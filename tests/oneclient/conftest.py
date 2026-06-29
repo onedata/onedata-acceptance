@@ -16,7 +16,10 @@ from tests.conftest import export_logs
 from tests.oneclient.steps.multi_dir_steps import purge_all_spaces
 from tests.type_definitions import Hosts, JsonObject, Storages
 from tests.utils.client_utils import Client
-from tests.utils.entities_setup.groups import CredentialsLike, GroupsConfig, UserLike
+from tests.utils.entities_setup.groups import CredentialsLike as GroupCredentialsLike
+from tests.utils.entities_setup.groups import (
+    GroupsConfig,
+)
 from tests.utils.entities_setup.groups import groups_creation as setup_groups
 from tests.utils.entities_setup.spaces import (
     SpacesConfig,
@@ -24,7 +27,11 @@ from tests.utils.entities_setup.spaces import (
 from tests.utils.entities_setup.spaces import (
     create_and_configure_spaces as setup_spaces,
 )
-from tests.utils.entities_setup.users import UserConfigEntry, UsersDb
+from tests.utils.entities_setup.users import CredentialsLike as UserCredentialsLike
+from tests.utils.entities_setup.users import (
+    UserConfigEntry,
+    UsersDb,
+)
 from tests.utils.entities_setup.users import users_creation_with_cleanup as setup_users
 from tests.utils.luma_utils import (
     add_spaces_luma_mapping,
@@ -95,8 +102,8 @@ def setup_entities(
     setup_users(
         "onezone",
         cast(list[UserConfigEntry], config.get("users")),
-        cast(CredentialsLike, admin_credentials),
-        cast(CredentialsLike, onepanel_credentials),
+        cast(UserCredentialsLike, admin_credentials),
+        cast(UserCredentialsLike, onepanel_credentials),
         cast(Mapping[str, Mapping[str, str]], hosts),
         cast(UsersDb, users),
         rm_users,
@@ -104,8 +111,8 @@ def setup_entities(
     setup_groups(
         cast(GroupsConfig, config.get("groups")),
         "onezone",
-        cast(CredentialsLike, admin_credentials),
-        cast(Mapping[str, UserLike], users),
+        cast(GroupCredentialsLike, admin_credentials),
+        users,
         cast(Mapping[str, Mapping[str, str]], hosts),
         groups,
     )

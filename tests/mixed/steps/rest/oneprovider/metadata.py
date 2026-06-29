@@ -7,8 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import base64
 import json
-from collections.abc import Mapping
-from typing import Protocol
 
 from oneprovider_client import CustomFileMetadataApi
 
@@ -16,19 +14,12 @@ from tests.gui.utils import CDMIClient as cdmi
 from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_provider
 from tests.type_definitions import JsonValue
-
-
-class UserLike(Protocol):
-    @property
-    def password(self) -> str | None: ...
-
-    @property
-    def token(self) -> str: ...
+from tests.utils.user_utils import Users
 
 
 def assert_metadata_in_op_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     host: str,
     hosts: HostsConfig,
     path: str,
@@ -60,7 +51,7 @@ def assert_metadata_in_op_rest(
 
 def set_metadata_in_op_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     host: str,
     hosts: HostsConfig,
     path: str,
@@ -79,7 +70,7 @@ def set_metadata_in_op_rest(
 
 def add_json_metadata_to_file_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: HostsConfig,
     host: str,
     expression: JsonValue,
@@ -91,7 +82,7 @@ def add_json_metadata_to_file_rest(
 
 
 def remove_all_metadata_in_op_rest(
-    user: str, users: Mapping[str, UserLike], host: str, hosts: HostsConfig, path: str
+    user: str, users: Users, host: str, hosts: HostsConfig, path: str
 ) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     client.write_metadata(path, {})
@@ -99,7 +90,7 @@ def remove_all_metadata_in_op_rest(
 
 def assert_no_such_metadata_in_op_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     host: str,
     hosts: HostsConfig,
     path: str,

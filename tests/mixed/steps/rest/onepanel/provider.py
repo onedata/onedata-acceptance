@@ -1,22 +1,16 @@
 """Utils and fixtures to facilitate provider operations in Onepanel using REST API."""
 
-from collections.abc import Mapping
-from typing import Protocol
-
 from tests.mixed.type_definitions import HostsConfig
+from tests.utils.user_utils import Users
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-class UserLike(Protocol):
-    password: str
-
-
 def modify_provider_in_op_panel_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     provider_host: str,
     hosts: HostsConfig,
     new_provider_name: str,
@@ -36,7 +30,7 @@ def modify_provider_in_op_panel_using_rest(
 
 
 def deregister_provider_in_op_panel_using_rest(
-    user: str, users: Mapping[str, UserLike], provider_host: str, hosts: HostsConfig
+    user: str, users: Users, provider_host: str, hosts: HostsConfig
 ) -> None:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
@@ -48,7 +42,7 @@ def deregister_provider_in_op_panel_using_rest(
 
 
 def register_provider_in_op_using_rest(
-    user: str, users: Mapping[str, UserLike], hosts: HostsConfig, config: str
+    user: str, users: Users, hosts: HostsConfig, config: str
 ) -> None:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi

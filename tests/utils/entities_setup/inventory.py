@@ -13,6 +13,7 @@ import yaml
 from tests import OZ_REST_PORT
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.rest_utils import get_zone_rest_path, http_post, http_put
+from tests.utils.user_utils import Users
 
 HostsConfig = Mapping[str, Mapping[str, str]]
 
@@ -35,11 +36,7 @@ InventoriesConfig = Mapping[str, InventoryDescription]
 
 class CredentialsLike(Protocol):
     username: str
-    password: str
-
-
-class UserLike(CredentialsLike, Protocol):
-    user_id: str
+    password: Optional[str]
 
 
 @given(
@@ -51,7 +48,7 @@ def inventories_creation(
     config: str,
     admin_credentials: CredentialsLike,
     hosts: HostsConfig,
-    users: Mapping[str, UserLike],
+    users: Users,
     groups: Mapping[str, str],
     zone_name: str,
     inventories: MutableMapping[str, str],
@@ -98,7 +95,7 @@ def inventories_creation(
 def _inventories_creation(
     config: str,
     hosts: HostsConfig,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     admin_credentials: CredentialsLike,
     groups: Mapping[str, str],

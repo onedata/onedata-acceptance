@@ -2,25 +2,21 @@
 using REST API.
 """
 
-from collections.abc import Mapping
-from typing import NoReturn, Protocol
+from typing import NoReturn
 
 from tests.type_definitions import Hosts
+from tests.utils.user_utils import Users
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-class UserLike(Protocol):
-    password: str
-
-
 def change_user_password_in_oz_panel_using_rest(
     user: str,
     new_password: str,
     zone_host: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
 ) -> NoReturn:
     raise NotImplementedError

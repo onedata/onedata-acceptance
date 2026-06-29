@@ -6,8 +6,6 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
-from collections.abc import Mapping
 from typing import Protocol, cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
@@ -26,10 +24,7 @@ from tests.mixed.type_definitions import SpaceManagementTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
 from tests.type_definitions import Hosts
 from tests.utils.entities_setup.spaces import _create_space
-
-
-class UserLike(Protocol):
-    password: str
+from tests.utils.user_utils import Users
 
 
 class CredentialsLike(Protocol):
@@ -39,7 +34,7 @@ class CredentialsLike(Protocol):
 
 def create_spaces_in_oz_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     zone_name: str,
     space_list: list[str],
@@ -54,7 +49,7 @@ def create_spaces_in_oz_using_rest(
 
 def leave_spaces_in_oz_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     space_list: str,
@@ -69,7 +64,7 @@ def leave_spaces_in_oz_using_rest(
 
 def rename_spaces_in_oz_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     space_list: str,
@@ -94,7 +89,7 @@ def rename_spaces_in_oz_using_rest(
 
 def remove_spaces_in_oz_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     space_list: str,
@@ -113,7 +108,7 @@ def remove_spaces_in_oz_using_rest(
 
 def remove_provider_support_for_space_in_oz_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     provider_alias: str,
@@ -135,7 +130,7 @@ def remove_provider_support_for_space_in_oz_using_rest(
 
 def request_space_support_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     space_name: str,
     zone_alias: str,
     hosts: Hosts,
@@ -155,7 +150,7 @@ def request_space_support_using_rest(
 
 def join_space_in_oz_using_rest(
     user_list: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     _space_name: str,
@@ -173,7 +168,7 @@ def join_space_in_oz_using_rest(
 
 def assert_spaces_have_appeared_in_oz_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     zone_name: str,
     space_list: str,
@@ -188,7 +183,7 @@ def assert_spaces_have_appeared_in_oz_rest(
 
 def assert_there_are_no_spaces_in_oz_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     space_list: str,
@@ -206,7 +201,7 @@ def assert_there_are_no_spaces_in_oz_rest(
 
 def assert_spaces_have_been_renamed_in_oz_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     space_list: str,
@@ -227,7 +222,7 @@ def assert_spaces_have_been_renamed_in_oz_rest(
 
 def assert_there_is_no_provider_for_space_in_oz_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     space_name: str,
@@ -258,7 +253,7 @@ def assert_there_is_no_provider_for_space_in_oz_rest(
 
 def assert_space_is_supported_by_provider_in_oz_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_host: str,
     hosts: Hosts,
     space_name: str,
@@ -278,7 +273,7 @@ def assert_space_is_supported_by_provider_in_oz_rest(
 
 def assert_provider_does_not_support_space_in_oz_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_host: str,
     hosts: Hosts,
     space_name: str,
@@ -297,7 +292,7 @@ def assert_provider_does_not_support_space_in_oz_rest(
 
 def copy_id_of_space_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     space_name: str,
     tmp_memory: TmpMemory,

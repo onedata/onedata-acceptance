@@ -4,23 +4,16 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Mapping
-from typing import Protocol
-
 from tests.mixed.oneprovider_client import QoSApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_provider
-
-
-class UserLike(Protocol):
-    @property
-    def token(self) -> str: ...
+from tests.utils.user_utils import Users
 
 
 def create_qos_requirement_in_op_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: HostsConfig,
     host: str,
     expression: str,
@@ -37,7 +30,7 @@ def create_qos_requirement_in_op_rest(
 
 def create_qos_requirement_in_op_by_id_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: HostsConfig,
     host: str,
     expression: str,
@@ -51,7 +44,7 @@ def create_qos_requirement_in_op_by_id_rest(
 
 def assert_qos_file_status_in_op_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: HostsConfig,
     host: str,
     space_name: str,
@@ -75,7 +68,7 @@ def assert_qos_file_status_in_op_rest(
 
 def delete_qos_requirement_in_op_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: HostsConfig,
     host: str,
     space_name: str,

@@ -1,22 +1,16 @@
 """Utils and fixtures to facilitate operations on providers in Onezone using REST API."""
 
-from collections.abc import Mapping
-from typing import Protocol
-
 from onezone_client import ProviderApi
 
 from tests.mixed.steps.rest.onezone.common import get_provider_with_name
 from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_oz
-
-
-class UserLike(Protocol):
-    password: str
+from tests.utils.user_utils import Users
 
 
 def assert_provider_has_name_and_hostname_in_oz_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     host_name: str,
     hosts: HostsConfig,
     provider_name: str,
@@ -40,7 +34,7 @@ def assert_provider_has_name_and_hostname_in_oz_rest(
 
 def assert_there_is_no_provider_in_oz_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     host_name: str,
     hosts: HostsConfig,
     provider_alias: str,

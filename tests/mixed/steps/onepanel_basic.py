@@ -6,7 +6,6 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Mapping
 from typing import Protocol, cast
 
 from _pytest._py.path import LocalPath
@@ -89,17 +88,9 @@ from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
 
-class RestUserLike(Protocol):
-    password: str
-
-
 class CredentialsLike(Protocol):
     username: str
     password: str
-
-
-def _as_rest_users(users: Users) -> Mapping[str, RestUserLike]:
-    return cast(Mapping[str, RestUserLike], users)
 
 
 def _as_rest_hosts(hosts: Hosts) -> HostsConfig:
@@ -133,7 +124,7 @@ def change_user_password_in_oz_panel(
     elif client.lower() == "rest":
 
         change_user_password_in_oz_panel_using_rest(
-            user, new_password, host, _as_rest_users(users), hosts
+            user, new_password, host, users, hosts
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -208,7 +199,7 @@ def modify_provider_using_test_hostname_in_op_panel(
 
         modify_provider_in_op_panel_using_rest(
             user,
-            _as_rest_users(users),
+            users,
             host,
             _as_rest_hosts(hosts),
             new_provider_name,
@@ -251,7 +242,7 @@ def modify_provider_using_known_hostname_in_op_panel(
 
         modify_provider_in_op_panel_using_rest(
             user,
-            _as_rest_users(users),
+            users,
             host,
             _as_rest_hosts(hosts),
             hosts[target_provider]["name"],
@@ -295,7 +286,7 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(
 
         assert_provider_has_name_and_hostname_in_oz_rest(
             user,
-            _as_rest_users(users),
+            users,
             host,
             _as_rest_hosts(hosts),
             provider_name,
@@ -334,7 +325,7 @@ def deregister_provider_in_op_panel(
     if client.lower() == "rest":
 
         deregister_provider_in_op_panel_using_rest(
-            user, _as_rest_users(users), host, _as_rest_hosts(hosts)
+            user, users, host, _as_rest_hosts(hosts)
         )
     elif client.lower() == "web gui":
 
@@ -364,7 +355,7 @@ def assert_there_is_no_provider_in_oz(
 
         assert_there_is_no_provider_in_oz_rest(
             user,
-            _as_rest_users(users),
+            users,
             host,
             _as_rest_hosts(hosts),
             provider_name,
@@ -398,7 +389,7 @@ def assert_provider_does_not_support_space_in_oz(
     if client.lower() == "rest":
 
         assert_provider_does_not_support_space_in_oz_rest(
-            user, _as_rest_users(users), host, hosts, space_name, provider_name
+            user, users, host, hosts, space_name, provider_name
         )
     elif client.lower() == "web gui":
 
@@ -458,9 +449,7 @@ def register_provider_in_op(
 
     if client.lower() == "rest":
 
-        register_provider_in_op_using_rest(
-            user, _as_rest_users(users), _as_rest_hosts(hosts), config
-        )
+        register_provider_in_op_using_rest(user, users, _as_rest_hosts(hosts), config)
     elif client.lower() == "web gui":
 
         register_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory)
@@ -494,7 +483,7 @@ def request_space_support(
 
         request_space_support_using_rest(
             user,
-            _as_rest_users(users),
+            users,
             space_name,
             host,
             hosts,
@@ -576,7 +565,7 @@ def support_space_in_op_panel(
     elif client.lower() == "rest":
 
         support_space_in_op_panel_using_rest(
-            user, host, hosts, _as_rest_users(users), tmp_memory, config
+            user, host, hosts, users, tmp_memory, config
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -609,7 +598,7 @@ def w_assert_space_is_supported_by_provider_in_oz(
     elif client.lower() == "rest":
 
         assert_space_is_supported_by_provider_in_oz_rest(
-            user, _as_rest_users(users), host, hosts, space_name, provider_name
+            user, users, host, hosts, space_name, provider_name
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -649,7 +638,7 @@ def revoke_space_support_in_op_panel(
 
         revoke_space_support_in_op_panel_using_rest(
             user,
-            _as_rest_users(users),
+            users,
             host,
             hosts,
             space_name,
@@ -771,7 +760,7 @@ def assert_proper_space_configuration_in_op_panel(
         assert_proper_space_configuration_in_op_panel_rest(
             space,
             user,
-            _as_rest_users(users),
+            users,
             host,
             hosts,
             config,
@@ -823,7 +812,7 @@ def configure_sync_parameters_for_space_in_op_panel(
 
         configure_sync_parameters_for_space_in_op_panel_rest(
             user,
-            _as_rest_users(users),
+            users,
             host,
             hosts,
             config,
@@ -940,7 +929,7 @@ def copy_id_of_space(
 
         copy_id_of_space_rest(
             user,
-            _as_rest_users(users),
+            users,
             hosts,
             space_name,
             tmp_memory,

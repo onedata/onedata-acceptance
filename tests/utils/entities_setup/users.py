@@ -29,7 +29,7 @@ from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 HostsConfig = Mapping[str, Mapping[str, str]]
-UsersDb = MutableMapping[str, User]
+type UsersDb = MutableMapping[str, User]
 
 
 class CredentialsLike(Protocol):
@@ -294,7 +294,7 @@ def _add_user_to_zone_cluster(
 def _cleanup_users(
     zone_hostname: str,
     admin_credentials: CredentialsLike,
-    users_db: Mapping[str, User],
+    users_db: UsersDb,
     ignore_http_exceptions: bool = False,
 ) -> None:
     for user_credentials in users_db.values():

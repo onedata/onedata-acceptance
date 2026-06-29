@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping, MutableMapping
-from typing import Protocol
+from typing import Optional
 
 from tests import ELASTICSEARCH_PORT, OZ_REST_PORT
 from tests.gui.utils.generic import parse_seq
@@ -18,15 +18,11 @@ from tests.utils.rest_utils import (
     http_post,
     http_put,
 )
+from tests.utils.user_utils import Users
 
 HostsConfig = Mapping[str, Mapping[str, str]]
 IdMap = Mapping[str, str]
 MutableIdMap = MutableMapping[str, str]
-
-
-class UserLike(Protocol):
-    username: str
-    password: str
 
 
 @given(
@@ -47,7 +43,7 @@ def create_harvesters_rest(
     harvesters_list: str,
     service: str,
     hosts: HostsConfig,
-    users: Mapping[str, UserLike],
+    users: Users,
     harvesters: MutableIdMap,
 ) -> None:
     zone_hostname = hosts[service]["hostname"]
@@ -70,7 +66,7 @@ def create_harvesters_rest(
 def _create_harvester(
     zone_hostname: str,
     owner_username: str,
-    owner_password: str,
+    owner_password: Optional[str],
     harvester_name: str,
     endpoint: str,
     plugin: str,
@@ -99,7 +95,10 @@ def _create_harvester(
 
 
 def _create_harvester_gui_index(
-    zone_hostname: str, owner_username: str, owner_password: str, harvester_id: str
+    zone_hostname: str,
+    owner_username: str,
+    owner_password: Optional[str],
+    harvester_id: str,
 ) -> None:
     index_details = {
         "name": "generic-index",
@@ -120,9 +119,7 @@ def _create_harvester_gui_index(
 
 @given(parsers.parse("user {user} has no harvesters"))
 @given(parsers.parse("user {user} has no harvesters other than defined in next steps"))
-def remove_all_harvesters_rest(
-    user: str, hosts: HostsConfig, users: Mapping[str, UserLike]
-) -> None:
+def remove_all_harvesters_rest(user: str, hosts: HostsConfig, users: Users) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
 
     dict_harvesters = http_get(
@@ -138,7 +135,7 @@ def remove_all_harvesters_rest(
 
 
 def _remove_harvester(
-    harvester_id: str, zone_hostname: str, user: str, users: Mapping[str, UserLike]
+    harvester_id: str, zone_hostname: str, user: str, users: Users
 ) -> None:
     http_delete(
         ip=zone_hostname,
@@ -162,7 +159,7 @@ def g_add_space_to_harvester(
     harvesters: IdMap,
     hosts: HostsConfig,
     username: str,
-    users: Mapping[str, UserLike],
+    users: Users,
 ) -> None:
     add_space_to_harvester(
         space_list, harvester_name, spaces, harvesters, hosts, username, users
@@ -182,7 +179,7 @@ def wt_add_space_to_harvester(
     harvesters: IdMap,
     hosts: HostsConfig,
     username: str,
-    users: Mapping[str, UserLike],
+    users: Users,
 ) -> None:
     add_space_to_harvester(
         space_list, harvester_name, spaces, harvesters, hosts, username, users
@@ -196,7 +193,7 @@ def add_space_to_harvester(
     harvesters: IdMap,
     hosts: HostsConfig,
     username: str,
-    users: Mapping[str, UserLike],
+    users: Users,
 ) -> None:
     for space in parse_seq(space_list):
         _add_space_to_harvester(
@@ -211,7 +208,7 @@ def _add_space_to_harvester(
     harvesters: IdMap,
     hosts: HostsConfig,
     username: str,
-    users: Mapping[str, UserLike],
+    users: Users,
 ) -> None:
     space_id = spaces[space_name]
     harvester_id = harvesters[harvester_name]

@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from collections.abc import Mapping
 from typing import Protocol
 
 import yaml
@@ -25,6 +24,7 @@ from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
 from tests.mixed.utils.common import login_to_oz, login_to_panel
 from tests.type_definitions import Hosts
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
@@ -33,13 +33,9 @@ class CredentialsLike(Protocol):
     password: str
 
 
-class UserLike(Protocol):
-    password: str
-
-
 def revoke_space_support_in_op_panel_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     provider_host: str,
     hosts: Hosts,
     space_name: str,
@@ -65,7 +61,7 @@ def support_space_in_op_panel_using_rest(
     user: str,
     provider_host: str,
     hosts: Hosts,
-    users: Mapping[str, UserLike],
+    users: Users,
     tmp_memory: TmpMemory,
     config: str,
 ) -> None:
@@ -120,7 +116,7 @@ def support_space_in_op_panel_using_rest(
 
 def configure_sync_parameters_for_space_in_op_panel_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     provider_host: str,
     hosts: Hosts,
     conf: str,
@@ -175,7 +171,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(
 def assert_proper_space_configuration_in_op_panel_rest(
     space_name: str,
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     provider_host: str,
     hosts: Hosts,
     conf: str,

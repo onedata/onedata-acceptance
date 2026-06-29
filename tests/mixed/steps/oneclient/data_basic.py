@@ -22,7 +22,6 @@ from tests.mixed.utils.data import (
     Content,
     ContentItem,
     CreateItem,
-    UserLike,
     assert_ace,
     check_files_tree,
     create_content,
@@ -445,7 +444,7 @@ def grant_acl_privileges_in_op_oneclient(
         item_type,
         groups,
         name,
-        cast(Mapping[str, UserLike], users),
+        users,
         path,
     )
     multi_file_steps.set_xattr(user, path, "cdmi_acl", json.dumps(acl), host, users)

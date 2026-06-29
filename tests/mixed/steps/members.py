@@ -18,7 +18,6 @@ from tests.gui.meta_steps.onezone.members import (
 )
 from tests.gui.meta_steps.onezone.spaces import add_group_to_space_or_group
 from tests.mixed.steps.rest.onezone.members import (
-    UserLike,
     add_group_to_space_using_rest,
     assert_group_in_space_using_rest,
     assert_not_user_in_space_using_rest,
@@ -29,6 +28,7 @@ from tests.mixed.steps.rest.onezone.members import (
 from tests.mixed.utils.common import NoSuchClientException
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
@@ -50,7 +50,7 @@ def fail_to_set_privileges_in_space_in_oz(
     hosts: Hosts,
     selenium: SeleniumDrivers,
     space_name: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     spaces: Mapping[str, str],
     host: str,
 ) -> None:
@@ -89,7 +89,7 @@ def assert_privileges_in_space_in_oz(
     space_name: str,
     hosts: Hosts,
     member_name: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     member_type: str,
     config: str,
     spaces: Mapping[str, str],
@@ -126,7 +126,7 @@ def fail_to_create_invitation_in_space_in_oz(
     selenium: SeleniumDrivers,
     user: str,
     space_name: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     member_name: str,
     spaces: Mapping[str, str],
@@ -157,7 +157,7 @@ def assert_not_user_in_space_in_oz(
     user: str,
     member_name: str,
     space_name: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     host: str,
     spaces: Mapping[str, str],
@@ -189,7 +189,7 @@ def add_group_to_space_in_oz(
     user: str,
     space_name: str,
     group_name: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     host: str,
     spaces: Mapping[str, str],
@@ -228,7 +228,7 @@ def assert_group_in_space_in_oz(
     space_name: str,
     host: str,
     selenium: SeleniumDrivers,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     spaces: Mapping[str, str],
 ) -> None:

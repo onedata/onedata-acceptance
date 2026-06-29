@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping
-from typing import Protocol, cast
+from typing import cast
 
 import yaml
 from onezone_client.rest import ApiException
@@ -20,6 +20,7 @@ from tests.mixed.type_definitions import (
 from tests.mixed.type_definitions import RestOnezoneTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
 from tests.type_definitions import Hosts
+from tests.utils.user_utils import Users
 
 PRIVILEGES_TRANSLATION = {
     "View space": "space_view",
@@ -114,11 +115,6 @@ DEFAULT_GRANT = [
 ]
 
 
-class UserLike(Protocol):
-    password: str
-    user_id: str
-
-
 def translate_privileges(
     privileges: Mapping[str, PrivilegeGroupConfig],
     grant: list[str],
@@ -149,7 +145,7 @@ def translate_privileges(
 
 def fail_to_set_privileges_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     host: str,
     spaces: IdMap,
@@ -182,7 +178,7 @@ def fail_to_set_privileges_using_rest(
 
 def assert_privileges_in_space_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     host: str,
     spaces: IdMap,
@@ -211,7 +207,7 @@ def assert_privileges_in_space_using_rest(
 
 def fail_to_create_invitation_in_space_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     host: str,
     spaces: IdMap,
@@ -233,7 +229,7 @@ def fail_to_create_invitation_in_space_using_rest(
 
 def assert_group_in_space_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     host: str,
     group_name: str,
@@ -250,7 +246,7 @@ def assert_group_in_space_using_rest(
 
 def add_users_to_space_in_oz_using_rest(
     user_list: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     space_name: str,
@@ -266,7 +262,7 @@ def add_users_to_space_in_oz_using_rest(
 
 def add_group_to_space_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     host: str,
     group_name: str,
@@ -281,7 +277,7 @@ def add_group_to_space_using_rest(
 
 def delete_users_from_space_in_oz_using_rest(
     user_list: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     space_name: str,
@@ -297,7 +293,7 @@ def delete_users_from_space_in_oz_using_rest(
 
 def invite_other_users_to_space_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     zone_name: str,
     hosts: Hosts,
     space_name: str,
@@ -315,7 +311,7 @@ def assert_user_is_member_of_space_rest(
     space_name: str,
     spaces: IdMap,
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     user_list: str,
     zone_name: str,
     hosts: Hosts,
@@ -330,7 +326,7 @@ def assert_user_is_member_of_space_rest(
 
 def assert_not_user_in_space_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     host: str,
     spaces: IdMap,
@@ -345,7 +341,7 @@ def assert_not_user_in_space_using_rest(
 
 def get_users_id_list(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     host: str,
     spaces: IdMap,

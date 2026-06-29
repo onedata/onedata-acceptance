@@ -33,10 +33,10 @@ from tests.utils.rest_utils import (
     http_post,
     http_put,
 )
+from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
 type Hosts = Mapping[str, HostDescription]
-type Users = Mapping[str, "UserLike"]
 type Groups = Mapping[str, str]
 type Storages = MutableMapping[str, MutableMapping[str, str]]
 type Spaces = MutableMapping[str, str]
@@ -53,14 +53,6 @@ class CredentialsLike(Protocol):
 
     @property
     def password(self) -> Optional[str]: ...
-
-
-class UserLike(CredentialsLike, Protocol):
-    @property
-    def user_id(self) -> str: ...
-
-    @property
-    def token(self) -> str: ...
 
 
 class MemberOptions(TypedDict):
@@ -422,7 +414,7 @@ def _add_group_to_space(
 def _get_support(
     zone_hostname: str,
     onepanel_credentials: CredentialsLike,
-    owner_credentials: UserLike,
+    owner_credentials: User,
     space_id: str,
     storages_db: Storages,
     hosts: Hosts,
@@ -552,7 +544,7 @@ def _get_storage_id(
 
 
 def _init_storage_from_config(
-    owner_credentials: UserLike,
+    owner_credentials: User,
     space_name: str,
     hosts: Hosts,
     users: Users,
@@ -572,7 +564,7 @@ def _init_storage_from_config(
 
 
 def init_storage(
-    owner_credentials: UserLike,
+    owner_credentials: User,
     space_name: str,
     hosts: Hosts,
     provider_hostname: str,
@@ -629,7 +621,7 @@ def _mkdirs(
     create_cdmi_obj: CdmiCreator,
     cwd: str,
     hosts: Hosts,
-    owner_credentials: UserLike,
+    owner_credentials: User,
     provider_hostname: str,
     users: Users,
     dir_content: Optional[DirectoryTree] = None,
@@ -670,7 +662,7 @@ def _mkdirs(
 
 def set_file_metadata(
     file_path: str,
-    owner_credentials: UserLike,
+    owner_credentials: User,
     provider_hostname: str,
     users: Users,
     metadata: Optional[JsonObject] = None,
@@ -694,7 +686,7 @@ def _mkfile(
     create_cdmi_obj: CdmiCreator,
     file_path: str,
     hosts: Hosts,
-    owner_credentials: UserLike,
+    owner_credentials: User,
     provider_hostname: str,
     users: Users,
     file_content: Optional[TreeValue] = None,

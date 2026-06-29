@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections import defaultdict
 from collections.abc import Callable, MutableMapping
 from typing import (
-    Any,
     Literal,
     Optional,
     ParamSpec,

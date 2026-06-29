@@ -30,7 +30,6 @@ from tests.gui.meta_steps.onezone.spaces import (
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
-from tests.mixed.steps.rest.onezone.members import UserLike as MemberUserLike
 from tests.mixed.steps.rest.onezone.members import (
     add_users_to_space_in_oz_using_rest,
     assert_user_is_member_of_space_rest,
@@ -40,14 +39,12 @@ from tests.mixed.steps.rest.onezone.members import (
 from tests.mixed.steps.rest.onezone.provider import (
     HostsConfig,
 )
-from tests.mixed.steps.rest.onezone.provider import UserLike as ProviderUserLike
 from tests.mixed.steps.rest.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_rest,
 )
 from tests.mixed.steps.rest.onezone.space_management import (
     CredentialsLike,
 )
-from tests.mixed.steps.rest.onezone.space_management import UserLike as SpaceUserLike
 from tests.mixed.steps.rest.onezone.space_management import (
     assert_spaces_have_appeared_in_oz_rest,
     assert_spaces_have_been_renamed_in_oz_rest,
@@ -70,16 +67,16 @@ from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
 
-def _as_space_users(users: Users) -> Mapping[str, SpaceUserLike]:
-    return cast(Mapping[str, SpaceUserLike], users)
+def _as_space_users(users: Users) -> Users:
+    return users
 
 
-def _as_member_users(users: Users) -> Mapping[str, MemberUserLike]:
-    return cast(Mapping[str, MemberUserLike], users)
+def _as_member_users(users: Users) -> Users:
+    return users
 
 
-def _as_provider_users(users: Users) -> Mapping[str, ProviderUserLike]:
-    return cast(Mapping[str, ProviderUserLike], users)
+def _as_provider_users(users: Users) -> Users:
+    return users
 
 
 def _as_credentials(credentials: User) -> CredentialsLike:

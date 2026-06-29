@@ -38,10 +38,6 @@ class FileTreeNode(Protocol):
     def get_items(self) -> Iterable[str]: ...
 
 
-class UserLike(Protocol):
-    user_id: str
-
-
 class CreateItem(Protocol):
     def __call__(
         self,
@@ -194,7 +190,7 @@ def get_acl_metadata(
     item_type: str,
     groups: Mapping[str, str],
     name: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     path: str,
 ) -> Acl:
     acl = list(curr_acl)

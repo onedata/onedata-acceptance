@@ -89,7 +89,6 @@ from tests.mixed.steps.rest.oneprovider.data import (
 from tests.mixed.steps.rest.oneprovider.metadata import (
     HostsConfig as MetadataHostsConfig,
 )
-from tests.mixed.steps.rest.oneprovider.metadata import UserLike as MetadataUserLike
 from tests.mixed.steps.rest.oneprovider.metadata import (
     assert_metadata_in_op_rest,
     assert_no_such_metadata_in_op_rest,
@@ -105,8 +104,8 @@ from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
-def _as_metadata_users(users: Users) -> Mapping[str, MetadataUserLike]:
-    return cast(Mapping[str, MetadataUserLike], users)
+def _as_metadata_users(users: Users) -> Users:
+    return users
 
 
 def _as_metadata_hosts(hosts: Hosts) -> MetadataHostsConfig:

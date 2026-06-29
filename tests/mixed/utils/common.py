@@ -78,7 +78,13 @@ def setup_basic_configuration(
     configuration.host = f"https://{host}:{port}{path_prefix}"
 
 
-def login_to_oz(username: str, password: str, host: str) -> ApiClient_OZ:
+def _require_password(username: str, password: Optional[str]) -> str:
+    if password is None:
+        raise ValueError(f'User "{username}" does not have a password')
+    return password
+
+
+def login_to_oz(username: str, password: Optional[str], host: str) -> ApiClient_OZ:
 
     configuration = Conf_OZ()
     setup_basic_configuration(
@@ -87,13 +93,15 @@ def login_to_oz(username: str, password: str, host: str) -> ApiClient_OZ:
         OZ_REST_PORT,
         OZ_REST_PATH_PREFIX,
         username,
-        password,
+        _require_password(username, password),
     )
 
     return ApiClient_OZ(configuration=configuration)
 
 
-def login_to_panel(username: str, password: str, host: str) -> ApiClient_panel:
+def login_to_panel(
+    username: str, password: Optional[str], host: str
+) -> ApiClient_panel:
 
     configuration = Conf_panel()
     setup_basic_configuration(
@@ -102,7 +110,7 @@ def login_to_panel(username: str, password: str, host: str) -> ApiClient_panel:
         PANEL_REST_PORT,
         PANEL_REST_PATH_PREFIX,
         username,
-        password,
+        _require_password(username, password),
     )
 
     return ApiClient_panel(configuration=configuration)

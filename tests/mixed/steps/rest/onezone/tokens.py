@@ -29,11 +29,7 @@ from tests.mixed.type_definitions import (
 )
 from tests.mixed.utils.common import login_to_oz
 from tests.type_definitions import Hosts, Tokens
-
-
-class UserLike(Protocol):
-    password: str
-    user_id: str
+from tests.utils.user_utils import Users
 
 
 class InviteTokenLike(Protocol):
@@ -61,7 +57,7 @@ def _token_caveats(token_config: TokenConfig) -> list[TokenCaveat]:
 def create_token_with_config_rest(
     user: str,
     config: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     tokens: Tokens,
     hosts: Hosts,
     tmp_memory: TmpMemory,
@@ -129,7 +125,7 @@ translation_dict = {
 def _create_token_with_config(
     user: str,
     config: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     tmp_memory: TmpMemory,
     tokens: Tokens,
@@ -191,7 +187,7 @@ def parse_token_caveats(
     caveats: ConfigMap,
     token_config: TokenConfig,
     groups: GroupMap,
-    users: Mapping[str, UserLike],
+    users: Users,
     spaces: SpaceMap,
     tmp_memory: TmpMemory,
 ) -> None:
@@ -268,7 +264,7 @@ def set_consumer_caveat(
     token_config: TokenConfig,
     caveat: list[Mapping[str, str]],
     groups: GroupMap,
-    users: Mapping[str, UserLike],
+    users: Users,
 ) -> None:
     consumer_list = []
     for consumer in caveat:
@@ -279,7 +275,7 @@ def set_consumer_caveat(
 
 
 def set_consumer_in_consumer_caveat(
-    consumer: Mapping[str, str], groups: GroupMap, users: Mapping[str, UserLike]
+    consumer: Mapping[str, str], groups: GroupMap, users: Users
 ) -> str:
     cons_type = consumer.get("type", "user")
     cons_name = consumer.get("consumer name", "")
@@ -355,7 +351,7 @@ def set_object_id_caveat(token_config: TokenConfig, object_ids: list[str]) -> No
 
 def revoke_token_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     zone_name: str,
     tokens: Tokens,
@@ -376,7 +372,7 @@ def revoke_token_rest(
 def assert_token_with_config_rest(
     user: str,
     config: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: Hosts,
     tmp_memory: TmpMemory,
     groups: GroupMap,
@@ -430,7 +426,7 @@ def assert_token_caveats(
     caveats: ConfigMap,
     token: NamedTokenLike,
     groups: GroupMap,
-    users: Mapping[str, UserLike],
+    users: Users,
     spaces: SpaceMap,
     tmp_memory: TmpMemory,
 ) -> None:
@@ -555,7 +551,7 @@ def assert_consumer_caveat(
     token_caveat: ConfigMap,
     expected_caveat: list[Mapping[str, str]],
     groups: GroupMap,
-    users: Mapping[str, UserLike],
+    users: Users,
 ) -> None:
     token_list = cast(list[str], token_caveat["whitelist"])
     assert len(token_list) == len(expected_caveat), (
@@ -571,7 +567,7 @@ def assert_consumer_in_consumer_caveat(
     consumer: Mapping[str, str],
     token_list: list[str],
     groups: GroupMap,
-    users: Mapping[str, UserLike],
+    users: Users,
 ) -> None:
     value = set_consumer_in_consumer_caveat(consumer, groups, users)
     assert value in token_list, f"{consumer} not in consumer token caveat"

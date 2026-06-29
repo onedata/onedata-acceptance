@@ -20,17 +20,14 @@ from tests.utils.rest_utils import (
     http_post,
     http_put,
 )
+from tests.utils.user_utils import Users
 
 HostsConfig = Mapping[str, Mapping[str, str]]
 
 
 class CredentialsLike(Protocol):
     username: str
-    password: str
-
-
-class UserLike(CredentialsLike, Protocol):
-    user_id: str
+    password: Optional[str]
 
 
 class MemberOptions(TypedDict):
@@ -58,7 +55,7 @@ def groups_creation_step(
     config: str,
     service: str,
     admin_credentials: CredentialsLike,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
 ) -> None:
@@ -76,7 +73,7 @@ def groups_creation(
     config: GroupsConfig,
     service: str,
     admin_credentials: CredentialsLike,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
 ) -> None:
@@ -129,7 +126,7 @@ def _groups_creation(
     config: GroupsConfig,
     service: str,
     admin_credentials: CredentialsLike,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
 ) -> None:
@@ -176,7 +173,7 @@ def _unpack_member_entry(entry: MemberEntry) -> tuple[str, Optional[list[str]]]:
 def _create_group(
     zone_hostname: str,
     owner_username: str,
-    owner_password: str,
+    owner_password: Optional[str],
     group_name: str,
     group_type: str = "team",
 ) -> str:
@@ -234,7 +231,7 @@ def _add_child_group(
 
 
 def _get_group_id(
-    hosts: HostsConfig, users: Mapping[str, UserLike], user: str, group_name: str
+    hosts: HostsConfig, users: Users, user: str, group_name: str
 ) -> Optional[str]:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
@@ -258,7 +255,7 @@ def _get_group_id(
     )
 )
 def remove_group_in_onezone(
-    hosts: HostsConfig, users: Mapping[str, UserLike], user: str, group_name: str
+    hosts: HostsConfig, users: Users, user: str, group_name: str
 ) -> None:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
@@ -278,9 +275,7 @@ def remove_group_in_onezone(
         "definition in next steps"
     )
 )
-def remove_all_groups_rest(
-    user: str, hosts: HostsConfig, users: Mapping[str, UserLike]
-) -> None:
+def remove_all_groups_rest(user: str, hosts: HostsConfig, users: Users) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
 
     groups_id_list = get_group_id_list(user, users, zone_hostname)
@@ -290,7 +285,7 @@ def remove_all_groups_rest(
 
 
 def _try_to_remove_group(
-    group_id: str, zone_hostname: str, user: str, users: Mapping[str, UserLike]
+    group_id: str, zone_hostname: str, user: str, users: Users
 ) -> None:
     try:
         http_delete(
@@ -303,9 +298,7 @@ def _try_to_remove_group(
         pass
 
 
-def get_group_id_list(
-    user: str, users: Mapping[str, UserLike], zone_hostname: str
-) -> list[str]:
+def get_group_id_list(user: str, users: Users, zone_hostname: str) -> list[str]:
     groups_list = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -318,7 +311,7 @@ def get_group_id_list(
 @wt(parsers.parse(r"using REST, user {user} creates {number} groups"))
 def create_n_groups_using_rest(
     user: str,
-    users: Mapping[str, UserLike],
+    users: Users,
     hosts: HostsConfig,
     number: str,
     host: str = "onezone",

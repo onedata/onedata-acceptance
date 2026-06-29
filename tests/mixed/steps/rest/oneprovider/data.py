@@ -30,14 +30,12 @@ from tests.mixed.oneprovider_client.models.inline_response2015 import InlineResp
 from tests.mixed.oneprovider_client.models.share import Share
 from tests.mixed.oneprovider_client.models.space import Space
 from tests.mixed.steps.rest.oneprovider.basic import HostsConfig
-from tests.mixed.steps.rest.oneprovider.basic import UserLike as BasicUserLike
 from tests.mixed.steps.rest.oneprovider.basic import see_item_is_dir_op_rest
 from tests.mixed.utils.common import login_to_cdmi, login_to_provider
 from tests.mixed.utils.data import (
     Content,
     ContentItem,
     CreateItem,
-    UserLike,
     assert_ace,
     check_files_tree,
     create_content,
@@ -50,8 +48,8 @@ from tests.utils.rest_utils import get_provider_rest_path, http_post
 from tests.utils.user_utils import Users
 
 
-def _as_basic_users(users: Users) -> Mapping[str, BasicUserLike]:
-    return cast(Mapping[str, BasicUserLike], users)
+def _as_basic_users(users: Users) -> Users:
+    return users
 
 
 def _as_basic_hosts(hosts: Hosts) -> HostsConfig:
@@ -343,9 +341,7 @@ def grant_acl_privileges_in_op_rest(
         acl = client.read_metadata(path)["metadata"]["cdmi_acl"]
     except KeyError:
         acl = []
-    acl = get_acl_metadata(
-        acl, priv, item_type, groups, name, cast(Mapping[str, UserLike], users), path
-    )
+    acl = get_acl_metadata(acl, priv, item_type, groups, name, users, path)
     client.write_metadata(path, {"cdmi_acl": acl})
 
 

@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from collections.abc import Mapping
 from typing import cast
 
 import pytest
@@ -18,7 +17,6 @@ from tests.mixed.steps.oneclient.data_basic import (
     create_file_in_op_oneclient,
 )
 from tests.mixed.steps.rest.onezone.space_management import (
-    UserLike,
     create_spaces_in_oz_using_rest,
 )
 from tests.mixed.type_definitions import DataAdvancedTmpMemory as TmpMemory
@@ -53,7 +51,7 @@ def create_space_with_alias_in_oz(
     if client.lower() == "rest":
         create_spaces_in_oz_using_rest(
             user,
-            cast(Mapping[str, UserLike], users),
+            users,
             hosts,
             host,
             [space_name],
