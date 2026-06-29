@@ -14,7 +14,8 @@ from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.type_definitions import DatasetSubtree, DatasetTree, IdMap
 from tests.mixed.utils.common import login_to_provider
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
+from tests.utils.user_utils import Users
 
 
 class DatasetData(TypedDict):

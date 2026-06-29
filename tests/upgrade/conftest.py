@@ -13,9 +13,10 @@ from typing import cast
 import pytest
 
 from tests.conftest import export_logs
-from tests.type_definitions import EnvDesc, Hosts, JsonObject, Users
+from tests.type_definitions import EnvDesc, Hosts, JsonObject
 from tests.upgrade.utils.upgrade_utils import UpgradeConfig, UpgradeTestsController
 from tests.utils.environment_utils import clean_env
+from tests.utils.user_utils import Users
 
 
 @pytest.fixture()

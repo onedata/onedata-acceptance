@@ -27,8 +27,9 @@ from tests.mixed.steps.rest.onezone.tokens import (
     revoke_token_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.type_definitions import Hosts, SeleniumDrivers, Tokens, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Tokens
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

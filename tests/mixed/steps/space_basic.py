@@ -63,10 +63,10 @@ from tests.mixed.steps.rest.onezone.space_management import (
 from tests.mixed.type_definitions import MutableSpaces as Spaces
 from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps.multi_file_steps import ls_present_spaces
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
 

@@ -24,7 +24,8 @@ from tests.mixed.type_definitions import (
     IsDir,
     ListDir,
 )
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
+from tests.utils.user_utils import Users
 
 
 class FileTreeNode(Protocol):

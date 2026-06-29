@@ -43,8 +43,9 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.onezone import OZLoggedIn
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

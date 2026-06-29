@@ -47,10 +47,11 @@ from tests.mixed.steps.rest.onezone.group_management import (
     see_groups_using_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPUnauthorized
 from tests.utils.rest_utils import get_zone_rest_path, http_post
+from tests.utils.user_utils import Users
 
 
 def _as_rest_users(users: Users) -> Mapping[str, UserLike]:

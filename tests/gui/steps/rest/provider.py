@@ -9,7 +9,7 @@ from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
 from tests.gui.utils.generic import OnedataService
-from tests.type_definitions import Hosts, JsonObject, Users
+from tests.type_definitions import Hosts, JsonObject
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import (
     get_panel_rest_path,
@@ -18,7 +18,7 @@ from tests.utils.rest_utils import (
     http_patch,
     http_post,
 )
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, Users
 
 
 def get_provider_id(provider: str, hosts: Hosts, users: Users) -> str:

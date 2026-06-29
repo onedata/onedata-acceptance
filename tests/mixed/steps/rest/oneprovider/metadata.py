@@ -19,8 +19,11 @@ from tests.type_definitions import JsonValue
 
 
 class UserLike(Protocol):
-    password: str
-    token: str
+    @property
+    def password(self) -> str | None: ...
+
+    @property
+    def token(self) -> str: ...
 
 
 def assert_metadata_in_op_rest(

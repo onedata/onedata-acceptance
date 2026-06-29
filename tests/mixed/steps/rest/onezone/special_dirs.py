@@ -41,9 +41,10 @@ from tests.oneclient.steps.multi_file_steps import (
     create_file_in_dir_by_id,
     try_to_create_file_in_root_dir,
 )
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPBadRequest
+from tests.utils.user_utils import Users
 
 EX_ERR_MSGS_REST = [
     "Operation failed with POSIX error: enotsup.",

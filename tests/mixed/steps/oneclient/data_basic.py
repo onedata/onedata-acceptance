@@ -33,9 +33,10 @@ from tests.oneclient.steps import (
     multi_file_steps,
     multi_reg_file_steps,
 )
-from tests.type_definitions import EnvDesc, Hosts, JsonValue, Users
+from tests.type_definitions import EnvDesc, Hosts, JsonValue
 from tests.utils.acceptance_utils import compare, failure, time_attr
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

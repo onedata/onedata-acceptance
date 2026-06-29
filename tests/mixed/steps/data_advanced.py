@@ -28,8 +28,9 @@ from tests.mixed.type_definitions import (
 )
 from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps import multi_reg_file_steps
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 
 
 @wt(

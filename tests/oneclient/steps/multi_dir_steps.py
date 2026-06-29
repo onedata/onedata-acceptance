@@ -11,12 +11,13 @@ import errno
 import os.path
 import subprocess as sp
 
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils import ONECLIENT_MOUNT_DIR
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, when, wt
 from tests.utils.client_utils import Client
 from tests.utils.onenv_utils import cmd_exec
+from tests.utils.user_utils import Users
 from tests.utils.utils import assert_, assert_expected_failure, assert_generic
 
 

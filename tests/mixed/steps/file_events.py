@@ -23,9 +23,10 @@ from tests.mixed.type_definitions import (
     FileAttrs,
 )
 from tests.mixed.utils.sse_utils import SpaceFilesMonitorClientImpl
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import get_file_id_by_rest, get_file_id_cached
+from tests.utils.user_utils import Users
 
 
 class ObservedFileAction(Enum):

@@ -14,7 +14,8 @@ from tests.mixed.utils.common import login_to_provider
 
 
 class UserLike(Protocol):
-    token: str
+    @property
+    def token(self) -> str: ...
 
 
 def see_item_is_dir_op_rest(

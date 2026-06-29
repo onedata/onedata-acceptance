@@ -22,11 +22,12 @@ import jsondiff
 import pytest
 
 from tests.oneclient.steps.multi_dir_steps import create
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils.acceptance_utils import compare, list_parser, make_arg_list, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
 from tests.utils.client_utils import Client
 from tests.utils.onenv_utils import cmd_exec
+from tests.utils.user_utils import Users
 from tests.utils.utils import (
     assert_,
     assert_expected_failure,

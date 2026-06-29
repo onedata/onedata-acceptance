@@ -22,8 +22,9 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.generic import implicit_wait, parse_seq, transform
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

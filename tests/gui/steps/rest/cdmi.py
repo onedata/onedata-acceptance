@@ -2,8 +2,9 @@
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils import CDMIClient as cdmi
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 __author__ = "Bartek Walkowicz"

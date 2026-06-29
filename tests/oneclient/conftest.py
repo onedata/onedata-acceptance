@@ -14,7 +14,7 @@ from pytest_bdd.parser import Feature, Scenario, Step
 
 from tests.conftest import export_logs
 from tests.oneclient.steps.multi_dir_steps import purge_all_spaces
-from tests.type_definitions import Hosts, JsonObject, Storages, Users
+from tests.type_definitions import Hosts, JsonObject, Storages
 from tests.utils.client_utils import Client
 from tests.utils.entities_setup.groups import CredentialsLike, GroupsConfig, UserLike
 from tests.utils.entities_setup.groups import groups_creation as setup_groups
@@ -32,7 +32,7 @@ from tests.utils.luma_utils import (
     get_all_spaces_details,
     get_local_feed_luma_storages,
 )
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, Users
 
 
 @pytest.fixture(autouse=True)

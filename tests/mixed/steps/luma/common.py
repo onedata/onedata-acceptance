@@ -15,10 +15,10 @@ from tests import PANEL_REST_PORT
 from tests.gui.meta_steps.onepanel.storages import get_first_storage_id_by_name
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.type_definitions import LumaMappings, MappingValue
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, Users
 
 
 class StorageCredentials(TypedDict):

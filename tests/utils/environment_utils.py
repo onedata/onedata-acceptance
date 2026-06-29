@@ -22,7 +22,7 @@ from requests.exceptions import ConnectTimeout
 # pylint: disable=import-error,no-name-in-module
 from bamboos.docker.images_branch_config import resolve_image
 from tests import OZ_REST_PORT, PANEL_REST_PORT
-from tests.type_definitions import Hosts, JsonObject, Users
+from tests.type_definitions import Hosts, JsonObject
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.luma_utils import (
     add_spaces_luma_mapping,
@@ -41,7 +41,7 @@ from tests.utils.onenv_utils import (
     service_name_to_alias_mapping,
 )
 from tests.utils.rest_utils import get_zone_rest_path, http_get
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
 START_ENV_MAX_RETRIES = 3

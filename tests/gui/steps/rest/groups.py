@@ -7,8 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import List
 
 from tests import OZ_REST_PORT
-from tests.type_definitions import Users
 from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
+from tests.utils.user_utils import Users
 
 
 def get_user_groups(zone_hostname: str, user: str, users: Users) -> List[str]:

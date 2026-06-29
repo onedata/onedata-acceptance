@@ -78,14 +78,14 @@ from tests.mixed.steps.rest.onezone.space_management import (
 )
 from tests.mixed.type_definitions import HostsConfig, Spaces
 from tests.mixed.utils.common import NoSuchClientException
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
     force_start_storage_scan,
     wait_for_space_support,
     wait_for_storage_scan_to_finish,
 )
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
 

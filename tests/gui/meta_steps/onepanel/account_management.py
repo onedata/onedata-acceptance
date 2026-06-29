@@ -27,8 +27,9 @@ from tests.gui.steps.onepanel.emergency_passphrase import (
     click_button_on_emergency_passphrase_page,
     type_text_to_input_on_emergency_passphrase_page,
 )
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

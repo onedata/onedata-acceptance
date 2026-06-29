@@ -56,8 +56,9 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq
-from tests.type_definitions import SeleniumDrivers, Users
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

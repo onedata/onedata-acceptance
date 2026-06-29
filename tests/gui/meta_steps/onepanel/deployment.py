@@ -30,8 +30,9 @@ from tests.gui.steps.onepanel.deployment import (
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 
 
 @wt(

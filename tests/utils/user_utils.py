@@ -184,6 +184,9 @@ class User:  # pylint: disable=too-many-instance-attributes
         return cast(RpycConnectionLike, rpyc.classic.connect(ip, port=port))
 
 
+type Users = dict[str, User]
+
+
 def create_required_dirs(pod: str) -> None:
     create_dir(pod, ONECLIENT_MOUNT_DIR)
     create_dir(pod, RPYC_LOGS_DIR)

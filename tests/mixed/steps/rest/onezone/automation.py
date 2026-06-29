@@ -30,7 +30,6 @@ from tests.type_definitions import (
     Hosts,
     JsonObject,
     JsonValue,
-    Users,
     WorkflowExecutions,
 )
 from tests.utils.acceptance_utils import get_workflow_dump
@@ -42,6 +41,7 @@ from tests.utils.rest_utils import (
     http_get,
     http_post,
 )
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 BAGIT_ARCHIVES = {

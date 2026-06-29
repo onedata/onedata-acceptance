@@ -32,8 +32,9 @@ from tests.mixed.steps.rest.oneprovider.data import (
     set_posix_permissions_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

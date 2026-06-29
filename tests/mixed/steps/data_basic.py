@@ -97,10 +97,11 @@ from tests.mixed.steps.rest.oneprovider.metadata import (
     set_metadata_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.type_definitions import EnvDesc, Hosts, SeleniumDrivers, Tokens, Users
+from tests.type_definitions import EnvDesc, Hosts, SeleniumDrivers, Tokens
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPBadRequest
 from tests.utils.path_utils import get_first_path_element
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

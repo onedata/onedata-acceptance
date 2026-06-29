@@ -13,9 +13,10 @@ from tests.performance.type_definitions import (
     int_parameter,
     str_parameter,
 )
-from tests.type_definitions import EnvDesc, Hosts, Users
+from tests.type_definitions import EnvDesc, Hosts
 from tests.utils.client_utils import Client, CommandResult
 from tests.utils.performance_utils import generate_configs, performance
+from tests.utils.user_utils import Users
 
 REPEATS = 1
 SUCCESS_RATE = 100

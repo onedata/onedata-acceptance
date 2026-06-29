@@ -49,9 +49,10 @@ from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

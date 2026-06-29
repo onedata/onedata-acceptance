@@ -45,7 +45,6 @@ from tests.type_definitions import (
     Storages,
     TestType,
     Tokens,
-    Users,
     WebDriverConfigurator,
     WebDriverFactory,
     WebDriverWithAllLogs,
@@ -56,7 +55,7 @@ from tests.utils.bdd_utils import scenarios_to_rerun
 from tests.utils.environment_utils import clean_env, start_environment
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, Users
 
 html.__tagspec__.update({x: 1 for x in ("video", "source")})
 VIDEO_ATTRS = {

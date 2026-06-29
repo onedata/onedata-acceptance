@@ -35,7 +35,6 @@ from tests.mixed.utils.privileges import (
     space_member_privileges,
     space_owner_privileges,
 )
-from tests.type_definitions import Users
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -49,6 +48,11 @@ class ConfigurationLike(Protocol):
 
 class FixtureRequestLike(Protocol):
     def getfixturevalue(self, argname: str) -> Any: ...
+
+
+class TokenUserLike(Protocol):
+    @property
+    def token(self) -> str: ...
 
 
 class NoSuchClientException(Exception):
@@ -106,7 +110,7 @@ def login_to_panel(username: str, password: str, host: str) -> ApiClient_panel:
 
 def login_to_cdmi(
     username: str,
-    users: Users,
+    users: Mapping[str, TokenUserLike],
     host: str,
     access_token: Optional[str] = None,
     identity_token: Optional[str] = None,
@@ -130,7 +134,7 @@ def login_to_cdmi(
 
 def login_to_provider(
     username: str,
-    users: Users,
+    users: Mapping[str, TokenUserLike],
     host: str,
     access_token: Optional[str] = None,
 ) -> ApiClient_provider:

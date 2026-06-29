@@ -22,7 +22,8 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
+from tests.utils.user_utils import Users
 
 RegionCaveat = TypedDict(
     "RegionCaveat", {"allow": bool, "region codes": list[str]}, total=False

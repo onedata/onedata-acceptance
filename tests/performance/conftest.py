@@ -19,7 +19,6 @@ from tests.conftest import export_logs, get_test_type, make_logdir
 from tests.type_definitions import (
     EnvDesc,
     Hosts,
-    Users,
 )
 from tests.utils.client_utils import Client
 from tests.utils.git_utils import get_branch_name, get_commit, get_repository
@@ -29,7 +28,7 @@ from tests.utils.performance_utils import (
     PerformanceReport,
     SuiteReport,
 )
-from tests.utils.user_utils import CORRECT_TOKEN
+from tests.utils.user_utils import CORRECT_TOKEN, Users
 from tests.utils.utils import get_authors, get_copyright, get_suite_description
 
 

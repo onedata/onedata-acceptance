@@ -16,8 +16,9 @@ from tests.gui.steps.rest.provider import get_provider_id
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.type_definitions import IdMap
 from tests.mixed.utils.common import login_to_provider
-from tests.type_definitions import Hosts, JsonObject, Users
+from tests.type_definitions import Hosts, JsonObject
 from tests.utils.rest_utils import get_provider_rest_path, http_get
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 

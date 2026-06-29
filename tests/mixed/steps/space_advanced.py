@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.steps.rest.shares import create_share_using_rest
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
     ProviderEntry,
@@ -16,7 +16,7 @@ from tests.utils.entities_setup.spaces import (
     _get_support,
     create_empty_file,
 )
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, Users
 
 
 @wt(

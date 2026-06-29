@@ -43,10 +43,11 @@ from tests.mixed.utils.data import (
     create_content,
     get_acl_metadata,
 )
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils.acceptance_utils import compare, time_attr
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.rest_utils import get_provider_rest_path, http_post
+from tests.utils.user_utils import Users
 
 
 def _as_basic_users(users: Users) -> Mapping[str, BasicUserLike]:

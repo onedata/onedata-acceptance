@@ -31,9 +31,10 @@ from tests.oneclient.steps.multi_file_steps import (
     create_hardlink,
     create_symlink,
 )
-from tests.type_definitions import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 
 
 @wt(

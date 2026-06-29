@@ -28,8 +28,9 @@ from tests.mixed.type_definitions import (
     IdMap,
 )
 from tests.mixed.utils.common import login_to_provider
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
