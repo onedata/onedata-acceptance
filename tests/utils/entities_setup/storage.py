@@ -16,7 +16,7 @@ from tests.gui.meta_steps.onepanel.storages import (
 )
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.rest_utils import get_panel_rest_path, http_post
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 HostsConfig = Mapping[str, Mapping[str, str]]
 
@@ -81,7 +81,7 @@ def _create_storage(
         name,
         host,
         hosts,
-        cast(AdminUser, onepanel_credentials),
+        cast(User, onepanel_credentials),
     )
     storage_data = {name: options}
     http_post(

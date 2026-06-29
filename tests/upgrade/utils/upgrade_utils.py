@@ -27,7 +27,7 @@ from tests.utils.environment_utils import (
     verify_env_ready,
 )
 from tests.utils.onenv_utils import run_onenv_command
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 type TestCallback = Callable[[], None]
 type HostsConfig = Mapping[str, Mapping[str, str]]
@@ -269,7 +269,7 @@ class UpgradeTestsController:
 
 def upgrade_service(
     service_name: str,
-    admin_user: AdminUser,
+    admin_user: User,
     hosts: HostsConfig,
     version_spec: VersionSpec,
     prev_version_spec: VersionSpec,

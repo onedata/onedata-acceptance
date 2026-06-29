@@ -85,7 +85,7 @@ from tests.utils.entities_setup.spaces import (
     wait_for_space_support,
     wait_for_storage_scan_to_finish,
 )
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 
@@ -106,7 +106,7 @@ def _as_rest_hosts(hosts: Hosts) -> HostsConfig:
     return cast(HostsConfig, hosts)
 
 
-def _as_credentials(credentials: AdminUser) -> CredentialsLike:
+def _as_credentials(credentials: User) -> CredentialsLike:
     return cast(CredentialsLike, credentials)
 
 
@@ -632,8 +632,8 @@ def revoke_space_support_in_op_panel(
     selenium: SeleniumDrivers,
     users: Users,
     hosts: Hosts,
-    admin_credentials: AdminUser,
-    onepanel_credentials: AdminUser,
+    admin_credentials: User,
+    onepanel_credentials: User,
 ) -> None:
 
     if client.lower() == "web gui":
@@ -744,8 +744,8 @@ def assert_proper_space_configuration_in_op_panel(
     users: Users,
     host: str,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
-    admin_credentials: AdminUser,
+    onepanel_credentials: User,
+    admin_credentials: User,
 ) -> None:
     """Assert configuration displayed in space record in panel.
 
@@ -799,8 +799,8 @@ def configure_sync_parameters_for_space_in_op_panel(
     selenium: SeleniumDrivers,
     users: Users,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
-    admin_credentials: AdminUser,
+    onepanel_credentials: User,
+    admin_credentials: User,
 ) -> None:
     """Configure synchronization parameters for space.
 
@@ -929,8 +929,8 @@ def copy_id_of_space(
     tmp_memory: TmpMemory,
     users: Users,
     hosts: Hosts,
-    admin_credentials: AdminUser,
-    onepanel_credentials: AdminUser,
+    admin_credentials: User,
+    onepanel_credentials: User,
 ) -> None:
 
     if client.lower() == "web gui":
@@ -987,7 +987,7 @@ def force_start_storage_import_scan(
     space: str,
     spaces: Spaces,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
 ) -> None:
     space_id = spaces[space]
     force_start_storage_scan(space_id, provider, hosts, onepanel_credentials)
@@ -1006,7 +1006,7 @@ def force_start_and_wait_to_finish_storage_import_scan(
     space: str,
     spaces: Spaces,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     selenium: SeleniumDrivers,
 ) -> None:
     if client.lower() == "rest":

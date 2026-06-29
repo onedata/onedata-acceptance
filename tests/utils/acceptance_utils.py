@@ -28,9 +28,6 @@ TIME_ATTR_MAPPING = {
 }
 
 type Command = Sequence[str]
-type JsonValue = Optional[
-    str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
-]
 type Comparable = int | float
 
 

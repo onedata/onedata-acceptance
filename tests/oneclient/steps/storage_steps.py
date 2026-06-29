@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.oneclient.steps.rest.onepanel.storages import modify_storage_parameters
 from tests.type_definitions import Hosts, Storages
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 
 @wt(
@@ -27,7 +27,7 @@ def modify_storage_parameter(
     provider: str,
     storages: Storages,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
 ) -> None:
     storage_id = storages[provider][storage]
     onepanel_host = None

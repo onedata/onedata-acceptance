@@ -41,7 +41,7 @@ from tests.utils.onenv_utils import (
     service_name_to_alias_mapping,
 )
 from tests.utils.rest_utils import get_zone_rest_path, http_get
-from tests.utils.user_utils import AdminUser, User
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 START_ENV_MAX_RETRIES = 3
@@ -138,7 +138,7 @@ def start_environment(
                 update_etc_hosts()
             setup_hosts_cfg(hosts, request)
             zone_hostname = hosts["onezone"]["hostname"]
-            users["admin"] = AdminUser(zone_hostname, "admin", "password")
+            users["admin"] = User(zone_hostname, "admin", "password")
 
             if patch_path and not request.config.getoption("--no-clean"):
                 run_onenv_command("patch", patch_args)
@@ -269,7 +269,7 @@ def setup_users(patch_cfg: PatchConfig, users: Users, zone_hostname: str) -> Non
         new_user = User(
             username=user_name, zone_hostname=zone_hostname, password=password
         )
-        users[user_name] = cast(AdminUser, new_user)
+        users[user_name] = new_user
         idps = user_cfg.get("idps", {})
         for idp_type in idps:
             new_user.idps.append(idp_type)
@@ -635,7 +635,7 @@ def clean_env() -> None:
     run_onenv_command("clean", ["-a", "-s", "-d", "-v"])
 
 
-def verify_env_ready(admin_user: AdminUser, hosts: Mapping[str, object]) -> None:
+def verify_env_ready(admin_user: User, hosts: Mapping[str, object]) -> None:
     zone = cast(Mapping[str, str], hosts["onezone"])
     zone_hostname = zone["hostname"]
     ready = False
@@ -660,7 +660,7 @@ def verify_env_ready(admin_user: AdminUser, hosts: Mapping[str, object]) -> None
             pass
 
 
-def get_providers_list(admin_user: AdminUser, zone_hostname: str) -> list[str]:
+def get_providers_list(admin_user: User, zone_hostname: str) -> list[str]:
     response = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -670,9 +670,7 @@ def get_providers_list(admin_user: AdminUser, zone_hostname: str) -> list[str]:
     return cast(list[str], json.loads(response.content)["providers"])
 
 
-def is_provider_online(
-    admin_user: AdminUser, zone_hostname: str, provider: str
-) -> bool:
+def is_provider_online(admin_user: User, zone_hostname: str, provider: str) -> bool:
     response = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,

@@ -20,7 +20,7 @@ from typing import (
 from _pytest.fixtures import FixtureRequest
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 type JsonValue = Optional[
     str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
@@ -47,13 +47,13 @@ type Hosts = dict[str, HostDescription]
 type TestConfig = dict[str, JsonValue]
 type SeleniumDrivers = dict[str, WebDriver]
 type SeleniumFixtureState = dict[str, WebDriver | FixtureRequest]
-type Users = dict[str, AdminUser]
+type Users = dict[str, User]
 type Storages = MutableMapping[str, MutableMapping[str, str]]
 type Tokens = dict[str, dict[str, str]]
 type WorkflowExecutions = dict[str, dict[str, object]]
 type PreviousEnv = dict[str, str | bool]
 type TestType = Literal[
-    "gui", "oneclient", "mixed", "onedata_fs", "performance", "upgrade"
+    "gui", "oneclient", "mixed", "performance", "upgrade"
 ]
 type WebDriverConfigurator = Callable[[WebDriver], WebDriver]
 FactoryParams = ParamSpec("FactoryParams")

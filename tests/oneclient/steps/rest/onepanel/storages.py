@@ -22,7 +22,7 @@ from tests.mixed.onepanel_client.models.nulldevice_modify import NulldeviceModif
 from tests.mixed.onepanel_client.models.posix_modify import PosixModify
 from tests.mixed.onepanel_client.models.s3_modify import S3Modify
 from tests.mixed.utils.common import login_to_panel
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 
 def modify_storage_parameters(
@@ -32,7 +32,7 @@ def modify_storage_parameters(
     storage_name: str,
     params: dict[str, str],
     onepanel_host: str,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
 ) -> None:
     assert onepanel_credentials.password is not None
     user_client = login_to_panel(

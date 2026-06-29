@@ -12,6 +12,7 @@ from typing import Optional
 from requests import Response
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
+from tests.type_definitions import JsonValue
 from tests.utils.rest_utils import (
     get_panel_rest_path,
     get_provider_rest_path,
@@ -26,9 +27,6 @@ from tests.utils.utils import repeat_failed
 
 DEFAULT_REST_QUERY_TIMEOUT = 60
 
-type JsonValue = Optional[
-    str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
-]
 JsonObject = dict[str, JsonValue]
 JsonList = list[JsonObject]
 JsonPayload = Mapping[str, JsonValue]

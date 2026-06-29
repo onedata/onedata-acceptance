@@ -48,7 +48,7 @@ from tests.gui.utils import Onepanel
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 
@@ -155,7 +155,7 @@ def safely_create_storage_rest(
     provider: str,
     config: str,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
 ) -> None:
     """Create storage according to given config.
 
@@ -181,7 +181,7 @@ def safely_create_storage_rest(
     )
 )
 def remove_all_storages_named(
-    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: AdminUser
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
 ) -> None:
     _remove_storage_in_op_panel_using_rest(
         storage_name, provider, hosts, onepanel_credentials
@@ -190,7 +190,7 @@ def remove_all_storages_named(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _remove_storage_in_op_panel_using_rest(
-    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: AdminUser
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
 ) -> None:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
@@ -221,7 +221,7 @@ def _remove_storage_by_id(
 
 @given(parsers.parse('there is no "{name}" storage in "{provider}" Oneprovider panel'))
 def remove_storage_in_op_panel_rest(
-    onepanel_credentials: AdminUser, hosts: Hosts, provider: str, name: str
+    onepanel_credentials: User, hosts: Hosts, provider: str, name: str
 ) -> None:
     _remove_storage_in_op_panel_using_rest(name, provider, hosts, onepanel_credentials)
 
@@ -240,7 +240,7 @@ def _get_storages_ids(
 
 
 def _get_storage_id_list_by_name(
-    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: AdminUser
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
 ) -> list[str]:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
@@ -263,7 +263,7 @@ def _get_storage_id_list_by_name(
 
 
 def get_first_storage_id_by_name(
-    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: AdminUser
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
 ) -> str:
     return _get_storage_id_list_by_name(
         storage_name, provider, hosts, onepanel_credentials
@@ -276,7 +276,7 @@ def _add_storage_in_op_panel_using_rest(
     storage_name: str,
     provider: str,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
 ) -> None:
     storage_config = {}
     options = yaml.load(config, yaml.Loader)

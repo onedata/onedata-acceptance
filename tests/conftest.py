@@ -57,7 +57,7 @@ from tests.utils.bdd_utils import scenarios_to_rerun
 from tests.utils.environment_utils import clean_env, start_environment
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 html.__tagspec__.update({x: 1 for x in ("video", "source")})
 VIDEO_ATTRS = {
@@ -318,8 +318,8 @@ def onepanel_credentials(
     users: Users,
     hosts: Hosts,
     emergency_passphrase: str,
-) -> AdminUser:
-    creds = users["onepanel"] = AdminUser(
+) -> User:
+    creds = users["onepanel"] = User(
         hosts["onezone"]["hostname"], "onepanel", emergency_passphrase
     )
     return creds
@@ -343,9 +343,9 @@ def admin_credentials(
     request: pytest.FixtureRequest,
     users: Users,
     hosts: Hosts,
-) -> AdminUser:
+) -> User:
     admin_username, admin_password = request.config.getoption("admin")
-    admin_user = users[admin_username] = AdminUser(
+    admin_user = users[admin_username] = User(
         hosts["onezone"]["hostname"], admin_username, admin_password
     )
     return admin_user

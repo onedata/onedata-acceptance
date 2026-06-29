@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 import time
-from os import PathLike
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
@@ -15,7 +14,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.type_definitions import FilePath, TmpMemory
 from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -148,7 +147,7 @@ def wait_for_item_to_disappear(item: WebElement) -> None:
 
 @repeat_failed(timeout=WAIT_NORMAL_DOWNLOAD)
 def wait_for_file_with_unknown_name_to_download(
-    n_files_before_download: int, dir_path: str | PathLike[str]
+    n_files_before_download: int, dir_path: FilePath
 ) -> None:
     # wait for a file to download, we don`t know the name of the file
     # so there is a way we can check that file was downloaded

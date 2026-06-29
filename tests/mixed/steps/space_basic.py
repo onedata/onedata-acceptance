@@ -66,7 +66,7 @@ from tests.oneclient.steps.multi_file_steps import ls_present_spaces
 from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 
@@ -82,7 +82,7 @@ def _as_provider_users(users: Users) -> Mapping[str, ProviderUserLike]:
     return cast(Mapping[str, ProviderUserLike], users)
 
 
-def _as_credentials(credentials: AdminUser) -> CredentialsLike:
+def _as_credentials(credentials: User) -> CredentialsLike:
     return cast(CredentialsLike, credentials)
 
 
@@ -299,7 +299,7 @@ def remove_provider_support_for_space_in_oz(
     users: Users,
     hosts: Hosts,
     spaces: Spaces,
-    admin_credentials: AdminUser,
+    admin_credentials: User,
 ) -> None:
 
     if client.lower() == "rest":
@@ -519,7 +519,7 @@ def assert_there_is_no_provider_for_space_in_oz(
     users: Users,
     hosts: Hosts,
     spaces: Spaces,
-    admin_credentials: AdminUser,
+    admin_credentials: User,
 ) -> None:
 
     if client.lower() == "rest":

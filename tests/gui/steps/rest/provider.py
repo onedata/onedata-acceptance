@@ -19,7 +19,7 @@ from tests.utils.rest_utils import (
     http_patch,
     http_post,
 )
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 
 def get_provider_id(provider: str, hosts: Hosts, users: Users) -> str:
@@ -53,7 +53,7 @@ def assert_provider_ones3_status_ok(provider: str, hosts: Hosts) -> None:
 def add_provider_service_node(
     hosts: Hosts,
     provider: str,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     data: dict[str, JsonValue],
     service: OnedataService,
 ) -> ProviderResponse:
@@ -75,7 +75,7 @@ def add_provider_service_node(
 def get_provider_service_nodes_statuses(
     hosts: Hosts,
     provider: str,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     service: OnedataService,
 ) -> ProviderResponse:
     provider_hostname = hosts[provider]["hostname"]
@@ -95,7 +95,7 @@ def start_stop_provider_service_node(
     hosts: Hosts,
     host: str,
     provider: str,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     service: OnedataService,
     start: bool = True,
 ) -> Response:

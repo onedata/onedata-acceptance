@@ -43,7 +43,7 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
 from tests.type_definitions import Hosts, JsonValue, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 
@@ -219,7 +219,7 @@ def change_provider_name_if_name_is_different_than_given(
 def assert_provider_cluster_ones3_node_status_rest(
     hosts: Hosts,
     provider: str,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     status: str,
 ) -> None:
     host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
@@ -235,7 +235,7 @@ def assert_provider_cluster_ones3_node_status_rest(
 def add_provider_cluster_ones3_node_rest(
     hosts: Hosts,
     provider: str,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
 ) -> None:
     host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
     data: dict[str, JsonValue] = {"hosts": [host]}
@@ -254,7 +254,7 @@ def stop_provider_cluster_ones3_node_rest(
     option: str,
     hosts: Hosts,
     provider: str,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
 ) -> None:
     host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
     start_stop_provider_service_node(

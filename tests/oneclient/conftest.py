@@ -32,7 +32,7 @@ from tests.utils.luma_utils import (
     get_all_spaces_details,
     get_local_feed_luma_storages,
 )
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 
 @pytest.fixture(autouse=True)
@@ -56,8 +56,8 @@ def run_around_suite(
 @pytest.fixture(autouse=True)
 def run_around_testcase(
     entities_config: TestConfig,
-    admin_credentials: AdminUser,
-    onepanel_credentials: AdminUser,
+    admin_credentials: User,
+    onepanel_credentials: User,
     hosts: Hosts,
     users: Users,
     groups: dict[str, str],
@@ -83,8 +83,8 @@ def run_around_testcase(
 
 def setup_entities(
     config: TestConfig,
-    admin_credentials: AdminUser,
-    onepanel_credentials: AdminUser,
+    admin_credentials: User,
+    onepanel_credentials: User,
     hosts: Hosts,
     users: Users,
     groups: dict[str, str],
@@ -131,7 +131,7 @@ def setup_entities(
 def setup_luma(
     users_config: list[UserConfigEntry],
     users: Users,
-    admin_credentials: AdminUser,
+    admin_credentials: User,
     hosts: Hosts,
 ) -> None:
     hosts_config = cast(Mapping[str, Mapping[str, str]], hosts)

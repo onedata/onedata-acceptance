@@ -15,7 +15,7 @@ import requests
 from tests import PANEL_REST_PORT
 from tests.utils.http_exceptions import HTTPConflict
 from tests.utils.rest_utils import get_panel_rest_path, http_get, http_post, http_put
-from tests.utils.user_utils import AdminUser, User
+from tests.utils.user_utils import User
 
 HttpMethod = Callable[..., requests.Response]  # http_post or http_put
 
@@ -33,7 +33,7 @@ class StorageDetails(NamedTuple):
 
 
 def add_user_luma_mapping(
-    admin_user: AdminUser, user: User, storages: list[StorageDetails]
+    admin_user: User, user: User, storages: list[StorageDetails]
 ) -> None:
 
     for storage_details in storages:
@@ -57,7 +57,7 @@ def add_user_luma_mapping(
 
 
 def add_spaces_luma_mapping(
-    admin_user: AdminUser,
+    admin_user: User,
     storages: list[StorageDetails],
     spaces_details: list[SpaceDetails],
 ) -> None:
@@ -80,7 +80,7 @@ def add_spaces_luma_mapping(
 
 
 def get_local_feed_luma_storages(
-    admin_user: AdminUser, hosts: Mapping[str, Mapping[str, str]]
+    admin_user: User, hosts: Mapping[str, Mapping[str, str]]
 ) -> list[StorageDetails]:
 
     providers_ips = get_providers_ips(hosts)
@@ -108,7 +108,7 @@ def get_local_feed_luma_storages(
 
 
 def get_all_spaces_details(
-    admin_user: AdminUser, hosts: Mapping[str, Mapping[str, str]]
+    admin_user: User, hosts: Mapping[str, Mapping[str, str]]
 ) -> list[SpaceDetails]:
     providers_ips = get_providers_ips(hosts)
     spaces_details = []
@@ -152,7 +152,7 @@ def get_providers_ips(hosts: Mapping[str, Mapping[str, str]]) -> list[str]:
 
 
 def add_mapping(
-    admin_user: AdminUser,
+    admin_user: User,
     provider_ip: str,
     storage_id: str,
     mapping: Mapping[str, object],

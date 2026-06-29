@@ -18,7 +18,6 @@ from tests.type_definitions import JsonValue
 
 type TmpMemory = defaultdict[str, dict[str, Any]]
 
-type BrowserTmpMemory = dict[str, dict[str, object]]
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 type WebElemRoot = WebDriver | WebElement
 

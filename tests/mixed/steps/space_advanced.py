@@ -16,7 +16,7 @@ from tests.utils.entities_setup.spaces import (
     _get_support,
     create_empty_file,
 )
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 
 @wt(
@@ -48,7 +48,7 @@ def create_n_spaces_with_shares(
     user: str,
     hosts: Hosts,
     number: str,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     storages: dict,
     shares: dict[str, str],
 ) -> None:

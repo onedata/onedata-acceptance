@@ -183,13 +183,6 @@ class User:  # pylint: disable=too-many-instance-attributes
         return cast(RpycConnectionLike, rpyc.classic.connect(ip, port=port))
 
 
-class AdminUser(User):
-    def __init__(self, zone_hostname: str, username: str, password: str) -> None:
-        User.__init__(
-            self, zone_hostname=zone_hostname, username=username, password=password
-        )
-
-
 def create_required_dirs(pod: str) -> None:
     create_dir(pod, ONECLIENT_MOUNT_DIR)
     create_dir(pod, RPYC_LOGS_DIR)

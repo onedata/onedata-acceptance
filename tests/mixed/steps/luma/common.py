@@ -18,7 +18,7 @@ from tests.mixed.type_definitions import LumaMappings, MappingValue
 from tests.type_definitions import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put
-from tests.utils.user_utils import AdminUser
+from tests.utils.user_utils import User
 
 
 class StorageCredentials(TypedDict):
@@ -51,7 +51,7 @@ def wt_create_luma_mappings(
     users: Users,
     spaces: Mapping[str, str],
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
 ) -> None:
     """Create LUMA mappings according to given config.
 
@@ -81,7 +81,7 @@ def create_luma_mappings(
     users: Users,
     spaces: Mapping[str, str],
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
 ) -> None:
     mappings = cast(LumaMappings, yaml.load(config, yaml.Loader))
     for provider in mappings:
@@ -137,7 +137,7 @@ def set_user_luma_local_feed_mappings(
     provider: str,
     hosts: Hosts,
     users: Users,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     storage_id: str,
     storage_type: str,
     user: str,
@@ -199,7 +199,7 @@ def set_default_posix_credentials_luma_lf(
     storage_id: str,
     space: str,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     spaces: Mapping[str, str],
     default_gid: str | int,
 ) -> None:
@@ -232,7 +232,7 @@ def set_default_display_credentials_luma_lf(
     storage_id: str,
     space: str,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     spaces: Mapping[str, str],
     display_gid: str | int,
 ) -> None:
@@ -273,7 +273,7 @@ def create_imported_storage_luma_mappings_lf(
     uid_list: str,
     user_list: str,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     users: Users,
 ) -> None:
     uids = parse_seq(uid_list)
@@ -294,7 +294,7 @@ def _insert_mapping_of_uid_into_lf(
     user: str,
     provider: str,
     hosts: Hosts,
-    onepanel_credentials: AdminUser,
+    onepanel_credentials: User,
     storage_id: str,
     users: Users,
 ) -> None:
