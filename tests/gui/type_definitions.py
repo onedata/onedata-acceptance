@@ -13,7 +13,7 @@ from typing import Any, Literal, TypedDict
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.type_definitions import JsonValue
+from tests.type_definitions import JsonObject
 
 
 type TmpMemory = defaultdict[str, dict[str, Any]]
@@ -28,9 +28,6 @@ type DataDirectoryContent = list[str | dict[str, "DataDirectoryContent"]]
 
 type TarTree = list[str | dict[str, "TarTree | str | int"]]
 type TreeConfig = list[str | dict[str, "TreeConfig | str | int"]]
-
-type ProviderResponse = dict[str, JsonValue]
-type JsonObject = dict[str, JsonValue]
 
 type AuditLogValue = (
     str | int | float | bool | list["AuditLogValue"] | dict[str, "AuditLogValue"]

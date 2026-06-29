@@ -14,9 +14,9 @@ from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
-from tests.mixed.type_definitions import IdMap, JsonObject
+from tests.mixed.type_definitions import IdMap
 from tests.mixed.utils.common import login_to_provider
-from tests.type_definitions import Hosts, Users
+from tests.type_definitions import Hosts, JsonObject, Users
 from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests.utils.utils import repeat_failed
 

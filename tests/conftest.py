@@ -31,7 +31,6 @@ from urllib3.exceptions import MaxRetryError
 
 from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
 from tests.type_definitions import (
-    Capabilities,
     EnvDesc,
     FactoryCallable,
     FactoryFunction,
@@ -39,11 +38,11 @@ from tests.type_definitions import (
     FactoryResult,
     HookOutcome,
     Hosts,
+    JsonObject,
     LogEntry,
     PreviousEnv,
     SeleniumFixtureState,
     Storages,
-    TestConfig,
     TestType,
     Tokens,
     Users,
@@ -288,7 +287,7 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
 
 
 @pytest.fixture(scope="session")
-def test_config(request: pytest.FixtureRequest) -> TestConfig:
+def test_config(request: pytest.FixtureRequest) -> JsonObject:
     """Loaded yaml with test config"""
     test_type = get_test_type(request)
     if test_type == "upgrade":
@@ -301,7 +300,7 @@ def test_config(request: pytest.FixtureRequest) -> TestConfig:
 def entities_config(
     request: pytest.FixtureRequest,
     env_desc: EnvDesc,
-) -> TestConfig:
+) -> JsonObject:
     file_name = env_desc.get("entities_config")
     if file_name is None:
         raise ValueError("Missing entities_config in environment description")
@@ -441,9 +440,9 @@ def selenium(request: pytest.FixtureRequest) -> SeleniumFixtureState:
 def session_capabilities(
     request: pytest.FixtureRequest,
     variables: dict[str, object],
-) -> Capabilities:
+) -> JsonObject:
     """Returns combined capabilities from pytest-variables and command line"""
-    capabilities = cast(Capabilities, variables.get("capabilities", {}))
+    capabilities = cast(JsonObject, variables.get("capabilities", {}))
     for capability in request.config.getoption("capabilities"):
         capabilities[capability[0]] = capability[1]
     return capabilities
@@ -452,8 +451,8 @@ def session_capabilities(
 @pytest.fixture
 def capabilities(
     request: pytest.FixtureRequest,
-    session_capabilities: Capabilities,
-) -> Capabilities:
+    session_capabilities: JsonObject,
+) -> JsonObject:
     """Returns combined capabilities"""
     capabilities = copy.deepcopy(session_capabilities)  # make a copy
     capabilities_marker = request.node.get_closest_marker("capabilities")
@@ -501,7 +500,7 @@ def config_driver() -> WebDriverConfigurator:
 
 
 @pytest.fixture
-def chrome_driver(capabilities: Capabilities) -> WebDriverFactory:
+def chrome_driver(capabilities: JsonObject) -> WebDriverFactory:
     """Return a factory function creating Chrome WebDriver instances."""
 
     @factory
@@ -842,7 +841,7 @@ def start_test_env(
     hosts: Hosts,
     users: Users,
     env_description_abs_path: str,
-    test_config: TestConfig,
+    test_config: JsonObject,
     previous_env: PreviousEnv,
     scenario_abs_path: str,
 ) -> None:
@@ -911,7 +910,7 @@ def maybe_start_env(
     env_desc: EnvDesc,
     users: Users,
     previous_env: PreviousEnv,
-    test_config: TestConfig,
+    test_config: JsonObject,
     scenario_abs_path: str,
 ) -> None:
     test_type = get_test_type(request)

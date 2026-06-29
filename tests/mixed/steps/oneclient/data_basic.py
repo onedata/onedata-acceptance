@@ -22,7 +22,6 @@ from tests.mixed.utils.data import (
     Content,
     ContentItem,
     CreateItem,
-    ItemType,
     UserLike,
     assert_ace,
     check_files_tree,
@@ -415,7 +414,7 @@ def assert_ace_in_op_oneclient(
     path: str,
     num: str,
     priv: str,
-    item_type: ItemType,
+    item_type: str,
     name: str,
     numerals: dict[str, int],
 ) -> None:
@@ -430,7 +429,7 @@ def grant_acl_privileges_in_op_oneclient(
     host: str,
     path: str,
     priv: str,
-    item_type: ItemType,
+    item_type: str,
     groups: Mapping[str, str],
     name: str,
 ) -> None:

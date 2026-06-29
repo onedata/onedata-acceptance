@@ -14,16 +14,14 @@ from typing import Optional, cast
 
 import pytest
 
-from ..oneclient.conftest import unmount_all_clients_and_purge_spaces
+from tests.type_definitions import EnvDesc
 
-type ReportData = dict
-type ConfigData = Mapping
-type PerformanceTest = Callable
+from ..oneclient.conftest import unmount_all_clients_and_purge_spaces
 
 
 def performance(
-    default_config: ConfigData, configs: Mapping[str, ConfigData]
-) -> Callable[[PerformanceTest], PerformanceTest]:
+    default_config: Mapping, configs: Mapping[str, Mapping]
+) -> Callable[[Callable[..., object]], Callable[..., object]]:
     """This function is meant to run performance test. It allows to start
     test cases multiple times and for many configs. It should be used as
     decorator to test function.
@@ -38,7 +36,7 @@ def performance(
                     will be started
     """
 
-    def wrap(test_function: PerformanceTest) -> PerformanceTest:
+    def wrap(test_function: Callable[..., object]) -> Callable[..., object]:
 
         def wrapped_test_function(  # pylint: disable=unused-argument
             self: object,
@@ -47,7 +45,7 @@ def performance(
             request: object,
             hosts: object,
             users: dict,
-            env_desc: object,
+            env_desc: EnvDesc,
         ) -> None:
             test_case_name = test_function.__name__
             test_case_report = TestCaseReport(
@@ -140,7 +138,7 @@ def performance(
 class Report:
     def __init__(self, name: str) -> None:
         self.name = name
-        self.report: ReportData = {name: {}}
+        self.report: dict = {name: {}}
 
     def add_to_report(self, key: str, value: object) -> None:
         if isinstance(value, Report):
@@ -223,9 +221,9 @@ class Result:
 class ResultReport:
 
     def __init__(self) -> None:
-        self.details: ReportData | list[ReportData] = {}
-        self.summary: ReportData | list[ReportData] = {}
-        self.average: ReportData | list[ReportData] = {}
+        self.details: dict | list[dict] = {}
+        self.summary: dict | list[dict] = {}
+        self.average: dict | list[dict] = {}
         self.num = 0
 
     def prepare_report(self) -> None:
@@ -276,7 +274,7 @@ class ResultReport:
         self.summary[name]["value"] += val
 
 
-def update_dict(base: Mapping, updating: Mapping) -> ReportData:
+def update_dict(base: Mapping, updating: Mapping) -> dict:
     new_dict = dict(base)
     for key in updating.keys():
         if (
@@ -291,7 +289,7 @@ def update_dict(base: Mapping, updating: Mapping) -> ReportData:
     return new_dict
 
 
-def dict_to_list(dict_: Mapping[str, ReportData]) -> list[ReportData]:
+def dict_to_list(dict_: Mapping[str, dict]) -> list[dict]:
     list_ = []
     for key in dict_.keys():
         new_elem = dict_[key]
@@ -310,7 +308,7 @@ def ensure_list(elem: Optional[Result | list[Result]]) -> list[Result]:
 
 def generate_configs(
     params: Mapping[str, list[object]], description_skeleton: str
-) -> ReportData:
+) -> dict:
     """This function generates all combinations of given parameters. Format of
     returned value is appropriate for @performance decorator
     :param description_skeleton: skeleton of config description, it will be

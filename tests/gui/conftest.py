@@ -31,9 +31,9 @@ from tests.gui.sse_fixtures import (
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.type_definitions import (
-    Capabilities,
     HookOutcome,
     Hosts,
+    JsonObject,
 )
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
@@ -284,9 +284,9 @@ def _skip_sensitive(request: pytest.FixtureRequest, sensitive_url: object) -> No
 @fixture
 def capabilities(
     request: pytest.FixtureRequest,
-    capabilities: Capabilities,
+    capabilities: JsonObject,
     tmpdir: LocalPath,
-) -> Capabilities:
+) -> JsonObject:
     """Add --no-sandbox argument for Chrome headless
     Should be the same as adding
     capability: 'chromeOptions': {'args': ['--no-sandbox'], 'extensions': []}

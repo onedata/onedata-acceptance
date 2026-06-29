@@ -41,7 +41,7 @@ from tests.gui.steps.rest.provider import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
-from tests.type_definitions import Hosts, JsonValue, SeleniumDrivers
+from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
@@ -238,7 +238,7 @@ def add_provider_cluster_ones3_node_rest(
     onepanel_credentials: User,
 ) -> None:
     host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
-    data: dict[str, JsonValue] = {"hosts": [host]}
+    data: JsonObject = {"hosts": [host]}
     add_provider_service_node(
         hosts, provider, onepanel_credentials, data, OnedataService.ONES3
     )

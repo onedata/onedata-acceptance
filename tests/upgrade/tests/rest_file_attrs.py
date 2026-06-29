@@ -10,8 +10,8 @@ from functools import partial
 from typing import TypedDict
 
 from tests.gui.utils.generic import FileAttr
+from tests.type_definitions import JsonObject
 from tests.upgrade.utils.rest_utils import (
-    JsonObject,
     get_directory_size_statistics,
     get_file_attributes,
     json_str,

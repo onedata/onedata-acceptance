@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Callable, Iterable, Mapping, MutableMapping, Sequence
 from typing import Any, Literal, NotRequired, Optional, Protocol, TypedDict
 
-from tests.type_definitions import JsonValue
+from tests.type_definitions import JsonObject, JsonValue
 
 
 type IdMap = Mapping[str, str]
@@ -26,9 +26,8 @@ type SpaceManagementTmpMemoryEntry = MutableMapping[str, Mailbox | str]
 type SpaceManagementTmpMemory = MutableMapping[str, SpaceManagementTmpMemoryEntry]
 type SpecialDirsTmpMemory = MutableMapping[Any, dict[str, str]]
 
-type StoreContent = dict[str, JsonValue]
 type InputFiles = list[str]
-type ExecutionResult = tuple[list[StoreContent], InputFiles | list[InputFiles]]
+type ExecutionResult = tuple[list[JsonObject], InputFiles | list[InputFiles]]
 type ResolveId = Callable[[str], str]
 type UploadFile = Callable[[str, str], None]
 
@@ -36,7 +35,6 @@ type Content = Optional[Iterable["ContentItem"]]
 type ContentItem = str | Mapping[str, Content]
 type AclEntry = MutableMapping[str, str]
 type Acl = list[AclEntry]
-type ItemType = str
 type IsDir = Callable[[str], bool]
 type ListDir = Callable[[str], Sequence[str]]
 type AssertFileContent = Callable[[str, str], None]
@@ -91,8 +89,6 @@ type DataAdvancedTmpMemory = MutableMapping[str, UserMemory]
 
 type DatasetSubtree = list[str | dict[str, "DatasetSubtree"]]
 type DatasetTree = list[dict[str, DatasetSubtree]]
-
-type JsonObject = dict[str, JsonValue]
 
 type ArchiveTmpMemory = MutableMapping[str, str]
 type ArchiveConfigValue = str | MutableMapping[str, str]

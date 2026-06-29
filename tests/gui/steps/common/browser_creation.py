@@ -22,7 +22,7 @@ from urllib3.exceptions import HTTPError
 from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import parse_seq, redirect_display
-from tests.type_definitions import Capabilities, SeleniumDrivers, WebDriverFactory
+from tests.type_definitions import JsonObject, SeleniumDrivers, WebDriverFactory
 from tests.utils.bdd_utils import parsers
 
 
@@ -39,7 +39,7 @@ def create_instances_of_webdriver(
     screen_width: int,
     screen_height: int,
     displays: dict[str, str],
-    capabilities: Capabilities,
+    capabilities: JsonObject,
 ) -> None:
 
     for browser_id, display in zip(parse_seq(browser_id_list), cycle(xvfb)):

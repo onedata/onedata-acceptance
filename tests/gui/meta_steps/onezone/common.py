@@ -31,7 +31,7 @@ from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.onezone.members_subpage import MembershipRow
-from tests.type_definitions import Capabilities, Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers, Users
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -59,7 +59,7 @@ def login_using_gui(
     browser_id_list: str,
     user_list: str,
     test_type: str,
-    capabilities: Capabilities,
+    capabilities: JsonObject,
 ) -> None:
     create_instances_of_webdriver(
         selenium,

@@ -21,12 +21,18 @@ from tests.mixed.oneprovider_client.api.workflow_execution_api import (
     WorkflowExecutionApi,
 )
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id, upload_file_rest
-from tests.mixed.type_definitions import IdMap, JsonObject, MutableIdMap
+from tests.mixed.type_definitions import IdMap, MutableIdMap
 from tests.mixed.utils.common import login_to_provider
 from tests.mixed.utils.example_workflow_executions import (
     ExampleWorkflowExecutionInitialStoreContent,
 )
-from tests.type_definitions import Hosts, JsonValue, Users, WorkflowExecutions
+from tests.type_definitions import (
+    Hosts,
+    JsonObject,
+    JsonValue,
+    Users,
+    WorkflowExecutions,
+)
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPNotFound

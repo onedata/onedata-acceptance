@@ -16,7 +16,7 @@ import yaml
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
-from tests.type_definitions import HostDescription, JsonValue
+from tests.type_definitions import HostDescription, JsonObject, JsonValue
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import (
     HTTPBadRequest,
@@ -42,7 +42,6 @@ type Storages = MutableMapping[str, MutableMapping[str, str]]
 type Spaces = MutableMapping[str, str]
 type MemberEntry = str | dict[str, "MemberOptions"]
 type ProviderEntry = dict[str, "ProviderOptions"]
-type Metadata = dict[str, JsonValue]
 type TreeValue = JsonValue | "DirectoryTree" | "FileDetails"
 type TreeEntry = str | dict[str, TreeValue]
 type DirectoryTree = list[TreeEntry]
@@ -76,7 +75,7 @@ class ProviderOptions(TypedDict):
 class FileDetails(TypedDict, total=False):
     provider: str
     content: JsonValue
-    metadata: Metadata
+    metadata: JsonObject
 
 
 class CdmiCreator(Protocol):
@@ -674,7 +673,7 @@ def set_file_metadata(
     owner_credentials: UserLike,
     provider_hostname: str,
     users: Users,
-    metadata: Optional[Metadata] = None,
+    metadata: Optional[JsonObject] = None,
 ) -> None:
     if metadata is None:
         return

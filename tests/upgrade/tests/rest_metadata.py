@@ -8,9 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 from functools import partial
 
+from tests.type_definitions import JsonObject
 from tests.upgrade.utils.rest_utils import (
-    JsonObject,
-    JsonValue,
     delete_file_extended_attributes,
     delete_file_json_metadata,
     delete_file_rdf_metadata,
@@ -42,7 +41,7 @@ RDF_META = (
     " <si:author>Jan Egil Refsnes</si:author>\n</rdf:Description>\n\n</rdf:RDF>"
 )
 
-XATTRS_META: list[dict[str, JsonValue]] = [
+XATTRS_META: list[JsonObject] = [
     {"licence1": "MIT1"},
     {"licence2": 2},
     {"licence3": "MIT3"},
@@ -87,7 +86,7 @@ def verify_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     res = get_file_extended_attributes(provider_host, token, file_id)
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
 
-    expected_xattrs_meta: list[dict[str, JsonValue]] = XATTRS_META.copy()
+    expected_xattrs_meta: list[JsonObject] = XATTRS_META.copy()
     if not is_version_lower_than(tests_controller.initial_prov_version, "26.0"):
         expected_xattrs_meta[1] = {"license2": "2"}
 
@@ -125,7 +124,7 @@ def verify_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
 
     delete_file_extended_attributes(provider_host, token, file_id, keys=["licence1"])
 
-    new_xattr: dict[str, JsonValue] = {"licence4": "MIT4"}
+    new_xattr: JsonObject = {"licence4": "MIT4"}
 
     set_file_extended_attribute(provider_host, token, file_id, new_xattr)
     res = get_file_extended_attributes(provider_host, token, file_id)

@@ -15,6 +15,7 @@ import time
 from collections.abc import Callable
 from typing import IO, Mapping, Optional, Protocol, TypedDict, cast
 
+from tests.type_definitions import EnvDesc
 from tests.utils import ONECLIENT_LOGS_DIR, ONECLIENT_MOUNT_DIR
 from tests.utils.path_utils import escape_path
 from tests.utils.utils import log_exception
@@ -479,7 +480,7 @@ def user_home_dir(user: str = "root") -> str:
 
 
 def get_client_conf(
-    client_id: str, client_host_alias: str, env_desc: Mapping[str, object]
+    client_id: str, client_host_alias: str, env_desc: EnvDesc
 ) -> ClientConfig:
     client_host_mapping = cast(Mapping[str, object], env_desc.get("oneclient") or {})
     client_host_conf = cast(

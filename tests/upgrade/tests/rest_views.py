@@ -10,10 +10,10 @@ from functools import partial
 
 import yaml
 
+from tests.type_definitions import JsonObject
 from tests.upgrade.utils.rest_utils import (
     DEFAULT_REST_QUERY_TIMEOUT,
     JsonList,
-    JsonObject,
     JsonPayload,
     configure_file_popularity_mechanism_in_the_space,
     create_view,

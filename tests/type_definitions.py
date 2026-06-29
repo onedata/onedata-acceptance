@@ -25,7 +25,7 @@ from tests.utils.user_utils import User
 type JsonValue = Optional[
     str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
 ]
-type Capabilities = dict[str, JsonValue]
+type JsonObject = dict[str, JsonValue]
 
 
 class HostPanel(TypedDict):
@@ -44,7 +44,6 @@ class HostDescription(TypedDict, total=False):
 
 
 type Hosts = dict[str, HostDescription]
-type TestConfig = dict[str, JsonValue]
 type SeleniumDrivers = dict[str, WebDriver]
 type SeleniumFixtureState = dict[str, WebDriver | FixtureRequest]
 type Users = dict[str, User]

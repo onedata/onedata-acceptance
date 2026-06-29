@@ -22,7 +22,6 @@ from tests.mixed.type_definitions import (
     Content,
     ContentItem,
     IsDir,
-    ItemType,
     ListDir,
 )
 from tests.type_definitions import Hosts, Users
@@ -162,7 +161,7 @@ ACL_MASK = {
 
 def assert_ace(
     priv: str,
-    item_type: ItemType,
+    item_type: str,
     ace: Mapping[str, str],
     name: str,
     num: int | str,
@@ -191,7 +190,7 @@ def assert_ace(
 def get_acl_metadata(
     curr_acl: Iterable[AclEntry],
     priv: str,
-    item_type: ItemType,
+    item_type: str,
     groups: Mapping[str, str],
     name: str,
     users: Mapping[str, UserLike],

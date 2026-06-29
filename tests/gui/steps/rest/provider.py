@@ -8,9 +8,8 @@ import json
 from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
-from tests.gui.type_definitions import ProviderResponse
 from tests.gui.utils.generic import OnedataService
-from tests.type_definitions import Hosts, JsonValue, Users
+from tests.type_definitions import Hosts, JsonObject, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import (
     get_panel_rest_path,
@@ -54,9 +53,9 @@ def add_provider_service_node(
     hosts: Hosts,
     provider: str,
     onepanel_credentials: User,
-    data: dict[str, JsonValue],
+    data: JsonObject,
     service: OnedataService,
-) -> ProviderResponse:
+) -> JsonObject:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -77,7 +76,7 @@ def get_provider_service_nodes_statuses(
     provider: str,
     onepanel_credentials: User,
     service: OnedataService,
-) -> ProviderResponse:
+) -> JsonObject:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password

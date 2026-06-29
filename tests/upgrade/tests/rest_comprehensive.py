@@ -14,8 +14,8 @@ from functools import partial
 from typing import TypedDict
 from xml.etree import ElementTree as ET
 
+from tests.type_definitions import JsonObject
 from tests.upgrade.utils.rest_utils import (
-    JsonObject,
     JsonPayload,
     create_archive,
     create_share,

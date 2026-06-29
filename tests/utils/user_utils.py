@@ -14,6 +14,7 @@ from typing import Optional, cast
 import rpyc  # pylint: disable=import-error
 
 from tests import HTTP_PORT, OZ_REST_PORT
+from tests.type_definitions import EnvDesc
 from tests.utils import ONECLIENT_LOGS_DIR, ONECLIENT_MOUNT_DIR, RPYC_LOGS_DIR
 from tests.utils.client_utils import Client, RpycConnectionLike, get_client_conf
 from tests.utils.docker_utils import run_cmd as docker_run_cmd
@@ -87,7 +88,7 @@ class User:  # pylint: disable=too-many-instance-attributes
         client_host_alias: str,
         client_id: str,
         hosts: Mapping[str, Mapping[str, str]],
-        env_desc: Mapping[str, object],
+        env_desc: EnvDesc,
         token: str = CORRECT_TOKEN,
         opts: Optional[list[str]] = None,
     ) -> Optional[Client]:
