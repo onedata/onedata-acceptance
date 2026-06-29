@@ -38,14 +38,10 @@ from tests.mixed.steps.rest.onezone.members import (
 )
 from tests.mixed.steps.rest.onezone.provider import (
     HostsConfig,
-)
-from tests.mixed.steps.rest.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_rest,
 )
 from tests.mixed.steps.rest.onezone.space_management import (
     CredentialsLike,
-)
-from tests.mixed.steps.rest.onezone.space_management import (
     assert_spaces_have_appeared_in_oz_rest,
     assert_spaces_have_been_renamed_in_oz_rest,
     assert_there_are_no_spaces_in_oz_rest,

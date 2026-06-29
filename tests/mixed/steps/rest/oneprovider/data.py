@@ -29,8 +29,10 @@ from tests.mixed.oneprovider_client import ApiClient
 from tests.mixed.oneprovider_client.models.inline_response2015 import InlineResponse2015
 from tests.mixed.oneprovider_client.models.share import Share
 from tests.mixed.oneprovider_client.models.space import Space
-from tests.mixed.steps.rest.oneprovider.basic import HostsConfig
-from tests.mixed.steps.rest.oneprovider.basic import see_item_is_dir_op_rest
+from tests.mixed.steps.rest.oneprovider.basic import (
+    HostsConfig,
+    see_item_is_dir_op_rest,
+)
 from tests.mixed.utils.common import login_to_cdmi, login_to_provider
 from tests.mixed.utils.data import (
     Content,
