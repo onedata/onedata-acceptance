@@ -19,7 +19,7 @@ As the testing framework, `pytest` with `pytest-bdd` extension is used.
 
 # Prerequisites
 
-* python 3.8+ (3.12+ is recommended)
+* python 3.12+
 * docker
 * kubernetes cluster (e.g. minikube)
 

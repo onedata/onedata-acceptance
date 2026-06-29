@@ -2,14 +2,23 @@
 using REST API.
 """
 
+from typing import NoReturn
+
+from tests.type_definitions import Hosts
+from tests.utils.user_utils import Users
+
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 def change_user_password_in_oz_panel_using_rest(
-    user, new_password, zone_host, users, hosts
-):
+    user: str,
+    new_password: str,
+    zone_host: str,
+    users: Users,
+    hosts: Hosts,
+) -> NoReturn:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OnepanelApi
     # user_client = login_to_panel(
@@ -20,7 +29,9 @@ def change_user_password_in_oz_panel_using_rest(
     # onepanel_api.modify_user(user, user_mod_rq)
 
 
-def login_to_oz_panel_using_new_password_rest(user, password, hosts, zone_host):
+def login_to_oz_panel_using_new_password_rest(
+    user: str, password: str, hosts: Hosts, zone_host: str
+) -> NoReturn:
     # client = login_to_panel(user, password, hosts[zone_host]["hostname"])
 
     raise NotImplementedError

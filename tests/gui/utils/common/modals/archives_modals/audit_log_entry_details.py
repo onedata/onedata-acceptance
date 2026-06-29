@@ -40,5 +40,5 @@ class AuditLogEntryDetails(Modal):
     archive_name = WebElement(".path-item.path-label")
     close = Button(".close-details")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Audit log entry details"

@@ -58,6 +58,7 @@ from tests.gui.steps.oneprovider.shares import (
     is_selected_share_named,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.xml_addons import (
@@ -70,6 +71,7 @@ from tests.gui.utils.common.xml_addons import (
     resolve_xml_tag_for_et_search,
 )
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -86,7 +88,13 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_share(selenium, browser_id, share_name, item_name, tmp_memory):
+def create_share(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    share_name: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     option = "Share / Publish"
     modal_name = "Share / Publish directory"
     button = "Create"
@@ -106,12 +114,12 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_single_share_view_by_modal(
-    selenium,
-    browser_id,
-    share_name,
-    tmp_memory,
-    item_name,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    share_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+) -> None:
 
     items_browser = transform(WhichBrowser.SHARES_FILE_BROWSER.value)
     status_type = "shared"
@@ -126,7 +134,9 @@ def open_single_share_view_by_modal(
 
 @wt(parsers.parse('user of {browser_id} creates another share named "{share_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_another_share(selenium, browser_id, share_name):
+def create_another_share(
+    selenium: SeleniumDrivers, browser_id: str, share_name: str
+) -> None:
     button = "Create another share"
     modal_name = "Shares"
     create_button = "Create"
@@ -138,7 +148,9 @@ def create_another_share(selenium, browser_id, share_name):
 
 @wt(parsers.parse("user of {browser_id} removes current share"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_current_share(selenium, browser_id, tmp_memory):
+def remove_current_share(
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
+) -> None:
     option = "Remove"
     modal_name = "Remove share"
     button = "Remove"
@@ -151,7 +163,9 @@ def remove_current_share(selenium, browser_id, tmp_memory):
 
 @wt(parsers.parse('user of {browser_id} opens shares view of "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_shares_view_of_given_space(selenium, browser_id, space_name, tmp_memory):
+def open_shares_view_of_given_space(
+    selenium: SeleniumDrivers, browser_id: str, space_name: str, tmp_memory: TmpMemory
+) -> None:
     option = "Shares, Public Data"
     items_browser = "shares_browser"
 
@@ -169,12 +183,12 @@ def open_shares_view_of_given_space(selenium, browser_id, space_name, tmp_memory
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_single_share_view_by_sidebar(
-    selenium,
-    browser_id,
-    share_name,
-    tmp_memory,
-    space_name,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    share_name: str,
+    tmp_memory: TmpMemory,
+    space_name: str,
+) -> None:
     open_shares_view_of_given_space(selenium, browser_id, space_name, tmp_memory)
     click_share_in_shares_browser(selenium, browser_id, share_name)
     change_shares_browser_to_file_browser(selenium, browser_id, tmp_memory)
@@ -188,15 +202,15 @@ def open_single_share_view_by_sidebar(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def hand_share_url_to_another_user(
-    selenium,
-    browser_id,
-    browser2_id,
-    share_name,
-    item_name,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    browser2_id: str,
+    share_name: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
     modal_name = "Details modal"
     item_type = "URL"
     button = "X"
@@ -213,7 +227,13 @@ def hand_share_url_to_another_user(
         'user of {browser_id} copies share URL of "{share_name}" share of "{item_name}"'
     )
 )
-def copy_url_of_share(selenium, browser_id, share_name, item_name, tmp_memory):
+def copy_url_of_share(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    share_name: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     icon_name = "copy"
     status_type = "shared"
 
@@ -230,7 +250,9 @@ def copy_url_of_share(selenium, browser_id, share_name, item_name, tmp_memory):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def rename_share_from_single_view(selenium, browser_id, new_name, tmp_memory):
+def rename_share_from_single_view(
+    selenium: SeleniumDrivers, browser_id: str, new_name: str, tmp_memory: TmpMemory
+) -> None:
     option = "Rename"
     modal_name = "Rename share"
     button = "Rename"
@@ -249,7 +271,9 @@ def rename_share_from_single_view(selenium, browser_id, new_name, tmp_memory):
         " API section from (file|directory) details modal"
     )
 )
-def copy_command_from_api_in_file_details_modal(selenium, browser_id, command):
+def copy_command_from_api_in_file_details_modal(
+    selenium: SeleniumDrivers, browser_id: str, command: str
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).details_modal
     command = f"{command}\nREST"
@@ -267,7 +291,9 @@ def copy_command_from_api_in_file_details_modal(selenium, browser_id, command):
         r" Public Data editor in share's private interface"
     )
 )
-def open_public_data_metadata_editor(selenium, browser_id, metadata_type):
+def open_public_data_metadata_editor(
+    selenium: SeleniumDrivers, browser_id: str, metadata_type: str
+) -> None:
     option = "private"
 
     open_tab_in_public_share(selenium, browser_id, "Expose as Public Data")
@@ -288,7 +314,9 @@ def open_public_data_metadata_editor(selenium, browser_id, metadata_type):
         r"share's private interface"
     )
 )
-def add_description_to_share_on_private_interface(selenium, browser_id, description):
+def add_description_to_share_on_private_interface(
+    selenium: SeleniumDrivers, browser_id: str, description: str
+) -> None:
     open_tab_in_public_share(selenium, browser_id, "Description")
     click_button_in_description_form(browser_id, selenium, "Create description")
     write_description_in_description_form(
@@ -303,7 +331,9 @@ def add_description_to_share_on_private_interface(selenium, browser_id, descript
         " with:\n{config}"
     )
 )
-def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
+def fill_inputs_in_dublin_core_metadata_form(
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     """
     Fill Dublin Core metadata form according to given config.
     Config format given in yaml is as follows:
@@ -326,9 +356,9 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
     tab_name = "Expose as Public Data"
 
     open_tab_in_public_share(selenium, browser_id, tab_name)
-    config = yaml.load(config, yaml.Loader)
+    parsed_config = yaml.load(config, yaml.Loader)
 
-    for option, value in config.items():
+    for option, value in parsed_config.items():
         option = option.lower()
 
         if not is_name_in_initial_form_fields(option, "dublin_core"):
@@ -356,14 +386,16 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
         " like the following:\n{config}"
     )
 )
-def assert_properties_in_dublin_core_metadata_form(selenium, browser_id, config):
+def assert_properties_in_dublin_core_metadata_form(
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     """
     Assert Dublin Core metadata values according to given config.
     Config format given in yaml is the same as in the function:
     fill_inputs_in_dublin_core_metadata_form.
     """
-    config = yaml.load(config, yaml.Loader)
-    for _, data in config.items():
+    parsed_config = yaml.load(config, yaml.Loader)
+    for _, data in parsed_config.items():
         if not isinstance(data, list):
             assert_data_in_dublin_core_metadata(browser_id, data, selenium)
         else:
@@ -377,7 +409,9 @@ def assert_properties_in_dublin_core_metadata_form(selenium, browser_id, config)
         r" share's file browser on share's public interface"
     )
 )
-def open_shares_file_browser(selenium, browser_id, tmp_memory):
+def open_shares_file_browser(
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
+) -> None:
     open_tab_in_public_share(selenium, browser_id, "Files")
     assert_file_browser_in_public_share(selenium, browser_id, tmp_memory)
 
@@ -390,8 +424,13 @@ def open_shares_file_browser(selenium, browser_id, tmp_memory):
     )
 )
 def send_public_handle_link_to_user(
-    selenium, browser_id, browser2_id, tmp_memory, displays, clipboard
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    browser2_id: str,
+    tmp_memory: TmpMemory,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
     item_type = "URL"
     link_type = "Public handle link"
 
@@ -409,7 +448,9 @@ def send_public_handle_link_to_user(
         " with:\n{config}"
     )
 )
-def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
+def fill_inputs_in_edm_metadata_form(
+    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
+) -> None:
     """
     Fill EDM metadata form according to given config.
 
@@ -442,9 +483,9 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
     selecting a group first and then choosing the corresponding value
     within that group.
     """
-    config = yaml.load(config, yaml.Loader)
+    parsed_config = yaml.load(config, yaml.Loader)
 
-    for field_name, value in config.items():
+    for field_name, value in parsed_config.items():
         field_name = field_name.lower()
         if not is_name_in_initial_form_fields(field_name, "edm"):
             add_property_to_edm_form_in_shares_interface(
@@ -503,15 +544,17 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
         " are like the following:\n{config}"
     )
 )
-def assert_properties_in_edm_metadata_form(selenium, browser_id, config, numerals):
+def assert_properties_in_edm_metadata_form(
+    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
+) -> None:
     """
     Assert EDM metadata values according to given config.
     Config format given in yaml is the same as in the function:
     fill_inputs_in_edm_metadata_form.
     """
-    config = yaml.load(config, yaml.Loader)
+    parsed_config = yaml.load(config, yaml.Loader)
 
-    for field_name, value in config.items():
+    for field_name, value in parsed_config.items():
         field_name = field_name.lower()
         if is_metadata_field_option_selectable_edm(field_name):
             assert_val_edm_form_in_shares_interface(
@@ -541,7 +584,9 @@ def assert_properties_in_edm_metadata_form(selenium, browser_id, config, numeral
         r" on share's private interface"
     )
 )
-def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory):
+def rename_share_on_private_interface(
+    selenium: SeleniumDrivers, browser_id: str, new_name: str, tmp_memory: TmpMemory
+) -> None:
     modal_name = "Rename share"
     click_menu_button_on_shares_page(selenium, browser_id)
     click_option_in_share_row_menu(selenium, browser_id, "Rename")
@@ -558,8 +603,8 @@ def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory
     )
 )
 def assert_xml_data_in_edm_form_in_shares_interface(
-    selenium, browser_id, data, metadata_type
-):
+    selenium: SeleniumDrivers, browser_id: str, data: str, metadata_type: str
+) -> None:
     check_ace_editor_appeared(selenium, browser_id)
     xml_data = get_xml_editor_data(selenium[browser_id])
     root = ET.fromstring(xml_data)
@@ -580,8 +625,12 @@ def assert_xml_data_in_edm_form_in_shares_interface(
     )
 )
 def modify_xml_data_in_edm_form_in_shares_interface(
-    selenium, browser_id, metadata_type, tag, new_text
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    metadata_type: str,
+    tag: str,
+    new_text: str,
+) -> None:
     driver = selenium[browser_id]
     public_share(driver).modify_button.click()
 
@@ -611,7 +660,13 @@ def modify_xml_data_in_edm_form_in_shares_interface(
         r" in share's private interface"
     )
 )
-def assert_xml_node_value(selenium, browser_id, tag, text, metadata_type):
+def assert_xml_node_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tag: str,
+    text: str,
+    metadata_type: str,
+) -> None:
     check_ace_editor_appeared(selenium, browser_id)
 
     xml_data = get_xml_editor_data(selenium[browser_id])

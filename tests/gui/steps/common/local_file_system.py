@@ -2,6 +2,8 @@
 interacting with local file system.
 """
 
+from __future__ import annotations
+
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -9,12 +11,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import stat
 import subprocess
+from typing import Optional, cast
 
 import requests
 import yaml
+from _pytest._py.path import LocalPath
 
 from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.type_definitions import LocalDirectoryContent as DirectoryContent
 from tests.gui.utils.generic import suppress
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -23,7 +28,7 @@ PERMS_777 = stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH
 
 
 @given(parsers.parse("directory tree structure on local file system:\n{structure}"))
-def create_dir_tree_structure_on_local_fs(structure, tmpdir):
+def create_dir_tree_structure_on_local_fs(structure: str, tmpdir: LocalPath) -> None:
     """Create directory tree structure on local storage.
 
     Directory tree structure format given in yaml is as follow:
@@ -56,33 +61,32 @@ def create_dir_tree_structure_on_local_fs(structure, tmpdir):
         _mkdirs(home_dir, home_dir_content)
 
 
-def _mkdirs(cwd, dir_content=None):
+def _mkdirs(cwd: LocalPath, dir_content: Optional[DirectoryContent] = None) -> None:
     if not dir_content:
         return
 
-    try:
-        files_num = int(dir_content)
-    except (TypeError, ValueError):
-        for item in dir_content:
-            if item.startswith("dir"):
-                new_dir = cwd.join(item)
-                new_dir.mkdir()
-                new_dir.chmod(PERMS_777)
-                _mkdirs(new_dir, dir_content[item])
-            else:
-                content = dir_content[item].get("content", None)
-                size = dir_content[item].get("size", None)
-                if size:
-                    size = specify_size(size)
-                    content = size * "1"
-
-                _mkfile(cwd.join(item), content)
-    else:
-        for i in range(files_num):
+    if isinstance(dir_content, int):
+        for i in range(dir_content):
             _mkfile(cwd.join(f"file{i}.txt"))
+        return
+
+    for item, item_content in dir_content.items():
+        if item.startswith("dir"):
+            new_dir = cwd.join(item)
+            new_dir.mkdir()
+            new_dir.chmod(PERMS_777)
+            _mkdirs(new_dir, cast(DirectoryContent, item_content))
+        else:
+            file_description = cast(dict[str, str], item_content)
+            content = file_description.get("content")
+            size = file_description.get("size")
+            if size:
+                content = specify_size(size) * "1"
+
+            _mkfile(cwd.join(item), content)
 
 
-def specify_size(size_string):
+def specify_size(size_string: str) -> int:
     try:
         return int(size_string)
     except ValueError:
@@ -96,7 +100,7 @@ def specify_size(size_string):
         return int(size) * unit_dict[unit]
 
 
-def _mkfile(file_, file_content=None):
+def _mkfile(file_: LocalPath, file_content: Optional[str] = None) -> None:
     if not file_content:
         file_content = "1" * 10
 
@@ -109,7 +113,9 @@ def _mkfile(file_, file_content=None):
         "user of {browser_id} downloads {file_url} as {file_name} to local file system"
     )
 )
-def download_file_to_local_file_system(browser_id, file_url, file_name, tmpdir):
+def download_file_to_local_file_system(
+    browser_id: str, file_url: str, file_name: str, tmpdir: LocalPath
+) -> None:
     home_dir = tmpdir.join(browser_id)
     os.makedirs(home_dir, exist_ok=True)
 
@@ -126,8 +132,12 @@ def download_file_to_local_file_system(browser_id, file_url, file_name, tmpdir):
     )
 )
 def create_file_on_local_file_system(
-    browser_id, file_name, item_size, directory_name, tmpdir
-):
+    browser_id: str,
+    file_name: str,
+    item_size: str,
+    directory_name: str,
+    tmpdir: LocalPath,
+) -> None:
     home_dir = tmpdir.join(browser_id)
     path = home_dir + directory_name
     size = specify_size(item_size)
@@ -138,7 +148,9 @@ def create_file_on_local_file_system(
 
 @wt(parsers.parse('user of {browser_id} removes "{path}" from local file system'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def remove_file_from_local_file_system(browser_id, path, tmpdir):
+def remove_file_from_local_file_system(
+    browser_id: str, path: str, tmpdir: LocalPath
+) -> None:
     home_dir = tmpdir.join(browser_id)
 
     cmd = ["rm", home_dir + path]

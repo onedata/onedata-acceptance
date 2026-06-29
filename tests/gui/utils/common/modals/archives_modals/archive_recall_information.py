@@ -11,6 +11,7 @@ from typing import Dict, List, Optional
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
@@ -48,7 +49,7 @@ class ArchiveRecallInformation(Modal):
     error_log_table = WebElement(".infinite-scroll-table")
 
     @staticmethod
-    def parse_progress(progress_text_content):
+    def parse_progress(progress_text_content: str) -> tuple[str, str]:
         """Parses recall progress values in format: <current_value>/<target_value>,
         eg. "1 B / 3 B" to tuple containing two strings: (current_value, target_value).
         """
@@ -57,10 +58,10 @@ class ArchiveRecallInformation(Modal):
         total_info = total_info.strip()
         return (progress_info, total_info)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Archive recall information"
 
-    def get_progress_info(self, type):
+    def get_progress_info(self, type: str) -> tuple[str, str]:
         """Returns a tuple with (currnet_value, total_value) for progress info.
         Return values are in string, because they can contain size with units, eg.
         ("3 B", "40 KiB").
@@ -70,14 +71,14 @@ class ArchiveRecallInformation(Modal):
         """
         return ArchiveRecallInformation.parse_progress(getattr(self, type))
 
-    def scroll_by_press_space(self):
+    def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()
 
-    def move_to_error_logs_table(self, driver):
+    def move_to_error_logs_table(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.error_log_table).perform()
 
-    def scroll_to_top(self):
+    def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
                 "document.querySelector('.infinite-scroll-table "
@@ -88,11 +89,11 @@ class ArchiveRecallInformation(Modal):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_rows_of_columns(
-        self, column_names: Optional[List[str]] = None
-    ) -> Dict[str, List[str]]:
+        self, column_names: Optional[list[str]] = None
+    ) -> dict[str, list[str]]:
         # This function concerns browsing logs with errors in archive recall
         temp_columns = list(set((column_names or []) + ["source_file"]))
-        column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
+        column_values: dict[str, list[str]] = {column: [] for column in temp_columns}
         for row in self.error_file_rows:
             values_in_row = [getattr(row, column) for column in temp_columns]
             if any(value_in_row == "" for value_in_row in values_in_row):
@@ -104,6 +105,6 @@ class ArchiveRecallInformation(Modal):
         return column_values
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_visible_rows_of_single_column(self, param) -> List[str]:
+    def get_visible_rows_of_single_column(self, param: str) -> List[str]:
         column_values = self.get_visible_rows_of_columns([param])
         return column_values[param]

@@ -6,6 +6,7 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.docker import wt_assert_file_in_path_with_content
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -27,18 +28,20 @@ from tests.gui.steps.onezone.providers import (
     click_on_provider_in_providers_sidebar_with_provider_name,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
 def assert_provider_has_name_and_hostname_in_oz_gui(
-    selenium,
-    user,
-    provider_name,
-    domain_provider,
-    hosts,
-    with_refresh=False,
-    test_domain=False,
-):
+    selenium: SeleniumDrivers,
+    user: str,
+    provider_name: str,
+    domain_provider: str,
+    hosts: Hosts,
+    with_refresh: bool = False,
+    test_domain: bool = False,
+) -> None:
     option = "Data"
 
     if with_refresh:
@@ -67,7 +70,9 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
         )
 
 
-def assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts):
+def assert_there_is_no_provider_in_oz_gui(
+    selenium: SeleniumDrivers, user: str, provider_name: str, hosts: Hosts
+) -> None:
     option = "Data"
 
     refresh_site(selenium, user)
@@ -78,8 +83,13 @@ def assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts):
 
 
 def send_copied_invite_token_in_oz_gui(
-    selenium, user, browser_list, tmp_memory, displays, clipboard
-):
+    selenium: SeleniumDrivers,
+    user: str,
+    browser_list: str,
+    tmp_memory: TmpMemory,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
     item_type = "token"
     button = "add new provider cluster"
 
@@ -96,7 +106,9 @@ def send_copied_invite_token_in_oz_gui(
         "provider in oneproviders list in data sidebar"
     )
 )
-def revoke_support_of_provider_in_list(selenium, browser_id, provider, hosts):
+def revoke_support_of_provider_in_list(
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     button = "Cease support"
     notify_type = "info"
@@ -119,7 +131,11 @@ def revoke_support_of_provider_in_list(selenium, browser_id, provider, hosts):
     )
 )
 def assert_file_with_content_in_provider_storage(
-    browser_id, clipboard, displays, content, hosts
-):
+    browser_id: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    content: str,
+    hosts: Hosts,
+) -> None:
     path = clipboard.paste(display=displays[browser_id])
     wt_assert_file_in_path_with_content(path, content, hosts)

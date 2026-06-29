@@ -4,6 +4,7 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 
@@ -29,10 +30,10 @@ class ExecutionRecord(PageObject):
     status_icon = Icon(".cell-status")
     menu_button = Button(".cell-actions")
 
-    def expand(self):
+    def expand(self) -> None:
         self.web_elem.click()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Workflow row {self.name} in {self.parent}"
 
 
@@ -64,14 +65,16 @@ class Task(Element):
     time_series = Button(".view-task-time-series-action-trigger")
     audit_log = Button(".view-task-audit-log-action-trigger")
 
-    def get_elem_id(self):
+    def get_elem_id(self) -> str:
         elem_id = self.web_elem.get_attribute("id")
+        if elem_id is None:
+            raise RuntimeError(f"Task {self.name} has no id")
         return elem_id
 
-    def click_on_drag_handle(self):
+    def click_on_drag_handle(self) -> None:
         self.web_elem.find_element(By.CSS_SELECTOR, ".task-drag-handle").click()
 
-    def click_on_option_in_task(self, option):
+    def click_on_option_in_task(self, option: str) -> None:
         if option == "Audit log":
             self.web_elem.find_element(
                 By.CSS_SELECTOR, ".view-task-audit-log-action-trigger"
@@ -89,7 +92,7 @@ class Task(Element):
 class ParallelBox(Element):
     task_list = WebItemsSequence(".box-elements .workflow-visualiser-task", cls=Task)
 
-    def scroll_to_bottom_of_task_in_parallel_box(self, task_id):
+    def scroll_to_bottom_of_task_in_parallel_box(self, task_id: str) -> None:
         box_sel = f"#{task_id} .detail-entry.actions-detail"
         scroll_to_css_selector(self.driver, box_sel)
 
@@ -110,7 +113,7 @@ class WorkflowLane(Element):
     latest_run_menu = Button(".lane-run-actions-trigger .menu-toggle-frame")
     run_indicators = WebItemsSequence(".run-indicators-item", cls=RunIndicator)
 
-    def scroll_to_first_task_in_parallel_box(self, number):
+    def scroll_to_first_task_in_parallel_box(self, number: int) -> None:
         elem_id = self.parallel_boxes[number].task_list[0].get_elem_id()
         box_sel = f"#{elem_id} .items-failed-detail"
 
@@ -201,7 +204,7 @@ class WorkflowExecutionPage(PageObject):
     string_input = WebItem(".string-editor", cls=StringInput)
     logging_level = Button(".dropdown-field-trigger")
 
-    def click_on_background_in_workflow_visualiser(self):
+    def click_on_background_in_workflow_visualiser(self) -> None:
         ActionChains(self.driver).move_to_element_with_offset(
             self.workflow_header, 0, 0
         ).click().perform()

@@ -27,11 +27,15 @@ from tests.gui.steps.onepanel.emergency_passphrase import (
     click_button_on_emergency_passphrase_page,
     type_text_to_input_on_emergency_passphrase_page,
 )
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
-def change_user_password_in_oz_panel_using_gui(selenium, user, users, new_password):
+def change_user_password_in_oz_panel_using_gui(
+    selenium: SeleniumDrivers, user: str, users: Users, new_password: str
+) -> None:
     option_name = "Manage account"
     button_name = "Change password"
     notify_type = "info"
@@ -47,7 +51,9 @@ def change_user_password_in_oz_panel_using_gui(selenium, user, users, new_passwo
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
-def login_to_oz_panel_using_new_password_gui(selenium, user, password):
+def login_to_oz_panel_using_new_password_gui(
+    selenium: SeleniumDrivers, user: str, password: str
+) -> None:
     notify_type = "info"
     notify_text_regexp = ".*[Aa]uthentication.*succeeded.*"
 
@@ -58,7 +64,7 @@ def login_to_oz_panel_using_new_password_gui(selenium, user, password):
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
-def log_out_from_oz_panel_gui(username, selenium):
+def log_out_from_oz_panel_gui(username: str, selenium: SeleniumDrivers) -> None:
     button_name = "Logout"
 
     wt_click_on_user_account_btn_panel(selenium, username)
@@ -74,7 +80,13 @@ def log_out_from_oz_panel_gui(username, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_passphrase(selenium, browser_id, current_passphrase, new_passphrase, hosts):
+def change_passphrase(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    current_passphrase: str,
+    new_passphrase: str,
+    hosts: Hosts,
+) -> None:
     change_passphrase_button = "Change passphrase"
     confirm_button = "Change"
     current_passphrase_input = "Current passphrase"

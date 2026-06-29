@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 
 from . import multi_file_steps
 
@@ -15,24 +16,30 @@ from . import multi_file_steps
         "{user} sets on {file} extended attribute {name} with value {value}"
     )
 )
-def set_extended_attribute(user, file, name, value, users):
+def set_extended_attribute(
+    user: str, file: str, name: str, value: str, users: Users
+) -> None:
     multi_file_steps.set_xattr(user, file, name, value, "client1", users)
 
 
 @wt(parsers.cfparse("{user} removes extended attribute {name} from {file}"))
-def remove_extended_attribute(user, file, name, users):
+def remove_extended_attribute(user: str, file: str, name: str, users: Users) -> None:
     multi_file_steps.remove_xattr(user, file, name, "client1", users)
 
 
 @wt(parsers.cfparse("{user} checks that {file} has extended attribute {name}"))
-def check_extended_attribute_exists(user, file, name, users):
+def check_extended_attribute_exists(
+    user: str, file: str, name: str, users: Users
+) -> None:
     multi_file_steps.check_xattr_exists(user, file, name, "client1", users)
 
 
 @wt(
     parsers.cfparse("{user} checks that {file} does not have extended attribute {name}")
 )
-def check_extended_attribute_doesn_exist(user, file, name, users):
+def check_extended_attribute_doesn_exist(
+    user: str, file: str, name: str, users: Users
+) -> None:
     multi_file_steps.check_xattr_doesnt_exist(user, file, name, "client1", users)
 
 
@@ -42,7 +49,9 @@ def check_extended_attribute_doesn_exist(user, file, name, users):
         "{name} with value {value}"
     )
 )
-def check_string_extended_attribute(user, file, name, value, users):
+def check_string_extended_attribute(
+    user: str, file: str, name: str, value: str, users: Users
+) -> None:
     multi_file_steps.check_string_xattr(user, file, name, value, "client1", users)
 
 
@@ -52,7 +61,9 @@ def check_string_extended_attribute(user, file, name, value, users):
         "{name} with value {value}"
     )
 )
-def check_numeric_extended_attribute(user, file, name, value, users):
+def check_numeric_extended_attribute(
+    user: str, file: str, name: str, value: str, users: Users
+) -> None:
     multi_file_steps.check_numeric_xattr(user, file, name, value, "client1", users)
 
 
@@ -62,5 +73,7 @@ def check_numeric_extended_attribute(user, file, name, value, users):
         "{name} with value {value}"
     )
 )
-def check_json_extended_attribute(user, file, name, value, users):
+def check_json_extended_attribute(
+    user: str, file: str, name: str, value: str, users: Users
+) -> None:
     multi_file_steps.check_json_xattr(user, file, name, value, "client1", users)

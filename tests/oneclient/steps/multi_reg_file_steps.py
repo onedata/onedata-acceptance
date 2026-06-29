@@ -7,17 +7,25 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.utils.bdd_utils import parsers, then, when, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import assert_, assert_expected_failure, assert_generic
 
 from . import multi_file_steps
 
 
-def write_text_base(user, text, file, client_node, users, should_fail=False):
-    user = users[user]
-    client = user.clients[client_node]
+def write_text_base(
+    user: str,
+    text: str,
+    file: str,
+    client_node: str,
+    users: Users,
+    should_fail: bool = False,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition():
+    def condition() -> None:
         client.write(str(text), file_path)
 
     assert_generic(client.perform, should_fail, condition, timeout=0)
@@ -29,7 +37,7 @@ def write_text_base(user, text, file, client_node, users, should_fail=False):
         "(?P<client_node>.*)"
     )
 )
-def write_text(user, text, file, client_node, users):
+def write_text(user: str, text: str, file: str, client_node: str, users: Users) -> None:
     write_text_base(user, text, file, client_node, users)
 
 
@@ -39,12 +47,14 @@ def write_text(user, text, file, client_node, users):
         "(?P<file>.*) on (?P<client_node>.*)"
     )
 )
-def write_opened(user, text, file, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def write_opened(
+    user: str, text: str, file: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition():
+    def condition() -> None:
         client.write_to_opened_file(file_path, text)
 
     assert_(client.perform, condition)
@@ -56,12 +66,14 @@ def write_opened(user, text, file, client_node, users):
         "(?P<file>.*) on (?P<client_node>.*)"
     )
 )
-def write_at_offset(user_name, data, offset, file, client_node, users):
-    user = users[user_name]
-    client = user.clients[client_node]
+def write_at_offset(
+    user_name: str, data: str, offset: str, file: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user_name]
+    client = user_obj.clients[client_node]
     path = client.absolute_path(file)
 
-    def condition():
+    def condition() -> None:
         f = client.open_file(path, "r+b")
         f.seek(int(offset))
         f.write(data.encode("utf-8"))
@@ -76,16 +88,24 @@ def write_at_offset(user_name, data, offset, file, client_node, users):
         "on (?P<client_node>.*)"
     )
 )
-def write_text_fail(user, text, file, client_node, users):
+def write_text_fail(
+    user: str, text: str, file: str, client_node: str, users: Users
+) -> None:
     write_text_base(user, text, file, client_node, users, should_fail=True)
 
 
-def count_md5(user_name, file_path, client_node, users, context):
-    user = users[user_name]
-    client = user.clients[client_node]
+def count_md5(
+    user_name: str,
+    file_path: str,
+    client_node: str,
+    users: Users,
+    context: dict[str, str],
+) -> None:
+    user_obj = users[user_name]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file_path)
 
-    def condition():
+    def condition() -> None:
         context["md5"] = client.md5sum(file_path)
         assert context["md5"] is not None
 
@@ -99,13 +119,20 @@ def count_md5(user_name, file_path, client_node, users, context):
         "saves MD5"
     )
 )
-def write_rand_text(user_name, megabytes, file, client_node, users, context):
-    user = users[user_name]
-    client = user.clients[client_node]
+def write_rand_text(
+    user_name: str,
+    megabytes: str,
+    file: str,
+    client_node: str,
+    users: Users,
+    context: dict[str, str],
+) -> None:
+    user_obj = users[user_name]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition():
-        client.dd(megabytes, 1, file_path, output=True, error=True)
+    def condition() -> None:
+        client.dd(int(megabytes), 1, file_path, output=True, error=True)
         multi_file_steps.check_size(
             user_name, file, int(megabytes) * 1024 * 1024, client_node, users
         )
@@ -121,16 +148,16 @@ def write_rand_text(user_name, megabytes, file, client_node, users, context):
         "on (?P<client_node>.*)"
     )
 )
-def read_text(user, text, file, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def read_text(user: str, text: str, file: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition():
+    def condition() -> None:
         _read_text = client.read(file_path)
         assert (
             _read_text == text
-        ), f"Read {_read_text} instead of expected {text} on {client_node}"
+        ), f"Read {_read_text!r} instead of expected {text} on {client_node}"
 
     assert_(client.perform, condition)
 
@@ -141,11 +168,13 @@ def read_text(user, text, file, client_node, users):
         "opened file (?P<file>.*) on (?P<client_node>.*)"
     )
 )
-def read_opened(user, text, file, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def read_opened(
+    user: str, text: str, file: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
 
-    def condition():
+    def condition() -> None:
         client.seek(client.absolute_path(file), 0)
         _read_text = client.read_from_opened_file(client.absolute_path(file))
         assert (
@@ -156,17 +185,17 @@ def read_opened(user, text, file, client_node, users):
 
 
 @wt(parsers.re(r'(?P<user>\w+) reads "" from file (?P<file>.*) on (?P<client_node>.*)'))
-def read_empty(user, file, client_node, users):
+def read_empty(user: str, file: str, client_node: str, users: Users) -> None:
     read_text(user, "", file, client_node, users)
 
 
 @then(parsers.re(r"(?P<user>\w+) cannot read from (?P<file>.*) on (?P<client_node>.*)"))
-def cannot_read(user, file, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def cannot_read(user: str, file: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition():
+    def condition() -> None:
         assert_expected_failure(client.read, file_path)
 
     assert_(client.perform, condition)
@@ -178,12 +207,12 @@ def cannot_read(user, file, client_node, users):
         "(?P<client_node>.*)"
     )
 )
-def append(user, text, file, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def append(user: str, text: str, file: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition():
+    def condition() -> None:
         client.write(str(text), file_path, mode="a")
 
     assert_(client.perform, condition, timeout=0)
@@ -195,12 +224,14 @@ def append(user, text, file, client_node, users):
         "in (?P<file>.*) on (?P<client_node>.*)"
     )
 )
-def replace(user, text1, text2, file, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def replace(
+    user: str, text1: str, text2: str, file: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition():
+    def condition() -> None:
         ret = client.replace_pattern(file_path, text1, text2)
         assert ret == 0
 
@@ -213,36 +244,47 @@ def replace(user, text1, text2, file, client_node, users):
         "(?P<path>.*) on (?P<client_node>.*)"
     )
 )
-def copy_reg_file(user, file, path, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def copy_reg_file(
+    user: str, file: str, path: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     src_path = client.absolute_path(file)
     dest_path = client.absolute_path(path)
 
-    def condition():
+    def condition() -> None:
         client.cp(src_path, dest_path)
 
     assert_(client.perform, condition, timeout=0)
 
 
 @wt(parsers.re(r"(?P<user>\w+) checks MD5 of (?P<file>.*) on (?P<client_node>.*)"))
-def check_md5(user, file, client_node, users, context):
-    user = users[user]
-    client = user.clients[client_node]
+def check_md5(
+    user: str, file: str, client_node: str, users: Users, context: dict[str, str]
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
 
-    def condition():
+    def condition() -> None:
         md5 = client.md5sum(client.absolute_path(file))
         assert md5 == context["md5"], f"Wrong MD5 of file {file}"
 
     assert_(client.perform, condition)
 
 
-def do_truncate_base(user, file, new_size, client_node, users, should_fail=False):
-    user = users[user]
-    client = user.clients[client_node]
+def do_truncate_base(
+    user: str,
+    file: str,
+    new_size: str,
+    client_node: str,
+    users: Users,
+    should_fail: bool = False,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition():
+    def condition() -> None:
         client.truncate(file_path, int(new_size))
 
     assert_generic(client.perform, should_fail, condition, timeout=0)
@@ -254,7 +296,9 @@ def do_truncate_base(user, file, new_size, client_node, users, should_fail=False
         "on (?P<client_node>.*)"
     )
 )
-def do_truncate(user, file, new_size, client_node, users):
+def do_truncate(
+    user: str, file: str, new_size: str, client_node: str, users: Users
+) -> None:
     do_truncate_base(user, file, new_size, client_node, users)
 
 
@@ -264,28 +308,32 @@ def do_truncate(user, file, new_size, client_node, users):
         "bytes on (?P<client_node>.*)"
     )
 )
-def do_truncate_fail(user, file, new_size, client_node, users):
+def do_truncate_fail(
+    user: str, file: str, new_size: str, client_node: str, users: Users
+) -> None:
     do_truncate_base(user, file, new_size, client_node, users, should_fail=True)
 
 
-def execute_script_base(user, script, client_node, users, should_fail=False):
-    user = users[user]
-    client = user.clients[client_node]
+def execute_script_base(
+    user: str, script: str, client_node: str, users: Users, should_fail: bool = False
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     script_path = client.absolute_path(script)
 
-    def condition():
+    def condition() -> None:
         client.execute(script_path)
 
     assert_generic(client.perform, should_fail, condition, timeout=0)
 
 
 @wt(parsers.re(r"(?P<user>\w+) executes (?P<script>.*) on (?P<client_node>.*)"))
-def execute_script(user, script, client_node, users):
+def execute_script(user: str, script: str, client_node: str, users: Users) -> None:
     execute_script_base(user, script, client_node, users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) fails to execute (?P<script>.*) on (?P<client_node>.*)"))
-def execute_script_fail(user, script, client_node, users):
+def execute_script_fail(user: str, script: str, client_node: str, users: Users) -> None:
     execute_script_base(user, script, client_node, users, should_fail=True)
 
 
@@ -295,18 +343,18 @@ def execute_script_fail(user, script, client_node, users):
         "on (?P<client_node>.*)"
     )
 )
-def open_file(user, file, mode, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def open_file(user: str, file: str, mode: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
     f = client.open_file(file_path, mode)
     client.opened_files.update({file_path: f})
 
 
 @wt(parsers.re(r"(?P<user>\w+) closes (?P<file>.*) on (?P<client_node>.*)"))
-def close_file(user, file, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def close_file(user: str, file: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
     client.close_file(file_path)
     del client.opened_files[file_path]
@@ -325,12 +373,14 @@ def close_file(user, file, client_node, users):
         "offset (?P<offset>.*) on (?P<client_node>.*)"
     )
 )
-def set_file_position(user, file, offset, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def set_file_position(
+    user: str, file: str, offset: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition():
+    def condition() -> None:
         client.seek(file_path, int(offset))
 
     assert_(client.perform, condition, timeout=0)

@@ -21,5 +21,5 @@ class WebCertificate(PageObject):
     warning_info = Label(".alert-warning.alert-simple-info")
     dns_names_warning = Label(".dnsNames-field .warning-item-container")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Web certificate"

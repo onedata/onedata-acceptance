@@ -35,7 +35,7 @@ class _ArchiveBrowser(Browser):
     )
     create_a_new_archive = Button(".empty-archives-create-action")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"archive browser in {self.parent}"
 
 

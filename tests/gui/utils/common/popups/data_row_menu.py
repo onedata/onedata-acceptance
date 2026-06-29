@@ -4,6 +4,7 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence
 
@@ -11,7 +12,7 @@ from tests.gui.utils.core.web_elements import Label, WebItemsSequence
 class Options(PageObject):
     name = id = Label(".one-label")
 
-    def get_state(self):
+    def get_state(self) -> str:
         return (
             "disabled"
             if "disabled" in self.web_elem.get_attribute("class")
@@ -24,22 +25,22 @@ class DataRowMenu(PageObject):
         ".file-actions.dropdown-menu li:not(.separator)", cls=Options
     )
 
-    def choose_option(self, name):
+    def choose_option(self, name: str) -> None:
         if name not in self.options:
             self.scroll_to_bottom()
         self.options[name].click()
 
-    def return_option(self, name):
+    def return_option(self, name: str) -> Options:
         if name not in self.options:
             self.scroll_to_bottom()
         return self.options[name]
 
-    def scroll_to_bottom(self):
+    def scroll_to_bottom(self) -> None:
         option_len = len(self.options)
         self.driver.execute_script(
             "arguments[0].scrollIntoView();",
             self.options[option_len - 1].web_elem,
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Data row menu"

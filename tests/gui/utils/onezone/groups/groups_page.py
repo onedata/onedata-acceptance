@@ -45,7 +45,7 @@ class GroupDetailsPage(PageObject):
 class MenuItem(PageObject):
     name = id = Label("a.clickable")
 
-    def __call__(self):
+    def __call__(self) -> None:
         self.click()
 
 

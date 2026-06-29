@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from functools import partial
+from typing import Any
 
 from selenium.webdriver.common.by import By
 
@@ -16,11 +17,11 @@ from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjects
 
 
 class WebElement(AbstractWebElement):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.parent_name = kwargs.pop("parent_name", "")
         super().__init__(*args, **kwargs)
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: object) -> Any:
         if instance is None:
             return self
 
@@ -31,20 +32,20 @@ class WebElement(AbstractWebElement):
             scroll=self.scroll,
         )
 
-    def _format_msg(self, err_msg, parent, **kwargs):
+    def _format_msg(self, err_msg: str, parent: Any, **kwargs: Any) -> str:
         name = self.name.replace("_", " ").strip().upper()
         p_name = self.parent_name if self.parent_name != "" else str(parent)
         return err_msg.format(item=name, parent=p_name, **kwargs)
 
 
 class WebElementWithText(WebElement):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.text = kwargs.pop("text", None)
         if self.text is None:
             raise ValueError("text not specified")
         super().__init__(*args, **kwargs)
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: object) -> Any:
         if instance is None:
             return self
 
@@ -59,7 +60,7 @@ class WebElementWithText(WebElement):
 
 
 class WebItem(AbstractWebItem, WebElement):
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: object) -> Any:
         elem = super().__get__(instance, owner)
         return (
             elem
@@ -79,17 +80,17 @@ NamedButton = partial(WebItemWithText, cls=ButtonWithTextPageObject)
 class Label(WebElement):
     item_not_found_msg = "{item} label not found in {parent}"
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: object) -> Any:
         item = super().__get__(instance, owner)
         return item.text if instance else item
 
 
 class Input(WebElement):
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: object) -> Any:
         item = super().__get__(instance, owner)
         return item.get_attribute("value") if instance else item
 
-    def __set__(self, instance, val):
+    def __set__(self, instance: Any, val: Any) -> None:
         input_box = super().__get__(instance, type(instance))
         input_box.clear()
         if val != "":
@@ -100,13 +101,13 @@ class Input(WebElement):
 
 
 class AceEditor(WebElement):
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: object) -> Any:
         selector = self.css_sel + " .ace_content"
         script = f"var textarea = document.querySelector('{selector}');return textarea"
         driver = instance.web_elem.parent
         return driver.execute_script(script).text
 
-    def __set__(self, instance, val):
+    def __set__(self, instance: Any, val: Any) -> None:
         driver = instance.web_elem.parent
         selector = self.css_sel + " .ace_text-input"
         script = (
@@ -121,7 +122,7 @@ class AceEditor(WebElement):
 
 
 class WebElementsSequence(AbstractWebElement):
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: object) -> Any:
         if instance is None:
             return self
 
@@ -129,7 +130,7 @@ class WebElementsSequence(AbstractWebElement):
 
 
 class WebItemsSequence(AbstractWebItem, WebElementsSequence):
-    def __get__(self, instance, owner):
+    def __get__(self, instance: Any, owner: object) -> Any:
         seq = super().__get__(instance, owner)
         return (
             seq

@@ -4,6 +4,9 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.web_elements import (
     Label,
@@ -138,17 +141,17 @@ class Popups:
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
     authentication_succeeded = WebItem(".alert-info", cls=AuthenticationSucceeded)
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "popups"
 
-    def is_upload_presenter(self):
+    def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0
 
     @repeat_failed(timeout=10)
-    def get_query_builder_not_hidden_popup(self):
+    def get_query_builder_not_hidden_popup(self) -> ExpressionBuilderPopup:
         for popup in self.query_builder_popups:
             if popup.web_elem.is_displayed():
                 return popup

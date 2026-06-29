@@ -4,23 +4,26 @@ __author__ = "Jakub Liput"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def main_menu_tab_to_url(tab):
+def main_menu_tab_to_url(tab: str) -> str:
     tab_to_url_mapping = {"shared": "shares"}
     return tab_to_url_mapping.get(tab, tab)
 
 
-def _click_on_tab_in_main_menu_sidebar(driver, tab):
-    def _load_main_menu_tab_page(tab):
-        def _check_url(_url):
+def _click_on_tab_in_main_menu_sidebar(driver: WebDriver, tab: str) -> None:
+    def _load_main_menu_tab_page(tab: str) -> bool:
+        def _check_url(_url: str) -> bool:
             return tab in driver.current_url
 
         current_url = driver.current_url
@@ -46,7 +49,9 @@ def _click_on_tab_in_main_menu_sidebar(driver, tab):
         '"(?P<main_menu_tab>.*)" tab in main menu sidebar'
     )
 )
-def g_click_on_the_given_main_menu_tab(selenium, browser_id_list, main_menu_tab):
+def g_click_on_the_given_main_menu_tab(
+    selenium: SeleniumDrivers, browser_id_list: str, main_menu_tab: str
+) -> None:
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
         _click_on_tab_in_main_menu_sidebar(driver, main_menu_tab)
@@ -59,13 +64,15 @@ def g_click_on_the_given_main_menu_tab(selenium, browser_id_list, main_menu_tab)
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_the_given_main_menu_tab(selenium, browser_id_list, main_menu_tab):
+def wt_click_on_the_given_main_menu_tab(
+    selenium: SeleniumDrivers, browser_id_list: str, main_menu_tab: str
+) -> None:
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
         _click_on_tab_in_main_menu_sidebar(driver, main_menu_tab)
 
 
-def _has_dir_content_been_loaded(driver):
+def _has_dir_content_been_loaded(driver: WebDriver) -> None:
     # find_element_* throws exception if nothing found
     loader = driver.find_elements(
         By.CSS_SELECTOR, "#main-content .loader-area-content-with-secondary-top"
@@ -83,7 +90,7 @@ def _has_dir_content_been_loaded(driver):
         "user of {browser_id} sees that content of current directory has been loaded"
     )
 )
-def g_has_dir_content_been_loaded(selenium, browser_id):
+def g_has_dir_content_been_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     _has_dir_content_been_loaded(driver)
 
@@ -93,6 +100,6 @@ def g_has_dir_content_been_loaded(selenium, browser_id):
         "user of {browser_id} sees that content of current directory has been loaded"
     )
 )
-def wt_has_dir_content_been_loaded(selenium, browser_id):
+def wt_has_dir_content_been_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     _has_dir_content_been_loaded(driver)

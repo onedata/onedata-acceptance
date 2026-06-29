@@ -6,13 +6,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from dataclasses import dataclass
 
+from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     ButtonWithTextPageObject,
     Label,
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.core.web_objects import PageObject
 
 
 @dataclass
@@ -27,11 +27,11 @@ class EndpointInfo:
         return f"{self.method}\n{self.name}"
 
     @classmethod
-    def space(cls, method, name):
+    def space(cls, method: str, name: str) -> "EndpointInfo":
         return cls(method, name, "Space", "Onezone REST API")
 
     @classmethod
-    def file_details(cls, method, name, category):
+    def file_details(cls, method: str, name: str, category: str) -> "EndpointInfo":
         return cls(method, name, category, "Oneprovider REST API")
 
 
@@ -41,17 +41,17 @@ class DocsSidebar(PageObject):
         ".sidebar-folder.expanded", cls=ButtonWithTextPageObject
     )
 
-    def get_active_rows_names(self):
+    def get_active_rows_names(self) -> list[str]:
         return [row.id for row in self.category_rows if row.is_active()]
 
-    def get_expanded_folders_names(self):
+    def get_expanded_folders_names(self) -> list[str]:
         return [folder.id.split("\n")[0] for folder in self.expanded_folders]
 
 
 class Chapters(PageObject):
     tabs = WebItemsSequence(".chapter-tab", cls=ButtonWithTextPageObject)
 
-    def get_active_chapter_tabs_names(self):
+    def get_active_chapter_tabs_names(self) -> list[str]:
         return [tab.id for tab in self.tabs if tab.is_active()]
 
 
@@ -59,6 +59,11 @@ class DocumentationPage(PageObject):
     current_header = Label(".docs-main-content h1")
     sidebar = WebItem(".sidebar-root-list", cls=DocsSidebar)
     chapters = WebItem(".docs-tabs-row", cls=Chapters)
+
+    def __getitem__(self, item: str) -> PageObject:
+        if hasattr(self, "elements_list"):
+            return self.elements_list[item]
+        raise ValueError("there is not elements_list member in class instance")
 
 
 class APIPage(DocumentationPage):

@@ -23,7 +23,7 @@ class HostRecord(PageObject):
     )
     ones3 = Toggle(".one-way-toggle[data-option=oneS3]")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} record in {self.parent}"
 
 

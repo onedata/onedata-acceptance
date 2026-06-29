@@ -5,7 +5,12 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
 
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
+
+from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 
 from .automation_page import AutomationPage
@@ -42,7 +47,7 @@ class OZLoggedIn:
 
     profile_username = Label(".main-menu-column .user-account-button-username")
 
-    panels = {
+    panels: dict[str, type[PageObject]] = {
         "data": DataPage,
         "shares": SharesPage,
         "providers": ProvidersPage,
@@ -53,19 +58,19 @@ class OZLoggedIn:
         "clusters": ClustersPage,
     }
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Onezone page"
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str) -> Any:
         return get_page(self, item, False)
 
-    def get_page_and_click(self, item):
+    def get_page_and_click(self, item: str) -> Any:
         return get_page(self, item)
 
-    def is_panel_clicked(self, item):
+    def is_panel_clicked(self, item: str) -> bool:
         for idx, panel in enumerate(self._panels):
             if idx != panels_dict[item] and (
                 "selected" in panel.get_attribute("class")
@@ -74,18 +79,18 @@ class OZLoggedIn:
         panel = self._panels[panels_dict[item]]
         return any(el in panel.get_attribute("class") for el in ["active", "selected"])
 
-    def is_panel_disabled(self, item):
+    def is_panel_disabled(self, item: str) -> bool:
         panel = self._panels[panels_dict[item]]
         return "disabled" in panel.get_attribute("class")
 
-    def get_panels(self):
+    def get_panels(self) -> list[SeleniumWebElement]:
         return self._panels
 
-    def get_profile(self):
+    def get_profile(self) -> SeleniumWebElement:
         return self._profile
 
 
-def get_page(oz_page, item, click=True):
+def get_page(oz_page: OZLoggedIn, item: str, click: bool = True) -> Any:
     item = item.lower()
     cls = oz_page.panels.get(item, None)
     if cls:
@@ -103,7 +108,7 @@ def get_page(oz_page, item, click=True):
     raise RuntimeError(f'no "{item}" on {oz_page} found')
 
 
-def wait_for_panel_to_expand(oz_page):
+def wait_for_panel_to_expand(oz_page: OZLoggedIn) -> None:
     for _ in range(20):
         if oz_page.get_panels()[0].text == "DATA":
             return

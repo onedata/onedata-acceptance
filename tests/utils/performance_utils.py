@@ -1,5 +1,7 @@
 """This file contains utility functions for performance tests."""
 
+from __future__ import annotations
+
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -7,14 +9,19 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import itertools
 import sys
 import time
-from typing import Any
+from collections.abc import Callable, Iterable, Mapping
+from typing import Optional, cast
 
 import pytest
+
+from tests.type_definitions import EnvDesc
 
 from ..oneclient.conftest import unmount_all_clients_and_purge_spaces
 
 
-def performance(default_config, configs):
+def performance(
+    default_config: Mapping, configs: Mapping[str, Mapping]
+) -> Callable[[Callable[..., object]], Callable[..., object]]:
     """This function is meant to run performance test. It allows to start
     test cases multiple times and for many configs. It should be used as
     decorator to test function.
@@ -29,20 +36,20 @@ def performance(default_config, configs):
                     will be started
     """
 
-    def wrap(test_function):
+    def wrap(test_function: Callable[..., object]) -> Callable[..., object]:
 
         def wrapped_test_function(  # pylint: disable=unused-argument
-            self,
-            clients,
-            suite_report,
-            request,
-            hosts,
-            users,
-            env_desc,
-        ):
-            test_case_report = test_function.__name__
+            self: object,
+            clients: object,
+            suite_report: Report,
+            request: object,
+            hosts: object,
+            users: dict,
+            env_desc: EnvDesc,
+        ) -> None:
+            test_case_name = test_function.__name__
             test_case_report = TestCaseReport(
-                test_case_report, default_config["description"]
+                test_case_name, default_config["description"]
             )
             failed = False
             error_msg = ""
@@ -82,7 +89,9 @@ def performance(default_config, configs):
                         failed_repeats += 1
                         failed_details[str(repeats)] = str(e)
                     else:
-                        test_results = ensure_list(test_results)
+                        test_results = ensure_list(
+                            cast(Optional[Result | list[Result]], test_results)
+                        )
                         test_result_report.add_single_test_results(
                             test_results, repeats
                         )
@@ -127,17 +136,17 @@ def performance(default_config, configs):
 
 
 class Report:
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         self.name = name
-        self.report: dict[str, Any] = {name: {}}
+        self.report: dict = {name: {}}
 
-    def add_to_report(self, key, value):
+    def add_to_report(self, key: str, value: object) -> None:
         if isinstance(value, Report):
             self.add_nested_report(key, value)
         else:
             self.report[self.name][key] = value
 
-    def add_nested_report(self, key, value):
+    def add_nested_report(self, key: str, value: "Report") -> None:
         if value.name not in self.report[self.name][key].keys():
             self.report[self.name][key][value.name] = value.report[value.name]
         else:
@@ -147,7 +156,7 @@ class Report:
 
 
 class PerformanceReport(Report):
-    def __init__(self, name, repository, commit, branch):
+    def __init__(self, name: str, repository: str, commit: str, branch: str) -> None:
         Report.__init__(self, name)
         self.report[name] = {"envs": {}}
         self.add_to_report("repository", repository)
@@ -156,14 +165,16 @@ class PerformanceReport(Report):
 
 
 class EnvironmentReport(Report):
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         Report.__init__(self, name)
         self.add_to_report("name", name)
         self.add_to_report("suites", {})
 
 
 class SuiteReport(Report):
-    def __init__(self, name, description, copyright_, authors):
+    def __init__(
+        self, name: str, description: str, copyright_: str, authors: list[str]
+    ) -> None:
         Report.__init__(self, name)
         self.add_to_report("name", name)
         self.add_to_report("description", description)
@@ -175,9 +186,9 @@ class SuiteReport(Report):
 class TestCaseReport(Report):
     def __init__(
         self,
-        name,
-        description,
-    ):
+        name: str,
+        description: str,
+    ) -> None:
         Report.__init__(self, name)
         self.add_to_report("name", name)
         self.add_to_report("description", description)
@@ -185,7 +196,7 @@ class TestCaseReport(Report):
 
 
 class ConfigReport(Report):
-    def __init__(self, name, description, repeats):
+    def __init__(self, name: str, description: str, repeats: int) -> None:
         Report.__init__(self, name)
         self.add_to_report("name", name)
         self.add_to_report("description", description)
@@ -198,7 +209,9 @@ class ConfigReport(Report):
 
 
 class Result:
-    def __init__(self, name, value, description, unit=""):
+    def __init__(
+        self, name: str, value: int | float, description: str, unit: str = ""
+    ) -> None:
         self.name = name
         self.value = value
         self.description = description
@@ -207,13 +220,16 @@ class Result:
 
 class ResultReport:
 
-    def __init__(self):
-        self.details = {}
-        self.summary = {}
-        self.average = {}
+    def __init__(self) -> None:
+        self.details: dict | list[dict] = {}
+        self.summary: dict | list[dict] = {}
+        self.average: dict | list[dict] = {}
         self.num = 0
 
-    def prepare_report(self):
+    def prepare_report(self) -> None:
+        assert isinstance(self.details, dict)
+        assert isinstance(self.summary, dict)
+        assert isinstance(self.average, dict)
         for key in self.details:
             avg = float(self.summary[key]["value"]) / self.num
             self.average[key]["value"] = avg
@@ -221,7 +237,10 @@ class ResultReport:
         self.summary = dict_to_list(self.summary)
         self.average = dict_to_list(self.average)
 
-    def add_single_test_results(self, test_results, repeat):
+    def add_single_test_results(
+        self, test_results: Iterable[Result], repeat: int
+    ) -> None:
+        assert isinstance(self.details, dict)
         for test_result in test_results:
             if test_result.name not in self.details:
                 self.add_new(test_result, repeat)
@@ -229,7 +248,10 @@ class ResultReport:
                 self.add_existing(test_result, repeat)
         self.num += 1
 
-    def add_new(self, test_result, repeat):
+    def add_new(self, test_result: Result, repeat: int) -> None:
+        assert isinstance(self.details, dict)
+        assert isinstance(self.summary, dict)
+        assert isinstance(self.average, dict)
         name = test_result.name
         val = test_result.value
         new_result = {
@@ -243,14 +265,16 @@ class ResultReport:
         self.summary[name]["value"] = val
         self.average[name] = dict(new_result)
 
-    def add_existing(self, test_result, repeat):
+    def add_existing(self, test_result: Result, repeat: int) -> None:
+        assert isinstance(self.details, dict)
+        assert isinstance(self.summary, dict)
         name = test_result.name
         val = test_result.value
         self.details[name]["value"].update({str(repeat): val})
         self.summary[name]["value"] += val
 
 
-def update_dict(base, updating):
+def update_dict(base: Mapping, updating: Mapping) -> dict:
     new_dict = dict(base)
     for key in updating.keys():
         if (
@@ -265,7 +289,7 @@ def update_dict(base, updating):
     return new_dict
 
 
-def dict_to_list(dict_):
+def dict_to_list(dict_: Mapping[str, dict]) -> list[dict]:
     list_ = []
     for key in dict_.keys():
         new_elem = dict_[key]
@@ -274,7 +298,7 @@ def dict_to_list(dict_):
     return list_
 
 
-def ensure_list(elem):
+def ensure_list(elem: Optional[Result | list[Result]]) -> list[Result]:
     if not elem:
         return []
     if not isinstance(elem, list):
@@ -282,7 +306,9 @@ def ensure_list(elem):
     return elem
 
 
-def generate_configs(params, description_skeleton):
+def generate_configs(
+    params: Mapping[str, list[object]], description_skeleton: str
+) -> dict:
     """This function generates all combinations of given parameters. Format of
     returned value is appropriate for @performance decorator
     :param description_skeleton: skeleton of config description, it will be
@@ -291,7 +317,7 @@ def generate_configs(params, description_skeleton):
     {"param_name": [val1, val2, val3]}
     """
     keys = params.keys()
-    configs: dict[str, Any] = {}
+    configs: dict[str, dict] = {}
     combinations = itertools.product(*params.values())
 
     for i, combination in enumerate(combinations):
@@ -307,10 +333,12 @@ def generate_configs(params, description_skeleton):
     return configs
 
 
-def is_success_rate_satisfied(successful_repeats, failed_repeats, rate):
+def is_success_rate_satisfied(
+    successful_repeats: int, failed_repeats: int, rate: int | float
+) -> bool:
     return rate * (successful_repeats + failed_repeats) <= 100 * successful_repeats
 
 
-def flushed_print(msg):
+def flushed_print(msg: object) -> None:
     print(msg)
     sys.stdout.flush()

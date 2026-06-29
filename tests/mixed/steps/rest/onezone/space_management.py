@@ -6,6 +6,7 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Protocol, cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
 
@@ -15,11 +16,30 @@ from tests.mixed.steps.rest.onezone.common import (
     get_space_with_name,
     get_user_space_with_name,
 )
+from tests.mixed.type_definitions import (
+    Mailbox,
+)
+from tests.mixed.type_definitions import MutableSpaces as SpaceMap
+from tests.mixed.type_definitions import SpaceManagementTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
+from tests.type_definitions import Hosts
 from tests.utils.entities_setup.spaces import _create_space
+from tests.utils.user_utils import Users
 
 
-def create_spaces_in_oz_using_rest(user, users, hosts, zone_name, space_list, spaces):
+class CredentialsLike(Protocol):
+    username: str
+    password: str
+
+
+def create_spaces_in_oz_using_rest(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    zone_name: str,
+    space_list: list[str],
+    spaces: SpaceMap,
+) -> None:
     for space_name in space_list:
         space_id = _create_space(
             hosts[zone_name]["hostname"], user, users[user].password, space_name
@@ -27,7 +47,14 @@ def create_spaces_in_oz_using_rest(user, users, hosts, zone_name, space_list, sp
         spaces[space_name] = space_id
 
 
-def leave_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list, spaces):
+def leave_spaces_in_oz_using_rest(
+    user: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     user_api = UserApi(user_client)
 
@@ -36,8 +63,14 @@ def leave_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list, spa
 
 
 def rename_spaces_in_oz_using_rest(
-    user, users, zone_name, hosts, space_list, new_names_list, spaces
-):
+    user: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    new_names_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
 
     user_api = UserApi(user_client)
@@ -54,7 +87,14 @@ def rename_spaces_in_oz_using_rest(
         space_api.modify_space(space.space_id, space)
 
 
-def remove_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list, spaces):
+def remove_spaces_in_oz_using_rest(
+    user: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
@@ -67,15 +107,15 @@ def remove_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list, sp
 
 
 def remove_provider_support_for_space_in_oz_using_rest(
-    user,
-    users,
-    zone_name,
-    hosts,
-    provider_alias,
-    space_name,
-    spaces,
-    admin_credentials,
-):
+    user: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    provider_alias: str,
+    space_name: str,
+    spaces: SpaceMap,
+    admin_credentials: CredentialsLike,
+) -> None:
     admin_client = login_to_oz(
         admin_credentials.username,
         admin_credentials.password,
@@ -89,32 +129,50 @@ def remove_provider_support_for_space_in_oz_using_rest(
 
 
 def request_space_support_using_rest(
-    user, users, space_name, zone_alias, hosts, tmp_memory, receiver
-):
+    user: str,
+    users: Users,
+    space_name: str,
+    zone_alias: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    receiver: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_alias]["hostname"])
 
     space_api = SpaceApi(user_client)
     space = get_user_space_with_name(user_client, space_name)
     token = space_api.create_space_support_token(space.space_id).token
     if "mailbox" in tmp_memory[receiver]:
-        tmp_memory[receiver]["mailbox"]["token"] = token
+        cast(Mailbox, tmp_memory[receiver]["mailbox"])["token"] = token
     else:
         tmp_memory[receiver]["mailbox"] = {"token": token}
 
 
 def join_space_in_oz_using_rest(
-    user_list, users, zone_name, hosts, _space_name, tmp_memory
-):
+    user_list: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    _space_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     for user in parse_seq(user_list):
         user_client = login_to_oz(
             user, users[user].password, hosts[zone_name]["hostname"]
         )
         user_api = UserApi(user_client)
-        token = SpaceInviteToken(tmp_memory[user]["mailbox"]["token"])
+        mailbox = cast(Mailbox, tmp_memory[user]["mailbox"])
+        token = SpaceInviteToken(mailbox["token"])
         user_api.join_space(token)
 
 
-def assert_spaces_have_appeared_in_oz_rest(user, users, hosts, zone_name, space_list):
+def assert_spaces_have_appeared_in_oz_rest(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    zone_name: str,
+    space_list: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
 
     for space_name in parse_seq(space_list):
@@ -124,8 +182,13 @@ def assert_spaces_have_appeared_in_oz_rest(user, users, hosts, zone_name, space_
 
 
 def assert_there_are_no_spaces_in_oz_rest(
-    user, users, zone_name, hosts, space_list, spaces
-):
+    user: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     user_api = UserApi(user_client)
     user_spaces = user_api.list_user_spaces()
@@ -137,8 +200,14 @@ def assert_there_are_no_spaces_in_oz_rest(
 
 
 def assert_spaces_have_been_renamed_in_oz_rest(
-    user, users, zone_name, hosts, space_list, new_names_list, spaces
-):
+    user: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    new_names_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     user_api = UserApi(user_client)
 
@@ -152,15 +221,15 @@ def assert_spaces_have_been_renamed_in_oz_rest(
 
 
 def assert_there_is_no_provider_for_space_in_oz_rest(
-    user,
-    users,
-    zone_name,
-    hosts,
-    space_name,
-    spaces,
-    providers_alias_list,
-    admin_credentials,
-):
+    user: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: SpaceMap,
+    providers_alias_list: str,
+    admin_credentials: CredentialsLike,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
     space_providers = space_api.list_space_providers(spaces[space_name])
@@ -183,8 +252,13 @@ def assert_there_is_no_provider_for_space_in_oz_rest(
 
 
 def assert_space_is_supported_by_provider_in_oz_rest(
-    user, users, zone_host, hosts, space_name, provider_alias
-):
+    user: str,
+    users: Users,
+    zone_host: str,
+    hosts: Hosts,
+    space_name: str,
+    provider_alias: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_host]["hostname"])
     provider_name = hosts[provider_alias]["name"]
 
@@ -198,8 +272,13 @@ def assert_space_is_supported_by_provider_in_oz_rest(
 
 
 def assert_provider_does_not_support_space_in_oz_rest(
-    user, users, zone_host, hosts, space_name, provider_alias
-):
+    user: str,
+    users: Users,
+    zone_host: str,
+    hosts: Hosts,
+    space_name: str,
+    provider_alias: str,
+) -> None:
     user_client_oz = login_to_oz(
         user, users[user].password, hosts[zone_host]["hostname"]
     )
@@ -212,14 +291,14 @@ def assert_provider_does_not_support_space_in_oz_rest(
 
 
 def copy_id_of_space_rest(
-    user,
-    users,
-    hosts,
-    space_name,
-    tmp_memory,
-    onepanel_credentials,
-    admin_credentials,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    onepanel_credentials: CredentialsLike,
+    admin_credentials: CredentialsLike,
+) -> None:
     if user == onepanel_credentials.username:
         user = admin_credentials.username
     user_client = login_to_oz(user, users[user].password, hosts["onezone"]["hostname"])

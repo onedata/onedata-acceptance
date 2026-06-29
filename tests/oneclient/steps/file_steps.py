@@ -7,13 +7,18 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import pytest
+
 from tests.utils.bdd_utils import parsers, then, when, wt
+from tests.utils.user_utils import Users
 
 from . import multi_file_steps
 
 
 @wt(parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*)"))
-def create_reg_file(user, files, users, request):
+def create_reg_file(
+    user: str, files: str, users: Users, request: pytest.FixtureRequest
+) -> None:
     multi_file_steps.create_reg_file(user, files, "client1", users, request)
 
 
@@ -23,19 +28,26 @@ def create_reg_file(user, files, users, request):
         r"with names in range \[(?P<lower>.*), (?P<upper>.*)\)"
     )
 )
-def create_many(user, lower: int, upper: int, parent_dir, users, request):
+def create_many(
+    user: str,
+    lower: str,
+    upper: str,
+    parent_dir: str,
+    users: Users,
+    request: pytest.FixtureRequest,
+) -> None:
     multi_file_steps.create_many(
         user, lower, upper, parent_dir, "client1", users, request
     )
 
 
 @wt(parsers.re(r"(?P<user>\w+) can stat (?P<files>.*) in (?P<path>.*)"))
-def stat_present(user, path, files, users):
+def stat_present(user: str, path: str, files: str, users: Users) -> None:
     multi_file_steps.stat_present(user, path, files, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) sees (?P<files>.*) in (?P<path>.*)"))
-def ls_present(user, files, path, users):
+def ls_present(user: str, files: str, path: str, users: Users) -> None:
     multi_file_steps.ls_present(user, files, path, "client1", users)
 
 
@@ -45,27 +57,29 @@ def ls_present(user, files, path, users):
         r"names in range \[(?P<lower>.*), (?P<upper>.*)\)"
     )
 )
-def ls_children(user, parent_dir, lower: int, upper: int, users):
+def ls_children(
+    user: str, parent_dir: str, lower: str, upper: str, users: Users
+) -> None:
     multi_file_steps.ls_children(user, parent_dir, lower, upper, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) renames (?P<file1>.*) to (?P<file2>.*)"))
-def rename(user, file1, file2, users):
+def rename(user: str, file1: str, file2: str, users: Users) -> None:
     multi_file_steps.rename(user, file1, file2, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) fails to rename (?P<file1>.*) to (?P<file2>.*)"))
-def rename_fail(user, file1, file2, users):
+def rename_fail(user: str, file1: str, file2: str, users: Users) -> None:
     multi_file_steps.rename_fail(user, file1, file2, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) can't stat (?P<files>.*) in (?P<path>.*)"))
-def stat_absent(user, path, files, users):
+def stat_absent(user: str, path: str, files: str, users: Users) -> None:
     multi_file_steps.stat_absent(user, path, files, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) doesn't see (?P<files>.*) in (?P<path>.*)"))
-def ls_absent(user, files, path, users):
+def ls_absent(user: str, files: str, path: str, users: Users) -> None:
     multi_file_steps.ls_absent(user, files, path, "client1", users)
 
 
@@ -75,27 +89,33 @@ def ls_absent(user, files, path, users):
         " using shell command"
     )
 )
-def shell_move_fail(user, file1, file2, users):
+def shell_move_fail(user: str, file1: str, file2: str, users: Users) -> None:
     multi_file_steps.shell_move_fail(user, file1, file2, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) deletes files (?P<files>.*)"))
-def delete_file(user, files, users):
+def delete_file(user: str, files: str, users: Users) -> None:
     multi_file_steps.delete_file(user, files, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) fails to delete files (?P<files>.*)"))
-def delete_file_fail(user, files, users):
+def delete_file_fail(user: str, files: str, users: Users) -> None:
     multi_file_steps.delete_file_fail(user, files, "client1", users)
 
 
 @wt(parsers.re(r"size of (?P<user>\w+)'s (?P<file>.*) is (?P<size>.*) bytes"))
-def check_size(user, file, size, users):
+def check_size(user: str, file: str, size: str, users: Users) -> None:
     multi_file_steps.check_size(user, file, size, "client1", users)
 
 
 @then(parsers.re(r"file type of (?P<user>\w+)'s (?P<file>.*) is (?P<file_type>.*)"))
-def check_type(user, file, file_type, users, request):
+def check_type(
+    user: str,
+    file: str,
+    file_type: str,
+    users: Users,
+    request: pytest.FixtureRequest,
+) -> None:
     multi_file_steps.check_type(user, file, file_type, "client1", users, request)
 
 
@@ -105,22 +125,28 @@ def check_type(user, file, file_type, users, request):
         "(?P<file>.*) is (?P<file_type>.*)"
     )
 )
-def shell_check_type(user, file, file_type, users, request):
+def shell_check_type(
+    user: str,
+    file: str,
+    file_type: str,
+    users: Users,
+    request: pytest.FixtureRequest,
+) -> None:
     multi_file_steps.shell_check_type(user, file, file_type, "client1", users, request)
 
 
 @then(parsers.re(r"mode of (?P<user>\w+)'s (?P<file>.*) is (?P<mode>.*)"))
-def check_mode(user, file, mode, users):
+def check_mode(user: str, file: str, mode: str, users: Users) -> None:
     multi_file_steps.check_mode(user, file, mode, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) changes (?P<file>.*) mode to (?P<mode>.*)"))
-def change_mode(user, file, mode, users):
+def change_mode(user: str, file: str, mode: str, users: Users) -> None:
     multi_file_steps.change_mode(user, file, mode, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) fails to change (?P<file>.*) mode to (?P<mode>.*)"))
-def change_mode_fail(user, file, mode, users):
+def change_mode_fail(user: str, file: str, mode: str, users: Users) -> None:
     multi_file_steps.change_mode_fail(user, file, mode, "client1", users)
 
 
@@ -136,15 +162,22 @@ def change_mode_fail(user, file, mode, users):
         " is (?P<comparator>.*) to (?P<time2>.*) time"
     )
 )
-def check_time(user, time1, time2, comparator, file, users):
+def check_time(
+    user: str,
+    time1: str,
+    time2: str,
+    comparator: str,
+    file: str,
+    users: Users,
+) -> None:
     multi_file_steps.check_time(user, time1, time2, comparator, file, "client1", users)
 
 
 @when(parsers.re(r"(?P<user>\w+) updates (?P<files>.*) timestamps"))
-def touch_file(user, files, users):
+def touch_file(user: str, files: str, users: Users) -> None:
     multi_file_steps.touch_file(user, files, "client1", users)
 
 
 @when(parsers.re(r"(?P<user>\w+) fails to update (?P<files>.*) timestamps"))
-def touch_file_fail(user, files, users):
+def touch_file_fail(user: str, files: str, users: Users) -> None:
     multi_file_steps.touch_file_fail(user, files, "client1", users)

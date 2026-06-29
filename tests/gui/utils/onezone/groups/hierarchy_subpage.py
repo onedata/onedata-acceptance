@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -28,11 +29,11 @@ class Group(PageObject):
     child_relation_menu_button = WebElement(".line-to-child .actions-trigger")
     parent_relation_menu_button = WebElement(".line-to-parent .actions-trigger")
 
-    def click_group_menu_button(self, driver):
+    def click_group_menu_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.group).perform()
         self.group_menu_button.click()
 
-    def click_relation_menu_button(self, driver, relation):
+    def click_relation_menu_button(self, driver: WebDriver, relation: str) -> None:
         line_to = f"line_to_{relation}"
         relation = f"{relation}_relation_menu_button"
 

@@ -4,13 +4,23 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Mapping
+from typing import cast
+
 import yaml
 from onezone_client.rest import ApiException
 
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.onezone_client import SpaceApi
 from tests.mixed.steps.rest.onezone.common import get_group
+from tests.mixed.type_definitions import (
+    IdMap,
+    PrivilegeGroupConfig,
+)
+from tests.mixed.type_definitions import RestOnezoneTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
+from tests.type_definitions import Hosts
+from tests.utils.user_utils import Users
 
 PRIVILEGES_TRANSLATION = {
     "View space": "space_view",
@@ -105,10 +115,14 @@ DEFAULT_GRANT = [
 ]
 
 
-def translate_privileges(privileges, grant, revoke):
+def translate_privileges(
+    privileges: Mapping[str, PrivilegeGroupConfig],
+    grant: list[str],
+    revoke: list[str],
+) -> None:
     for privileges_group, privileges_group_items in privileges.items():
         if privileges_group_items["granted"] == "Partially":
-            items = privileges_group_items["privilege subtypes"].items()
+            items = privileges_group_items.get("privilege subtypes", {}).items()
             for privilege, granted in items:
                 if granted:
                     grant.append(privilege)
@@ -130,13 +144,22 @@ def translate_privileges(privileges, grant, revoke):
 
 
 def fail_to_set_privileges_using_rest(
-    user, users, hosts, host, spaces, space_name, member_name, config
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+    member_name: str,
+    config: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     grant: list[str] = []
     revoke: list[str] = []
-    privileges = yaml.load(config, yaml.Loader)
+    privileges = cast(
+        Mapping[str, PrivilegeGroupConfig], yaml.load(config, yaml.Loader)
+    )
     translate_privileges(privileges, grant, revoke)
     data = {"grant": grant, "revoke": revoke}
     try:
@@ -154,8 +177,15 @@ def fail_to_set_privileges_using_rest(
 
 
 def assert_privileges_in_space_using_rest(
-    user, users, hosts, host, spaces, space_name, member_name, config
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+    member_name: str,
+    config: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
 
@@ -164,7 +194,9 @@ def assert_privileges_in_space_using_rest(
     ).privileges
     grant: list[str] = []
     revoke: list[str] = []
-    privileges = yaml.load(config, yaml.Loader)
+    privileges = cast(
+        Mapping[str, PrivilegeGroupConfig], yaml.load(config, yaml.Loader)
+    )
     translate_privileges(privileges, grant, revoke)
     grant.sort()
     user_privileges.sort()
@@ -174,8 +206,14 @@ def assert_privileges_in_space_using_rest(
 
 
 def fail_to_create_invitation_in_space_using_rest(
-    user, users, hosts, host, spaces, space_name, member_name
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+    member_name: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     try:
@@ -190,8 +228,14 @@ def fail_to_create_invitation_in_space_using_rest(
 
 
 def assert_group_in_space_using_rest(
-    user, users, hosts, host, group_name, spaces, space_name
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    group_name: str,
+    spaces: IdMap,
+    space_name: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     group = get_group(group_name, user_client_oz).group_id
@@ -201,8 +245,14 @@ def assert_group_in_space_using_rest(
 
 
 def add_users_to_space_in_oz_using_rest(
-    user_list, users, zone_name, hosts, space_name, spaces, user
-):
+    user_list: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: IdMap,
+    user: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
@@ -211,8 +261,14 @@ def add_users_to_space_in_oz_using_rest(
 
 
 def add_group_to_space_using_rest(
-    user, users, hosts, host, group_name, spaces, space_name
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    group_name: str,
+    spaces: IdMap,
+    space_name: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     group = get_group(group_name, user_client_oz)
@@ -220,8 +276,14 @@ def add_group_to_space_using_rest(
 
 
 def delete_users_from_space_in_oz_using_rest(
-    user_list, users, zone_name, hosts, space_name, spaces, user
-):
+    user_list: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: IdMap,
+    user: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
@@ -230,8 +292,15 @@ def delete_users_from_space_in_oz_using_rest(
 
 
 def invite_other_users_to_space_using_rest(
-    user, users, zone_name, hosts, space_name, spaces, tmp_memory, receiver
-):
+    user: str,
+    users: Users,
+    zone_name: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: IdMap,
+    tmp_memory: TmpMemory,
+    receiver: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
     token = space_api.create_space_user_invite_token(spaces[space_name])
@@ -239,8 +308,14 @@ def invite_other_users_to_space_using_rest(
 
 
 def assert_user_is_member_of_space_rest(
-    space_name, spaces, user, users, user_list, zone_name, hosts
-):
+    space_name: str,
+    spaces: IdMap,
+    user: str,
+    users: Users,
+    user_list: str,
+    zone_name: str,
+    hosts: Hosts,
+) -> None:
     space_users = get_users_id_list(user, users, hosts, zone_name, spaces, space_name)
 
     for username in parse_seq(user_list):
@@ -250,15 +325,28 @@ def assert_user_is_member_of_space_rest(
 
 
 def assert_not_user_in_space_using_rest(
-    user, users, hosts, host, spaces, space_name, member_name
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+    member_name: str,
+) -> None:
     users_id_list = get_users_id_list(user, users, hosts, host, spaces, space_name)
     assert (
         users[member_name].user_id not in users_id_list
     ), f"user {member_name} is in space {space_name}"
 
 
-def get_users_id_list(user, users, hosts, host, spaces, space_name):
+def get_users_id_list(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+) -> list[str]:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     return space_api.list_space_users(spaces[space_name]).users

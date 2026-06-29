@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 
+from _pytest._py.path import LocalPath
+
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
@@ -29,14 +31,16 @@ from tests.gui.steps.oneprovider.dataset import (
     fail_to_click_button_in_modal,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OPLoggedIn
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 DATA_PROTECTION = "data_protection"
 METADATA_PROTECTION = "metadata_protection"
 
 
-def get_flags(option):
+def get_flags(option: str) -> list[str]:
     flags = []
     if re.search("(?!meta)data", option):
         flags.append(DATA_PROTECTION)
@@ -46,14 +50,14 @@ def get_flags(option):
 
 
 def get_item_name_from_path(
-    selenium,
-    browser_id,
-    space_name,
-    tmp_memory,
-    path,
-    option_in_space,
-    item_browser,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    path: str,
+    option_in_space: str,
+    item_browser: str,
+) -> str:
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space_name, option_in_space
     )
@@ -69,13 +73,13 @@ def get_item_name_from_path(
     )
 )
 def create_dataset(
-    browser_id,
-    tmp_memory,
-    item_name,
-    space_name,
-    selenium,
-    option,
-):
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    space_name: str,
+    selenium: SeleniumDrivers,
+    option: str,
+) -> None:
     option_in_space = "Files"
     option_in_data_row_menu = "Datasets"
     create_button = "Establish dataset"
@@ -116,12 +120,12 @@ def create_dataset(
 
 
 def fail_to_create_dataset_in_op_gui(
-    browser_id,
-    tmp_memory,
-    item_name,
-    space_name,
-    selenium,
-):
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    space_name: str,
+    selenium: SeleniumDrivers,
+) -> None:
     option_in_space = "Files"
     option_in_data_row_menu = "Datasets"
     create_button = "Establish dataset"
@@ -142,13 +146,13 @@ def fail_to_create_dataset_in_op_gui(
 
 
 def assert_top_level_dataset_in_space_in_op_gui(
-    selenium,
-    browser_id,
-    space_name,
-    tmp_memory,
-    item_name,
-    option,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    option: str,
+) -> None:
     option_in_space = "Datasets, Archives"
     item_browser = "dataset browser"
     go_to_and_assert_browser(
@@ -178,12 +182,12 @@ def assert_top_level_dataset_in_space_in_op_gui(
 
 
 def remove_dataset_in_op_gui(
-    selenium,
-    browser_id,
-    space_name,
-    tmp_memory,
-    item_name,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+) -> None:
     option_in_space = "Datasets, Archives"
     item_browser = "dataset browser"
     option_in_data_row_menu = "Remove"
@@ -209,13 +213,13 @@ def remove_dataset_in_op_gui(
 
 
 def check_dataset_structure_in_op_gui(
-    selenium,
-    browser_id,
-    space_name,
-    config,
-    tmpdir,
-    tmp_memory,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    config: str,
+    tmpdir: LocalPath,
+    tmp_memory: TmpMemory,
+) -> None:
     # function checks only if what is in config exists, does not
     # fail if there are more datasets
     option_in_space = "Datasets, Archives"
@@ -239,13 +243,13 @@ def check_dataset_structure_in_op_gui(
 
 
 def check_effective_protection_flags_for_file_in_op_gui(
-    selenium,
-    browser_id,
-    space_name,
-    tmp_memory,
-    item_name,
-    option,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    option: str,
+) -> None:
     option_in_space = "Files"
     option_in_data_row_menu = "Datasets"
     go_to_and_assert_browser(
@@ -268,7 +272,13 @@ def check_effective_protection_flags_for_file_in_op_gui(
         )
 
 
-def check_effective_protection_flag(browser_id, selenium, kind, item_name, tmp_memory):
+def check_effective_protection_flag(
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    kind: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     try:
         assert_general_toggle_checked_for_ancestors(browser_id, selenium, kind)
     except AssertionError:
@@ -279,13 +289,13 @@ def check_effective_protection_flag(browser_id, selenium, kind, item_name, tmp_m
 
 
 def set_protection_flags_for_dataset_in_op_gui(
-    browser_id,
-    selenium,
-    space_name,
-    tmp_memory,
-    item_name,
-    option,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    option: str,
+) -> None:
     option_in_space = "Datasets, Archives"
     item_browser = "dataset browser"
     option_in_data_row_menu = "Write protection"
@@ -323,12 +333,12 @@ def set_protection_flags_for_dataset_in_op_gui(
 
 
 def detach_dataset_in_op_gui(
-    selenium,
-    browser_id,
-    space_name,
-    tmp_memory,
-    item_name,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+) -> None:
     option_in_space = "Datasets, Archives"
     item_browser = "dataset browser"
     option_in_data_row_menu = "Detach"
@@ -355,12 +365,12 @@ def detach_dataset_in_op_gui(
 
 
 def assert_dataset_detached_in_op_gui(
-    selenium,
-    browser_id,
-    item_name,
-    space_name,
-    tmp_memory,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     option_in_space = "Datasets, Archives"
     which = "dataset"
     state = "detached"
@@ -386,12 +396,12 @@ def assert_dataset_detached_in_op_gui(
 
 
 def reattach_dataset_in_op_gui(
-    selenium,
-    browser_id,
-    space_name,
-    tmp_memory,
-    item_name,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+) -> None:
     option_in_space = "Datasets, Archives"
     item_browser = "dataset browser"
     which = "dataset"

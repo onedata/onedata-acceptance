@@ -6,9 +6,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+from typing import Protocol, cast
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
@@ -35,6 +38,10 @@ DEFAULT_IMPORT_STRATEGY_CONFIG = {
 }
 
 
+class Checkable(Protocol):
+    def is_checked(self) -> bool: ...
+
+
 class StorageImportConfiguration(PageObject):
     modes = WebItemsSequence(
         ".field-mode-mode label.clickable", cls=ButtonWithTextPageObject
@@ -46,9 +53,9 @@ class StorageImportConfiguration(PageObject):
     continuous_scan = Toggle(".toggle-field-generic-continuousScan")
     scan_interval = Input(".field-continuous-scanInterval")
 
-    def is_toggle_checked(self, toggle):
-        toggle = getattr(self, toggle)
-        return toggle.is_checked()
+    def is_toggle_checked(self, toggle: str) -> bool:
+        checkable = cast(Checkable, getattr(self, toggle))
+        return checkable.is_checked()
 
 
 class SpaceSupportForm(PageObject):
@@ -75,13 +82,13 @@ class SpaceInfo(PageObject):
     size = Input(".size-number-input")
 
     @property
-    def import_strategy(self):
+    def import_strategy(self) -> dict[str, str]:
         values = DEFAULT_IMPORT_STRATEGY_CONFIG.copy()
         values.update(self._get_labels(self._storage_import))
         return values
 
     @staticmethod
-    def _get_labels(elem):
+    def _get_labels(elem: SeleniumWebElement) -> dict[str, str]:
         items = elem.find_elements(By.CSS_SELECTOR, "strong, .one-label")
         items.pop(0)  # pop redundant "Storage import:" label
         return {
@@ -116,23 +123,23 @@ class SyncChart(PageObject):
         ".storage-import-chart-operations g.ct-series-2 line"
     )
 
-    def start_scan_is_green(self):
+    def start_scan_is_green(self) -> bool:
         return "btn-success" in self.start_scan.web_elem.get_attribute("class")
 
     @property
-    def inserted(self):
+    def inserted(self) -> int:
         return self._get_chart_bar_values(self._inserted)
 
     @property
-    def updated(self):
+    def updated(self) -> int:
         return self._get_chart_bar_values(self._updated)
 
     @property
-    def deleted(self):
+    def deleted(self) -> int:
         return self._get_chart_bar_values(self._deleted)
 
     @staticmethod
-    def _get_chart_bar_values(bars):
+    def _get_chart_bar_values(bars: list[SeleniumWebElement]) -> int:
         return sum(int(data.get_attribute("ct:value")) for data in bars)
 
 
@@ -188,11 +195,11 @@ class AutoCleaning(PageObject):
 
     cleaning_reports = WebItemsSequence("tbody tr.data-item-base", cls=CleaningReport)
 
-    def click_rename_soft_quota_button(self, driver):
+    def click_rename_soft_quota_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self._soft_quota).perform()
         self.soft_quota.edit_button()
 
-    def click_rename_hard_quota_button(self, driver):
+    def click_rename_hard_quota_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self._hard_quota).perform()
         self.hard_quota.edit_button()
 
@@ -210,12 +217,12 @@ class SpaceRecord(PageObject, ExpandableMixin):
 
     _toggle = WebElement(".one-collapsible-list-item-header")
 
-    def is_expanded(self):
+    def is_expanded(self) -> bool:
         return bool(
             re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
         )
 
-    def expand_menu(self):
+    def expand_menu(self) -> None:
         self.toolbar.click()
 
 

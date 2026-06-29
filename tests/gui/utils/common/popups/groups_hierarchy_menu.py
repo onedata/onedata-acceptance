@@ -17,5 +17,5 @@ class GroupHierarchyMenu(PageObject):
     add_child = Button(".groups-hierarchy-visualiser-actions .add-child-group-action")
     options = WebItemsSequence(".groups-hierarchy-visualiser-actions li", cls=Options)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Group hierarchy menu"

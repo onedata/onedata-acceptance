@@ -67,5 +67,5 @@ class StoreDetails(Modal):
     single_file_container = WebItem(".content-container", cls=SingleFileContainer)
     close_details = Button(".close-details")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Store details modal"

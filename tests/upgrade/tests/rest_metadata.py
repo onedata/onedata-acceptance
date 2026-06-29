@@ -7,8 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 from functools import partial
-from typing import Any
 
+from tests.type_definitions import JsonObject
 from tests.upgrade.utils.rest_utils import (
     delete_file_extended_attributes,
     delete_file_json_metadata,
@@ -21,12 +21,17 @@ from tests.upgrade.utils.rest_utils import (
     set_file_json_metadata,
     set_file_rdf_metadata,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest, is_version_lower_than
+from tests.upgrade.utils.upgrade_utils import (
+    OneClientLike,
+    UpgradeTest,
+    UpgradeTestsControllerLike,
+    is_version_lower_than,
+)
 
 SPACE_NAME = "space_posix"
 FILE_NAME = "file_meta"
 
-JSON_META = {"hello": {"world": ["hello", "world"]}}
+JSON_META: JsonObject = {"hello": {"world": ["hello", "world"]}}
 
 RDF_META = (
     '<?xml version="1.0"?>\n\n'
@@ -36,14 +41,14 @@ RDF_META = (
     " <si:author>Jan Egil Refsnes</si:author>\n</rdf:Description>\n\n</rdf:RDF>"
 )
 
-XATTRS_META: list[dict[str, Any]] = [
+XATTRS_META: list[JsonObject] = [
     {"licence1": "MIT1"},
     {"licence2": 2},
     {"licence3": "MIT3"},
 ]
 
 
-def get_tests(tests_controller):
+def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]:
     return [
         UpgradeTest(
             "rest metadata test",
@@ -53,7 +58,7 @@ def get_tests(tests_controller):
     ]
 
 
-def setup_metadata(tests_controller):
+def setup_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
@@ -65,7 +70,7 @@ def setup_metadata(tests_controller):
     add_example_metadata_to_files_in_space(provider_host, token)
 
 
-def verify_metadata(tests_controller):
+def verify_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -81,7 +86,7 @@ def verify_metadata(tests_controller):
     res = get_file_extended_attributes(provider_host, token, file_id)
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
 
-    expected_xattrs_meta: list[dict[str, Any]] = XATTRS_META.copy()
+    expected_xattrs_meta: list[JsonObject] = XATTRS_META.copy()
     if not is_version_lower_than(tests_controller.initial_prov_version, "26.0"):
         expected_xattrs_meta[1] = {"license2": "2"}
 
@@ -119,7 +124,7 @@ def verify_metadata(tests_controller):
 
     delete_file_extended_attributes(provider_host, token, file_id, keys=["licence1"])
 
-    new_xattr = {"licence4": "MIT4"}
+    new_xattr: JsonObject = {"licence4": "MIT4"}
 
     set_file_extended_attribute(provider_host, token, file_id, new_xattr)
     res = get_file_extended_attributes(provider_host, token, file_id)
@@ -133,13 +138,13 @@ def verify_metadata(tests_controller):
     )
 
 
-def create_example_content_in_space(client):
+def create_example_content_in_space(client: OneClientLike) -> None:
     space_path = client.absolute_path(SPACE_NAME)
     file_path = os.path.join(space_path, FILE_NAME)
     client.create_file(file_path)
 
 
-def add_example_metadata_to_files_in_space(provider_host, token):
+def add_example_metadata_to_files_in_space(provider_host: str, token: str) -> None:
     file_id = lookup_file_id(f"{SPACE_NAME}/{FILE_NAME}", provider_host, token)
     set_file_json_metadata(provider_host, token, file_id, JSON_META)
     set_file_rdf_metadata(provider_host, token, file_id, RDF_META)

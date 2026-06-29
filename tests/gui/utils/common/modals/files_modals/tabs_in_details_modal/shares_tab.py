@@ -4,6 +4,7 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -25,5 +26,5 @@ class SharesTab(Modal):
     share_options = WebItemsSequence(".file-share-item", cls=SharesOptions)
     create_another_share = NamedButton("button", text="Create another share")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Shares tab"
