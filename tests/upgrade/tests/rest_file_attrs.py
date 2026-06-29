@@ -7,14 +7,22 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 from functools import partial
+from typing import TypedDict
 
 from tests.gui.utils.generic import FileAttr
+from tests.type_definitions import JsonObject
 from tests.upgrade.utils.rest_utils import (
     get_directory_size_statistics,
     get_file_attributes,
+    json_str,
     lookup_file_id,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest, is_version_lower_than
+from tests.upgrade.utils.upgrade_utils import (
+    OneClientLike,
+    UpgradeTest,
+    UpgradeTestsControllerLike,
+    is_version_lower_than,
+)
 from tests.utils.utils import repeat_failed
 
 TIMEOUT_FOR_UPDATING_FILE_ATTRS = 15
@@ -23,13 +31,13 @@ SPACE_NAME = "space_posix"
 
 TEXT = "example"
 
-ALL_ATTRS = [
+ALL_ATTRS: list[str] = [
     attr.value
     for attr in FileAttr
     if attr.value not in ("hasJsonMetadata", "jsonMetadata")
 ]  # excluded hasJsonMetadata, jsonMetadata as they are available since 25.0
 
-ATTRS_MAP = {
+ATTRS_MAP: dict[str, str] = {
     "file_id": "fileId",
     "mode": "posixPermissions",
     "parent_id": "parentFileId",
@@ -43,7 +51,14 @@ ATTRS_MAP = {
 }
 
 
-RESULTS = {}
+class AttrResults(TypedDict, total=False):
+    regular_file_attrs_setup: JsonObject
+    file_attrs_hardlink_setup: JsonObject
+    file_attrs_symlink_setup: JsonObject
+    dir_stats_setup: JsonObject
+
+
+RESULTS: AttrResults = {}
 
 REG_NAME = "file_attrs"
 HARDLINK_NAME = "file_attrs_hardlink"
@@ -51,7 +66,7 @@ SYMLINK_NAME = "file_attrs_symlink"
 DIR_NAME = "dir_stats"
 
 
-def get_tests(tests_controller):
+def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]:
     return [
         UpgradeTest(
             "rest file attrs test",
@@ -61,7 +76,7 @@ def get_tests(tests_controller):
     ]
 
 
-def setup_metadata(tests_controller):
+def setup_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
@@ -99,7 +114,7 @@ def setup_metadata(tests_controller):
         )
 
 
-def verify_metadata(tests_controller):
+def verify_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -133,7 +148,9 @@ def verify_metadata(tests_controller):
         )
 
 
-def create_example_content_in_space(client, tests_controller):
+def create_example_content_in_space(
+    client: OneClientLike, tests_controller: UpgradeTestsControllerLike
+) -> None:
     space_path = client.absolute_path(SPACE_NAME)
     file_path = os.path.join(space_path, REG_NAME)
     client.create_file(file_path)
@@ -148,7 +165,11 @@ def create_example_content_in_space(client, tests_controller):
     client.mkdir(dir_path)
 
 
-def compare_attrs(old_attrs, new_attrs, tests_controller):
+def compare_attrs(
+    old_attrs: JsonObject,
+    new_attrs: JsonObject,
+    tests_controller: UpgradeTestsControllerLike,
+) -> None:
     for attr in old_attrs:
         err_msg = (
             f"Attr: {attr} is different after upgrade. Attrs before"
@@ -166,14 +187,16 @@ def compare_attrs(old_attrs, new_attrs, tests_controller):
 
 
 @repeat_failed(timeout=TIMEOUT_FOR_UPDATING_FILE_ATTRS)
-def _wait_for_file_size_attr(provider_host, token, file_id, ex_size):
+def _wait_for_file_size_attr(
+    provider_host: str, token: str, file_id: str, ex_size: int
+) -> None:
     res = get_file_attributes(provider_host, token, file_id, ["size"])
     assert res["size"] == ex_size
 
 
-def format_attr_val(attr, old_attrs):
+def format_attr_val(attr: str, old_attrs: JsonObject) -> object:
     if attr == "type":
-        return old_attrs[attr].upper()
+        return json_str(old_attrs[attr]).upper()
     if attr == "mode":
-        return old_attrs[attr][1:]
+        return json_str(old_attrs[attr])[1:]
     return old_attrs[attr]

@@ -28,7 +28,7 @@ class Sidebar(PageObject):
     title = Label(".col-title")
     clusters = WebItem(".one-sidebar", cls=ClustersSidebar)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.title} sidebar in {self.parent}"
 
 
@@ -56,7 +56,7 @@ class Onepanel(OnePage):
     discard_button = Button(".modal-content .btn-toolbar button")
 
     @property
-    def sidebar(self):
+    def sidebar(self) -> Sidebar:
         sidebar = self._sub_sidebar
         if "ps-active-x" not in sidebar.get_attribute("class"):
             sidebar = self._main_sidebar

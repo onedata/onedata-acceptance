@@ -5,16 +5,21 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
+from collections.abc import Callable, Sequence
 from functools import partial
 
 import yaml
 
+from tests.type_definitions import JsonObject
 from tests.upgrade.utils.rest_utils import (
     DEFAULT_REST_QUERY_TIMEOUT,
+    JsonList,
+    JsonPayload,
     configure_file_popularity_mechanism_in_the_space,
     create_view,
     get_provider_configuration,
     get_space_id,
+    json_str,
     lookup_file_id,
     query_view,
     set_file_extended_attribute,
@@ -23,30 +28,14 @@ from tests.upgrade.utils.rest_utils import (
     subscribe_to_file_changes,
     update_view_reduce_function,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest, get_prov_version
+from tests.upgrade.utils.upgrade_utils import (
+    OneClientLike,
+    UpgradeTest,
+    UpgradeTestsControllerLike,
+    get_prov_version,
+)
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.utils import repeat_failed
-
-
-def get_tests(tests_controller):
-    return [
-        UpgradeTest(
-            "rest views test",
-            partial(setup_views, tests_controller),
-            partial(verify_views, tests_controller),
-        ),
-        UpgradeTest(
-            "rest views multiprovider test",
-            partial(setup_views_multiprovider, tests_controller),
-            partial(verify_views_multiprovider, tests_controller),
-        ),
-        UpgradeTest(
-            "rest subscribe changes test",
-            partial(setup_subscribe_changes, tests_controller),
-            partial(verify_subscribe_changes, tests_controller),
-        ),
-    ]
-
 
 MAP_FUNC_ALL_FILES = """
     function(id, type, meta, ctx) {
@@ -122,11 +111,32 @@ SPECIAL_DIRS_COUNT_21_02_1 = 3  # also space archive root dir
 SPECIAL_DIRS_COUNT_21_02_8 = 5  #
 
 SPACE_NAME = "space_views"
-RESULTS = {}
+RESULTS: dict[str, JsonList | str] = {}
 
 
 # pylint: disable=too-many-statements
-def setup_views(tests_controller):
+def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]:
+    return [
+        UpgradeTest(
+            "rest views test",
+            partial(setup_views, tests_controller),
+            partial(verify_views, tests_controller),
+        ),
+        UpgradeTest(
+            "rest views multiprovider test",
+            partial(setup_views_multiprovider, tests_controller),
+            partial(verify_views_multiprovider, tests_controller),
+        ),
+        UpgradeTest(
+            "rest subscribe changes test",
+            partial(setup_subscribe_changes, tests_controller),
+            partial(verify_subscribe_changes, tests_controller),
+        ),
+    ]
+
+
+# pylint: disable=too-many-statements
+def setup_views(tests_controller: UpgradeTestsControllerLike) -> None:
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
@@ -214,7 +224,7 @@ def setup_views(tests_controller):
     )
 
 
-def verify_views(tests_controller):
+def verify_views(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
@@ -249,15 +259,15 @@ def verify_views(tests_controller):
     )
 
 
-def setup_views_multiprovider(tests_controller):
+def setup_views_multiprovider(tests_controller: UpgradeTestsControllerLike) -> None:
     multi_provider_suite = "oneprovider-2" in tests_controller.hosts
     if not multi_provider_suite:
         return
 
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     provider_host2 = tests_controller.hosts["oneprovider-2"]["hostname"]
-    prov1_id = get_provider_configuration(provider_host)["providerId"]
-    prov2_id = get_provider_configuration(provider_host2)["providerId"]
+    prov1_id = json_str(get_provider_configuration(provider_host)["providerId"])
+    prov2_id = json_str(get_provider_configuration(provider_host2)["providerId"])
 
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
@@ -294,7 +304,7 @@ def setup_views_multiprovider(tests_controller):
         RESULTS[VIEW_SINGLEPROVIDER] = e.response.json()["error"]["id"]
 
 
-def verify_views_multiprovider(tests_controller):
+def verify_views_multiprovider(tests_controller: UpgradeTestsControllerLike) -> None:
     multi_provider_suite = "oneprovider-2" in tests_controller.hosts
     if not multi_provider_suite:
         return
@@ -317,12 +327,12 @@ def verify_views_multiprovider(tests_controller):
         )
 
 
-def setup_subscribe_changes(tests_controller):
+def setup_subscribe_changes(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
 
-    data = {
+    data: JsonPayload = {
         "triggers": ["customMetadata"],
         "customMetadata": {"always": True, "fields": ["string"], "exists": ["string"]},
     }
@@ -338,11 +348,11 @@ def setup_subscribe_changes(tests_controller):
     RESULTS["file_changes"] = record
 
 
-def verify_subscribe_changes(tests_controller):
+def verify_subscribe_changes(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
-    data = {
+    data: JsonPayload = {
         "triggers": ["customMetadata"],
         "customMetadata": {"always": True, "fields": ["string"], "exists": ["string"]},
     }
@@ -358,19 +368,21 @@ def verify_subscribe_changes(tests_controller):
 
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
-def _assert(expected, actual):
+def _assert(expected: object, actual: object) -> None:
     err_msg = f"Expected value: {expected},\nbut got: {actual}"
     assert actual == expected, err_msg
 
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
-def _assert_json_included(json_to_be_included, other_json):
+def _assert_json_included(
+    json_to_be_included: Sequence[object], other_json: Sequence[object]
+) -> None:
     for item in json_to_be_included:
         assert item in other_json, f"There is no {item} included in second json."
 
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
-def _assert_json_equal(expected, actual):
+def _assert_json_equal(expected: Sequence[object], actual: Sequence[object]) -> None:
     err_msg = "Json`s are not equal, there is no:\n{}\nin:\n{}"
     for item in expected:
         assert item in actual, err_msg.format(item, actual)
@@ -380,8 +392,13 @@ def _assert_json_equal(expected, actual):
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def wait_for_expected_files_in_query_view(
-    query, provider_host, token, expected_files, attr_holding_file_id, extra_files=False
-):
+    query: Callable[[], JsonList],
+    provider_host: str,
+    token: str,
+    expected_files: list[str],
+    attr_holding_file_id: str,
+    extra_files: bool = False,
+) -> JsonList:
     res = query()
     items = [item[attr_holding_file_id] for item in res]
     prov_version = get_prov_version(provider_host)
@@ -403,7 +420,9 @@ def wait_for_expected_files_in_query_view(
 
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
-def wait_for_expected_result_in_reduce_query_view(query, expected_result):
+def wait_for_expected_result_in_reduce_query_view(
+    query: Callable[[], JsonList], expected_result: int
+) -> JsonList:
     res = query()
     assert (
         res[0]["value"] == expected_result
@@ -413,20 +432,24 @@ def wait_for_expected_result_in_reduce_query_view(query, expected_result):
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def get_record_for_file_in_file_changes(
-    provider_host, token, space_id, data, file_name
-):
+    provider_host: str,
+    token: str,
+    space_id: str,
+    data: JsonPayload,
+    file_name: str,
+) -> JsonList:
     res = subscribe_to_file_changes(provider_host, token, space_id, data)
     file_id = lookup_file_id(f"{SPACE_NAME}/{file_name}", provider_host, token)
     items = res.text.split("\r\n")
-    items = [yaml.load(item, yaml.Loader) for item in items][0:-1]
-    record = [item for item in items if item["fileId"] == file_id]
+    parsed_items: JsonList = [yaml.load(item, yaml.Loader) for item in items][0:-1]
+    record = [item for item in parsed_items if item["fileId"] == file_id]
     assert (
         len(record) >= 1
-    ), f"Record for file {file_name} not found. All found items:\n {items}"
+    ), f"Record for file {file_name} not found. All found items:\n {parsed_items}"
     return record
 
 
-def create_example_content_in_space(client):
+def create_example_content_in_space(client: OneClientLike) -> None:
     space_path = client.absolute_path(SPACE_NAME)
     file_path = os.path.join(space_path, "file_json")
     client.create_file(file_path)
@@ -445,10 +468,10 @@ def create_example_content_in_space(client):
     client.write("abc123", file_path)
 
 
-def add_example_metadata_to_files_in_space(provider_host, token):
+def add_example_metadata_to_files_in_space(provider_host: str, token: str) -> None:
     xattrs_meta: dict[str, str | int] = {}
     file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
-    json_meta = {"coordinates": [5, 10]}
+    json_meta: JsonObject = {"coordinates": [5, 10]}
     set_file_json_metadata(provider_host, token, file_id, json_meta)
     file_id = lookup_file_id(f"{SPACE_NAME}/file_rdf", provider_host, token)
     rdf_meta = (

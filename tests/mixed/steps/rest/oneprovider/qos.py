@@ -6,12 +6,20 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.mixed.oneprovider_client import QoSApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
+from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_provider
+from tests.utils.user_utils import Users
 
 
 def create_qos_requirement_in_op_rest(
-    user, users, hosts, host, expression, space_name, file_name
-):
+    user: str,
+    users: Users,
+    hosts: HostsConfig,
+    host: str,
+    expression: str,
+    space_name: str,
+    file_name: str,
+) -> None:
     path = f"{space_name}/{file_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     file_id = _lookup_file_id(path, client)
@@ -21,8 +29,13 @@ def create_qos_requirement_in_op_rest(
 
 
 def create_qos_requirement_in_op_by_id_rest(
-    user, users, hosts, host, expression, file_id
-):
+    user: str,
+    users: Users,
+    hosts: HostsConfig,
+    host: str,
+    expression: str,
+    file_id: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     qos_api = QoSApi(client)
     data = {"fileId": file_id, "expression": expression}
@@ -30,8 +43,14 @@ def create_qos_requirement_in_op_by_id_rest(
 
 
 def assert_qos_file_status_in_op_rest(
-    user, users, hosts, host, space_name, file_name, option
-):
+    user: str,
+    users: Users,
+    hosts: HostsConfig,
+    host: str,
+    space_name: str,
+    file_name: str,
+    option: str,
+) -> None:
     path = f"{space_name}/{file_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     qo_s_api = QoSApi(client)
@@ -47,7 +66,14 @@ def assert_qos_file_status_in_op_rest(
         )
 
 
-def delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name, file_name):
+def delete_qos_requirement_in_op_rest(
+    user: str,
+    users: Users,
+    hosts: HostsConfig,
+    host: str,
+    space_name: str,
+    file_name: str,
+) -> None:
     path = f"{space_name}/{file_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     qo_s_api = QoSApi(client)

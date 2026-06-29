@@ -32,7 +32,7 @@ class Step1(PageObject):
     hostname_label = Label(".cluster-host-table-row .one-label")
     hostname = Input("input.input-add-host")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -53,7 +53,7 @@ class Step2(PageObject):
     token = Input(".zone-token-textarea")
     proceed = NamedButton("button", text="Proceed")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -66,7 +66,7 @@ class SetupIP(PageObject):
     setup_ip_addresses = NamedButton("button", text="Setup IP adresses")
     nodes = WebItemsSequence("tr.cluster-host-ip-form-row", cls=NodeIP)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -79,7 +79,7 @@ class StepWebCert(PageObject):
     next_step = Button("button.btn-cert-next")
     lets_encrypt_toggle = Toggle(".toggle-field-letsEncrypt.one-way-toggle")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -88,7 +88,7 @@ class Step5(StorageContentPage):
 
     finish = NamedButton("button", text="Finish")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -100,7 +100,7 @@ class LastStep(PageObject):
     )
     link = Button(".info a")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -120,5 +120,5 @@ class Deployment(PageObject):
     step5 = WebItem(_deployment_step_css, cls=Step5)
     laststep = WebItem(_deployment_step_css, cls=LastStep)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.title} deployment step in {self.parent}"

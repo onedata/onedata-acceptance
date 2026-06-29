@@ -7,13 +7,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 from functools import partial
 
-from tests.upgrade.utils.upgrade_utils import UpgradeTest
+from tests.upgrade.utils.upgrade_utils import UpgradeTest, UpgradeTestsControllerLike
 
 TEXT = "example_text"
 TEXT2 = "some_other_text"
 
 
-def get_tests(tests_controller):
+def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]:
     return [
         UpgradeTest(
             "oneclient CRUD test posix",
@@ -28,7 +28,7 @@ def get_tests(tests_controller):
     ]
 
 
-def setup(tests_controller, space_name):
+def setup(tests_controller: UpgradeTestsControllerLike, space_name: str) -> None:
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
     space_path = client.absolute_path(space_name)
     file_path = os.path.join(space_path, "file_name")
@@ -37,7 +37,7 @@ def setup(tests_controller, space_name):
     client.write(TEXT, file_path)
 
 
-def verify(tests_controller, space_name):
+def verify(tests_controller: UpgradeTestsControllerLike, space_name: str) -> None:
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
     space_path = client.absolute_path(space_name)
     file_path = os.path.join(space_path, "file_name")

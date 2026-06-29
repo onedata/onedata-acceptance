@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from collections.abc import Iterable
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, WebItemsSequence
 
@@ -20,10 +22,10 @@ class SelectGroups(Modal):
     confirm_selection = Button(".btn-confirm")
     cancel = Button(".btn-cancel")
 
-    def select(self, groups):
+    def select(self, groups: Iterable[str]) -> None:
         for group in groups:
             self.groups[group].web_elem.click()
         self.confirm_selection.click()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Select groups modal"

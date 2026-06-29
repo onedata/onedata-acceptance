@@ -6,6 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.steps.modals.modal import assert_element_text_in_modal
 from tests.gui.steps.onezone.members import (
     assert_member_is_in_parent_members_list,
@@ -15,16 +16,17 @@ from tests.gui.steps.onezone.members import (
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.type_definitions import SeleniumDrivers
 
 
 def fail_to_set_privileges_using_op_gui(
-    user,
-    space_name,
-    member_name,
-    member_type,
-    config,
-    selenium,
-):
+    user: str,
+    space_name: str,
+    member_name: str,
+    member_type: str,
+    config: str,
+    selenium: SeleniumDrivers,
+) -> None:
     button = "Members"
     option = "fails to set"
     list_type = "users"
@@ -44,13 +46,13 @@ def fail_to_set_privileges_using_op_gui(
 
 
 def assert_privileges_in_space_using_op_gui(
-    user,
-    space_name,
-    member_name,
-    member_type,
-    config,
-    selenium,
-):
+    user: str,
+    space_name: str,
+    member_name: str,
+    member_type: str,
+    config: str,
+    selenium: SeleniumDrivers,
+) -> None:
     option = "Members"
     list_type = "users"
     where = "space"
@@ -67,7 +69,9 @@ def assert_privileges_in_space_using_op_gui(
     )
 
 
-def fail_to_create_invitation_in_space_using_op_gui(user, space_name, selenium):
+def fail_to_create_invitation_in_space_using_op_gui(
+    user: str, space_name: str, selenium: SeleniumDrivers
+) -> None:
     option = "Members"
     button = "Invite user using token"
     where = "space"
@@ -80,7 +84,9 @@ def fail_to_create_invitation_in_space_using_op_gui(user, space_name, selenium):
     assert_element_text_in_modal(selenium, user, modal, text, element)
 
 
-def assert_not_user_in_space_using_op_gui(user, space_name, member_name, selenium):
+def assert_not_user_in_space_using_op_gui(
+    user: str, space_name: str, member_name: str, selenium: SeleniumDrivers
+) -> None:
     option = "does not see"
     member_type = "user"
     parent_type = "space"
@@ -95,7 +101,9 @@ def assert_not_user_in_space_using_op_gui(user, space_name, member_name, seleniu
     )
 
 
-def assert_group_in_space_using_op_gui(selenium, user, space_name, group_name):
+def assert_group_in_space_using_op_gui(
+    selenium: SeleniumDrivers, user: str, space_name: str, group_name: str
+) -> None:
     option1 = "Members"
     option2 = "sees"
     member_type = "group"

@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from typing import Protocol
 
 import yaml
 from onepanel_client import (
@@ -19,21 +20,29 @@ from onepanel_client import (
 )
 
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
 from tests.mixed.utils.common import login_to_oz, login_to_panel
+from tests.type_definitions import Hosts
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
+class CredentialsLike(Protocol):
+    username: str
+    password: str
+
+
 def revoke_space_support_in_op_panel_using_rest(
-    user,
-    users,
-    provider_host,
-    hosts,
-    space_name,
-    admin_credentials,
-    onepanel_credentials,
-    zone_host="onezone",
-):
+    user: str,
+    users: Users,
+    provider_host: str,
+    hosts: Hosts,
+    space_name: str,
+    admin_credentials: CredentialsLike,
+    onepanel_credentials: CredentialsLike,
+    zone_host: str = "onezone",
+) -> None:
     user_client_op = login_to_panel(
         user, users[user].password, hosts[provider_host]["hostname"]
     )
@@ -49,8 +58,13 @@ def revoke_space_support_in_op_panel_using_rest(
 
 
 def support_space_in_op_panel_using_rest(
-    user, provider_host, hosts, users, tmp_memory, config
-):
+    user: str,
+    provider_host: str,
+    hosts: Hosts,
+    users: Users,
+    tmp_memory: TmpMemory,
+    config: str,
+) -> None:
     user_client = login_to_panel(
         user, users[user].password, hosts[provider_host]["hostname"]
     )
@@ -101,15 +115,15 @@ def support_space_in_op_panel_using_rest(
 
 
 def configure_sync_parameters_for_space_in_op_panel_rest(
-    user,
-    users,
-    provider_host,
-    hosts,
-    conf,
-    space_name,
-    onepanel_credentials,
-    admin_credentials,
-):
+    user: str,
+    users: Users,
+    provider_host: str,
+    hosts: Hosts,
+    conf: str,
+    space_name: str,
+    onepanel_credentials: CredentialsLike,
+    admin_credentials: CredentialsLike,
+) -> None:
     user_client_op = login_to_panel(
         user, users[user].password, hosts[provider_host]["hostname"]
     )
@@ -155,16 +169,16 @@ def configure_sync_parameters_for_space_in_op_panel_rest(
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_proper_space_configuration_in_op_panel_rest(
-    space_name,
-    user,
-    users,
-    provider_host,
-    hosts,
-    conf,
-    onepanel_credentials,
-    admin_credentials,
-    zone_host="onezone",
-):
+    space_name: str,
+    user: str,
+    users: Users,
+    provider_host: str,
+    hosts: Hosts,
+    conf: str,
+    onepanel_credentials: CredentialsLike,
+    admin_credentials: CredentialsLike,
+    zone_host: str = "onezone",
+) -> None:
     user_client_op = login_to_panel(
         user, users[user].password, hosts[provider_host]["hostname"]
     )

@@ -13,5 +13,5 @@ class DeleteUserAccountModal(Modal):
     understand_consequences = Button(".one-checkbox-understand")
     delete_account = Button(".btn-danger.proceed")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Delete User Account"

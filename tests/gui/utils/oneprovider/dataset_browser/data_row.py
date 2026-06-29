@@ -18,5 +18,5 @@ class DataRow(BrowserRow):
     path_to_root_file = Label(".dataset-info-secondary-file-path-internal")
     deleted_root_file_icon = WebElement(".one-icon-tag-circle")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} in {str(self.parent)}"

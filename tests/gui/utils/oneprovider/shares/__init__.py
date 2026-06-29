@@ -24,7 +24,7 @@ class SharesOptions(PageObject):
     menu_button = Button(".menu-toggle-frame", scroll=False)
     icon = WebElement(".one-icon-tag-icon", scroll=False)
 
-    def points_to_del_dir(self):
+    def points_to_del_dir(self) -> bool:
         return "oneicon-x" in self.icon.get_attribute("class")
 
 
@@ -48,3 +48,6 @@ class SharesContentPage(Browser):
     switch_editor_markdown = Button(".btn-switch-editor-mode")
     editor_mode = Label(".btn-switch-editor-mode .text")
     link_type_selector = Button(".share-link-type-selector-trigger")
+
+    def get_visible_shares_list(self) -> list[object]:
+        return [share for share in self.shares_list if share.name != ""]

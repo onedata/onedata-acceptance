@@ -16,7 +16,7 @@ WORKFLOWS_NAMES = []
 
 
 @wt(parsers.parse("workflows from automation-examples are gathered"))
-def gather_workflows_names():
+def gather_workflows_names() -> None:
     global WORKFLOWS_NAMES
     workflows_names: list[str] = []
     for _, _, files in os.walk(WORKFLOW_DIR):
@@ -25,7 +25,7 @@ def gather_workflows_names():
 
 
 @wt(parsers.parse("all gathered workflows are used in acceptance tests"))
-def check_using_all_workflows():
+def check_using_all_workflows() -> None:
     workflows_names = WORKFLOWS_NAMES
     # remove extension
     workflows_names_set = set(map(lambda x: x.split(".")[0], workflows_names))
@@ -42,7 +42,7 @@ def check_using_all_workflows():
     assert workflows_names_set == used_workflows, err_msg
 
 
-def check_names_in_file(path, names):
+def check_names_in_file(path: str, names: set[str]) -> set[str]:
     detected_names = set()
     with open(path, "r") as f:
         lines = f.readlines()

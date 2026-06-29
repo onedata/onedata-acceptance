@@ -10,6 +10,7 @@ import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.utils.generic import transform
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import create_empty_file, get_file_id_by_rest
 from tests.utils.rest_utils import (
@@ -19,6 +20,7 @@ from tests.utils.rest_utils import (
     http_post,
     http_put,
 )
+from tests.utils.user_utils import Users
 
 
 @given(
@@ -28,8 +30,14 @@ from tests.utils.rest_utils import (
     )
 )
 def create_share_using_rest(
-    item_path, provider, user, share_name, hosts, users, shares
-):
+    item_path: str,
+    provider: str,
+    user: str,
+    share_name: str,
+    hosts: Hosts,
+    users: Users,
+    shares: dict[str, str],
+) -> None:
     provider_hostname = hosts[provider]["hostname"]
     file_id = get_file_id_by_rest(item_path, provider_hostname, users[user].token)
 
@@ -52,13 +60,21 @@ def create_share_using_rest(
     )
 )
 def wt_create_share_using_rest(
-    item_path, provider, user, share_name, hosts, users, shares
-):
+    item_path: str,
+    provider: str,
+    user: str,
+    share_name: str,
+    hosts: Hosts,
+    users: Users,
+    shares: dict[str, str],
+) -> None:
     create_share_using_rest(item_path, provider, user, share_name, hosts, users, shares)
 
 
 @given(parsers.parse("using REST, user {user} creates following shares:\n{config}"))
-def create_many_shares_using_rest(user, config, hosts, users, shares):
+def create_many_shares_using_rest(
+    user: str, config: str, hosts: Hosts, users: Users, shares: dict[str, str]
+) -> None:
     """Config:
 
     - name: share name
@@ -69,7 +85,9 @@ def create_many_shares_using_rest(user, config, hosts, users, shares):
     _create_many_shares_using_rest(user, config, hosts, users, shares)
 
 
-def _create_many_shares_using_rest(user, config, hosts, users, shares):
+def _create_many_shares_using_rest(
+    user: str, config: str, hosts: Hosts, users: Users, shares: dict[str, str]
+) -> None:
     data = yaml.load(config, yaml.Loader)
     for share in data:
         name = share["name"]
@@ -80,7 +98,9 @@ def _create_many_shares_using_rest(user, config, hosts, users, shares):
 
 
 @given(parsers.parse("user {user} is added to mock handle service in {host}"))
-def add_user_to_handle_service(user, users, host, hosts):
+def add_user_to_handle_service(
+    user: str, users: Users, host: str, hosts: Hosts
+) -> None:
     zone_hostname = hosts[transform(host)]["hostname"]
     handle_service_id = http_get(
         ip=zone_hostname,
@@ -103,8 +123,16 @@ def add_user_to_handle_service(user, users, host, hosts):
         'using REST, {user} creates {number} shares in space "{space_name}" in {host}'
     )
 )
-def create_n_shares_in_space(users, user, hosts, host, number: int, space_name, shares):
-    for i in range(number):
+def create_n_shares_in_space(
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    number: str,
+    space_name: str,
+    shares: dict[str, str],
+) -> None:
+    for i in range(int(number)):
         create_empty_file(f"{space_name}/file{i}", users, user, host, hosts)
         create_share_using_rest(
             f"{space_name}/file{i}", host, user, f"share{i}", hosts, users, shares

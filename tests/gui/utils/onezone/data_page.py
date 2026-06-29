@@ -5,9 +5,11 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from typing import Optional
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -58,19 +60,19 @@ class Space(Element):
     configuration = NamedButton(".one-list-level-2 .item-header", text="Configuration")
     menu_button = Button(".collapsible-toolbar-toggle")
 
-    def click_menu(self):
+    def click_menu(self) -> None:
         self.click()
         self.menu_button.click()
 
-    def is_element_disabled(self, element_name):
+    def is_element_disabled(self, element_name: str) -> bool:
         element = getattr(self, element_name)
         return "disabled" in element.web_elem.get_attribute("class")
 
-    def is_element_enabled(self, element_name):
+    def is_element_enabled(self, element_name: str) -> bool:
         element = getattr(self, element_name)
         return "disabled" not in element.web_elem.get_attribute("class")
 
-    def is_active(self):
+    def is_active(self) -> bool:
         return "active" in self.web_elem.get_attribute("class")
 
 
@@ -85,7 +87,7 @@ class SpaceHeader(Element):
     menu_button = Button(".collapsible-toolbar-toggle", scroll=False)
     clickable_field = WebElement(".item-name", scroll=False)
 
-    def click_menu(self):
+    def click_menu(self) -> None:
         self.click()
         self.menu_button.click()
 
@@ -125,7 +127,7 @@ class SpaceMarketplaceTile(PageObject):
 class ProvidersMap(Element):
     providers = WebElementsSequence(".one-atlas-point")
 
-    def click_provider(self, provider_name, driver):
+    def click_provider(self, provider_name: str, driver: WebDriver) -> None:
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
@@ -135,7 +137,7 @@ class ProvidersMap(Element):
 
         raise RuntimeError(f"Provider {provider_name} was not found on the map")
 
-    def hover_and_check_provider(self, provider_name, driver):
+    def hover_and_check_provider(self, provider_name: str, driver: WebDriver) -> None:
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
@@ -144,7 +146,9 @@ class ProvidersMap(Element):
 
         raise RuntimeError(f"Provider {provider_name} was not found on the map")
 
-    def get_provider_horizontal_position(self, provider_name, driver):
+    def get_provider_horizontal_position(
+        self, provider_name: str, driver: WebDriver
+    ) -> float:
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
@@ -182,7 +186,7 @@ class HarvesterRow(Element):
     harvester = WebElement(".item-name")
     harvester_menu_button = WebElement(".collapsible-toolbar-toggle")
 
-    def click_harvester_menu_button(self, driver):
+    def click_harvester_menu_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.harvester).perform()
         self.harvester_menu_button.click()
 
@@ -212,14 +216,25 @@ class GetSupportPage(PageObject):
     insufficient_privileges = Label(".text-center .col-xs-12")
 
 
+class SpaceProvidersHeader(PageObject):
+    providers_tab = WebElementsSequence(".provider-online")
+    overview_tab = WebElement(".item-overview")
+
+    def get_current_active_tab(self) -> Optional[str]:
+        for tab in self.providers_tab + [self.overview_tab]:
+            if "active" in tab.get_attribute("class"):
+                return tab.text
+        return None
+
+
 class SpaceProvidersPage(PageObject):
-    current_provider_tab = Label(".provider-info-container.active")
+    header = WebItem(".content-header-section", cls=SpaceProvidersHeader)
     settings_message = Label(".space-settings-info")
     providers_list = WebItemsSequence(
         ".space-providers-list li.one-collapsible-list-item", cls=Provider
     )
-    add_support = Button(".btn-add-support")
     get_support_page = WebItem(".ember-view", cls=GetSupportPage)
+    add_support = Button(".btn-add-support")
     map = WebItem(".space-providers-atlas", cls=ProvidersMap)
 
 
@@ -277,10 +292,13 @@ class DataPage(GenericPage):
     choose_other_provider = Button(".choose-oneprovider-link")
     error_header = Label(".content-info-content-container h1")
 
-    def choose_space(self, name):
+    def choose_space(self, name: str) -> None:
         for space in self.spaces_list:
             if space.name in (name, ""):
                 space.click()
                 if space.name == name:
                     return
         raise RuntimeError(f"{name} space not found")
+
+    def get_visible_spaces_list(self) -> list[SpaceHeader]:
+        return [space for space in self.spaces_headers_list if space.name != ""]

@@ -13,19 +13,23 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.url import assert_main_page_loaded
 from tests.gui.utils import LoginPage, OnePage
 from tests.gui.utils.generic import parse_seq, transform
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def _login_using_basic_auth(login_page, username, password):
+def _login_using_basic_auth(
+    login_page: LoginPage, username: str, password: str
+) -> None:
     login_page.username = username
     login_page.password = password
     login_page.sign_in()
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def _login_using_passphrase(login_page, password):
+def _login_using_passphrase(login_page: LoginPage, password: str) -> None:
     login_page.passphrase = password
     login_page.sign_in()
 
@@ -37,26 +41,35 @@ def _login_using_passphrase(login_page, password):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_sign_in_to_emergency_interface(selenium, browser_id):
+def click_sign_in_to_emergency_interface(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     LoginPage(selenium[browser_id]).sign_in_to_emergency_interface()
 
 
-def _login_to_service(selenium, browser_id_list, user_id_list, service_list, users):
+def _login_to_service(
+    selenium: SeleniumDrivers,
+    browser_id_list: str,
+    user_id_list: str,
+    service_list: str,
+    users: Users,
+) -> None:
     for browser_id, username, service in zip(
         parse_seq(browser_id_list),
         parse_seq(user_id_list),
         parse_seq(service_list),
     ):
         driver = selenium[browser_id]
+        password = users[username].password
+        if password is None:
+            raise ValueError(f"User {username} has no password")
 
         if "emergency interface" in service:
             click_sign_in_to_emergency_interface(selenium, browser_id)
             time.sleep(1)
-            _login_using_passphrase(LoginPage(driver), users[username].password)
+            _login_using_passphrase(LoginPage(driver), password)
         else:
-            _login_using_basic_auth(
-                LoginPage(driver), username, users[username].password
-            )
+            _login_using_basic_auth(LoginPage(driver), username, password)
         assert_main_page_loaded(selenium, browser_id)
 
 
@@ -73,8 +86,12 @@ def _login_to_service(selenium, browser_id_list, user_id_list, service_list, use
     )
 )
 def login_using_basic_auth(
-    selenium, browser_id_list, user_id_list, users, service_list
-):
+    selenium: SeleniumDrivers,
+    browser_id_list: str,
+    user_id_list: str,
+    users: Users,
+    service_list: str,
+) -> None:
     _login_to_service(selenium, browser_id_list, user_id_list, service_list, users)
 
 
@@ -86,7 +103,9 @@ def login_using_basic_auth(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enter_text_to_field_in_login_form(selenium, browser_id, in_box, text):
+def wt_enter_text_to_field_in_login_form(
+    selenium: SeleniumDrivers, browser_id: str, in_box: str, text: str
+) -> None:
     setattr(LoginPage(selenium[browser_id]), transform(in_box), text)
 
 
@@ -97,7 +116,9 @@ def wt_enter_text_to_field_in_login_form(selenium, browser_id, in_box, text):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enter_password_of_user(selenium, browser_id, username, users):
+def wt_enter_password_of_user(
+    selenium: SeleniumDrivers, browser_id: str, username: str, users: Users
+) -> None:
     password = users[username].password
     setattr(LoginPage(selenium[browser_id]), "password", password)
 
@@ -109,13 +130,17 @@ def wt_enter_password_of_user(selenium, browser_id, username, users):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_press_sign_in_btn_on_login_page(selenium, browser_id):
+def wt_press_sign_in_btn_on_login_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     LoginPage(selenium[browser_id]).sign_in()
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) successfully signed in (?P<service>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_successful_login(selenium, browser_id, service):
+def wt_assert_successful_login(
+    selenium: SeleniumDrivers, browser_id: str, service: str
+) -> None:
     logged_in_service = OnePage(selenium[browser_id]).service
     assert (
         service.lower() in logged_in_service.lower()
@@ -129,7 +154,7 @@ def wt_assert_successful_login(selenium, browser_id, service):
 )
 @wt(parsers.re("user of (?P<browser_id>.*) sees (Onepanel|Onezone) login page"))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def wt_assert_login_page(selenium, browser_id):
+def wt_assert_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     _ = LoginPage(selenium[browser_id]).header
 
 
@@ -141,7 +166,9 @@ def wt_assert_login_page(selenium, browser_id):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_err_msg_about_credentials(selenium, browser_id):
+def wt_assert_err_msg_about_credentials(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     assert LoginPage(
         selenium[browser_id]
     ).err_msg, "no err msg about invalid credentials found"
@@ -154,7 +181,9 @@ def wt_assert_err_msg_about_credentials(selenium, browser_id):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_sign_in_notification(text, selenium, browser_id):
+def assert_sign_in_notification(
+    text: str, selenium: SeleniumDrivers, browser_id: str
+) -> None:
     err_msg = "sign in notification message is not as expected"
     assert (
         LoginPage(selenium[browser_id]).login_notification_message.text == text

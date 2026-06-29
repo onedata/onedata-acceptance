@@ -4,6 +4,7 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -38,7 +39,7 @@ class Index(PageObject):
     progress_values = WebItemsSequence(".progress-row", cls=ProgressRow)
     used_by_gui_tag = WebElement(".index-labels-container")
 
-    def is_used_by_gui_tag_visible(self):
+    def is_used_by_gui_tag_visible(self) -> bool:
         try:
             self.used_by_gui_tag
         except RuntimeError:
@@ -135,7 +136,7 @@ class Harvester(Element):
 class MenuItem(PageObject):
     name = id = Label("a.clickable")
 
-    def __call__(self):
+    def __call__(self) -> None:
         self.click()
 
 
@@ -144,7 +145,7 @@ class Space(PageObject):
 
     menu_button = Button(".collapsible-toolbar-toggle")
 
-    def click_menu(self):
+    def click_menu(self) -> None:
         self.menu_button.click()
 
 

@@ -12,13 +12,17 @@ from tests.gui.meta_steps.oneprovider.qos import (
     assert_qos_file_status_in_op_gui,
     delete_qos_requirement_in_op_gui,
 )
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.qos import (
+    HostsConfig,
     assert_qos_file_status_in_op_rest,
     create_qos_requirement_in_op_rest,
     delete_qos_requirement_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
@@ -31,17 +35,17 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_qos_requirement_in_op(
-    client,
-    user,
-    selenium,
-    file_name,
-    tmp_memory,
-    expression,
-    space_name,
-    users,
-    hosts,
-    host,
-):
+    client: str,
+    user: str,
+    selenium: SeleniumDrivers,
+    file_name: str,
+    tmp_memory: TmpMemory,
+    expression: str,
+    space_name: str,
+    users: Users,
+    hosts: HostsConfig,
+    host: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         add_qos_requirement_in_modal(
@@ -69,17 +73,17 @@ def create_qos_requirement_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_qos_file_status_in_op(
-    client,
-    user,
-    file_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-    option,
-):
+    client: str,
+    user: str,
+    file_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: HostsConfig,
+    option: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_qos_file_status_in_op_gui(
@@ -107,16 +111,16 @@ def assert_qos_file_status_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def delete_qos_requirement_in_op(
-    client,
-    selenium,
-    user,
-    space_name,
-    file_name,
-    tmp_memory,
-    users,
-    hosts,
-    host,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space_name: str,
+    file_name: str,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: HostsConfig,
+    host: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         delete_qos_requirement_in_op_gui(

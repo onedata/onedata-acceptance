@@ -11,22 +11,31 @@ import errno
 import os.path
 import subprocess as sp
 
+from tests.type_definitions import Hosts
 from tests.utils import ONECLIENT_MOUNT_DIR
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, when, wt
+from tests.utils.client_utils import Client
 from tests.utils.onenv_utils import cmd_exec
+from tests.utils.user_utils import Users
 from tests.utils.utils import assert_, assert_expected_failure, assert_generic
 
 
-def create_base(user, dirs, client_node, users, should_fail=False, exists_ok=False):
-    dirs = list_parser(dirs)
-    user = users[user]
-    client = user.clients[client_node]
+def create_base(
+    user: str,
+    dirs: str,
+    client_node: str,
+    users: Users,
+    should_fail: bool = False,
+    exists_ok: bool = False,
+) -> None:
+    dir_names = list_parser(dirs)
+    client = users[user].clients[client_node]
 
-    for _dir in dirs:
+    for _dir in dir_names:
         path = client.absolute_path(_dir)
 
-        def condition():
+        def condition() -> None:
             client.mkdir(path, exist_ok=exists_ok)
 
         if should_fail:
@@ -40,11 +49,13 @@ def create_base(user, dirs, client_node, users, should_fail=False, exists_ok=Fal
         r"(?P<user>\w+) creates directories (?P<dirs>.*)\son (?P<client_node>.*)"
     )
 )
-def create_(user, dirs, client_node, users):
+def create_(user: str, dirs: str, client_node: str, users: Users) -> None:
     create(user, dirs, client_node, users)
 
 
-def create(user, dirs, client_node, users, exists_ok=False):
+def create(
+    user: str, dirs: str, client_node: str, users: Users, exists_ok: bool = False
+) -> None:
     create_base(user, dirs, client_node, users, exists_ok=exists_ok)
 
 
@@ -54,15 +65,14 @@ def create(user, dirs, client_node, users, exists_ok=False):
         "on (?P<client_node>.*)"
     )
 )
-def create_parents(user, paths, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
-    paths = list_parser(paths)
+def create_parents(user: str, paths: str, client_node: str, users: Users) -> None:
+    client = users[user].clients[client_node]
+    path_names = list_parser(paths)
 
-    for path in paths:
+    for path in path_names:
         dir_path = client.absolute_path(path)
 
-        def condition():
+        def condition() -> None:
             client.mkdir(dir_path, recursive=True)
 
         assert_(client.perform, condition)
@@ -74,19 +84,20 @@ def create_parents(user, paths, client_node, users):
         "(?P<client_node>.*)"
     )
 )
-def fail_to_create(user, dirs, client_node, users):
+def fail_to_create(user: str, dirs: str, client_node: str, users: Users) -> None:
     create_base(user, dirs, client_node, users, should_fail=True)
 
 
-def delete_empty_base(user, dirs, client_node, users, should_fail=False):
-    user = users[user]
-    client = user.clients[client_node]
-    dirs = list_parser(dirs)
+def delete_empty_base(
+    user: str, dirs: str, client_node: str, users: Users, should_fail: bool = False
+) -> None:
+    client = users[user].clients[client_node]
+    dir_names = list_parser(dirs)
 
-    for _dir in dirs:
+    for _dir in dir_names:
         path = client.absolute_path(_dir)
 
-        def condition():
+        def condition() -> None:
             client.rmdir(path)
 
         if should_fail:
@@ -101,7 +112,7 @@ def delete_empty_base(user, dirs, client_node, users, should_fail=False):
         "(?P<client_node>.*)"
     )
 )
-def delete_empty(user, dirs, client_node, users):
+def delete_empty(user: str, dirs: str, client_node: str, users: Users) -> None:
     delete_empty_base(user, dirs, client_node, users)
 
 
@@ -111,11 +122,11 @@ def delete_empty(user, dirs, client_node, users):
         "(?P<dirs>.*) on (?P<client_node>.*)"
     )
 )
-def fail_to_delete_empty(user, dirs, client_node, users):
+def fail_to_delete_empty(user: str, dirs: str, client_node: str, users: Users) -> None:
     delete_empty_base(user, dirs, client_node, users, should_fail=True)
 
 
-def purge_all_spaces(client):
+def purge_all_spaces(client: Client) -> None:
     try:
         spaces = client.list_spaces()
         for space in spaces:
@@ -136,9 +147,8 @@ def purge_all_spaces(client):
 
 
 @wt(parsers.re(r"(?P<user>\w+) purges all spaces on (?P<client_node>.*)"))
-def purge_all_user_spaces(user, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def purge_all_user_spaces(user: str, client_node: str, users: Users) -> None:
+    client = users[user].clients[client_node]
     purge_all_spaces(client)
 
 
@@ -148,44 +158,41 @@ def purge_all_user_spaces(user, client_node, users):
         "(?P<client_node>.*)"
     )
 )
-def delete_non_empty(user, dirs, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
-    dirs = list_parser(dirs)
+def delete_non_empty(user: str, dirs: str, client_node: str, users: Users) -> None:
+    client = users[user].clients[client_node]
+    dir_names = list_parser(dirs)
 
-    for _dir in dirs:
+    for _dir in dir_names:
         path = client.absolute_path(_dir)
 
-        def condition():
+        def condition() -> None:
             client.rm(path, recursive=True, force=True)
 
         assert_(client.perform, condition)
 
 
-def try_to_delete_root_dir(user, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def try_to_delete_root_dir(user: str, client_node: str, users: Users) -> None:
+    client = users[user].clients[client_node]
     client.rm(client.get_mount_path(), recursive=True)
 
 
-def try_to_move_root_dir(user, client_node, users, dst):
-    user = users[user]
-    client = user.clients[client_node]
+def try_to_move_root_dir(user: str, client_node: str, users: Users, dst: str) -> None:
+    client = users[user].clients[client_node]
     client.mv(client.get_mount_path(), os.path.join(ONECLIENT_MOUNT_DIR, dst))
 
 
-def move_dir_by_id(user, client_node, users, file_id, dst):
-    user = users[user]
-    client = user.clients[client_node]
+def move_dir_by_id(
+    user: str, client_node: str, users: Users, file_id: str, dst: str
+) -> None:
+    client = users[user].clients[client_node]
     client.mv(
         f"{client.get_mount_path()}/.__onedata__file_id__{file_id}",
         os.path.join(ONECLIENT_MOUNT_DIR, dst),
     )
 
 
-def delete_dir_by_id(user, client_node, users, file_id):
-    user = users[user]
-    client = user.clients[client_node]
+def delete_dir_by_id(user: str, client_node: str, users: Users, file_id: str) -> None:
+    client = users[user].clients[client_node]
     client.rm(
         f"{client.get_mount_path()}/.__onedata__file_id__{file_id}",
         recursive=True,
@@ -198,27 +205,31 @@ def delete_dir_by_id(user, client_node, users, file_id):
         "(?P<paths>.*) on (?P<client_node>.*)"
     )
 )
-def delete_parents(user, paths, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
-    paths = list_parser(paths)
+def delete_parents(user: str, paths: str, client_node: str, users: Users) -> None:
+    client = users[user].clients[client_node]
+    path_names = list_parser(paths)
 
-    for path in paths:
+    for path in path_names:
         dir_path = client.absolute_path(path)
 
-        def condition():
+        def condition() -> None:
             client.rmdir(dir_path, recursive=True)
 
         assert_(client.perform, condition)
 
 
-def list_dirs_base(user, directory, client_node, users, should_fail=False):
-    user = users[user]
-    client = user.clients[client_node]
+def list_dirs_base(
+    user: str,
+    directory: str,
+    client_node: str,
+    users: Users,
+    should_fail: bool = False,
+) -> list[str]:
+    client = users[user].clients[client_node]
     path = client.absolute_path(directory)
     path_content = []
 
-    def condition():
+    def condition() -> bool:
         try:
             content = client.ls(path=path)
             path_content.extend(content)
@@ -233,12 +244,12 @@ def list_dirs_base(user, directory, client_node, users, should_fail=False):
 
 
 @wt(parsers.re(r"(?P<user>\w+) can list (?P<directory>.*) on (?P<client_node>.*)"))
-def list_dir(user, directory, client_node, users):
+def list_dir(user: str, directory: str, client_node: str, users: Users) -> None:
     list_dirs_base(user, directory, client_node, users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) can't list (?P<directory>.*) on (?P<client_node>.*)"))
-def cannot_list_dir(user, directory, client_node, users):
+def cannot_list_dir(user: str, directory: str, client_node: str, users: Users) -> None:
     list_dirs_base(user, directory, client_node, users, should_fail=True)
 
 
@@ -248,13 +259,12 @@ def cannot_list_dir(user, directory, client_node, users):
         "on (?P<client_node>.*)"
     )
 )
-def copy_dir(user, dir1, dir2, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
+def copy_dir(user: str, dir1: str, dir2: str, client_node: str, users: Users) -> None:
+    client = users[user].clients[client_node]
     src_path = client.absolute_path(dir1)
     dest_path = client.absolute_path(dir2)
 
-    def condition():
+    def condition() -> None:
         client.cp(src_path, dest_path, recursive=True)
 
     assert_(client.perform, condition)
@@ -267,9 +277,11 @@ def copy_dir(user, dir1, dir2, client_node, users):
         '"(?P<container>.*)" on provider "(?P<provider>.*)"'
     )
 )
-def create_in_container(uid, gid, paths, container, provider, hosts):
+def create_in_container(
+    uid: str, gid: str, paths: str, container: str, provider: str, hosts: Hosts
+) -> None:
     for path in list_parser(paths):
-        pod_name = hosts[provider]["pod-name"]
+        pod_name = hosts[provider]["pod_name"]
         mkdir_cmd = ["sh", "-c", f"mkdir {path}"]
         sp.call(cmd_exec(pod_name, mkdir_cmd, container=container))
         chown_cmd = ["sh", "-c", f"chown {uid}:{gid} {path}"]
@@ -283,8 +295,10 @@ def create_in_container(uid, gid, paths, container, provider, hosts):
         '"(?P<provider>.*)"'
     )
 )
-def remove_in_container(paths, container, provider, hosts):
+def remove_in_container(
+    paths: str, container: str, provider: str, hosts: Hosts
+) -> None:
     for path in list_parser(paths):
-        pod_name = hosts[provider]["pod-name"]
+        pod_name = hosts[provider]["pod_name"]
         cmd = ["sh", "-c", f"rm -rf {path}"]
         sp.call(cmd_exec(pod_name, cmd, container=container))

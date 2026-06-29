@@ -23,6 +23,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_editor_bracket,
 )
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -35,14 +36,14 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def create_task_using_previously_created_lambda(
-    browser_id,
-    config,
-    selenium,
-    lane_name,
-    lambda_name,
-    ordinal,
-    which,
-):
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    lane_name: str,
+    lambda_name: str,
+    ordinal: str,
+    which: str,
+) -> None:
     """Create task using lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -84,14 +85,14 @@ def create_task_using_previously_created_lambda(
 
 
 def _create_task_using_previously_created_lambda(
-    browser_id,
-    config,
-    selenium,
-    lane_name,
-    lambda_name,
-    ordinal,
-    which,
-):
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    lane_name: str,
+    lambda_name: str,
+    ordinal: str,
+    which: str,
+) -> None:
     arg_type = "argument"
     res_type = "result"
     conf_param_option = "configuration parameters"
@@ -170,14 +171,16 @@ def _create_task_using_previously_created_lambda(
         ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
     )
 )
-def remove_task_from_lane(selenium, browser_id, lane, task):
+def remove_task_from_lane(
+    selenium: SeleniumDrivers, browser_id: str, lane: str, task: str
+) -> None:
     modal = "Remove task"
     option = "Remove"
 
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["automation"]
-    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane.parallel_box.task_list[task].menu_button()
+    lane_page = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane_page.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu[option]()
     click_modal_button(selenium, browser_id, option, modal)
 
@@ -189,7 +192,14 @@ def remove_task_from_lane(selenium, browser_id, lane, task):
         r"(?P<option>adding|changing) following:\n(?P<config>(.|\s)*)"
     )
 )
-def modify_task_results(selenium, browser_id, lane, task, config, option):
+def modify_task_results(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    lane: str,
+    task: str,
+    config: str,
+    option: str,
+) -> None:
     conf_param_option = "configuration parameters"
     data = yaml.load(config, yaml.Loader)
     results_conf = data.get("results", False)
@@ -200,8 +210,8 @@ def modify_task_results(selenium, browser_id, lane, task, config, option):
 
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).get_page_and_click("automation")
-    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane.parallel_box.task_list[task].menu_button()
+    lane_page = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane_page.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu[button]()
     # wait for task form to open
     time.sleep(1)

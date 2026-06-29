@@ -10,14 +10,27 @@ import json
 import time
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, Final
+from typing import Final, NotRequired, Optional, TypedDict, cast
 
 from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
 from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
 
+from tests.mixed.type_definitions import FileAttrs
+
 INITIAL_BACKOFF_TIMEOUT: Final[int] = 1
 MAX_BACKOFF_TIMEOUT: Final[int] = 60
 BACKOFF_INCREASE_FACTOR: Final[int] = 2
+
+
+class ChangedOrCreatedEventData(TypedDict):
+    fileId: str
+    parentFileId: str
+    attributes: NotRequired[FileAttrs]
+
+
+class DeletedEventData(TypedDict):
+    fileId: str
+    parentFileId: str
 
 
 class SSEEvent(Enum):
@@ -35,7 +48,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         observed_dirs: list[str],
         observed_attrs: list[str],
         verify_ssl: bool = True,
-    ):
+    ) -> None:
         self.oneprovider_authority = oneprovider_authority.rstrip("/")
         self.space_id = space_id
         self.access_token = access_token
@@ -44,14 +57,14 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         self.verify_ssl = verify_ssl
 
         # fileId -> attrs
-        self.files: dict[str, dict[str, str | int]] = {}
+        self.files: dict[str, FileAttrs] = {}
         self.deleted_files: set[str] = set()
-        self.last_event_id: str | None = None
-        self.first_event_id: str | None = None
+        self.last_event_id: Optional[str] = None
+        self.first_event_id: Optional[str] = None
 
-        self.changed_or_created_events: asyncio.Queue[
-            dict[str, dict[str, str | int]]
-        ] = asyncio.Queue()
+        self.changed_or_created_events: asyncio.Queue[dict[str, FileAttrs]] = (
+            asyncio.Queue()
+        )
         self.heartbeat_events: asyncio.Queue[tuple[str, float]] = asyncio.Queue()
 
         self.backoff: int = INITIAL_BACKOFF_TIMEOUT
@@ -127,12 +140,12 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
             self.first_event_id = event.last_event_id
 
         try:
-            data: dict[str, Any] = json.loads(data_raw)
+            raw_data: object = json.loads(data_raw)
         except json.JSONDecodeError:
             print(f"Cannot decode data: {data_raw!r}")
             return
 
-        # Only put heartbeat event to the queue as event id is saved above
+        # Heartbeat events carry JSON null rather than an object.
         if event_type == SSEEvent.HEARTBEAT.value:
             await self.heartbeat_events.put(
                 (
@@ -141,23 +154,29 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
                 )
             )
             return
+
+        if not isinstance(raw_data, dict):
+            print(f"Unexpected event data={raw_data!r}")
+            return
+        data = cast(dict[str, object], raw_data)
+
         if event_type == SSEEvent.CHANGED_OR_CREATED.value:
-            await self._handle_changed_or_created(data)
+            await self._handle_changed_or_created(cast(ChangedOrCreatedEventData, data))
         elif event_type == SSEEvent.DELETED.value:
-            await self._handle_deleted(data)
+            await self._handle_deleted(cast(DeletedEventData, data))
         else:
             print(f"Unknown event type={event_type}, data={data}")
 
-    async def _handle_changed_or_created(self, data: dict[str, Any]) -> None:
+    async def _handle_changed_or_created(self, data: ChangedOrCreatedEventData) -> None:
         file_id: str = data["fileId"]
         parent_file_id: str = data["parentFileId"]
-        attrs: dict[str, str | int] = data.get("attributes", {})
+        attrs: FileAttrs = data.get("attributes", {})
 
         # If file is deleted ignore
         if file_id in self.deleted_files:
             return
 
-        cached_attrs: dict[str, str | int] = self.files.get(file_id, {}).copy()
+        cached_attrs: FileAttrs = self.files.get(file_id, {}).copy()
 
         await self.changed_or_created_events.put({file_id: attrs})
 
@@ -180,7 +199,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
             self.files[file_id].update(attrs)
             return
 
-        updated_attrs: dict[str, str | int] = get_updated_attrs(attrs, cached_attrs)
+        updated_attrs: FileAttrs = get_updated_attrs(attrs, cached_attrs)
         # Check if anything changed
         if not updated_attrs:
             return
@@ -195,7 +214,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
             cached_attrs=cached_attrs,
         )
 
-    async def _handle_deleted(self, data: dict[str, Any]) -> None:
+    async def _handle_deleted(self, data: DeletedEventData) -> None:
         file_id: str = data["fileId"]
         parent_file_id: str = data["parentFileId"]
 
@@ -221,8 +240,8 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         self,
         file_id: str,
         parent_file_id: str,
-        attrs: dict[str, str | int],
-        cached_attrs: dict[str, str | int],
+        attrs: FileAttrs,
+        cached_attrs: FileAttrs,
     ) -> None:
         pass
 
@@ -249,7 +268,7 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
         observed_dirs: list[str],
         observed_attrs: list[str],
         verify_ssl: bool = True,
-    ):
+    ) -> None:
         super().__init__(
             oneprovider_authority,
             space_id,
@@ -259,9 +278,7 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
             verify_ssl=verify_ssl,
         )
         self.created_file_ids: asyncio.Queue[str] = asyncio.Queue()
-        self.updated_file_attrs: asyncio.Queue[dict[str, dict[str, str | int]]] = (
-            asyncio.Queue()
-        )
+        self.updated_file_attrs: asyncio.Queue[dict[str, FileAttrs]] = asyncio.Queue()
         self.deleted_file_ids: asyncio.Queue[str] = asyncio.Queue()
 
     async def on_file_created(self, file_id: str, parent_file_id: str) -> None:
@@ -271,8 +288,8 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
         self,
         file_id: str,
         parent_file_id: str,
-        attrs: dict[str, str | int],
-        cached_attrs: dict[str, str | int],
+        attrs: FileAttrs,
+        cached_attrs: FileAttrs,
     ) -> None:
         await self.updated_file_attrs.put(
             {file_id: get_updated_attrs(attrs, cached_attrs)}
@@ -288,7 +305,5 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
         self.deleted_file_ids = asyncio.Queue()
 
 
-def get_updated_attrs(
-    attrs: dict[str, str | int], cached_attrs: dict[str, str | int]
-) -> dict[str, str | int]:
+def get_updated_attrs(attrs: FileAttrs, cached_attrs: FileAttrs) -> FileAttrs:
     return {k: attrs[k] for k in attrs if attrs[k] != cached_attrs[k]}

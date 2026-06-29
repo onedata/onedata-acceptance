@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from typing import cast
 
 import yaml
 
@@ -23,7 +24,10 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
+from tests.gui.utils.onezone.data_discovery_page import ResultSample
+from tests.type_definitions import JsonObject, JsonValue, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -41,7 +45,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=2)
-def assert_data_discovery_files(selenium, browser_id, config, spaces):
+def assert_data_discovery_files(
+    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: dict[str, str]
+) -> None:
     button_name = "Query"
 
     click_button_on_data_disc_page(selenium, browser_id, button_name)
@@ -49,7 +55,9 @@ def assert_data_discovery_files(selenium, browser_id, config, spaces):
     assert_files(selenium, browser_id, config, spaces)
 
 
-def assert_files(selenium, browser_id, config, spaces):
+def assert_files(
+    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: dict[str, str]
+) -> None:
     expected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     _assert_elem_num_equals(expected_data, data_dict)
@@ -62,9 +70,11 @@ def assert_files(selenium, browser_id, config, spaces):
             )
 
 
-def _assert_elem_num_equals(expected_data, data_dict):
+def _assert_elem_num_equals(
+    expected_data: JsonObject, data_dict: dict[str, ResultSample]
+) -> None:
     expected_num = len(expected_data)
-    spaces = expected_data.get("spaces", [])
+    spaces = cast(list[str], expected_data.get("spaces", []))
     if spaces:
         expected_num = expected_num - 1 + len(spaces)
     assert expected_num == len(
@@ -72,12 +82,16 @@ def _assert_elem_num_equals(expected_data, data_dict):
     ), f"There should be {expected_num} files visible but there is {len(data_dict)}"
 
 
-def _check_spaces_of_data_disc(expected, actual):
+def _check_spaces_of_data_disc(
+    expected: list[str], actual: dict[str, ResultSample]
+) -> None:
     for space in expected:
         assert space in actual, f"space {space} not harvested"
 
 
-def _unpack_files_data(selenium, browser_id):
+def _unpack_files_data(
+    selenium: SeleniumDrivers, browser_id: str
+) -> dict[str, ResultSample]:
     driver = selenium[browser_id]
     regex = r'fileName: "(?P<file_name>[^\s]+)"'
     files_data_dict = {}
@@ -87,12 +101,15 @@ def _unpack_files_data(selenium, browser_id):
     return files_data_dict
 
 
-def _assert_data_discovery_files(expected, actual, spaces):
+def _assert_data_discovery_files(
+    expected: JsonObject, actual: str, spaces: dict[str, str]
+) -> None:
     for item in expected.items():
         if item[0] == "spaceId":
-            item = ("spaceId", f'"{spaces[item[1]]}"')
+            item = ("spaceId", f'"{spaces[cast(str, item[1])]}"')
         if item[0] == "xattrs":
-            for sub_item in item[1].items():
+            xattrs = cast(dict[str, JsonObject], item[1])
+            for sub_item in xattrs.items():
                 if sub_item[0] == "unexpected":
                     for s_item in sub_item[1].items():
                         _assert_unexpected_xattr(s_item, actual)
@@ -104,22 +121,24 @@ def _assert_data_discovery_files(expected, actual, spaces):
             ), f"{item[0]}: {item[1]} not in {actual}"
 
 
-def _assert_unexpected_xattr(sub_item, actual):
+def _assert_unexpected_xattr(sub_item: tuple[str, JsonValue], actual: str) -> None:
     regex = f"{sub_item[0]}: {{__value: {sub_item[1]}}}"
     assert regex not in actual, f"{regex} in {actual} but should not be"
 
 
-def _assert_expected_xattr(sub_item, actual):
+def _assert_expected_xattr(sub_item: tuple[str, JsonValue], actual: str) -> None:
     regex = f"{sub_item[0]}: {{__value: {sub_item[1]}}}"
     assert regex in actual, f"{regex} not in {actual}"
 
 
-def _assert_unexpected_properties_of_files(unexpected, actual, spaces):
+def _assert_unexpected_properties_of_files(
+    unexpected: JsonObject, actual: str, spaces: dict[str, str]
+) -> None:
     for item in unexpected.items():
         if item[0] == "spaceId":
-            item = ("spaceId", f'"{spaces[item[1]]}"')
+            item = ("spaceId", f'"{spaces[cast(str, item[1])]}"')
         if item[0] == "xattrs":
-            for sub_item in item[1].items():
+            for sub_item in cast(JsonObject, item[1]).items():
                 _assert_unexpected_xattr(sub_item, actual)
         else:
             assert not (
@@ -133,7 +152,9 @@ def _assert_unexpected_properties_of_files(unexpected, actual, spaces):
         "files in data discovery page:\n{config}"
     )
 )
-def assert_not_files_properties(selenium, browser_id, config, spaces):
+def assert_not_files_properties(
+    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: dict[str, str]
+) -> None:
     unexpected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     for file in unexpected_data:
@@ -149,7 +170,9 @@ def assert_not_files_properties(selenium, browser_id, config, spaces):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def see_files_with_order(selenium, browser_id, config):
+def see_files_with_order(
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     files_list = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     assert len(files_list) == len(data_dict)
@@ -162,7 +185,9 @@ def see_files_with_order(selenium, browser_id, config):
         'user of {browser_id} opens Data Discovery page of "{harvester_name}" harvester'
     )
 )
-def open_data_discovery_of_harvester(selenium, browser_id, harvester_name):
+def open_data_discovery_of_harvester(
+    selenium: SeleniumDrivers, browser_id: str, harvester_name: str
+) -> None:
     option = "Discovery"
     list_name = "harvesters"
     option2 = "data discovery"
@@ -182,17 +207,21 @@ def open_data_discovery_of_harvester(selenium, browser_id, harvester_name):
         'user of {browser_id} clicks on "Go to source file..." for "{filename}"'
     )
 )
-def go_to_source_of_file(selenium, browser_id, filename):
+def go_to_source_of_file(
+    selenium: SeleniumDrivers, browser_id: str, filename: str
+) -> None:
     data_dict = _unpack_files_data(selenium, browser_id)
     data_dict[filename].source_button()
 
 
 @wt(parsers.parse("user of {browser_id} sees {number} files on data discovery page"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_number_of_files_on_data_disc(selenium, browser_id, number: int):
+def assert_number_of_files_on_data_disc(
+    selenium: SeleniumDrivers, browser_id: str, number: str
+) -> None:
     files_dict = _unpack_files_data(selenium, browser_id)
-    assert (
-        len(files_dict) == number
+    assert len(files_dict) == int(
+        number
     ), f"Expected: {number} files but only {len(files_dict)} given"
 
 
@@ -202,18 +231,22 @@ def assert_number_of_files_on_data_disc(selenium, browser_id, number: int):
         "filter on data discovery page:\n{config}"
     )
 )
-def choose_properties_to_filter(selenium, browser_id, config):
+def choose_properties_to_filter(
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     data = yaml.load(config, yaml.Loader)
     _parse_data(data, selenium, browser_id)
 
 
-def _parse_data(data, selenium, browser_id):
+def _parse_data(
+    data: list[JsonValue], selenium: SeleniumDrivers, browser_id: str
+) -> None:
     page = DataDiscovery(selenium[browser_id])
     for item in data:
         if isinstance(item, dict):
             if [*item][0] == "__onedata":
                 page.filter_properties_tree.tree_nodes["__onedata"].expander()
-                attrs = item["__onedata"]
+                attrs = cast(list[JsonValue], item["__onedata"])
                 for attr in attrs:
                     if isinstance(attr, dict):
                         if [*attr][0] == "xattrs":
@@ -222,7 +255,7 @@ def _parse_data(data, selenium, browser_id):
                             ].onedata_tree_nodes["xattrs"]
                             node.expander()
                             nodes = node.xattrs_tree_nodes
-                            for prop in attr["xattrs"]:
+                            for prop in cast(list[str], attr["xattrs"]):
                                 nodes[prop].checkbox.click()
                         else:
                             raise RuntimeError(f"Do not support {attr}")
@@ -243,7 +276,9 @@ def _parse_data(data, selenium, browser_id):
         "following files:\n{config}"
     )
 )
-def compare_files_with_curl(browser_id, tmp_memory, config):
+def compare_files_with_curl(
+    browser_id: str, tmp_memory: TmpMemory, config: str
+) -> None:
     curl_res = tmp_memory[browser_id]["curl result"]
     expected_data = yaml.load(config, yaml.Loader)
 
@@ -259,16 +294,21 @@ def compare_files_with_curl(browser_id, tmp_memory, config):
             if prop == "xattrs":
                 xattrs = expected_data[file_name][prop]
                 for xattr in xattrs:
-                    file_xattrs = curl_dict[file_name]["__onedata"]["xattrs"]
+                    onedata = cast(JsonObject, curl_dict[file_name]["__onedata"])
+                    file_xattrs = cast(dict[str, JsonObject], onedata["xattrs"])
                     assert file_xattrs[xattr]["__value"] == xattrs[xattr], msg
 
             else:
                 assert expected_data[file_name][prop] == curl_dict[file_name][prop], msg
 
 
-def _curl_data_to_dict(query_curl_data):
+def _curl_data_to_dict(
+    query_curl_data: list[JsonObject],
+) -> dict[str, JsonObject]:
     new_dict = {}
     for entry in query_curl_data:
-        file_name = entry["_source"]["__onedata"]["fileName"]
-        new_dict[file_name] = entry["_source"]
+        source = cast(JsonObject, entry["_source"])
+        onedata = cast(JsonObject, source["__onedata"])
+        file_name = cast(str, onedata["fileName"])
+        new_dict[file_name] = source
     return new_dict

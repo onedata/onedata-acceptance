@@ -1,17 +1,64 @@
 """This module contains utility functions for data management."""
 
+from __future__ import annotations
+
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Iterable, Mapping
+from typing import Optional, Protocol
+
+import pytest
 import yaml
 
 from tests.gui.meta_steps.oneprovider.files_tree import build_tree_config
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
+from tests.mixed.type_definitions import (
+    Acl,
+    AclEntry,
+    AssertFileContent,
+    Content,
+    ContentItem,
+    IsDir,
+    ListDir,
+)
+from tests.type_definitions import Hosts
+from tests.utils.user_utils import Users
 
 
-def _check_files_tree(parent, is_dir_fun, ls_fun, assert_file_content_fun):
+class FileTreeNode(Protocol):
+    path: str
+    content: Optional[str | int]
+
+    @property
+    def nodes(self) -> Iterable[FileTreeNode]: ...
+
+    def get_items(self) -> Iterable[str]: ...
+
+
+class CreateItem(Protocol):
+    def __call__(
+        self,
+        user: str,
+        users: Users,
+        cwd: str,
+        name: str,
+        content: Content,
+        create_item_fun: CreateItem,
+        host: str,
+        hosts: Hosts,
+        request: pytest.FixtureRequest,
+    ) -> None: ...
+
+
+def _check_files_tree(
+    parent: FileTreeNode,
+    is_dir_fun: IsDir,
+    ls_fun: ListDir,
+    assert_file_content_fun: AssertFileContent,
+) -> None:
     children = ls_fun(parent.path)
     err_msg = (
         f"expected item {parent.path} to have children {parent.get_items()} but got"
@@ -34,25 +81,40 @@ def _check_files_tree(parent, is_dir_fun, ls_fun, assert_file_content_fun):
             assert_file_content_fun(child.path, str(child.content))
 
 
-def check_files_tree(config, cwd, is_dir_fun, ls_fun, assert_file_content_fun):
+def check_files_tree(
+    config: str,
+    cwd: str,
+    is_dir_fun: IsDir,
+    ls_fun: ListDir,
+    assert_file_content_fun: AssertFileContent,
+) -> None:
     tree = yaml.load(config, yaml.Loader)
     root = build_tree_config(tree, root_path=cwd)
     _check_files_tree(root, is_dir_fun, ls_fun, assert_file_content_fun)
 
 
-def create_content(user, users, cwd, content, create_item_fun, host, hosts, request):
+def create_content(
+    user: str,
+    users: Users,
+    cwd: str,
+    content: Iterable[ContentItem],
+    create_item_fun: CreateItem,
+    host: str,
+    hosts: Hosts,
+    request: pytest.FixtureRequest,
+) -> None:
     for item in content:
-        try:
-            [(name, content)] = item.items()
-        except AttributeError:
+        if isinstance(item, Mapping):
+            [(name, item_content)] = item.items()
+        else:
             name = item
-            content = None
+            item_content = None
         create_item_fun(
             user,
             users,
             cwd,
             name,
-            content,
+            item_content,
             create_item_fun,
             host,
             hosts,
@@ -94,11 +156,18 @@ ACL_MASK = {
 }
 
 
-def assert_ace(priv, item_type, ace, name, num, path):
-    priv = parse_seq(priv)
-    if "deny" in priv:
+def assert_ace(
+    priv: str,
+    item_type: str,
+    ace: Mapping[str, str],
+    name: str,
+    num: int | str,
+    path: str,
+) -> None:
+    parsed_priv = parse_seq(priv)
+    if "deny" in parsed_priv:
         acetype = "0x1"
-        priv.remove("deny")
+        parsed_priv.remove("deny")
     else:
         acetype = "0x0"
     aceflags = "0x40" if item_type == "group" else "0x0"
@@ -112,17 +181,25 @@ def assert_ace(priv, item_type, ace, name, num, path):
     assert (
         ace["aceflags"] == aceflags
     ), f"{num} ACE is set for {'group' if aceflags else 'user'}"
-    assert set_priv == sorted(priv), f"Privileges in {num} ACE are not correct"
+    assert set_priv == sorted(parsed_priv), f"Privileges in {num} ACE are not correct"
 
 
-def get_acl_metadata(curr_acl, priv, item_type, groups, name, users, path):
+def get_acl_metadata(
+    curr_acl: Iterable[AclEntry],
+    priv: str,
+    item_type: str,
+    groups: Mapping[str, str],
+    name: str,
+    users: Users,
+    path: str,
+) -> Acl:
     acl = list(curr_acl)
     acl.append({})
     ace = acl[-1]
-    priv = parse_seq(priv)
-    if "deny" in priv:
+    parsed_priv = parse_seq(priv)
+    if "deny" in parsed_priv:
         acetype = "0x1"
-        priv.remove("deny")
+        parsed_priv.remove("deny")
     else:
         acetype = "0x0"
     if item_type == "group":
@@ -136,7 +213,7 @@ def get_acl_metadata(curr_acl, priv, item_type, groups, name, users, path):
     ace["acetype"] = acetype
     acemask = 0
     for p in ACL_MASK[cdmi_item_type]:
-        if ACL_MASK[cdmi_item_type][p] in priv:
+        if ACL_MASK[cdmi_item_type][p] in parsed_priv:
             acemask |= p
     ace["acemask"] = hex(acemask)
     ace["aceflags"] = aceflags

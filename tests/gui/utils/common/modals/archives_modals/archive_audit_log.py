@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, cast
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -32,7 +32,7 @@ class FilesLog(BrowserRow):
     duplicated_name_hash = Label(".log-filename-duplicate-hash", scroll=False)
     time_taken = Label(".time-taken-text", scroll=False)
 
-    def click(self):
+    def click(self) -> None:
         time.sleep(0.1)
         ActionChains(self.driver).click(self.clickable_field).perform()
 
@@ -43,11 +43,11 @@ class ArchiveAuditLog(Modal):
 
     x = Button(".close")
 
-    def scroll_by_press_space(self):
+    def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()
 
-    def scroll_to_top(self):
+    def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
                 "document.querySelector("
@@ -60,13 +60,14 @@ class ArchiveAuditLog(Modal):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_rows_of_columns(
-        self, column_names: Optional[List[str]] = None
-    ) -> Dict[str, List[str]]:
+        self, column_names: Optional[list[str]] = None
+    ) -> dict[str, list[str]]:
 
         temp_columns = list(set((column_names or []) + ["file"]))
-        column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
+        column_values: dict[str, list[str]] = {column: [] for column in temp_columns}
 
         for row in self.data_row:
+            row = cast(FilesLog, row)
             values_in_row = [getattr(row, column) for column in temp_columns]
             if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
@@ -85,9 +86,9 @@ class ArchiveAuditLog(Modal):
         return column_values
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_visible_rows_of_single_column(self, column_name: str) -> List[str]:
+    def get_visible_rows_of_single_column(self, column_name: str) -> list[str]:
         column_values = self.get_visible_rows_of_columns([column_name])
         return column_values[column_name]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Archive audit log"

@@ -14,5 +14,5 @@ class Modal(PageObject):
     title = Label(".modal-title")
 
     @abstractmethod
-    def __str__(self):
+    def __str__(self) -> str:
         pass

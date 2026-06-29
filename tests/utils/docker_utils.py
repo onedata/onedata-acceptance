@@ -9,8 +9,17 @@ import subprocess
 
 from environment import docker  # pylint: disable=import-error
 
+DockerCommand = str | list[str]
 
-def run_cmd(username, client, cmd, detach=False, output=False, error=False):
+
+def run_cmd(
+    username: str,
+    client: object,
+    cmd: DockerCommand,
+    detach: bool = False,
+    output: bool = False,
+    error: bool = False,
+) -> object:
     """Run command in docker
     :param username: command will be run as given user
     :param client: instance of utils.client_utils.Client class
@@ -43,5 +52,5 @@ def run_cmd(username, client, cmd, detach=False, output=False, error=False):
     )
 
 
-def docker_ip(container):
+def docker_ip(container: object) -> str:
     return docker.inspect(container)["NetworkSettings"]["IPAddress"]

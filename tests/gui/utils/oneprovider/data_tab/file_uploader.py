@@ -41,13 +41,13 @@ class FileUploader(PageObject):
     progress = WebItem(".resumable-progress", cls=ProgressBar)
     rows = WebItemsSequence("ul.resumable-list li", cls=FileUploadRow)
 
-    def is_visible(self):
+    def is_visible(self) -> bool:
         return "visible" in self.web_elem.get_attribute("class")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"file uploader in {self.parent}"
 
-    def scroll_to_bottom(self):
+    def scroll_to_bottom(self) -> None:
         self.driver.execute_script(
             "arguments[0].scrollIntoView();", self.rows[-1].web_elem
         )

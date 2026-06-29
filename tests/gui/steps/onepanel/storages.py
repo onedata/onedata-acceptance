@@ -11,6 +11,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -22,7 +23,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id, storage_type):
+def wt_select_storage_type_in_storage_page_op_panel(
+    selenium: SeleniumDrivers, browser_id: str, storage_type: str
+) -> None:
     storage_selector = Onepanel(
         selenium[browser_id]
     ).content.storages.form.storage_selector
@@ -45,8 +48,12 @@ def wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id, storag
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_storages_page_op_panel(
-    selenium, browser_id, text, form, input_box
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    text: str,
+    form: str,
+    input_box: str,
+) -> None:
     form = getattr(
         Onepanel(selenium[browser_id]).content.storages.form, transform(form)
     )
@@ -62,15 +69,17 @@ def wt_type_text_to_in_box_in_storages_page_op_panel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_check_option_in_box_in_storages_page_op_panel(
-    selenium, browser_id, option, form
-):
-    form = getattr(
+    selenium: SeleniumDrivers, browser_id: str, option: str, form: str
+) -> None:
+    storage_form = getattr(
         Onepanel(selenium[browser_id]).content.storages.form, transform(form)
     )
-    getattr(form.storage_path_type, option).click()
+    getattr(storage_form.storage_path_type, option).click()
 
 
-def enable_import_in_add_storage_form(selenium, browser_id):
+def enable_import_in_add_storage_form(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     form = Onepanel(selenium[browser_id]).content.storages.form
     form.posix.imported_storage.check()
 
@@ -82,7 +91,9 @@ def enable_import_in_add_storage_form(selenium, browser_id):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium, browser_id):
+def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     Onepanel(selenium[browser_id]).content.storages.form.add()
 
 
@@ -93,7 +104,9 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium, browser_id
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_expand_storage_item_in_storages_page_op_panel(selenium, browser_id, storage):
+def wt_expand_storage_item_in_storages_page_op_panel(
+    selenium: SeleniumDrivers, browser_id: str, storage: str
+) -> None:
     storage_item = Onepanel(selenium[browser_id]).content.storages.storages[storage]
     storage_item.expand()
 
@@ -110,8 +123,12 @@ def wt_expand_storage_item_in_storages_page_op_panel(selenium, browser_id, stora
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_assert_storage_attr_in_storages_page_op_panel(
-    selenium, browser_id, storage, attr, val
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    storage: str,
+    attr: str,
+    val: str,
+) -> None:
     storages = Onepanel(selenium[browser_id]).content.storages.storages
     displayed_val = getattr(storages[storage], transform(attr)).lower()
     assert (
@@ -126,7 +143,9 @@ def wt_assert_storage_attr_in_storages_page_op_panel(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name):
+def wt_expands_toolbar_for_storage_in_onepanel(
+    selenium: SeleniumDrivers, browser_id: str, name: str
+) -> None:
     driver = selenium[browser_id]
     Onepanel(driver).content.storages.storages[name].expand_menu()
 
@@ -139,7 +158,9 @@ def wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option):
+def wt_clicks_on_btn_in_storage_toolbar_in_panel(
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
     toolbar = Popups(selenium[browser_id]).toolbar
     if toolbar.is_displayed():
         toolbar.options[option].click()
@@ -154,7 +175,9 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_modify_storage_in_onepanel(selenium, browser_id, name):
+def click_modify_storage_in_onepanel(
+    selenium: SeleniumDrivers, browser_id: str, name: str
+) -> None:
     driver = selenium[browser_id]
     Onepanel(driver).content.storages.storages[name].click()
     Onepanel(driver).content.storages.storages[name].modify()
@@ -167,7 +190,9 @@ def click_modify_storage_in_onepanel(selenium, browser_id, name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_key_in_posix_storage_edit_page(selenium, browser_id, key):
+def type_key_in_posix_storage_edit_page(
+    selenium: SeleniumDrivers, browser_id: str, key: str
+) -> None:
     driver = selenium[browser_id]
     storage_posix = Onepanel(driver).content.storages.storages["posix"]
     storage_posix.edit_form.posix_editor.params.set_last_key(key)
@@ -180,7 +205,9 @@ def type_key_in_posix_storage_edit_page(selenium, browser_id, key):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_value_in_posix_storage_edit_page(selenium, browser_id):
+def click_value_in_posix_storage_edit_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     storage_posix = Onepanel(driver).content.storages.storages["posix"]
     storage_posix.edit_form.posix_editor.params.click_value_in_modified_record()
@@ -193,7 +220,9 @@ def click_value_in_posix_storage_edit_page(selenium, browser_id):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def delete_additional_param_in_posix_storage_edit_page(selenium, browser_id):
+def delete_additional_param_in_posix_storage_edit_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     storage_posix = Onepanel(driver).content.storages.storages["posix"]
     storage_posix.edit_form.posix_editor.params.delete_first_additional_param()
@@ -201,7 +230,9 @@ def delete_additional_param_in_posix_storage_edit_page(selenium, browser_id):
 
 @wt(parsers.parse("user of {browser_id} saves changes in posix storage edit page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def save_changes_in_posix_storage_edit_page(selenium, browser_id):
+def save_changes_in_posix_storage_edit_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     storage = Onepanel(driver).content.storages.storages["posix"]
     storage.edit_form.posix_editor.save_button.click()
@@ -214,7 +245,9 @@ def save_changes_in_posix_storage_edit_page(selenium, browser_id):
 )
 @wt(parsers.parse('user of {browser_id} does not see "{name}" on the storages list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_storage_disappeared_from_list(selenium, browser_id, name):
+def assert_storage_disappeared_from_list(
+    selenium: SeleniumDrivers, browser_id: str, name: str
+) -> None:
     driver = selenium[browser_id]
     storages_list = Onepanel(driver).content.storages.storages
     assert name not in storages_list, f"found {name} on storages list"
@@ -226,20 +259,24 @@ def assert_storage_disappeared_from_list(selenium, browser_id, name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_storage_on_storage_list(selenium, browser_id, name):
+def assert_storage_on_storage_list(
+    selenium: SeleniumDrivers, browser_id: str, name: str
+) -> None:
     assert is_storage_on_storage_list(
         selenium, browser_id, name
     ), f"{name} not visible on storages list"
 
 
-def is_storage_on_storage_list(selenium, browser_id, name):
+def is_storage_on_storage_list(
+    selenium: SeleniumDrivers, browser_id: str, name: str
+) -> bool:
     driver = selenium[browser_id]
     storages_list = Onepanel(driver).content.storages.storages
     return name in storages_list
 
 
 # if there are repeated ids, set will be shorter than list
-def check_ids_different(id_list):
+def check_ids_different(id_list: list[str]) -> bool:
     ids_set = set(id_list)
     return len(ids_set) == len(id_list)
 
@@ -252,8 +289,13 @@ def check_ids_different(id_list):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_name_to_form_in_storages_page(
-    selenium, browser_id, name, input_box, storage_type, storage
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    name: str,
+    input_box: str,
+    storage_type: str,
+    storage: str,
+) -> None:
     driver = selenium[browser_id]
     form = getattr(
         Onepanel(driver).content.storages.storages[storage].edit_form,
@@ -261,11 +303,7 @@ def type_name_to_form_in_storages_page(
     )
 
     input_box = transform(input_box)
-
-    if input_box == "mount_point":
-        form.change_mount_point(name)
-    else:
-        setattr(form, input_box, name)
+    form.change_field_in_editor(driver, input_box, name)
 
 
 @wt(
@@ -275,7 +313,9 @@ def type_name_to_form_in_storages_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_button_in_edit_form(selenium, browser_id, name, storage):
+def click_on_button_in_edit_form(
+    selenium: SeleniumDrivers, browser_id: str, name: str, storage: str
+) -> None:
     driver = selenium[browser_id]
     button = name.lower() + "_button"
     getattr(
@@ -291,12 +331,16 @@ def click_on_button_in_edit_form(selenium, browser_id, name, storage):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_storage_id_to_clipboard(selenium, browser_id, storage_name):
+def copy_storage_id_to_clipboard(
+    selenium: SeleniumDrivers, browser_id: str, storage_name: str
+) -> None:
     driver = selenium[browser_id]
     Onepanel(driver).content.storages.storages[storage_name].copy_id_button()
 
 
-def close_all_expanded_storages(browser_id, selenium):
+def close_all_expanded_storages(
+    browser_id: str, selenium: SeleniumDrivers
+) -> list[str]:
     driver = selenium[browser_id]
     storages_list = Onepanel(driver).content.storages.storages
 
@@ -314,7 +358,9 @@ def close_all_expanded_storages(browser_id, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_number_storages_with_same_name(selenium, browser_id, name, number: int):
+def assert_number_storages_with_same_name(
+    selenium: SeleniumDrivers, browser_id: str, name: str, number: str
+) -> None:
     storages_names = close_all_expanded_storages(browser_id, selenium)
 
     rows_with_name = [
@@ -324,7 +370,7 @@ def assert_number_storages_with_same_name(selenium, browser_id, name, number: in
     ]
     ids = [row_name.split(CONFLICT_NAME_SEPARATOR)[1] for row_name in rows_with_name]
 
-    assert (
-        len(rows_with_name) == number
+    assert len(rows_with_name) == int(
+        number
     ), f"{name} not visible {number} times on storages list"
     assert check_ids_different(ids), f"IDs are not unique, {ids}"

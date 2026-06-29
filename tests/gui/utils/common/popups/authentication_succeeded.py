@@ -11,5 +11,5 @@ from tests.gui.utils.core.web_elements import Button
 class AuthenticationSucceeded(PageObject):
     close = Button(".close")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Authentication succeeded popup"
