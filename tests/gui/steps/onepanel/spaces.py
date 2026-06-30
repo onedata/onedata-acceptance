@@ -517,7 +517,6 @@ def assert_correct_number_displayed_on_sync_charts(
         files_dir2 = docker_ls("dir2", hosts)
     except CalledProcessError:
         files_dir2 = []
-
     expected_num = int(num)
     record = Onepanel(selenium[browser_id]).content.spaces.space
     displayed_num = getattr(record.sync_chart, bar_type)
@@ -772,7 +771,7 @@ def click_start_scan_button_in_storage_import_tab(
         "in storage import tab in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND, interval=4)
+@repeat_failed(timeout=WAIT_BACKEND * 1.5, interval=1)
 def wait_until_scanning_is_finished_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
