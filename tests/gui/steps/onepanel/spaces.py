@@ -780,7 +780,7 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
         lambda driver: Onepanel(
             driver
         ).content.spaces.space.sync_chart.start_scan_is_green(),
-        "Waiting for start scan button to be available failed",
+        message="Waiting for start scan button to be available failed",
     )
 
 
