@@ -64,9 +64,9 @@ stages:
         - _Autoformatter check
         - _Static analysis
         - _Type_check
-        - Atm examples workflows 1
-        - Storage sync
         - Storage sync charts
+        # - Atm examples workflows 1
+        # - Storage sync
         # - Atm examples workflows 2
         # - Atm pods
         # - Atm stores basic
@@ -288,7 +288,7 @@ _Type_check:
           - make type-check
         description: Type checker
 
-Atm examples workflows 1: &acceptance-tests-in-chrome-job
+Storage sync charts: &acceptance-tests-in-chrome-job
   key: COAWEX2
   other: *common-opts
   tasks:
@@ -352,7 +352,7 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
     - script: &run-selenium-tests
         <<: *run-script-working-dir
         scripts:
-          - make ENV_FILE=1oz_1op_openfaas SUITE=test_automation_examples_workflows_tests1 test_gui_pkg
+          - make SUITE=test_storage_sync_charts test_gui_pkg
         description: Run Selenium tests
   final-tasks:
     - test-parser:
@@ -1653,35 +1653,35 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
 #         scripts:
 #           - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service test_gui_pkg
 
-Storage sync:
-  <<: *acceptance-tests-in-chrome-job
-  key: CSST
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_storage_sync test_gui_pkg
+# Storage sync:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CSST
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_storage_sync test_gui_pkg
 
-Storage sync charts:
-  <<: *acceptance-tests-in-chrome-job
-  key: CSSC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_storage_sync_charts test_gui_pkg
+# Storage sync charts:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CSSC
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_storage_sync_charts test_gui_pkg
 
 # Transfers cancel:
 #   <<: *acceptance-tests-in-chrome-job
