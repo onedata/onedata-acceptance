@@ -15,7 +15,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
