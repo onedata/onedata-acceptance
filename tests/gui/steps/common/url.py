@@ -325,7 +325,7 @@ def refresh_site_and_wait(selenium: SeleniumDrivers, browser_id_list: str) -> No
 def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     wait_till_main_content_loaded(driver)
-    wait_till_authentication_info_disappear(driver)
+    wait_till_alert_info_popup_disappear(driver)
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
@@ -336,24 +336,28 @@ def wait_till_main_content_loaded(driver: WebDriver) -> None:
     assert len(elems) > 0, "did not manage to load main page"
 
 
-def wait_till_authentication_info_disappear(driver: WebDriver) -> None:
+def wait_till_alert_info_popup_disappear(
+    driver: WebDriver,
+    popup_name: str = "authentication_succeeded",
+    css_sel: str = ".alert-info",
+) -> None:
     # If popup don't appear don't throw error
     # If appeared and not closed raise
     try:
         Wait(driver, WAIT_FRONTEND).until(
-            visibility_of_element_located((By.CSS_SELECTOR, ".alert-info"))
+            visibility_of_element_located((By.CSS_SELECTOR, css_sel))
         )
     except TimeoutException:
         pass
     else:
         try_click_without_throwing_error(
-            lambda: Popups(  # pylint: disable=unnecessary-lambda
-                driver
-            ).authentication_succeeded.close.click()
+            lambda: getattr(
+                Popups(driver), popup_name  # pylint: disable=unnecessary-lambda
+            ).close.click()
         )
 
         Wait(driver, WAIT_FRONTEND).until(
-            invisibility_of_element_located((By.CSS_SELECTOR, ".alert-info"))
+            invisibility_of_element_located((By.CSS_SELECTOR, css_sel))
         )
 
 

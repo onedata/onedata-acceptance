@@ -27,6 +27,7 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
+from tests.gui.steps.common.url import wait_till_alert_info_popup_disappear
 
 
 @wt(
@@ -763,9 +764,11 @@ def click_start_scan_button_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    start_scan_btn = Onepanel(driver).content.spaces.space.sync_chart.start_scan
-    start_scan_btn.click()
-    assert not start_scan_btn.is_green(), 'Button "Start scan" was not clicked'
+    sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+    sync_chart.start_scan.click()
+    wait_till_alert_info_popup_disappear(
+        driver, popup_name="storage_import_scan_started"
+    )
 
 
 @wt(

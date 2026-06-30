@@ -44,6 +44,7 @@ from .query_builder import ExpressionBuilderPopup
 from .selector_popup import SelectorPopup
 from .shares_row_menu import SharesRowMenu
 from .spaces_tags import SpacesTags
+from .storage_import_scan_started import StorageImportScanStarted
 from .toolbar import ToolbarPopup
 from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
@@ -140,6 +141,7 @@ class Popups:
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
     authentication_succeeded = WebItem(".alert-info", cls=AuthenticationSucceeded)
+    storage_import_scan_started = WebItem(".alert-info", cls=StorageImportScanStarted)
 
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
