@@ -13,7 +13,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
@@ -154,9 +154,7 @@ def scroll_to_bottom_of_the_table(driver: WebDriver) -> int:
             "arguments[0].scrollIntoView();", get_last_item_in_table(driver)
         )
         try:
-            WebDriverWait(driver, 2).until(
-                lambda d: get_last_item_number_in_table(d) > count
-            )
+            Wait(driver, 2).until(lambda d: get_last_item_number_in_table(d) > count)
         except TimeoutException:
             break
     return count
@@ -253,9 +251,7 @@ def element_rect_stable(
 def wait_for_sliding_panel_to_stop_moving(
     driver: WebDriver, timeout: int, css_sel: str
 ) -> None:
-    WebDriverWait(driver=driver, timeout=timeout).until(
-        element_rect_stable(css_sel=css_sel)
-    )
+    Wait(driver=driver, timeout=timeout).until(element_rect_stable(css_sel=css_sel))
 
 
 def try_click_without_throwing_error(action: Callable[[], object]) -> None:
