@@ -23,7 +23,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import try_click_without_throwing_error
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Popups
-from tests.gui.utils.generic import parse_seq, parse_url
+from tests.gui.utils.generic import AlertPopup, parse_seq, parse_url, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -325,7 +325,9 @@ def refresh_site_and_wait(selenium: SeleniumDrivers, browser_id_list: str) -> No
 def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     wait_till_main_content_loaded(driver)
-    wait_till_alert_info_popup_disappear(driver)
+    wait_till_alert_info_popup_disappear(
+        driver, popup_name=AlertPopup.AUTHENTICATION_SUCCEEDED
+    )
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
@@ -338,11 +340,11 @@ def wait_till_main_content_loaded(driver: WebDriver) -> None:
 
 def wait_till_alert_info_popup_disappear(
     driver: WebDriver,
-    popup_name: str = "authentication_succeeded",
-    css_sel: str = ".alert-info",
+    popup_name: AlertPopup,
 ) -> None:
     # If popup don't appear don't throw error
     # If appeared and not closed raise
+    css_sel = ".alert-info"
     try:
         Wait(driver, WAIT_FRONTEND).until(
             visibility_of_element_located((By.CSS_SELECTOR, css_sel))
@@ -351,8 +353,9 @@ def wait_till_alert_info_popup_disappear(
         pass
     else:
         try_click_without_throwing_error(
-            lambda: getattr(
-                Popups(driver), popup_name  # pylint: disable=unnecessary-lambda
+            lambda: getattr(  # pylint: disable=unnecessary-lambda
+                Popups(driver),
+                transform(popup_name.value),
             ).close.click()
         )
 

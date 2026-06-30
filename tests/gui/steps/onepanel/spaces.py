@@ -12,22 +12,21 @@ from subprocess import CalledProcessError
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
-from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_checking_toggle
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.steps.common.url import wait_till_alert_info_popup_disappear
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
-from tests.gui.utils.generic import implicit_wait, parse_seq, transform
+from tests.gui.utils.generic import AlertPopup, implicit_wait, parse_seq, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.url import wait_till_alert_info_popup_disappear
 
 
 @wt(
@@ -767,25 +766,7 @@ def click_start_scan_button_in_storage_import_tab(
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     sync_chart.start_scan.click()
     wait_till_alert_info_popup_disappear(
-        driver, popup_name="storage_import_scan_started"
-    )
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} waits until scanning is finished "
-        "in storage import tab in Onepanel"
-    )
-)
-def wait_until_scanning_is_finished_in_storage_import_tab(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    driver = selenium[browser_id]
-    Wait(driver, timeout=WAIT_BACKEND * 2, poll_frequency=0.2).until(
-        lambda driver: Onepanel(
-            driver
-        ).content.spaces.space.sync_chart.start_scan_is_green(),
-        message="Waiting for start scan button to be available failed",
+        driver, popup_name=AlertPopup.STORAGE_IMPORT_SCAN_STARTED
     )
 
 
