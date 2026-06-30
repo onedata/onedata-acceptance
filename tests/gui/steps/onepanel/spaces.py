@@ -778,7 +778,7 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
     driver = selenium[browser_id]
     Wait(driver, WAIT_BACKEND * 2).until(
         lambda driver: driver.content.spaces.space.sync_chart.start_scan_is_green(),
-        message=f"waiting for start scan button to be available failed",
+        message="waiting for start scan button to be available failed",
     )
 
 
