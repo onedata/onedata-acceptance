@@ -12,6 +12,7 @@ from subprocess import CalledProcessError
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_checking_toggle
@@ -771,15 +772,12 @@ def click_start_scan_button_in_storage_import_tab(
         "in storage import tab in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND * 1.5, interval=1)
 def wait_until_scanning_is_finished_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    assert Onepanel(
-        driver
-    ).content.spaces.space.sync_chart.start_scan_is_green(), (
-        'Scanning did not finish correctly, "Start scan" button is not green'
+    WebDriverWait(driver, WAIT_BACKEND * 2).until(
+        lambda driver: driver.content.spaces.space.sync_chart.start_scan_is_green()
     )
 
 
