@@ -763,7 +763,9 @@ def click_start_scan_button_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    Onepanel(driver).content.spaces.space.sync_chart.start_scan()
+    start_scan_btn = Onepanel(driver).content.spaces.space.sync_chart.start_scan
+    start_scan_btn.click()
+    assert not start_scan_btn.is_green(), 'Button "Start scan" was not clicked'
 
 
 @wt(
@@ -776,7 +778,7 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    Wait(driver, WAIT_BACKEND * 2).until(
+    Wait(driver, timeout=WAIT_BACKEND * 2, poll_frequency=0.2).until(
         lambda driver: Onepanel(
             driver
         ).content.spaces.space.sync_chart.start_scan_is_green(),
