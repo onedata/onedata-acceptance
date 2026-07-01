@@ -151,8 +151,8 @@ class Popups:
         return "popups"
 
     def get_alert_popup(self, alert_info_popup: AlertPopup) -> AlertInfoPopup:
-        for popup_name in AlertPopup:
-            if popup_name is alert_info_popup:
+        for popup_type in AlertPopup:
+            if popup_type is alert_info_popup:
                 return self.alert_info_popup
         raise RuntimeError(f"Alert popup with name {alert_info_popup.value} not found")
 
