@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
