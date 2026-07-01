@@ -9,8 +9,8 @@ from tests.gui.utils.core.web_elements import Button, Label
 
 
 class AlertInfoPopup(PageObject):
+    message = id = Label(".message-body")
     close = Button(".close")
-    message = Label(".message-body")
 
     def __str__(self) -> str:
         return "alert info popup"

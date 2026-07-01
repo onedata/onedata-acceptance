@@ -326,7 +326,7 @@ def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     wait_till_main_content_loaded(driver)
     wait_till_alert_info_popup_disappear(
-        driver, alert_info_popup=AlertPopup.AUTHENTICATION_SUCCEEDED
+        driver, alert_popup=AlertPopup.AUTHENTICATION_SUCCEEDED
     )
 
 
@@ -340,7 +340,7 @@ def wait_till_main_content_loaded(driver: WebDriver) -> None:
 
 def wait_till_alert_info_popup_disappear(
     driver: WebDriver,
-    alert_info_popup: AlertPopup,
+    alert_popup: AlertPopup,
 ) -> None:
     # If popup don't appear don't throw error
     # If appeared and not closed raise
@@ -353,10 +353,10 @@ def wait_till_alert_info_popup_disappear(
         pass
     else:
         try_click_without_throwing_error(
-            Popups(driver)
+            lambda: Popups(driver)  # pylint: disable=unnecessary-lambda
             .get_alert_popup(
-                alert_info_popup,
-            )  # pylint: disable=unnecessary-lambda
+                alert_popup,
+            )
             .close.click()
         )
 

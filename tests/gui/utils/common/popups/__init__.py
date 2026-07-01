@@ -143,6 +143,7 @@ class Popups:
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
     alert_info_popup = WebItem(".alert-info", cls=AlertInfoPopup)
+    alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
 
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
@@ -150,11 +151,8 @@ class Popups:
     def __str__(self) -> str:
         return "popups"
 
-    def get_alert_popup(self, alert_info_popup: AlertPopup) -> AlertInfoPopup:
-        for popup_type in AlertPopup:
-            if popup_type is alert_info_popup:
-                return self.alert_info_popup
-        raise RuntimeError(f"Alert popup with name {alert_info_popup.value} not found")
+    def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
+        return self.alert_info_popups[alert_popup.value]
 
     def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0

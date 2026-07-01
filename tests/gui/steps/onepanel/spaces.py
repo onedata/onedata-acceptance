@@ -765,7 +765,7 @@ def click_start_scan_button_in_storage_import_tab(
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     sync_chart.start_scan.click()
     wait_till_alert_info_popup_disappear(
-        driver, alert_info_popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED
+        driver, alert_popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED
     )
 
 
