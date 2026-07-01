@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
@@ -14,10 +16,11 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.generic import AlertPopup
 from tests.utils.utils import repeat_failed
 
+from .alert_info_popup import AlertInfoPopup
 from .archive_row_menu import ArchiveRowMenu
-from .authentication_succeeded import AuthenticationSucceeded
 from .boolean_values import BooleanValues
 from .chart_statistics import ChartStatistics
 from .configure_columns_menu import ConfigureColumnsMenu
@@ -44,7 +47,6 @@ from .query_builder import ExpressionBuilderPopup
 from .selector_popup import SelectorPopup
 from .shares_row_menu import SharesRowMenu
 from .spaces_tags import SpacesTags
-from .storage_import_scan_started import StorageImportScanStarted
 from .toolbar import ToolbarPopup
 from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
@@ -140,14 +142,19 @@ class Popups:
     workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
-    authentication_succeeded = WebItem(".alert-info", cls=AuthenticationSucceeded)
-    storage_import_scan_started = WebItem(".alert-info", cls=StorageImportScanStarted)
+    alert_info_popup = WebItem(".alert-info", cls=AlertInfoPopup)
 
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
     def __str__(self) -> str:
         return "popups"
+
+    def get_alert_popup(self, alert_info_popup: AlertPopup) -> AlertInfoPopup:
+        for popup_name in AlertPopup:
+            if popup_name is alert_info_popup:
+                return self.alert_info_popup
+        raise RuntimeError(f"Alert popup with name {alert_info_popup.value} not found")
 
     def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0

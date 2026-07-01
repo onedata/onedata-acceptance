@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
@@ -29,7 +29,7 @@ def _click_on_tab_in_main_menu_sidebar(driver: WebDriver, tab: str) -> None:
         current_url = driver.current_url
         driver.find_elements(By.CSS_SELECTOR, css_path).click()
 
-        return Wait(driver, WAIT_FRONTEND).until(
+        return WebDriverWait(driver, WAIT_FRONTEND).until(
             lambda _: _check_url(current_url),
             message=f"waiting for url to change. Current url: {driver.current_url}",
         )
@@ -37,7 +37,7 @@ def _click_on_tab_in_main_menu_sidebar(driver: WebDriver, tab: str) -> None:
     menu_tab = main_menu_tab_to_url(tab)
     css_path = f".primary-sidebar a#main-{menu_tab}"
 
-    Wait(driver, WAIT_BACKEND).until(
+    WebDriverWait(driver, WAIT_BACKEND).until(
         lambda _: _load_main_menu_tab_page(menu_tab),
         message=f"waiting for {tab} main menu tab page to load",
     )
@@ -79,7 +79,7 @@ def _has_dir_content_been_loaded(driver: WebDriver) -> None:
     )
     if loader:
         loader = loader[0]
-        Wait(driver, WAIT_BACKEND).until_not(
+        WebDriverWait(driver, WAIT_BACKEND).until_not(
             lambda _: loader.is_displayed(),
             message="waiting for dir content to end loading",
         )

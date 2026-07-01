@@ -46,3 +46,8 @@ warnings.log
 *~
 
 venv/*
+cdmi_client/*
+myenv/*
+onepanel_client/*
+onezone_client/*
+oneprovider_client/*
