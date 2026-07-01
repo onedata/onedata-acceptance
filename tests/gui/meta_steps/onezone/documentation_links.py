@@ -105,6 +105,9 @@ FILE_DETAILS_ENDPOINTS = {
     "Remove extended attributes (xattrs)": EndpointInfo.file_details(
         "DELETE", "Remove file extended attributes", "Custom File Metadata"
     ),
+    "Get data distribution": EndpointInfo.file_details(
+        "GET", "Get data distribution", "Data Distribution"
+    ),
 }
 
 
@@ -199,9 +202,6 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
     popup = Popups(driver).power_select
     commands = [item.text.split("\n")[0] for item in popup.items]
     for command in commands:
-        # TODO: VFS-12753, remove after fix
-        if command == "Get data distribution":
-            continue
         modal = Modals(driver).details_modal.api
         Popups(driver).power_select.choose_item(f"{command}\nREST")
         modal.rest_api_documentation.click()
