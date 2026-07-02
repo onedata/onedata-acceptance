@@ -762,8 +762,13 @@ def click_start_scan_button_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    sync_chart = Onepanel(driver).content.spaces.space.sync_chart
-    sync_chart.start_scan.click()
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def click_start_scan_button() -> None:
+        sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+        sync_chart.start_scan.click()
+
+    click_start_scan_button()
     wait_till_alert_info_popup_disappear(
         driver, alert_popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED
     )
