@@ -420,5 +420,5 @@ class ListElement(Enum):
 
 
 class AlertPopup(Enum):
-    AUTHENTICATION_SUCCEEDED = "authentication succeeded"
-    STORAGE_IMPORT_SCAN_STARTED = "storage import scan started"
+    AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
+    STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"

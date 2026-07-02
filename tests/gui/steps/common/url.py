@@ -23,6 +23,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import try_click_without_throwing_error
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Popups
+from tests.gui.utils.core.web_objects import ButtonPageObject
 from tests.gui.utils.generic import AlertPopup, parse_seq, parse_url
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -352,13 +353,13 @@ def wait_till_alert_info_popup_disappear(
     except TimeoutException:
         pass
     else:
+
+        def alert_popup_close_button() -> ButtonPageObject:
+            return Popups(driver).get_alert_popup(alert_popup).close
+
         try_click_without_throwing_error(
-            lambda: Popups(driver)  # pylint: disable=unnecessary-lambda
-            .get_alert_popup(
-                alert_popup,
-            )
-            .close.click()
-        )
+            lambda: alert_popup_close_button().click()
+        )  # pylint: disable=unnecessary-lambda
 
         WebDriverWait(driver, WAIT_FRONTEND).until(
             invisibility_of_element_located((By.CSS_SELECTOR, css_sel))
