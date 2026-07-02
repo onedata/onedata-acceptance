@@ -14,10 +14,11 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.generic import AlertPopup
 from tests.utils.utils import repeat_failed
 
+from .alert_info_popup import AlertInfoPopup
 from .archive_row_menu import ArchiveRowMenu
-from .authentication_succeeded import AuthenticationSucceeded
 from .boolean_values import BooleanValues
 from .chart_statistics import ChartStatistics
 from .configure_columns_menu import ConfigureColumnsMenu
@@ -139,13 +140,17 @@ class Popups:
     workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
-    authentication_succeeded = WebItem(".alert-info", cls=AuthenticationSucceeded)
+    alert_info_popup = WebItem(".alert-info", cls=AlertInfoPopup)
+    alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
 
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
     def __str__(self) -> str:
         return "popups"
+
+    def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
+        return self.alert_info_popups[alert_popup.value]
 
     def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0

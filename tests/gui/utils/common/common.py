@@ -10,7 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from functools import partial
 
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import (
@@ -104,7 +104,7 @@ class _Toggle(PageObject):
         return False
 
     def wait_for_status(self, is_checked: bool) -> None:
-        Wait(self.driver, WAIT_BACKEND).until(
+        WebDriverWait(self.driver, WAIT_BACKEND).until(
             lambda _: self.is_checked() == is_checked,
             message=(
                 f"waited too long for the {str(self)} toggle to be"

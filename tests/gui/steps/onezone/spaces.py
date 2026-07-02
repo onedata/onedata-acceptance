@@ -12,7 +12,7 @@ from typing import Any
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
@@ -647,7 +647,7 @@ def open_prov_option_in_prov_menu_in_prov_section_in_space(
     driver = selenium[browser_id]
     last_url = driver.current_url
     Popups(driver).space_provider_details.menu[option]()
-    Wait(driver, WAIT_FRONTEND).until(
+    WebDriverWait(driver, WAIT_FRONTEND).until(
         lambda _: driver.current_url != last_url,
         message=f"waiting for url to change. Current url: {driver.current_url}",
     )
