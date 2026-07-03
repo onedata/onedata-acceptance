@@ -20,6 +20,12 @@ from tests.gui.steps.common.login import (
     wt_enter_text_to_field_in_login_form,
     wt_press_sign_in_btn_on_login_page,
 )
+from tests.gui.steps.common.login import (
+    login_using_basic_auth,
+    wt_enter_password_of_user,
+    wt_enter_text_to_field_in_login_form,
+    wt_press_sign_in_btn_on_login_page,
+)
 from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.oneprovider.data_tab import (
     assert_browser_in_tab_in_op,
