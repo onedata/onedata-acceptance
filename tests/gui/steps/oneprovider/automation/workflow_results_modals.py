@@ -11,7 +11,7 @@ from datetime import datetime
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import url_to_be
-from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
@@ -331,7 +331,7 @@ def open_url_from_store_content(
     url = items[option]
     driver = selenium[browser_id]
     driver.get(url)
-    Wait(driver, WAIT_BACKEND).until(
+    WebDriverWait(driver, WAIT_BACKEND).until(
         url_to_be(url), message=f"waiting for page {url:s} to load"
     )
 

@@ -18,10 +18,11 @@ from tests.gui.steps.common.common import wait_for_checking_toggle
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.steps.common.url import wait_till_alert_info_popup_disappear
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
-from tests.gui.utils.generic import implicit_wait, parse_seq, transform
+from tests.gui.utils.generic import AlertPopup, implicit_wait, parse_seq, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -517,7 +518,6 @@ def assert_correct_number_displayed_on_sync_charts(
         files_dir2 = docker_ls("dir2", hosts)
     except CalledProcessError:
         files_dir2 = []
-
     expected_num = int(num)
     record = Onepanel(selenium[browser_id]).content.spaces.space
     displayed_num = getattr(record.sync_chart, bar_type)
@@ -758,29 +758,19 @@ def toggle_in_storage_import_configuration_is_enabled(
         "in storage import tab in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_start_scan_button_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    Onepanel(driver).content.spaces.space.sync_chart.start_scan()
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def click_start_scan_button() -> None:
+        sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+        sync_chart.start_scan.click()
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} waits until scanning is finished "
-        "in storage import tab in Onepanel"
-    )
-)
-@repeat_failed(timeout=WAIT_BACKEND, interval=4)
-def wait_until_scanning_is_finished_in_storage_import_tab(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    driver = selenium[browser_id]
-    assert Onepanel(
-        driver
-    ).content.spaces.space.sync_chart.start_scan_is_green(), (
-        'Scanning did not finish correctly, "Start scan" button is not green'
+    click_start_scan_button()
+    wait_till_alert_info_popup_disappear(
+        driver, alert_popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED
     )
 
 

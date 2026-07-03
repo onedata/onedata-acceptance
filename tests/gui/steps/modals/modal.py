@@ -17,7 +17,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import staleness_of
-from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
@@ -139,7 +139,7 @@ def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
         raise NoSuchElementException(f"modal {modal_name} not found")
 
     modal_name = modal_name.lower()
-    return Wait(driver, WAIT_BACKEND).until(
+    return WebDriverWait(driver, WAIT_BACKEND).until(
         lambda _: _find(),
         message=f"waiting for {modal_name:s} modal to appear",
     )
@@ -205,7 +205,7 @@ def _wait_for_modal_to_disappear(
     driver: WebDriver, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
-    Wait(driver, WAIT_BACKEND).until_not(
+    WebDriverWait(driver, WAIT_BACKEND).until_not(
         lambda _: not staleness_of(modal) or modal.is_displayed(),
         message="waiting for modal to disappear",
     )
@@ -224,7 +224,7 @@ def wait_for_named_modal_to_disappear(
         modal = getattr(Modals(driver), transform(modal_name))
     except RuntimeError:
         return
-    Wait(
+    WebDriverWait(
         driver,
         wait_time,
         ignored_exceptions=[
@@ -318,7 +318,7 @@ def get_token_from_modal(
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]["window"]["modal"]
     token_box = modal.find_element(By.CSS_SELECTOR, "input[readonly]")
-    token = Wait(driver, WAIT_BACKEND).until(
+    token = WebDriverWait(driver, WAIT_BACKEND).until(
         lambda _: token_box.get_attribute("value"),
         message="waiting for token to appear",
     )

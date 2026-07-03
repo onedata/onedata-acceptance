@@ -417,3 +417,8 @@ class ListElement(Enum):
     AUTOMATIONS = "automations"
     LAMBDAS = "lambdas"
     WORKFLOWS = "workflows"
+
+
+class AlertPopup(Enum):
+    AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
+    STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"

@@ -12,6 +12,9 @@ import yaml
 
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.miscellaneous import (
+    wait_until_scanning_is_finished_in_storage_import_tab,
+)
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
@@ -23,7 +26,6 @@ from tests.gui.steps.onepanel.spaces import (
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
-    wait_until_scanning_is_finished_in_storage_import_tab,
     wt_assert_correct_supported_space_opened,
     wt_assert_proper_space_configuration_in_panel,
     wt_click_on_btn_in_space_support_form,
