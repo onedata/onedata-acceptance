@@ -13,9 +13,7 @@ Feature: Onezone login page
 
 
   Scenario: User successfully logins and logouts
-    When user of browser types "user1" to Username input in Onezone login form
-    And user of browser types password of "user1" to Password input in Onezone login form
-    And user of browser presses Sign in button in Onezone login page
+    When user of browser signs in to Onezone as "user1"
     And user of browser sees an info notify with text matching to: Authentication succeeded!
     And user of browser expands account settings dropdown in the sidebar
     And user of browser clicks on Logout item in expanded settings dropdown in the sidebar
