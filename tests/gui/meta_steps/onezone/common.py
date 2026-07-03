@@ -311,7 +311,12 @@ def change_password(
     users[username].password = new_password
 
 
-@wt(parsers.parse('user of {browser_id} logins as "{username}" without closing authentication info alert'))
+@wt(
+    parsers.parse(
+        'user of {browser_id} logins as "{username}" without closing authentication'
+        " info alert"
+    )
+)
 def wt_sign_in_to_onezone_as_user(
     selenium: SeleniumDrivers,
     browser_id: str,
