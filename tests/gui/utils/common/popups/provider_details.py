@@ -4,12 +4,15 @@ __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.webdriver.common.action_chains import ActionChains
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
     Label,
     NamedButton,
+    WebElement,
     WebElementsSequence,
     WebItemsSequence,
 )
@@ -31,8 +34,9 @@ class ProviderDetails(PageObject):
 
 class ProviderMapPopover(PageObject):
     provider_name = id = Label(".provider-label")
+    provider_hostname_container = WebElement(".drop-provider-host-container")
     provider_hostname = Input(".provider-host-text")
-    copy_hostname = Button(".provider-host-copy-btn .one-icon")
+    copy_hostname = Button(".provider-host-copy-btn-container")
     spaces_list = WebItemsSequence(
         ".spaces-list li.provider-place-drop-space", cls=Space
     )
@@ -42,3 +46,12 @@ class ProviderMapPopover(PageObject):
     visit_provider = NamedButton(
         ".btn-container .btn-go-to-files", text="Visit provider"
     )
+
+    def click_copy_hostname_icon(self) -> None:
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView();", self.provider_hostname_container
+        )
+        ActionChains(self.driver).move_to_element(
+            self.provider_hostname_container
+        ).perform()
+        self.copy_hostname.click()

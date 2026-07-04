@@ -23,7 +23,7 @@ Feature: Basic workflows management
 
 
   Scenario: User sees that new workflow has been added after uploading it as json file
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser opens inventory "inventory1" workflows subpage
@@ -31,7 +31,7 @@ Feature: Basic workflows management
 
 
   Scenario: User sees new workflow after creating it
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Add new workflow" button from menu bar in workflows subpage
     And user of browser writes "Workflow1" into workflow name text field
@@ -41,7 +41,7 @@ Feature: Basic workflows management
 
 
   Scenario: User sees new store after creating it
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser creates workflow "Workflow1"
     And user of browser clicks "Add store" button in workflow visualizer
@@ -52,7 +52,7 @@ Feature: Basic workflows management
 
 
   Scenario: User sees new lane after creating it
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser creates workflow "Workflow1"
     And user of browser clicks "Add store" button in workflow visualizer
@@ -67,10 +67,11 @@ Feature: Basic workflows management
 
 
   Scenario: User sees task after adding it to uploaded workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-empty-lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser sees that workflow editor appeared
     And user of browser clicks on "Add parallel box" button in the middle of "Lane1" lane
     And user of browser clicks "Create task" button in empty parallel box in "Lane1" lane
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
@@ -82,7 +83,7 @@ Feature: Basic workflows management
 
 
   Scenario: User changes name of task in uploaded workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
@@ -93,7 +94,7 @@ Feature: Basic workflows management
 
 
   Scenario: User does not see task in uploaded workflow after removing it
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
@@ -127,6 +128,7 @@ Feature: Basic workflows management
   Scenario: User sees new workflow revision after using redesign as new revision
     When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on "Redesign as new revision" button from 2nd revision of "echo" workflow menu
+    And user of browser sees that workflow editor appeared
     And user of browser changes workflow view to "Details" tab
     And user of browser writes "Revision1" in description textfield in workflow Details tab
     And user of browser Saves workflow edition by clicking "Save" button from menu bar

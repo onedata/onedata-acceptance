@@ -58,7 +58,7 @@ Feature: Basic management of user privileges for spaces in Onezone GUI
 
 
   Scenario: User fails to generate space invite token because of lack in privileges
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Members" of "space2" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
@@ -66,7 +66,7 @@ Feature: Basic management of user privileges for spaces in Onezone GUI
           User management:
             granted: False
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     And user of browser_user1 clicks "space2" on the spaces list in the sidebar
     And user of browser_user1 clicks "Members" of "space2" space in the sidebar
     And user of browser_user1 clicks on "Invite user using token" button in users list menu in "space2" space members view
@@ -74,7 +74,7 @@ Feature: Basic management of user privileges for spaces in Onezone GUI
 
 
   Scenario: User fails to remove other user from given space because of lack in privileges
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Members" of "space2" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
@@ -82,14 +82,14 @@ Feature: Basic management of user privileges for spaces in Onezone GUI
           User management:
             granted: False
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     And user of browser_user1 clicks "space2" on the spaces list in the sidebar
     And user of browser_user1 removes "user2" user from "space2" space members
     Then user of browser_user1 sees that error modal with text "insufficient privileges" appeared
 
 
   Scenario: Non-space-owner successfully generates space invite token if he got user management privilege
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Members" of "space2" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
@@ -97,7 +97,7 @@ Feature: Basic management of user privileges for spaces in Onezone GUI
             User management:
               granted: True
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     And user of browser_user1 clicks "space2" on the spaces list in the sidebar
     And user of browser_user1 clicks "Members" of "space2" space in the sidebar
     And user of browser_user1 clicks on "Invite user using token" button in users list menu in "space2" space members view

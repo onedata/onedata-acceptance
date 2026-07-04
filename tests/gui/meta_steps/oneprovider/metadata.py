@@ -35,6 +35,9 @@ from tests.gui.steps.oneprovider.metadata import (
     type_text_to_metadata_textarea,
     type_text_to_val_of_attr_in_new_xattr_entry,
 )
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils import Modals
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -46,14 +49,14 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_xattr_entry(selenium, browser_id, modals, key_name, value):
-    type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, key_name, modals)
-    type_text_to_val_of_attr_in_new_xattr_entry(
-        selenium, browser_id, value, modals, key_name
-    )
+def add_xattr_entry(
+    selenium: SeleniumDrivers, browser_id: str, key_name: str, value: str
+) -> None:
+    type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, key_name)
+    type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, value, key_name)
 
 
-def get_modal_name_from_item_name(item_name):
+def get_modal_name_from_item_name(item_name: str) -> str:
     if "file" in item_name:
         return "File details"
     return "Directory details"
@@ -68,29 +71,25 @@ def get_modal_name_from_item_name(item_name):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_json_rdf_metadata_for_item(
-    selenium,
-    browser_id,
-    modals,
-    text,
-    input_type,
-    item_name,
-    tmp_memory,
-    popups,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    text: str,
+    input_type: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
 
     modal_name = get_modal_name_from_item_name(item_name.lower())
     button = "Save"
     panel = "Metadata"
     close_button = "X"
 
-    click_on_context_menu_item(
-        selenium, browser_id, popups, item_name, tmp_memory, panel
-    )
-    assert_tab_in_modal(selenium, browser_id, panel, modals, modal_name)
-    click_on_navigation_tab_in_panel(selenium, browser_id, input_type, modals, panel)
-    type_text_to_metadata_textarea(selenium, browser_id, text, input_type, modals)
-    click_panel_button(selenium, browser_id, button, panel, modals)
-    click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+    click_on_context_menu_item(selenium, browser_id, item_name, tmp_memory, panel)
+    assert_tab_in_modal(selenium, browser_id, panel, modal_name)
+    click_on_navigation_tab_in_panel(selenium, browser_id, input_type, panel)
+    type_text_to_metadata_textarea(selenium, browser_id, text, input_type)
+    click_panel_button(selenium, browser_id, button, panel)
+    click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
 @wt(
@@ -102,15 +101,17 @@ def add_json_rdf_metadata_for_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_json_rdf_metadata_for_item(
-    selenium, browser_id, tab, item_name, modals, tmp_memory, popups
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tab: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     modal_name = get_modal_name_from_item_name(item_name.lower())
     option = "Metadata"
-    click_on_context_menu_item(
-        selenium, browser_id, popups, item_name, tmp_memory, option
-    )
-    assert_tab_in_modal(selenium, browser_id, option, modals, modal_name)
-    click_on_navigation_tab_in_panel(selenium, browser_id, tab, modals, option)
+    click_on_context_menu_item(selenium, browser_id, item_name, tmp_memory, option)
+    assert_tab_in_modal(selenium, browser_id, option, modal_name)
+    click_on_navigation_tab_in_panel(selenium, browser_id, tab, option)
 
 
 @wt(
@@ -123,20 +124,16 @@ def open_json_rdf_metadata_for_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_metadata_in_op_gui(
-    selenium,
-    browser_id,
-    path,
-    tmp_memory,
-    op_container,
-    res,
-    space,
-    tab_name,
-    val,
-    modals,
-    oz_page,
-    item,
-    popups,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    path: str,
+    tmp_memory: TmpMemory,
+    res: str,
+    space: str,
+    tab_name: str,
+    val: str,
+    item: str,
+) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
     button = "Save"
@@ -147,36 +144,31 @@ def set_metadata_in_op_gui(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,
         option,
         space,
-        oz_page,
-        op_container,
     )
     if tab_name == "xattrs":
         attr, val = val.split("=")
-        type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, attr, modals)
-        type_text_to_val_of_attr_in_new_xattr_entry(
-            selenium, browser_id, val, modals, attr
-        )
+        type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, attr)
+        type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, val, attr)
     else:
-        click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modals, option)
-        type_text_to_metadata_textarea(selenium, browser_id, val, tab_name, modals)
-    click_panel_button(selenium, browser_id, button, option, modals)
+        click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
+        type_text_to_metadata_textarea(selenium, browser_id, val, tab_name)
+    click_panel_button(selenium, browser_id, button, option)
 
     if res == "fails":
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
         assert_status_tag_for_file_in_browser(browser_id, status_type, path, tmp_memory)
 
-    click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+    click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
-def _assert_metadata_loading_alert(selenium, browser_id, modals):
-    modal = modals(selenium[browser_id]).details_modal.metadata
+def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: str) -> None:
+    modal = Modals(selenium[browser_id]).details_modal.metadata
     assert "Insufficient privileges" in modal.loading_alert, "resource loaded"
 
 
@@ -191,20 +183,16 @@ def _assert_metadata_loading_alert(selenium, browser_id, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_metadata_in_op_gui(
-    selenium,
-    browser_id,
-    path,
-    tmp_memory,
-    op_container,
-    res,
-    space,
-    tab_name,
-    val,
-    modals,
-    oz_page,
-    item,
-    popups,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    path: str,
+    tmp_memory: TmpMemory,
+    res: str,
+    space: str,
+    tab_name: str,
+    val: str,
+    item: str,
+) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
     close_button = "X"
@@ -212,45 +200,34 @@ def assert_metadata_in_op_gui(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,
         option,
         space,
-        oz_page,
-        op_container,
     )
     if res == "fails":
-        _assert_metadata_loading_alert(selenium, browser_id, modals)
+        _assert_metadata_loading_alert(selenium, browser_id)
     else:
         if tab_name == "xattrs":
             attr, val = val.split("=")
-            assert_there_is_such_xattr_meta_record(
-                selenium, browser_id, attr, val, modals
-            )
+            assert_there_is_such_xattr_meta_record(selenium, browser_id, attr, val)
         else:
-            click_on_navigation_tab_in_panel(
-                selenium, browser_id, tab_name, modals, option
-            )
-            assert_textarea_contains_record(selenium, browser_id, val, tab_name, modals)
-    click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+            click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
+            assert_textarea_contains_record(selenium, browser_id, val, tab_name)
+    click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
 def assert_such_metadata_not_exist_in_op_gui(
-    selenium,
-    browser_id,
-    path,
-    tmp_memory,
-    op_container,
-    space,
-    tab_name,
-    val,
-    modals,
-    oz_page,
-    item,
-    popups,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    path: str,
+    tmp_memory: TmpMemory,
+    space: str,
+    tab_name: str,
+    val: str,
+    item: str,
+) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
     details_modal = "Details modal"
@@ -259,82 +236,72 @@ def assert_such_metadata_not_exist_in_op_gui(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,
         option,
         space,
-        oz_page,
-        op_container,
     )
 
     if tab_name == "xattrs":
         attr, val = val.split("=")
-        assert_there_is_no_such_meta_record(selenium, browser_id, attr, modals)
+        assert_there_is_no_such_meta_record(selenium, browser_id, attr)
     else:
-        click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modals, option)
-        assert_textarea_not_contain_record(selenium, browser_id, val, tab_name, modals)
-    click_modal_button(selenium, browser_id, x_button, details_modal, modals)
+        click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
+        assert_textarea_not_contain_record(selenium, browser_id, val, tab_name)
+    click_modal_button(selenium, browser_id, x_button, details_modal)
 
 
-def remove_all_xattrs_metadata(selenium, browser_id, modals):
+def remove_all_xattrs_metadata(selenium: SeleniumDrivers, browser_id: str) -> None:
     button = "Save"
     panel = "Metadata"
-    modal = modals(selenium[browser_id]).details_modal.metadata
+    modal = Modals(selenium[browser_id]).details_modal.metadata
     if len(modal.xattrs.entries) > 0:
         while len(modal.xattrs.entries) > 0:
             modal.xattrs.entries[0].remove()
             time.sleep(0.5)
 
-        click_panel_button(selenium, browser_id, button, panel, modals)
+        click_panel_button(selenium, browser_id, button, panel)
 
 
 def remove_all_metadata_in_op_gui(
-    selenium,
-    browser_id,
-    space,
-    op_container,
-    tmp_memory,
-    path,
-    oz_page,
-    modals,
-    item,
-    popups,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space: str,
+    tmp_memory: TmpMemory,
+    path: str,
+    item: str,
+) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
 
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,
         option,
         space,
-        oz_page,
-        op_container,
     )
-    click_on_navigation_tab_in_panel(selenium, browser_id, "xattrs", modals, option)
-    remove_all_xattrs_metadata(selenium, browser_id, modals)
+    click_on_navigation_tab_in_panel(selenium, browser_id, "xattrs", option)
+    remove_all_xattrs_metadata(selenium, browser_id)
 
-    click_on_navigation_tab_in_panel(selenium, browser_id, "JSON", modals, option)
-    clean_tab_textarea_in_metadata_modal(selenium, browser_id, "JSON", modals)
+    click_on_navigation_tab_in_panel(selenium, browser_id, "JSON", option)
+    clean_tab_textarea_in_metadata_modal(selenium, browser_id, "JSON")
 
-    click_save_button_metadata(selenium, browser_id, modals)
+    click_save_button_metadata(selenium, browser_id)
 
-    click_on_navigation_tab_in_panel(selenium, browser_id, "RDF", modals, option)
-    clean_tab_textarea_in_metadata_modal(selenium, browser_id, "RDF", modals)
-    click_save_button_metadata(selenium, browser_id, modals)
+    click_on_navigation_tab_in_panel(selenium, browser_id, "RDF", option)
+    clean_tab_textarea_in_metadata_modal(selenium, browser_id, "RDF")
+    click_save_button_metadata(selenium, browser_id)
 
 
-def click_save_button_metadata(selenium, browser_id, modals):
+def click_save_button_metadata(selenium: SeleniumDrivers, browser_id: str) -> None:
     button = "Save"
     panel = "Metadata"
     try:
-        click_panel_button(selenium, browser_id, button, panel, modals)
+        click_panel_button(selenium, browser_id, button, panel)
     except RuntimeError:
         pass
 
@@ -344,14 +311,14 @@ def click_save_button_metadata(selenium, browser_id, modals):
         "user of {browser_id} sees that there is no metadata in metadata panel"
     )
 )
-def assert_no_metadata_in_modal(selenium, browser_id, modals):
+def assert_no_metadata_in_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     panel = "Metadata"
 
-    assert_no_xattrs_metadata_for_item(selenium, browser_id, modals)
-    click_on_navigation_tab_in_panel(selenium, browser_id, "JSON", modals, panel)
-    assert_textarea_is_empty_for_metadata(selenium, browser_id, "JSON", modals)
-    click_on_navigation_tab_in_panel(selenium, browser_id, "RDF", modals, panel)
-    assert_textarea_is_empty_for_metadata(selenium, browser_id, "RDF", modals)
+    assert_no_xattrs_metadata_for_item(selenium, browser_id)
+    click_on_navigation_tab_in_panel(selenium, browser_id, "JSON", panel)
+    assert_textarea_is_empty_for_metadata(selenium, browser_id, "JSON")
+    click_on_navigation_tab_in_panel(selenium, browser_id, "RDF", panel)
+    assert_textarea_is_empty_for_metadata(selenium, browser_id, "RDF")
 
 
 @wt(
@@ -361,33 +328,26 @@ def assert_no_metadata_in_modal(selenium, browser_id, modals):
     )
 )
 def open_filebrowser_and_remove_meta(
-    selenium,
-    browser_id,
-    key,
-    path,
-    space,
-    modals,
-    oz_page,
-    op_container,
-    tmp_memory,
-    popups,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    key: str,
+    path: str,
+    space: str,
+    tmp_memory: TmpMemory,
+) -> None:
     modal_name = "File details"
     button = "Save"
     option = "Metadata"
 
-    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space)
+    go_to_filebrowser(selenium, browser_id, tmp_memory, space)
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,
         option,
         space,
-        oz_page,
-        op_container,
     )
-    click_on_del_metadata_record_button(selenium, browser_id, key, modals)
-    click_panel_button(selenium, browser_id, button, option, modals)
+    click_on_del_metadata_record_button(selenium, browser_id, key)
+    click_panel_button(selenium, browser_id, button, option)

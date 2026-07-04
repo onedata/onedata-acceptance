@@ -118,11 +118,8 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
             privilege subtypes:
               Modify group: False
 
-    And user of browser2 clicks on "Rename" button in group "group5" menu in the sidebar
-    And user of browser2 writes "group_renamed" into rename group text field
-    And user of browser2 confirms group rename using confirmation button
+    And user of browser2 renames group "group5" to "group_renamed" using button to confirm
     Then user of browser2 sees that error modal with text "insufficient privileges" appeared
-
 
   Scenario: User successfully sets privileges for other user if he has group management privileges
     When user of browser1 opens group "group5" members subpage
@@ -273,7 +270,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
   Scenario: User creates new space and invites group to it but given group fails to control it because of lack in privileges
     When user of browser2 creates space "new_space"
-    And user of browser2 clicks on Data in the main menu
+    And user of browser2 clicks on "Data" in the main menu
     And user of browser2 clicks "new_space" on the spaces list in the sidebar
     And user of browser2 clicks "Members" of "new_space" space in the sidebar
     And user of browser2 clicks on "Invite group using token" button in groups list menu in "new_space" space members view
@@ -285,7 +282,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser1 clicks "new_space" on the spaces list in the sidebar
     And user of browser1 clicks "Members" of "new_space" space in the sidebar
 
-    And user of browser2 clicks on Data in the main menu
+    And user of browser2 clicks on "Data" in the main menu
     And user of browser2 clicks "new_space" on the spaces list in the sidebar
     And user of browser2 clicks "Members" of "new_space" space in the sidebar
     And user of browser2 clicks "group6" group in "new_space" space members groups list

@@ -5,8 +5,13 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 # pylint: disable=cell-var-from-loop, deprecated-method
 
+from collections.abc import Mapping
+from typing import cast
+
+from tests.type_definitions import EnvDesc, Hosts
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, then
+from tests.utils.user_utils import Users
 from tests.utils.utils import assert_
 
 
@@ -17,7 +22,15 @@ from tests.utils.utils import assert_
         "using (?P<tokens>.*) by (?P<user_names>.*)"
     )
 )
-def multi_mount(user_names, client_ids, client_hosts, tokens, hosts, users, env_desc):
+def multi_mount(
+    user_names: str,
+    client_ids: str,
+    client_hosts: str,
+    tokens: str,
+    hosts: Hosts,
+    users: Users,
+    env_desc: EnvDesc,
+) -> None:
     params = zip(
         list_parser(user_names),
         list_parser(client_ids),
@@ -26,8 +39,14 @@ def multi_mount(user_names, client_ids, client_hosts, tokens, hosts, users, env_
     )
 
     for username, client_id, client_host, token in params:
-        user = users.get(username)
-        user.mount_client(client_host, client_id, hosts, env_desc, token)
+        user = users[username]
+        user.mount_client(
+            client_host,
+            client_id,
+            cast(Mapping[str, Mapping[str, str]], hosts),
+            env_desc,
+            token,
+        )
 
 
 @then(
@@ -35,20 +54,19 @@ def multi_mount(user_names, client_ids, client_hosts, tokens, hosts, users, env_
         r"(?P<spaces>.*) are mounted for (?P<user_name>\w+) on (?P<client_nodes>.*)"
     )
 )
-def check_spaces(spaces, user_name, client_nodes, users):
-    spaces = list_parser(spaces)
-    user_name = str(user_name)
-    client_nodes = list_parser(client_nodes)
+def check_spaces(spaces: str, user_name: str, client_nodes: str, users: Users) -> None:
+    expected_spaces = list_parser(spaces)
+    client_node_names = list_parser(client_nodes)
 
-    for client_node in client_nodes:
-        user = users.get(user_name)
-        client = user.clients.get(client_node)
+    for client_node in client_node_names:
+        user = users[user_name]
+        client = user.clients[client_node]
         spaces_in_client = client.list_spaces()
 
-        def condition():
-            for space in spaces:
+        def condition() -> None:
+            for space in expected_spaces:
                 assert space in spaces_in_client, (
-                    f"Space {spaces} not found in spaces list"
+                    f"Space {expected_spaces} not found in spaces list"
                     f" {spaces_in_client} on client {client_node}"
                 )
 

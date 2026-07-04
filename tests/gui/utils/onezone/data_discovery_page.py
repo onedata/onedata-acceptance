@@ -4,6 +4,9 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.common.query_builder import QueryBuilder
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -66,14 +69,14 @@ class DataDiscoveryPage:
 
     filter_properties_tree = WebItem(".tree", cls=FilterTree)
 
-    def choose_item(self, property_name):
+    def choose_item(self, property_name: str) -> None:
         for item in self.items:
             if item.text == property_name:
                 item.click()
                 return
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.web_elem = self.driver = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Data discovery page"

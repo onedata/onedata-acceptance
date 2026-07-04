@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Input,
@@ -13,7 +15,10 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
-from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.gui.utils.core.web_objects import (
+    ButtonWithTextPageObject,
+    PageObjectsSequence,
+)
 
 
 class WelcomePage(PageObject):
@@ -32,10 +37,10 @@ class ClusterRecord(ButtonWithTextPageObject):
     submenu = WebItemsSequence("ul.one-list-level-2 li", cls=ButtonWithTextPageObject)
     status_icon = WebElement(".sidebar-item-icon")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} item in {self.parent}"
 
-    def is_not_working(self):
+    def is_not_working(self) -> bool:
         return "error" in self.status_icon.get_attribute("class")
 
 
@@ -46,9 +51,9 @@ class ClustersSidebar(PageObject):
         cls=ClusterRecord,
     )
 
-    def scroll_to_bottom(self, driver):
+    def scroll_to_bottom(self, driver: WebDriver) -> None:
         driver.execute_script("var s = $('#col-sidebar'); s.scrollTo(s.height())")
 
-    def get_all_items(self, driver):
+    def get_all_items(self, driver: WebDriver) -> PageObjectsSequence:
         self.scroll_to_bottom(driver)
         return self.items

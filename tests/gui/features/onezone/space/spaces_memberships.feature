@@ -34,7 +34,7 @@ Feature: Basic management of spaces memberships in Onezone GUI
 
 
   Scenario: User removes relation between group and space (direct)
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "space-owner-user" user in "space1" space members users list
@@ -47,7 +47,7 @@ Feature: Basic management of spaces memberships in Onezone GUI
 
 
   Scenario: User removes relation between group and space (effect)
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Members" of "space2" space in the sidebar
     And user of space_owner_browser clicks "group2" group in "space2" space members groups list
@@ -57,7 +57,7 @@ Feature: Basic management of spaces memberships in Onezone GUI
               privilege subtypes:
                 Remove group: True
 
-    And user of browser1 clicks on Data in the main menu
+    And user of browser1 clicks on "Data" in the main menu
     And user of browser1 clicks "space2" on the spaces list in the sidebar
     And user of browser1 clicks "Members" of "space2" space in the sidebar
     And user of browser1 clicks "user1" user in "space2" space members users list
@@ -68,7 +68,7 @@ Feature: Basic management of spaces memberships in Onezone GUI
 
 
   Scenario: User leaves the space in members subpage
-    When user of browser1 clicks on Data in the main menu
+    When user of browser1 clicks on "Data" in the main menu
     And user of browser1 clicks "space3" on the spaces list in the sidebar
     And user of browser1 clicks "Members" of "space3" space in the sidebar
     And user of browser1 clicks "user1" user in "space3" space members users list

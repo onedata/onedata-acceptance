@@ -6,13 +6,18 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from collections.abc import Mapping, MutableMapping, Sequence
+from functools import cache
+from typing import Optional, Protocol, TypedDict, cast
 
+import requests
 import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
-from tests.utils.bdd_utils import given, parsers
+from tests.type_definitions import HostDescription, JsonObject, JsonValue
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import (
     HTTPBadRequest,
     HTTPError,
@@ -28,7 +33,73 @@ from tests.utils.rest_utils import (
     http_post,
     http_put,
 )
+from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
+
+type Hosts = Mapping[str, HostDescription]
+type Groups = Mapping[str, str]
+type Storages = MutableMapping[str, MutableMapping[str, str]]
+type Spaces = MutableMapping[str, str]
+type MemberEntry = str | dict[str, "MemberOptions"]
+type ProviderEntry = dict[str, "ProviderOptions"]
+type TreeValue = JsonValue | "DirectoryTree" | "FileDetails"
+type TreeEntry = str | dict[str, TreeValue]
+type DirectoryTree = list[TreeEntry]
+
+
+class CredentialsLike(Protocol):
+    @property
+    def username(self) -> str: ...
+
+    @property
+    def password(self) -> Optional[str]: ...
+
+
+class MemberOptions(TypedDict):
+    privileges: list[str]
+
+
+class ProviderOptions(TypedDict):
+    storage: str
+    size: int | str
+
+
+class FileDetails(TypedDict, total=False):
+    provider: str
+    content: JsonValue
+    metadata: JsonObject
+
+
+class CdmiCreator(Protocol):
+    def __call__(
+        self,
+        path: str,
+        data: Optional[str] = None,
+        repeats: int = 10,
+        auth: Optional[tuple[str, Optional[str]]] = None,
+        headers: Optional[Mapping[str, str]] = None,
+        **extra: str,
+    ) -> Optional[requests.Response]: ...
+
+
+StorageConfig = TypedDict(
+    "StorageConfig",
+    {"defaults": dict[str, str], "directory tree": DirectoryTree},
+)
+
+
+SpaceDescription = TypedDict(
+    "SpaceDescription",
+    {
+        "owner": str,
+        "users": list[MemberEntry],
+        "groups": list[MemberEntry],
+        "providers": list[ProviderEntry],
+        "storage": StorageConfig,
+    },
+    total=False,
+)
+type SpacesConfig = Mapping[str, SpaceDescription]
 
 
 @given(
@@ -37,18 +108,18 @@ from tests.utils.utils import repeat_failed
     )
 )
 def create_and_configure_spaces_step(
-    config,
-    zone_host,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-):
+    config: str,
+    zone_host: str,
+    admin_credentials: CredentialsLike,
+    onepanel_credentials: CredentialsLike,
+    hosts: Hosts,
+    users: Users,
+    groups: Groups,
+    storages: Storages,
+    spaces: Spaces,
+) -> None:
     create_and_configure_spaces(
-        yaml.load(config, yaml.Loader),
+        cast(SpacesConfig, yaml.load(config, yaml.Loader)),
         zone_host,
         admin_credentials,
         onepanel_credentials,
@@ -61,16 +132,16 @@ def create_and_configure_spaces_step(
 
 
 def create_and_configure_spaces(
-    config,
-    zone_host,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-):
+    config: SpacesConfig,
+    zone_host: str,
+    admin_credentials: CredentialsLike,
+    onepanel_credentials: CredentialsLike,
+    hosts: Hosts,
+    users: Users,
+    groups: Groups,
+    storages: Storages,
+    spaces: Spaces,
+) -> None:
     """Create and configure spaces according to given config.
 
     Config format given in yaml is as follows:
@@ -162,18 +233,18 @@ def create_and_configure_spaces(
     )
 )
 def add_spaces_configuration(
-    config,
-    zone_host,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-):
+    config: str,
+    zone_host: str,
+    admin_credentials: CredentialsLike,
+    onepanel_credentials: CredentialsLike,
+    hosts: Hosts,
+    users: Users,
+    groups: Groups,
+    storages: Storages,
+    spaces: Spaces,
+) -> None:
     _create_and_configure_spaces(
-        yaml.load(config, yaml.Loader),
+        cast(SpacesConfig, yaml.load(config, yaml.Loader)),
         zone_host,
         admin_credentials,
         onepanel_credentials,
@@ -186,17 +257,18 @@ def add_spaces_configuration(
 
 
 def _create_and_configure_spaces(
-    config,
-    zone_name,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users_db,
-    groups_db,
-    storages_db,
-    spaces_db,
-):
-    zone_hostname = hosts[zone_name]["hostname"]
+    config: SpacesConfig,
+    zone_name: str,
+    admin_credentials: CredentialsLike,
+    onepanel_credentials: CredentialsLike,
+    hosts: Hosts,
+    users_db: Users,
+    groups_db: Groups,
+    storages_db: Storages,
+    spaces_db: Spaces,
+) -> None:
+    zone = cast(Mapping[str, str], hosts[zone_name])
+    zone_hostname = zone["hostname"]
 
     for space_name, description in config.items():
         owner = users_db[description["owner"]]
@@ -212,7 +284,7 @@ def _create_and_configure_spaces(
             admin_credentials,
             space_id,
             groups_db,
-            description.get("groups", {}),
+            description.get("groups", []),
         )
         _get_support(
             zone_hostname,
@@ -221,16 +293,21 @@ def _create_and_configure_spaces(
             space_id,
             storages_db,
             hosts,
-            description.get("providers", {}),
+            description.get("providers", []),
             users_to_add,
             users_db,
         )
         _init_storage_from_config(
-            owner, space_name, hosts, users_db, description.get("storage", {})
+            owner, space_name, hosts, users_db, description.get("storage")
         )
 
 
-def _create_space(zone_hostname, owner_username, owner_password, space_name):
+def _create_space(
+    zone_hostname: str,
+    owner_username: str,
+    owner_password: Optional[str],
+    space_name: str,
+) -> str:
     space_properties = {"name": space_name}
     response = http_post(
         ip=zone_hostname,
@@ -243,15 +320,18 @@ def _create_space(zone_hostname, owner_username, owner_password, space_name):
 
 
 def _add_users_to_space(
-    zone_hostname, admin_credentials, space_id, users_db, users_to_add
-):
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    space_id: str,
+    users_db: Users,
+    users_to_add: list[MemberEntry],
+) -> None:
     for user in users_to_add:
-        try:
+        if isinstance(user, dict):
             [(user, options)] = user.items()
-        except AttributeError:
-            privileges = None
-        else:
             privileges = options["privileges"]
+        else:
+            privileges = None
 
         _add_user_to_space(
             zone_hostname,
@@ -264,8 +344,13 @@ def _add_users_to_space(
 
 
 def _add_user_to_space(
-    zone_hostname, admin_username, admin_password, space_id, user_id, privileges
-):
+    zone_hostname: str,
+    admin_username: str,
+    admin_password: Optional[str],
+    space_id: str,
+    user_id: str,
+    privileges: Optional[list[str]],
+) -> None:
     if privileges:
         data = json.dumps({"operation": "set", "privileges": privileges})
     else:
@@ -281,15 +366,18 @@ def _add_user_to_space(
 
 
 def _add_groups_to_space(
-    zone_hostname, admin_credentials, space_id, groups_db, groups_to_add
-):
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    space_id: str,
+    groups_db: Groups,
+    groups_to_add: list[MemberEntry],
+) -> None:
     for group in groups_to_add:
-        try:
+        if isinstance(group, dict):
             [(group, options)] = group.items()
-        except AttributeError:
-            privileges = None
-        else:
             privileges = options["privileges"]
+        else:
+            privileges = None
 
         _add_group_to_space(
             zone_hostname,
@@ -302,8 +390,13 @@ def _add_groups_to_space(
 
 
 def _add_group_to_space(
-    zone_hostname, admin_username, admin_password, space_id, group_id, privileges
-):
+    zone_hostname: str,
+    admin_username: str,
+    admin_password: Optional[str],
+    space_id: str,
+    group_id: str,
+    privileges: Optional[list[str]],
+) -> None:
     if privileges:
         data = json.dumps({"operation": "set", "privileges": privileges})
     else:
@@ -319,35 +412,35 @@ def _add_group_to_space(
 
 
 def _get_support(
-    zone_hostname,
-    onepanel_credentials,
-    owner_credentials,
-    space_id,
-    storages_db,
-    hosts,
-    providers,
-    members,
-    users,
-):
+    zone_hostname: str,
+    onepanel_credentials: CredentialsLike,
+    owner_credentials: User,
+    space_id: str,
+    storages_db: Storages,
+    hosts: Hosts,
+    providers: Sequence[ProviderEntry],
+    members: Sequence[MemberEntry],
+    users: Users,
+) -> None:
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
-    for provider in providers:
-        [(provider, options)] = provider.items()
+    for provider_entry in providers:
+        [(provider, options)] = provider_entry.items()
 
-        provider_name = hosts[provider]["name"]
-        provider_hostname = hosts[provider]["hostname"]
+        host = cast(Mapping[str, str], hosts[provider])
+        provider_name = host["name"]
+        provider_hostname = host["hostname"]
         storage_name = options["storage"]
 
+        provider_storages = storages_db.setdefault(provider_name, {})
         try:
-            storage_id = storages_db[provider_name][storage_name]
+            storage_id = provider_storages[storage_name]
         except KeyError:
-            if provider_name not in storages_db:
-                storages_db[provider_name] = {}
-            storages_db[provider_name][storage_name] = _get_storage_id(
+            storage_id = _get_storage_id(
                 provider_hostname, onepanel_username, onepanel_password, storage_name
             )
-            storage_id = storages_db[provider_name][storage_name]
+            provider_storages[storage_name] = storage_id
 
         token = http_post(
             ip=zone_hostname,
@@ -369,12 +462,17 @@ def _get_support(
             data=json.dumps(space_support_details),
         )
 
-        all_members = [owner_credentials.username] + members
+        all_members = [owner_credentials.username] + [
+            member if isinstance(member, str) else next(iter(member))
+            for member in members
+        ]
         wait_for_space_support(space_id, provider_hostname, all_members, users)
 
 
 @repeat_failed(attempts=30, interval=0.5, exceptions=(AssertionError, HTTPError))
-def wait_for_space_support(space_id, provider_hostname, members, users):
+def wait_for_space_support(
+    space_id: str, provider_hostname: str, members: list[str], users: Users
+) -> None:
     for user in members:
         response = http_get(
             ip=provider_hostname,
@@ -391,8 +489,11 @@ def wait_for_space_support(space_id, provider_hostname, members, users):
 
 @repeat_failed(attempts=10, interval=5)
 def wait_for_storage_details(
-    provider_hostname, storage_id, onepanel_username, onepanel_password
-):
+    provider_hostname: str,
+    storage_id: str,
+    onepanel_username: str,
+    onepanel_password: Optional[str],
+) -> requests.Response:
     storage_details = http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
@@ -403,7 +504,11 @@ def wait_for_storage_details(
 
 
 @repeat_failed(attempts=10, interval=5)
-def wait_for_storages_id(provider_hostname, onepanel_username, onepanel_password):
+def wait_for_storages_id(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: Optional[str],
+) -> requests.Response:
     storages_id = http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
@@ -414,8 +519,11 @@ def wait_for_storages_id(provider_hostname, onepanel_username, onepanel_password
 
 
 def _get_storage_id(
-    provider_hostname, onepanel_username, onepanel_password, storage_name
-):
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: Optional[str],
+    storage_name: str,
+) -> str:
     storages_id = wait_for_storages_id(
         provider_hostname, onepanel_username, onepanel_password
     )
@@ -436,13 +544,18 @@ def _get_storage_id(
 
 
 def _init_storage_from_config(
-    owner_credentials, space_name, hosts, users, storage_conf
-):
+    owner_credentials: User,
+    space_name: str,
+    hosts: Hosts,
+    users: Users,
+    storage_conf: Optional[StorageConfig],
+) -> None:
     if not storage_conf:
         return
 
     defaults = storage_conf["defaults"]
-    provider_hostname = hosts[defaults["provider"]]["hostname"]
+    provider = cast(Mapping[str, str], hosts[defaults["provider"]])
+    provider_hostname = provider["hostname"]
     directory_tree = storage_conf["directory tree"]
 
     init_storage(
@@ -451,25 +564,31 @@ def _init_storage_from_config(
 
 
 def init_storage(
-    owner_credentials, space_name, hosts, provider_hostname, users, directory_tree
-):
-    # if we make call to fast after deleting users from previous test
-    # provider cache was not refreshed and call will create dir for
-    # now nonexistent user, to avoid this wait some time
+    owner_credentials: User,
+    space_name: str,
+    hosts: Hosts,
+    provider_hostname: str,
+    users: Users,
+    directory_tree: DirectoryTree,
+) -> None:
+    # if we make call too fast after deleting users from previous test
+    # provider cache may not be refreshed and call will create dir for
+    # currently nonexistent user, to avoid this wait some time
 
     time.sleep(2)
 
     def create_cdmi_object(
-        path,
-        data=None,
-        repeats=10,
-        auth=None,
-        headers=None,
-    ):
+        path: str,
+        data: Optional[str] = None,
+        repeats: int = 10,
+        auth: Optional[tuple[str, Optional[str]]] = None,
+        headers: Optional[Mapping[str, str]] = None,
+        **_extra: str,
+    ) -> Optional[requests.Response]:
         if headers is None:
             headers = {"X-Auth-Token": owner_credentials.token}
         response = None
-        for _ in range(repeats):
+        for _attempt in range(repeats):
             try:
                 response = http_put(
                     ip=provider_hostname,
@@ -499,23 +618,23 @@ def init_storage(
 
 
 def _mkdirs(
-    create_cdmi_obj,
-    cwd,
-    hosts,
-    owner_credentials,
-    provider_hostname,
-    users,
-    dir_content=None,
-):
+    create_cdmi_obj: CdmiCreator,
+    cwd: str,
+    hosts: Hosts,
+    owner_credentials: User,
+    provider_hostname: str,
+    users: Users,
+    dir_content: Optional[DirectoryTree] = None,
+) -> None:
     if not dir_content:
         return
 
     for item in dir_content:
-        try:
+        if isinstance(item, dict):
             [(name, content)] = item.items()
-        except AttributeError:
-            name = item
-            content = None
+            nested_content = cast(Optional[DirectoryTree], content)
+        else:
+            name, nested_content = item, None
 
         path = cwd + "/" + name
         if name.startswith("dir"):
@@ -527,7 +646,7 @@ def _mkdirs(
                 owner_credentials,
                 provider_hostname,
                 users,
-                content,
+                nested_content,
             )
         else:
             _mkfile(
@@ -537,17 +656,23 @@ def _mkdirs(
                 owner_credentials,
                 provider_hostname,
                 users,
-                content,
+                nested_content,
             )
 
 
 def set_file_metadata(
-    file_path, owner_credentials, provider_hostname, users, metadata=None
-):
-    metadata_type = metadata.pop("type", "json")
+    file_path: str,
+    owner_credentials: User,
+    provider_hostname: str,
+    users: Users,
+    metadata: Optional[JsonObject] = None,
+) -> None:
+    if metadata is None:
+        return
+    metadata_type = cast(str, metadata.pop("type", "json"))
     metadata_type = "xattrs" if metadata_type == "basic" else metadata_type
     user = owner_credentials.username
-    file_id = get_file_id_by_rest(file_path, provider_hostname, user, users)
+    file_id = get_file_id_by_rest(file_path, provider_hostname, users[user].token)
     http_put(
         ip=provider_hostname,
         port=OP_REST_PORT,
@@ -558,49 +683,53 @@ def set_file_metadata(
 
 
 def _mkfile(
-    create_cdmi_obj,
-    file_path,
-    hosts,
-    owner_credentials,
-    provider_hostname,
-    users,
-    file_content=None,
-):
+    create_cdmi_obj: CdmiCreator,
+    file_path: str,
+    hosts: Hosts,
+    owner_credentials: User,
+    provider_hostname: str,
+    users: Users,
+    file_content: Optional[TreeValue] = None,
+) -> None:
     if file_content:
-        try:
-            provider = file_content.get("provider", None)
-        except (TypeError, AttributeError):
+        if not isinstance(file_content, dict):
             create_cdmi_obj(file_path, str(file_content))
         else:
+            details = cast(FileDetails, file_content)
+            provider = details.get("provider")
             if provider:
+                provider_host = hosts[provider]
                 create_cdmi_obj(
                     file_path,
-                    data=str(file_content.get("content", None)),
-                    url=f"https://{hosts[provider]["hostname"]}:{OP_REST_PORT}/cdmi/",
+                    data=str(details.get("content", None)),
+                    url=f"https://{provider_host["hostname"]}:{OP_REST_PORT}/cdmi/",
                 )
                 set_file_metadata(
                     file_path,
                     owner_credentials,
                     provider_hostname,
                     users,
-                    file_content.get("metadata", None),
+                    details.get("metadata"),
                 )
             else:
-                create_cdmi_obj(file_path, str(file_content.get("content", None)))
+                create_cdmi_obj(file_path, str(details.get("content", None)))
                 set_file_metadata(
                     file_path,
                     owner_credentials,
                     provider_hostname,
                     users,
-                    file_content.get("metadata", None),
+                    details.get("metadata"),
                 )
     else:
         create_cdmi_obj(file_path)
 
 
-def create_empty_file(path, users, user, provider, hosts):
+def create_empty_file(
+    path: str, users: Users, user: str, provider: str, hosts: Hosts
+) -> None:
+    provider_host = cast(Mapping[str, str], hosts[provider])
     http_put(
-        ip=hosts[provider]["hostname"],
+        ip=provider_host["hostname"],
         port=OP_REST_PORT,
         path="/cdmi/" + path,
         headers={"X-Auth-Token": users[user].token},
@@ -609,14 +738,24 @@ def create_empty_file(path, users, user, provider, hosts):
     )
 
 
-def get_file_id_by_rest(file_path, provider_hostname, user, users):
+@repeat_failed(timeout=WAIT_BACKEND)
+def get_file_id_by_rest(file_path: str, provider_hostname: str, token: str) -> str:
     response = http_post(
         ip=provider_hostname,
         port=OP_REST_PORT,
         path=get_provider_rest_path("lookup-file-id", file_path),
-        headers={"X-Auth-Token": users[user].token},
+        headers={"X-Auth-Token": token},
     ).content
-    return json.loads(response)["fileId"]
+    return cast(str, json.loads(response)["fileId"])
+
+
+@cache
+def get_file_id_cached(file_path: str, provider_hostname: str, token: str) -> str:
+    """
+    Caches file ID lookup to avoid repeated REST calls.
+    Useful also for retrieving IDs of files that may have been deleted.
+    """
+    return get_file_id_by_rest(file_path, provider_hostname, token)
 
 
 @given(
@@ -626,12 +765,20 @@ def get_file_id_by_rest(file_path, provider_hostname, user, users):
         'supported by "{provider}" provider'
     )
 )
-def create_nested_directory(user, path, provider, number: int, name, users, hosts):
+def create_nested_directory(
+    user: str,
+    path: str,
+    provider: str,
+    number: str,
+    name: str,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     names_list = name.split("/")
     min_index = int(names_list[0].split("_")[1])
     name_prefix = names_list[0].split("_")[0]
     nested_path = f"{path}"
-    for i in range(min_index, min_index + number, 1):
+    for i in range(min_index, min_index + int(number), 1):
         nested_path += f"/{name_prefix}_{i}"
         create_empty_file(nested_path + "/", users, user, provider, hosts)
 
@@ -644,18 +791,32 @@ def create_nested_directory(user, path, provider, number: int, name, users, host
     )
 )
 def create_file_in_nested_directory(
-    user, path, provider, number: int, dir_name, file_name, users, hosts
-):
+    user: str,
+    path: str,
+    provider: str,
+    number: str,
+    dir_name: str,
+    file_name: str,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     names_list = dir_name.split("/")
     min_index = int(names_list[0].split("_")[1])
     name_prefix = names_list[0].split("_")[0]
     nested_path = f"{path}"
-    for i in range(min_index, min_index + number, 1):
+    for i in range(min_index, min_index + int(number), 1):
         nested_path += f"/{name_prefix}_{i}"
     nested_path += f"/{file_name}"
     create_empty_file(nested_path, users, user, provider, hosts)
 
 
+@wt(
+    parsers.parse(
+        "using REST, {user} creates {number} empty files in "
+        '"{path}" named "file_001", "file_002", ..., '
+        '"file_N" supported by "{provider}" provider'
+    )
+)
 @given(
     parsers.parse(
         "using REST, {user} creates {number} empty files in "
@@ -663,7 +824,14 @@ def create_file_in_nested_directory(
         '"file_N" supported by "{provider}" provider'
     )
 )
-def create_files_names_alphabetically(number, path, users, user, provider, hosts):
+def create_files_names_alphabetically(
+    number: str | int,
+    path: str,
+    users: Users,
+    user: str,
+    provider: str,
+    hosts: Hosts,
+) -> None:
     for i in range(int(number)):
         num = str(i + 1).rjust(3, "0")
         file_path = f"{path}/file_{num}"
@@ -678,15 +846,22 @@ def create_files_names_alphabetically(number, path, users, user, provider, hosts
     )
 )
 def create_files_names_alphabetically_with_dir_list(
-    user, number, dir_list, provider, users, hosts
-):
+    user: str,
+    number: str | int,
+    dir_list: str,
+    provider: str,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     for dir_path in parse_seq(dir_list):
         create_files_names_alphabetically(
             number, dir_path, users, user, provider, hosts
         )
 
 
-def _get_users_space_id_list(zone_hostname, owner_username, owner_password):
+def _get_users_space_id_list(
+    zone_hostname: str, owner_username: str, owner_password: Optional[str]
+) -> list[str]:
 
     resp = http_get(
         ip=zone_hostname,
@@ -695,10 +870,12 @@ def _get_users_space_id_list(zone_hostname, owner_username, owner_password):
         auth=(owner_username, owner_password),
     ).json()
     spaces_id_list = resp["spaces"]
-    return spaces_id_list
+    return cast(list[str], spaces_id_list)
 
 
-def _rm_all_spaces_for_user(zone_hostname, owner_username, owner_password):
+def _rm_all_spaces_for_user(
+    zone_hostname: str, owner_username: str, owner_password: Optional[str]
+) -> None:
     spaces_id_list = _get_users_space_id_list(
         zone_hostname, owner_username, owner_password
     )
@@ -715,7 +892,7 @@ def _rm_all_spaces_for_user(zone_hostname, owner_username, owner_password):
             pass
 
 
-def _rm_all_spaces_for_users_list(zone_hostname, users_db):
+def _rm_all_spaces_for_users_list(zone_hostname: str, users_db: Users) -> None:
     for user_credentials in users_db.values():
         _rm_all_spaces_for_user(
             zone_hostname, user_credentials.username, user_credentials.password
@@ -724,14 +901,25 @@ def _rm_all_spaces_for_users_list(zone_hostname, users_db):
 
 @given(parsers.parse('there are no spaces of {user} in "{zone_host}" Onezone service'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_remove_all_space_supports_using_rest(hosts, users, user, zone_host):
-    zone_hostname = hosts[zone_host]["hostname"]
-    user = users[user]
-    _rm_all_spaces_for_user(zone_hostname, user.username, user.password)
+def g_remove_all_space_supports_using_rest(
+    hosts: Hosts, users: Users, user: str, zone_host: str
+) -> None:
+    host = cast(Mapping[str, str], hosts[zone_host])
+    zone_hostname = host["hostname"]
+    user_credentials = users[user]
+    _rm_all_spaces_for_user(
+        zone_hostname, user_credentials.username, user_credentials.password
+    )
 
 
-def force_start_storage_scan(space_id, provider, hosts, onepanel_credentials):
-    provider_hostname = hosts[provider]["hostname"]
+def force_start_storage_scan(
+    space_id: str,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: CredentialsLike,
+) -> None:
+    provider_host = cast(Mapping[str, str], hosts[provider])
+    provider_hostname = provider_host["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
     http_post(
@@ -745,8 +933,14 @@ def force_start_storage_scan(space_id, provider, hosts, onepanel_credentials):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_storage_scan_to_finish(space_id, provider, hosts, onepanel_credentials):
-    provider_hostname = hosts[provider]["hostname"]
+def wait_for_storage_scan_to_finish(
+    space_id: str,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: CredentialsLike,
+) -> None:
+    provider_host = cast(Mapping[str, str], hosts[provider])
+    provider_hostname = provider_host["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
     resp = http_get(

@@ -59,7 +59,7 @@ Feature: Groups effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parent direct privileges and its direct privileges
-    When user of browser clicks on Groups in the main menu
+    When user of browser clicks on "Groups" in the main menu
     And user of browser opens group "grandparent_group" members subpage
     And user of browser clicks "parent_group1" group in "grandparent_group" group members groups list
     And user of browser sees following privileges of "parent_group1" group in group members subpage:
@@ -88,7 +88,7 @@ Feature: Groups effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parent direct privileges and its direct privileges
-    When user of browser clicks on Groups in the main menu
+    When user of browser clicks on "Groups" in the main menu
     And user of browser opens group "grandparent_group" members subpage
     And user of browser clicks "parent_group1" group in "grandparent_group" group members groups list
     And user of browser sees following privileges of "parent_group1" group in group members subpage:
@@ -117,7 +117,7 @@ Feature: Groups effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on Groups in the main menu
+    When user of browser clicks on "Groups" in the main menu
     And user of browser opens group "grandparent_group" members subpage
     And user of browser clicks "parent_group1" group in "grandparent_group" group members groups list
     And user of browser sees following privileges of "parent_group1" group in group members subpage:
@@ -152,7 +152,7 @@ Feature: Groups effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on Groups in the main menu
+    When user of browser clicks on "Groups" in the main menu
     And user of browser opens group "grandparent_group" members subpage
     And user of browser clicks "parent_group1" group in "grandparent_group" group members groups list
     And user of browser sees following privileges of "parent_group1" group in group members subpage:

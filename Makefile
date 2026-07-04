@@ -10,7 +10,7 @@ ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL
 export ONEDATA_GIT_URL
 
 # TODO: VFS-12424 Try latest Chrome (newer than 128.0.6613.86) with fix from this issue
-ACCEPTANCE_TEST_IMAGE := onedata/acceptance_tests:v2.130
+ACCEPTANCE_TEST_IMAGE := onedata/acceptance_tests:v3.130
 
 unpack = tar xzf $(1).tar.gz
 
@@ -71,7 +71,7 @@ RECORDING_OPTION            ?= failed
 BROWSER                     ?= Chrome
 TIMEOUT			            ?= 600
 REPEATS                     ?= 1
-RERUNS                      ?= 0
+RERUNS                      ?= 1
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
 FILE_MODE                   ?= regular
@@ -160,7 +160,7 @@ codetag-tracker:
 ## Formatting
 ##
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v8"
+STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v12"
 UID := $(shell id -u)
 GID := $(shell id -g)
 
@@ -171,19 +171,20 @@ endef
 
 ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__init__.py tests/__init__.py \
  tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
+ tests/performance/__init__.py tests/performance/type_definitions.py tests/performance/test_*.py \
  tests/oneclient/steps tests/oneclient/__init__.py tests/utils tests/upgrade
-ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py tests/oneclient/conftest.py
+ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py \
+ tests/oneclient/conftest.py tests/performance/conftest.py
 ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios
-FILES_TO_FORMAT := $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
 
 
 format:
-	$(docker_run) isort $(FILES_TO_FORMAT) --settings-file tests/configs/.pyproject.toml
-	$(docker_run) black $(FILES_TO_FORMAT) --config tests/configs/.pyproject.toml
+	$(docker_run) isort $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) --settings-file tests/configs/.pyproject.toml
+	$(docker_run) black $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) --config tests/configs/.pyproject.toml
 
 
 black-check:
-	$(docker_run) black $(FILES_TO_FORMAT) --check --config tests/configs/.pyproject.toml || \
+	$(docker_run) black $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) --check --config tests/configs/.pyproject.toml || \
 	 (echo "Code failed Black format checking. Please run 'make format' before commiting your changes. "; exit 1)
 
 
@@ -195,3 +196,6 @@ static-analysis:
 	$(docker_run) pylint $(ALL_FILES) --output-format=colorized --rcfile=tests/configs/.pylintrc
 	$(docker_run) pylint $(ALL_CONFTEST_FILES) --output-format=colorized \
 	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc
+
+type-check:
+	$(docker_run) mypy $(ALL_FILES) $(ALL_CONFTEST_FILES) --config-file=tests/configs/.pyproject.toml

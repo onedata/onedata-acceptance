@@ -4,7 +4,9 @@ __author__ = "Michal Stanisz, Natalia Organek"
 __copyright__ = "Copyright (C) 2018-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
@@ -29,13 +31,13 @@ class TokenRow(PageObject):
     menu_button = Button(".token-menu-trigger")
     icon = WebElement(".one-icon")
 
-    def is_type_of(self, exp_type):
+    def is_type_of(self, exp_type: str) -> bool:
         return exp_type in self.icon.get_attribute("class")
 
-    def is_revoked(self):
+    def is_revoked(self) -> bool:
         return "inactive" in self.web_elem.get_attribute("class")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Tokens row"
 
 
@@ -70,13 +72,13 @@ class TokensSidebar(PageObject):
     confirm = Button(".save-icon")
     discard = Button(".cancel-icon")
 
-    def click_create_new_token(self, driver):
+    def click_create_new_token(self, driver: WebDriver) -> None:
         driver.execute_script(
             "arguments[0].click();",
             self.web_elem.find_element(By.CSS_SELECTOR, ".create-token-link-trigger"),
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Tokens sidebar"
 
 
@@ -88,6 +90,7 @@ class UsageLimitBar(PageObject):
 
 class CreateNewTokenPage(PageObject):
     create_custom_token = Button(".template-custom")
+    header = Label(".resource-name")
 
     create_token = NamedButton(".submit-token", text="Create token")
     access_option = WebElement(".option-access .one-way-radio-control")
@@ -125,32 +128,32 @@ class CreateNewTokenPage(PageObject):
         ".data-access-caveat-warning-details .documentation-link"
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Create new token page"
 
-    def expand_invite_type_dropdown(self):
+    def expand_invite_type_dropdown(self) -> None:
         self.invite_type.click()
 
-    def expand_invite_target_dropdown(self):
+    def expand_invite_target_dropdown(self) -> None:
         self.invite_target.click()
 
-    def expand_caveats(self):
+    def expand_caveats(self) -> None:
         if "show" in self.show_inactive_caveats.web_elem.text.lower():
             self.show_inactive_caveats()
 
-    def caveats_expanded(self):
+    def caveats_expanded(self) -> bool:
         return "hide" in self.show_inactive_caveats.web_elem.text.lower()
 
-    def hide_caveats(self):
+    def hide_caveats(self) -> None:
         if "hide" in self.show_inactive_caveats.web_elem.text.lower():
             self.show_inactive_caveats()
 
-    def scroll_to_bottom(self):
+    def scroll_to_bottom(self) -> None:
         self.driver.execute_script(
             "arguments[0].scrollTo(arguments[1]);", self.web_elem, self.footer
         )
 
-    def get_caveat(self, name):
+    def get_caveat(self, name: str) -> CaveatField:
         self.scroll_to_bottom()
         return getattr(self, f"{name}_caveat")
 
@@ -180,11 +183,11 @@ class TokensPage(GenericPage):
     onezone_rest_access_template = WebElement(".template-onezoneRest")
     alert = Label(".alert")
 
-    def expand_dropdown(self):
+    def expand_dropdown(self) -> None:
         self._toggle.click()
 
-    def is_token_revoked(self):
+    def is_token_revoked(self) -> bool:
         return self.revoke_toggle.is_checked()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Tokens page"

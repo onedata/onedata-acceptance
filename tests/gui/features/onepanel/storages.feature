@@ -20,7 +20,7 @@ Feature: Storage management using onepanel
   Scenario Outline: User uploads files on freshly supported space on newly created storage
 
     # create new_storage POSIX storage
-    When user of browser_unified clicks on Clusters in the main menu
+    When user of browser_unified clicks on "Clusters" in the main menu
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of <browser> clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of <browser> clicks on Add storage backend button in storages page in Onepanel
@@ -37,7 +37,7 @@ Feature: Storage management using onepanel
     And user of browser_unified sends support token for "space1" to user of <browser>
 
     # support space
-    And user of browser_unified clicks on Clusters in the main menu
+    And user of browser_unified clicks on "Clusters" in the main menu
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of <browser> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of <browser> clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
@@ -47,7 +47,7 @@ Feature: Storage management using onepanel
     And user of <browser> selects GiB radio button in support space form in Onepanel
     And user of <browser> clicks on Support space button in support space form in Onepanel
     And user of <browser> sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of <browser> sees that space support record for "space1" has appeared in Spaces page in Onepanel
+    And user of <browser> sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     # go to provider
     And user of browser_unified is idle for 4 seconds
@@ -117,7 +117,7 @@ Feature: Storage management using onepanel
     And user of browser_unified sends support token for "space1" to user of browser_unified
 
     # support space
-    And user of browser_unified clicks on Clusters in the main menu
+    And user of browser_unified clicks on "Clusters" in the main menu
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of browser_unified supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: new_storage1 (import-enabled)
@@ -129,7 +129,7 @@ Feature: Storage management using onepanel
             scan interval [s]: 1
 
     And user of browser_unified sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser_unified sees that space support record for "space1" has appeared in Spaces page in Onepanel
+    And user of browser_unified sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     And user of browser_unified opens file browser for "space1" space
 
@@ -145,7 +145,7 @@ Feature: Storage management using onepanel
 
     And user of browser_unified sees that there is 1 item in file browser
 
-    And user of browser_unified clicks on Clusters in the main menu
+    And user of browser_unified clicks on "Clusters" in the main menu
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of browser_unified clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_unified is idle for 2 seconds
@@ -172,7 +172,7 @@ Feature: Storage management using onepanel
 
     And user of browser_unified sends support token for "space1" to user of browser_unified
 
-    And user of browser_unified clicks on Clusters in the main menu
+    And user of browser_unified clicks on "Clusters" in the main menu
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of browser_unified clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_unified clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
@@ -181,13 +181,12 @@ Feature: Storage management using onepanel
     And user of browser_unified types "1" to Size input field in support space form in Onepanel
     And user of browser_unified selects GiB radio button in support space form in Onepanel
     And user of browser_unified clicks on Support space button in support space form in Onepanel
-    And user of browser_unified opens "space1" record on spaces list in Spaces page in Onepanel
     Then user of browser_unified cannot click on Storage import navigation tab in space "space1"
 
 
   Scenario: User succeeds to create 2 storages with the same name
     Given there is no "storage" storage in "oneprovider-1" Oneprovider panel
-    When user of browser_unified clicks on Clusters in the main menu
+    When user of browser_unified clicks on "Clusters" in the main menu
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of browser_unified clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 

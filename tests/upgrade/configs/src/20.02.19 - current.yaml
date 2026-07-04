@@ -9,14 +9,14 @@ initialVersions:
 targetVersions:
   onezone:
     sources:
-      baseImage: develop
+      baseImage: default
       components:
         - panel
         - worker
         - cluster-manager
   oneprovider:
     sources:
-      baseImage: develop
+      baseImage: default
       components:
         - panel
         - worker

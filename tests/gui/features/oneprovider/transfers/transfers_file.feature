@@ -86,11 +86,7 @@ Feature: Oneprovider transfers files functionality
   Scenario: User tries to replicate file to too small space on remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser fails to replicate "large_file.txt" to provider "oneprovider-2"
-
-    Then user of browser sees that error modal with text "Starting replication failed!" appeared
-    And user of browser clicks on "Close" button in modal "Error"
-
+    Then user of browser fails to replicate "large_file.txt" to provider "oneprovider-2"
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:

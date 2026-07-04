@@ -26,6 +26,7 @@ Feature: Quality of Service in directory tests for 2 providers with 1 supporting
   Scenario: User sees QoS requirement met after a new support is added
     When user of browser_unified creates 2 replicas of "anyStorage" QoS requirement for "file1" in space "space1"
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     And user of browser_unified sees that all QoS requirements are impossible
     And user of browser_unified sees that 1 storage matches condition in QoS panel
     And user of browser_unified sees that matching storage is "posix provided by oneprovider-1"
@@ -39,6 +40,7 @@ Feature: Quality of Service in directory tests for 2 providers with 1 supporting
     And user of browser_unified clicks "Files" of "space1" space in the sidebar
     And user of browser_unified sees file browser in files tab in Oneprovider page
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     Then user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified sees that 2 storages match condition in QoS panel
     And user of browser_unified sees that matching storages are ["posix provided by oneprovider-1", "posix provided by oneprovider-2"]

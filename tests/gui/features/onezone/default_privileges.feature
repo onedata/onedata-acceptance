@@ -168,7 +168,7 @@ Feature: Management of privileges in onezone GUI
     Given user admin has no harvesters
     And using REST, user admin creates "harvester3" harvester in "onezone" Onezone service
 
-    When user of browser1 clicks on Discovery in the main menu
+    When user of browser1 clicks on "Discovery" in the main menu
     And user of browser1 clicks "harvester3" on the harvesters list in the sidebar
     And user of browser1 adds "group3" group to "harvester3" harvester using available groups dropdown
     And user of browser1 clicks "group3" group in "harvester3" harvester members groups list

@@ -8,12 +8,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.steps.rest.shares import create_share_using_rest
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
+    ProviderEntry,
     _create_space,
     _get_support,
     create_empty_file,
 )
+from tests.utils.user_utils import User, Users
 
 
 @wt(
@@ -21,12 +24,14 @@ from tests.utils.entities_setup.spaces import (
         'using REST, {user} creates {number} spaces in "{zone_host}" Onezone service'
     )
 )
-def create_n_spaces_without_support(zone_host, users, user, hosts, number: int):
+def create_n_spaces_without_support(
+    zone_host: str, users: Users, user: str, hosts: Hosts, number: str
+) -> None:
     name_prefix = "space"
     zone_hostname = hosts[zone_host]["hostname"]
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
-    for i in range(number):
+    for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
         _create_space(zone_hostname, owner.username, owner.password, space_name)
 
@@ -38,16 +43,25 @@ def create_n_spaces_without_support(zone_host, users, user, hosts, number: int):
     )
 )
 def create_n_spaces_with_shares(
-    zone_host, users, user, hosts, number: int, onepanel_credentials, storages, shares
-):
+    zone_host: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    number: str,
+    onepanel_credentials: User,
+    storages: dict,
+    shares: dict[str, str],
+) -> None:
     name_prefix = "space"
     host = "oneprovider-1"
     zone_hostname = hosts[zone_host]["hostname"]
-    users_to_add = []
-    providers = [{"oneprovider-1": {"storage": "posix", "size": 1000000}}]
+    users_to_add: list[str] = []
+    providers: list[ProviderEntry] = [
+        {"oneprovider-1": {"storage": "posix", "size": 1000000}}
+    ]
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
-    for i in range(number):
+    for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
         space_id = _create_space(
             zone_hostname, owner.username, owner.password, space_name

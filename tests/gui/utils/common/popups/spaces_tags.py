@@ -4,6 +4,7 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, WebItemsSequence
 
@@ -19,5 +20,5 @@ class SpacesTags(PageObject):
 
     tags_list = WebItemsSequence(".tags-container .selector-item", cls=Tag)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Spaces tags"

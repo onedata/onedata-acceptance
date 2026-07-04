@@ -4,6 +4,9 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Mapping
+from typing import Optional, cast
+
 import yaml
 from oneprovider_client import TransferApi
 
@@ -11,21 +14,24 @@ from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
+from tests.mixed.type_definitions import IdMap
 from tests.mixed.utils.common import login_to_provider
+from tests.type_definitions import Hosts, JsonObject
 from tests.utils.rest_utils import get_provider_rest_path, http_get
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
 def create_transfer_rest(
-    user,
-    users,
-    host,
-    hosts,
-    transfer_type,
-    path,
-    replicating_provider=None,
-    evicting_provider=None,
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    transfer_type: str,
+    path: str,
+    replicating_provider: Optional[str] = None,
+    evicting_provider: Optional[str] = None,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     transfer_api = TransferApi(client)
     file_id = _lookup_file_id(path, client)
@@ -40,7 +46,9 @@ def create_transfer_rest(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def get_recent_transfer_status_rest(user, users, host, hosts, space_id):
+def get_recent_transfer_status_rest(
+    user: str, users: Users, host: str, hosts: Hosts, space_id: str
+) -> JsonObject:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     transfer_api = TransferApi(client)
     tid = transfer_api.get_all_transfers(space_id, state="ended").transfers[0]
@@ -51,16 +59,22 @@ def get_recent_transfer_status_rest(user, users, host, hosts, space_id):
         path=get_provider_rest_path("transfers", tid),
         headers={"X-Auth-Token": users[user].token},
     )
-    return res.json()
+    return cast(JsonObject, res.json())
 
 
 def assert_recent_transfer_details_rest(
-    user, users, host, hosts, space, spaces, config
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: IdMap,
+    config: str,
+) -> None:
     transfer_status = get_recent_transfer_status_rest(
         user, users, host, hosts, spaces[space]
     )
-    details = yaml.load(config, yaml.Loader)
+    details = cast(Mapping[str, str], yaml.load(config, yaml.Loader))
     err_msg = "expected {} to be {} but got {}"
     for k, v in details.items():
         if k == "name":
@@ -85,7 +99,14 @@ def assert_recent_transfer_details_rest(
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)
-def assert_recent_transfer_finished_rest(user, users, host, hosts, spaces, space):
+def assert_recent_transfer_finished_rest(
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    spaces: IdMap,
+    space: str,
+) -> None:
     transfer_status = get_recent_transfer_status_rest(
         user, users, host, hosts, spaces[space]
     )

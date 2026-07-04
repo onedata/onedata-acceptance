@@ -6,6 +6,9 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Mapping
+from typing import cast
+
 import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -20,6 +23,7 @@ from tests.gui.meta_steps.oneprovider.archives import (
     recalled_archive_details_in_op_gui,
     remove_archive_in_op_gui,
 )
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.mixed.steps.rest.oneprovider.archives import (
     assert_archive_callback_in_op_rest,
     assert_archive_in_op_rest,
@@ -29,12 +33,15 @@ from tests.mixed.steps.rest.oneprovider.archives import (
     assert_progress_of_recall_in_op_rest,
     cancel_archive_for_archive_in_op_rest,
     create_archive_in_op_rest,
+    create_n_archives_in_op_rest,
     recall_archive_for_archive_in_op_rest,
     recalled_archive_details_in_op_rest,
     remove_archive_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
@@ -49,25 +56,21 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    oz_page,
-    op_container,
-    modals,
-    users,
-    hosts,
-    config,
-    spaces,
-    clipboard,
-    displays,
-    option,
-    popups,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    config: str,
+    spaces: Mapping[str, str],
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    option: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         create_archive(
@@ -76,14 +79,10 @@ def create_archive_in_op(
             config,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
-            modals,
             clipboard,
             displays,
             option,
-            popups,
         )
     elif client_lower == "rest":
         create_archive_in_op_rest(
@@ -103,6 +102,38 @@ def create_archive_in_op(
 
 
 @wt(
+    parsers.parse(
+        'using REST, {user} creates {number} archives for dataset "{item_name}" in '
+        'space "{space_name}" in host {host} with following configuration:\n{config}'
+    )
+)
+def wt_create_n_archives_in_op(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    item_name: str,
+    config: str,
+    spaces: Mapping[str, str],
+    tmp_memory: TmpMemory,
+    number: str,
+) -> None:
+    create_n_archives_in_op_rest(
+        user,
+        users,
+        hosts,
+        host,
+        space_name,
+        item_name,
+        config,
+        spaces,
+        tmp_memory,
+        int(number),
+    )
+
+
+@wt(
     parsers.re(
         "using (?P<client>.*), (?P<user>.+?) (?P<option>does not "
         'see|sees) archive with description: "(?P<description>.*)" for'
@@ -112,21 +143,19 @@ def create_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    oz_page,
-    op_container,
-    users,
-    hosts,
-    spaces,
-    option,
-    description,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+    option: str,
+    description: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_archive_in_op_gui(
@@ -134,8 +163,6 @@ def assert_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
             option,
             description,
@@ -167,22 +194,18 @@ def assert_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    oz_page,
-    op_container,
-    users,
-    hosts,
-    modals,
-    description,
-    option,
-    popups,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    description: str,
+    option: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         remove_archive_in_op_gui(
@@ -190,13 +213,9 @@ def remove_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
-            modals,
             description,
             option,
-            popups,
         )
     elif client_lower == "rest":
         remove_archive_in_op_rest(
@@ -216,28 +235,24 @@ def remove_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_with_option_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    option,
-    selenium,
-    oz_page,
-    op_container,
-    tmp_memory,
-    users,
-    hosts,
-    description,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    option: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    description: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_archive_with_option_in_op_gui(
             user,
             selenium,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
             option,
@@ -260,20 +275,19 @@ def assert_archive_with_option_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    oz_page,
-    op_container,
-    users,
-    hosts,
-    spaces,
-    number,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+    number: str,
+) -> None:
+    expected_number = int(number)
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_number_of_archive_in_op_gui(
@@ -281,14 +295,12 @@ def assert_number_of_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
-            number,
+            expected_number,
         )
     elif client_lower == "rest":
         assert_number_of_archive_in_op_rest(
-            user, users, hosts, host, space_name, item_name, spaces, number
+            user, users, hosts, host, space_name, item_name, spaces, expected_number
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found")
@@ -305,20 +317,18 @@ def assert_number_of_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_base_archive_for_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    description,
-    base_description,
-    selenium,
-    oz_page,
-    op_container,
-    tmp_memory,
-    users,
-    hosts,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    description: str,
+    base_description: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_base_archive_for_archive_in_op_gui(
@@ -326,8 +336,6 @@ def assert_base_archive_for_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
             description,
             base_description,
@@ -350,19 +358,17 @@ def assert_base_archive_for_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_callback(
-    user,
-    users,
-    hosts,
-    host,
-    tmp_memory,
-    description,
-    option,
-    expected_callback,
-    client,
-    selenium,
-    popups,
-    modals,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    option: str,
+    expected_callback: str,
+    client: str,
+    selenium: SeleniumDrivers,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_archive_callback_in_op_gui(
@@ -370,8 +376,6 @@ def assert_archive_callback(
             tmp_memory,
             description,
             selenium,
-            popups,
-            modals,
             expected_callback,
             option,
         )
@@ -399,25 +403,23 @@ def assert_archive_callback(
     )
 )
 def recall_archive_for_archive_in_op(
-    client,
-    user,
-    description,
-    target_name,
-    space_name,
-    host,
-    tmp_memory,
-    popups,
-    selenium,
-    modals,
-    users,
-    hosts,
-    spaces,
-):
+    client: str,
+    user: str,
+    description: str,
+    target_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
 
     client_lower = client.lower()
     if client_lower == "web gui":
         recall_archive_for_archive_in_op_gui(
-            user, description, tmp_memory, popups, selenium, modals, target_name
+            user, description, tmp_memory, selenium, target_name
         )
     elif client_lower == "rest":
         recall_archive_for_archive_in_op_rest(
@@ -444,26 +446,23 @@ def recall_archive_for_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recall_archive_details_in_op(
-    client,
-    user,
-    config,
-    name,
-    tmp_memory,
-    modals,
-    selenium,
-    users,
-    hosts,
-    host,
-    space_name,
-    spaces,
-):
+    client: str,
+    user: str,
+    config: str,
+    name: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    spaces: Mapping[str, str],
+) -> None:
 
     client_lower = client.lower()
-    data = yaml.load(config, yaml.Loader)
+    data = cast(dict[str, str], yaml.load(config, yaml.Loader))
     if client_lower == "web gui":
-        recalled_archive_details_in_op_gui(
-            user, name, tmp_memory, data, modals, selenium
-        )
+        recalled_archive_details_in_op_gui(user, name, tmp_memory, data, selenium)
     elif client_lower == "rest":
         recalled_archive_details_in_op_rest(
             user, users, hosts, host, data, name, space_name, spaces
@@ -482,8 +481,15 @@ def recall_archive_details_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_progress_of_recall_in_op(
-    user, name, client, space_name, host, hosts, users, config
-):
+    user: str,
+    name: str,
+    client: str,
+    space_name: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    config: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
         assert_progress_of_recall_in_op_rest(
@@ -503,8 +509,14 @@ def assert_progress_of_recall_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def cancel_archive_for_archive_in_op(
-    client, user, users, hosts, host, space_name, target_name
-):
+    client: str,
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    target_name: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
         cancel_archive_for_archive_in_op_rest(

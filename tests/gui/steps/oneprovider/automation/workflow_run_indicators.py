@@ -9,11 +9,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     switch_to_automation_page,
 )
+from tests.gui.utils import Popups
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
-def get_run_indicators_for_lane(selenium, browser_id, op_container, lane_name):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
+def get_run_indicators_for_lane(
+    selenium: SeleniumDrivers, browser_id: str, lane_name: str
+) -> list[str]:
+    page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
     return [elem.number for elem in lane.run_indicators]
@@ -27,11 +31,9 @@ def get_run_indicators_for_lane(selenium, browser_id, op_container, lane_name):
     )
 )
 def assert_run_indicator_for_lane(
-    selenium, browser_id, op_container, lane_name, number
-):
-    run_indicators = get_run_indicators_for_lane(
-        selenium, browser_id, op_container, lane_name
-    )
+    selenium: SeleniumDrivers, browser_id: str, lane_name: str, number: str
+) -> None:
+    run_indicators = get_run_indicators_for_lane(selenium, browser_id, lane_name)
     err_msg = (
         f'Run indicator with "{number}" does not appeared on run bar '
         f"for lane {lane_name}"
@@ -47,12 +49,10 @@ def assert_run_indicator_for_lane(
     )
 )
 def assert_certain_indicator_is_only_one_in_lane(
-    selenium, browser_id, op_container, lane_name, number
-):
-    assert_run_indicator_for_lane(selenium, browser_id, op_container, lane_name, number)
-    run_indicators = get_run_indicators_for_lane(
-        selenium, browser_id, op_container, lane_name
-    )
+    selenium: SeleniumDrivers, browser_id: str, lane_name: str, number: str
+) -> None:
+    assert_run_indicator_for_lane(selenium, browser_id, lane_name, number)
+    run_indicators = get_run_indicators_for_lane(selenium, browser_id, lane_name)
     err_msg = (
         f'Run indicator with "{number}" is not the only one indicator '
         f'for "{lane_name}" lane'
@@ -67,9 +67,9 @@ def assert_certain_indicator_is_only_one_in_lane(
     )
 )
 def click_on_run_indicator_for_lane(
-    selenium, browser_id, op_container, lane_name, number
-):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
+    selenium: SeleniumDrivers, browser_id: str, lane_name: str, number: str
+) -> None:
+    page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
     lane.run_indicators[number].click()
@@ -83,14 +83,13 @@ def click_on_run_indicator_for_lane(
     )
 )
 def assert_origin_run_number_for_run_in_lane(
-    selenium,
-    browser_id,
-    op_container,
-    lane_name,
-    run_number,
-    expected_origin_number,
-):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    lane_name: str,
+    run_number: str,
+    expected_origin_number: str,
+) -> None:
+    page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
     origin_number = lane.run_indicators[run_number].origin_run_number
@@ -111,12 +110,15 @@ def assert_origin_run_number_for_run_in_lane(
     )
 )
 def assert_status_for_run_in_popup(
-    selenium, browser_id, popups, option, value, op_container, lane_name, number
-):
-    click_on_run_indicator_for_lane(
-        selenium, browser_id, op_container, lane_name, number
-    )
-    info = popups(selenium[browser_id]).run_info
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    value: str,
+    lane_name: str,
+    number: str,
+) -> None:
+    click_on_run_indicator_for_lane(selenium, browser_id, lane_name, number)
+    info = Popups(selenium[browser_id]).run_info
     info_dict_list = {
         elem.split(": ")[0].lower(): elem.split(": ")[1] for elem in info.split("\n")
     }

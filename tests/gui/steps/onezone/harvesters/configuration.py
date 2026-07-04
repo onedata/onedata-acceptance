@@ -9,10 +9,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import requests
+from _pytest._py.path import LocalPath
 
 from tests import ELASTICSEARCH_PORT
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.environment_utils import (
     get_pods_config,
@@ -28,9 +31,11 @@ from tests.utils.utils import repeat_failed
         "user of {browser_id} {action} Public toggle on harvester configuration page"
     )
 )
-def check_public_toggle_on_harvester_config_page(selenium, browser_id, oz_page, action):
+def check_public_toggle_on_harvester_config_page(
+    selenium: SeleniumDrivers, browser_id: str, action: str
+) -> None:
     driver = selenium[browser_id]
-    page = oz_page(driver)["discovery"].configuration_page
+    page = OZLoggedIn(driver)["discovery"].configuration_page
     if action == "checks":
         page.public.check()
     else:
@@ -44,10 +49,10 @@ def check_public_toggle_on_harvester_config_page(selenium, browser_id, oz_page, 
     )
 )
 def assert_public_toggle_on_harvester_config_page(
-    selenium, browser_id, oz_page, checked
-):
+    selenium: SeleniumDrivers, browser_id: str, checked: str
+) -> None:
     driver = selenium[browser_id]
-    page = oz_page(driver)["discovery"].configuration_page
+    page = OZLoggedIn(driver)["discovery"].configuration_page
     if "not" in checked:
         assert page.public.is_unchecked(), "Harvester is checked as public"
     else:
@@ -55,9 +60,9 @@ def assert_public_toggle_on_harvester_config_page(
 
 
 @wt(parsers.parse("user of {browser_id} clicks on copy icon of public harvester URL"))
-def copy_public_harvester_url(selenium, browser_id, oz_page):
+def copy_public_harvester_url(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    oz_page(driver)["discovery"].configuration_page.general_tab.copy_public_url()
+    OZLoggedIn(driver)["discovery"].configuration_page.general_tab.copy_public_url()
 
 
 @wt(
@@ -65,9 +70,11 @@ def copy_public_harvester_url(selenium, browser_id, oz_page):
         "user of {browser_id} clicks on {tab_name} tab on harvester configuration page"
     )
 )
-def click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name, oz_page):
+def click_on_tab_of_harvester_config_page(
+    selenium: SeleniumDrivers, browser_id: str, tab_name: str
+) -> None:
     driver = selenium[browser_id]
-    page = oz_page(driver)["discovery"].configuration_page
+    page = OZLoggedIn(driver)["discovery"].configuration_page
     getattr(page, transform(tab_name) + "_button")()
 
 
@@ -77,10 +84,12 @@ def click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name, oz_pag
         "from local directory to be uploaded"
     )
 )
-def upload_discovery_gui_plugin(selenium, browser_id, plugin, tmpdir, oz_page):
+def upload_discovery_gui_plugin(
+    selenium: SeleniumDrivers, browser_id: str, plugin: str, tmpdir: LocalPath
+) -> None:
     driver = selenium[browser_id]
     path = tmpdir.join(browser_id).join(plugin)
-    page = oz_page(driver)["discovery"].configuration_page.gui_plugin_tab
+    page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
     uploader = page.upload_file_input
     uploader.send_keys(str(path))
 
@@ -91,28 +100,33 @@ def upload_discovery_gui_plugin(selenium, browser_id, plugin, tmpdir, oz_page):
         "{tab_name} of harvester configuration page"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_tab_of_harvester_config_page(
-    selenium, browser_id, oz_page, button, tab_name
-):
+    selenium: SeleniumDrivers, browser_id: str, button: str, tab_name: str
+) -> None:
     driver = selenium[browser_id]
-    page = getattr(oz_page(driver)["discovery"].configuration_page, transform(tab_name))
+    page = getattr(
+        OZLoggedIn(driver)["discovery"].configuration_page, transform(tab_name)
+    )
     getattr(page, transform(button) + "_button")()
 
 
 @wt(parsers.parse("user of {browser_id} waits until plugin upload finish"))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def wait_until_plugin_upload_finish(selenium, browser_id, oz_page):
+def wait_until_plugin_upload_finish(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    page = oz_page(driver)["discovery"].configuration_page.gui_plugin_tab
+    page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
     assert (
         page.gui_status == "uploaded"
     ), "GUI plugin upload not finished until given time"
 
 
 @wt(parsers.parse("user of {browser_id} sees that GUI plugin version is {version}"))
-def assert_plugin_version(selenium, browser_id, version, oz_page):
+def assert_plugin_version(
+    selenium: SeleniumDrivers, browser_id: str, version: str
+) -> None:
     driver = selenium[browser_id]
-    page = oz_page(driver)["discovery"].configuration_page.gui_plugin_tab
+    page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
     assert (
         page.version == version
     ), f"Actual plugin version is {page.version} when expected {version}"
@@ -125,10 +139,13 @@ def assert_plugin_version(selenium, browser_id, version, oz_page):
     )
 )
 def assert_plugin_index_value(
-    selenium, browser_id, plugin_index, harvester_index, oz_page
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    plugin_index: str,
+    harvester_index: str,
+) -> None:
     driver = selenium[browser_id]
-    page = oz_page(driver)["discovery"].configuration_page.gui_plugin_tab
+    page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
     actual_index_value = page.indices[plugin_index].harvester_index
     assert actual_index_value == harvester_index, (
         f"Actual {plugin_index} "
@@ -144,9 +161,11 @@ def assert_plugin_index_value(
         "user of {browser_id} sees that injected configuration is: {configuration}"
     )
 )
-def assert_plugin_injected_config(selenium, browser_id, oz_page, configuration):
+def assert_plugin_injected_config(
+    selenium: SeleniumDrivers, browser_id: str, configuration: str
+) -> None:
     driver = selenium[browser_id]
-    page = oz_page(driver)["discovery"].configuration_page.gui_plugin_tab
+    page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
     actual_conf = f"{{{page.injected_config}}}"
     assert (
         actual_conf == configuration
@@ -154,22 +173,22 @@ def assert_plugin_injected_config(selenium, browser_id, oz_page, configuration):
 
 
 @wt(parsers.parse("elasticsearch plugin stops working"))
-def pause_elasticsearch_container(hosts):
+def pause_elasticsearch_container(hosts: Hosts) -> None:
     run_onenv_command("service", ["stop", "elasticsearch"])
     wait_for_pod_to_stop(hosts["elasticsearch"]["hostname"].split(".")[0])
 
 
 @wt(parsers.parse("elasticsearch plugin starts working"))
-def unpause_elasticsearch_container(hosts):
+def unpause_elasticsearch_container(hosts: Hosts) -> None:
     run_onenv_command("service", ["start", "elasticsearch"])
     # Necessary for pod to reach 1/1 running status
     set_elasticsearch_replicas_number(hosts)
 
 
-def set_elasticsearch_replicas_number(hosts):
+def set_elasticsearch_replicas_number(hosts: Hosts) -> requests.Response:
     wait_for_pod_running_phase(hosts["elasticsearch"]["hostname"].split(".")[0])
     pods = get_pods_config()
-    es_pod = [el for _, el in pods.items() if el["service-type"] == "elasticsearch"][0]
+    es_pod = [el for _, el in pods.items() if el["service_type"] == "elasticsearch"][0]
     hosts["elasticsearch"]["ip"] = es_pod["ip"]
     url = f"http://{hosts['elasticsearch']['ip']}:{ELASTICSEARCH_PORT}/_settings?pretty"
     # even after reaching running phase by pod, ip address may not be accessible,

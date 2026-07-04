@@ -5,29 +5,69 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Dict, List
+from collections.abc import Callable, Sequence
+from contextlib import suppress
+from typing import Any, Protocol, cast
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import OZLoggedIn
+from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
+    ArchiveAuditLog,
+)
+from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
+    ArchiveRecallInformation,
+)
+from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.oneprovider.browser import Browser
+from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def assert_n_items_in_items_list(page, selenium, browser_id, number: int, items_names):
+class Checkable(Protocol):
+    def is_checked(self) -> bool: ...
+
+
+class ScrollableColumns(Protocol):
+    def get_visible_rows_of_columns(
+        self, column_names: list[str]
+    ) -> dict[str, list[str]]: ...
+
+    def scroll_by_press_space(self) -> None: ...
+
+
+class VisibleItem(Protocol):
+    name: str
+    web_elem: WebElement
+
+    def __getattr__(self, name: str) -> Any: ...
+
+
+def assert_n_items_in_items_list(
+    page: GenericPage | Browser,
+    selenium: dict[str, WebDriver],
+    browser_id: str,
+    number: int,
+    items_type: ListElement,
+    main_field: str,
+) -> None:
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_items = _get_visible_items_list(page, items_names)
-        new_items_names = [el.text.split("\n")[0] for el in new_items]
+        new_items = get_visible_items_list(page, items_type, main_field)
+        new_items_fields = [getattr(el, main_field) for el in new_items]
 
-        # if there are at least 1 new item keep scrolling
-        stop_scrolling_flag = not any(el not in seen_items for el in new_items_names)
-        seen_items.update(new_items_names)
-        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1])
+        stop_scrolling_flag = not any(el not in seen_items for el in new_items_fields)
+        seen_items.update(new_items_fields)
+        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
+
     assert len(seen_items) == number, (
         f"There are {len(seen_items)} items, but should be: {number}. All found"
         f" items:\n {seen_items}"
@@ -37,52 +77,74 @@ def assert_n_items_in_items_list(page, selenium, browser_id, number: int, items_
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def _get_visible_items_list(page, items_names):
-    return getattr(page, f"get_visible_{items_names}_list")()
+def get_visible_items_list(
+    page: GenericPage | Browser, items_type: ListElement, main_field: str = "name"
+) -> Sequence[VisibleItem]:
+    items_type_str = transform(items_type.value)
+    elements_list = getattr(page, f"{items_type_str}_list")
+    if isinstance(page, Browser):
+        return cast(
+            Sequence[VisibleItem],
+            page.get_visible_file_rows(elements_list, main_field),
+        )
+    return cast(
+        Sequence[VisibleItem],
+        page.get_visible_elements_list(elements_list, main_field),
+    )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_checking_toggle(toggle, toggle_name=""):
+def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page(where, oz_page, driver):
+def _get_page(where: str, driver: WebDriver) -> Any:
     if where == "shares":
-        return oz_page(driver)["shares"]
+        return OZLoggedIn(driver)["shares"]
     if where == "groups":
-        return oz_page(driver)["groups"]
+        return OZLoggedIn(driver)["groups"]
     if where == "spaces":
-        return oz_page(driver)["data"]
+        return OZLoggedIn(driver)["data"]
     raise AssertionError(f"page {where} not found")
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} {items} on the {where} list in"
-        " the sidebar"
-    )
+    parsers.re(
+        r"user of (?P<browser_id>.*) can see there are (?P<number>\d+)"
+        r" (?P<items_type>.*) on the (?P<list_type>.*)"
+        r" list in the sidebar",
+    ),
+    converters={
+        "number": int,
+        "items_type": ListElement,
+        "list_type": ListElement,
+    },
 )
 def wt_assert_n_items_in_items_list(
-    selenium, browser_id, number: int, oz_page, items, where
-):
+    selenium: dict[str, WebDriver],
+    browser_id: str,
+    number: int,
+    items_type: ListElement,
+    list_type: ListElement,
+) -> None:
     driver = selenium[browser_id]
-    page = _get_page(where, oz_page, driver)
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+    page = _get_page(list_type.value, driver)
+    assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 
-def get_last_item_number_in_table(driver):
+def get_last_item_number_in_table(driver: WebDriver) -> int:
     last_item = get_last_item_in_table(driver)
     if last_item is None:
         return 0
     return int(last_item.get_attribute("data-row-id")) + 1
 
 
-def get_last_item_in_table(driver):
+def get_last_item_in_table(driver: WebDriver) -> WebElement | None:
     entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
     return entries[-1] if len(entries) > 0 else None
 
 
-def scroll_to_bottom_of_the_table(driver):
+def scroll_to_bottom_of_the_table(driver: WebDriver) -> int:
     while True:
         count = get_last_item_number_in_table(driver)
         if count == 0:
@@ -101,8 +163,8 @@ def scroll_to_bottom_of_the_table(driver):
 
 
 def assert_logs_order_with_optional_logs(
-    logs_expected: List[Dict[str, str]], logs_actual: List[str]
-):
+    logs_expected: list[dict[str, str]], logs_actual: list[str]
+) -> None:
     """
 
     This function takes as a first argument list of dictionaries as in example below:
@@ -146,6 +208,65 @@ def assert_logs_order_with_optional_logs(
             if idx < n and expected_log == logs_actual[idx]:
                 idx += 1
 
+
+def scroll_and_get_columns(
+    modal: ArchiveRecallInformation | ArchiveAuditLog,
+    columns: list[str],
+    main_column: str = "file",
+) -> list[str]:
+    # The modal has to be a class that implements get_visible_rows_of_columns
+    checked_names = set()
+    columns = [transform(column) for column in columns]
+    stop_scrolling_flag = False
+    while not stop_scrolling_flag:
+        visible_elems = modal.get_visible_rows_of_columns(columns)
+        visible_names = visible_elems[main_column]
+
+        modal.scroll_by_press_space()
+        stop_scrolling_flag = not any(
+            name not in checked_names for name in visible_names
+        )
+        checked_names.update(visible_names)
+    return list(checked_names)
+
+
+def element_rect_stable(
+    css_sel: str, checks: int = 5, interval: float = 0.1
+) -> Callable[[WebDriver], bool]:
+    def _predicate(driver: WebDriver) -> bool:
+        web_element = driver.find_element(By.CSS_SELECTOR, css_sel)
+
+        last_rect = web_element.rect
+        for _ in range(checks):
+            time.sleep(interval)
+            current_rect = web_element.rect
+            if current_rect != last_rect:
+                return False
+            last_rect = current_rect
+
+        return True
+
+    return _predicate
+
+
+# TODO: VFS-12424 Add class to fully-transitioned file details panel
+def wait_for_sliding_panel_to_stop_moving(
+    driver: WebDriver, timeout: int, css_sel: str
+) -> None:
+    WebDriverWait(driver=driver, timeout=timeout).until(
+        element_rect_stable(css_sel=css_sel)
+    )
+
+
+def try_click_without_throwing_error(action: Callable[[], object]) -> None:
+
+    @repeat_failed(timeout=WAIT_FRONTEND // 2)
+    def perform(_action: Callable[[], object]) -> None:
+        _action()
+
+    with suppress(Exception):
+        perform(action)
+        
 
 # Function closes error modal and repeat execution until error modal
 # will no longer appear

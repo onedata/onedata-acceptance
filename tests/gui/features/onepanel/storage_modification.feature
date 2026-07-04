@@ -8,7 +8,7 @@ Feature: Storage modification
 
 
   Scenario Outline: User changes storage parameters into incorrect ones and sees that they remain unchanged in Onepanel
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 
@@ -18,7 +18,7 @@ Feature: Storage modification
     And user of browser clicks on Save button in edit form for "<storage_name>" storage in Onepanel
     And user of browser confirms committed changes in modal "Modify Storage"
 
-    And user of browser sees that error modal with text "File read/write test has failed" appeared
+    And user of browser sees that error modal with text "File read/write test failed" appeared
     And user of browser closes "error" modal
 
     And user of browser expands "<storage_name>" record on storages list in storages page in Onepanel
@@ -31,7 +31,7 @@ Feature: Storage modification
 
 
   Scenario: User fails to create posix storage with incorrect parameters using add storage form in Onepanel
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 
@@ -47,7 +47,7 @@ Feature: Storage modification
 
 
   Scenario: User fails to create s3 storage with incorrect parameters using add storage form in Onepanel
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 
@@ -65,7 +65,7 @@ Feature: Storage modification
 
 
   Scenario: User fails to create Ceph storage with incorrect parameters using add storage form in Onepanel
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 
@@ -106,7 +106,7 @@ Feature: Storage modification
 
     And user of browser copies "space2" space directory to /volumes/dir3
 
-    And user of browser clicks on Clusters in the main menu
+    And user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 

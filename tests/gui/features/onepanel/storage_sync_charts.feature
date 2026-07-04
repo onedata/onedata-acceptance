@@ -43,7 +43,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir1 to provider's storage mount point
 
     # open chart tab
-    And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
     And user of browser1 clicks on storage import navigation tab in space "space1"
 
     Then user of browser1 clicks on last hour update view

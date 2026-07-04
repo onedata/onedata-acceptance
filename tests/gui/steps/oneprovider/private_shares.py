@@ -6,14 +6,19 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from selenium.common.exceptions import (
     ElementClickInterceptedException,
     ElementNotInteractableException,
 )
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.utils import Popups, PrivateShareView
+from tests.gui.utils import Popups
+from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils.generic import transform
+from tests.gui.utils.oneprovider.shares.private_share import EDMBoxForm
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -26,10 +31,10 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_for_publish_handle_service_as_open_data(
-    browser_id, option, popups, selenium
-):
+    browser_id: str, option: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
-    popups(driver).handle_service.options[option].click()
+    Popups(driver).handle_service.options[option].click()
 
 
 @wt(
@@ -40,10 +45,10 @@ def choose_option_for_publish_handle_service_as_open_data(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_for_publish_metadata_as_open_data(
-    browser_id, option, popups, selenium
-):
+    browser_id: str, option: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
-    popups(driver).metadata_type.options[option].click()
+    Popups(driver).metadata_type.options[option].click()
 
 
 @wt(
@@ -55,11 +60,11 @@ def choose_option_for_publish_metadata_as_open_data(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_input_in_form_in_shares_interface(
-    browser_id, text, which_input, selenium, private_share
-):
+    browser_id: str, text: str, which_input: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     private_share(driver).dublin_core_metadata_form.write_to_last_input(
-        text, which_input
+        driver, text, which_input
     )
 
 
@@ -70,11 +75,11 @@ def write_input_in_form_in_shares_interface(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def clicks_button_in_form_in_shares_interface(
-    browser_id, button, selenium, private_share
-):
+def click_button_in_form_in_shares_interface(
+    browser_id: str, button: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
-    private_share(driver).dublin_core_metadata_form.click_add_button(button)
+    private_share(driver).dublin_core_metadata_form.click_add_button(driver, button)
 
 
 @wt(
@@ -83,7 +88,9 @@ def clicks_button_in_form_in_shares_interface(
         ' "Description" form on share\'s private interface'
     )
 )
-def click_button_in_description_form(browser_id, selenium, button, private_share):
+def click_button_in_description_form(
+    browser_id: str, selenium: SeleniumDrivers, button: str
+) -> None:
     driver = selenium[browser_id]
     getattr(private_share(driver).description_form, transform(button))()
 
@@ -94,7 +101,9 @@ def click_button_in_description_form(browser_id, selenium, button, private_share
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_link_on_shares_interface(browser_id, link, selenium, private_share):
+def assert_link_on_shares_interface(
+    browser_id: str, link: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     err_msg = f'Link on share\'s private interface is not "{link}"'
     assert private_share(driver).link_name == link, err_msg
@@ -107,8 +116,8 @@ def assert_link_on_shares_interface(browser_id, link, selenium, private_share):
     )
 )
 def write_description_in_description_form(
-    browser_id, text, where, selenium, private_share
-):
+    browser_id: str, text: str, where: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     setattr(private_share(driver).description_form, transform(where), text)
 
@@ -119,7 +128,9 @@ def write_description_in_description_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)
-def assert_private_share_named(selenium, browser_id, share_name, private_share):
+def assert_private_share_named(
+    selenium: SeleniumDrivers, browser_id: str, share_name: str
+) -> None:
     driver = selenium[browser_id]
     # because label with share name lies beyond iframe we need to change
     # to default content
@@ -135,13 +146,17 @@ def assert_private_share_named(selenium, browser_id, share_name, private_share):
 @wt(
     parsers.parse(
         'user of {browser_id} writes "{text}" to "{which_input}"'
-        ' section text field in "EDM" form on '
+        " section text field in EDM form on "
         "share's private interface"
     )
 )
 def write_input_in_edm_form_in_shares_interface(
-    browser_id, text, which_input, selenium, numerals
-):
+    browser_id: str,
+    text: str,
+    which_input: str,
+    selenium: SeleniumDrivers,
+    numerals: dict[str, int],
+) -> None:
     numeral = "first"
     write_to_nth_input_in_edm_form_in_shares_interface(
         browser_id, text, which_input, selenium, numeral, numerals
@@ -151,22 +166,26 @@ def write_input_in_edm_form_in_shares_interface(
 @wt(
     parsers.parse(
         'user of {browser_id} writes "{text}" to {numeral} "{which_input}"'
-        ' section text field in "EDM" form on '
+        " section text field in EDM form on "
         "share's private interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_to_nth_input_in_edm_form_in_shares_interface(
-    browser_id, text, which_input, selenium, numeral, numerals
-):
+    browser_id: str,
+    text: str,
+    which_input: str,
+    selenium: SeleniumDrivers,
+    numeral: str,
+    numerals: dict[str, int],
+) -> None:
     driver = selenium[browser_id]
-    form = PrivateShareView(driver).edm_metadata_form
+    form = private_share(driver).edm_metadata_form
     idx = numerals[numeral]
-
     for item in form.items:
         if item.name == "":
             driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
-        if item.name == which_input:
+        if item.name.lower() == which_input.lower():
             if idx == 0:
                 item_input = item.input
                 if not item_input.is_displayed():
@@ -181,43 +200,91 @@ def write_to_nth_input_in_edm_form_in_shares_interface(
 @wt(
     parsers.parse(
         'user of {browser_id} chooses "{option}" in "{section_name}"'
-        ' section in "EDM" form on '
+        " section in EDM form on "
         "share's private interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_edm_form_in_shares_interface(
-    browser_id, option, section_name, selenium
-):
+    browser_id: str,
+    option: str,
+    section_name: str,
+    selenium: SeleniumDrivers,
+    is_group: bool = False,
+    requires_group_selection: bool = False,
+) -> None:
     driver = selenium[browser_id]
-    form = PrivateShareView(driver).edm_metadata_form
+    form = private_share(driver).edm_metadata_form
+
+    if (
+        requires_group_selection and not is_group
+    ):  # When group selection is enabled but we are selecting a concrete item
+        # (not the group itself), it can be chosen directly without expanding
+        # the dropdown again.
+        Popups(driver).power_select.choose_item(option, require_full_match=False)
+        return
 
     for item in form.items:
         if item.name == "":
             driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
-        if item.name == section_name:
-            item_dropdown = item.dropdown
-            try:
-                item_dropdown.click()
-            except (ElementClickInterceptedException, ElementNotInteractableException):
-                driver.execute_script(
-                    "arguments[0].scrollIntoView({block: 'center'});", item_dropdown
-                )
-                item_dropdown.click()
-            Popups(driver).power_select.choose_item_including_name(option)
+        if item.name.lower() == section_name.lower():
+            _open_section_dropdown_and_choose(driver, item, option, is_group)
+            # intentionally return after handling the matching item
             return
+
     raise AssertionError(f"item {section_name} not found")
+
+
+def _open_section_dropdown_and_choose(
+    driver: WebDriver, item: EDMBoxForm, option: str, is_group: bool
+) -> None:
+    item_dropdown = item.dropdown
+    try:
+        item_dropdown.click()
+    except (ElementClickInterceptedException, ElementNotInteractableException):
+        # fallback: scroll to center and try again
+        driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});", item_dropdown
+        )
+        item_dropdown.click()
+
+    if is_group:
+        Popups(driver).power_select.choose_group(option, require_full_match=False)
+    else:
+        Popups(driver).power_select.choose_item(option, require_full_match=False)
+
+
+@wt(
+    'user of {browser_id} chooses "{option}" item group in "{section_name}"'
+    " section in EDM form on "
+    "share's private interface"
+)
+def choose_option_group_in_edm_form_in_shares_interface(
+    browser_id: str, option: str, section_name: str, selenium: SeleniumDrivers
+) -> None:
+    choose_option_in_edm_form_in_shares_interface(
+        browser_id,
+        option,
+        section_name,
+        selenium,
+        is_group=True,
+        requires_group_selection=True,
+    )
 
 
 @wt(
     parsers.parse(
         'user of {browser_id} sees that "{section_name}" section has value'
-        ' "{expected_value}" in "EDM" form on share\'s private interface'
+        ' "{expected_value}" in EDM form on share\'s private interface'
     )
 )
 def assert_val_edm_form_in_shares_interface(
-    browser_id, expected_value, section_name, selenium, numerals
-):
+    browser_id: str,
+    expected_value: str,
+    section_name: str,
+    selenium: SeleniumDrivers,
+    numerals: dict[str, int],
+) -> None:
     numeral = "first"
     assert_nth_val_edm_form_in_shares_interface(
         browser_id, expected_value, section_name, selenium, numeral, numerals
@@ -227,20 +294,25 @@ def assert_val_edm_form_in_shares_interface(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that {numeral} "{section_name}" section has value'
-        ' "{expected_value}" in "EDM" form on share\'s private interface'
+        ' "{expected_value}" in EDM form on share\'s private interface'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_nth_val_edm_form_in_shares_interface(
-    browser_id, expected_value, section_name, selenium, numeral, numerals
-):
+    browser_id: str,
+    expected_value: str,
+    section_name: str,
+    selenium: SeleniumDrivers,
+    numeral: str,
+    numerals: dict[str, int],
+) -> None:
     driver = selenium[browser_id]
-    items = PrivateShareView(driver).edm_public_view.items
+    items = private_share(driver).edm_public_view.items
     idx = numerals[numeral]
     for item in items:
         if item.name == "":
             driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
-        if item.name == section_name:
+        if item.name.lower() == section_name.lower():
             if idx == 0:
                 item_value = item.value.text
                 err_msg = (
@@ -256,14 +328,16 @@ def assert_nth_val_edm_form_in_shares_interface(
 @wt(
     parsers.parse(
         'user of {browser_id} adds property "{item_name}" in'
-        ' section in "EDM" form on '
+        " section in EDM form on "
         "share's private interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_property_to_edm_form_in_shares_interface(browser_id, selenium, item_name):
+def add_property_to_edm_form_in_shares_interface(
+    browser_id: str, selenium: SeleniumDrivers, item_name: str
+) -> None:
     driver = selenium[browser_id]
-    form = PrivateShareView(driver).edm_metadata_form
+    form = private_share(driver).edm_metadata_form
     driver.execute_script(
         "arguments[0].scrollIntoView({block: 'center'});", form.add_property.web_elem
     )
@@ -278,9 +352,11 @@ def add_property_to_edm_form_in_shares_interface(browser_id, selenium, item_name
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_warning_message_in_shares_page(browser_id, selenium, mess_text):
+def assert_warning_message_in_shares_page(
+    browser_id: str, selenium: SeleniumDrivers, mess_text: str
+) -> None:
     driver = selenium[browser_id]
-    warning = PrivateShareView(driver).alert_warning
+    warning = private_share(driver).alert_warning
     err_msg = f"Expected alert message: {mess_text} but got: {warning.text}"
     assert mess_text in warning.text, err_msg
 
@@ -292,10 +368,20 @@ def assert_warning_message_in_shares_page(browser_id, selenium, mess_text):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_warning_message_in_shares_page(browser_id, selenium):
+def assert_no_warning_message_in_shares_page(
+    browser_id: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     try:
-        warning = PrivateShareView(driver).alert_warning
+        warning = private_share(driver).alert_warning
         raise AssertionError(f"There is visible warning alert: {warning.text}")
     except RuntimeError:
         pass
+
+
+def add_metadata_field_in_dublin_core_form(driver: WebDriver, field_name: str) -> None:
+    share = private_share(driver)
+    share.dublin_core_metadata_form.add_more_elements.click()
+    share.dropdown.options[field_name.capitalize()].click()
+
+    share.dublin_core_metadata_form.click_on_background()

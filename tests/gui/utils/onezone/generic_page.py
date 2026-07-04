@@ -6,25 +6,41 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from abc import ABCMeta
+from collections.abc import Iterable
+from typing import Any
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils.core.base import PageObject, PageObjectMeta
 from tests.gui.utils.core.web_elements import Label, NamedButton
+from tests.gui.utils.generic import ListElement
+from tests.utils.utils import repeat_failed
 
 
 class Element(PageObject):
     name = id = Label(".one-label")
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args: object, **kwargs: object) -> None:
         self.web_elem.click()
 
 
-class GenericPage(PageObject):
-    __metaclass__ = ABCMeta
+class GenericPageMeta(PageObjectMeta, ABCMeta):
+    pass  # this class is needed to avoid metaclass conflict between PageObjectMeta and ABCMeta
 
+
+class GenericPage(PageObject, metaclass=GenericPageMeta):
     name = id = Label(".row-heading .col-title")
     get_started = NamedButton(".btn-default", text="Get started")
 
-    def __getitem__(self, item):
-        if hasattr(self, "elements_list"):
-            return self.elements_list[item]
-        raise ValueError("there is not elements_list member in class instance")
+    def __getitem__(self, item: int | str) -> Any:
+        for attr in ListElement:
+            attr_list = f"{attr.value}_list"
+            if hasattr(self, attr_list):
+                return getattr(self, attr_list)[item]
+        raise ValueError("there is not any elements list member in class instance")
+
+    @staticmethod
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_elements_list(
+        elements_list: Iterable[Element], main_field: str = "name"
+    ) -> list[Element]:
+        return [element for element in elements_list if getattr(element, main_field)]

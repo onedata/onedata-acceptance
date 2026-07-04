@@ -11,31 +11,28 @@ from tests.gui.utils.core.web_elements import (
     Input,
     Label,
     WebElement,
-    WebElementsSequence,
     WebItemsSequence,
 )
+from tests.gui.utils.oneprovider.browser import Browser
 
 from ..breadcrumbs import Breadcrumbs
 from ..file_browser import FileBrowser
 
 
 class SharesOptions(PageObject):
-    name = id = Label(".item-name")
-    menu_button = Button(".menu-toggle-frame")
-    icon = WebElement(".one-icon-tag-icon")
+    name = id = Label(".item-name", scroll=False)
+    menu_button = Button(".menu-toggle-frame", scroll=False)
+    icon = WebElement(".one-icon-tag-icon", scroll=False)
 
-    def points_to_del_dir(self):
+    def points_to_del_dir(self) -> bool:
         return "oneicon-x" in self.icon.get_attribute("class")
 
 
-class SharesContentPage(PageObject):
+class SharesContentPage(Browser):
     no_shares_msg = Label(".content-info-content-container")
     name = Label(".file-browser .fb-breadcrumbs-dir > .truncate")
-    shares_browser = WebItemsSequence(
+    shares_list = WebItemsSequence(
         ".one-collapsible-list .list-header-row", cls=SharesOptions
-    )
-    shares_list_web_elems = WebElementsSequence(
-        ".one-collapsible-list .share-list-item .list-header-row"
     )
     path = Breadcrumbs(".share-header-path")
     url = Input(".clipboard-input.form-control")
@@ -52,5 +49,5 @@ class SharesContentPage(PageObject):
     editor_mode = Label(".btn-switch-editor-mode .text")
     link_type_selector = Button(".share-link-type-selector-trigger")
 
-    def get_visible_shares_list(self):
-        return [el for el in self.shares_list_web_elems if el.text != ""]
+    def get_visible_shares_list(self) -> list[object]:
+        return [share for share in self.shares_list if share.name != ""]

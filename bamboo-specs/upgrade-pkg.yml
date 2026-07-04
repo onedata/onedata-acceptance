@@ -38,10 +38,12 @@ stages:
     - _Codetag Tracker
     - _Autoformatter check
     - _Static analysis
+    - _Type_check
     - 20.02.19 - current
     - 21.02.1 - current
     - 21.02.8 - current
     - 25.0 - current
+    - current - current
 
 _Codetag Tracker:
   key: CDTR
@@ -104,6 +106,17 @@ _Static analysis:
           - make static-analysis
         description: Static analysis
 
+_Type_check:
+  key: TCH
+  other: *common-opts
+  tasks:
+    - checkout: *checkout-default-repository
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - make type-check
+        description: Type checker
+
 20.02.19 - current:
   key: RFCD
   other: &common-opts
@@ -135,7 +148,7 @@ _Static analysis:
   - script:
       interpreter: SHELL
       scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+      - one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
       working-dir: onedata-acceptance
       description: Download artifacts
   - script:
@@ -155,7 +168,7 @@ _Static analysis:
       scripts:
       - |-
         cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
-        cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
+        cp onedata-acceptance/one-env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
         mv onedata-acceptance/tests/upgrade/logs/*/*/images.yaml onedata-acceptance/tests/upgrade/logs
         tar czf test_logs.tar.gz onedata-acceptance/tests/upgrade/logs
       description: Pack logs
@@ -194,6 +207,15 @@ _Static analysis:
 
 25.0 - current:
   key: U25C
+  other: *common-opts
+  tasks: *tasks
+  final-tasks: *final-tasks
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+
+current - current:
+  key: CUCU
   other: *common-opts
   tasks: *tasks
   final-tasks: *final-tasks

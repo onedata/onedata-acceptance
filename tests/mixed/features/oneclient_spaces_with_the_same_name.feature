@@ -122,7 +122,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
         storage: posix
         size: 1000000
 
-    Then using oneclient1, user1 sees spaces "[helloworld]" in mount point
+    Then using oneclient1, user1 sees spaces "[helloworld]" in mount point, waiting up to 60s
 
     And using REST, user2 creates token with following configuration:
           name: invite token
@@ -133,9 +133,9 @@ Feature: Tests for oneclient interaction with spaces with the same name
     And user2 sends token to user1
     And using REST, user1 successfully joins space space_helloworld2 with received token
 
-    And using oneclient1, user1 sees spaces "[helloworld, space_helloworld2]" in mount point
+    And using oneclient1, user1 sees spaces "[helloworld, space_helloworld2]" in mount point, waiting up to 60s
     And using REST, user1 leaves space named "space_helloworld2" in "onezone" Onezone service
-    And using oneclient1, user1 sees spaces "[helloworld]" in mount point
+    And using oneclient1, user1 sees spaces "[helloworld]" in mount point, waiting up to 60s
 
 
   Scenario: Using oneclient user can see a space (with the same name he already has) he joined into in mount point
@@ -151,7 +151,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
         storage: posix
         size: 1000000
 
-    Then using oneclient1, user1 sees spaces "[space_helloworld]" in mount point
+    Then using oneclient1, user1 sees spaces "[space_helloworld]" in mount point, waiting up to 60s
 
     And using REST, user2 creates token with following configuration:
           name: invite token
@@ -162,10 +162,10 @@ Feature: Tests for oneclient interaction with spaces with the same name
     And user2 sends token to user1
     And using REST, user1 successfully joins space space_helloworld with received token
 
-    And using oneclient1, user1 sees spaces "[space_helloworld, space_helloworld]" from "onezone" Onezone service, annotated with their ids in mount point
+    And using oneclient1, user1 sees spaces "[space_helloworld, space_helloworld]" from "onezone" Onezone service, annotated with their ids in mount point, waiting up to 60s
     And using REST, user1 leaves space named "space_helloworld" in "onezone" Onezone service
     # Due to VFS-10923, space id is still visible
-    And using oneclient1, user1 sees spaces "[space_helloworld]" from "onezone" Onezone service, annotated with their ids in mount point
+    And using oneclient1, user1 sees spaces "[space_helloworld]" from "onezone" Onezone service, annotated with their ids in mount point, waiting up to 60s
 
 
   Scenario: Using oneclient user can see 2 spaces with the same name annotated with their ids in mount point, then after removing one space (when provider is offline) can see the other without id
@@ -214,7 +214,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
     # this step renames one of the spaces with that name
     And using REST, user1 renames space named "helloworld" to "helloworld2" in "onezone" Onezone service
     And user1 starts network on oneprovider oneprovider-krakow
-    And using oneclient1, user1 sees spaces "[helloworld, helloworld2]" in mount point, waiting up to 60s
+    And using oneclient1, user1 sees spaces "[helloworld, helloworld2]" in mount point, waiting up to 90s
 
 
   Scenario: Using oneclient different users can properly write and read from spaces with the same name

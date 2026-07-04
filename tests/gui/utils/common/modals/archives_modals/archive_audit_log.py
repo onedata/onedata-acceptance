@@ -6,47 +6,48 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
+from typing import Dict, List, Optional, cast
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     WebElement,
-    WebElementsSequence,
     WebItemsSequence,
 )
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
+from tests.utils.utils import repeat_failed
 
 
 class FilesLog(BrowserRow):
-    name = id = Label(".file-name")
-    event = Label(".message-text")
-    clickable_field = WebElement(".file-name")
-    date = Label(".timestamp-cell")
-    duplicated_name_hash = Label(".log-filename-duplicate-hash")
+    file = id = Label(".file-name", scroll=False)
+    event = Label(".message-text", scroll=False)
+    clickable_field = WebElement(".file-name", scroll=False)
+    time = Label(".timestamp-cell", scroll=False)
+    duplicated_name_hash = Label(".log-filename-duplicate-hash", scroll=False)
+    time_taken = Label(".time-taken-text", scroll=False)
 
-    def click(self):
+    def click(self) -> None:
         time.sleep(0.1)
         ActionChains(self.driver).click(self.clickable_field).perform()
 
 
 class ArchiveAuditLog(Modal):
     archive_name = Label(".file-base-name")
-    _data_row = WebElementsSequence(".table-entry.data-row")
     data_row = WebItemsSequence(".table-entry.data-row", cls=FilesLog)
-    info_dict = {"Time": 0, "File": 1, "Event": 2, "Time taken": 3}
+
     x = Button(".close")
 
-    def scroll_by_press_space(self):
+    def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()
 
-    def scroll_to_top(self):
+    def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
                 "document.querySelector("
@@ -57,23 +58,37 @@ class ArchiveAuditLog(Modal):
         except JavascriptException:
             pass
 
-    def get_rows_of_column(self, option):
-        # order in dict
-        #  0   |  1   |   2   |     3
-        # Time | File | Event | Time taken
-        index = self.info_dict[option]
-        rows_data = self._data_row
-        all_rows = [f.text.split("\n") for f in rows_data]
-        rows = []
-        for row in all_rows:
-            if len(row) > 3:
-                # when file`s name repeats, annotation @... is added to
-                # another column
-                if len(row) == 5:
-                    row[1] += row[2]
-                    row.pop(2)
-                rows.append(row[index])
-        return rows
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_columns(
+        self, column_names: Optional[list[str]] = None
+    ) -> dict[str, list[str]]:
 
-    def __str__(self):
+        temp_columns = list(set((column_names or []) + ["file"]))
+        column_values: dict[str, list[str]] = {column: [] for column in temp_columns}
+
+        for row in self.data_row:
+            row = cast(FilesLog, row)
+            values_in_row = [getattr(row, column) for column in temp_columns]
+            if any(value_in_row == "" for value_in_row in values_in_row):
+                continue
+
+            for column, param in zip(temp_columns, values_in_row):
+                column_values[column].append(param)
+
+            try:
+                name_hash = getattr(row, "duplicated_name_hash")
+            except RuntimeError:
+                name_hash = ""
+
+            column_values["file"][-1] += name_hash
+            # adding hash to last file name to make it unique in case of duplicated names
+
+        return column_values
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_single_column(self, column_name: str) -> list[str]:
+        column_values = self.get_visible_rows_of_columns([column_name])
+        return column_values[column_name]
+
+    def __str__(self) -> str:
         return "Archive audit log"

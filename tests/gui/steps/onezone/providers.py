@@ -7,16 +7,23 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from collections.abc import Iterator
 from itertools import zip_longest
 
 import requests
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
+from tests.gui.type_definitions import Clipboard
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.rest_utils import get_provider_rest_path, http_get
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
@@ -32,11 +39,11 @@ TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 120
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_popup_for_provider_with_name_has_appeared_on_map(
-    selenium, browser_id, provider_name, popups
-):
+    selenium: SeleniumDrivers, browser_id: str, provider_name: str
+) -> None:
     driver = selenium[browser_id]
     err_msg = 'Popup displayed for provider named "{}" instead of "{}"'
-    prov = popups(driver).provider_map_popover.provider_name
+    prov = Popups(driver).provider_map_popover.provider_name
     assert provider_name == prov, err_msg.format(prov, provider_name)
 
 
@@ -48,14 +55,19 @@ def assert_popup_for_provider_with_name_has_appeared_on_map(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_popup_for_provider_has_appeared_on_map(
-    selenium, browser_id, provider, hosts, popups, clipboard, displays
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider: str,
+    hosts: Hosts,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
     driver = selenium[browser_id]
     err_msg = 'Popup displayed for provider named "{}" instead of "{}"'
     try:
-        prov = popups(driver).provider_map_popover.provider_name
+        prov = Popups(driver).provider_map_popover.provider_name
     except RuntimeError:
-        popups(driver).provider_details.values[0].copy_to_clipboard()
+        Popups(driver).provider_details.values[0].copy_to_clipboard()
         prov = clipboard.paste(display=displays[browser_id])
     provider_name = hosts[provider]["name"]
     assert provider_name == prov, err_msg.format(prov, provider_name)
@@ -69,10 +81,10 @@ def assert_popup_for_provider_has_appeared_on_map(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_known_domain(
-    selenium, browser_id, host, hosts, popups
-):
+    selenium: SeleniumDrivers, browser_id: str, host: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
-    displayed_domain = popups(driver).provider_map_popover.provider_hostname
+    displayed_domain = Popups(driver).provider_map_popover.provider_hostname
     domain = hosts[host]["hostname"]
     assert (
         displayed_domain == domain
@@ -88,13 +100,18 @@ def assert_provider_hostname_matches_known_domain(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_test_hostname(
-    selenium, browser_id, provider, hosts, popups, oz_page, displays, clipboard
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider: str,
+    hosts: Hosts,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
     driver = selenium[browser_id]
     expected_domain = f"{hosts[provider]['hostname']}.test"
-    page = oz_page(driver).get_page_and_click("providers")
-    page.elements_list[0]()
-    _click_copy_hostname(driver, popups)
+    page = OZLoggedIn(driver).get_page_and_click("providers")
+    page.providers_list[0]()
+    _click_copy_hostname(driver)
     displayed_domain = clipboard.paste(display=displays[browser_id])
     assert displayed_domain == expected_domain, (
         f"displayed {displayed_domain} provider hostname instead of expected"
@@ -103,14 +120,16 @@ def assert_provider_hostname_matches_test_hostname(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _click_copy_hostname(driver, popups):
-    popups(driver).provider_map_popover.copy_hostname()
+def _click_copy_hostname(driver: WebDriver) -> None:
+    Popups(driver).provider_map_popover.click_copy_hostname_icon()
 
 
-def _click_on_btn_in_provider_popup(driver, btn, provider, oz_page, hosts):
+def _click_on_btn_in_provider_popup(
+    driver: WebDriver, btn: str, provider: str, hosts: Hosts
+) -> None:
     err_msg = 'Popup displayed for provider named "{}" instead of "{}"'
     provider = hosts[provider]["name"]
-    prov = oz_page(driver)["world map"].get_provider_with_displayed_popup()
+    prov = OZLoggedIn(driver)["world map"].get_provider_with_displayed_popup()
     assert provider == prov.name, err_msg.format(prov.name, provider)
     getattr(prov, transform(btn)).click()
 
@@ -125,16 +144,18 @@ def _click_on_btn_in_provider_popup(driver, btn, provider, oz_page, hosts):
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def g_click_on_btn_in_provider_popup(
-    selenium, browser_id_list, btn, provider_list, oz_page, hosts
-):
+    selenium: SeleniumDrivers,
+    browser_id_list: str,
+    btn: str,
+    provider_list: str,
+    hosts: Hosts,
+) -> None:
     browser_ids = parse_seq(browser_id_list)
     providers = parse_seq(provider_list)
     for browser_id, provider in zip_longest(
         browser_ids, providers, fillvalue=providers[-1]
     ):
-        _click_on_btn_in_provider_popup(
-            selenium[browser_id], btn, provider, oz_page, hosts
-        )
+        _click_on_btn_in_provider_popup(selenium[browser_id], btn, provider, hosts)
 
 
 @wt(
@@ -146,9 +167,13 @@ def g_click_on_btn_in_provider_popup(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_in_provider_popup(
-    selenium, browser_id, btn, provider, oz_page, hosts
-):
-    _click_on_btn_in_provider_popup(selenium[browser_id], btn, provider, oz_page, hosts)
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    btn: str,
+    provider: str,
+    hosts: Hosts,
+) -> None:
+    _click_on_btn_in_provider_popup(selenium[browser_id], btn, provider, hosts)
 
 
 @given(
@@ -157,10 +182,12 @@ def wt_click_on_btn_in_provider_popup(
         '"(?P<btn_name>.+?)" button in provider popup'
     )
 )
-def g_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page):
+def g_click_on_go_to_files_provider(
+    selenium: SeleniumDrivers, browser_id_list: str, btn_name: str
+) -> None:
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
-        popup = oz_page(driver)["world map"].get_provider_with_displayed_popup()
+        popup = OZLoggedIn(driver)["world map"].get_provider_with_displayed_popup()
         getattr(popup, transform(btn_name)).click()
 
 
@@ -170,10 +197,12 @@ def g_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page
         '"(?P<btn_name>.+?)" button in provider popup'
     )
 )
-def wt_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page):
+def wt_click_on_go_to_files_provider(
+    selenium: SeleniumDrivers, browser_id_list: str, btn_name: str
+) -> None:
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
-        popup = oz_page(driver)["world map"].get_provider_with_displayed_popup()
+        popup = OZLoggedIn(driver)["world map"].get_provider_with_displayed_popup()
         getattr(popup, transform(btn_name)).click()
 
 
@@ -196,10 +225,11 @@ def wt_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_pag
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_provider_popup_next_to_provider_circle(
-    selenium, browser_id, ordinal, oz_page
-):
+    selenium: SeleniumDrivers, browser_id: str, ordinal: str
+) -> None:
     driver = selenium[browser_id]
-    prov_circle = oz_page(driver)["world map"].providers[int(ordinal[:-2]) - 1]
+    number = from_ordinal_number_to_int(ordinal) - 1
+    prov_circle = OZLoggedIn(driver)["world map"].providers[number]
     assert (
         not prov_circle.is_displayed()
     ), f"provider popup for {ordinal} circle is displayed while it should not be"
@@ -211,10 +241,12 @@ def assert_no_provider_popup_next_to_provider_circle(
         r"on Onezone world map"
     )
 )
-def assert_no_provider_popup_on_world_map(selenium, browser_id, popups):
+def assert_no_provider_popup_on_world_map(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     try:
-        popups(driver).provider_map_popover
+        Popups(driver).provider_map_popover
     except RuntimeError:
         pass
     else:
@@ -230,9 +262,12 @@ def assert_no_provider_popup_on_world_map(selenium, browser_id, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_provider_circle(selenium, browser_id, ordinal, oz_page):
+def click_on_provider_circle(
+    selenium: SeleniumDrivers, browser_id: str, ordinal: str
+) -> None:
     driver = selenium[browser_id]
-    oz_page(driver)["world map"].providers[int(ordinal[:-2]) - 1].click()
+    number = from_ordinal_number_to_int(ordinal) - 1
+    OZLoggedIn(driver)["world map"].providers[number].click()
 
 
 @wt(
@@ -241,9 +276,9 @@ def click_on_provider_circle(selenium, browser_id, ordinal, oz_page):
         r"circle on Onezone world map"
     )
 )
-def click_other_provider_icons(selenium, browser_id, oz_page):
+def click_other_provider_icons(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    oz_page(driver)["providers"].icons[0].icon()
+    OZLoggedIn(driver)["providers"].icons[0].icon()
 
 
 @wt(
@@ -256,10 +291,11 @@ def click_other_provider_icons(selenium, browser_id, oz_page):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_popup_next_to_provider_circle(
-    selenium, browser_id, ordinal, oz_page
-):
+    selenium: SeleniumDrivers, browser_id: str, ordinal: str
+) -> None:
     driver = selenium[browser_id]
-    prov_circle = oz_page(driver)["world map"].providers[int(ordinal[:-2]) - 1]
+    number = from_ordinal_number_to_int(ordinal) - 1
+    prov_circle = OZLoggedIn(driver)["world map"].providers[number]
     assert (
         prov_circle.is_displayed()
     ), f"provider popup for {ordinal} circle is not displayed while it should be"
@@ -267,8 +303,8 @@ def assert_provider_popup_next_to_provider_circle(
 
 @wt(parsers.parse("user of {browser_id} clicks on Onezone world map"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_world_map(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])["providers"].map_point.click()
+def click_on_world_map(selenium: SeleniumDrivers, browser_id: str) -> None:
+    OZLoggedIn(selenium[browser_id])["providers"].map_point.click()
 
 
 @wt(
@@ -280,18 +316,18 @@ def click_on_world_map(selenium, browser_id, oz_page):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_consistent_list_of_spaces_for_provider(
-    selenium, browser_id, provider, oz_page, hosts
-):
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     provider_record_spaces = {
         (space.name, space.is_home())
-        for space in (oz_page(driver)["go to your files"].providers[provider].spaces)
+        for space in OZLoggedIn(driver)["go to your files"].providers[provider].spaces
     }
     provider_popup_spaces = {
         (space.name, space.is_home())
         for space in (
-            oz_page(driver)["world map"].get_provider_with_displayed_popup().spaces
+            OZLoggedIn(driver)["world map"].get_provider_with_displayed_popup().spaces
         )
     }
     assert provider_record_spaces == provider_popup_spaces, (
@@ -310,16 +346,16 @@ def assert_consistent_list_of_spaces_for_provider(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def g_click_on_provider_in_go_to_your_files_oz_panel(
-    selenium, browser_id_list, providers, oz_page, hosts
-):
+    selenium: SeleniumDrivers, browser_id_list: str, providers: str, hosts: Hosts
+) -> None:
     browser_ids = parse_seq(browser_id_list)
-    providers = parse_seq(providers)
+    provider_names = parse_seq(providers)
     for browser_id, provider in zip_longest(
-        browser_ids, providers, fillvalue=providers[-1]
+        browser_ids, provider_names, fillvalue=provider_names[-1]
     ):
         provider_name = hosts[provider]["name"]
         (
-            oz_page(selenium[browser_id])["go to your files"]
+            OZLoggedIn(selenium[browser_id])["go to your files"]
             .providers[provider_name]
             .click()
         )
@@ -333,10 +369,10 @@ def g_click_on_provider_in_go_to_your_files_oz_panel(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_provider_in_go_to_your_files_oz_panel(
-    selenium, browser_id, provider, oz_page, hosts
-):
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     provider = hosts[provider]["name"]
-    (oz_page(selenium[browser_id])["go to your files"].providers[provider].click())
+    (OZLoggedIn(selenium[browser_id])["go to your files"].providers[provider].click())
 
 
 @wt(
@@ -348,9 +384,9 @@ def wt_click_on_provider_in_go_to_your_files_oz_panel(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(
-    selenium, browser_id, provider, oz_page
-):
-    (oz_page(selenium[browser_id])["go to your files"].providers[provider].click())
+    selenium: SeleniumDrivers, browser_id: str, provider: str
+) -> None:
+    (OZLoggedIn(selenium[browser_id])["go to your files"].providers[provider].click())
 
 
 @wt(
@@ -360,9 +396,11 @@ def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_list_of_providers_is_empty(selenium, browser_id, oz_page):
+def assert_list_of_providers_is_empty(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
-    count = oz_page(driver)["go to your files"].providers.count()
+    count = OZLoggedIn(driver)["go to your files"].providers.count()
     assert count == 0, f"Providers count is {count} instead of expected 0"
 
 
@@ -372,12 +410,14 @@ def assert_list_of_providers_is_empty(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_provider_working_in_oz_panel(selenium, browser_id, provider, oz_page, hosts):
+def assert_provider_working_in_oz_panel(
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    page = oz_page(driver).get_page_and_click("providers")
+    page = OZLoggedIn(driver).get_page_and_click("providers")
     try:
-        provider_record = page.elements_list[provider]
+        provider_record = page.providers_list[provider]
         provider_record.click()
     except RuntimeError:
         assert False, f'no provider "{provider}" found on providers list'
@@ -395,21 +435,21 @@ def assert_provider_working_in_oz_panel(selenium, browser_id, provider, oz_page,
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_not_working_in_oz_panel(
-    selenium, browser_id, provider, oz_page, hosts
-):
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    provider_record = oz_page(driver)["go to your files"].providers[provider]
+    provider_record = OZLoggedIn(driver)["go to your files"].providers[provider]
     assert (
         provider_record.is_not_working()
     ), f'provider icon in GO TO YOUR FILES oz panel for "{provider}" is not gray'
 
 
 def click_on_provider_in_providers_sidebar_with_provider_name(
-    selenium, browser_id, oz_page, provider_name
-):
+    selenium: SeleniumDrivers, browser_id: str, provider_name: str
+) -> None:
     driver = selenium[browser_id]
-    oz_page(driver)["providers"].elements_list[provider_name]()
+    OZLoggedIn(driver)["providers"].providers_list[provider_name]()
 
 
 @wt(
@@ -418,10 +458,12 @@ def click_on_provider_in_providers_sidebar_with_provider_name(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page, provider, hosts):
+def click_on_provider_in_data_sidebar(
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     provider = hosts[provider]["name"]
     click_on_provider_in_providers_sidebar_with_provider_name(
-        selenium, browser_id, oz_page, provider
+        selenium, browser_id, provider
     )
 
 
@@ -433,11 +475,11 @@ def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page, provider, h
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_is_not_in_providers_list_in_data_sidebar(
-    selenium, browser_id, oz_page, provider, hosts
-):
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    providers_list = oz_page(driver)["providers"].elements_list
+    providers_list = OZLoggedIn(driver)["providers"].providers_list
     assert (
         provider not in providers_list
     ), f"{provider} is in providers list in data sidebar"
@@ -451,9 +493,11 @@ def assert_provider_is_not_in_providers_list_in_data_sidebar(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_visit_provider_in_provider_popover(selenium, browser_id, option, popups):
+def click_on_visit_provider_in_provider_popover(
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
     driver = selenium[browser_id]
-    getattr(popups(driver).provider_map_popover, transform(option)).click()
+    getattr(Popups(driver).provider_map_popover, transform(option)).click()
 
 
 @wt(
@@ -464,10 +508,10 @@ def click_on_visit_provider_in_provider_popover(selenium, browser_id, option, po
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_space_is_in_spaces_list_in_provider_popover(
-    selenium, browser_id, space_name, popups
-):
+    selenium: SeleniumDrivers, browser_id: str, space_name: str
+) -> None:
     driver = selenium[browser_id]
-    spaces_list = popups(driver).provider_map_popover.spaces_list
+    spaces_list = Popups(driver).provider_map_popover.spaces_list
     assert space_name in spaces_list
 
 
@@ -479,12 +523,12 @@ def assert_space_is_in_spaces_list_in_provider_popover(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_supported_spaces_in_data_sidebar(
-    selenium, browser_id, oz_page, provider, number, hosts
-):
+    selenium: SeleniumDrivers, browser_id: str, provider: str, number: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     supported_spaces_number = (
-        oz_page(driver)["providers"].elements_list[provider].supported_spaces_number
+        OZLoggedIn(driver)["providers"].providers_list[provider].supported_spaces_number
     )
     assert (
         number == supported_spaces_number
@@ -497,27 +541,28 @@ def assert_number_of_supported_spaces_in_data_sidebar(
         "provider popover is {number}"
     )
 )
-def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id, number, popups):
+def assert_len_of_spaces_list_in_provider_popover(
+    selenium: SeleniumDrivers, browser_id: str, number: str
+) -> None:
     driver = selenium[browser_id]
-    spaces_list = popups(driver).provider_map_popover.spaces_list
+    spaces_list = Popups(driver).provider_map_popover.spaces_list
     assert int(number) == len(
         spaces_list
     ), f"number of supported spaces is not equal {number}"
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} opens "{provider}" provider menu '
-        "on space providers data page"
+    parsers.re(
+        r'user of (?P<browser_id>.+) opens "(?P<provider>oneprovider-[0-9]+)"'
+        r" provider menu "
+        r"on space providers data page"
     )
 )
 def click_on_menu_button_of_provider_on_providers_list(
-    selenium, browser_id, provider, oz_page, hosts
-):
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     button = "menu button"
-    click_on_button_on_providers_list(
-        selenium, browser_id, provider, oz_page, hosts, button
-    )
+    click_on_button_on_providers_list(selenium, browser_id, provider, hosts, button)
 
 
 @wt(
@@ -527,18 +572,24 @@ def click_on_menu_button_of_provider_on_providers_list(
     )
 )
 def click_on_button_on_providers_list(
-    selenium, browser_id, provider, oz_page, hosts, button
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider: str,
+    hosts: Hosts,
+    button: str,
+) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     getattr(
-        oz_page(driver)["data"].providers_page.providers_list[provider_name],
+        OZLoggedIn(driver)["data"].providers_page.providers_list[provider_name],
         transform(button),
     )()
 
 
-def click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups):
-    popups(driver).menu_popup_with_text.cease_support_from_providers_list_menu()
+def click_on_cease_support_in_menu_of_provider_on_providers_list(
+    driver: WebDriver,
+) -> None:
+    Popups(driver).menu_popup_with_text.cease_support_from_providers_list_menu()
 
 
 @wt(
@@ -547,14 +598,14 @@ def click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups)
         "goes offline on providers map"
     )
 )
-def wait_until_provider_goes_offline(
-    selenium, browser_id, oz_page, hosts, provider_name
-):
+def wait_until_provider_goes_offline_by_gui(
+    selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, provider_name: str
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider_name]["name"]
-    page = oz_page(driver).get_page_and_click("providers")
+    page = OZLoggedIn(driver).get_page_and_click("providers")
     time.sleep(0.5)
-    provider_record = page.elements_list[provider]
+    provider_record = page.providers_list[provider]
     provider_record.click()
     start = time.time()
     while page.is_working():
@@ -566,52 +617,14 @@ def wait_until_provider_goes_offline(
             )
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} waits until provider "{provider_name}" '
-        "goes online on providers map"
-    )
-)
-def wait_until_provider_goes_online(
-    selenium, browser_id, oz_page, hosts, provider_name, users
-):
+def wait_until_provider_goes_online_by_rest(
+    hosts: Hosts, provider_name: str, users: Users
+) -> None:
     user = "admin"
-    driver = selenium[browser_id]
-    provider = hosts[provider_name]["name"]
     provider_hostname = hosts[provider_name]["hostname"]
-    page = oz_page(driver).get_page_and_click("providers")
-    time.sleep(0.5)
-    provider_record = page.elements_list[provider]
-    provider_record.click()
     start = time.time()
-    start_providers(hosts, provider_name)
-    while not page.is_working():
-        time.sleep(0.5)
-        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
-            try:
-                res = http_get(
-                    ip=provider_hostname,
-                    port=OP_REST_PORT,
-                    path=get_provider_rest_path("health"),
-                    auth=(user, users[user].password),
-                )
-                print(f"Respone from health check request: {res}")
-            except requests.exceptions.ConnectionError as e:
-                print(f"Exception from health check request: {e}")
-            raise RuntimeError(
-                "Provider did not go online on providers map "
-                f"within {TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s."
-            )
-    wait_for_provider_online(provider_name, hosts, users)
-
-
-def wait_for_provider_online(provider, hosts, users):
-    user = "admin"
-    provider_hostname = hosts[provider]["hostname"]
-    start = time.time()
-    exception = ""
-
-    while True:
+    exception_message = ""
+    while time.time() < start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
         time.sleep(0.5)
         try:
             res = http_get(
@@ -623,35 +636,39 @@ def wait_for_provider_online(provider, hosts, users):
             if res.status_code == requests.codes["ok"]:
                 return
         except requests.exceptions.ConnectionError as e:
-            exception = e
-        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
-            if exception:
-                print(f"Exception from request: {exception}")
-            raise RuntimeError(
-                "Provider is still not working after "
-                f"{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s. "
-                f"Last response from health check request: {res}"
-            )
+            exception_message = str(e)
+    raise RuntimeError(
+        "Provider is still not working after "
+        f"{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s. "
+        f"Last response from health check request: {res} "
+        f"Exception from request: {exception_message}"
+    )
 
 
-@given(parsers.re("providers? named (?P<provider_list>.*?) (is|are) stopped"))
-def given_stop_providers(hosts, provider_list):
-    _stop_providers(hosts, provider_list)
-
-
-@wt(parsers.re("providers? named (?P<provider_list>.*?) (is|are) stopped"))
-def when_stop_providers(hosts, provider_list):
-    _stop_providers(hosts, provider_list)
-
-
-def _stop_providers(hosts, provider_list):
+def _start_and_wait_for_providers(
+    hosts: Hosts, provider_list: str, users: Users
+) -> None:
+    start_providers(hosts, provider_list)
     for provider in parse_seq(provider_list):
-        pod_name = hosts[provider]["pod-name"]
+        wait_until_provider_goes_online_by_rest(hosts, provider, users)
+
+
+@wt(parsers.re(r'provider named "(?P<provider_list>.*?)" is stopped'))
+@wt(parsers.re(r"providers named (?P<provider_list>.*?) are stopped"))
+def wt_stop_providers(provider_list: str, hosts: Hosts, users: Users) -> Iterator[None]:
+    _stop_providers(hosts, provider_list)
+    yield
+    _start_and_wait_for_providers(hosts, provider_list, users)
+
+
+def _stop_providers(hosts: Hosts, provider_list: str) -> None:
+    for provider in parse_seq(provider_list):
+        pod_name = hosts[provider]["pod_name"]
         run_onenv_command("service", ["stop", pod_name])
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def start_providers(hosts, provider_list):
+def start_providers(hosts: Hosts, provider_list: str) -> None:
     for provider in parse_seq(provider_list):
-        pod_name = hosts[provider]["pod-name"]
+        pod_name = hosts[provider]["pod_name"]
         run_onenv_command("service", ["start", pod_name])

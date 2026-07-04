@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+from collections.abc import Mapping
+from typing import Protocol, cast
 
 import yaml
 
@@ -14,6 +16,14 @@ from tests.gui.meta_steps.onepanel.storages import (
 )
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.rest_utils import get_panel_rest_path, http_post
+from tests.utils.user_utils import User
+
+HostsConfig = Mapping[str, Mapping[str, str]]
+
+
+class CredentialsLike(Protocol):
+    username: str
+    password: str
 
 
 @given(
@@ -21,7 +31,13 @@ from tests.utils.rest_utils import get_panel_rest_path, http_post
         'initial "{name}" storage configuration in "{host}" Onezone service:\n{config}'
     )
 )
-def create_storage(hosts, host, config, onepanel_credentials, name):
+def create_storage(
+    hosts: HostsConfig,
+    host: str,
+    config: str,
+    onepanel_credentials: CredentialsLike,
+    name: str,
+) -> None:
     """Create storage according to given config.
 
     Config format depends on storage type. For example config format for
@@ -52,10 +68,21 @@ def create_storage(hosts, host, config, onepanel_credentials, name):
     _create_storage(hosts, host, config, onepanel_credentials, name)
 
 
-def _create_storage(hosts, host, config, onepanel_credentials, name):
+def _create_storage(
+    hosts: HostsConfig,
+    host: str,
+    config: str,
+    onepanel_credentials: CredentialsLike,
+    name: str,
+) -> None:
     options = yaml.load(config, yaml.Loader)
 
-    _remove_storage_in_op_panel_using_rest(name, host, hosts, onepanel_credentials)
+    _remove_storage_in_op_panel_using_rest(
+        name,
+        host,
+        hosts,
+        cast(User, onepanel_credentials),
+    )
     storage_data = {name: options}
     http_post(
         ip=hosts[host]["hostname"],

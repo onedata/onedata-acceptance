@@ -11,7 +11,10 @@ from functools import partial
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, WebItem, WebItemsSequence
-from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.gui.utils.core.web_objects import (
+    ButtonWithTextPageObject,
+    PageObjectsSequence,
+)
 
 
 class _Breadcrumbs(PageObject):
@@ -22,23 +25,26 @@ class _Breadcrumbs(PageObject):
     space_root = Button(".fb-breadcrumbs-dir-root")
     menu_button = Button(".fb-breadcrumbs-current-dir-button")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Breadcrumbs({self.pwd()}) in {self.parent}"
 
-    def pwd(self):
+    def pwd(self) -> str:
         return "/".join(directory.text for directory in self._breadcrumbs)
 
-    def chdir(self, path, archive=False):
+    def chdir(self, path: str, archive: bool = False) -> None:
         if not path or path == "/":
             self.space_root()
         else:
-            path = path.split("/")
+            path_parts = path.split("/")
             breadcrumbs = self._breadcrumbs
-            assert len(path) <= len(
-                breadcrumbs
-            ), f"specified path {path} exceeded one displayed in breadcrumbs {self}"
+            assert len(path_parts) <= len(breadcrumbs), (
+                f"specified path {path_parts} exceeded one displayed in breadcrumbs"
+                f" {self}"
+            )
 
-            i, dir1, dir2 = None, None, None
+            i = None
+            dir1 = None
+            dir2 = None
             err_msg = "{dir} not found on {idx}th position in {item}"
             if archive:
                 breadcrumbs = [elem for i, elem in enumerate(breadcrumbs) if i != 1]
@@ -47,31 +53,32 @@ class _Breadcrumbs(PageObject):
 
             # works only if '...' is after archive name in path
             if "..." in breadcrumbs_name:
-                path[1] = "..."
-                if len(breadcrumbs_name) < len(path):
-                    for i in range(2, 2 + (len(path) - len(breadcrumbs))):
-                        path.remove(path[i])
+                path_parts[1] = "..."
+                if len(breadcrumbs_name) < len(path_parts):
+                    for i in range(2, 2 + (len(path_parts) - len(breadcrumbs))):
+                        path_parts.remove(path_parts[i])
 
-                for i, (dir1, dir2) in enumerate(zip(path, breadcrumbs_name)):
+                for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs_name)):
                     if i == 0:
                         continue
                     assert dir1 == dir2, err_msg.format(dir=dir1, idx=i, item=self)
                 breadcrumbs[breadcrumbs_name.index(dir2) - 1].click()
             else:
-                for i, (dir1, dir2) in enumerate(zip(path, breadcrumbs)):
+                for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs)):
                     if i == 0:
                         continue
                     assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i, item=self)
+                assert dir2 is not None
                 dir2.click()
 
-    def go_one_back(self):
+    def go_one_back(self) -> None:
         breadcrumbs = self._breadcrumbs
         if len(breadcrumbs) - 2 < 0:
             raise RuntimeError(f"Cannot go back in breadcrumbs {breadcrumbs}")
         breadcrumbs[len(breadcrumbs) - 2].click()
 
     @property
-    def breadcrumbs(self):
+    def breadcrumbs(self) -> PageObjectsSequence:
         return self._breadcrumbs
 
 

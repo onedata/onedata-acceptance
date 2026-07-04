@@ -20,7 +20,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 sends copied token to user of <client>
 
     # support space
-    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser is idle for 1 second
     And user of <client> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -31,7 +31,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of <client> selects GiB radio button in support space form in Onepanel
     And user of <client> clicks on Support space button in support space form in Onepanel
     And user of <client> sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of <client> sees that space support record for "space1" has appeared in Spaces page in Onepanel
+    And user of <client> sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     # confirm support of space
     Then user of browser1 clicks "space1" on the spaces list in the sidebar
@@ -59,7 +59,7 @@ Feature: Basic spaces management utilities using onepanel
 #    And user of browser1 sees that length of providers list of "space1" equals "1"
 #
 #    # unsupport space
-#    And user of browser1 clicks on Clusters in the main menu
+#    And user of browser1 clicks on "Clusters" in the main menu
 #    And user of browser1 clicks on "oneprovider-1" in clusters menu
 #    And user of browser is idle for 1 second
 #    And user of <client> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -97,7 +97,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 sees that length of providers list of "space1" equals "1"
 
     # unsupport space
-    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser is idle for 1 second
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel

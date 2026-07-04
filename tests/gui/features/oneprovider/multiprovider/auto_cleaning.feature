@@ -30,7 +30,6 @@ Feature: Onepanel features auto-cleaning
            unit: GiB
 
     # enable file popularity
-    And user of browser1 opens "space2" record on spaces list in Spaces page in Onepanel
     And user of browser1 clicks on File popularity navigation tab in space "space2"
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
@@ -46,9 +45,7 @@ Feature: Onepanel features auto-cleaning
 
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
-    And user of space_owner_browser opens oneprovider-1 Oneprovider transfers for "space2" space
-    And user of space_owner_browser waits for all transfers to start
-    And user of space_owner_browser waits for all transfers to finish
+    And user of space_owner_browser waits until "oneprovider-1" transfers complete for "space2" space
     And user of space_owner_browser sees directory in ended transfers:
             name: dir1
             replicated: 100 MiB
@@ -106,7 +103,6 @@ Feature: Onepanel features auto-cleaning
             unit: GiB
 
     # enable file popularity
-    And user of browser1 opens "space2" record on spaces list in Spaces page in Onepanel
     And user of browser1 clicks on File popularity navigation tab in space "space2"
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
@@ -121,9 +117,7 @@ Feature: Onepanel features auto-cleaning
 
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
-    And user of space_owner_browser opens oneprovider-1 Oneprovider transfers for "space2" space
-    And user of space_owner_browser waits for all transfers to start
-    And user of space_owner_browser waits for all transfers to finish
+    And user of space_owner_browser waits until "oneprovider-1" transfers complete for "space2" space
     And user of space_owner_browser sees directory in ended transfers:
             name: dir1
             replicated: 100 MiB
@@ -178,7 +172,6 @@ Feature: Onepanel features auto-cleaning
             unit: GiB
 
     # enable file popularity
-    And user of browser1 opens "space2" record on spaces list in Spaces page in Onepanel
     And user of browser1 clicks on File popularity navigation tab in space "space2"
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
@@ -194,9 +187,7 @@ Feature: Onepanel features auto-cleaning
 
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
-    And user of space_owner_browser opens oneprovider-1 Oneprovider transfers for "space2" space
-    And user of space_owner_browser waits for all transfers to start
-    And user of space_owner_browser waits for all transfers to finish
+    And user of space_owner_browser waits until "oneprovider-1" transfers complete for "space2" space
     And user of space_owner_browser sees directory in ended transfers:
             name: dir1
             replicated: 100 MiB

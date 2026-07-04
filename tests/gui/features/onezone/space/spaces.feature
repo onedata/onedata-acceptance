@@ -19,7 +19,7 @@ Feature: Basic management of spaces
 
 
   Scenario Outline: User successfully renames space in space info tile
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Overview" of "space1" space in the sidebar
     And user of space_owner_browser writes "space2" into rename space text field
@@ -34,7 +34,7 @@ Feature: Basic management of spaces
 
 
 Scenario: User successfully renames space in the sidebar
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks on "Rename" button in space "space1" menu
     And user of space_owner_browser writes "space2" into input box in space title sidebar item
     And user of space_owner_browser clicks on save icon in space title sidebar item
@@ -43,7 +43,7 @@ Scenario: User successfully renames space in the sidebar
 
 
   Scenario: User successfully cancels rename space
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Overview" of "space1" space in the sidebar
     And user of space_owner_browser writes "space2" into rename space text field
@@ -93,7 +93,7 @@ Scenario: User successfully renames space in the sidebar
 
 
   Scenario: User sees that provider is added to supporters list after supporting space
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Providers" of "space1" space in the sidebar
     Then user of space_owner_browser sees "oneprovider-1" is on the providers list
@@ -101,7 +101,7 @@ Scenario: User successfully renames space in the sidebar
 
 
   Scenario: User successfully copies support token (space has already supported by one provider)
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Providers" of "space1" space in the sidebar
     And user of space_owner_browser clicks Add support button on providers page
@@ -115,7 +115,7 @@ Scenario: User successfully renames space in the sidebar
     And user of space_owner_browser sees 1 user in space members subpage
     And user of space_owner_browser sees [you, owner, direct] status labels for "space-owner-user" user in space members subpage
 
-    And user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks on "Leave" button in space "space1" menu
     And user of space_owner_browser clicks on Leave button
@@ -123,7 +123,7 @@ Scenario: User successfully renames space in the sidebar
 
 
   Scenario: User sees space details in space overview subpage
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks on "Marketplace" button in spaces sidebar
     And user of space_owner_browser clicks on "Advertise your space" button in Space Marketplace subpage
     And user of space_owner_browser chooses "space1" in spaces dropdown menu in modal "Advertise space"

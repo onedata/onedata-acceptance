@@ -33,7 +33,7 @@ Feature: Harvesters effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parent direct privileges and its direct privileges
-    When user of browser_admin clicks on Discovery in the main menu
+    When user of browser_admin clicks on "Discovery" in the main menu
     And user of browser_admin clicks "harvester1" on the harvesters list in the sidebar
     And user of browser_admin adds "child_group_1" group to "harvester1" harvester using available groups dropdown
     And user of browser_admin adds "parent_group_1" group to "harvester1" harvester using available groups dropdown
@@ -73,7 +73,7 @@ Feature: Harvesters effective privileges
     When user of browser_admin sends invitation token from "harvester1" harvester to user of browser_user2
     And user of browser_user2 joins to harvester in Onezone page
 
-    And user of browser_admin clicks on Discovery in the main menu
+    And user of browser_admin clicks on "Discovery" in the main menu
     And user of browser_admin clicks "harvester1" on the harvesters list in the sidebar
     And user of browser_admin adds "parent_group_1" group to "harvester1" harvester using available groups dropdown
     And user of browser_admin clicks "parent_group_1" group in "harvester1" harvester members groups list
@@ -109,7 +109,7 @@ Feature: Harvesters effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
-    When user of browser_admin clicks on Discovery in the main menu
+    When user of browser_admin clicks on "Discovery" in the main menu
     And user of browser_admin clicks "harvester1" on the harvesters list in the sidebar
     And user of browser_admin adds "parent_group_1" group to "harvester1" harvester using available groups dropdown
     And user of browser_admin adds "parent_group_2" group to "harvester1" harvester using available groups dropdown
@@ -146,7 +146,7 @@ Feature: Harvesters effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parents direct privileges
-    When user of browser_admin clicks on Discovery in the main menu
+    When user of browser_admin clicks on "Discovery" in the main menu
     And user of browser_admin clicks "harvester1" on the harvesters list in the sidebar
     And user of browser_admin adds "parent_group_1" group to "harvester1" harvester using available groups dropdown
     And user of browser_admin adds "parent_group_2" group to "harvester1" harvester using available groups dropdown

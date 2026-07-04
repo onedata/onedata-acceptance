@@ -14,7 +14,7 @@ from tests.gui.utils.core.web_elements import Label, WebItem
 class _ArchiveContainer(PageObject):
     message = Label(".bottom-panel-text")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"archive container in {self.parent}"
 
 

@@ -13,5 +13,5 @@ from ..modal import Modal
 class ReattachDataset(Modal):
     proceed = Button(".question-yes")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Reattach Dataset"

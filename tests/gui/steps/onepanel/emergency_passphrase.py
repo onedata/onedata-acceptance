@@ -9,7 +9,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import transform
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -20,10 +22,12 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_emergency_passphrase_page(selenium, browser_id, onepanel, button):
+def click_button_on_emergency_passphrase_page(
+    selenium: SeleniumDrivers, browser_id: str, button: str
+) -> None:
     driver = selenium[browser_id]
     button = transform(button) + "_button"
-    getattr(onepanel(driver).content.emergency_passphrase, button).click()
+    getattr(Onepanel(driver).content.emergency_passphrase, button).click()
 
 
 @wt(
@@ -34,9 +38,9 @@ def click_button_on_emergency_passphrase_page(selenium, browser_id, onepanel, bu
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_input_on_emergency_passphrase_page(
-    selenium, browser_id, onepanel, text, input_field
-):
+    selenium: SeleniumDrivers, browser_id: str, text: str, input_field: str
+) -> None:
     driver = selenium[browser_id]
     input_field = transform(input_field) + "_input"
-    field = getattr(onepanel(driver).content.emergency_passphrase, input_field)
+    field = getattr(Onepanel(driver).content.emergency_passphrase, input_field)
     _enter_text(field, text)

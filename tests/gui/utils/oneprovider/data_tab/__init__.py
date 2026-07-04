@@ -29,7 +29,7 @@ class DataTab(PageObject):
     )
 
     @property
-    def sidebar(self):
+    def sidebar(self) -> DataTabSidebar:
         sidebar_, resize_handler = self._sidebar
         return DataTabSidebar(
             self.web_elem, sidebar_, self, resize_handler=resize_handler

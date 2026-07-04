@@ -6,7 +6,10 @@ __author__ = "Bartosz Walkowicz, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2017-2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import OZLoggedIn
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -19,8 +22,10 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_btn_for_user_full_name_edit_box_in_oz(selenium, browser_id, btn, oz_page):
-    getattr(oz_page(selenium[browser_id])["profile"].edit_box, btn).click()
+def click_on_btn_for_user_full_name_edit_box_in_oz(
+    selenium: SeleniumDrivers, browser_id: str, btn: str
+) -> None:
+    getattr(OZLoggedIn(selenium[browser_id])["profile"].edit_box, btn).click()
 
 
 @wt(
@@ -29,8 +34,10 @@ def click_on_btn_for_user_full_name_edit_box_in_oz(selenium, browser_id, btn, oz
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_into_user_full_name_edit_box_in_oz(selenium, browser_id, text, oz_page):
-    oz_page(selenium[browser_id])["profile"].edit_box.value = text
+def type_text_into_user_full_name_edit_box_in_oz(
+    selenium: SeleniumDrivers, browser_id: str, text: str
+) -> None:
+    OZLoggedIn(selenium[browser_id])["profile"].edit_box.value = text
 
 
 @wt(
@@ -40,8 +47,10 @@ def type_text_into_user_full_name_edit_box_in_oz(selenium, browser_id, text, oz_
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def activate_user_full_name_edit_box_in_oz(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])["profile"].rename_full_name()
+def activate_user_full_name_edit_box_in_oz(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    OZLoggedIn(selenium[browser_id])["profile"].rename_full_name()
 
 
 @wt(
@@ -52,9 +61,9 @@ def activate_user_full_name_edit_box_in_oz(selenium, browser_id, oz_page):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_correct_usr_full_name_in_oz(
-    selenium, browser_id, expected_full_name, oz_page
-):
-    displayed_full_name = oz_page(selenium[browser_id])["profile"].full_name
+    selenium: SeleniumDrivers, browser_id: str, expected_full_name: str
+) -> None:
+    displayed_full_name = OZLoggedIn(selenium[browser_id])["profile"].full_name
     err_msg = (
         f'expected "{expected_full_name}" as user full name, but instead'
         f' displayed is "{displayed_full_name}" in USER FULL NAME oz panel'

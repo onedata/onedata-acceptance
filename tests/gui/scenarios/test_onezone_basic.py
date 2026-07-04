@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
 
+from tests.gui.meta_steps.onepanel.account_management import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -33,6 +34,7 @@ from tests.gui.steps.modals.modal import *
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.onepanel.deployment import *
+from tests.gui.steps.onepanel.emergency_passphrase import *
 from tests.gui.steps.onepanel.nodes import *
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.oneprovider.browser import *
@@ -63,7 +65,7 @@ from tests.utils.entities_setup.users import *
 
 
 @fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0, 1]
 
 
@@ -72,6 +74,7 @@ scenarios("../features/onezone/user_account_manage.feature")
 scenarios("../features/onezone/full_name.feature")
 scenarios("../features/onezone/default_privileges.feature")
 scenarios("../features/onezone/clusters_effective_privileges.feature")
+scenarios("../features/onezone/emergency_oz.feature")
 
 # THIS SCENARIO HAS TO BE EXECUTED IN THE END
 scenarios("../features/onezone/delete_account.feature")

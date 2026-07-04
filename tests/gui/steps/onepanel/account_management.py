@@ -10,24 +10,31 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from time import sleep
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import OnePage, Popups
 from tests.gui.utils.generic import transform
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse("user of {browser_id} clicks on logout button in main menu"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_user_account_btn_panel(selenium, browser_id, onepage):
+def wt_click_on_user_account_btn_panel(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     sleep(1)
-    onepage(selenium[browser_id]).logout.click()
+    OnePage(selenium[browser_id]).logout.click()
 
 
 @wt(
     parsers.parse("user of {browser_id} clicks on {btn} button in user account popover")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_option_in_user_account_popover(selenium, browser_id, btn, popups):
-    popups(selenium[browser_id]).user_account_menu.options[btn].click()
+def wt_click_option_in_user_account_popover(
+    selenium: SeleniumDrivers, browser_id: str, btn: str
+) -> None:
+    Popups(selenium[browser_id]).user_account_menu.options[btn].click()
 
 
 @wt(
@@ -38,8 +45,10 @@ def wt_click_option_in_user_account_popover(selenium, browser_id, btn, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_type_password_of_user_to_curr_passwd(selenium, browser_id, user, users, onepage):
-    form = onepage(selenium[browser_id]).content.account_management.chpasswd_form
+def wt_type_password_of_user_to_curr_passwd(
+    selenium: SeleniumDrivers, browser_id: str, user: str, users: Users
+) -> None:
+    form = OnePage(selenium[browser_id]).content.account_management.chpasswd_form
     form.current_password = users[user].password
 
 
@@ -52,9 +61,9 @@ def wt_type_password_of_user_to_curr_passwd(selenium, browser_id, user, users, o
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_chpasswd_form(
-    selenium, browser_id, in_box, text, onepage
-):
-    form = onepage(selenium[browser_id]).content.account_management.chpasswd_form
+    selenium: SeleniumDrivers, browser_id: str, in_box: str, text: str
+) -> None:
+    form = OnePage(selenium[browser_id]).content.account_management.chpasswd_form
     setattr(form, transform(in_box + " password"), text)
 
 
@@ -65,8 +74,10 @@ def wt_type_text_to_in_box_in_chpasswd_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_confirm_btn_in_chpasswd_form(selenium, browser_id, onepage):
-    form = onepage(selenium[browser_id]).content.account_management.chpasswd_form
+def wt_click_confirm_btn_in_chpasswd_form(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    form = OnePage(selenium[browser_id]).content.account_management.chpasswd_form
     form.confirm_password_change()
 
 
@@ -76,7 +87,9 @@ def wt_click_confirm_btn_in_chpasswd_form(selenium, browser_id, onepage):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_account_management(selenium, browser_id, btn, onepage):
+def wt_click_on_btn_in_account_management(
+    selenium: SeleniumDrivers, browser_id: str, btn: str
+) -> None:
     getattr(
-        onepage(selenium[browser_id]).content.account_management, transform(btn)
+        OnePage(selenium[browser_id]).content.account_management, transform(btn)
     ).click()

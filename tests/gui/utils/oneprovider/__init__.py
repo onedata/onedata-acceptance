@@ -4,12 +4,19 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from ..core.web_elements import WebItem
+
+from typing import Any
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from ..core.web_elements import Label, WebItem
 from .archive_browser import ArchiveBrowser
 from .archive_container import ArchiveContainer
 from .archive_file_browser import ArchiveFileBrowser
+from .archive_recall_browser import ArchiveRecallBrowser
 from .automation import WorkflowExecutionPage
 from .data_tab import DataTab
+from .dataset_archive_browser import DatasetArchiveBrowser
 from .dataset_browser import DatasetBrowser
 from .file_browser import FileBrowser
 from .provider_configuration import ProviderConfiguration
@@ -31,12 +38,14 @@ class OPLoggedIn:
     archive_container = ArchiveContainer(".archive-browser-container")
     provider_configuration = ProviderConfiguration(".provider-config")
     automation_page = WebItem(".content-space-automation", cls=WorkflowExecutionPage)
+    dataset_archive_browser = DatasetArchiveBrowser(".dataset-archives-browser")
+    archive_recall_browser = ArchiveRecallBrowser(".archive-recall-browser")
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.web_elem = self.driver = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Oneprovider page"
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Any:
         return self.tabs[item](self.web_elem, self.web_elem, self)

@@ -6,13 +6,31 @@ __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Callable, Generator, Mapping
+from typing import cast
+
 import pytest
+from pytest_bdd.parser import Feature, Scenario, Step
 
 from tests.conftest import export_logs
 from tests.oneclient.steps.multi_dir_steps import purge_all_spaces
+from tests.type_definitions import Hosts, JsonObject, Storages
+from tests.utils.client_utils import Client
+from tests.utils.entities_setup.groups import CredentialsLike as GroupCredentialsLike
+from tests.utils.entities_setup.groups import (
+    GroupsConfig,
+)
 from tests.utils.entities_setup.groups import groups_creation as setup_groups
 from tests.utils.entities_setup.spaces import (
+    SpacesConfig,
+)
+from tests.utils.entities_setup.spaces import (
     create_and_configure_spaces as setup_spaces,
+)
+from tests.utils.entities_setup.users import CredentialsLike as UserCredentialsLike
+from tests.utils.entities_setup.users import (
+    UserConfigEntry,
+    UsersDb,
 )
 from tests.utils.entities_setup.users import users_creation_with_cleanup as setup_users
 from tests.utils.luma_utils import (
@@ -21,36 +39,39 @@ from tests.utils.luma_utils import (
     get_all_spaces_details,
     get_local_feed_luma_storages,
 )
+from tests.utils.user_utils import User, Users
 
 
 @pytest.fixture(autouse=True)
-def skip_by_env(skip_by_env):
+def skip_by_env(skip_by_env: object) -> None:
     """Autouse fixture defined in tests.conftest"""
 
 
 @pytest.fixture(autouse=True)
-def xfail_by_env(xfail_by_env):
+def xfail_by_env(xfail_by_env: object) -> None:
     """Autouse fixture defined in tests.conftest"""
 
 
 @pytest.fixture(autouse=True, scope="module")
-def run_around_suite(request, env_description_abs_path):
+def run_around_suite(
+    request: pytest.FixtureRequest, env_description_abs_path: str
+) -> Generator[None, None, None]:
     yield
     export_logs(request, env_description_abs_path)
 
 
 @pytest.fixture(autouse=True)
 def run_around_testcase(
-    entities_config,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-    rm_users,
-):
+    entities_config: JsonObject,
+    admin_credentials: User,
+    onepanel_credentials: User,
+    hosts: Hosts,
+    users: Users,
+    groups: dict[str, str],
+    storages: Storages,
+    spaces: dict[str, str],
+    rm_users: bool,
+) -> Generator[None, None, None]:
     unmount_all_clients_and_purge_spaces(users)
     setup_entities(
         entities_config,
@@ -68,30 +89,35 @@ def run_around_testcase(
 
 
 def setup_entities(
-    config,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-    rm_users,
-):
+    config: JsonObject,
+    admin_credentials: User,
+    onepanel_credentials: User,
+    hosts: Hosts,
+    users: Users,
+    groups: dict[str, str],
+    storages: Storages,
+    spaces: dict[str, str],
+    rm_users: bool,
+) -> None:
     setup_users(
         "onezone",
-        config.get("users"),
-        admin_credentials,
-        onepanel_credentials,
-        hosts,
-        users,
+        cast(list[UserConfigEntry], config.get("users")),
+        cast(UserCredentialsLike, admin_credentials),
+        cast(UserCredentialsLike, onepanel_credentials),
+        cast(Mapping[str, Mapping[str, str]], hosts),
+        cast(UsersDb, users),
         rm_users,
     )
     setup_groups(
-        config.get("groups"), "onezone", admin_credentials, users, hosts, groups
+        cast(GroupsConfig, config.get("groups")),
+        "onezone",
+        cast(GroupCredentialsLike, admin_credentials),
+        users,
+        cast(Mapping[str, Mapping[str, str]], hosts),
+        groups,
     )
     setup_spaces(
-        config.get("spaces"),
+        cast(SpacesConfig, config.get("spaces")),
         "onezone",
         admin_credentials,
         onepanel_credentials,
@@ -101,21 +127,37 @@ def setup_entities(
         storages,
         spaces,
     )
-    setup_luma(config.get("users"), users, admin_credentials, hosts)
+    setup_luma(
+        cast(list[UserConfigEntry], config.get("users")),
+        users,
+        admin_credentials,
+        hosts,
+    )
 
 
-def setup_luma(users_config, users, admin_credentials, hosts):
-    spaces = get_all_spaces_details(admin_credentials, hosts)
-    local_feed_luma_storages = get_local_feed_luma_storages(admin_credentials, hosts)
+def setup_luma(
+    users_config: list[UserConfigEntry],
+    users: Users,
+    admin_credentials: User,
+    hosts: Hosts,
+) -> None:
+    hosts_config = cast(Mapping[str, Mapping[str, str]], hosts)
+    spaces = get_all_spaces_details(admin_credentials, hosts_config)
+    local_feed_luma_storages = get_local_feed_luma_storages(
+        admin_credentials, hosts_config
+    )
 
-    for username in users_config:
+    for user_config in users_config:
+        username = (
+            user_config if isinstance(user_config, str) else next(iter(user_config))
+        )
         new_user = users[username]
         add_user_luma_mapping(admin_credentials, new_user, local_feed_luma_storages)
 
     add_spaces_luma_mapping(admin_credentials, local_feed_luma_storages, spaces)
 
 
-def unmount_all_clients_and_purge_spaces(users):
+def unmount_all_clients_and_purge_spaces(users: Users) -> None:
     for user in users.values():
         for client in user.clients.values():
             purge_spaces(client)
@@ -123,11 +165,13 @@ def unmount_all_clients_and_purge_spaces(users):
         user.clients.clear()
 
 
-def purge_spaces(client):
+def purge_spaces(client: Client) -> None:
     purge_all_spaces(client)
 
 
-def pytest_bdd_before_scenario(request, feature, scenario):
+def pytest_bdd_before_scenario(
+    request: pytest.FixtureRequest, feature: Feature, scenario: Scenario
+) -> None:
     print("\n=================================================================")
     print(f"- Executing scenario '{scenario.name}'")
     print(f"- from feature '{feature.name}'")
@@ -135,16 +179,29 @@ def pytest_bdd_before_scenario(request, feature, scenario):
 
 
 def pytest_bdd_before_step_call(
-    request, feature, scenario, step, step_func, step_func_args
-):
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
+    step: Step,
+    step_func: Callable[..., object],
+    step_func_args: dict[str, object],
+) -> None:
     print(f"-- Executing step: '{step}'")
 
 
 def pytest_bdd_step_error(
-    request, feature, scenario, step, step_func, step_func_args, exception
-):
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
+    step: Step,
+    step_func: Callable[..., object],
+    step_func_args: dict[str, object],
+    exception: BaseException,
+) -> None:
     print("--- STEP FAILED\n")
 
 
-def pytest_bdd_after_scenario(request, feature, scenario):
+def pytest_bdd_after_scenario(
+    request: pytest.FixtureRequest, feature: Feature, scenario: Scenario
+) -> None:
     print("=================================================================\n")

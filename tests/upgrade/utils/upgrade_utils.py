@@ -7,13 +7,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 import traceback
+from collections.abc import Callable, Iterable, Mapping
+from typing import Optional, Protocol, TypedDict, TypeGuard, cast
 
+import pytest
 from packaging.version import Version
 
 # pylint: disable=import-error,no-name-in-module
 from bamboos.docker.environment.docker import pull_image_with_retries
 from bamboos.docker.images_branch_config import resolve_image
 from tests.conftest import export_logs
+from tests.type_definitions import EnvDesc, Hosts
 from tests.upgrade.utils.rest_utils import get_provider_configuration
 from tests.utils.environment_utils import (
     configure_os,
@@ -23,29 +27,94 @@ from tests.utils.environment_utils import (
     verify_env_ready,
 )
 from tests.utils.onenv_utils import run_onenv_command
+from tests.utils.user_utils import User, Users
+
+type TestCallback = Callable[[], None]
+type HostsConfig = Mapping[str, Mapping[str, str]]
+type ClientKey = tuple[str, str, str]
+
+
+class SourcesSpec(TypedDict):
+    baseImage: str
+    components: list[str]
+
+
+class SourceVersionSpec(TypedDict):
+    sources: SourcesSpec
+
+
+type VersionSpec = str | SourceVersionSpec
+
+
+class UpgradeConfig(TypedDict):
+    scenarios: list[str]
+    initialVersions: dict[str, VersionSpec]
+    targetVersions: dict[str, VersionSpec]
+
+
+class UpgradeEnvironment(TypedDict):
+    env_desc: EnvDesc
+    scenario_abs_path: str
+    env_description_abs_path: str
+
+
+class OneClientLike(Protocol):
+    def absolute_path(self, space_name: str) -> str: ...
+
+    def mkdir(self, path: str) -> None: ...
+
+    def create_file(self, path: str) -> None: ...
+
+    def write(self, data: str, path: str) -> None: ...
+
+    def read(self, path: str) -> str: ...
+
+    def stat(self, path: str) -> object: ...
+
+    def rm(self, path: str) -> None: ...
+
+    def create_hardlink(self, target_path: str, link_path: str) -> None: ...
+
+    def create_symlink(self, target_path: str, link_path: str) -> None: ...
+
+
+class UpgradeTestsControllerLike(Protocol):
+    hosts: Hosts
+    users: Users
+    initial_prov_version: str
+
+    def get_client(
+        self, username: str, client_host_alias: str, client_instance: str
+    ) -> OneClientLike: ...
 
 
 class UpgradeTest:
-    def __init__(self, name, setup, verify, min_prov_version=None):
+    def __init__(
+        self,
+        name: str,
+        setup: TestCallback,
+        verify: TestCallback,
+        min_prov_version: Optional[int] = None,
+    ) -> None:
         self.__name = name
         self.__setup = setup  # function executed before any upgrade is performed
         self.__verify = verify  # function executed after all upgrades are performed
         self.__min_prov_version = min_prov_version
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.__name
 
-    def get_required_min_prov_version(self):
+    def get_required_min_prov_version(self) -> Optional[int]:
         return self.__min_prov_version
 
-    def run_setup(self, *args, **kwargs):
+    def run_setup(self) -> None:
         print(f'\nRunning setup for test "{self.__name}"\n')
-        self.__setup(*args, **kwargs)
+        self.__setup()
         print(f'\nSetup for test "{self.__name}" finished\n')
 
-    def run_verify(self, *args, **kwargs):
+    def run_verify(self) -> None:
         print(f'\nRunning verify for test "{self.__name}"\n')
-        self.__verify(*args, **kwargs)
+        self.__verify()
         print(f'\nVerify for test "{self.__name}" finished\n')
 
 
@@ -53,31 +122,31 @@ class UpgradeTest:
 class UpgradeTestsController:
     def __init__(
         self,
-        test_config,
-        hosts,
-        clients,
-        request,
-        users,
-        env_desc,
-        scenario_abs_path,
-        env_description_abs_path,
-    ):
-        self.__tests_list = []
-        self.__test_results = {}
-        self.test_config = test_config
-        self.env = {
+        test_config: UpgradeConfig,
+        hosts: Hosts,
+        clients: dict[str, object],
+        request: pytest.FixtureRequest,
+        users: Users,
+        env_desc: EnvDesc,
+        scenario_abs_path: str,
+        env_description_abs_path: str,
+    ) -> None:
+        self.__tests_list: list[UpgradeTest] = []
+        self.__test_results: dict[str, str] = {}
+        self.test_config: UpgradeConfig = test_config
+        self.env: UpgradeEnvironment = {
             "env_desc": env_desc,
             "scenario_abs_path": scenario_abs_path,
             "env_description_abs_path": env_description_abs_path,
         }
-        self.hosts = hosts
+        self.hosts: Hosts = hosts
         self.clients = clients
         self.request = request
-        self.users = users
-        self.user_clients = {}
+        self.users: Users = users
+        self.user_clients: dict[ClientKey, OneClientLike] = {}
         self.initial_prov_version = ""
 
-    def add_test(self, test):
+    def add_test(self, test: UpgradeTest) -> None:
         req_prov_version = test.get_required_min_prov_version()
         if req_prov_version is not None:
             if req_prov_version <= get_major_prov_version(
@@ -87,23 +156,27 @@ class UpgradeTestsController:
         else:
             self.__tests_list.append(test)
 
-    def add_tests(self, tests):
+    def add_tests(self, tests: Iterable[UpgradeTest]) -> None:
         for test in tests:
             self.add_test(test)
 
-    def mount_client(self, username, client_host_alias, client_instance):
+    def mount_client(
+        self, username: str, client_host_alias: str, client_instance: str
+    ) -> OneClientLike:
         client = self.users[username].mount_client(
             client_host_alias,
             client_instance,
-            self.hosts,
+            cast(Mapping[str, Mapping[str, str]], self.hosts),
             self.env["env_desc"],
             opts=[],
         )
         if client:
-            return client
+            return cast(OneClientLike, client)
         raise RuntimeError("Error when mounting oneclient")
 
-    def get_client(self, username, client_host_alias, client_instance):
+    def get_client(
+        self, username: str, client_host_alias: str, client_instance: str
+    ) -> OneClientLike:
         client_info = (
             username,
             client_host_alias,
@@ -115,7 +188,7 @@ class UpgradeTestsController:
         self.user_clients[client_info] = client
         return client
 
-    def run_tests(self):
+    def run_tests(self) -> None:
         admin_user = self.users["admin"]
         self.initial_prov_version = get_prov_version(
             self.hosts["oneprovider-1"]["hostname"]
@@ -138,8 +211,9 @@ class UpgradeTestsController:
                 upgrade_service(
                     service_name,
                     admin_user,
-                    self.hosts,
+                    cast(Mapping[str, Mapping[str, str]], self.hosts),
                     self.test_config["targetVersions"][service_name],
+                    self.test_config["initialVersions"][service_name],
                 )
 
         setup_hosts_cfg(self.hosts, self.request)
@@ -161,88 +235,104 @@ class UpgradeTestsController:
         self.print_tests_results()
         assert not self.tests_failed(), f"FAILED TESTS {self.get_failed_tests()}"
 
-    def __run_setup(self, test):
+    def __run_setup(self, test: UpgradeTest) -> None:
         test.run_setup()
         export_logs(
             self.request, self.env["env_description_abs_path"], "before_upgrade"
         )
 
-    def __run_verify(self, test):
+    def __run_verify(self, test: UpgradeTest) -> None:
         test.run_verify()
 
-    def __unmount_clients(self):
+    def __unmount_clients(self) -> None:
         for user in self.users.values():
             for client in user.clients.values():
                 client.unmount()
             user.clients.clear()
         self.user_clients = {}
 
-    def get_failed_tests(self):
+    def get_failed_tests(self) -> list[str]:
         return [
             test_name
             for test_name, test_result in self.__test_results.items()
             if "FAILED" in test_result
         ]
 
-    def tests_failed(self):
+    def tests_failed(self) -> bool:
         return any(self.get_failed_tests())
 
-    def print_tests_results(self):
+    def print_tests_results(self) -> None:
         print("TESTS RESULTS")
         for test_result in self.__test_results.values():
             print(test_result)
 
 
-def upgrade_service(service_name, admin_user, hosts, version):
+def upgrade_service(
+    service_name: str,
+    admin_user: User,
+    hosts: HostsConfig,
+    version_spec: VersionSpec,
+    prev_version_spec: VersionSpec,
+) -> None:
     for service in hosts.keys():
         if service.startswith(service_name):
-            pod_name = hosts[service]["pod-name"]
-            run_upgrade_command(pod_name, service_name, version)
+            pod_name = hosts[service]["pod_name"]
+            run_upgrade_command(pod_name, service_name, version_spec, prev_version_spec)
 
     # etc hosts update needed so it is possible to connect
     update_etc_hosts()
     verify_env_ready(admin_user, hosts)
 
 
-def run_upgrade_command(pod_name, service, version):
-    cmd = [pod_name]
-    if isinstance(version, str):
-        cmd.extend(prepare_image_upgrade_command(service, version))
-        run_onenv_command("upgrade", cmd)
+def run_upgrade_command(
+    pod_name: str, service: str, version_spec: VersionSpec, prev_version: VersionSpec
+) -> None:
+    current_image = get_service_image(service, version_spec)
+    prev_image = get_service_image(service, prev_version)
+    if prev_image == current_image and not is_upgrade_from_sources(version_spec):
+        if service == "oneclient":
+            # do nothing with oneclient, it should reconnect after provider restart
+            return
+        run_onenv_command("service", ["stop", pod_name])
+        run_onenv_command("service", ["start", pod_name])
     else:
-        cmd.extend(prepare_sources_upgrade_command(service, version))
+        pull_image_with_retries(current_image)
+        cmd = [pod_name]
+        cmd.extend(["-i", current_image])
+        cmd.extend(prepare_sources_upgrade_command(version_spec))
         run_onenv_command("upgrade", cmd)
 
 
-def prepare_image_upgrade_command(service, version):
-    if version == "default":
-        image = resolve_image(service)
-    else:
-        image = f"docker.onedata.org/{service}-dev:{version}"
-    pull_image_with_retries(image)
-    return ["-i", image]
-
-
-def prepare_sources_upgrade_command(service, version):
-    image = f"docker.onedata.org/{service}-dev:{version["sources"]["baseImage"]}"
-    pull_image_with_retries(image)
-    components = []
-    for component in version["sources"]["components"]:
+def prepare_sources_upgrade_command(version_spec: VersionSpec) -> list[str]:
+    if not is_upgrade_from_sources(version_spec):
+        return []
+    components = ["--sources-path", "."]
+    for component in version_spec["sources"]["components"]:
         components.append(f"--{component}")
-    cmd = ["-i", image, "--sources-path", "."]
-    cmd.extend(components)
-    return cmd
+    return components
 
 
-def get_major_prov_version(provider_host):
+def get_service_image(service: str, version_spec: VersionSpec) -> str:
+    if is_upgrade_from_sources(version_spec):
+        version_spec = version_spec["sources"]["baseImage"]
+    if version_spec == "default":
+        return resolve_image(service)
+    return f"docker.onedata.org/{service}-dev:{version_spec}"
+
+
+def is_upgrade_from_sources(version_spec: VersionSpec) -> TypeGuard[SourceVersionSpec]:
+    return isinstance(version_spec, dict)
+
+
+def get_major_prov_version(provider_host: str) -> int:
     return int(get_prov_version(provider_host).split(".")[0])
 
 
-def get_prov_version(provider_host):
-    return get_provider_configuration(provider_host)["version"]
+def get_prov_version(provider_host: str) -> str:
+    return cast(str, get_provider_configuration(provider_host)["version"])
 
 
-def is_version_lower_than(actual_version, reference_version):
+def is_version_lower_than(actual_version: str, reference_version: str) -> bool:
     """
     Returns true if actual version is lower than reference one, e.g.
     21.02.8 < 25.0
@@ -253,9 +343,9 @@ def is_version_lower_than(actual_version, reference_version):
     return Version(actual_version) < Version(reference_version)
 
 
-def format_failed_test_results(when, exception, test):
+def format_failed_test_results(when: str, exception: str, test: UpgradeTest) -> str:
     return f"TEST {test.get_name()} FAILED ON {when} ERROR:\n {exception}"
 
 
-def format_succeed_test_results(test):
+def format_succeed_test_results(test: UpgradeTest) -> str:
     return f"TEST OK: {test.get_name()}"

@@ -74,7 +74,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 succeeds to consume token for "group2" group
     And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
 
-    Then user of browser1 sees that space space1 has following privilege configuration for group group2:
+    Then user of browser1 sees that space "space1" has following privilege configuration for group "group2":
           privileges:
             Space management:
               granted: Partially
@@ -147,7 +147,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 succeeds to consume token
     And user of browser2 sees group "group2" on groups list
 
-    Then user of browser1 sees that group group1 has following privilege configuration for user user2:
+    Then user of browser1 sees that group "group1" has following privilege configuration for user "user2":
           privileges:
             Group management:
               granted: Partially

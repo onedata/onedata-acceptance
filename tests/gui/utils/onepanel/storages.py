@@ -8,6 +8,7 @@ import re
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core import scroll_to_css_selector
@@ -82,18 +83,18 @@ class QOSParams(PageObject):
     )
     enabled_remove_icons = WebElementsSequence(".remove-param")
 
-    def set_last_key(self, key):
+    def set_last_key(self, key: str) -> None:
         self.last_key.value = key
 
-    def click_value_in_modified_record(self):
+    def click_value_in_modified_record(self) -> None:
         size = len(self.key_values)
         self.key_values[size - 2].key.click()
         self.key_values[size - 2].val.click()
 
-    def get_key_values_count(self):
+    def get_key_values_count(self) -> int:
         return len(self.key_values) - 1
 
-    def delete_first_additional_param(self):
+    def delete_first_additional_param(self) -> None:
         if self.enabled_remove_icons:
             css_sel = ".remove-param"
             scroll_to_css_selector(self.driver, css_sel)
@@ -107,25 +108,28 @@ class Editor(PageObject):
     save_button = Button("button.btn-primary")
     cancel_button = NamedButton("button", text="Cancel")
 
+    def change_field_in_editor(
+        self, driver: WebDriver, field_name: str, new_val: str
+    ) -> None:
+        input_box = getattr(self, field_name)
+        driver.execute_script("arguments[0].scrollIntoView();", input_box)
+        input_box.clear()
+        if new_val != "":
+            input_box.send_keys(new_val)
+            assert (
+                input_box.get_attribute("value") == new_val
+            ), f'entering "{new_val}" failed'
+
 
 class POSIXEditor(Editor):
     mount_point = WebElement(".mountPoint-field input")
-    timeout = Input(".timeout-field input")
+    timeout = WebElement(".timeout-field input")
     read_only = Toggle(".readonly-field .one-way-toggle")
-
-    def change_mount_point(self, val):
-        input_box = self.mount_point
-        self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
-        input_box.clear()
-
-        if val != "":
-            input_box.send_keys(val)
-            assert input_box.get_attribute("value") == val, f'entering "{val}" failed'
 
 
 class S3Editor(Editor):
-    bucket_name = Input(".bucketName-field input")
-    admin_secret_key = Input(".secretKey-field input")
+    bucket_name = WebElement(".bucketName-field input")
+    admin_secret_key = WebElement(".secretKey-field input")
 
 
 class CephEditor(Editor):
@@ -156,18 +160,16 @@ class StorageRecord(PageObject, ExpandableMixin):
     copy_id_button = Button(".copy-btn-icon")
 
     menu_button = Button(".collapsible-toolbar-toggle")
-    _toolbar = WebElement(".one-collapsible-toolbar")
 
-    def is_expanded(self):
+    def is_expanded(self) -> bool:
         return bool(
             re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
         )
 
-    def expand_menu(self, driver):
-        ActionChains(driver).move_to_element(self._toolbar).perform()
+    def expand_menu(self) -> None:
         self.menu_button.click()
 
-    def click_toggle(self):
+    def click_toggle(self) -> None:
         self._click_on_toggle()
 
 
@@ -178,7 +180,9 @@ class StorageContentPage(PageObject):
     cancel = NamedButton("button", text="Cancel")
 
     @repeat_failed(timeout=30)
-    def click_modify_button_of_storage(self, driver, storage_name):
+    def click_modify_button_of_storage(
+        self, driver: WebDriver, storage_name: str
+    ) -> None:
         for index, record in enumerate(self.storages):
             if record.name == storage_name:
                 driver.execute_script(f'$(".btn-default")[{index}].click();')
@@ -191,6 +195,6 @@ class StorageContentPage(PageObject):
                 "because storage is not visible on page."
             )
 
-    def scroll_by_press_space(self):
+    def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()

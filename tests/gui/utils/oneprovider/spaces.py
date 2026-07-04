@@ -30,10 +30,10 @@ class SpaceSidebarRecord(PageObject):
     groups = Button("ul li.groups-permissions .item-click-area")
     _space_icon = WebElement('.item-icon [class*="oneicon-space"]')
 
-    def is_selected(self):
+    def is_selected(self) -> bool:
         return "active" in self.web_elem.get_attribute("class")
 
-    def is_home(self):
+    def is_home(self) -> bool:
         return "oneicon-space-home" in self._space_icon.get_attribute("class")
 
 

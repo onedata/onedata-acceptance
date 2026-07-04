@@ -7,26 +7,37 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import hashlib
 import json
-from collections import namedtuple
-from typing import Any, Dict, List, Union
+from collections.abc import Callable, Mapping
+from typing import NamedTuple
+
+import requests
 
 from tests import PANEL_REST_PORT
 from tests.utils.http_exceptions import HTTPConflict
 from tests.utils.rest_utils import get_panel_rest_path, http_get, http_post, http_put
-from tests.utils.user_utils import AdminUser, User
+from tests.utils.user_utils import User
 
-SpaceDetails = namedtuple(
-    "SpaceDetails", ["space_id", "provider_ip", "space_name", "storage_id"]
-)
-StorageDetails = namedtuple("StorageDetails", ["storage_id", "provider_ip"])
+HttpMethod = Callable[..., requests.Response]  # http_post or http_put
+
+
+class SpaceDetails(NamedTuple):
+    space_id: str
+    provider_ip: str
+    space_name: str
+    storage_id: str
+
+
+class StorageDetails(NamedTuple):
+    storage_id: str
+    provider_ip: str
 
 
 def add_user_luma_mapping(
-    admin_user: AdminUser, user: User, storages: List[StorageDetails]
+    admin_user: User, user: User, storages: list[StorageDetails]
 ) -> None:
 
     for storage_details in storages:
-        mapping = {
+        mapping: dict[str, object] = {
             "onedataUser": {
                 "mappingScheme": "onedataUser",
                 "onedataUserId": user.user_id,
@@ -46,9 +57,9 @@ def add_user_luma_mapping(
 
 
 def add_spaces_luma_mapping(
-    admin_user: AdminUser,
-    storages: List[StorageDetails],
-    spaces_details: List[SpaceDetails],
+    admin_user: User,
+    storages: list[StorageDetails],
+    spaces_details: list[SpaceDetails],
 ) -> None:
 
     storages_ids = [x for _, x in storages]
@@ -69,8 +80,8 @@ def add_spaces_luma_mapping(
 
 
 def get_local_feed_luma_storages(
-    admin_user: AdminUser, hosts: Dict[str, Any]
-) -> List[StorageDetails]:
+    admin_user: User, hosts: Mapping[str, Mapping[str, str]]
+) -> list[StorageDetails]:
 
     providers_ips = get_providers_ips(hosts)
     storages = []
@@ -97,8 +108,8 @@ def get_local_feed_luma_storages(
 
 
 def get_all_spaces_details(
-    admin_user: AdminUser, hosts: Dict[str, Any]
-) -> List[SpaceDetails]:
+    admin_user: User, hosts: Mapping[str, Mapping[str, str]]
+) -> list[SpaceDetails]:
     providers_ips = get_providers_ips(hosts)
     spaces_details = []
     for provider_ip in providers_ips:
@@ -129,23 +140,23 @@ def get_all_spaces_details(
     return spaces_details
 
 
-def get_providers_ips(hosts: Dict[str, Any]) -> List[str]:
+def get_providers_ips(hosts: Mapping[str, Mapping[str, str]]) -> list[str]:
     providers_ips = []
     for service in hosts.values():
         if (
-            "service-type" in service.keys()
-            and service["service-type"] == "oneprovider"
+            "service_type" in service.keys()
+            and service["service_type"] == "oneprovider"
         ):
             providers_ips.append(service["ip"])
     return providers_ips
 
 
 def add_mapping(
-    admin_user: AdminUser,
+    admin_user: User,
     provider_ip: str,
     storage_id: str,
-    mapping: Dict[str, Union[Dict[str, str], int]],
-    method: Union[http_post, http_put],
+    mapping: Mapping[str, object],
+    method: HttpMethod,
     path_suffix: str,
 ) -> None:
 
@@ -174,9 +185,9 @@ def add_mapping(
         pass
 
 
-def gen_uid(username):
+def gen_uid(username: str) -> int:
     return int(hashlib.sha1(username.encode("utf-8")).hexdigest(), 16) % 50000 + 10000
 
 
-def gen_gid(group_name):
+def gen_gid(group_name: str) -> int:
     return int(hashlib.sha1(group_name.encode("utf-8")).hexdigest(), 16) % 50000 + 10000

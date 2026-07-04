@@ -4,14 +4,27 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Optional, Protocol, cast
+
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+
+
+class Clickable(Protocol):
+    def click(self) -> None: ...
+
+
+class BrowserWithConfigureColumns(Protocol):
+    configure_columns: Clickable
 
 
 @wt(
@@ -22,10 +35,14 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser(
-    selenium, browser_id, which_browser, tmp_memory, popups, key_name
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    which_browser: str,
+    tmp_memory: TmpMemory,
+    key_name: str,
+) -> None:
     create_xattr_columns_in_columns_menu_in_browser(
-        selenium, browser_id, which_browser, tmp_memory, popups, key_name
+        selenium, browser_id, which_browser, tmp_memory, key_name
     )
 
 
@@ -38,14 +55,18 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
-    selenium, browser_id, which_browser, tmp_memory, popups, key_name, label_name
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    which_browser: str,
+    tmp_memory: TmpMemory,
+    key_name: str,
+    label_name: str,
+) -> None:
     create_xattr_columns_in_columns_menu_in_browser(
         selenium,
         browser_id,
         which_browser,
         tmp_memory,
-        popups,
         key_name,
         with_label=True,
         label_name=label_name,
@@ -53,28 +74,28 @@ def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
 
 
 def create_xattr_columns_in_columns_menu_in_browser(
-    selenium,
-    browser_id,
-    which_browser,
-    tmp_memory,
-    popups,
-    name,
-    with_label=False,
-    label_name=None,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    which_browser: str,
+    tmp_memory: TmpMemory,
+    name: str,
+    with_label: bool = False,
+    label_name: Optional[str] = None,
+) -> None:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = cast(BrowserWithConfigureColumns, browser)
 
     browser.configure_columns.click()
     wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
+        Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    new_column_button = popups(driver).configure_columns_menu.new_column_button
+    new_column_button = Popups(driver).configure_columns_menu.new_column_button
     wait_for_item_to_appear(new_column_button.web_elem)
     new_column_button.click()
 
-    new_xattr_column = popups(driver).configure_columns_menu.xattr_column_editor
+    new_xattr_column = Popups(driver).configure_columns_menu.xattr_column_editor
     new_xattr_column.enter_an_xattr_key.send_keys(name)
 
     if with_label:
@@ -96,19 +117,17 @@ def create_xattr_columns_in_columns_menu_in_browser(
     )
 )
 def wt_create_json_column_for_whole_document_with_label(
-    selenium,
-    browser_id,
-    which_browser,
-    tmp_memory,
-    popups,
-    label_name,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    which_browser: str,
+    tmp_memory: TmpMemory,
+    label_name: str,
+) -> None:
     create_json_column_in_columns_menu(
         selenium,
         browser_id,
         tmp_memory,
         which_browser,
-        popups,
         label_name,
         "whole document",
         None,
@@ -123,18 +142,16 @@ def wt_create_json_column_for_whole_document_with_label(
     )
 )
 def wt_create_json_column_for_whole_document(
-    selenium,
-    browser_id,
-    which_browser,
-    tmp_memory,
-    popups,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    which_browser: str,
+    tmp_memory: TmpMemory,
+) -> None:
     create_json_column_in_columns_menu(
         selenium,
         browser_id,
         tmp_memory,
         which_browser,
-        popups,
         None,
         "whole document",
         None,
@@ -151,21 +168,19 @@ def wt_create_json_column_for_whole_document(
     )
 )
 def wt_create_json_column_for_query_or_key_with_label(
-    selenium,
-    browser_id,
-    tmp_memory,
-    which_browser,
-    popups,
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    which_browser: str,
     label_name: str,
     mode: str,
     option: str,
-):
+) -> None:
     create_json_column_in_columns_menu(
         selenium,
         browser_id,
         tmp_memory,
         which_browser,
-        popups,
         label_name,
         mode.lower(),
         option,
@@ -182,14 +197,18 @@ def wt_create_json_column_for_query_or_key_with_label(
     )
 )
 def wt_create_json_column_for_query_or_key(
-    selenium, browser_id, tmp_memory, which_browser, popups, mode: str, option: str
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    which_browser: str,
+    mode: str,
+    option: str,
+) -> None:
     create_json_column_in_columns_menu(
         selenium,
         browser_id,
         tmp_memory,
         which_browser,
-        popups,
         None,
         mode.lower(),
         option=option,
@@ -197,24 +216,24 @@ def wt_create_json_column_for_query_or_key(
 
 
 def create_json_column_in_columns_menu(
-    selenium,
-    browser_id,
-    tmp_memory,
-    which_browser,
-    popups,
-    label_name: str | None,
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    which_browser: str,
+    label_name: Optional[str],
     mode: str,
-    option,
-):
+    option: Optional[str],
+) -> None:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = cast(BrowserWithConfigureColumns, browser)
 
     browser.configure_columns.click()
     wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
+        Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    columns_menu = popups(driver).configure_columns_menu
+    columns_menu = Popups(driver).configure_columns_menu
     columns_menu.new_column_button.click()
 
     columns_menu.choose_json.click()
@@ -223,11 +242,13 @@ def create_json_column_in_columns_menu(
     getattr(new_json_col.choose_mode, transform(mode)).click()
 
     if mode == "query":
+        assert option is not None
         new_json_col.query.clear()
         new_json_col.query.send_keys(option)
     elif mode == "extract key":
+        assert option is not None
         new_json_col.json_key.click()
-        popups(driver).dropdown.options[option].click()
+        Popups(driver).dropdown.options[option].click()
 
     if label_name:
         new_json_col.column_label.clear()
@@ -246,8 +267,12 @@ def create_json_column_in_columns_menu(
     )
 )
 def open_metadata_tab_using_tag(
-    selenium, browser_id, tmp_memory, item_name, modal_name, modals
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    modal_name: str,
+) -> None:
     tab_name = "Metadata"
     click_on_status_tag_for_file_in_file_browser(
         browser_id, tab_name.lower(), item_name, tmp_memory
@@ -255,4 +280,4 @@ def open_metadata_tab_using_tag(
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
-    assert_tab_in_modal(selenium, browser_id, tab_name, modals, modal_name)
+    assert_tab_in_modal(selenium, browser_id, tab_name, modal_name)
