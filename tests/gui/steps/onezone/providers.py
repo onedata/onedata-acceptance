@@ -15,7 +15,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
@@ -124,121 +123,6 @@ def _click_copy_hostname(driver: WebDriver) -> None:
     Popups(driver).provider_map_popover.click_copy_hostname_icon()
 
 
-def _click_on_btn_in_provider_popup(
-    driver: WebDriver, btn: str, provider: str, hosts: Hosts
-) -> None:
-    err_msg = 'Popup displayed for provider named "{}" instead of "{}"'
-    provider = hosts[provider]["name"]
-    prov = getattr(OZLoggedIn(driver), "world map").get_provider_with_displayed_popup()
-    assert provider == prov.name, err_msg.format(prov.name, provider)
-    getattr(prov, transform(btn)).click()
-
-
-@given(
-    parsers.re(
-        r"users? of (?P<browser_id_list>.+?) clicked on the "
-        r'"(?P<btn>Go to your files|copy hostname)" button in '
-        r'"(?P<provider_list>.+?)" provider\'s popup displayed '
-        r"on world map"
-    )
-)
-@repeat_failed(timeout=WAIT_BACKEND)
-def g_click_on_btn_in_provider_popup(
-    selenium: SeleniumDrivers,
-    browser_id_list: str,
-    btn: str,
-    provider_list: str,
-    hosts: Hosts,
-) -> None:
-    browser_ids = parse_seq(browser_id_list)
-    providers = parse_seq(provider_list)
-    for browser_id, provider in zip_longest(
-        browser_ids, providers, fillvalue=providers[-1]
-    ):
-        _click_on_btn_in_provider_popup(selenium[browser_id], btn, provider, hosts)
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) clicks on the "
-        r'"(?P<btn>Go to your files|copy hostname)" button in '
-        r'"(?P<provider>.+?)" provider\'s popup displayed on world map'
-    )
-)
-@repeat_failed(timeout=WAIT_BACKEND)
-def wt_click_on_btn_in_provider_popup(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    btn: str,
-    provider: str,
-    hosts: Hosts,
-) -> None:
-    _click_on_btn_in_provider_popup(selenium[browser_id], btn, provider, hosts)
-
-
-@given(
-    parsers.re(
-        "users? of (?P<browser_id_list>.*) clicked on the "
-        '"(?P<btn_name>.+?)" button in provider popup'
-    )
-)
-def g_click_on_go_to_files_provider(
-    selenium: SeleniumDrivers, browser_id_list: str, btn_name: str
-) -> None:
-    for browser_id in parse_seq(browser_id_list):
-        driver = selenium[browser_id]
-        popup = getattr(
-            OZLoggedIn(driver), "world map"
-        ).get_provider_with_displayed_popup()
-        getattr(popup, transform(btn_name)).click()
-
-
-@wt(
-    parsers.re(
-        "users? of (?P<browser_id_list>.*) clicks on the "
-        '"(?P<btn_name>.+?)" button in provider popup'
-    )
-)
-def wt_click_on_go_to_files_provider(
-    selenium: SeleniumDrivers, browser_id_list: str, btn_name: str
-) -> None:
-    for browser_id in parse_seq(browser_id_list):
-        driver = selenium[browser_id]
-        popup = getattr(
-            OZLoggedIn(driver), "world map"
-        ).get_provider_with_displayed_popup()
-        getattr(popup, transform(btn_name)).click()
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) sees that there is no "
-        r"displayed provider popup next to "
-        r"(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|"
-        r"\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) "
-        r"provider circle on Onezone world map"
-    )
-)
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) sees that provider popup next to "
-        r"(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|"
-        r"\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) "
-        r"provider circle on Onezone world map has disappeared"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_provider_popup_next_to_provider_circle(
-    selenium: SeleniumDrivers, browser_id: str, ordinal: str
-) -> None:
-    driver = selenium[browser_id]
-    number = from_ordinal_number_to_int(ordinal) - 1
-    prov_circle = OZLoggedIn(driver).world_map.providers[number]
-    assert (
-        not prov_circle.is_displayed()
-    ), f"provider popup for {ordinal} circle is displayed while it should not be"
-
-
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.+?) does not see provider popover "
@@ -257,88 +141,10 @@ def assert_no_provider_popup_on_world_map(
         raise RuntimeError("found provider popover on world map")
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) clicks on "
-        r"(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|"
-        r"\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) "
-        r"provider circle on Onezone world map"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_provider_circle(
-    selenium: SeleniumDrivers, browser_id: str, ordinal: str
-) -> None:
-    driver = selenium[browser_id]
-    number = from_ordinal_number_to_int(ordinal) - 1
-    OZLoggedIn(driver).world_map.providers[number].click()
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) clicks on the other provider "
-        r"circle on Onezone world map"
-    )
-)
-def click_other_provider_icons(selenium: SeleniumDrivers, browser_id: str) -> None:
-    driver = selenium[browser_id]
-    OZLoggedIn(driver).providers.icons[0].icon()
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) sees that provider popup has "
-        r"appeared next to (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|"
-        r"\d*?11th|\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|"
-        r"\d*?[^1]3rd) provider circle on Onezone world map"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_provider_popup_next_to_provider_circle(
-    selenium: SeleniumDrivers, browser_id: str, ordinal: str
-) -> None:
-    driver = selenium[browser_id]
-    number = from_ordinal_number_to_int(ordinal) - 1
-    prov_circle = OZLoggedIn(driver).world_map.providers[number]
-    assert (
-        prov_circle.is_displayed()
-    ), f"provider popup for {ordinal} circle is not displayed while it should be"
-
-
 @wt(parsers.parse("user of {browser_id} clicks on Onezone world map"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_world_map(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id]).providers.map_point.click()
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that the list of spaces "
-        'in provider popup and in expanded "GO TO YOUR FILES" '
-        'Onezone panel are the same for provider named "{provider}"'
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_consistent_list_of_spaces_for_provider(
-    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
-) -> None:
-    driver = selenium[browser_id]
-    provider = hosts[provider]["name"]
-    provider_record_spaces = {
-        (space.name, space.is_home())
-        for space in OZLoggedIn(driver)["go to your files"].providers[provider].spaces
-    }
-    provider_popup_spaces = {
-        (space.name, space.is_home())
-        for space in (
-            OZLoggedIn(driver)["world map"].get_provider_with_displayed_popup().spaces
-        )
-    }
-    assert provider_record_spaces == provider_popup_spaces, (
-        f'spaces (space_name, is_home) displayed in "{provider}" provider'
-        f" record in GO TO YOUR FILES panel: {provider_record_spaces} does not"
-        f" match those displayed in provider popup: {provider_popup_spaces}"
-    )
+    OZLoggedIn(selenium[browser_id])["providers"].map_point.click()
 
 
 @given(
