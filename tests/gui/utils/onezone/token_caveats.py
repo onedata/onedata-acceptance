@@ -72,11 +72,13 @@ class CreateTokenPage(Protocol):
 
 
 class TokensArea(Protocol):
-    create_token_page: CreateTokenPage
+    @property
+    def create_token_page(self) -> CreateTokenPage: ...
 
 
 class ZonePage(Protocol):
-    def __getitem__(self, item: str) -> TokensArea: ...
+    @property
+    def tokens(self) -> TokensArea: ...
 
 
 class CaveatTag(PageObject):
@@ -274,7 +276,7 @@ class CaveatField(PageObject):
         oz_page: Callable[[WebDriver], ZonePage],
     ) -> None:
         self.activate()
-        oz_page(selenium[browser_id])["tokens"].create_token_page.hide_caveats()
+        oz_page(selenium[browser_id]).tokens.create_token_page.hide_caveats()
         for consumer in consumer_caveats:
             consumer_type = consumer.get("type")
             method = consumer.get("by")
@@ -293,7 +295,7 @@ class CaveatField(PageObject):
             self.set_consumer_in_consumer_caveat(
                 selenium, browser_id, popups, consumer_type, method, value
             )
-        oz_page(selenium[browser_id])["tokens"].create_token_page.expand_caveats()
+        oz_page(selenium[browser_id]).tokens.create_token_page.expand_caveats()
 
     def set_consumer_in_consumer_caveat(
         self,

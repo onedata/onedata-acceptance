@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import cast
+
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -40,7 +42,7 @@ class Homepage:
     def get_panel_by_name(self, name: str) -> WebElement:
         return [p for p in self._panels if p.text.lower() == name.lower()][0]
 
-    def get_page(self, item: str, click=False) -> PageObject:
+    def get_page(self, item: str, click: bool = False) -> PageObject:
         item = item.lower()
         cls = self.panels_classes.get(item, None)
         if cls:
@@ -51,17 +53,17 @@ class Homepage:
         raise RuntimeError(f'no "{item}" on {self} found')
 
     @property
-    def how_it_works(self):
-        return self.get_page("how_it_works")
+    def how_it_works(self) -> HowItWorksPage:
+        return cast(HowItWorksPage, self.get_page("how_it_works"))
 
     @property
-    def quick_start(self):
-        return self.get_page("quick_start")
+    def quick_start(self) -> QuickStartPage:
+        return cast(QuickStartPage, self.get_page("quick_start"))
 
     @property
-    def api(self):
-        return self.get_page("api")
+    def api(self) -> APIPage:
+        return cast(APIPage, self.get_page("api"))
 
     @property
-    def docs(self):
-        return self.get_page("docs")
+    def docs(self) -> DocsPage:
+        return cast(DocsPage, self.get_page("docs"))

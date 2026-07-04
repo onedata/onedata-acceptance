@@ -24,7 +24,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_group_button_in_panel(selenium: SeleniumDrivers, browser_id: str):
+def click_create_group_button_in_panel(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     OZLoggedIn(selenium[browser_id]).open_page_and_click("groups").create_group()
 
 
@@ -99,7 +101,9 @@ def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) ->
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_group_subpage(selenium: SeleniumDrivers, browser_id: str, group: str, subpage: str) -> None:
+def go_to_group_subpage(
+    selenium: SeleniumDrivers, browser_id: str, group: str, subpage: str
+) -> None:
     page = OZLoggedIn(selenium[browser_id]).open_page_and_click("groups")
     page.groups_list[group]()
     if subpage != "main":
@@ -231,9 +235,7 @@ def assert_list_of_children_contains_group(
 def click_show_parent_groups_in_hierarchy_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    (
-        OZLoggedIn(selenium[browser_id]).groups.main_page.hierarchy.show_parent_groups()
-    )
+    (OZLoggedIn(selenium[browser_id]).groups.main_page.hierarchy.show_parent_groups())
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" error on groups page'))

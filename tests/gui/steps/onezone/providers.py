@@ -144,7 +144,7 @@ def assert_no_provider_popup_on_world_map(
 @wt(parsers.parse("user of {browser_id} clicks on Onezone world map"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_world_map(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id])["providers"].map_point.click()
+    OZLoggedIn(selenium[browser_id]).providers.map_point.click()
 
 
 @given(
@@ -164,11 +164,7 @@ def g_click_on_provider_in_go_to_your_files_oz_panel(
         browser_ids, provider_names, fillvalue=provider_names[-1]
     ):
         provider_name = hosts[provider]["name"]
-        (
-            OZLoggedIn(selenium[browser_id])["go to your files"]
-            .providers[provider_name]
-            .click()
-        )
+        OZLoggedIn(selenium[browser_id]).data.providers[provider_name].click()
 
 
 @wt(
@@ -182,7 +178,7 @@ def wt_click_on_provider_in_go_to_your_files_oz_panel(
     selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
 ) -> None:
     provider = hosts[provider]["name"]
-    (OZLoggedIn(selenium[browser_id])["go to your files"].providers[provider].click())
+    OZLoggedIn(selenium[browser_id]).data.providers[provider].click()
 
 
 @wt(
@@ -196,7 +192,7 @@ def wt_click_on_provider_in_go_to_your_files_oz_panel(
 def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(
     selenium: SeleniumDrivers, browser_id: str, provider: str
 ) -> None:
-    (OZLoggedIn(selenium[browser_id])["go to your files"].providers[provider].click())
+    OZLoggedIn(selenium[browser_id]).data.providers[provider].click()
 
 
 @wt(
@@ -210,7 +206,7 @@ def assert_list_of_providers_is_empty(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    count = OZLoggedIn(driver)["go to your files"].providers.count()
+    count = OZLoggedIn(driver).data.providers.count()
     assert count == 0, f"Providers count is {count} instead of expected 0"
 
 

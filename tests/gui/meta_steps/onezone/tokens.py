@@ -65,7 +65,9 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _paste_token_into_text_field(selenium, browser_id, token):
+def _paste_token_into_text_field(
+    selenium: SeleniumDrivers, browser_id: str, token: str
+) -> None:
     page = OZLoggedIn(selenium[browser_id]).tokens
     page.input_name = token
 

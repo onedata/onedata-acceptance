@@ -277,6 +277,7 @@ class DataPage(GenericPage):
     welcome_page = WebItem(".main-content", cls=WelcomePage)
     harvesters_page = WebItem(".main-content", cls=HarvestersPage)
     dataset_header = WebItem(".main-content", cls=DatasetHeader)
+    archive_header = WebItem(".main-content", cls=ArchiveHeader)
     configuration_page = WebItem(".main-content", cls=SpaceConfigurationPage)
     space_marketplace_page = WebItem(".main-content", cls=SpaceMarketplacePage)
 

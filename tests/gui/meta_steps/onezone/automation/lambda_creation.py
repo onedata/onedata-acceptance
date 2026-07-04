@@ -380,7 +380,6 @@ def download_and_remove_lambda_dump_from_inventory(
     page_name = "lambda"
     modal = "Unlink lambda"
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver).automation
 
     click_option_in_revision_menu_button(
         selenium,
@@ -398,7 +397,7 @@ def download_and_remove_lambda_dump_from_inventory(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_lambda_menu(driver: WebDriver, lambda_name: str) -> None:
-    page = OZLoggedIn(driver)["automation"]
+    page = OZLoggedIn(driver).automation
     page.lambdas_page.lambdas_list[lambda_name].lambda_menu.click()
 
 

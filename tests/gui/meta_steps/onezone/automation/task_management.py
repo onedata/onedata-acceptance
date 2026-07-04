@@ -179,8 +179,8 @@ def remove_task_from_lane(
 
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).automation
-    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane.parallel_box.task_list[task].menu_button()
+    lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane_obj.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu[option]()
     click_modal_button(selenium, browser_id, option, modal)
 
@@ -210,8 +210,8 @@ def modify_task_results(
 
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).open_page_and_click("automation")
-    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane.parallel_box.task_list[task].menu_button()
+    lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane_obj.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu[button]()
     # wait for task form to open
     time.sleep(1)

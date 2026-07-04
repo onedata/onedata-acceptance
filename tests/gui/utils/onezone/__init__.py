@@ -7,10 +7,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Any
 
+from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
-
-from selenium.webdriver import ActionChains
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
@@ -56,14 +55,14 @@ class OZLoggedIn:
     def __str__(self) -> str:
         return "Onezone page"
 
-    def open_page_and_click(self, item:str) -> Any:
+    def open_page_and_click(self, item: str) -> Any:
         return self.get_page(item, True)
-    
-    def find_panels_with_name(self, name: str) -> list[WebElement]:
+
+    def find_panels_with_name(self, name: str) -> list[SeleniumWebElement]:
         return [p for p in self._panels if p.text.lower() == name.lower()]
-            
-    def get_panel_by_name(self, name: str) -> WebElement:
-        panel_found = self.find_panels_with_name(name) 
+
+    def get_panel_by_name(self, name: str) -> SeleniumWebElement:
+        panel_found = self.find_panels_with_name(name)
         if panel_found:
             return panel_found[0]
 
@@ -87,11 +86,11 @@ class OZLoggedIn:
     def click_on_sidebar_menu_panel(self, name: str) -> None:
         panel = self.get_panel_by_name(name)
         panel.click()
-    
+
     def is_panel_expanded(self) -> bool:
         return self._panels[0].text == "DATA"
 
-    def expand_panel(self)-> None:
+    def expand_panel(self) -> None:
         if self.is_panel_expanded():
             return
         ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
@@ -101,7 +100,7 @@ class OZLoggedIn:
             time.sleep(0.1)
         raise RuntimeError("did not manage to expand main panel")
 
-    def get_page(self, item: str, click: bool=False) -> Any:
+    def get_page(self, item: str, click: bool = False) -> Any:
         item = item.lower()
         cls = self.panels_classes.get(item, None)
         if cls:
