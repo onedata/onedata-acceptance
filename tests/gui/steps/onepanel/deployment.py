@@ -14,11 +14,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_till_error_modal_stop_appearing
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
-from tests.gui.steps.common.common import wait_till_error_modal_stop_appearing
 from tests.gui.utils.core.web_objects import ButtonPageObject
-
 from tests.gui.utils.generic import parse_seq, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt

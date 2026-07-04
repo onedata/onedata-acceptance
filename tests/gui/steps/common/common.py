@@ -17,6 +17,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
+from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
     ArchiveAuditLog,
 )
@@ -26,6 +27,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
 from tests.gui.utils.generic import ListElement, transform
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -266,15 +268,15 @@ def try_click_without_throwing_error(action: Callable[[], object]) -> None:
 
     with suppress(Exception):
         perform(action)
-        
+
 
 # Function closes error modal and repeat execution until error modal
 # will no longer appear
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_till_error_modal_stop_appearing(modals, driver):
+def wait_till_error_modal_stop_appearing(driver: SeleniumDrivers) -> None:
     try:
         time.sleep(0.2)
-        error_modal = modals(driver).error
+        error_modal = Modals(driver).error
         error_modal.close.click()
         raise AssertionError(f"There is error modal {error_modal}")
     except RuntimeError:
