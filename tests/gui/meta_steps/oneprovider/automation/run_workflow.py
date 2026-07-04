@@ -10,6 +10,7 @@ import time
 
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
@@ -35,18 +36,21 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
 )
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq, transform
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def open_initial_modal(data_type, driver):
+def open_initial_modal(data_type: str, driver: WebDriver) -> None:
     if "dataset" in data_type:
         open_select_initial_datasets_modal(driver)
     else:
         open_select_initial_files_modal(driver)
 
 
-def go_to_path_and_return_file_name_in_modal(path, driver, modal_name):
+def go_to_path_and_return_file_name_in_modal(
+    path: str, driver: WebDriver, modal_name: str
+) -> str:
     if "/" in path:
         modal = getattr(Modals(driver), transform(modal_name))
         file_name, path_list = get_item_name_and_containing_dir_path(path)
@@ -56,11 +60,16 @@ def go_to_path_and_return_file_name_in_modal(path, driver, modal_name):
     return path
 
 
-def select_initial_items_for_workflow_in_modal(files, driver, data_type):
-    if not isinstance(files, list):
-        files = parse_seq(files)
+def select_initial_items_for_workflow_in_modal(
+    files: str | list[str], driver: WebDriver, data_type: str
+) -> None:
+    if isinstance(files, str):
+        parsed_files = parse_seq(files)
+    else:
+        parsed_files = files
+    last_file_name = parsed_files[-1].split("/")[-1]
 
-    for path in files:
+    for path in parsed_files:
         modal_name = "select files"
         file_name = go_to_path_and_return_file_name_in_modal(path, driver, modal_name)
         select_files_modal = Modals(driver).select_files
@@ -73,7 +82,7 @@ def select_initial_items_for_workflow_in_modal(files, driver, data_type):
                 select_files_modal.confirm_button.click()
                 # wait a moment for modal to close
                 time.sleep(0.25)
-                if file_name != files[-1].split("/")[-1]:
+                if file_name != last_file_name:
                     open_initial_modal(data_type, driver)
                     # wait a moment for modal to open
                     time.sleep(0.25)
@@ -90,8 +99,11 @@ def select_initial_items_for_workflow_in_modal(files, driver, data_type):
     )
 )
 def choose_file_as_initial_workflow_value_for_store(
-    selenium, browser_id, file_list, store_name
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    file_list: str | list[str],
+    store_name: str,
+) -> None:
     data_type = "file"
 
     switch_to_iframe(selenium, browser_id)
@@ -101,8 +113,11 @@ def choose_file_as_initial_workflow_value_for_store(
 
 
 def choose_group_as_initial_workflow_value_for_store(
-    selenium, browser_id, group_list, store_name
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group_list: str | list[str],
+    store_name: str,
+) -> None:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     open_select_initial_groups_modal(selenium, browser_id, store_name)
@@ -111,18 +126,28 @@ def choose_group_as_initial_workflow_value_for_store(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _select_groups_from_select_groups_modal(driver, group_list):
-    Modals(driver).select_groups.select(group_list)
+def _select_groups_from_select_groups_modal(
+    driver: WebDriver, group_list: str | list[str]
+) -> None:
+    if isinstance(group_list, str):
+        parsed_list = parse_seq(group_list)
+    else:
+        parsed_list = group_list
+    Modals(driver).select_groups.select(parsed_list)
 
 
-def provide_text_to_object_initial_workflow_value_store(driver, store_name, text):
+def provide_text_to_object_initial_workflow_value_store(
+    driver: WebDriver, store_name: str, text: str
+) -> None:
     store = get_initial_value_store(driver, store_name)
     store.content.send_keys([Keys.CONTROL, "a", Keys.BACKSPACE])
     text = str(text).replace("'", '"')
     store.content.send_keys(text)
 
 
-def provide_text_to_string_initial_workflow_value_store(driver, store_name, text):
+def provide_text_to_string_initial_workflow_value_store(
+    driver: WebDriver, store_name: str, text: str
+) -> None:
     store = get_initial_value_store(driver, store_name)
     store.input = text
 
@@ -135,11 +160,11 @@ def provide_text_to_string_initial_workflow_value_store(driver, store_name, text
     )
 )
 def fails_to_choose_directory_as_initial_workflow_value(
-    selenium,
-    browser_id,
-    dir_name,
-    expected_err_msg,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    dir_name: str,
+    expected_err_msg: str,
+) -> None:
     data_type = "directory"
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
@@ -159,7 +184,12 @@ def fails_to_choose_directory_as_initial_workflow_value(
         'workflow in "Select files" modal'
     )
 )
-def choose_file_as_initial_workflow_value(selenium, browser_id, file_list, data_type):
+def choose_file_as_initial_workflow_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    file_list: str,
+    data_type: str,
+) -> None:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     open_initial_modal(data_type, driver)
@@ -176,7 +206,9 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list, data_
     interval=1,
     timeout=360,
 )
-def wait_for_workflows_in_automation_subpage(selenium, browser_id, option):
+def wait_for_workflows_in_automation_subpage(
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
     _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
 
 
@@ -192,18 +224,22 @@ def wait_for_workflows_in_automation_subpage(selenium, browser_id, option):
     exceptions=(AssertionError, StaleElementReferenceException),
 )
 def wait_for_workflows_in_automation_subpage_extended_time(
-    selenium, browser_id, option
-):
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
     _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
 
 
-def wait_for_workflow_execution_in_atm_subpage(selenium, browser_id):
+def wait_for_workflow_execution_in_atm_subpage(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "start")
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "finish")
     assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id)
 
 
-def _wait_for_workflows_in_automation_subpage(selenium, browser_id, option):
+def _wait_for_workflows_in_automation_subpage(
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     if option == "start":
         change_tab_in_automation_subpage(selenium, browser_id, "Waiting")
@@ -215,7 +251,9 @@ def _wait_for_workflows_in_automation_subpage(selenium, browser_id, option):
     assert len(page.workflow_executions_list) == 0, err
 
 
-def assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id):
+def assert_no_suspended_workflows_in_atm_subpage(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Suspended")
     err_msg = "Workflow did not finished successfully and it is in suspended state."
@@ -229,7 +267,14 @@ def assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id):
         '"{expected_status}"'
     )
 )
-def await_for_task_status(selenium, browser_id, lane, task, ordinal, expected_status):
+def await_for_task_status(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    lane: str,
+    task: str,
+    ordinal: str,
+    expected_status: str,
+) -> None:
     click = "clicks on"
     close = "closes"
 
@@ -246,7 +291,9 @@ def await_for_task_status(selenium, browser_id, lane, task, ordinal, expected_st
         ' "{resolution}" in modal "{modal}"'
     )
 )
-def change_time_resolution_in_modal(selenium, browser_id, resolution):
+def change_time_resolution_in_modal(
+    selenium: SeleniumDrivers, browser_id: str, resolution: str
+) -> None:
     button = "Time resolution"
     modal_name = "Task time series"
     click_modal_button(selenium, browser_id, button, modal_name)

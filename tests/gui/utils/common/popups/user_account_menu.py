@@ -12,5 +12,5 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 class UserAccountPopup(PageObject):
     options = WebItemsSequence("ul.dropdown-menu li", cls=ButtonWithTextPageObject)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "User account popup"

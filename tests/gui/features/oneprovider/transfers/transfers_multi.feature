@@ -40,9 +40,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser2 replicates "large_file.txt" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser1 opens oneprovider-1 Oneprovider transfers for "space1" space
-    And user of browser1 waits for all transfers to start
-    And user of browser1 waits for all transfers to finish
+    And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
     Then user of browser1 sees file in ended transfers:
             name: large_file.txt
             replicated: 50 MiB
@@ -81,9 +79,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser2 replicates "dir1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser1 opens oneprovider-1 Oneprovider transfers for "space1" space
-    And user of browser1 waits for all transfers to start
-    And user of browser1 waits for all transfers to finish
+    And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
     Then user of browser1 sees directory in ended transfers:
             name: dir1
             replicated: 50 MiB
@@ -119,9 +115,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser2 migrates "large_file.txt" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser1 opens oneprovider-1 Oneprovider transfers for "space1" space
-    And user of browser1 waits for all transfers to start
-    And user of browser1 waits for all transfers to finish
+    And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
     Then user of browser1 sees file in ended transfers:
             name: large_file.txt
             replicated: 50 MiB
@@ -161,9 +155,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser2 migrates "dir1" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser1 opens oneprovider-1 Oneprovider transfers for "space1" space
-    And user of browser1 waits for all transfers to start
-    And user of browser1 waits for all transfers to finish
+    And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
     Then user of browser1 sees directory in ended transfers:
             name: dir1
             replicated: 50 MiB

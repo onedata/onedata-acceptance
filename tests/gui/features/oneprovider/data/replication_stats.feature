@@ -43,9 +43,7 @@ Feature: Directories and files replications stats
     And user of browser sees that item named "file1" has 0% replication rate in file browser
 
     And user of browser replicates "file1" to provider "oneprovider-2"
-    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
-    And user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
+    And user of browser waits until "oneprovider-1" transfers complete for "space1" space
     And user of browser opens file browser for "space1" space
     And user of browser sees that item named "file1" has 100% replication rate in file browser
     And user of browser changes provider to "oneprovider-1" on file browser page
@@ -59,9 +57,7 @@ Feature: Directories and files replications stats
     And user of browser sees that item named "dir1" has 100% replication rate in file browser
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser migrates "file1" from provider "oneprovider-1" to provider "oneprovider-2"
-    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
-    And user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
+    And user of browser waits until "oneprovider-1" transfers complete for "space1" space
     And user of browser opens file browser for "space1" space
     Then user of browser sees that item named "dir1" has 75% replication rate in file browser
     And user of browser changes provider to "oneprovider-2" on file browser page
@@ -75,9 +71,7 @@ Feature: Directories and files replications stats
     And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
     And user of browser migrates "file10.txt" from provider "oneprovider-1" to provider "oneprovider-2"
-    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
-    And user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
+    And user of browser waits until "oneprovider-1" transfers complete for "space1" space
     And user of browser opens file browser for "space1" space
     And user of browser changes provider to "oneprovider-2" on file browser page
     And user of browser sees file browser in files tab in Oneprovider page

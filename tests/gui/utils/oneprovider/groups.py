@@ -28,7 +28,7 @@ class GroupSidebarRecord(PageObject):
     settings = WebItem(".settings-dropdown", cls=SettingDropdown)
     members = Button("ul li.members-permissions .item-click-area")
 
-    def is_selected(self):
+    def is_selected(self) -> bool:
         return "active" in self.web_elem.get_attribute("class")
 
 

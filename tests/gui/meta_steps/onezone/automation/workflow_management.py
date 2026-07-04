@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 from ast import literal_eval
+from typing import Optional, cast
 
 import yaml
 
@@ -44,6 +45,7 @@ from tests.gui.steps.onezone.automation.automation_basic import (
     go_to_inventory_subpage,
     upload_workflow_as_json,
     upload_workflow_from_repository,
+    wait_for_workflow_editor_to_expand,
 )
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar,
@@ -55,7 +57,10 @@ from tests.gui.steps.onezone.spaces import (
     click_on_automation_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.oneprovider.automation import NumberInput
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -63,7 +68,9 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_workflow_using_gui(selenium, browser_id, workflow_name):
+def create_workflow_using_gui(
+    selenium: SeleniumDrivers, browser_id: str, workflow_name: str
+) -> None:
     click_add_new_button_in_menu_bar(selenium, browser_id, "Add new workflow")
     write_text_into_workflow_name_on_main_workflows_page(
         selenium, browser_id, workflow_name
@@ -79,19 +86,20 @@ def create_workflow_using_gui(selenium, browser_id, workflow_name):
     )
 )
 def upload_and_assert_workflow_to_inventory_using_gui(
-    selenium,
-    browser_id,
-    inventory,
-    workflow,
-    file_name,
-    tmp_memory,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    file_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     driver = selenium[browser_id]
     click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
     upload_workflow_as_json(selenium, browser_id, file_name)
     _wait_for_modal_to_appear(driver, browser_id, "Upload workflow", tmp_memory)
     click_modal_button(selenium, browser_id, "Apply", "Upload workflow")
+    wait_for_workflow_editor_to_expand(driver)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
 
     assert_workflow_exists(selenium, browser_id, workflow, "sees")
@@ -104,8 +112,12 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     )
 )
 def given_upload_workflow_from_automation_examples(
-    selenium, browser_id, inventory, workflow, tmp_memory
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+) -> None:
     upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory
     )
@@ -118,8 +130,12 @@ def given_upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples(
-    selenium, browser_id, inventory, workflow, tmp_memory
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+) -> None:
     _upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory
     )
@@ -132,13 +148,13 @@ def upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples_with_given_method(
-    selenium,
-    browser_id,
-    inventory,
-    workflow,
-    tmp_memory,
-    method,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+    method: str,
+) -> None:
     _upload_workflow_from_automation_examples(
         selenium,
         browser_id,
@@ -150,13 +166,13 @@ def upload_workflow_from_automation_examples_with_given_method(
 
 
 def _upload_workflow_from_automation_examples(
-    selenium,
-    browser_id,
-    inventory,
-    workflow,
-    tmp_memory,
-    method=None,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+    method: Optional[str] = None,
+) -> None:
     subpage = "workflows"
     modal = "Upload workflow"
     button = "Apply"
@@ -178,7 +194,7 @@ def _upload_workflow_from_automation_examples(
     assert_workflow_exists(selenium, browser_id, visible_workflow_name, "sees")
 
 
-def change_workflow_dump_name_to_visible_name(workflow_name):
+def change_workflow_dump_name_to_visible_name(workflow_name: str) -> str:
     data = get_workflow_dump(workflow_name)
     return data["name"]
 
@@ -191,13 +207,13 @@ def change_workflow_dump_name_to_visible_name(workflow_name):
     )
 )
 def execute_workflow_with_input_config(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    config,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space: str,
+    ordinal: str,
+    workflow: str,
+    config: str,
+) -> None:
     """Adjust configuration of input values for stores according to given config.
 
     Config format given in yaml is as follows:
@@ -225,13 +241,13 @@ def execute_workflow_with_input_config(
 
 
 def _execute_workflow_with_input_config(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    config,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space: str,
+    ordinal: str,
+    workflow: str,
+    config: str,
+) -> None:
     spaces = "spaces"
     automation_workflows = "Automation Workflows"
     tab_name = "Run workflow"
@@ -304,14 +320,14 @@ def _execute_workflow_with_input_config(
     )
 )
 def execute_workflow_and_wait(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    item_list,
-    data_type,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space: str,
+    ordinal: str,
+    workflow: str,
+    item_list: str,
+    data_type: str,
+) -> None:
 
     execute_workflow(
         browser_id,
@@ -336,14 +352,14 @@ def execute_workflow_and_wait(
     )
 )
 def execute_workflow(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    item_list,
-    data_type,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space: str,
+    ordinal: str,
+    workflow: str,
+    item_list: str,
+    data_type: str,
+) -> None:
     spaces = "spaces"
     automation_workflows = "Automation Workflows"
     tab_name = "Run workflow"
@@ -358,23 +374,25 @@ def execute_workflow(
     # wait a moment for workflow revision to open
     time.sleep(1)
     if "range" in data_type:
-        item_list = literal_eval(item_list)
-        if isinstance(item_list, list):
-            for item in item_list:
-                choose_range_as_initial_workflow_value(selenium, browser_id, item)
+        range_items = literal_eval(item_list)
+        if isinstance(range_items, list):
+            for item in range_items:
+                choose_range_as_initial_workflow_value(
+                    selenium, browser_id, cast(dict[str, object], item)
+                )
         else:
             choose_range_as_initial_workflow_value(
-                selenium, browser_id, item_list, False
+                selenium, browser_id, cast(dict[str, object], range_items), False
             )
     elif "number" in data_type:
         items = literal_eval(item_list)
         if isinstance(items, list):
             for number in items:
                 numbers = get_input_element(driver, "numbers_input")
-                numbers[len(numbers) - 1].input = str(number)
+                cast(NumberInput, numbers[len(numbers) - 1]).input = str(number)
         else:
             numbers = OPLoggedIn(driver).automation_page.numbers_input
-            numbers[len(numbers) - 1].input = str(item_list)
+            cast(NumberInput, numbers[len(numbers) - 1]).input = str(item_list)
     elif "string" in data_type:
         OPLoggedIn(driver).automation_page.string_input.input = item_list
     elif "boolean" in data_type:
@@ -402,13 +420,13 @@ def execute_workflow(
     )
 )
 def modify_data_type_in_store(
-    selenium,
-    browser_id,
-    store_name,
-    value,
-    menu,
-    tmp_memory,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    store_name: str,
+    value: str,
+    menu: str,
+    tmp_memory: TmpMemory,
+) -> None:
     driver = selenium[browser_id]
     dropdown_menu = f"{menu} dropdown menu"
     button = "OK"

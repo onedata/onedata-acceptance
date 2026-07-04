@@ -21,5 +21,5 @@ class CreateArchive(Modal):
     follow_symbolic_links = Toggle(".followSymlinks-field .one-way-toggle-track")
     base_archive = Label(".field-component.static-text-field")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Create archive"

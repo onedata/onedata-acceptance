@@ -27,7 +27,7 @@ class Files(BrowserRow):
     name = id = Label(".file-name")
     clickable_field = WebElement(".file-base-name")
 
-    def click_and_enter(self):
+    def click_and_enter(self) -> None:
         time.sleep(0.1)
         ActionChains(self.driver).click(self.clickable_field).perform()
         self.wait_for_selected()
@@ -40,5 +40,5 @@ class SelectFiles(Modal):
     files = WebItemsSequence(".fb-table-tbody .data-row", cls=Files)
     error_msg = Label(".selection-validation-error")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Select files, directories or symlinks modal"

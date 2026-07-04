@@ -14,5 +14,5 @@ class DeleteArchive(Modal):
     confirmation_input = Input(".form-control")
     delete_archive = NamedButton(".btn-danger", text="Delete archive")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Delete archive"

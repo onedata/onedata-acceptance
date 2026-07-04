@@ -154,6 +154,7 @@ Feature: Basic files tab operations on hardlinks in file browser
 
     # check QoS of hardlink
     And user of browser clicks on QoS status tag for "file1(1)" in file browser
+    And user of browser sees that "File details" modal has appeared
     And user of browser sees [hello = "WORLD"] QoS requirement in QoS panel
 
     # check metadata of hardlink
@@ -181,6 +182,7 @@ Feature: Basic files tab operations on hardlinks in file browser
 
     # check QoS of original file
     And user of browser clicks on QoS status tag for "file1" in file browser
+    And user of browser sees that "File details" modal has appeared
     And user of browser sees [hello = "WORLD"] QoS requirement in QoS panel
 
     # check QoS of second hardlink

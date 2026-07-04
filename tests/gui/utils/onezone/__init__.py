@@ -5,9 +5,14 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
+
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from selenium.webdriver import ActionChains
 
+from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 
 from .automation_page import AutomationPage
@@ -34,7 +39,7 @@ class OZLoggedIn:
 
     profile_username = Label(".main-menu-column .user-account-button-username")
 
-    panels_classes = {
+    panels_classes: dict[str, type[PageObject]] = {
         "data": DataPage,
         "shares": SharesPage,
         "providers": ProvidersPage,
@@ -45,19 +50,19 @@ class OZLoggedIn:
         "clusters": ClustersPage,
     }
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Onezone page"
 
-    def open_page_and_click(self, item):
+    def open_page_and_click(self, item:str) -> Any:
         return self.get_page(item, True)
     
-    def find_panels_with_name(self, name):
+    def find_panels_with_name(self, name: str) -> list[WebElement]:
         return [p for p in self._panels if p.text.lower() == name.lower()]
             
-    def get_panel_by_name(self, name):
+    def get_panel_by_name(self, name: str) -> WebElement:
         panel_found = self.find_panels_with_name(name) 
         if panel_found:
             return panel_found[0]
@@ -71,22 +76,22 @@ class OZLoggedIn:
             return self.find_panels_with_name(alternate_name)[0]
         return self.find_panels_with_name(name)[0]
 
-    def is_panel_clicked(self, item):
+    def is_panel_clicked(self, item: str) -> bool:
         panel = self.get_panel_by_name(item)
         return any(el in panel.get_attribute("class") for el in ["active", "selected"])
 
-    def is_panel_disabled(self, item):
+    def is_panel_disabled(self, item: str) -> bool:
         panel = self.get_panel_by_name(item)
         return "disabled" in panel.get_attribute("class")
 
-    def click_on_sidebar_menu_panel(self, name):
+    def click_on_sidebar_menu_panel(self, name: str) -> None:
         panel = self.get_panel_by_name(name)
         panel.click()
     
-    def is_panel_expanded(self):
+    def is_panel_expanded(self) -> bool:
         return self._panels[0].text == "DATA"
 
-    def expand_panel(self):
+    def expand_panel(self)-> None:
         if self.is_panel_expanded():
             return
         ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
@@ -96,7 +101,7 @@ class OZLoggedIn:
             time.sleep(0.1)
         raise RuntimeError("did not manage to expand main panel")
 
-    def get_page(self, item, click=False):
+    def get_page(self, item: str, click: bool=False) -> Any:
         item = item.lower()
         cls = self.panels_classes.get(item, None)
         if cls:
@@ -113,41 +118,41 @@ class OZLoggedIn:
         raise RuntimeError(f'no "{item}" on {self} found')
 
     @property
-    def data(self):
+    def data(self) -> DataPage:
         return self.get_page("data")
 
     @property
-    def shares(self):
+    def shares(self) -> SharesPage:
         return self.get_page("shares")
 
     @property
-    def providers(self):
+    def providers(self) -> ProvidersPage:
         return self.get_page("providers")
 
     @property
-    def groups(self):
+    def groups(self) -> GroupsPage:
         return self.get_page("groups")
 
     @property
-    def tokens(self):
+    def tokens(self) -> TokensPage:
         return self.get_page("tokens")
 
     @property
-    def discovery(self):
+    def discovery(self) -> DiscoveryPage:
         return self.get_page("discovery")
 
     @property
-    def automation(self):
+    def automation(self) -> AutomationPage:
         return self.get_page("automation")
 
     @property
-    def clusters(self):
+    def clusters(self) -> ClustersPage:
         return self.get_page("clusters")
 
     @property
-    def profile(self):
+    def profile(self) -> ManageAccountPage:
         return self.get_page("profile")
 
     @property
-    def uploads(self):
+    def uploads(self) -> UploadsPage:
         return self.get_page("uploads")

@@ -8,16 +8,24 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import os
 import re
+from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from enum import Enum
 from itertools import islice
 from time import sleep
+from typing import Optional, TypeVar, cast, overload
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests import gui
+from tests.gui.type_definitions import WebElemRoot
+from tests.type_definitions import JsonValue
+
+T = TypeVar("T")
 
 # RE_URL regexp is matched as shown below:
 #
@@ -35,20 +43,52 @@ RE_URL = re.compile(
 )
 
 
-def parse_url(url):
-    return RE_URL.match(url)
-
-
-def go_to_relative_url(selenium, relative_url):
-    match = RE_URL.match(selenium.current_url)
+def parse_url(url: str) -> re.Match[str]:
+    match = RE_URL.match(url)
     if match is None:
-        raise ValueError(f"Invalid URL: {selenium.current_url}")
+        raise ValueError(f"Invalid URL: {url}")
+    return match
 
+
+def go_to_relative_url(selenium: WebDriver, relative_url: str) -> None:
+    match = parse_url(selenium.current_url)
     new_url = match.group("base_url") + relative_url
     selenium.get(new_url)
 
 
-def parse_seq(seq, pattern=None, separator=None, default=str):
+@overload
+def parse_seq(
+    seq: str,
+    pattern: Optional[str] = None,
+    separator: Optional[str] = None,
+) -> list[str]: ...
+
+
+@overload
+def parse_seq(
+    seq: str,
+    pattern: Optional[str] = None,
+    separator: Optional[str] = None,
+    *,
+    default: Callable[[str], T],
+) -> list[T]: ...
+
+
+@overload
+def parse_seq(
+    seq: str,
+    pattern: Optional[str],
+    separator: Optional[str],
+    default: Callable[[str], T],
+) -> list[T]: ...
+
+
+def parse_seq(
+    seq: str,
+    pattern: Optional[str] = None,
+    separator: Optional[str] = None,
+    default: Callable[[str], T] = cast(Callable[[str], T], str),
+) -> list[T]:
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
@@ -59,7 +99,7 @@ def parse_seq(seq, pattern=None, separator=None, default=str):
     ]
 
 
-def upload_file_path(file_name):
+def upload_file_path(file_name: str) -> str:
     """Resolve an absolute path for file with name file_name stored
     in upload_files dir
     """
@@ -70,7 +110,7 @@ def upload_file_path(file_name):
     )
 
 
-def upload_workflow_path(workflow_name=None):
+def upload_workflow_path(workflow_name: Optional[str] = None) -> str:
     """Resolve an absolute path for workflow file with name workflow_name
     stored in automation-examples submodule
     """
@@ -96,7 +136,7 @@ def upload_workflow_path(workflow_name=None):
     )
 
 
-def upload_lambda_path(lambda_name):
+def upload_lambda_path(lambda_name: Optional[str]) -> str:
     """Resolve an absolute path for lambda dump file with name lambda_name
     stored in automation-examples submodule
     """
@@ -122,7 +162,7 @@ def upload_lambda_path(lambda_name):
     )
 
 
-def strip_path(path_string, separator="/"):
+def strip_path(path_string: str, separator: str = "/") -> str:
     """Strips string from whitespaces inside file path. Useful for file
      paths rendered
     in DOM which contains `\\n` characters in `innerText`.
@@ -133,7 +173,9 @@ def strip_path(path_string, separator="/"):
 
 
 @contextmanager
-def implicit_wait(driver, timeout, prev_timeout):
+def implicit_wait(
+    driver: WebDriver, timeout: int | float, prev_timeout: int | float
+) -> Iterator[None]:
     driver.implicitly_wait(timeout)
     try:
         yield
@@ -141,36 +183,54 @@ def implicit_wait(driver, timeout, prev_timeout):
         driver.implicitly_wait(prev_timeout)
 
 
-def iter_ahead(iterable):
+def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
     read_ahead = iter(iterable)
     next(read_ahead, None)
     for item, next_item in zip(iterable, read_ahead):
         yield item, next_item
 
 
-def find_web_elem(web_elem_root, css_sel, err_msg, scroll=True):
+def find_web_elem(
+    web_elem_root: WebElemRoot,
+    css_sel: str,
+    err_msg: str | Callable[[], str],
+    scroll: bool = True,
+) -> WebElement:
     try:
         if scroll:
             _scroll_to_css_sel(web_elem_root, css_sel)
         item = web_elem_root.find_element(By.CSS_SELECTOR, css_sel)
     except NoSuchElementException as exc:
-        with suppress(TypeError):
+        if callable(err_msg):
             err_msg = err_msg()
         raise RuntimeError(err_msg) from exc
     return item
 
 
-def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg, scroll=True):
+def find_web_elem_with_text(
+    web_elem_root: WebElemRoot,
+    css_sel: str,
+    text: str,
+    err_msg: str | Callable[[], str],
+    scroll: bool = True,
+) -> WebElement:
     items = web_elem_root.find_elements(By.CSS_SELECTOR, css_sel)
     if scroll:
         _scroll_to_css_sel(web_elem_root, css_sel)
     for item in items:
         if item.text.lower() == text.lower():
             return item
+    if callable(err_msg):
+        err_msg = err_msg()
     raise RuntimeError(f'Css element with "{text}" text not found. {err_msg}')
 
 
-def click_on_web_elem(driver, web_elem, err_msg, delay=True):
+def click_on_web_elem(
+    driver: WebDriver,
+    web_elem: WebElement,
+    err_msg: str | Callable[[], str],
+    delay: bool | float = True,
+) -> None:
     disabled = "disabled" in web_elem.get_attribute("class")
     # scroll to make the element visible
     if not web_elem.is_displayed():
@@ -187,12 +247,12 @@ def click_on_web_elem(driver, web_elem, err_msg, delay=True):
         action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
         action.perform()
     else:
-        with suppress(TypeError):
+        if callable(err_msg):
             err_msg = err_msg()
         raise RuntimeError(err_msg)
 
 
-def _scroll_to_css_sel(web_elem_root, css_sel):
+def _scroll_to_css_sel(web_elem_root: WebElemRoot, css_sel: str) -> None:
     driver = getattr(web_elem_root, "parent", web_elem_root)
     driver.execute_script(
         "var el = (typeof $ === 'function' ? "
@@ -203,7 +263,7 @@ def _scroll_to_css_sel(web_elem_root, css_sel):
 
 
 @contextmanager
-def suppress(*exceptions):
+def suppress(*exceptions: type[BaseException]) -> Iterator[None]:
     try:
         yield
     except exceptions:
@@ -211,18 +271,20 @@ def suppress(*exceptions):
 
 
 @contextmanager
-def rm_css_cls(driver, web_elem, css_cls):
+def rm_css_cls(
+    driver: WebDriver, web_elem: WebElement, css_cls: str
+) -> Iterator[WebElement]:
     driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
     yield web_elem
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)
 
 
-def nth(seq, idx):
+def nth(seq: Iterable[T], idx: int) -> Optional[T]:
     return next(islice(seq, idx, None), None)
 
 
 @contextmanager
-def redirect_display(new_display):
+def redirect_display(new_display: str) -> Iterator[None]:
     """Replace DISPLAY environment variable with new value"""
     old_display = os.environ.get("DISPLAY", "DUMMY_DISPLAY")
     os.environ["DISPLAY"] = new_display
@@ -235,11 +297,11 @@ def redirect_display(new_display):
             del os.environ["DISPLAY"]
 
 
-def transform(val, strip_char=None):
+def transform(val: str, strip_char: Optional[str] = None) -> str:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 
-def sort_json_keys(obj):
+def sort_json_keys(obj: JsonValue) -> JsonValue:
     if isinstance(obj, dict):
         items = list(obj.items())
         items.sort(reverse=True)
@@ -250,10 +312,9 @@ def sort_json_keys(obj):
     return obj  # number or string
 
 
-def sort_json_from_string(value: str):
-    value = json.loads(value)
-    value = sort_json_keys(value)
-    return value
+def sort_json_from_string(value: str) -> JsonValue:
+    parsed_value = json.loads(value)
+    return sort_json_keys(parsed_value)
 
 
 class WhichBrowser(Enum):
@@ -355,3 +416,8 @@ class ListElement(Enum):
     AUTOMATIONS = "automations"
     LAMBDAS = "lambdas"
     WORKFLOWS = "workflows"
+
+
+class AlertPopup(Enum):
+    AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
+    STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"

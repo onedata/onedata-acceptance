@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import yaml
+from _pytest._py.path import LocalPath
 
 from tests.gui.steps.oneprovider.browser import (
     assert_num_of_files_are_displayed_in_browser,
@@ -17,21 +18,23 @@ from tests.gui.steps.oneprovider.data_tab import (
     go_one_back_using_breadcrumbs_in_data_tab_in_op,
     has_downloaded_file_content,
 )
+from tests.gui.type_definitions import TmpMemory, TreeConfig
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.file_browser.file_tree_node import Node
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
-def build_tree_config(data, root_path=""):
+def build_tree_config(data: TreeConfig, root_path: str = "") -> Node:
     root = Node("root")
     root.path = root_path
     _build_tree_config(data, root)
     return root
 
 
-def _build_tree_config(data, parent: Node):
+def _build_tree_config(data: TreeConfig, parent: Node) -> None:
     for item in data:
-        try:
+        if isinstance(item, dict):
             [(item_name, item_subtree)] = item.items()
             node = Node(item_name)
             node.set_parent(parent)
@@ -40,7 +43,7 @@ def _build_tree_config(data, parent: Node):
                 _build_tree_config(item_subtree, node)
             else:
                 node.content = item_subtree
-        except AttributeError:
+        else:
             node = Node(item)
             node.set_parent(parent)
             parent.nodes.append(node)
@@ -48,12 +51,12 @@ def _build_tree_config(data, parent: Node):
 
 def check_tree_browser(
     parent: Node,
-    selenium,
-    user,
-    tmp_memory,
-    tmpdir,
-    which_browser,
-):
+    selenium: SeleniumDrivers,
+    user: str,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    which_browser: str,
+) -> None:
     assert_only_expected_items_presence_in_browser(
         selenium, user, parent.get_items(), tmp_memory, which_browser
     )
@@ -114,13 +117,13 @@ def check_tree_browser(
     )
 )
 def wt_check_file_structure_in_browser(
-    browser_id,
-    config,
-    selenium,
-    tmp_memory,
-    tmpdir,
-    which_browser,
-):
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    which_browser: str,
+) -> None:
     check_file_structure_in_browser(
         browser_id,
         config,
@@ -132,13 +135,13 @@ def wt_check_file_structure_in_browser(
 
 
 def check_file_structure_in_browser(
-    browser_id,
-    config,
-    selenium,
-    tmp_memory,
-    tmpdir,
-    which_browser="file browser",
-):
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    which_browser: str = "file browser",
+) -> None:
     tree = yaml.load(config, yaml.Loader)
     root = build_tree_config(tree)
     check_tree_browser(

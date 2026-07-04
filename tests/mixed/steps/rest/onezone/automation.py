@@ -6,21 +6,31 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import os
+from collections.abc import Mapping
 from functools import partial
+from typing import Optional, Protocol, TypedDict, cast
 
 import yaml
 from oneprovider_client.rest import ApiException
 
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import upload_file_path, upload_workflow_path
 from tests.mixed.oneprovider_client.api.workflow_execution_api import (
     WorkflowExecutionApi,
 )
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id, upload_file_rest
+from tests.mixed.type_definitions import IdMap, MutableIdMap
 from tests.mixed.utils.common import login_to_provider
 from tests.mixed.utils.example_workflow_executions import (
     ExampleWorkflowExecutionInitialStoreContent,
+)
+from tests.type_definitions import (
+    Hosts,
+    JsonObject,
+    JsonValue,
+    WorkflowExecutions,
 )
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
@@ -31,6 +41,7 @@ from tests.utils.rest_utils import (
     http_get,
     http_post,
 )
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 BAGIT_ARCHIVES = {
@@ -38,6 +49,24 @@ BAGIT_ARCHIVES = {
     "fetch": ["bagit_archive_fetch.tar.gz", "bagit_archive_fetch_xrootd.zip"],
     "unpack": ["bagit_archive_unpack.tar", "bagit_archive_unpack_and_fetch.zip"],
 }
+
+
+class CredentialsLike(Protocol):
+    username: str
+    password: Optional[str]
+
+
+class WorkflowRun(TypedDict, total=False):
+    exceptionStoreId: str
+    iteratedStoreId: str
+
+
+class WorkflowLane(TypedDict):
+    runs: list[WorkflowRun]
+
+
+class WorkflowExecutionDetails(TypedDict):
+    lanes: list[WorkflowLane]
 
 
 @given(
@@ -48,8 +77,15 @@ BAGIT_ARCHIVES = {
     )
 )
 def upload_workflow_from_automation_examples_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflow_name, workflows
-):
+    hosts: Hosts,
+    zone_name: str,
+    users: Users,
+    user: str,
+    inventory: str,
+    inventories: IdMap,
+    workflow_name: str,
+    workflows: MutableIdMap,
+) -> None:
     dump_path = upload_workflow_path(workflow_name + ".json")
     upload_workflow_rest(
         hosts,
@@ -72,8 +108,15 @@ def upload_workflow_from_automation_examples_rest(
     )
 )
 def upload_workflow_from_upload_files_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflow_name, workflows
-):
+    hosts: Hosts,
+    zone_name: str,
+    users: Users,
+    user: str,
+    inventory: str,
+    inventories: IdMap,
+    workflow_name: str,
+    workflows: MutableIdMap,
+) -> None:
     dump_path = upload_file_path(f"automation/workflow/{workflow_name}.json")
     upload_workflow_rest(
         hosts,
@@ -96,8 +139,15 @@ def upload_workflow_from_upload_files_rest(
     )
 )
 def wt_upload_bagit_uploader_from_automation_examples_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
-):
+    hosts: Hosts,
+    zone_name: str,
+    users: Users,
+    user: str,
+    inventory: str,
+    inventories: IdMap,
+    workflows: MutableIdMap,
+    tmp_memory: TmpMemory,
+) -> None:
     workflow_type = "bagit-uploader"
     upload_part_of_the_workflows_from_automation_examples_rest(
         hosts,
@@ -120,8 +170,15 @@ def wt_upload_bagit_uploader_from_automation_examples_rest(
     )
 )
 def wt_upload_non_bagit_workflows_from_automation_examples_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
-):
+    hosts: Hosts,
+    zone_name: str,
+    users: Users,
+    user: str,
+    inventory: str,
+    inventories: IdMap,
+    workflows: MutableIdMap,
+    tmp_memory: TmpMemory,
+) -> None:
     workflow_type = "non bagit"
     upload_part_of_the_workflows_from_automation_examples_rest(
         hosts,
@@ -137,16 +194,16 @@ def wt_upload_non_bagit_workflows_from_automation_examples_rest(
 
 
 def upload_part_of_the_workflows_from_automation_examples_rest(
-    hosts,
-    zone_name,
-    users,
-    user,
-    inventory,
-    inventories,
-    workflows,
-    tmp_memory,
-    workflow_type,
-):
+    hosts: Hosts,
+    zone_name: str,
+    users: Users,
+    user: str,
+    inventory: str,
+    inventories: IdMap,
+    workflows: MutableIdMap,
+    tmp_memory: TmpMemory,
+    workflow_type: str,
+) -> None:
     tmp_memory["workflows_with_input_files"] = []
     tmp_memory["workflows_without_input_files"] = []
     for f in os.listdir(upload_workflow_path()):
@@ -175,16 +232,16 @@ def upload_part_of_the_workflows_from_automation_examples_rest(
 
 
 def upload_workflow_rest(
-    hosts,
-    zone_name,
-    users,
-    user,
-    inventory_name,
-    inventories,
-    workflow_name,
-    path,
-    workflows,
-):
+    hosts: Hosts,
+    zone_name: str,
+    users: Users,
+    user: str,
+    inventory_name: str,
+    inventories: IdMap,
+    workflow_name: str,
+    path: str,
+    workflows: MutableIdMap,
+) -> None:
     zone_hostname = hosts[zone_name]["hostname"]
     owner = users[user]
 
@@ -202,8 +259,13 @@ def upload_workflow_rest(
 
 
 def _upload_workflow_rest(
-    zone_hostname, owner, inventory_id, workflow_name, workflow_dump, workflows
-):
+    zone_hostname: str,
+    owner: CredentialsLike,
+    inventory_id: str,
+    workflow_name: str,
+    workflow_dump: JsonValue,
+    workflows: MutableIdMap,
+) -> None:
     workflow_schema_details = json.dumps(
         {
             "atmInventoryId": inventory_id,
@@ -223,7 +285,7 @@ def _upload_workflow_rest(
     workflows[workflow_name] = workflow_location.split("/")[-1]
 
 
-def get_store_schema_id_of_workflow(store_name, workflow_name):
+def get_store_schema_id_of_workflow(store_name: str, workflow_name: str) -> str:
     data = get_workflow_dump(workflow_name)
     stores = data["revision"]["atmWorkflowSchemaRevision"]["_data"]["stores"]
     for store in stores:
@@ -234,7 +296,7 @@ def get_store_schema_id_of_workflow(store_name, workflow_name):
     )
 
 
-def get_revision_num_of_workflow(workflow_name):
+def get_revision_num_of_workflow(workflow_name: str) -> int:
     data = get_workflow_dump(workflow_name)
     return data["revision"]["originalRevisionNumber"]
 
@@ -247,17 +309,17 @@ def get_revision_num_of_workflow(workflow_name):
     )
 )
 def wt_execute_workflow_rest(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space,
-    workflow_name,
-    workflows,
-    workflow_executions,
-    config,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space: str,
+    workflow_name: str,
+    workflows: IdMap,
+    workflow_executions: WorkflowExecutions,
+    config: str,
+) -> None:
     """
     Expected format of config
     store: {arg: val}
@@ -301,7 +363,14 @@ def wt_execute_workflow_rest(
         'using REST, {user} pauses execution of "{workflow_name}" workflow in {host}'
     )
 )
-def pause_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+def pause_workflow_rest(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -314,7 +383,14 @@ def pause_workflow_rest(user, users, hosts, host, workflow_name, workflow_execut
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def resume_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+def resume_workflow_rest(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -327,7 +403,14 @@ def resume_workflow_rest(user, users, hosts, host, workflow_name, workflow_execu
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def cancel_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+def cancel_workflow_rest(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -340,7 +423,14 @@ def cancel_workflow_rest(user, users, hosts, host, workflow_name, workflow_execu
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def delete_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+def delete_workflow_rest(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -355,8 +445,13 @@ def delete_workflow_rest(user, users, hosts, host, workflow_name, workflow_execu
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_resume_workflow_rest(
-    user, users, hosts, host, workflow_name, workflow_executions
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     try:
         resume_workflow_rest(
             user, users, hosts, host, workflow_name, workflow_executions
@@ -376,8 +471,13 @@ def fail_to_resume_workflow_rest(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def force_continue_workflow_rest(
-    user, users, hosts, host, workflow_name, workflow_executions
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -393,19 +493,19 @@ def force_continue_workflow_rest(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rerun_workflow_rest(
-    user,
-    users,
-    hosts,
-    host,
-    workflow_name,
-    workflow_executions,
-    lane_id: int,
-    lane_run: int,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+    lane_id: str,
+    lane_run: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
-    data = {"laneIndex": lane_id, "laneRunNumber": lane_run}
+    data = {"laneIndex": int(lane_id), "laneRunNumber": int(lane_run)}
     workflow_execution_api.rerun_workflow_execution(wid, data)
 
 
@@ -418,19 +518,19 @@ def rerun_workflow_rest(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def retry_workflow_rest(
-    user,
-    users,
-    hosts,
-    host,
-    workflow_name,
-    workflow_executions,
-    lane_id: int,
-    lane_run: int,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+    lane_id: str,
+    lane_run: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
-    data = {"laneIndex": lane_id, "laneRunNumber": lane_run}
+    data = {"laneIndex": int(lane_id), "laneRunNumber": int(lane_run)}
     workflow_execution_api.retry_workflow_execution(wid, data)
 
 
@@ -441,17 +541,17 @@ def retry_workflow_rest(
     )
 )
 def wt_execute_non_bagit_part_of_the_workflows(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space,
-    workflows,
-    groups,
-    workflow_executions,
-    tmp_memory,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space: str,
+    workflows: IdMap,
+    groups: IdMap,
+    workflow_executions: WorkflowExecutions,
+    tmp_memory: TmpMemory,
+) -> None:
     archive_types = None
     execute_part_of_the_workflows(
         user,
@@ -476,18 +576,18 @@ def wt_execute_non_bagit_part_of_the_workflows(
     )
 )
 def wt_execute_part_of_the_workflows(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space,
-    workflows,
-    groups,
-    workflow_executions,
-    tmp_memory,
-    archive_types,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space: str,
+    workflows: IdMap,
+    groups: IdMap,
+    workflow_executions: WorkflowExecutions,
+    tmp_memory: TmpMemory,
+    archive_types: str,
+) -> None:
     execute_part_of_the_workflows(
         user,
         users,
@@ -504,18 +604,18 @@ def wt_execute_part_of_the_workflows(
 
 
 def execute_part_of_the_workflows(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space,
-    workflows,
-    groups,
-    workflow_executions,
-    tmp_memory,
-    archive_types,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space: str,
+    workflows: IdMap,
+    groups: IdMap,
+    workflow_executions: WorkflowExecutions,
+    tmp_memory: TmpMemory,
+    archive_types: Optional[str],
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
         partial(_lookup_file_id, user_client_op=client),
@@ -561,7 +661,9 @@ def execute_part_of_the_workflows(
             )
 
 
-def check_to_run_workflow(workflow_name, file_name, archive_types):
+def check_to_run_workflow(
+    workflow_name: str, file_name: str | list[str], archive_types: Optional[str]
+) -> bool:
     if archive_types is None:
         return workflow_name != "bagit-uploader"
     return (
@@ -570,18 +672,18 @@ def check_to_run_workflow(workflow_name, file_name, archive_types):
 
 
 def execute_workflow_rest(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space_name,
-    workflow_name,
-    stores_content,
-    workflows,
-    rev_number=1,
-    loglevel="info",
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+    workflow_name: str,
+    stores_content: Mapping[str, JsonValue],
+    workflows: IdMap,
+    rev_number: int = 1,
+    loglevel: str = "info",
+) -> str:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     workflow_execution_api = WorkflowExecutionApi(client)
     data = {
@@ -597,7 +699,7 @@ def execute_workflow_rest(
     return wid
 
 
-def get_group_id(groups, group):
+def get_group_id(groups: IdMap, group: str) -> str:
     return groups[group]
 
 
@@ -609,8 +711,14 @@ def get_group_id(groups, group):
 )
 @repeat_failed(interval=4, timeout=620)
 def wait_for_workflow_executions(
-    user, users, host, hosts, space, spaces, workflow_executions
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: IdMap,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     assert_all_workflow_execution_finished(
         user, users, host, hosts, space, spaces, workflow_executions
     )
@@ -624,16 +732,28 @@ def wait_for_workflow_executions(
 )
 @repeat_failed(interval=10, timeout=60 * 60 * 4)
 def wait_for_workflow_executions_extended_time(
-    user, users, host, hosts, space, spaces, workflow_executions
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: IdMap,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     assert_all_workflow_execution_finished(
         user, users, host, hosts, space, spaces, workflow_executions
     )
 
 
 def assert_all_workflow_execution_finished(
-    user, users, host, hosts, space, spaces, workflow_executions
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: IdMap,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     assert_empty_workflow_phase(
         user, users, host, hosts, space, spaces, workflow_executions, "waiting"
     )
@@ -643,8 +763,15 @@ def assert_all_workflow_execution_finished(
 
 
 def assert_empty_workflow_phase(
-    user, users, host, hosts, space, spaces, workflow_executions, phase
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: IdMap,
+    workflow_executions: WorkflowExecutions,
+    phase: str,
+) -> None:
     executions = list_workflow_executions(
         user, users, host, hosts, space, spaces, phase=phase
     )
@@ -668,12 +795,20 @@ def assert_empty_workflow_phase(
     )
 )
 def assert_num_workflow_executions_in_phase(
-    user, users, host, hosts, space, spaces, phase, num: int
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: IdMap,
+    phase: str,
+    num: str,
+) -> None:
+    expected_num = int(num)
     executions = list_workflow_executions(
         user, users, host, hosts, space, spaces, phase=phase
     )
-    if len(executions) != num:
+    if len(executions) != expected_num:
         raise AssertionError(
             f"Expected {num} of workflows executions to be in "
             f"phase {phase}, but there are {len(executions)}"
@@ -686,8 +821,12 @@ def assert_num_workflow_executions_in_phase(
     )
 )
 def assert_successful_workflow_executions(
-    user, users, host, hosts, workflow_executions
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     err_msgs = []
     for wid in workflow_executions.keys():
         mes = get_workflow_execution_details(
@@ -713,8 +852,15 @@ def assert_successful_workflow_executions(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_num_workflow_executions_in_status(
-    user, users, host, hosts, status, num: int, workflow_executions
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    status: str,
+    num: str,
+    workflow_executions: WorkflowExecutions,
+) -> None:
+    expected_num = int(num)
     executions = []
     for wid in workflow_executions.keys():
         mes = get_workflow_execution_details(
@@ -722,7 +868,7 @@ def assert_num_workflow_executions_in_status(
         )
         if mes["status"] == status:
             executions.append((workflow_executions[wid], mes["status"]))
-    if len(executions) != num:
+    if len(executions) != expected_num:
         raise AssertionError(
             f"Expected {num} of workflows executions to be of "
             f"status {status}, but there are {len(executions)}"
@@ -730,8 +876,15 @@ def assert_num_workflow_executions_in_status(
 
 
 def list_workflow_executions(
-    user, users, host, hosts, space, spaces, phase="ongoing", limit=50
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: IdMap,
+    phase: str = "ongoing",
+    limit: int = 50,
+) -> list[str]:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     workflow_execution_api = WorkflowExecutionApi(client)
     response = workflow_execution_api.list_workflow_executions(
@@ -747,8 +900,15 @@ def list_workflow_executions(
     )
 )
 def assert_workflow_execution_details(
-    user, users, host, hosts, workflow_name, workflow_executions, inventories, config
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+    inventories: IdMap,
+    config: str,
+) -> None:
     data = yaml.load(config, yaml.Loader)
 
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
@@ -772,10 +932,18 @@ def assert_workflow_execution_details(
     )
 )
 def compare_stores_id_after_retry_from_workflow_execution_details(
-    user, users, host, hosts, workflow_name, workflow_executions
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
-    details = get_workflow_execution_details(user, users, host, hosts, wid)
+    details = cast(
+        WorkflowExecutionDetails,
+        get_workflow_execution_details(user, users, host, hosts, wid),
+    )
     # first run
     exception_store_id = details["lanes"][0]["runs"][1]["exceptionStoreId"]
     # second run
@@ -795,8 +963,13 @@ def compare_stores_id_after_retry_from_workflow_execution_details(
     )
 )
 def fail_to_get_workflow_execution_details(
-    user, users, host, hosts, workflow_name, workflow_executions
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    workflow_name: str,
+    workflow_executions: WorkflowExecutions,
+) -> None:
     try:
         wid = get_workflow_execution_id(workflow_name, workflow_executions)
         _ = get_workflow_execution_details(user, users, host, hosts, wid)
@@ -809,7 +982,9 @@ def fail_to_get_workflow_execution_details(
         raise
 
 
-def get_workflow_execution_id(workflow_name, workflow_executions):
+def get_workflow_execution_id(
+    workflow_name: str, workflow_executions: WorkflowExecutions
+) -> str:
     return [
         wid
         for wid in workflow_executions.keys()
@@ -818,8 +993,13 @@ def get_workflow_execution_id(workflow_name, workflow_executions):
 
 
 def get_workflow_execution_details(
-    user, users, host, hosts, workflow_execution_id, details=None
-):
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    workflow_execution_id: str,
+    details: Optional[list[str]] = None,
+) -> JsonObject:
     provider_hostname = hosts[host]["hostname"]
     # calling using swagger api does not work, because
     # 'originRunNumber' can be of value None

@@ -47,9 +47,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser replicates "dir1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
-    Then user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
+    Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
     And user of browser sees directory in ended transfers:
             name: dir1
             replicated: 50 MiB
@@ -81,9 +79,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser migrates "dir1" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser opens oneprovider-1 Oneprovider transfers for "smallSpace" space
-    Then user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
+    Then user of browser waits until "oneprovider-1" transfers complete for "smallSpace" space
     And user of browser sees directory in ended transfers:
             name: dir1
             replicated: 0 B
@@ -111,9 +107,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser replicates "dir1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser opens oneprovider-1 Oneprovider transfers for "smallSpace" space
-    Then user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
+    Then user of browser waits until "oneprovider-1" transfers complete for "smallSpace" space
     And user of browser sees directory in ended transfers:
             name: dir1
             replicated: 0 B
@@ -165,9 +159,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser replicates "dir1" to provider "oneprovider-1"
 
     # Check that transfer appeared in transfer tab
-    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
-    Then user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
+    Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
     And user of browser sees directory in ended transfers:
             name: dir1
             replicated: 0 B
@@ -198,9 +190,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser migrates "dir1" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
-    Then user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
+    Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
     And user of browser sees directory in ended transfers:
             name: dir1
             replicated: 50 MiB

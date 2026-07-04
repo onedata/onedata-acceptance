@@ -40,5 +40,5 @@ class DatasetsModal(Modal):
     metadata_protected_label = Label(".metadata-protected-tag")
     archives_tab = WebElement(".nav-item-archives")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Datasets modal"

@@ -6,8 +6,10 @@ __author__ = "Emilia Kwolek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -18,15 +20,17 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_cancel_upload_button_on_popup(selenium, browser_id, number: int):
+def click_on_cancel_upload_button_on_popup(
+    selenium: SeleniumDrivers, browser_id: str, number: str
+) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    Popups(driver).upload_presenter[number - 1].cancel_button.click()
+    Popups(driver).upload_presenter[int(number) - 1].cancel_button.click()
 
 
 @wt(parsers.parse("user of {browser_id} confirms canceling the upload"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_confirm_cancel_upload(selenium, browser_id):
+def click_on_confirm_cancel_upload(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     Popups(driver).menu_popup_with_text.confirm_cancel_button.click()
@@ -34,13 +38,15 @@ def click_on_confirm_cancel_upload(selenium, browser_id):
 
 @wt(parsers.parse("user of {browser_id} sees that number of uploads is equal {number}"))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
-def assert_number_of_files_in_uploaded_files_list(selenium, browser_id, number: int):
+def assert_number_of_files_in_uploaded_files_list(
+    selenium: SeleniumDrivers, browser_id: str, number: str
+) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     uploaded_files_list = OZLoggedIn(
         driver
     ).uploads.uploaded_content_page.uploaded_items_list
-    assert number == len(
+    assert int(number) == len(
         uploaded_files_list
     ), f"number of files uploaded {len(uploaded_files_list)} is not equal {number}"
 
@@ -52,7 +58,9 @@ def assert_number_of_files_in_uploaded_files_list(selenium, browser_id, number: 
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_file_is_uploaded(selenium, browser_id, file_name, option):
+def assert_file_is_uploaded(
+    selenium: SeleniumDrivers, browser_id: str, file_name: str, option: str
+) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     item_list = OZLoggedIn(driver).uploads.uploaded_content_page.uploaded_items_list
@@ -70,15 +78,15 @@ def assert_file_is_uploaded(selenium, browser_id, file_name, option):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_uploads_in_the_sidebar(selenium, browser_id):
+def click_on_uploads_in_the_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     OZLoggedIn(driver).uploads_button.click()
 
 
 def click_on_provider_in_uploads_sidebar_with_provider_name(
-    selenium, browser_id, provider
-):
+    selenium: SeleniumDrivers, browser_id: str, provider: str
+) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).uploads.uploads_list[provider].click()
 
@@ -89,7 +97,9 @@ def click_on_provider_in_uploads_sidebar_with_provider_name(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_provider_in_uploads_sidebar(selenium, browser_id, provider_name, hosts):
+def click_on_provider_in_uploads_sidebar(
+    selenium: SeleniumDrivers, browser_id: str, provider_name: str, hosts: Hosts
+) -> None:
     provider = hosts[provider_name]["name"]
     click_on_provider_in_uploads_sidebar_with_provider_name(
         selenium, browser_id, provider
@@ -98,6 +108,8 @@ def click_on_provider_in_uploads_sidebar(selenium, browser_id, provider_name, ho
 
 @wt(parsers.parse('user of {browser_id} clicks on "All uploads" in uploads sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_all_uploads_in_uploads_sidebar_with_provider_name(selenium, browser_id):
+def click_on_all_uploads_in_uploads_sidebar_with_provider_name(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).uploads.uploads_list["All uploads"].click()

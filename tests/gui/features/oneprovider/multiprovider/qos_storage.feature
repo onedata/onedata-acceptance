@@ -34,6 +34,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates QoS requirement with copied storageId for "file1" from file browser
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "X" button in modal "File details"
     And user of browser_unified migrates "file1" from provider "oneprovider-1" to provider "oneprovider-2"
@@ -48,6 +49,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates "anyStorage \ storageId=" QoS requirement and pastes storage id from clipboard for "file1" from file browser
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "X" button in modal "File details"
     Then user of browser_unified sees file chunks for file "file1" as follows:

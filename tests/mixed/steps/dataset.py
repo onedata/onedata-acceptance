@@ -7,6 +7,10 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from collections.abc import Mapping
+
+from _pytest._py.path import LocalPath
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
 from tests.gui.meta_steps.oneprovider.dataset import (
@@ -22,6 +26,7 @@ from tests.gui.meta_steps.oneprovider.dataset import (
 )
 from tests.gui.steps.oneprovider.browser import assert_status_tag_for_file_in_browser
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.datasets import (
     assert_dataset_detached_in_op_rest,
     assert_top_level_dataset_in_space_in_op_rest,
@@ -38,7 +43,9 @@ from tests.mixed.steps.rest.oneprovider.datasets import (
     set_protection_flags_for_dataset_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
@@ -51,17 +58,17 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_dataset_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-    option,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    option: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         create_dataset(
@@ -89,16 +96,16 @@ def create_dataset_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_create_dataset_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         fail_to_create_dataset_in_op_gui(
@@ -125,18 +132,18 @@ def fail_to_create_dataset_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_top_level_dataset_in_space_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-    spaces,
-    option,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+    option: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_top_level_dataset_in_space_in_op_gui(
@@ -164,17 +171,17 @@ def assert_top_level_dataset_in_space_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_dataset_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-    spaces,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         remove_dataset_in_op_gui(
@@ -201,17 +208,17 @@ def remove_dataset_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_write_protection_flag_for_dataset(
-    client,
-    user,
-    item_name,
-    option,
-    tmp_memory,
-    users,
-    hosts,
-    host,
-    space_name,
-    spaces,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    option: str,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         flags = [
@@ -242,18 +249,18 @@ def assert_write_protection_flag_for_dataset(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_dataset_structure_in_op(
-    client,
-    user,
-    space_name,
-    host,
-    config,
-    selenium,
-    tmpdir,
-    tmp_memory,
-    users,
-    hosts,
-    spaces,
-):
+    client: str,
+    user: str,
+    space_name: str,
+    host: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    tmpdir: LocalPath,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
     # function checks only if what is in config exists, does not
     # fail if there are more datasets
     client_lower = client.lower()
@@ -289,17 +296,17 @@ def check_dataset_structure_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_effective_protection_flags_for_file(
-    client,
-    user,
-    item_name,
-    option,
-    space_name,
-    host,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    option: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         check_effective_protection_flags_for_file_in_op_gui(
@@ -328,18 +335,18 @@ def check_effective_protection_flags_for_file(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_protection_flags_for_dataset(
-    client,
-    user,
-    option,
-    item_name,
-    space_name,
-    host,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-    spaces,
-):
+    client: str,
+    user: str,
+    option: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         set_protection_flags_for_dataset_in_op_gui(
@@ -369,18 +376,18 @@ def set_protection_flags_for_dataset(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_effective_protection_flags_for_dataset(
-    client,
-    user,
-    item_name,
-    option,
-    space_name,
-    host,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-    spaces,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    option: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         check_effective_protection_flags_for_file_in_op_gui(
@@ -409,17 +416,17 @@ def check_effective_protection_flags_for_dataset(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def detach_dataset_in_op(
-    client,
-    user,
-    selenium,
-    space_name,
-    tmp_memory,
-    item_name,
-    users,
-    hosts,
-    host,
-    spaces,
-):
+    client: str,
+    user: str,
+    selenium: SeleniumDrivers,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         detach_dataset_in_op_gui(
@@ -446,17 +453,17 @@ def detach_dataset_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_dataset_detached_in_op(
-    client,
-    selenium,
-    user,
-    space_name,
-    tmp_memory,
-    item_name,
-    users,
-    hosts,
-    host,
-    spaces,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_dataset_detached_in_op_gui(
@@ -483,17 +490,17 @@ def assert_dataset_detached_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def reattach_dataset_in_op(
-    client,
-    user,
-    selenium,
-    space_name,
-    tmp_memory,
-    item_name,
-    users,
-    hosts,
-    host,
-    spaces,
-):
+    client: str,
+    user: str,
+    selenium: SeleniumDrivers,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         reattach_dataset_in_op_gui(

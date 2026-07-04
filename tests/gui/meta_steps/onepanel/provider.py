@@ -38,20 +38,23 @@ from tests.gui.steps.rest.provider import (
     get_provider_service_nodes_statuses,
     start_stop_provider_service_node,
 )
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
+from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(
-    selenium,
-    user,
-    provider_name,
-    new_provider_name,
-    new_domain,
-    browser_id,
-):
+    selenium: SeleniumDrivers,
+    user: str,
+    provider_name: str,
+    new_provider_name: str,
+    new_domain: str,
+    browser_id: str,
+) -> None:
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
     button = "Edit settings"
@@ -89,8 +92,11 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     )
 )
 def deregister_provider_in_op_panel_using_gui(
-    selenium, browser_id, provider_name, hosts
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider_name: str,
+    hosts: Hosts,
+) -> None:
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
     content = "provider"
@@ -106,7 +112,13 @@ def deregister_provider_in_op_panel_using_gui(
     )
 
 
-def register_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory):
+def register_provider_in_op_using_gui(
+    selenium: SeleniumDrivers,
+    user: str,
+    hosts: Hosts,
+    config: str,
+    tmp_memory: TmpMemory,
+) -> None:
     step2 = "step 2"
     options = yaml.load(config, yaml.Loader)
 
@@ -168,8 +180,11 @@ def register_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory)
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(
-    selenium, browser_id, provider, hosts
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider: str,
+    hosts: Hosts,
+) -> None:
     sub_item = "Provider configuration"
     record = 0
     sidebar = "CLUSTERS"
@@ -202,9 +217,12 @@ def change_provider_name_if_name_is_different_than_given(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_cluster_ones3_node_status_rest(
-    hosts, provider, onepanel_credentials, status
-):
-    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: User,
+    status: str,
+) -> None:
+    host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
     res = get_provider_service_nodes_statuses(
         hosts, provider, onepanel_credentials, OnedataService.ONES3
     )
@@ -214,9 +232,13 @@ def assert_provider_cluster_ones3_node_status_rest(
 
 
 @wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
-def add_provider_cluster_ones3_node_rest(hosts, provider, onepanel_credentials):
-    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
-    data = {"hosts": [host]}
+def add_provider_cluster_ones3_node_rest(
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: User,
+) -> None:
+    host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
+    data: JsonObject = {"hosts": [host]}
     add_provider_service_node(
         hosts, provider, onepanel_credentials, data, OnedataService.ONES3
     )
@@ -229,9 +251,12 @@ def add_provider_cluster_ones3_node_rest(hosts, provider, onepanel_credentials):
     )
 )
 def stop_provider_cluster_ones3_node_rest(
-    option, hosts, provider, onepanel_credentials
-):
-    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    option: str,
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: User,
+) -> None:
+    host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
     start_stop_provider_service_node(
         hosts,
         host,

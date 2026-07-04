@@ -8,6 +8,7 @@ Feature: Provider management in Onepanel
                 user role: onezone admin
                 cluster privileges:
                   - oz_providers_list
+                  - oz_providers_view
     And initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: user1

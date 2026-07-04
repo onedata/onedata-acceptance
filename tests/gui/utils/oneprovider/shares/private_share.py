@@ -4,9 +4,11 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import DropdownSelector
 from tests.gui.utils.core import scroll_to_css_selector_bottom
@@ -26,12 +28,12 @@ class DublinCoreMetadata(PageObject):
     add_more_elements = Button(".row-metadata-group-add .ember-basic-dropdown-trigger")
     header = WebElement(".metadata-group-header")
 
-    def click_on_background(self):
+    def click_on_background(self) -> None:
         ActionChains(self.driver).move_to_element_with_offset(
             self.header, 0, 0
         ).click().perform()
 
-    def write_to_last_input(self, driver, val, which):
+    def write_to_last_input(self, driver: WebDriver, val: str, which: str) -> None:
         css_sel = f'.form-control[data-dc-element-type="{which}"]'
         # WebItemsSequence, WebElementsSequence were not working for this
         # case (because of weird selectors)
@@ -40,7 +42,7 @@ class DublinCoreMetadata(PageObject):
         inputs[-1].clear()
         inputs[-1].send_keys(val)
 
-    def click_add_button(self, driver, button_name):
+    def click_add_button(self, driver: WebDriver, button_name: str) -> None:
         buttons = self.driver.find_elements(By.CSS_SELECTOR, ".btn-add-entry .text")
         for button in buttons:
             if button.text == "":
@@ -115,5 +117,5 @@ class PrivateShareView(PublicShareView):
 
     alert_warning = WebElement(".alert-warning")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Private share View"

@@ -15,5 +15,5 @@ class WriteProtection(Modal):
     metadata_protection_toggle = Toggle(".direct-dataset-item .metadata-flag-toggle")
     close = Button(".close-btn")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Write protection modal"

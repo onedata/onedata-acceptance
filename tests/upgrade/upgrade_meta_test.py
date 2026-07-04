@@ -11,9 +11,10 @@ from tests.upgrade.tests import (
     rest_metadata,
     rest_views,
 )
+from tests.upgrade.utils.upgrade_utils import UpgradeTestsController
 
 
-def test_upgrade(tests_controller):
+def test_upgrade(tests_controller: UpgradeTestsController) -> None:
     """
     All those tests are interpreted as a one test
     Number of tests depends on a config file

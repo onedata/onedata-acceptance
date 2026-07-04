@@ -24,7 +24,6 @@ Feature: Storage S3 management using onepanel, REST
     And user opened browser window
     And user of browser opened Onezone page
     And user of browser logged as admin to Onezone service
-    And S3 host entry is added to /etc/hosts
 
 
   Scenario: User sees file's content after modifying storage backend by setting new S3 bucket with copied content from the previous bucket

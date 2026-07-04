@@ -7,7 +7,9 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.oneclient.steps.rest.onepanel.storages import modify_storage_parameters
+from tests.type_definitions import Hosts, Storages
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import User
 
 
 @wt(
@@ -17,17 +19,16 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def modify_storage_parameter(
-    user,
-    storage_type,
-    storage,
-    parameter,
-    value,
-    provider,
-    storages,
-    hosts,
-    onepanel_credentials,
-):
-
+    user: str,
+    storage_type: str,
+    storage: str,
+    parameter: str,
+    value: str,
+    provider: str,
+    storages: Storages,
+    hosts: Hosts,
+    onepanel_credentials: User,
+) -> None:
     storage_id = storages[provider][storage]
     onepanel_host = None
 

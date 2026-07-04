@@ -4,6 +4,10 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Mapping
+
+from _pytest._py.path import LocalPath
+
 from tests.gui.meta_steps.oneprovider.common import (
     migrate_file_to_provider,
     replicate_files_to_provider,
@@ -17,13 +21,16 @@ from tests.gui.meta_steps.oneprovider.transfers import (
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
 from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
 from tests.gui.steps.oneprovider.transfers import assert_ended_transfer
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,
     assert_recent_transfer_finished_rest,
     create_transfer_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 
 
 @wt(
@@ -33,16 +40,16 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def replicate_file_to_provider_op(
-    client,
-    user,
-    path,
-    space,
-    provider_to,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: str,
+    user: str,
+    path: str,
+    space: str,
+    provider_to: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+) -> None:
     transfer_type = "replication"
     if client.lower() == "rest":
         path = space + "/" + path
@@ -72,17 +79,17 @@ def replicate_file_to_provider_op(
     )
 )
 def migrate_file_to_provider_op(
-    client,
-    user,
-    path,
-    space,
-    provider_to,
-    provider_from,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: str,
+    user: str,
+    path: str,
+    space: str,
+    provider_to: str,
+    provider_from: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+) -> None:
     transfer_type = "migration"
     if client.lower() == "rest":
         path = space + "/" + path
@@ -120,16 +127,16 @@ def migrate_file_to_provider_op(
     )
 )
 def evict_file_to_provider_op(
-    client,
-    user,
-    path,
-    space,
-    provider_from,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: str,
+    user: str,
+    path: str,
+    space: str,
+    provider_from: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+) -> None:
     transfer_type = "eviction"
     if client.lower() == "rest":
         path = space + "/" + path
@@ -156,17 +163,17 @@ def evict_file_to_provider_op(
     )
 )
 def assert_details_of_recent_transfer_op(
-    client,
-    user,
-    users,
-    host,
-    hosts,
-    spaces,
-    item_type,
-    space,
-    config,
-    selenium,
-):
+    client: str,
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+    item_type: str,
+    space: str,
+    config: str,
+    selenium: SeleniumDrivers,
+) -> None:
     if client.lower() == "rest":
         assert_recent_transfer_details_rest(
             user, users, host, hosts, space, spaces, config
@@ -185,8 +192,15 @@ def assert_details_of_recent_transfer_op(
     )
 )
 def wait_for_recent_transfer_to_finish_op(
-    client, user, users, host, hosts, space, spaces, selenium
-):
+    client: str,
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: Mapping[str, str],
+    selenium: SeleniumDrivers,
+) -> None:
     if client.lower() == "rest":
         assert_recent_transfer_finished_rest(user, users, host, hosts, spaces, space)
     elif client.lower() == "web gui":
@@ -203,16 +217,16 @@ def wait_for_recent_transfer_to_finish_op(
     )
 )
 def upload_file_to_provider_browser(
-    selenium,
-    client,
-    user,
-    path,
-    provider,
-    space,
-    tmp_memory,
-    hosts,
-    tmpdir,
-):
+    selenium: SeleniumDrivers,
+    client: str,
+    user: str,
+    path: str,
+    provider: str,
+    space: str,
+    tmp_memory: TmpMemory,
+    hosts: Hosts,
+    tmpdir: LocalPath,
+) -> None:
     if client.lower() == "web gui":
         wt_visit_file_browser(selenium, provider, space, user, tmp_memory, hosts)
         upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)

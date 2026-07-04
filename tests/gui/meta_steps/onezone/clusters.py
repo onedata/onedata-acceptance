@@ -37,6 +37,8 @@ from tests.gui.steps.onezone.members import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -48,15 +50,15 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def invite_user_to_cluster(
-    selenium,
-    browser_id,
-    browser,
-    cluster,
-    hosts,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    browser: str,
+    cluster: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
     option = "Clusters"
     sub_item = "Members"
     button = "Invite user using token"
@@ -79,7 +81,12 @@ def invite_user_to_cluster(
 
 @wt(parsers.parse("user of {browser_id} joins to cluster"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def join_to_cluster(selenium, browser_id, displays, clipboard):
+def join_to_cluster(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
     consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
 
 
@@ -90,8 +97,13 @@ def join_to_cluster(selenium, browser_id, displays, clipboard):
     )
 )
 def change_privilege_config_in_cluster(
-    selenium, browser_id, where, user_name, hosts, config
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    where: str,
+    user_name: str,
+    hosts: Hosts,
+    config: str,
+) -> None:
     member_type = "user"
     list_type = "users"
     option = "sets"
@@ -120,13 +132,13 @@ def change_privilege_config_in_cluster(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_cluster(
-    selenium,
-    browser_id,
-    hosts,
-    group_name,
-    cluster_name,
-    tmp_memory,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    hosts: Hosts,
+    group_name: str,
+    cluster_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     sidebar = "CLUSTERS"
     menu_option = "Members"
     sub_item = "Add one of your groups"
@@ -167,14 +179,14 @@ def add_group_to_cluster(
     )
 )
 def no_member_in_parent(
-    selenium,
-    browser_id,
-    member_name,
-    member_type,
-    name,
-    tmp_memory,
-    where,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    member_name: str,
+    member_type: str,
+    name: str,
+    tmp_memory: TmpMemory,
+    where: str,
+) -> None:
     try:
         remove_member_from_parent(
             selenium,
@@ -192,14 +204,14 @@ def no_member_in_parent(
 @wt(parsers.parse('user of {browser_id} remembers "{provider}" cluster id'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remember_cluster_id(
-    selenium,
-    browser_id,
-    provider,
-    hosts,
-    tmp_memory,
-    clipboard,
-    displays,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
     option = "Copy ID"
     click_on_record_in_clusters_menu(selenium, browser_id, provider, hosts)
     click_cluster_menu_button(selenium, browser_id, provider, hosts)
@@ -224,14 +236,14 @@ def remember_cluster_id(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_gui_settings(
-    selenium,
-    browser_id,
-    record,
-    hosts,
-    kind_of_agreement,
-    text,
-    operation,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    record: str,
+    hosts: Hosts,
+    kind_of_agreement: str,
+    text: str,
+    operation: str,
+) -> None:
     menu = "Clusters"
     option = "GUI settings"
     box = kind_of_agreement + " input"
@@ -259,7 +271,9 @@ def set_gui_settings(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def insert_setting_link(selenium, browser_id, kind_of_agreement):
+def insert_setting_link(
+    selenium: SeleniumDrivers, browser_id: str, kind_of_agreement: str
+) -> None:
     link = "insert " + kind_of_agreement + " link"
     button = "save cookie consent notification"
     click_button_in_gui_settings_page(selenium, browser_id, link)

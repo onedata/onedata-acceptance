@@ -16,5 +16,5 @@ class Options(PageObject):
 class SharesRowMenu(PageObject):
     options = WebItemsSequence(".share-actions.dropdown-menu a.clickable", cls=Options)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Shares row menu"

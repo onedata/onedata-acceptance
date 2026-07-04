@@ -13,7 +13,13 @@ import time
 from itertools import chain
 
 
-def start_session(display, screens, screen_width, screen_height, screen_depth):
+def start_session(
+    display: int,
+    screens: list[int],
+    screen_width: int,
+    screen_height: int,
+    screen_depth: int,
+) -> sp.Popen[bytes]:
     whd = f"{screen_width}x{screen_height}x{screen_depth}"
     cmd = ["Xvfb", "-br", "-nolisten", "tcp", f":{display}"]
     for screen in screens:
@@ -31,7 +37,7 @@ def start_session(display, screens, screen_width, screen_height, screen_depth):
     return proc
 
 
-def stop_session(proc):
+def stop_session(proc: sp.Popen[bytes]) -> None:
     try:
         proc.terminate()
         proc.wait()
@@ -40,7 +46,7 @@ def stop_session(proc):
             raise
 
 
-def find_free_display(min_display_num=1005):
+def find_free_display(min_display_num: int = 1005) -> int:
     tmp_dir = tempfile.gettempdir()
     lock_files = fnmatch.filter(os.listdir(tmp_dir), ".X*-lock")
     displays_in_use = (

@@ -4,26 +4,39 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import pytest
 import asyncio
 import threading
+from collections.abc import Generator
+from concurrent.futures import CancelledError, Future
+from typing import NamedTuple, Protocol
 
-from typing import NamedTuple, Callable
+import pytest
 
 from tests.mixed.utils.sse_utils import SpaceFilesMonitorClientImpl
 
-from concurrent.futures._base import CancelledError
+
+class StartMonitor(Protocol):
+    def __call__(
+        self,
+        *,
+        oneprovider_authority: str,
+        space_id: str,
+        token: str,
+        observed_dirs: list[str],
+        observed_attrs: list[str],
+        verify_ssl: bool = False,
+    ) -> SpaceFilesMonitorClientImpl: ...
 
 
 class MonitorEntry(NamedTuple):
     monitor: SpaceFilesMonitorClientImpl
     # Future representing the background execution of monitor.run()
     # used for cancellation and graceful shutdown.
-    future: asyncio.Future
+    future: Future[None]
 
 
 @pytest.fixture(scope="function")
-def async_loop_in_thread() -> asyncio.AbstractEventLoop:
+def async_loop_in_thread() -> Generator[asyncio.AbstractEventLoop, None, None]:
     """
     Runs asyncio event loop in another thread,
     in order to run coroutines from sync code
@@ -31,7 +44,7 @@ def async_loop_in_thread() -> asyncio.AbstractEventLoop:
     """
     loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
 
-    def runner():
+    def runner() -> None:
         asyncio.set_event_loop(loop)
         try:
             loop.run_forever()
@@ -54,7 +67,10 @@ def monitors() -> list[MonitorEntry]:
 
 
 @pytest.fixture(scope="function")
-def space_files_monitor_factory(async_loop_in_thread, monitors) -> Callable[..., SpaceFilesMonitorClientImpl]:
+def space_files_monitor_factory(
+    async_loop_in_thread: asyncio.AbstractEventLoop,
+    monitors: list[MonitorEntry],
+) -> Generator[StartMonitor, None, None]:
     """
     Fixture, which returns function responsible for creating and running monitor SSE
     """
@@ -93,7 +109,8 @@ def space_files_monitor_factory(async_loop_in_thread, monitors) -> Callable[...,
         # Give the event loop one tick so the cancelled task can process its
         # CancelledError and finish cleanly before we call future.result()
         asyncio.run_coroutine_threadsafe(
-            asyncio.sleep(0), async_loop_in_thread).result()
+            asyncio.sleep(0), async_loop_in_thread
+        ).result()
         try:
             future.result(timeout=1)
         except CancelledError:

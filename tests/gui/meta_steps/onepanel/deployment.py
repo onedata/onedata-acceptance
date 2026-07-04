@@ -29,7 +29,10 @@ from tests.gui.steps.onepanel.deployment import (
     wt_type_text_to_in_box_in_deployment_step5,
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
+from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 
 
 @wt(
@@ -39,7 +42,13 @@ from tests.utils.bdd_utils import parsers, wt
         "configuration:\n{config}"
     )
 )
-def setup_step1(selenium, browser_id, host_regexp, config, hosts):
+def setup_step1(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    host_regexp: str,
+    config: str,
+    hosts: Hosts,
+) -> None:
     """
     config:
 
@@ -54,7 +63,13 @@ def setup_step1(selenium, browser_id, host_regexp, config, hosts):
     _setup_step1(selenium, browser_id, host_regexp, config, hosts)
 
 
-def _setup_step1(selenium, browser_id, host_regexp, configuration, hosts):
+def _setup_step1(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    host_regexp: str,
+    configuration: str,
+    hosts: Hosts,
+) -> None:
     config = yaml.load(configuration, yaml.Loader)
     options = config.get("options", [])
     step = "step 1"
@@ -95,8 +110,12 @@ def _parse_zone_data(zone_name: str, zone_domain: str) -> Tuple[str, str]:
 
 
 def _setup_onezone_in_step1(
-    selenium, browser_id, zone_for_name, zone_for_domain, hosts
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    zone_for_name: str,
+    zone_for_domain: str,
+    hosts: Hosts,
+) -> None:
     step = "step 1"
 
     name_property = "name"
@@ -129,7 +148,7 @@ def _setup_onezone_in_step1(
         "setup DNS step and proceeds"
     )
 )
-def setup_dns(selenium, browser_id):
+def setup_dns(selenium: SeleniumDrivers, browser_id: str) -> None:
     wt_click_perform_check_in_dns_setup_step(selenium, browser_id)
     wt_click_proceed_in_dns_setup_step(selenium, browser_id)
     wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id)
@@ -143,15 +162,15 @@ def setup_dns(selenium, browser_id):
     )
 )
 def enable_provider_cluster_registration_for_user(
-    selenium,
-    browser_id,
-    user_login,
-    browser_id2,
-    users,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    user_login: str,
+    browser_id2: str,
+    users: Users,
+    tmp_memory: TmpMemory,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
     last_step_btn = "Manage cluster via onezone"
     last_step = "last step"
     wt_click_on_btn_in_deployment_step(selenium, browser_id, last_step_btn, last_step)
@@ -174,7 +193,9 @@ def enable_provider_cluster_registration_for_user(
         "{config}"
     )
 )
-def setup_step2(selenium, browser_id, hosts, config):
+def setup_step2(
+    selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, config: str
+) -> None:
     """
     provider: provider_name
     request a subdomain: True/False
@@ -184,7 +205,12 @@ def setup_step2(selenium, browser_id, hosts, config):
     time.sleep(5)
 
 
-def _setup_step2(selenium, browser_id, hosts, configuration):
+def _setup_step2(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    hosts: Hosts,
+    configuration: str,
+) -> None:
     config = yaml.load(configuration, yaml.Loader)
     provider_for_name, provider_for_domain = _parse_provider(
         config["name"], config["domain"]
@@ -249,7 +275,9 @@ def _parse_provider(provider_name: str, provider_domain: str) -> Tuple[str, str]
         "process in Onepanel with following config:\n{config}"
     )
 )
-def add_storage_in_step5(selenium, browser_id, config):
+def add_storage_in_step5(
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     """
     storage type: type of storage
     storage name: name of storage
@@ -257,7 +285,9 @@ def add_storage_in_step5(selenium, browser_id, config):
     _add_storage_in_step5(selenium, browser_id, config)
 
 
-def _add_storage_in_step5(selenium, browser_id, configuration):
+def _add_storage_in_step5(
+    selenium: SeleniumDrivers, browser_id: str, configuration: str
+) -> None:
     config = yaml.load(configuration, yaml.Loader)
     storage_type = config["storage type"]
     name = config["name"]

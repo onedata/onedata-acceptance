@@ -4,6 +4,9 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.web_elements import (
     Label,
@@ -11,8 +14,10 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.generic import AlertPopup
 from tests.utils.utils import repeat_failed
 
+from .alert_info_popup import AlertInfoPopup
 from .archive_row_menu import ArchiveRowMenu
 from .boolean_values import BooleanValues
 from .chart_statistics import ChartStatistics
@@ -135,18 +140,23 @@ class Popups:
     workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
+    alert_info_popup = WebItem(".alert-info", cls=AlertInfoPopup)
+    alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "popups"
 
-    def is_upload_presenter(self):
+    def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
+        return self.alert_info_popups[alert_popup.value]
+
+    def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0
 
     @repeat_failed(timeout=10)
-    def get_query_builder_not_hidden_popup(self):
+    def get_query_builder_not_hidden_popup(self) -> ExpressionBuilderPopup:
         for popup in self.query_builder_popups:
             if popup.web_elem.is_displayed():
                 return popup
