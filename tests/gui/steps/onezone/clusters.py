@@ -369,5 +369,7 @@ def go_to_agreement_page(
     selenium: SeleniumDrivers, browser_id: str, kind_of_agreement: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).profile.profile()
+    oz_page = OZLoggedIn(driver)
+    oz_page.expand_panel_if_needed()
+    oz_page.profile.profile()
     Popups(driver).user_account_menu.options[kind_of_agreement].click()

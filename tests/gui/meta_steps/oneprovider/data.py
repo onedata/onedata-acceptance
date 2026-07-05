@@ -228,9 +228,7 @@ def see_items_in_op_gui(
 
     try:
         option_in_menu = "Data"
-        _click_on_option_in_the_sidebar(
-            selenium, browser_id, option_in_menu
-        )
+        _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu)
         option = "Files"
         _click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space, option, force=False
