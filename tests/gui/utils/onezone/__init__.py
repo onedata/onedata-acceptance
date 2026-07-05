@@ -62,6 +62,11 @@ class OZLoggedIn:
         return [p for p in self._panels if p.text.lower() == name.lower()]
 
     def get_panel_by_name(self, name: str) -> SeleniumWebElement:
+        if not self.is_panel_expanded():
+            raise RuntimeError(
+                f'cannot get "{name}" panel, because main panel is not expanded'
+            )
+
         panel_found = self.find_panels_with_name(name)
         if panel_found:
             return panel_found[0]
@@ -73,7 +78,8 @@ class OZLoggedIn:
 
         if alternate_name:
             return self.find_panels_with_name(alternate_name)[0]
-        return self.find_panels_with_name(name)[0]
+
+        raise RuntimeError(f'no "{name}" on {self} found')
 
     def is_panel_clicked(self, item: str) -> bool:
         panel = self.get_panel_by_name(item)

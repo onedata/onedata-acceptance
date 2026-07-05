@@ -240,12 +240,13 @@ def _click_on_option_in_the_sidebar(
 ) -> PageObject:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    name = str(option).lower()
+    option = option.lower()
+    oz_page = OZLoggedIn(driver)
     # call get_page in Onezone page
-    if force or not OZLoggedIn(driver).is_panel_clicked(name):
-        page = OZLoggedIn(driver).open_page_and_click(name)
+    if force or not oz_page.is_panel_expanded() or not oz_page.is_panel_clicked(option):
+        page = oz_page.open_page_and_click(option)
         return page
-    return getattr(OZLoggedIn(driver), name)
+    return getattr(oz_page, option)
 
 
 @wt(
