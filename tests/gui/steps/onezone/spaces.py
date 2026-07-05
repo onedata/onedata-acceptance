@@ -193,7 +193,7 @@ def click_on_automation_option_in_the_sidebar(
 def click_on_option_in_the_sidebar(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    _click_on_option_in_the_sidebar(selenium, browser_id, option, force=True)
+    _click_on_option_in_the_sidebar(selenium, browser_id, option)
 
 
 @wt(
@@ -235,15 +235,13 @@ def close_sidebar_by_click_on_background(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _click_on_option_in_the_sidebar(
-    selenium: SeleniumDrivers, browser_id: str, option: str, force: bool = True
+    selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> PageObject:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     option = option.lower()
     oz_page = OZLoggedIn(driver)
     # call get_page in Onezone page
-    if force:
-        return oz_page.get_page(option, click=True)
     return oz_page.get_page(option, click=True)
 
 
