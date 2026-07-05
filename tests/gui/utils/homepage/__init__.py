@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import cast
+from typing import Literal, cast
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -19,13 +19,15 @@ from tests.gui.utils.homepage.documentation import (
     QuickStartPage,
 )
 
+PageName = Literal["how it works", "quick start", "api", "docs"]
+
 
 class Homepage:
     _panels = WebElementsSequence(".nav-list .nav-link")
 
-    panels_classes: dict[str, type[PageObject]] = {
-        "how_it_works": HowItWorksPage,
-        "quick_start": QuickStartPage,
+    panels_classes: dict[PageName, type[PageObject]] = {
+        "how it works": HowItWorksPage,
+        "quick start": QuickStartPage,
         "api": APIPage,
         "docs": DocsPage,
     }
@@ -36,14 +38,10 @@ class Homepage:
     def __str__(self) -> str:
         return "Onedata Docs page"
 
-    def open_page_and_click(self, item: str) -> PageObject:
-        return self.get_page(item, True)
-
-    def get_panel_by_name(self, name: str) -> WebElement:
+    def get_panel_by_name(self, name: PageName) -> WebElement:
         return [p for p in self._panels if p.text.lower() == name.lower()][0]
 
-    def get_page(self, item: str, click: bool = False) -> PageObject:
-        item = item.lower()
+    def get_page(self, item: PageName, click: bool = False) -> PageObject:
         cls = self.panels_classes.get(item, None)
         if cls:
             panel = self.get_panel_by_name(item)
@@ -52,18 +50,22 @@ class Homepage:
             return cls(self.web_elem, self.web_elem, parent=self)
         raise RuntimeError(f'no "{item}" on {self} found')
 
+    def _panel_page(self, name: PageName) -> PageObject:
+        page_cls = self.panels_classes[name]
+        return page_cls(self.web_elem, self.web_elem, parent=self)
+
     @property
     def how_it_works(self) -> HowItWorksPage:
-        return cast(HowItWorksPage, self.get_page("how_it_works"))
+        return cast(HowItWorksPage, self._panel_page("how it works"))
 
     @property
     def quick_start(self) -> QuickStartPage:
-        return cast(QuickStartPage, self.get_page("quick_start"))
+        return cast(QuickStartPage, self._panel_page("quick start"))
 
     @property
     def api(self) -> APIPage:
-        return cast(APIPage, self.get_page("api"))
+        return cast(APIPage, self._panel_page("api"))
 
     @property
     def docs(self) -> DocsPage:
-        return cast(DocsPage, self.get_page("docs"))
+        return cast(DocsPage, self._panel_page("docs"))

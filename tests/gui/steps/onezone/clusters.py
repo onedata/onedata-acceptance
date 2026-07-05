@@ -29,7 +29,7 @@ def click_button_in_cluster_page(
 ) -> None:
     driver = selenium[browser_id]
     getattr(
-        OZLoggedIn(driver).open_page_and_click("clusters"), transform(button)
+        OZLoggedIn(driver).get_page("clusters", click=True), transform(button)
     ).click()
 
 
@@ -65,7 +65,7 @@ def assert_record_in_clusters_menu(
 
 def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence:
     driver = selenium[browser_id]
-    return OZLoggedIn(driver).open_page_and_click("clusters").menu
+    return OZLoggedIn(driver).get_page("clusters", click=True).menu
 
 
 def _get_cluster_record(

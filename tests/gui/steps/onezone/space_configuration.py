@@ -165,9 +165,8 @@ def check_header_info_in_space_configuration(
     selenium: SeleniumDrivers, browser_id: str, label_info: str
 ) -> None:
     driver = selenium[browser_id]
-    header_label_message = OZLoggedIn(
-        driver
-    ).data.configuration_page.header_label_warning
+    configuration_page = OZLoggedIn(driver).data.configuration_page
+    header_label_message = configuration_page.header_label_warning
     err_msg = f"expected {label_info} header label instead of {header_label_message}"
     assert header_label_message == str(label_info), err_msg
 

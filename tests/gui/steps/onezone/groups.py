@@ -27,7 +27,7 @@ from tests.utils.utils import repeat_failed
 def click_create_group_button_in_panel(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    OZLoggedIn(selenium[browser_id]).open_page_and_click("groups").create_group()
+    OZLoggedIn(selenium[browser_id]).get_page("groups", click=True).create_group()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into group name text field'))
@@ -66,7 +66,7 @@ def assert_group_exists(
     for browser_id in parse_seq(browser_ids):
         groups_count = len(
             _find_groups(
-                OZLoggedIn(selenium[browser_id]).open_page_and_click("groups"),
+                OZLoggedIn(selenium[browser_id]).get_page("groups", click=True),
                 group,
             )
         )
@@ -104,7 +104,7 @@ def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) ->
 def go_to_group_subpage(
     selenium: SeleniumDrivers, browser_id: str, group: str, subpage: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id]).open_page_and_click("groups")
+    page = OZLoggedIn(selenium[browser_id]).get_page("groups", click=True)
     page.groups_list[group]()
     if subpage != "main":
         getattr(page.groups_list[group], subpage)()

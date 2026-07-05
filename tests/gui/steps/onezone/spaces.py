@@ -40,13 +40,10 @@ SPACE_TABS = [
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _choose_space_from_menu_list(
-    driver: WebDriver, name: str, open_oz_page: bool = True
-) -> None:
+def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
     option = "data"
     # select data in main menu if not selected
-    if open_oz_page:
-        OZLoggedIn(driver).open_page_and_click(option)
+    OZLoggedIn(driver).get_page(option, click=True)
     click_on_space_in_menu_list(driver, name)
 
 
@@ -246,8 +243,8 @@ def _click_on_option_in_the_sidebar(
     oz_page = OZLoggedIn(driver)
     # call get_page in Onezone page
     if force:
-        return oz_page.get_page(option, True)
-    return oz_page.open_page_and_click(option)
+        return oz_page.get_page(option, click=True)
+    return oz_page.get_page(option, click=True)
 
 
 @wt(
@@ -266,7 +263,7 @@ def click_element_on_lists_on_left_sidebar_menu(
     if page_name == "spaces":
         try:
             _choose_space_from_menu_list(driver, name)
-            _choose_space_from_menu_list(driver, name, open_oz_page=False)
+            _choose_space_from_menu_list(driver, name)
         except ElementClickInterceptedException:
             pass
     else:
@@ -281,7 +278,7 @@ def click_element_on_lists_on_left_sidebar_menu(
 def get_list_element_on_subpage_in_oz_page(
     driver: WebDriver, page_name: str, option: ListElement, elem_name: str
 ) -> Any:
-    page = OZLoggedIn(driver).open_page_and_click(page_name)
+    page = OZLoggedIn(driver).get_page(page_name, click=True)
     elements_list = getattr(page, f"{option.value}_list")
     return elements_list[elem_name]
 
@@ -537,7 +534,7 @@ def check_number_of_providers_on_the_map_on_data_page(
     expected_number = 0 if correct_number == "no" else int(correct_number)
     driver = selenium[browser_id]
     current_page = getattr(
-        OZLoggedIn(driver).open_page_and_click("data"), _get_subpage_name(page)
+        OZLoggedIn(driver).get_page("data", click=True), _get_subpage_name(page)
     )
     number_providers = len(current_page.map.providers)
     error_msg = f"found {number_providers} instead of {expected_number}"

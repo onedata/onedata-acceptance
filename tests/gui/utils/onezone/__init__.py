@@ -13,6 +13,7 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
+from tests.utils.utils import cast
 
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage
@@ -28,7 +29,7 @@ from .uploads_page import UploadsPage
 
 class OZLoggedIn:
     _atlas = WebElement(".onezone-atlas")
-    _sidebar_menu = WebElement(".main-menu-content")
+    _sidebar_menu = WebElement(".main-menu-column")
     _panels = WebElementsSequence(".main-menu-content li.main-menu-item")
     _profile = WebElement(".app-layout")
 
@@ -47,6 +48,7 @@ class OZLoggedIn:
         "discovery": DiscoveryPage,
         "automation": AutomationPage,
         "clusters": ClustersPage,
+        "cluster": ClustersPage,
     }
 
     def __init__(self, driver: WebDriver) -> None:
@@ -55,115 +57,109 @@ class OZLoggedIn:
     def __str__(self) -> str:
         return "Onezone page"
 
-    def open_page_and_click(self, item: str) -> Any:
-        item = item.lower()
-        if item in self.panels_classes:
-            return self.get_page(item, click=not self.is_page_open(item))
-        return self.get_page(item, True)
-
     def is_page_open(self, item: str) -> bool:
-        return self.is_panel_expanded() and self.is_panel_clicked(item)
+        return self.is_panel_menu_expanded() and self.is_panel_active(item)
 
-    def find_panels_with_name(self, name: str) -> list[SeleniumWebElement]:
+    def find_panels_with_name(self, name: str) -> list[WebElement]:
         return [p for p in self._panels if p.text.lower() == name.lower()]
 
+    def _element_has_class(
+        self,
+        element: SeleniumWebElement,
+        class_name: str,
+    ) -> bool:
+        element_class = element.get_attribute("class") or ""
+        return class_name in element_class
+
+    def _panel_has_class(self, item: str, class_name: str) -> bool:
+        return self._element_has_class(self.get_panel_by_name(item), class_name)
+
+    def is_panel_menu_expanded(self) -> bool:
+        return self._element_has_class(self._sidebar_menu, "expanded")
+
+    def is_panel_disabled(self, item: str) -> bool:
+        return self._panel_has_class(item, "disabled")
+
+    def is_panel_active(self, item: str) -> bool:
+        return self._panel_has_class(item, "active")
+
+    def is_panel_selected(self, item: str) -> bool:
+        return self._panel_has_class(item, "selected")
+
     def get_panel_by_name(self, name: str) -> SeleniumWebElement:
-        if not self.is_panel_expanded():
+        if not self.is_panel_menu_expanded():
             raise RuntimeError(
                 f'cannot get "{name}" panel, because main panel is not expanded'
             )
-
-        panel_found = self.find_panels_with_name(name)
-        if panel_found:
-            return panel_found[0]
-
-        alternate_name = {
-            "cluster": "clusters",
-            "clusters": "cluster",
-        }.get(name)
-
-        if alternate_name:
-            return self.find_panels_with_name(alternate_name)[0]
-
+        for panel in self._panels:
+            panel_name = panel.text.lower()
+            if panel_name == name.lower() and not self.is_panel_disabled(panel_name):
+                return panel
         raise RuntimeError(f'no "{name}" on {self} found')
-
-    def is_panel_clicked(self, item: str) -> bool:
-        panel = self.get_panel_by_name(item)
-        return any(el in panel.get_attribute("class") for el in ["active", "selected"])
-
-    def is_panel_disabled(self, item: str) -> bool:
-        panel = self.get_panel_by_name(item)
-        return "disabled" in panel.get_attribute("class")
 
     def click_on_sidebar_menu_panel(self, name: str) -> None:
         panel = self.get_panel_by_name(name)
         panel.click()
 
-    def is_panel_expanded(self) -> bool:
-        return self._panels[0].text == "DATA"
-
-    def expand_panel(self) -> None:
-        if self.is_panel_expanded():
+    def expand_panel_if_needed(self) -> None:
+        if self.is_panel_menu_expanded():
             return
         ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
         for _ in range(20):
-            if self.is_panel_expanded():
+            if self.is_panel_menu_expanded():
                 return
             time.sleep(0.1)
         raise RuntimeError("did not manage to expand main panel")
 
+    def _panel_page(self, name: str) -> PageObject:
+        page_cls = self.panels_classes[name]
+        return page_cls(self.web_elem, self.web_elem, parent=self)
+
     def get_page(self, item: str, click: bool = False) -> Any:
         item = item.lower()
-        cls = self.panels_classes.get(item, None)
-        if cls:
-            if click:
-                self.expand_panel()
-                self.click_on_sidebar_menu_panel(item)
-            return cls(self.web_elem, self.web_elem, parent=self)
-        if item == "profile":
-            self.expand_panel()
-            return ManageAccountPage(self.web_elem, self._profile, self)
-        if item == "uploads":
-            self.expand_panel()
-            return UploadsPage(self.web_elem, self.web_elem, self)
-        raise RuntimeError(f'no "{item}" on {self} found')
+        if item not in self.panels_classes:
+            raise RuntimeError(f'no "{item}" on {self} found')
+        self.expand_panel_if_needed()
+        if click:
+            self.click_on_sidebar_menu_panel(item)
+        return self._panel_page(item)
 
     @property
     def data(self) -> DataPage:
-        return self.get_page("data")
+        return cast(DataPage, self._panel_page("data"))
 
     @property
     def shares(self) -> SharesPage:
-        return self.get_page("shares")
+        return cast(SharesPage, self._panel_page("shares"))
 
     @property
     def providers(self) -> ProvidersPage:
-        return self.get_page("providers")
+        return cast(ProvidersPage, self._panel_page("providers"))
 
     @property
     def groups(self) -> GroupsPage:
-        return self.get_page("groups")
+        return cast(GroupsPage, self._panel_page("groups"))
 
     @property
     def tokens(self) -> TokensPage:
-        return self.get_page("tokens")
+        return cast(TokensPage, self._panel_page("tokens"))
 
     @property
     def discovery(self) -> DiscoveryPage:
-        return self.get_page("discovery")
+        return cast(DiscoveryPage, self._panel_page("discovery"))
 
     @property
     def automation(self) -> AutomationPage:
-        return self.get_page("automation")
+        return cast(AutomationPage, self._panel_page("automation"))
 
     @property
     def clusters(self) -> ClustersPage:
-        return self.get_page("clusters")
+        return cast(ClustersPage, self._panel_page("clusters"))
 
     @property
     def profile(self) -> ManageAccountPage:
-        return self.get_page("profile")
+        return ManageAccountPage(self.web_elem, self._profile, parent=self)
 
     @property
     def uploads(self) -> UploadsPage:
-        return self.get_page("uploads")
+        return UploadsPage(self.web_elem, self.web_elem, parent=self)

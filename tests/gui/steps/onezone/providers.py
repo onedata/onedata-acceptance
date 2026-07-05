@@ -108,7 +108,7 @@ def assert_provider_hostname_matches_test_hostname(
 ) -> None:
     driver = selenium[browser_id]
     expected_domain = f"{hosts[provider]['hostname']}.test"
-    page = OZLoggedIn(driver).open_page_and_click("providers")
+    page = OZLoggedIn(driver).get_page("providers", click=True)
     page.providers_list[0]()
     _click_copy_hostname(driver)
     displayed_domain = clipboard.paste(display=displays[browser_id])
@@ -221,7 +221,7 @@ def assert_provider_working_in_oz_panel(
 ) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    page = OZLoggedIn(driver).open_page_and_click("providers")
+    page = OZLoggedIn(driver).get_page("providers", click=True)
     try:
         provider_record = page.providers_list[provider]
         provider_record.click()
@@ -391,7 +391,7 @@ def wait_until_provider_goes_offline_by_gui(
 ) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider_name]["name"]
-    page = OZLoggedIn(driver).open_page_and_click("providers")
+    page = OZLoggedIn(driver).get_page("providers", click=True)
     time.sleep(0.5)
     provider_record = page.providers_list[provider]
     provider_record.click()
