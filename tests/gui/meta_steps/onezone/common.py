@@ -317,7 +317,7 @@ def change_password(
         " info alert"
     )
 )
-def wt_sign_in_to_onezone_as_user(
+def wt_sign_in_to_onezone_without_closing_auth_info_alert(
     selenium: SeleniumDrivers,
     browser_id: str,
     username: str,
