@@ -81,7 +81,7 @@ def assert_file_is_uploaded(
 def click_on_uploads_in_the_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver).uploads_button.click()
+    OZLoggedIn(driver).uploads_web_elem.click()
 
 
 def click_on_provider_in_uploads_sidebar_with_provider_name(

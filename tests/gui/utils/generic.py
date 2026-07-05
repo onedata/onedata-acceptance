@@ -404,6 +404,7 @@ class ListElement(Enum):
     """
 
     SHARES = "shares"
+    SHARES_SIDEBAR = "shares sidebar"
     GROUPS = "groups"
     GROUPS_HEADERS = "groups headers"
     SPACES = "spaces"

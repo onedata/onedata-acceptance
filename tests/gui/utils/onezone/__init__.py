@@ -5,14 +5,16 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Any
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
+from tests.utils.bdd_utils import Any
+from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import cast
 
 from .automation_page import AutomationPage
@@ -33,7 +35,7 @@ class OZLoggedIn:
     _panels = WebElementsSequence(".main-menu-content li.main-menu-item")
     _profile = WebElement(".app-layout")
 
-    uploads_button = WebElement(".main-menu-column .main-menu-upload-item")
+    uploads_web_elem = WebElement(".main-menu-column .main-menu-upload-item")
 
     provider_alert_message = Label(".content-info-content-container .text-center")
 
@@ -50,6 +52,10 @@ class OZLoggedIn:
         "clusters": ClustersPage,
         "cluster": ClustersPage,
     }
+    panel_aliases = {
+        "clusters": ("clusters", "cluster"),
+        "cluster": ("cluster", "clusters"),
+    }
 
     def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
@@ -57,11 +63,13 @@ class OZLoggedIn:
     def __str__(self) -> str:
         return "Onezone page"
 
-    def is_page_open(self, item: str) -> bool:
-        return self.is_panel_menu_expanded() and self.is_panel_active(item)
-
     def find_panels_with_name(self, name: str) -> list[WebElement]:
-        return [p for p in self._panels if p.text.lower() == name.lower()]
+        panel_names = self._panel_name_variants(name)
+        return [p for p in self._panels if p.text.lower() in panel_names]
+
+    def _panel_name_variants(self, name: str) -> tuple[str, ...]:
+        name = name.lower()
+        return self.panel_aliases.get(name, (name,))
 
     def _element_has_class(
         self,
@@ -91,9 +99,10 @@ class OZLoggedIn:
             raise RuntimeError(
                 f'cannot get "{name}" panel, because main panel is not expanded'
             )
+        panel_names = self._panel_name_variants(name)
         for panel in self._panels:
             panel_name = panel.text.lower()
-            if panel_name == name.lower() and not self.is_panel_disabled(panel_name):
+            if panel_name in panel_names:
                 return panel
         raise RuntimeError(f'no "{name}" on {self} found')
 
@@ -101,21 +110,24 @@ class OZLoggedIn:
         panel = self.get_panel_by_name(name)
         panel.click()
 
+    def _wait_for_panel_to_expand(self) -> None:
+        WebDriverWait(self.web_elem, WAIT_FRONTEND).until(
+            lambda _: self.is_panel_menu_expanded(),
+            message="did not manage to expand main panel",
+        )
+
     def expand_panel_if_needed(self) -> None:
         if self.is_panel_menu_expanded():
             return
         ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
-        for _ in range(20):
-            if self.is_panel_menu_expanded():
-                return
-            time.sleep(0.1)
-        raise RuntimeError("did not manage to expand main panel")
+        self._wait_for_panel_to_expand()
 
     def _panel_page(self, name: str) -> PageObject:
         page_cls = self.panels_classes[name]
         return page_cls(self.web_elem, self.web_elem, parent=self)
 
     def get_page(self, item: str, click: bool = False) -> Any:
+        # returns GenericPage subclasses
         item = item.lower()
         if item not in self.panels_classes:
             raise RuntimeError(f'no "{item}" on {self} found')
@@ -155,6 +167,10 @@ class OZLoggedIn:
     @property
     def clusters(self) -> ClustersPage:
         return cast(ClustersPage, self._panel_page("clusters"))
+
+    @property
+    def cluster(self) -> ClustersPage:
+        return self.clusters
 
     @property
     def profile(self) -> ManageAccountPage:
