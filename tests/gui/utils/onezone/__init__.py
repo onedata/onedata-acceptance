@@ -56,7 +56,13 @@ class OZLoggedIn:
         return "Onezone page"
 
     def open_page_and_click(self, item: str) -> Any:
+        item = item.lower()
+        if item in self.panels_classes:
+            return self.get_page(item, click=not self.is_page_open(item))
         return self.get_page(item, True)
+
+    def is_page_open(self, item: str) -> bool:
+        return self.is_panel_expanded() and self.is_panel_clicked(item)
 
     def find_panels_with_name(self, name: str) -> list[SeleniumWebElement]:
         return [p for p in self._panels if p.text.lower() == name.lower()]

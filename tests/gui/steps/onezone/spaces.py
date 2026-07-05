@@ -43,8 +43,7 @@ SPACE_TABS = [
 def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
     option = "data"
     # select data in main menu if not selected
-    if not OZLoggedIn(driver).is_panel_clicked(option):
-        OZLoggedIn(driver).open_page_and_click(option)
+    OZLoggedIn(driver).open_page_and_click(option)
     click_on_space_in_menu_list(driver, name)
 
 
@@ -243,10 +242,9 @@ def _click_on_option_in_the_sidebar(
     option = option.lower()
     oz_page = OZLoggedIn(driver)
     # call get_page in Onezone page
-    if force or not oz_page.is_panel_expanded() or not oz_page.is_panel_clicked(option):
-        page = oz_page.open_page_and_click(option)
-        return page
-    return getattr(oz_page, option)
+    if force:
+        return oz_page.get_page(option, True)
+    return oz_page.open_page_and_click(option)
 
 
 @wt(

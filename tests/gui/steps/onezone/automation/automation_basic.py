@@ -45,8 +45,6 @@ def click_create_automation_button_in_sidebar(
 
 def get_oz_workflow_visualizer(driver: WebDriver) -> WorkflowVisualiser:
     page = OZLoggedIn(driver)
-    if page.is_panel_clicked("automation"):
-        return page.automation.workflows_page.workflow_visualiser
     return page.open_page_and_click("automation").workflows_page.workflow_visualiser
 
 
