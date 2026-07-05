@@ -40,10 +40,13 @@ SPACE_TABS = [
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
+def _choose_space_from_menu_list(
+    driver: WebDriver, name: str, open_oz_page: bool = True
+) -> None:
     option = "data"
     # select data in main menu if not selected
-    OZLoggedIn(driver).open_page_and_click(option)
+    if open_oz_page:
+        OZLoggedIn(driver).open_page_and_click(option)
     click_on_space_in_menu_list(driver, name)
 
 
@@ -263,7 +266,7 @@ def click_element_on_lists_on_left_sidebar_menu(
     if page_name == "spaces":
         try:
             _choose_space_from_menu_list(driver, name)
-            _choose_space_from_menu_list(driver, name)
+            _choose_space_from_menu_list(driver, name, open_oz_page=False)
         except ElementClickInterceptedException:
             pass
     else:

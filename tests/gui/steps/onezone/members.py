@@ -247,7 +247,6 @@ def assert_members_number_in_space_members_tile(
     members_tile = OZLoggedIn(driver).data.overview_page.members_tile
     name = _change_membership_to_name(membership_type, subject_type)
     members_count = getattr(members_tile, name)
-
     error_msg = (
         f"found {number} {membership_type} {subject_type} instead of {members_count}"
     )
