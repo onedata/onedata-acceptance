@@ -52,20 +52,12 @@ class OZLoggedIn:
         "clusters": ClustersPage,
         "cluster": ClustersPage,
     }
-    panel_aliases = {
-        "clusters": ("clusters", "cluster"),
-        "cluster": ("cluster", "clusters"),
-    }
 
     def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
 
     def __str__(self) -> str:
         return "Onezone page"
-
-    def _panel_name_variants(self, name: str) -> tuple[str, ...]:
-        name = name.lower()
-        return self.panel_aliases.get(name, (name,))
 
     def _element_has_class(
         self,
@@ -99,10 +91,14 @@ class OZLoggedIn:
             raise RuntimeError(
                 f'cannot get "{name}" panel, because main panel is not expanded'
             )
-        panel_names = self._panel_name_variants(name)
+        name = name.lower()
         for panel in self._panels:
             panel_name = panel.text.lower()
-            if panel_name in panel_names:
+            if panel_name == name:
+                return panel
+            if name == "cluster" and panel_name == "clusters":
+                return panel
+            if name == "clusters" and panel_name == "cluster":
                 return panel
         raise RuntimeError(f'no "{name}" on {self} found')
 
