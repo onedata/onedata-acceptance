@@ -707,7 +707,7 @@ def remove_all_tokens(selenium: SeleniumDrivers, browser_id: str) -> None:
     modal = "Remove token"
 
     driver = selenium[browser_id]
-    tokens = OZLoggedIn(driver).get_page("tokens", click=True).sidebar.tokens
+    tokens = OZLoggedIn(driver).get_page("tokens").sidebar.tokens
     if len(tokens):
         tokens[0].click()
 

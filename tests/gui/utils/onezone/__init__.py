@@ -126,14 +126,16 @@ class OZLoggedIn:
         page_cls = self.panels_classes[name]
         return page_cls(self.web_elem, self.web_elem, parent=self)
 
-    def get_page(self, item: str, click: bool = False) -> Any:
+    def get_page(self, item: str) -> Any:
         # returns GenericPage subclasses
         item = item.lower()
         if item not in self.panels_classes:
             raise RuntimeError(f'no "{item}" on {self} found')
         self.expand_panel_if_needed()
-        if click:
+
+        if not self.is_panel_selected(item):
             self.click_on_sidebar_menu_panel(item)
+
         return self._panel_page(item)
 
     @property

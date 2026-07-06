@@ -209,7 +209,7 @@ def modify_task_results(
     task_option = "task"
 
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver).get_page("automation", click=True)
+    page = OZLoggedIn(driver).get_page("automation")
     lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
     lane_obj.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu[button]()

@@ -349,7 +349,7 @@ def click_element_in_members_list(
 def click_generate_token_in_subgroups_list(
     selenium: SeleniumDrivers, browser_id: str, group: str, member: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id]).get_page("groups", click=True)
+    page = OZLoggedIn(selenium[browser_id]).get_page("groups")
     page.groups_list[group]()
     page.groups_list[group].members()
     getattr(page.main_page.members, member).generate_token()
@@ -423,7 +423,7 @@ def assert_element_is_groups_child(
     child: str,
     parent: str,
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id]).get_page("groups", click=True)
+    page = OZLoggedIn(selenium[browser_id]).get_page("groups")
     page.groups_list[parent]()
     page.groups_list[parent].members()
 
@@ -535,7 +535,7 @@ def remove_member_from_parent(
     driver = selenium[browser_id]
     if where != "cluster":
         main_page = OZLoggedIn(selenium[browser_id]).get_page(
-            _change_to_tab_name(where), click=True
+            _change_to_tab_name(where)
         )
         list_name = f"{where}s_list"
         getattr(main_page, list_name)[name]()
@@ -667,7 +667,7 @@ def copy_invitation_token(
     tmp_memory: TmpMemory,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver).get_page("groups", click=True)
+    page = OZLoggedIn(driver).get_page("groups")
     page.groups_list[group]()
 
     getattr(page.main_page.members, who + "s").header.menu_button()
