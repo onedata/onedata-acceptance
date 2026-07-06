@@ -79,6 +79,10 @@ class OZLoggedIn:
         return self._element_has_class(self.get_panel_by_name(item), class_name)
 
     def is_panel_menu_expanded(self) -> bool:
+        try:
+            _ = self._sidebar_menu
+        except RuntimeError:
+            self.web_elem.switch_to.default_content()
         return self._element_has_class(self._sidebar_menu, "expanded")
 
     def is_panel_disabled(self, item: str) -> bool:

@@ -248,18 +248,16 @@ def _execute_workflow_with_input_config(
     workflow: str,
     config: str,
 ) -> None:
-    spaces = "spaces"
-    automation_workflows = "Automation Workflows"
-    tab_name = "Run workflow"
-
     try:
-        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, spaces, space)
+        click_element_on_lists_on_left_sidebar_menu(
+            selenium, browser_id, "spaces", space
+        )
     except IndexError:
         pass
     click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, automation_workflows
+        selenium, browser_id, space, "Automation Workflows"
     )
-    click_button_in_navigation_tab(selenium, browser_id, tab_name)
+    click_button_in_navigation_tab(selenium, browser_id, "Run workflow")
     choose_workflow_revision_to_run(selenium, browser_id, ordinal, workflow)
 
     # wait a moment for workflow revision to open
