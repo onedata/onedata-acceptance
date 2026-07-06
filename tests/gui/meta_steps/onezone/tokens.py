@@ -243,7 +243,6 @@ def _result_to_consume_token(
         click_modal_button(selenium, browser_id, button, modal)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def _create_token_of_type(
     selenium: SeleniumDrivers,
     browser_id: str,

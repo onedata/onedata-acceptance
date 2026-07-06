@@ -10,8 +10,14 @@ import re
 import time
 from typing import cast
 
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+    TimeoutException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_till_error_modal_stop_appearing
@@ -198,19 +204,23 @@ def wt_try_to_register_prov_using_register_btn(
     # if error modal occurred close it and repeat function execution
     wait_till_error_modal_stop_appearing(driver)
     # wait for provider registration, due to rare possibilities it can take some time
-    wait_for_provider_registration(btn)
+    wait_for_provider_registration(driver, btn)
 
 
-@repeat_failed(timeout=120)
-def wait_for_provider_registration(button: ButtonPageObject) -> None:
-    try:
-        assert (
-            not button.is_displayed()
-        ), "Provider registration is still in progress after 120s"
-    except AssertionError:
-        raise
-    except Exception:  # pylint: disable=broad-exception-caught
-        pass
+def wait_for_provider_registration(
+    driver: WebDriver, registration_btn: ButtonPageObject
+) -> None:
+
+    def is_registration_finished() -> bool:
+        try:
+            return not registration_btn.is_displayed()
+        except (NoSuchElementException, StaleElementReferenceException):
+            return True
+
+    WebDriverWait(driver, 120).until(
+        lambda _: is_registration_finished(),
+        "Provider registration is still in progress after 120s",
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

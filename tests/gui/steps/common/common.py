@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from collections.abc import Callable, Sequence
-from contextlib import suppress
 from typing import Any, Protocol, cast
 
 from selenium.common.exceptions import TimeoutException
@@ -15,7 +14,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.steps.common.url import wait_till_popup_or_modal_disappear
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
@@ -24,6 +24,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
+from tests.gui.utils.core.web_objects import ButtonPageObject
 from tests.gui.utils.generic import ListElement, transform
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.generic_page import GenericPage
@@ -260,24 +261,15 @@ def wait_for_sliding_panel_to_stop_moving(
     )
 
 
-def try_click_without_throwing_error(action: Callable[[], object]) -> None:
-
-    @repeat_failed(timeout=WAIT_FRONTEND // 2)
-    def perform(_action: Callable[[], object]) -> None:
-        _action()
-
-    with suppress(Exception):
-        perform(action)
-
-
-# Function closes error modal and repeat execution until error modal
-# will no longer appear
-@repeat_failed(timeout=WAIT_BACKEND)
 def wait_till_error_modal_stop_appearing(driver: SeleniumDrivers) -> None:
+    def error_modal_close_button(driver: SeleniumDrivers) -> ButtonPageObject:
+        return Modals(driver).error.close
+
     try:
-        time.sleep(0.2)
-        error_modal = Modals(driver).error
-        error_modal.close.click()
-        raise AssertionError(f"There is error modal {error_modal}")
-    except RuntimeError:
-        pass
+        wait_till_popup_or_modal_disappear(
+            driver=driver,
+            css_sel=".alert-global.modal.in .modal-dialog",
+            handler=error_modal_close_button,
+        )
+    except TimeoutException as exc:
+        raise AssertionError("Error modal is still visible") from exc

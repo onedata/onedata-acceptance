@@ -7,7 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import Union
+from contextlib import suppress
+from typing import Any, Callable, Union
 
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
@@ -20,7 +21,6 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import try_click_without_throwing_error
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.core.web_objects import ButtonPageObject
@@ -339,31 +339,56 @@ def wait_till_main_content_loaded(driver: WebDriver) -> None:
     assert len(elems) > 0, "did not manage to load main page"
 
 
-def wait_till_alert_info_popup_disappear(
+def try_click_without_throwing_error(action: Callable[[], object]) -> None:
+
+    @repeat_failed(timeout=WAIT_FRONTEND // 2)
+    def perform(_action: Callable[[], object]) -> None:
+        _action()
+
+    with suppress(Exception):
+        perform(action)
+
+
+def wait_till_popup_or_modal_disappear(
     driver: WebDriver,
-    alert_popup: AlertPopup,
+    css_sel: str,
+    handler: Callable[..., ButtonPageObject],
+    *args: Any,
 ) -> None:
-    # If popup don't appear don't throw error
-    # If appeared and not closed raise
-    css_sel = ".alert-info"
     try:
         WebDriverWait(driver, WAIT_FRONTEND).until(
             visibility_of_element_located((By.CSS_SELECTOR, css_sel))
         )
     except TimeoutException:
-        pass
-    else:
+        return
 
-        def alert_popup_close_button() -> ButtonPageObject:
-            return Popups(driver).get_alert_popup(alert_popup).close
+    try_click_without_throwing_error(lambda: handler(driver, *args).click())
 
-        try_click_without_throwing_error(
-            lambda: alert_popup_close_button().click()
-        )  # pylint: disable=unnecessary-lambda
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        invisibility_of_element_located((By.CSS_SELECTOR, css_sel))
+    )
 
-        WebDriverWait(driver, WAIT_FRONTEND).until(
-            invisibility_of_element_located((By.CSS_SELECTOR, css_sel))
-        )
+
+def wait_till_alert_info_popup_disappear(
+    driver: WebDriver,
+    alert_popup: AlertPopup,
+) -> None:
+    # If popup doesn't appear, don't throw an error.
+    # If it appeared and was not closed, raise.
+    css_sel = ".alert-info"
+
+    def alert_popup_close_button(
+        driver: WebDriver,
+        alert_popup: AlertPopup,
+    ) -> ButtonPageObject:
+        return Popups(driver).get_alert_popup(alert_popup).close
+
+    wait_till_popup_or_modal_disappear(
+        driver,
+        css_sel,
+        alert_popup_close_button,
+        alert_popup,
+    )
 
 
 @wt(parsers.parse("if {client} is web GUI, {user} refreshes site"))
