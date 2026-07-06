@@ -42,7 +42,7 @@ def get_images_option(
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg, pull)
     add_image_to_images_cfg(rest_cli_image, 'rest-cli', '--rest-cli-image', images_cfg, pull)
 
-    if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance']:
+    if test_type in ['oneclient', 'mixed', 'performance']:
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
     elif test_type == 'gui' and env_file_name:
         env_file_path = f'tests/gui/environments/{env_file_name}.yaml'
@@ -158,7 +158,7 @@ def main():
         '--test-type', '-tt',
         action='store',
         default='oneclient',
-        help='Type of test (oneclient, mixed, onedata_fs, performance, upgrade, gui)',
+        help='Type of test (oneclient, mixed, performance, upgrade, gui)',
         dest='test_type')
 
     parser.add_argument(

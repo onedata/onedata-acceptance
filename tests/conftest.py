@@ -851,7 +851,7 @@ def start_test_env(
         scenario_path = env_description_abs_path
     elif test_type in ["oneclient", "mixed"]:
         scenario_path = scenario_abs_path
-    elif test_type in ["onedata_fs", "performance", "upgrade"]:
+    elif test_type in ["performance", "upgrade"]:
         scenario_path = scenario_abs_path
         patch = env_desc.get("patch")
         if patch is None:
