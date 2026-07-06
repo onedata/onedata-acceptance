@@ -63,10 +63,6 @@ class OZLoggedIn:
     def __str__(self) -> str:
         return "Onezone page"
 
-    def find_panels_with_name(self, name: str) -> list[WebElement]:
-        panel_names = self._panel_name_variants(name)
-        return [p for p in self._panels if p.text.lower() in panel_names]
-
     def _panel_name_variants(self, name: str) -> tuple[str, ...]:
         name = name.lower()
         return self.panel_aliases.get(name, (name,))
