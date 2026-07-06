@@ -261,7 +261,7 @@ def click_element_on_lists_on_left_sidebar_menu(
     if page_name == "spaces":
         try:
             _choose_space_from_menu_list(driver, name)
-            _choose_space_from_menu_list(driver, name)
+            click_on_space_in_menu_list(driver, name)
         except ElementClickInterceptedException:
             pass
     else:
