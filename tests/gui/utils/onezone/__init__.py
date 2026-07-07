@@ -12,8 +12,8 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
-from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.gui.utils.generic import PageName
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import element_has_class, repeat_failed
 
@@ -28,11 +28,11 @@ from .shares_page import SharesPage
 from .tokens_page import TokensPage
 from .uploads_page import UploadsPage
 
-PageT = TypeVar("PageT", bound=GenericPage)
+PageT = TypeVar("PageT", bound=SidebarPanelPage)
 
 
 class OZLoggedIn:
-    _page_class_by_name: ClassVar[dict[PageName, type[GenericPage]]] = {
+    _page_class_by_name: ClassVar[dict[PageName, type[SidebarPanelPage]]] = {
         "data": DataPage,
         "shares": SharesPage,
         "providers": ProvidersPage,
@@ -62,7 +62,7 @@ class OZLoggedIn:
         return "Onezone page"
 
     @staticmethod
-    def get_page_class(page_name: PageName) -> type[GenericPage]:
+    def get_page_class(page_name: PageName) -> type[SidebarPanelPage]:
         return OZLoggedIn._page_class_by_name[page_name]
 
     def _panel_has_class(self, item: PageName, class_name: str) -> bool:

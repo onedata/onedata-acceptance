@@ -11,7 +11,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
 
 
 class Provider(Element):
@@ -24,7 +24,7 @@ class Icon(Element):
     name = id = icon = Button(".circle")
 
 
-class ProvidersPage(GenericPage):
+class ProvidersPage(SidebarPanelPage):
     panel_name = "providers"
 
     _popover = WebElement(".webui-popover .provider-place-drop")

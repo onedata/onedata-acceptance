@@ -17,7 +17,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import InputBox
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
@@ -149,7 +149,7 @@ class Space(PageObject):
         self.menu_button.click()
 
 
-class DiscoveryPage(GenericPage):
+class DiscoveryPage(SidebarPanelPage):
     panel_name = "discovery"
 
     add_one_of_your_spaces_button = NamedButton("button", text="Add one of your spaces")

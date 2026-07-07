@@ -434,5 +434,4 @@ PageName = Literal[
     "automation",
     "clusters",
     "cluster",
-    "",  # default value for pages that are not in the sidebar menu
 ]

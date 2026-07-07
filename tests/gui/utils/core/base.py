@@ -1,12 +1,12 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from abc import ABC, ABCMeta, abstractmethod
-from typing import ClassVar, Optional, cast
+from typing import Optional, cast
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.utils.generic import PageName, click_on_web_elem
+from tests.gui.utils.generic import click_on_web_elem
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
@@ -106,10 +106,6 @@ class PageObject(AbstractPageObject):
             self._click_area,
             lambda: f"cannot click on {self}",
         )
-
-
-class SidebarPanelPage(PageObject):
-    panel_name: ClassVar[PageName] = ""
 
 
 class ExpandableMixin:

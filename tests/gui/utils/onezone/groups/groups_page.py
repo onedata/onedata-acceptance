@@ -15,7 +15,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import EditBox, InputBox
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 
 from .hierarchy_subpage import GroupHierarchyPage
@@ -49,7 +49,7 @@ class MenuItem(PageObject):
         self.click()
 
 
-class GroupsPage(GenericPage):
+class GroupsPage(SidebarPanelPage):
     panel_name = "groups"
 
     groups_list = WebItemsSequence(
