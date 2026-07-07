@@ -4,18 +4,15 @@ __author__ = "Bartosz Walkowicz Michal Stanisz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
-from typing import Literal, TypeGuard, get_args
+from typing import Literal, TypeGuard, get_args, overload
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 from tests.gui.utils.onezone.generic_page import GenericPage
-from tests.utils.bdd_utils import Any
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import element_has_class
 
@@ -55,7 +52,7 @@ class OZLoggedIn:
 
     profile_username = Label(".main-menu-column .user-account-button-username")
 
-    panels_classes: dict[PageName, type[PageObject]] = {
+    panels_classes: dict[PageName, type[GenericPage]] = {
         "data": DataPage,
         "shares": SharesPage,
         "providers": ProvidersPage,
@@ -125,6 +122,33 @@ class OZLoggedIn:
             return
         ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
         self._wait_for_panel_to_expand()
+
+    @overload
+    def get_page(self, panel_name: Literal["data"]) -> DataPage: ...
+
+    @overload
+    def get_page(self, panel_name: Literal["shares"]) -> SharesPage: ...
+
+    @overload
+    def get_page(self, panel_name: Literal["providers"]) -> ProvidersPage: ...
+
+    @overload
+    def get_page(self, panel_name: Literal["groups"]) -> GroupsPage: ...
+
+    @overload
+    def get_page(self, panel_name: Literal["tokens"]) -> TokensPage: ...
+
+    @overload
+    def get_page(self, panel_name: Literal["discovery"]) -> DiscoveryPage: ...
+
+    @overload
+    def get_page(self, panel_name: Literal["automation"]) -> AutomationPage: ...
+
+    @overload
+    def get_page(self, panel_name: Literal["clusters", "cluster"]) -> ClustersPage: ...
+
+    @overload
+    def get_page(self, panel_name: PageName) -> GenericPage: ...
 
     def get_page(self, panel_name: PageName) -> GenericPage:
         # returns GenericPage subclasses

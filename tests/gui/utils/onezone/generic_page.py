@@ -31,11 +31,83 @@ class GenericPage(PageObject, metaclass=GenericPageMeta):
     name = id = Label(".row-heading .col-title")
     get_started = NamedButton(".btn-default", text="Get started")
 
+    @staticmethod
+    def _list_attr_name(list_element: ListElement) -> str:
+        return f"{list_element.value.replace(' ', '_')}_list"
+
+    def _get_items_list(self, list_element: ListElement) -> Any:
+        attr_list = self._list_attr_name(list_element)
+        for cls in type(self).__mro__:
+            if cls is GenericPage:
+                break
+            if attr_list in cls.__dict__:
+                return getattr(self, attr_list)
+        raise AttributeError(
+            f'there is not "{attr_list}" elements list member in class instance'
+        )
+
+    @property
+    def shares_list(self) -> Any:
+        return self._get_items_list(ListElement.SHARES)
+
+    @property
+    def shares_sidebar_list(self) -> Any:
+        return self._get_items_list(ListElement.SHARES_SIDEBAR)
+
+    @property
+    def groups_list(self) -> Any:
+        return self._get_items_list(ListElement.GROUPS)
+
+    @property
+    def groups_headers_list(self) -> Any:
+        return self._get_items_list(ListElement.GROUPS_HEADERS)
+
+    @property
+    def spaces_list(self) -> Any:
+        return self._get_items_list(ListElement.SPACES)
+
+    @property
+    def spaces_headers_list(self) -> Any:
+        return self._get_items_list(ListElement.SPACES_HEADERS)
+
+    @property
+    def files_list(self) -> Any:
+        return self._get_items_list(ListElement.FILES)
+
+    @property
+    def uploads_list(self) -> Any:
+        return self._get_items_list(ListElement.UPLOADS)
+
+    @property
+    def providers_list(self) -> Any:
+        return self._get_items_list(ListElement.PROVIDERS)
+
+    @property
+    def harvesters_list(self) -> Any:
+        return self._get_items_list(ListElement.HARVESTERS)
+
+    @property
+    def tokens_list(self) -> Any:
+        return self._get_items_list(ListElement.TOKENS)
+
+    @property
+    def automations_list(self) -> Any:
+        return self._get_items_list(ListElement.AUTOMATIONS)
+
+    @property
+    def lambdas_list(self) -> Any:
+        return self._get_items_list(ListElement.LAMBDAS)
+
+    @property
+    def workflows_list(self) -> Any:
+        return self._get_items_list(ListElement.WORKFLOWS)
+
     def __getitem__(self, item: int | str) -> Any:
         for attr in ListElement:
-            attr_list = f"{attr.value}_list"
-            if hasattr(self, attr_list):
-                return getattr(self, attr_list)[item]
+            try:
+                return self._get_items_list(attr)[item]
+            except AttributeError:
+                pass
         raise ValueError("there is not any elements list member in class instance")
 
     @staticmethod
