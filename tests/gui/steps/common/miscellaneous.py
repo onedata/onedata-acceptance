@@ -14,7 +14,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -31,7 +31,7 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(attempts=WAIT_FRONTEND)
-def _enter_text(input_box: WebElement, text: str) -> None:
+def _enter_text(input_box: SeleniumWebElement, text: str) -> None:
     input_box.clear()
     input_box.send_keys(text)
     if input_box.get_attribute("value") != text and input_box.text != text:

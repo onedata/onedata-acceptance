@@ -21,6 +21,7 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.generic import ListElement, parse_seq, transform
+from tests.gui.utils.onezone import PageName
 from tests.gui.utils.onezone.data_page import DataPage, Space
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -41,7 +42,7 @@ SPACE_TABS = [
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
-    option = "data"
+    option: PageName = "data"
     # select data in main menu if not selected
     OZLoggedIn(driver).get_page(option)
     click_on_space_in_menu_list(driver, name)
@@ -214,7 +215,7 @@ def assert_main_tab_disabled(
 ) -> None:
     driver = selenium[browser_id]
     assert OZLoggedIn(driver).is_panel_disabled(
-        tab.lower()
+        OZLoggedIn.get_page_name_from_str(tab)
     ), f"tab {tab} should be disabled but is not"
 
 
@@ -239,10 +240,9 @@ def _click_on_option_in_the_sidebar(
 ) -> PageObject:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    option = option.lower()
     oz_page = OZLoggedIn(driver)
     # call get_page in Onezone page
-    return oz_page.get_page(option)
+    return oz_page.get_page(OZLoggedIn.get_page_name_from_str(option))
 
 
 @wt(
@@ -276,7 +276,7 @@ def click_element_on_lists_on_left_sidebar_menu(
 def get_list_element_on_subpage_in_oz_page(
     driver: WebDriver, page_name: str, option: ListElement, elem_name: str
 ) -> Any:
-    page = OZLoggedIn(driver).get_page(page_name)
+    page = OZLoggedIn(driver).get_page(OZLoggedIn.get_page_name_from_str(page_name))
     elements_list = getattr(page, f"{option.value}_list")
     return elements_list[elem_name]
 

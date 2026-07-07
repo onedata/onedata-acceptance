@@ -16,6 +16,7 @@ from typing import Optional, ParamSpec, TypeVar, cast
 
 import pytest
 from decorator import decorator  # pylint: disable=import-error
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -124,3 +125,7 @@ def get_authors(mod: ModuleType) -> list[str]:
 
 def get_suite_description(mod: ModuleType) -> Optional[str]:
     return mod.__doc__
+
+
+def element_has_class(element: SeleniumWebElement, class_name: str) -> bool:
+    return class_name in (element.get_attribute("class") or "").split()

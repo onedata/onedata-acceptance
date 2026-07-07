@@ -57,7 +57,8 @@ def _find_members_page(driver: WebDriver, where: str) -> MembersPage:
     tab_name = _change_to_tab_name(where)
     if tab_name == "clusters":
         return Onepanel(driver).content.members
-    tab = getattr(OZLoggedIn(driver), tab_name)
+    page_name = OZLoggedIn.get_page_name_from_str(tab_name)
+    tab = getattr(OZLoggedIn(driver), page_name)
     return tab.members_page
 
 
@@ -108,7 +109,7 @@ def assert_element_is_member_of_parent_in_memberships(
     where: str,
 ) -> None:
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
+    where = OZLoggedIn.get_page_name_from_str(_change_to_tab_name(where))
     tab = getattr(OZLoggedIn(driver), where)
     records = tab.members_page.memberships
 
@@ -145,7 +146,7 @@ def assert_element_is_not_member_of_parent_in_memberships(
     parent_type: str,
 ) -> None:
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
+    where = OZLoggedIn.get_page_name_from_str(_change_to_tab_name(where))
     tab = getattr(OZLoggedIn(driver), where)
     records = tab.members_page.memberships
 
@@ -176,7 +177,7 @@ def assert_count_membership_rows(
     selenium: SeleniumDrivers, browser_id: str, number: str, where: str
 ) -> None:
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
+    where = OZLoggedIn.get_page_name_from_str(_change_to_tab_name(where))
     tab = getattr(OZLoggedIn(driver), where)
     records = tab.members_page.memberships
     count_records = len(records)
@@ -265,7 +266,7 @@ def click_relation_menu_button(
     selenium: SeleniumDrivers, browser_id: str, member_name: str, name: str, where: str
 ) -> None:
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
+    where = OZLoggedIn.get_page_name_from_str(_change_to_tab_name(where))
     tab = getattr(OZLoggedIn(driver), where)
     records = tab.members_page.memberships
 
@@ -535,7 +536,7 @@ def remove_member_from_parent(
     driver = selenium[browser_id]
     if where != "cluster":
         main_page = OZLoggedIn(selenium[browser_id]).get_page(
-            _change_to_tab_name(where)
+            OZLoggedIn.get_page_name_from_str(_change_to_tab_name(where))
         )
         list_name = f"{where}s_list"
         getattr(main_page, list_name)[name]()

@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Literal, TypeGuard, get_args
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -13,9 +14,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
+from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.utils.bdd_utils import Any
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
-from tests.utils.utils import cast
+from tests.utils.utils import element_has_class
 
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage
@@ -27,6 +29,18 @@ from .providers_page import ProvidersPage
 from .shares_page import SharesPage
 from .tokens_page import TokensPage
 from .uploads_page import UploadsPage
+
+PageName = Literal[
+    "data",
+    "shares",
+    "providers",
+    "groups",
+    "tokens",
+    "discovery",
+    "automation",
+    "clusters",
+    "cluster",
+]
 
 
 class OZLoggedIn:
@@ -41,7 +55,7 @@ class OZLoggedIn:
 
     profile_username = Label(".main-menu-column .user-account-button-username")
 
-    panels_classes: dict[str, type[PageObject]] = {
+    panels_classes: dict[PageName, type[PageObject]] = {
         "data": DataPage,
         "shares": SharesPage,
         "providers": ProvidersPage,
@@ -50,7 +64,9 @@ class OZLoggedIn:
         "discovery": DiscoveryPage,
         "automation": AutomationPage,
         "clusters": ClustersPage,
-        "cluster": ClustersPage,
+        "cluster": (
+            ClustersPage
+        ),  # sometimes the panel is called "cluster" instead of "clusters" in the gui
     }
 
     def __init__(self, driver: WebDriver) -> None:
@@ -59,51 +75,43 @@ class OZLoggedIn:
     def __str__(self) -> str:
         return "Onezone page"
 
-    def _element_has_class(
-        self,
-        element: SeleniumWebElement,
-        class_name: str,
-    ) -> bool:
-        element_class = element.get_attribute("class") or ""
-        return class_name in element_class
-
-    def _panel_has_class(self, item: str, class_name: str) -> bool:
-        return self._element_has_class(self.get_panel_by_name(item), class_name)
+    def _panel_has_class(self, item: PageName, class_name: str) -> bool:
+        return element_has_class(self.get_panel_by_name(item), class_name)
 
     def is_panel_menu_expanded(self) -> bool:
         try:
             _ = self._sidebar_menu
         except RuntimeError:
             self.web_elem.switch_to.default_content()
-        return self._element_has_class(self._sidebar_menu, "expanded")
+        return element_has_class(self._sidebar_menu, "expanded")
 
-    def is_panel_disabled(self, item: str) -> bool:
-        return self._panel_has_class(item, "disabled")
+    def is_panel_disabled(self, panel_name: PageName) -> bool:
+        return self._panel_has_class(panel_name, "disabled")
 
-    def is_panel_active(self, item: str) -> bool:
-        return self._panel_has_class(item, "active")
+    def is_panel_active(self, panel_name: PageName) -> bool:
+        return self._panel_has_class(panel_name, "active")
 
-    def is_panel_selected(self, item: str) -> bool:
-        return self._panel_has_class(item, "selected")
+    def is_panel_selected(self, panel_name: PageName) -> bool:
+        return self._panel_has_class(panel_name, "selected")
 
-    def get_panel_by_name(self, name: str) -> SeleniumWebElement:
+    def get_panel_by_name(self, panel_name: PageName) -> SeleniumWebElement:
         if not self.is_panel_menu_expanded():
             raise RuntimeError(
-                f'cannot get "{name}" panel, because main panel is not expanded'
+                f'cannot get "{panel_name}" panel, because main panel is not expanded'
             )
-        name = name.lower()
+        expected_panel = panel_name
+        if expected_panel == "cluster":
+            expected_panel = "clusters"
+        elif expected_panel == "clusters":
+            expected_panel = "cluster"
         for panel in self._panels:
-            panel_name = panel.text.lower()
-            if panel_name == name:
+            name = panel.text.lower()
+            if name == expected_panel:
                 return panel
-            if name == "cluster" and panel_name == "clusters":
-                return panel
-            if name == "clusters" and panel_name == "cluster":
-                return panel
-        raise RuntimeError(f'no "{name}" on {self} found')
+        raise RuntimeError(f'no "{expected_panel}" on {self} found')
 
-    def click_on_sidebar_menu_panel(self, name: str) -> None:
-        panel = self.get_panel_by_name(name)
+    def click_on_sidebar_menu_panel(self, panel_name: PageName) -> None:
+        panel = self.get_panel_by_name(panel_name)
         panel.click()
 
     def _wait_for_panel_to_expand(self) -> None:
@@ -118,53 +126,60 @@ class OZLoggedIn:
         ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
         self._wait_for_panel_to_expand()
 
-    def _panel_page(self, name: str) -> PageObject:
-        page_cls = self.panels_classes[name]
-        return page_cls(self.web_elem, self.web_elem, parent=self)
-
-    def get_page(self, item: str) -> Any:
+    def get_page(self, panel_name: PageName) -> GenericPage:
         # returns GenericPage subclasses
-        item = item.lower()
-        if item not in self.panels_classes:
-            raise RuntimeError(f'no "{item}" on {self} found')
+        if panel_name not in self.panels_classes:
+            raise RuntimeError(f'no "{panel_name}" on {self} found')
         self.expand_panel_if_needed()
 
-        if not self.is_panel_selected(item):
-            self.click_on_sidebar_menu_panel(item)
+        if not self.is_panel_selected(panel_name):
+            self.click_on_sidebar_menu_panel(panel_name)
 
-        return self._panel_page(item)
+        page_cls = self.panels_classes[panel_name]
+        return page_cls(self.web_elem, self.web_elem, parent=self)
+
+    @staticmethod
+    def get_page_name_from_str(name: str) -> PageName:
+
+        def is_page_name(name: str) -> TypeGuard[PageName]:
+            return name in get_args(PageName)
+
+        name = name.lower()
+        if is_page_name(name):
+            return name
+        raise RuntimeError(f'no "{name}" Onezone page found')
 
     @property
     def data(self) -> DataPage:
-        return cast(DataPage, self._panel_page("data"))
+        return DataPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def shares(self) -> SharesPage:
-        return cast(SharesPage, self._panel_page("shares"))
+        return SharesPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def providers(self) -> ProvidersPage:
-        return cast(ProvidersPage, self._panel_page("providers"))
+        return ProvidersPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def groups(self) -> GroupsPage:
-        return cast(GroupsPage, self._panel_page("groups"))
+        return GroupsPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def tokens(self) -> TokensPage:
-        return cast(TokensPage, self._panel_page("tokens"))
+        return TokensPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def discovery(self) -> DiscoveryPage:
-        return cast(DiscoveryPage, self._panel_page("discovery"))
+        return DiscoveryPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def automation(self) -> AutomationPage:
-        return cast(AutomationPage, self._panel_page("automation"))
+        return AutomationPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def clusters(self) -> ClustersPage:
-        return cast(ClustersPage, self._panel_page("clusters"))
+        return ClustersPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def cluster(self) -> ClustersPage:
@@ -176,4 +191,4 @@ class OZLoggedIn:
 
     @property
     def uploads(self) -> UploadsPage:
-        return UploadsPage(self.web_elem, self.web_elem, parent=self)
+        return UploadsPage(self.web_elem, self.uploads_web_elem, parent=self)

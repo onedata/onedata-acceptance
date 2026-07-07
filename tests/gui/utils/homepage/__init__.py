@@ -38,34 +38,30 @@ class Homepage:
     def __str__(self) -> str:
         return "Onedata Docs page"
 
-    def get_panel_by_name(self, name: PageName) -> WebElement:
-        return [p for p in self._panels if p.text.lower() == name.lower()][0]
+    def get_panel_by_name(self, panel_name: PageName) -> WebElement:
+        return [p for p in self._panels if p.text.lower() == panel_name.lower()][0]
 
-    def get_page(self, item: PageName, click: bool = False) -> PageObject:
-        cls = self.panels_classes.get(item, None)
+    def get_page(self, panel_name: PageName, click: bool = False) -> PageObject:
+        cls = self.panels_classes.get(panel_name, None)
         if cls:
-            panel = self.get_panel_by_name(item)
+            panel = self.get_panel_by_name(panel_name)
             if click:
                 panel.click()
             return cls(self.web_elem, self.web_elem, parent=self)
-        raise RuntimeError(f'no "{item}" on {self} found')
-
-    def _panel_page(self, name: PageName) -> PageObject:
-        page_cls = self.panels_classes[name]
-        return page_cls(self.web_elem, self.web_elem, parent=self)
+        raise RuntimeError(f'no "{panel_name}" on {self} found')
 
     @property
     def how_it_works(self) -> HowItWorksPage:
-        return cast(HowItWorksPage, self._panel_page("how it works"))
+        return HowItWorksPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def quick_start(self) -> QuickStartPage:
-        return cast(QuickStartPage, self._panel_page("quick start"))
+        return QuickStartPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def api(self) -> APIPage:
-        return cast(APIPage, self._panel_page("api"))
+        return APIPage(self.web_elem, self.web_elem, parent=self)
 
     @property
     def docs(self) -> DocsPage:
-        return cast(DocsPage, self._panel_page("docs"))
+        return DocsPage(self.web_elem, self.web_elem, parent=self)
