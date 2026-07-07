@@ -23,7 +23,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import Element, GenericPage, PageName
 
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -252,6 +252,8 @@ class ArchiveHeader(PageObject):
 
 
 class DataPage(GenericPage):
+    panel_name = PageName("data")
+
     create_space_button = Button(".one-sidebar-toolbar-button .oneicon-add-filled")
 
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")

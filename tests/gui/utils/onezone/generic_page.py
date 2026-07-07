@@ -7,13 +7,25 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from abc import ABCMeta
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, Literal
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.utils.core.base import PageObject, PageObjectMeta
+from tests.gui.utils.core.base import PageObject, PageObjectMeta, SidebarPanelPage
 from tests.gui.utils.core.web_elements import Label, NamedButton
 from tests.gui.utils.generic import ListElement
 from tests.utils.utils import repeat_failed
+
+PageName = Literal[
+    "data",
+    "shares",
+    "providers",
+    "groups",
+    "tokens",
+    "discovery",
+    "automation",
+    "clusters",
+    "cluster",
+]
 
 
 class Element(PageObject):
@@ -27,7 +39,7 @@ class GenericPageMeta(PageObjectMeta, ABCMeta):
     pass  # this class is needed to avoid metaclass conflict between PageObjectMeta and ABCMeta
 
 
-class GenericPage(PageObject, metaclass=GenericPageMeta):
+class GenericPage(SidebarPanelPage, metaclass=GenericPageMeta):
     name = id = Label(".row-heading .col-title")
     get_started = NamedButton(".btn-default", text="Get started")
 

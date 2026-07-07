@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence
-from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.gui.utils.onezone.generic_page import GenericPage, PageName
 
 
 class SharesSidebarRecord(PageObject):
@@ -16,6 +16,8 @@ class SharesSidebarRecord(PageObject):
 
 
 class SharesPage(GenericPage):
+    panel_name = PageName("shares")
+
     shares_list = WebItemsSequence(
         ".sidebar-shares .one-list-item", cls=SharesSidebarRecord
     )

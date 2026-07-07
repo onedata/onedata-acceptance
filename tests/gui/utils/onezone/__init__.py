@@ -4,7 +4,7 @@ __author__ = "Bartosz Walkowicz Michal Stanisz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Literal
+from typing import Literal, TypeVar, cast
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -12,10 +12,9 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
-from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.gui.utils.onezone.generic_page import GenericPage, PageName
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import element_has_class
-
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage
 from .data_page import DataPage
@@ -27,17 +26,7 @@ from .shares_page import SharesPage
 from .tokens_page import TokensPage
 from .uploads_page import UploadsPage
 
-PageName = Literal[
-    "data",
-    "shares",
-    "providers",
-    "groups",
-    "tokens",
-    "discovery",
-    "automation",
-    "clusters",
-    "cluster",
-]
+PageT = TypeVar("PageT", bound=GenericPage)
 
 
 class OZLoggedIn:
@@ -51,20 +40,6 @@ class OZLoggedIn:
     provider_alert_message = Label(".content-info-content-container .text-center")
 
     profile_username = Label(".main-menu-column .user-account-button-username")
-
-    panels_classes: dict[PageName, type[GenericPage]] = {
-        "data": DataPage,
-        "shares": SharesPage,
-        "providers": ProvidersPage,
-        "groups": GroupsPage,
-        "tokens": TokensPage,
-        "discovery": DiscoveryPage,
-        "automation": AutomationPage,
-        "clusters": ClustersPage,
-        "cluster": (
-            ClustersPage
-        ),  # sometimes the panel is called "cluster" instead of "clusters" in the gui
-    }
 
     def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
@@ -123,8 +98,9 @@ class OZLoggedIn:
         ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
         self._wait_for_panel_to_expand()
 
-    def open_panel(self, panel_name: PageName) -> None:
+    def open_panel(self, page_cls: type[PageT]) -> None:
         self.expand_panel_if_needed()
+        panel_name = page_cls.panel_name
         if not self.is_panel_selected(panel_name):
             self.click_on_sidebar_menu_panel(panel_name)
 

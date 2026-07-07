@@ -16,7 +16,7 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.generic import rm_css_cls
 from tests.gui.utils.onezone.common import EditBox, InputBox
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import Element, GenericPage, PageName
 from tests.gui.utils.onezone.lambdas_subpage import LambdasPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.gui.utils.onezone.workflows_subpage import WorkflowsPage
@@ -41,6 +41,8 @@ class AutomationDetailsPage(PageObject):
 
 
 class AutomationPage(GenericPage):
+    panel_name = PageName("automation")
+
     automations_list = WebItemsSequence(
         ".sidebar-atm-inventories .one-list>.one-list-item.clickable",
         cls=Inventory,
