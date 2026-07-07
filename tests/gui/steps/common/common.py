@@ -62,6 +62,8 @@ def assert_n_items_in_items_list(
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
         new_items = get_visible_items_list(page, items_type, main_field)
+        if not new_items:
+            break
         new_items_fields = [getattr(el, main_field) for el in new_items]
 
         stop_scrolling_flag = not any(el not in seen_items for el in new_items_fields)
