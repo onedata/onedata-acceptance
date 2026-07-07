@@ -11,6 +11,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.onezone.data_page import DataPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -24,7 +25,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).open_panel("data")
+    OZLoggedIn(driver).open_panel(DataPage)
     button = OZLoggedIn(driver).profile.profile.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
 

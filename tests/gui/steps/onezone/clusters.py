@@ -16,7 +16,7 @@ from tests.gui.utils import OZLoggedIn, Popups, PrivacyPolicy, TermsOfUse
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import transform
-from tests.gui.utils.onezone.clusters_page import MenuItem
+from tests.gui.utils.onezone.clusters_page import ClustersPage, MenuItem
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -29,7 +29,7 @@ def click_button_in_cluster_page(
 ) -> None:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("clusters")
+    oz_page.open_panel(ClustersPage)
     getattr(oz_page.clusters, transform(button)).click()
 
 
@@ -66,7 +66,7 @@ def assert_record_in_clusters_menu(
 def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("clusters")
+    oz_page.open_panel(ClustersPage)
     return oz_page.clusters.menu
 
 

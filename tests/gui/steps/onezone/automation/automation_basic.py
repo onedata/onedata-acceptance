@@ -23,6 +23,7 @@ from tests.gui.utils.generic import (
     upload_lambda_path,
     upload_workflow_path,
 )
+from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.gui.utils.onezone.lambdas_subpage import Lambda
 from tests.gui.utils.onezone.workflows_subpage import Workflow, WorkflowVisualiser
 from tests.type_definitions import SeleniumDrivers
@@ -45,7 +46,7 @@ def click_create_automation_button_in_sidebar(
 
 def get_oz_workflow_visualizer(driver: WebDriver) -> WorkflowVisualiser:
     page = OZLoggedIn(driver)
-    page.open_panel("automation")
+    page.open_panel(AutomationPage)
     return page.automation.workflows_page.workflow_visualiser
 
 
@@ -85,7 +86,7 @@ def click_option_in_inventory_menu(
 ) -> None:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("automation")
+    oz_page.open_panel(AutomationPage)
     page = oz_page.automation
     page.automations_list[inventory]()
     page.automations_list[inventory].menu()
@@ -152,7 +153,7 @@ def go_to_inventory_subpage(
         page = tmp_memory[browser_id]["oz_page"]
     except KeyError:
         oz_page = OZLoggedIn(selenium[browser_id])
-        oz_page.open_panel("automation")
+        oz_page.open_panel(AutomationPage)
         page = oz_page.automation
         tmp_memory[browser_id]["oz_page"] = page
     page.automations_list[inventory]()

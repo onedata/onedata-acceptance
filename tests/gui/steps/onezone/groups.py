@@ -28,7 +28,7 @@ def click_create_group_button_in_panel(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.open_panel("groups")
+    oz_page.open_panel(GroupsPage)
     oz_page.groups.create_group()
 
 
@@ -67,7 +67,7 @@ def assert_group_exists(
 ) -> None:
     for browser_id in parse_seq(browser_ids):
         oz_page = OZLoggedIn(selenium[browser_id])
-        oz_page.open_panel("groups")
+        oz_page.open_panel(GroupsPage)
         groups_count = len(
             _find_groups(
                 oz_page.groups,
@@ -109,7 +109,7 @@ def go_to_group_subpage(
     selenium: SeleniumDrivers, browser_id: str, group: str, subpage: str
 ) -> None:
     oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.open_panel("groups")
+    oz_page.open_panel(GroupsPage)
     page = oz_page.groups
     page.groups_list[group]()
     if subpage != "main":

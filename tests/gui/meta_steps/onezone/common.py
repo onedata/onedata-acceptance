@@ -36,6 +36,7 @@ from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.onezone.members_subpage import MembershipRow
+from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
@@ -104,7 +105,7 @@ def login_using_gui(
 def visit_op(selenium: SeleniumDrivers, browser_id: str, provider_name: str) -> None:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("providers")
+    oz_page.open_panel(ProvidersPage)
     providers_panel = oz_page.providers
     time.sleep(0.5)
     providers_panel[provider_name]()

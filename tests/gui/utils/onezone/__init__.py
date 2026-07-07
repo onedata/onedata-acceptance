@@ -4,7 +4,7 @@ __author__ = "Bartosz Walkowicz Michal Stanisz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Literal, TypeVar, cast
+from typing import ClassVar, Literal, TypeVar, cast
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -12,9 +12,11 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
-from tests.gui.utils.onezone.generic_page import GenericPage, PageName
+from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.gui.utils.generic import PageName
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import element_has_class
+
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage
 from .data_page import DataPage
@@ -30,6 +32,18 @@ PageT = TypeVar("PageT", bound=GenericPage)
 
 
 class OZLoggedIn:
+    _page_class_by_name: ClassVar[dict[PageName, type[GenericPage]]] = {
+        "data": DataPage,
+        "shares": SharesPage,
+        "providers": ProvidersPage,
+        "groups": GroupsPage,
+        "tokens": TokensPage,
+        "discovery": DiscoveryPage,
+        "automation": AutomationPage,
+        "clusters": ClustersPage,
+        "cluster": ClustersPage,
+    }
+
     _atlas = WebElement(".onezone-atlas")
     _sidebar_menu = WebElement(".main-menu-column")
     _panels = WebElementsSequence(".main-menu-content li.main-menu-item")
@@ -46,6 +60,10 @@ class OZLoggedIn:
 
     def __str__(self) -> str:
         return "Onezone page"
+
+    @staticmethod
+    def get_page_class(page_name: PageName) -> type[GenericPage]:
+        return OZLoggedIn._page_class_by_name[page_name]
 
     def _panel_has_class(self, item: PageName, class_name: str) -> bool:
         return element_has_class(self.get_panel_by_name(item), class_name)

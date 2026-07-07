@@ -16,6 +16,7 @@ from tests.gui.steps.onezone.automation.automation_basic import collapse_revisio
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
+from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.gui.utils.onezone.workflows_subpage import JSONWorkflowsPanel
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -322,7 +323,7 @@ def click_option_in_task_menu_button(
 ) -> None:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("automation")
+    oz_page.open_panel(AutomationPage)
     page = oz_page.automation
     workflow_visualiser = page.workflows_page.workflow_visualiser
     box = workflow_visualiser.workflow_lanes[lane_name].parallel_box

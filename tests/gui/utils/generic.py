@@ -13,7 +13,7 @@ from contextlib import contextmanager
 from enum import Enum
 from itertools import islice
 from time import sleep
-from typing import Optional, TypeVar, cast, overload
+from typing import Literal, Optional, TypeVar, cast, overload
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -422,3 +422,17 @@ class ListElement(Enum):
 class AlertPopup(Enum):
     AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
     STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"
+
+
+PageName = Literal[
+    "data",
+    "shares",
+    "providers",
+    "groups",
+    "tokens",
+    "discovery",
+    "automation",
+    "clusters",
+    "cluster",
+    "",  # default value for pages that are not in the sidebar menu
+]

@@ -38,6 +38,7 @@ from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.utils.onezone import PageName
+from tests.gui.utils.onezone.groups.groups_page import GroupsPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -353,7 +354,7 @@ def click_generate_token_in_subgroups_list(
     selenium: SeleniumDrivers, browser_id: str, group: str, member: str
 ) -> None:
     oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.open_panel("groups")
+    oz_page.open_panel(GroupsPage)
     page = oz_page.groups
     page.groups_list[group]()
     page.groups_list[group].members()
@@ -429,7 +430,7 @@ def assert_element_is_groups_child(
     parent: str,
 ) -> None:
     oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.open_panel("groups")
+    oz_page.open_panel(GroupsPage)
     page = oz_page.groups
     page.groups_list[parent]()
     page.groups_list[parent].members()
@@ -543,7 +544,7 @@ def remove_member_from_parent(
     if where != "cluster":
         page_name = cast(PageName, _change_to_tab_name(where))
         oz_page = OZLoggedIn(selenium[browser_id])
-        oz_page.open_panel(page_name)
+        oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
         main_page = getattr(oz_page, page_name)
         list_name = f"{where}s_list"
         getattr(main_page, list_name)[name]()
@@ -676,7 +677,7 @@ def copy_invitation_token(
 ) -> None:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("groups")
+    oz_page.open_panel(GroupsPage)
     page = oz_page.groups
     page.groups_list[group]()
 

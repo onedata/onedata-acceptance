@@ -42,9 +42,8 @@ SPACE_TABS = [
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
-    option: PageName = "data"
     # select data in main menu if not selected
-    OZLoggedIn(driver).open_panel(option)
+    OZLoggedIn(driver).open_panel(DataPage)
     click_on_space_in_menu_list(driver, name)
 
 
@@ -242,7 +241,7 @@ def _click_on_option_in_the_sidebar(
     driver.switch_to.default_content()
     oz_page = OZLoggedIn(driver)
     page_name = cast(PageName, option.lower())
-    oz_page.open_panel(page_name)
+    oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
     return getattr(oz_page, page_name)
 
 
@@ -279,7 +278,7 @@ def get_list_element_on_subpage_in_oz_page(
 ) -> Any:
     page_name = cast(PageName, page_name)
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(page_name)
+    oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
     page = getattr(oz_page, page_name)
     elements_list = getattr(page, f"{option.value}_list")
     return elements_list[elem_name]
@@ -536,7 +535,7 @@ def check_number_of_providers_on_the_map_on_data_page(
     expected_number = 0 if correct_number == "no" else int(correct_number)
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("data")
+    oz_page.open_panel(DataPage)
     current_page = getattr(oz_page.data, _get_subpage_name(page))
     number_providers = len(current_page.map.providers)
     error_msg = f"found {number_providers} instead of {expected_number}"

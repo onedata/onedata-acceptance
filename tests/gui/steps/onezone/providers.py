@@ -18,6 +18,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.onenv_utils import run_onenv_command
@@ -109,7 +110,7 @@ def assert_provider_hostname_matches_test_hostname(
     driver = selenium[browser_id]
     expected_domain = f"{hosts[provider]['hostname']}.test"
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("providers")
+    oz_page.open_panel(ProvidersPage)
     page = oz_page.providers
     page.providers_list[0]()
     _click_copy_hostname(driver)
@@ -224,7 +225,7 @@ def assert_provider_working_in_oz_panel(
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("providers")
+    oz_page.open_panel(ProvidersPage)
     page = oz_page.providers
     try:
         provider_record = page.providers_list[provider]
@@ -396,7 +397,7 @@ def wait_until_provider_goes_offline_by_gui(
     driver = selenium[browser_id]
     provider = hosts[provider_name]["name"]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("providers")
+    oz_page.open_panel(ProvidersPage)
     page = oz_page.providers
     time.sleep(0.5)
     provider_record = page.providers_list[provider]

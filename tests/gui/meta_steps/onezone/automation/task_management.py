@@ -23,6 +23,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_editor_bracket,
 )
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -210,7 +211,7 @@ def modify_task_results(
 
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("automation")
+    oz_page.open_panel(AutomationPage)
     page = oz_page.automation
     lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
     lane_obj.parallel_box.task_list[task].menu_button()

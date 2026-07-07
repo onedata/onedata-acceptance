@@ -19,7 +19,7 @@ from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.token_caveats import CaveatField
-from tests.gui.utils.onezone.tokens_page import TokenRow
+from tests.gui.utils.onezone.tokens_page import TokenRow, TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -28,7 +28,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_token_by_name(driver: WebDriver, token_name: str) -> TokenRow:
     oz_page = OZLoggedIn(driver)
-    oz_page.open_panel("tokens")
+    oz_page.open_panel(TokensPage)
     return oz_page.tokens.sidebar.tokens[token_name]
 
 
@@ -95,7 +95,7 @@ def click_on_button_in_tokens_sidebar(
 
     if button == "Create new token":
         oz_page = OZLoggedIn(driver)
-        oz_page.open_panel("tokens")
+        oz_page.open_panel(TokensPage)
         oz_page.tokens.sidebar.click_create_new_token(driver)
     elif button == "Clean up obsolete tokens":
         sidebar = OZLoggedIn(driver).tokens.sidebar

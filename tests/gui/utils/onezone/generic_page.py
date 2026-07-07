@@ -7,25 +7,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from abc import ABCMeta
 from collections.abc import Iterable
-from typing import Any, Literal
+from typing import Any
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject, PageObjectMeta, SidebarPanelPage
 from tests.gui.utils.core.web_elements import Label, NamedButton
 from tests.gui.utils.generic import ListElement
 from tests.utils.utils import repeat_failed
-
-PageName = Literal[
-    "data",
-    "shares",
-    "providers",
-    "groups",
-    "tokens",
-    "discovery",
-    "automation",
-    "clusters",
-    "cluster",
-]
 
 
 class Element(PageObject):

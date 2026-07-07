@@ -6,7 +6,7 @@ from typing import ClassVar, Optional, cast
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.utils.generic import click_on_web_elem
+from tests.gui.utils.generic import PageName, click_on_web_elem
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
@@ -109,7 +109,7 @@ class PageObject(AbstractPageObject):
 
 
 class SidebarPanelPage(PageObject):
-    panel_name: ClassVar[str] = ""
+    panel_name: ClassVar[PageName] = ""
 
 
 class ExpandableMixin:

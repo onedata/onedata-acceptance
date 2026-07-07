@@ -22,7 +22,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import InputBox
-from tests.gui.utils.onezone.generic_page import GenericPage, PageName
+from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.gui.utils.onezone.token_caveats import CaveatField
 
 
@@ -159,7 +159,7 @@ class CreateNewTokenPage(PageObject):
 
 
 class TokensPage(GenericPage):
-    panel_name = PageName("tokens")
+    panel_name = "tokens"
 
     sidebar = WebItem(".sidebar-tokens", cls=TokensSidebar)
     create_token_page = WebItem(".col-content", cls=CreateNewTokenPage)
