@@ -103,7 +103,9 @@ def login_using_gui(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def visit_op(selenium: SeleniumDrivers, browser_id: str, provider_name: str) -> None:
     driver = selenium[browser_id]
-    providers_panel = OZLoggedIn(driver).get_page("providers")
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel("providers")
+    providers_panel = oz_page.providers
     time.sleep(0.5)
     providers_panel[provider_name]()
     click_visit_provider(driver)

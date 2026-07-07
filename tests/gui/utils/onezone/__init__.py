@@ -4,7 +4,7 @@ __author__ = "Bartosz Walkowicz Michal Stanisz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Literal, TypeGuard, get_args, overload
+from typing import Literal
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -97,13 +97,13 @@ class OZLoggedIn:
                 f'cannot get "{panel_name}" panel, because main panel is not expanded'
             )
         expected_panel = panel_name
-        if expected_panel == "cluster":
-            expected_panel = "clusters"
-        elif expected_panel == "clusters":
-            expected_panel = "cluster"
         for panel in self._panels:
             name = panel.text.lower()
             if name == expected_panel:
+                return panel
+            if name == "cluster" and expected_panel == "clusters":
+                return panel
+            if name == "clusters" and expected_panel == "cluster":
                 return panel
         raise RuntimeError(f'no "{expected_panel}" on {self} found')
 
@@ -123,55 +123,10 @@ class OZLoggedIn:
         ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
         self._wait_for_panel_to_expand()
 
-    @overload
-    def get_page(self, panel_name: Literal["data"]) -> DataPage: ...
-
-    @overload
-    def get_page(self, panel_name: Literal["shares"]) -> SharesPage: ...
-
-    @overload
-    def get_page(self, panel_name: Literal["providers"]) -> ProvidersPage: ...
-
-    @overload
-    def get_page(self, panel_name: Literal["groups"]) -> GroupsPage: ...
-
-    @overload
-    def get_page(self, panel_name: Literal["tokens"]) -> TokensPage: ...
-
-    @overload
-    def get_page(self, panel_name: Literal["discovery"]) -> DiscoveryPage: ...
-
-    @overload
-    def get_page(self, panel_name: Literal["automation"]) -> AutomationPage: ...
-
-    @overload
-    def get_page(self, panel_name: Literal["clusters", "cluster"]) -> ClustersPage: ...
-
-    @overload
-    def get_page(self, panel_name: PageName) -> GenericPage: ...
-
-    def get_page(self, panel_name: PageName) -> GenericPage:
-        # returns GenericPage subclasses
-        if panel_name not in self.panels_classes:
-            raise RuntimeError(f'no "{panel_name}" on {self} found')
+    def open_panel(self, panel_name: PageName) -> None:
         self.expand_panel_if_needed()
-
         if not self.is_panel_selected(panel_name):
             self.click_on_sidebar_menu_panel(panel_name)
-
-        page_cls = self.panels_classes[panel_name]
-        return page_cls(self.web_elem, self.web_elem, parent=self)
-
-    @staticmethod
-    def get_page_name_from_str(name: str) -> PageName:
-
-        def is_page_name(name: str) -> TypeGuard[PageName]:
-            return name in get_args(PageName)
-
-        name = name.lower()
-        if is_page_name(name):
-            return name
-        raise RuntimeError(f'no "{name}" Onezone page found')
 
     @property
     def data(self) -> DataPage:

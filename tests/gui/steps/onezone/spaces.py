@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
+from typing import Any, cast
 
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.common.by import By
@@ -44,7 +44,7 @@ SPACE_TABS = [
 def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
     option: PageName = "data"
     # select data in main menu if not selected
-    OZLoggedIn(driver).get_page(option)
+    OZLoggedIn(driver).open_panel(option)
     click_on_space_in_menu_list(driver, name)
 
 
@@ -215,7 +215,7 @@ def assert_main_tab_disabled(
 ) -> None:
     driver = selenium[browser_id]
     assert OZLoggedIn(driver).is_panel_disabled(
-        OZLoggedIn.get_page_name_from_str(tab)
+        cast(PageName, tab.lower())
     ), f"tab {tab} should be disabled but is not"
 
 
@@ -241,8 +241,9 @@ def _click_on_option_in_the_sidebar(
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     oz_page = OZLoggedIn(driver)
-    # call get_page in Onezone page
-    return oz_page.get_page(OZLoggedIn.get_page_name_from_str(option))
+    page_name = cast(PageName, option.lower())
+    oz_page.open_panel(page_name)
+    return getattr(oz_page, page_name)
 
 
 @wt(
@@ -276,7 +277,10 @@ def click_element_on_lists_on_left_sidebar_menu(
 def get_list_element_on_subpage_in_oz_page(
     driver: WebDriver, page_name: str, option: ListElement, elem_name: str
 ) -> Any:
-    page = OZLoggedIn(driver).get_page(OZLoggedIn.get_page_name_from_str(page_name))
+    page_name = cast(PageName, page_name)
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(page_name)
+    page = getattr(oz_page, page_name)
     elements_list = getattr(page, f"{option.value}_list")
     return elements_list[elem_name]
 
@@ -531,7 +535,9 @@ def check_number_of_providers_on_the_map_on_data_page(
 ) -> None:
     expected_number = 0 if correct_number == "no" else int(correct_number)
     driver = selenium[browser_id]
-    current_page = getattr(OZLoggedIn(driver).get_page("data"), _get_subpage_name(page))
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel("data")
+    current_page = getattr(oz_page.data, _get_subpage_name(page))
     number_providers = len(current_page.map.providers)
     error_msg = f"found {number_providers} instead of {expected_number}"
     assert number_providers == expected_number, error_msg

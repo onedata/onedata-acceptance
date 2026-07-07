@@ -28,7 +28,9 @@ def click_button_in_cluster_page(
     selenium: SeleniumDrivers, browser_id: str, button: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver).get_page("clusters"), transform(button)).click()
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel("clusters")
+    getattr(oz_page.clusters, transform(button)).click()
 
 
 @wt(parsers.parse("user of {browser_id} copies registration token from clusters page"))
@@ -63,7 +65,9 @@ def assert_record_in_clusters_menu(
 
 def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence:
     driver = selenium[browser_id]
-    return OZLoggedIn(driver).get_page("clusters").menu
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel("clusters")
+    return oz_page.clusters.menu
 
 
 def _get_cluster_record(

@@ -27,7 +27,9 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_token_by_name(driver: WebDriver, token_name: str) -> TokenRow:
-    return OZLoggedIn(driver).get_page("tokens").sidebar.tokens[token_name]
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel("tokens")
+    return oz_page.tokens.sidebar.tokens[token_name]
 
 
 def _open_menu_for_token(driver: WebDriver, token_name: str) -> None:
@@ -92,7 +94,9 @@ def click_on_button_in_tokens_sidebar(
     driver = selenium[browser_id]
 
     if button == "Create new token":
-        OZLoggedIn(driver).get_page("tokens").sidebar.click_create_new_token(driver)
+        oz_page = OZLoggedIn(driver)
+        oz_page.open_panel("tokens")
+        oz_page.tokens.sidebar.click_create_new_token(driver)
     elif button == "Clean up obsolete tokens":
         sidebar = OZLoggedIn(driver).tokens.sidebar
         button_clean = getattr(sidebar, transform(button))

@@ -321,7 +321,9 @@ def click_option_in_task_menu_button(
     option: str,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver).get_page("automation")
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel("automation")
+    page = oz_page.automation
     workflow_visualiser = page.workflows_page.workflow_visualiser
     box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
     box.task_list[task_name].menu_button.click()

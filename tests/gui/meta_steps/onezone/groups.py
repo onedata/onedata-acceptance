@@ -62,7 +62,9 @@ def input_new_group_name_into_rename_group_inpux_box(group: Any, text: str) -> N
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Group:
-    page = OZLoggedIn(driver).get_page("groups")
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel("groups")
+    page = oz_page.groups
     return page.groups_list[group_name]
 
 
