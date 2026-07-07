@@ -27,6 +27,7 @@ class GenericPageMeta(PageObjectMeta, ABCMeta):
     pass  # this class is needed to avoid metaclass conflict between PageObjectMeta and ABCMeta
 
 
+# TODO: VFS-13694 simplify generic page
 class GenericPage(SidebarPanelPage, metaclass=GenericPageMeta):
     name = id = Label(".row-heading .col-title")
     get_started = NamedButton(".btn-default", text="Get started")
@@ -37,14 +38,7 @@ class GenericPage(SidebarPanelPage, metaclass=GenericPageMeta):
 
     def _get_items_list(self, list_element: ListElement) -> Any:
         attr_list = self._list_attr_name(list_element)
-        for cls in type(self).__mro__:
-            if cls is GenericPage:
-                break
-            if attr_list in cls.__dict__:
-                return getattr(self, attr_list)
-        raise AttributeError(
-            f'there is not "{attr_list}" elements list member in class instance'
-        )
+        return getattr(self, attr_list)
 
     @property
     def shares_list(self) -> Any:

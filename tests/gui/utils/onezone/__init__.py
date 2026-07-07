@@ -15,7 +15,7 @@ from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequ
 from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.gui.utils.generic import PageName
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
-from tests.utils.utils import element_has_class
+from tests.utils.utils import element_has_class, repeat_failed
 
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage
@@ -100,6 +100,7 @@ class OZLoggedIn:
                 return panel
         raise RuntimeError(f'no "{expected_panel}" on {self} found')
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def click_on_sidebar_menu_panel(self, panel_name: PageName) -> None:
         panel = self.get_panel_by_name(panel_name)
         panel.click()
