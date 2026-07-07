@@ -161,4 +161,4 @@ class OZLoggedIn:
 
     @property
     def uploads(self) -> UploadsPage:
-        return UploadsPage(self.web_elem, self.uploads_web_elem, parent=self)
+        return UploadsPage(self.web_elem, self.web_elem, parent=self)
