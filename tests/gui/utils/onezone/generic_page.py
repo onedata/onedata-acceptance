@@ -113,4 +113,4 @@ class GenericPage(PageObject, metaclass=GenericPageMeta):
 
 
 class SidebarPanelPage(GenericPage):
-    panel_name: ClassVar[PageName] = ""
+    panel_name: ClassVar[PageName]
