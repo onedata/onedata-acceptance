@@ -44,7 +44,7 @@ class TransferRecord(PageObject):
     destination = Label("td:nth-of-type(3)")
     status_icon = Icon(".cell-status")
     menu_button = Button(".cell-actions")
-    type_icon = Icon(".cell-type")
+    type_icon = Icon(".cell-type-destination")
     icon = Icon(".transfer-file-icon")
 
     def __init__(
