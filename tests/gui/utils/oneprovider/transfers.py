@@ -52,19 +52,17 @@ class TransferRecord(PageObject):
 
     @property
     def status(self) -> str:
-        return self._get_icon_class_token(self.status_icon, TRANSFER_STATUS_LIST)
+        return self._get_icon_class(self.status_icon, TRANSFER_STATUS_LIST)
 
     @property
     def type(self) -> str:
-        return self._get_icon_class_token(
-            self.type_destination.type_icon, TRANSFER_TYPE_LIST
-        )
+        return self._get_icon_class(self.type_destination.type_icon, TRANSFER_TYPE_LIST)
 
     @property
     def destination(self) -> str:
         return self.type_destination.destination
 
-    def _get_icon_class_token(
+    def _get_icon_class(
         self, icon: SeleniumWebElement, expected_tokens: list[str]
     ) -> str:
         icon_classes = icon.get_attribute("class").split()
