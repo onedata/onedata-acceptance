@@ -20,13 +20,13 @@ Feature: Oneprovider transfers basic functionality
     And user of browser clicks "Transfers" of "space1" space in the sidebar
     And user of browser waits for Transfers page to load
     And user of browser enables only <columns_list> columns in columns configuration popover in transfers table
-    Then user of browser sees only <columns_list> columns in transfers
+    Then user of browser sees only <expected_columns_list> columns in transfers
     And user of browser refreshes site
     And user of browser waits for Transfers page to load
-    And user of browser sees only <columns_list> columns in transfers
+    And user of browser sees only <expected_columns_list> columns in transfers
 
   # in standard browser view max 3 columns can be displayed
   Examples:
-    |columns_list                              |
-    |["User", "Type", "Status"]                |
-    |["Destination", "Processed", "Replicated"]|
+    |columns_list                                       | expected_columns_list                       |
+    |["User", "Type & Destination", "Status"]           |["User", "Type & Destination", "Status"]     |
+    |["Type & Destination", "Processed"]                |["Type & Destination", "Processed", "Status] |

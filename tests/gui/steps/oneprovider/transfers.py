@@ -404,7 +404,7 @@ def _select_columns_to_be_visible_in_transfers(
 def _get_transfers_and_enable_initial_cols(
     browser_id: str, selenium: SeleniumDrivers
 ) -> _TransfersTab:
-    columns = ["user", "type", "status"]
+    columns = ["user", "type & destination", "status"]
     _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
     return OPLoggedIn(selenium[browser_id]).transfers
 
