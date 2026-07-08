@@ -28,8 +28,8 @@ def type_space_name_on_rename_space_input_on_overview_page(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].overview_page.info_tile.rename()
-    OZLoggedIn(driver)["data"].overview_page.info_tile.edit_name_box.value = space_name
+    OZLoggedIn(driver).data.overview_page.info_tile.rename()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.value = space_name
 
 
 @wt(
@@ -40,7 +40,7 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].overview_page.info_tile.edit_name_box.confirm()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.confirm()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on cancel button on overview page"))
@@ -49,7 +49,7 @@ def click_cancel_rename_button_on_overview_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].overview_page.info_tile.edit_name_box.cancel()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.cancel()
 
 
 @wt(
@@ -79,7 +79,7 @@ def assert_number_of_shares_on_overview_page(
     browser_id: str, selenium: SeleniumDrivers, number: str
 ) -> None:
     driver = selenium[browser_id]
-    shares_count = int(OZLoggedIn(driver)["data"].overview_page.info_tile.shares_count)
+    shares_count = int(OZLoggedIn(driver).data.overview_page.info_tile.shares_count)
     assert (
         int(number) == shares_count
     ), f"number of shares equals {shares_count}, not {number} as expected"
@@ -92,7 +92,7 @@ def assert_name_label_of_space_on_overview_page(
 ) -> None:
     driver = selenium[browser_id]
     assert (
-        OZLoggedIn(driver)["data"].overview_page.space_name == space_name
+        OZLoggedIn(driver).data.overview_page.space_name == space_name
     ), f'space "{space_name}" not found on overview page'
 
 
@@ -101,7 +101,7 @@ def assert_mes_at_field_in_space_details_in_overview(
     selenium: SeleniumDrivers, browser_id: str, text: str, field: str
 ) -> None:
     driver = selenium[browser_id]
-    details_tile = OZLoggedIn(driver)["data"].overview_page.space_details_tile
+    details_tile = OZLoggedIn(driver).data.overview_page.space_details_tile
     field = transform(field)
     visible_mes = getattr(details_tile, field)
     err_msg = f"user sees {visible_mes} instead of {text} at {field}"
@@ -114,7 +114,7 @@ def assert_tags_in_space_details_in_overview(
 ) -> None:
     tags = "tags"
     driver = selenium[browser_id]
-    details_tile = OZLoggedIn(driver)["data"].overview_page.space_details_tile
+    details_tile = OZLoggedIn(driver).data.overview_page.space_details_tile
     visible_mes = getattr(details_tile, tags)
     visible_tags = [t.text.split("\n")[0] for t in visible_mes]
     err_msg = f"user sees tags: {visible_tags} instead of {tags_to_check}"
@@ -135,7 +135,7 @@ def assert_space_advertised_in_space_marketplace_in_overview(
     browser_id: str, option: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    marketplace_tile = OZLoggedIn(driver)["data"].overview_page.marketplace_tile
+    marketplace_tile = OZLoggedIn(driver).data.overview_page.marketplace_tile
     advertise_info = marketplace_tile.advertise_info
     if option == "is":
         err_msg = f"space should be advertised but visible info is {advertise_info}"
@@ -156,7 +156,7 @@ def click_link_in_space_marketplace_in_overview(
     browser_id: str, link: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    marketplace_tile = OZLoggedIn(driver)["data"].overview_page.marketplace_tile
+    marketplace_tile = OZLoggedIn(driver).data.overview_page.marketplace_tile
     link_element = getattr(marketplace_tile, transform(link))
     link_element.click()
 

@@ -11,6 +11,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.onezone.data_page import DataPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -24,8 +25,8 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).get_page_and_click("data")
-    button = OZLoggedIn(driver)["profile"].profile.web_elem
+    OZLoggedIn(driver).open_panel(DataPage)
+    button = OZLoggedIn(driver).profile.profile.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
 
 
@@ -47,7 +48,7 @@ def click_on_option_in_account_settings_in_oz(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_user_menu_button_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["profile"].show_user_account_menu_toolbar.click()
+    OZLoggedIn(driver).profile.show_user_account_menu_toolbar.click()
 
 
 @wt(
@@ -95,7 +96,7 @@ def assert_correct_user_name_in_oz(
     selenium: SeleniumDrivers, browser_id: str, expected_user_name: str
 ) -> None:
     driver = selenium[browser_id]
-    displayed_user_name = OZLoggedIn(driver)["profile"].user_name
+    displayed_user_name = OZLoggedIn(driver).profile.user_name
     err_msg = (
         f"expected {expected_user_name} as user name, but instead "
         f"displayed is {displayed_user_name} in USER NAME oz panel"
@@ -119,6 +120,6 @@ def wt_assert_user_alias_in_sidebar(
         name = OZLoggedIn(driver).profile_username
         assert name == username, err_msg.format(username, name)
     except AssertionError:
-        OZLoggedIn(driver)["profile"].profile()
+        OZLoggedIn(driver).profile.profile()
         name = OZLoggedIn(driver).profile_username
         assert name == username, err_msg.format(username, name)

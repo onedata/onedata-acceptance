@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from functools import partial
 
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.utils.core.base import PageObject
@@ -36,29 +35,45 @@ TRANSFER_STATUS_LIST = [
 TRANSFER_TYPE_LIST = ["migration", "replication", "eviction"]
 
 
-# before initializing transfer record make sure,
-# that columns used in __init__ are enabled
+class TypeAndDestination(PageObject):
+    destination = Label(".truncated-string")
+    type_icon = Icon(".cell-type-destination")
+
+
 class TransferRecord(PageObject):
-    name = Label("td:first-of-type")
+    name = Label(".cell-data-name .transfer-file-name")
+    file_icon = Icon(".cell-data-name .transfer-file-icon")
     username = Label("td:nth-of-type(2)")
-    destination = Label("td:nth-of-type(3)")
     status_icon = Icon(".cell-status")
     menu_button = Button(".cell-actions")
-    type_icon = Icon(".cell-type-destination")
-    icon = Icon(".transfer-file-icon")
+    type_destination = WebItem(
+        ".transfers-table-cell-typeDestination", cls=TypeAndDestination
+    )
 
-    def __init__(
-        self,
-        driver: WebDriver,
-        web_elem: SeleniumWebElement,
-        parent: object,
-        **kwargs: object,
-    ) -> None:
-        super().__init__(driver, web_elem, parent, **kwargs)
-        status_class = self.status_icon.get_attribute("class").split()
-        type_class = self.type_icon.get_attribute("class").split()
-        self.status = [x for x in status_class if x in TRANSFER_STATUS_LIST][0]
-        self.type = [x for x in type_class if x in TRANSFER_TYPE_LIST][0]
+    @property
+    def status(self) -> str:
+        return self._get_icon_class(self.status_icon, TRANSFER_STATUS_LIST)
+
+    @property
+    def type(self) -> str:
+        return self._get_icon_class(self.type_destination.type_icon, TRANSFER_TYPE_LIST)
+
+    @property
+    def destination(self) -> str:
+        return self.type_destination.destination
+
+    def _get_icon_class(
+        self, icon: SeleniumWebElement, expected_tokens: list[str]
+    ) -> str:
+        icon_classes = icon.get_attribute("class").split()
+
+        for icon_class in icon_classes:
+            if icon_class in expected_tokens:
+                return icon_class
+
+        raise RuntimeError(
+            f"no transfer state matching {expected_tokens} found in {self}"
+        )
 
     def get_chart(self) -> "TransferChart":
         return TransferChart(
@@ -78,10 +93,10 @@ class TransferRecord(PageObject):
             self.web_elem.click()
 
     def is_file(self) -> bool:
-        return "oneicon-browser-file" in self.icon.get_attribute("class")
+        return "oneicon-browser-file" in self.file_icon.get_attribute("class")
 
     def is_directory(self) -> bool:
-        return "oneicon-browser-directory" in self.icon.get_attribute("class")
+        return "oneicon-browser-directory" in self.file_icon.get_attribute("class")
 
     def __str__(self) -> str:
         return f"Transfer row {self.name} in {self.parent}"

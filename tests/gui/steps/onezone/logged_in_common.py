@@ -19,7 +19,7 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _expand_oz_panel(driver: WebDriver, panel: str) -> None:
-    OZLoggedIn(driver)[panel].expand()
+    getattr(OZLoggedIn(driver), panel).expand()
 
 
 @given(
@@ -82,7 +82,8 @@ def click_on_btn_in_oz_panel(
     selenium: SeleniumDrivers, browser_id: str, btn: str, oz_panel: str
 ) -> None:
     driver = selenium[browser_id]
-    action = getattr(OZLoggedIn(driver)[oz_panel], btn.lower().replace(" ", "_"))
+    panel = getattr(OZLoggedIn(driver), oz_panel)
+    action = getattr(panel, btn.lower().replace(" ", "_"))
     action()
 
 
@@ -111,7 +112,8 @@ def assert_there_is_item_with_known_name_in_oz_panel_list(
 ) -> None:
     driver = selenium[browser_id]
     item_name = hosts[item_name]["name"]
-    items = getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")
+    panel = getattr(OZLoggedIn(driver), oz_panel)
+    items = getattr(panel, f"{item_type}s")
     assert (
         item_name in items
     ), f'no {item_type} named "{item_name}" found in {oz_panel} oz panel'
@@ -168,7 +170,8 @@ def assert_there_is_item_named_in_oz_panel_list(
     oz_panel: str,
 ) -> None:
     driver = selenium[browser_id]
-    items = getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")
+    panel = getattr(OZLoggedIn(driver), oz_panel)
+    items = getattr(panel, f"{item_type}s")
     assert (
         item_name in items
     ), f'no {item_type} named "{item_name}" found in {oz_panel} oz panel'
@@ -228,9 +231,8 @@ def assert_there_is_no_item_named_in_oz_panel_list(
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
-    items = {
-        item.name for item in getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")
-    }
+    panel = getattr(OZLoggedIn(driver), oz_panel)
+    items = {item.name for item in getattr(panel, f"{item_type}s")}
     assert item_name not in items, (
         f'{item_type} named "{item_name}" found in {oz_panel} oz panel while it'
         " should not be found"
@@ -268,7 +270,8 @@ def assert_item_counter_match_given_num(
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
-    items = getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")
+    panel = getattr(OZLoggedIn(driver), oz_panel)
+    items = getattr(panel, f"{item_type}s")
     item = items[item_name]
     item_counter = int(getattr(item, f"{counter_type}s_count"))
 
@@ -318,7 +321,8 @@ def assert_number_of_items_match_items_counter(
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
-    items = getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")
+    panel = getattr(OZLoggedIn(driver), oz_panel)
+    items = getattr(panel, f"{item_type}s")
     item = items[item_name]
     subitems = getattr(item, f"{counter_type}s")
     counter = int(getattr(item, f"{counter_type}s_count"))
@@ -360,7 +364,8 @@ def expand_items_submenu_in_oz_panel(
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
-    items = getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")
+    panel = getattr(OZLoggedIn(driver), oz_panel)
+    items = getattr(panel, f"{item_type}s")
     item = items[item_name]
     item.expand()
     err_msg = 'submenu for {type} named "{name}" has not been expanded'
@@ -400,7 +405,8 @@ def assert_item_in_submenu_of_item_in_oz_panel(
         item_name = hosts[item_name]["name"]
     if subitem_type == "provider":
         subitem_name = hosts[subitem_name]["name"]
-    items = getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")
+    panel = getattr(OZLoggedIn(driver), oz_panel)
+    items = getattr(panel, f"{item_type}s")
     item = items[item_name]
     subitems = getattr(item, f"{subitem_type}s")
     assert (

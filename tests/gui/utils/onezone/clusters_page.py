@@ -15,7 +15,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onepanel.emergency_passphrase import EmergencyPassphrase
-from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
@@ -69,7 +69,9 @@ class SubmenuItem(PageObject):
         self.click()
 
 
-class ClustersPage(GenericPage):
+class ClustersPage(SidebarPanelPage):
+    panel_name = "clusters"
+
     add_new_provider_cluster = Button(".add-cluster-btn")
 
     token_page = WebItem(".main-content", cls=TokenPage)

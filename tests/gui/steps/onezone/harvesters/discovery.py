@@ -30,7 +30,7 @@ def click_button_on_discovery_on_left_sidebar_menu(
 ) -> None:
     driver = selenium[browser_id]
     button = transform(button_name) + "_button"
-    getattr(OZLoggedIn(driver)["discovery"], button).click()
+    getattr(OZLoggedIn(driver).discovery, button).click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in discovery page"))
@@ -39,7 +39,7 @@ def click_create_button_in_discovery_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["discovery"].create_button()
+    OZLoggedIn(driver).discovery.create_button()
 
 
 @wt(
@@ -66,7 +66,7 @@ def check_element_exists_on_sidebar_list(
         attr = ListElement.AUTOMATIONS
 
     elements_list = get_visible_items_list(
-        OZLoggedIn(driver)[list_type], attr, main_field="name"
+        getattr(OZLoggedIn(driver), list_type), attr, main_field="name"
     )
     elements_names = [elem.name for elem in elements_list]
 
@@ -88,7 +88,7 @@ def check_element_exists_on_sidebar_list(
 def click_on_option_in_harvester_menu(
     selenium: SeleniumDrivers, browser_id: str, option: str, name: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["discovery"]
+    page = OZLoggedIn(selenium[browser_id]).discovery
     page.harvesters_list[name]()
     page.harvesters_list[name].menu_button()
     page.menu[option]()
@@ -102,7 +102,7 @@ def type_text_to_rename_input_field_in_discovery_page(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
     driver = selenium[browser_id]
-    input_field = OZLoggedIn(driver)["discovery"].rename_input
+    input_field = OZLoggedIn(driver).discovery.rename_input
     _enter_text(input_field, text)
 
 
@@ -112,7 +112,7 @@ def confirm_harvester_rename_using_button(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["discovery"].rename_button()
+    OZLoggedIn(driver).discovery.rename_button()
 
 
 @wt(
@@ -127,7 +127,7 @@ def click_on_option_of_harvester_on_left_sidebar_menu(
 ) -> None:
     driver = selenium[browser_id]
     getattr(
-        OZLoggedIn(driver)["discovery"].harvesters_list[harvester_name],
+        OZLoggedIn(driver).discovery.harvesters_list[harvester_name],
         transform(option),
     ).click()
 
@@ -136,7 +136,7 @@ def click_option_in_discovery_page_menu(
     selenium: SeleniumDrivers, browser_id: str, button_name: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["discovery"]
+    page = OZLoggedIn(driver).discovery
     page.menu_button()
     page.menu[button_name].click()
 
@@ -153,7 +153,7 @@ def see_insufficient_permissions_alert_on_discovery_page(
     selenium: SeleniumDrivers, browser_id: str, alert_text: str
 ) -> None:
     driver = selenium[browser_id]
-    forbidden_alert = OZLoggedIn(driver)["discovery"].forbidden_alert.text
+    forbidden_alert = OZLoggedIn(driver).discovery.forbidden_alert.text
 
     assert alert_text in forbidden_alert, f'alert with text "{alert_text}" not found'
 
@@ -169,7 +169,7 @@ def type_text_to_input_field_in_discovery_page(
     selenium: SeleniumDrivers, browser_id: str, text: str, input_name: str
 ) -> None:
     driver = selenium[browser_id]
-    input_field = getattr(OZLoggedIn(driver)["discovery"], input_name)
+    input_field = getattr(OZLoggedIn(driver).discovery, input_name)
     _enter_text(input_field, text)
 
 
@@ -185,7 +185,7 @@ def type_endpoint_to_input_field_in_discovery_page(
     selenium: SeleniumDrivers, browser_id: str, input_name: str, hosts: Hosts
 ) -> None:
     driver = selenium[browser_id]
-    input_field = getattr(OZLoggedIn(driver)["discovery"], input_name)
+    input_field = getattr(OZLoggedIn(driver).discovery, input_name)
     text = f"{hosts['elasticsearch']['ip']}:{ELASTICSEARCH_PORT}"
     _enter_text(input_field, text)
 
@@ -201,7 +201,7 @@ def click_button_in_harvester_spaces_page(
 ) -> None:
     driver = selenium[browser_id]
     button_name = transform(button_name) + "_button"
-    getattr(OZLoggedIn(driver)["discovery"], button_name).click()
+    getattr(OZLoggedIn(driver).discovery, button_name).click()
 
 
 @wt(
@@ -239,7 +239,7 @@ def assert_space_has_appeared_in_discovery_page(
 ) -> None:
     driver = selenium[browser_id]
     assert (
-        space_name in OZLoggedIn(driver)["discovery"].spaces_list
+        space_name in OZLoggedIn(driver).discovery.spaces_list
     ), f'space "{space_name}" not found'
 
 
@@ -247,6 +247,6 @@ def click_remove_space_option_in_menu_in_discover_spaces_page(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["discovery"]
+    page = OZLoggedIn(driver).discovery
     page.spaces_list[space_name].click_menu()
     page.menu["Remove this space"].click()

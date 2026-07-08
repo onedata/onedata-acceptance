@@ -783,7 +783,7 @@ def choose_provider_in_selected_page(
     provider = hosts[provider]["name"]
     driver.switch_to.default_content()
 
-    OZLoggedIn(driver)["data"].providers[provider].click()
+    OZLoggedIn(driver).data.providers[provider].click()
 
 
 @wt(
@@ -797,7 +797,7 @@ def click_choose_other_oneprovider_on_file_browser(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver)["data"].choose_other_provider()
+    OZLoggedIn(driver).data.choose_other_provider()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -805,7 +805,7 @@ def check_current_provider_in_space(selenium: SeleniumDrivers, browser_id: str) 
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
-    current_provider = OZLoggedIn(driver)["data"].current_provider
+    current_provider = OZLoggedIn(driver).data.current_provider
     return current_provider
 
 
@@ -823,7 +823,7 @@ def _assert_provider_in_space(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    providers = OZLoggedIn(selenium[browser_id])["data"].providers
+    providers = OZLoggedIn(selenium[browser_id]).data.providers
 
     assert provider in providers, f"{provider} provider not found on file browser page"
 

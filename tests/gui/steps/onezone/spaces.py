@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
+from typing import Any, cast
 
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.common.by import By
@@ -21,6 +21,7 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.generic import ListElement, parse_seq, transform
+from tests.gui.utils.onezone import PageName
 from tests.gui.utils.onezone.data_page import DataPage, Space
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -41,10 +42,8 @@ SPACE_TABS = [
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
-    option = "data"
     # select data in main menu if not selected
-    if not OZLoggedIn(driver).is_panel_clicked(option):
-        OZLoggedIn(driver).get_page_and_click(option)
+    OZLoggedIn(driver).open_panel(DataPage)
     click_on_space_in_menu_list(driver, name)
 
 
@@ -52,7 +51,7 @@ def click_on_space_in_menu_list(
     driver: WebDriver, name: str, force: bool = True
 ) -> DataPage:
     # function assumes data page is active
-    page = OZLoggedIn(driver)["data"]
+    page = OZLoggedIn(driver).data
     if force:
         page.spaces_headers_list[name]()
     else:
@@ -79,7 +78,7 @@ def click_button_on_spaces_sidebar_menu(
 ) -> None:
     driver = selenium[browser_id]
     button_name = transform(button_name) + "_button"
-    getattr(OZLoggedIn(driver)["data"], button_name).click()
+    getattr(OZLoggedIn(driver).data, button_name).click()
 
 
 @wt(
@@ -93,7 +92,7 @@ def click_button_in_space_harvesters_page(
 ) -> None:
     driver = selenium[browser_id]
     button_name = transform(button_name)
-    getattr(OZLoggedIn(driver)["data"].harvesters_page, button_name).click()
+    getattr(OZLoggedIn(driver).data.harvesters_page, button_name).click()
 
 
 @wt(
@@ -106,7 +105,7 @@ def type_space_name_on_input_on_create_new_space_page(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].input_box.value = space_name
+    OZLoggedIn(driver).data.input_box.value = space_name
 
 
 @wt(parsers.parse("user of {browser_id} clicks on Create new space button"))
@@ -115,7 +114,7 @@ def create_new_space_by_click_on_create_new_space_button(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].input_box.confirm()
+    OZLoggedIn(driver).data.input_box.confirm()
 
 
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
@@ -123,7 +122,7 @@ def create_new_space_by_click_on_create_new_space_button(
 def create_new_space_on_onezone_page(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["data"]
+    page = OZLoggedIn(selenium[browser_id]).data
     page.create_space_button()
     page.input_box.value = space_name
     page.input_box.confirm()
@@ -143,7 +142,7 @@ def assert_no_provider_for_space(
     space_name: str,
     hosts: Hosts,
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["data"]
+    page = OZLoggedIn(selenium[browser_id]).data
     page.spaces_headers_list[space_name]()
     page.spaces_list[space_name].providers()
     provider = hosts[provider_name]["name"]
@@ -169,7 +168,7 @@ def assert_new_created_space_has_appeared_on_spaces(
 ) -> None:
     driver = selenium[browser_id]
     assert (
-        space_name in OZLoggedIn(driver)["data"].spaces_list
+        space_name in OZLoggedIn(driver).data.spaces_list
     ), f'space "{space_name}" not found'
 
 
@@ -194,7 +193,7 @@ def click_on_automation_option_in_the_sidebar(
 def click_on_option_in_the_sidebar(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    _click_on_option_in_the_sidebar(selenium, browser_id, option, force=True)
+    _click_on_option_in_the_sidebar(selenium, browser_id, option)
 
 
 @wt(
@@ -215,7 +214,7 @@ def assert_main_tab_disabled(
 ) -> None:
     driver = selenium[browser_id]
     assert OZLoggedIn(driver).is_panel_disabled(
-        tab.lower()
+        cast(PageName, tab.lower())
     ), f"tab {tab} should be disabled but is not"
 
 
@@ -236,16 +235,14 @@ def close_sidebar_by_click_on_background(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _click_on_option_in_the_sidebar(
-    selenium: SeleniumDrivers, browser_id: str, option: str, force: bool = True
+    selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> PageObject:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    name = str(option).lower()
-    # call get_page in Onezone page
-    if force or not OZLoggedIn(driver).is_panel_clicked(name):
-        page = OZLoggedIn(driver).get_page_and_click(name)
-        return page
-    return OZLoggedIn(driver)[name]
+    oz_page = OZLoggedIn(driver)
+    page_name = cast(PageName, option.lower())
+    oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
+    return getattr(oz_page, page_name)
 
 
 @wt(
@@ -264,7 +261,7 @@ def click_element_on_lists_on_left_sidebar_menu(
     if page_name == "spaces":
         try:
             _choose_space_from_menu_list(driver, name)
-            _choose_space_from_menu_list(driver, name)
+            click_on_space_in_menu_list(driver, name)
         except ElementClickInterceptedException:
             pass
     else:
@@ -279,7 +276,10 @@ def click_element_on_lists_on_left_sidebar_menu(
 def get_list_element_on_subpage_in_oz_page(
     driver: WebDriver, page_name: str, option: ListElement, elem_name: str
 ) -> Any:
-    page = OZLoggedIn(driver).get_page_and_click(page_name)
+    page_name = cast(PageName, page_name)
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
+    page = getattr(oz_page, page_name)
     elements_list = getattr(page, f"{option.value}_list")
     return elements_list[elem_name]
 
@@ -294,7 +294,7 @@ def click_on_option_in_space_menu(
     selenium: SeleniumDrivers, browser_id: str, space_name: str, button: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].spaces_headers_list[space_name].click_menu()
+    OZLoggedIn(driver).data.spaces_headers_list[space_name].click_menu()
     Popups(driver).menu_popup_with_text.menu[button]()
 
 
@@ -308,7 +308,7 @@ def click_on_option_in_menu(
     selenium: SeleniumDrivers, browser_id: str, button: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"]
+    page = OZLoggedIn(driver).data
     page.menu_button()
     Popups(driver).menu_popup_with_text.menu[button]()
 
@@ -359,7 +359,7 @@ def assert_space_has_disappeared_on_spaces(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    spaces = OZLoggedIn(driver)["data"].spaces_list
+    spaces = OZLoggedIn(driver).data.spaces_list
     assert space_name not in spaces, f'space "{space_name}" found'
 
 
@@ -375,7 +375,7 @@ def assert_number_of_supporting_providers_of_space(
 ) -> None:
     driver = selenium[browser_id]
     supporting_providers_number = int(
-        OZLoggedIn(driver)["data"].spaces_list[space_name].supporting_providers_number
+        OZLoggedIn(driver).data.spaces_list[space_name].supporting_providers_number
     )
     assert (
         number == supporting_providers_number
@@ -389,7 +389,7 @@ def assert_size_of_space_on_left_sidebar_menu(
 ) -> None:
     driver = selenium[browser_id]
     assert (
-        number == OZLoggedIn(driver)["data"].spaces_list[space_name].support_size
+        number == OZLoggedIn(driver).data.spaces_list[space_name].support_size
     ), f'size of space "{space_name}" is not equal {number}'
 
 
@@ -412,7 +412,7 @@ def click_provider_on_the_map_on_data_page(
     hosts: Hosts,
 ) -> None:
     driver = selenium[browser_id]
-    current_page = getattr(OZLoggedIn(driver)["data"], _get_subpage_name(page))
+    current_page = getattr(OZLoggedIn(driver).data, _get_subpage_name(page))
     provider_name = hosts[provider]["name"]
     current_page.map.click_provider(provider_name, driver)
 
@@ -432,7 +432,7 @@ def hover_provider_on_the_map_on_data_page(
     hosts: Hosts,
 ) -> None:
     driver = selenium[browser_id]
-    current_page = getattr(OZLoggedIn(driver)["data"], _get_subpage_name(page))
+    current_page = getattr(OZLoggedIn(driver).data, _get_subpage_name(page))
     provider_name = hosts[provider]["name"]
     current_page.map.hover_and_check_provider(provider_name, driver)
 
@@ -448,7 +448,7 @@ def click_the_map_on_data_page(
     selenium: SeleniumDrivers, browser_id: str, page: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver)["data"], _get_subpage_name(page)).map()
+    getattr(OZLoggedIn(driver).data, _get_subpage_name(page)).map()
 
 
 @wt(
@@ -507,7 +507,7 @@ def assert_option_of_space_on_left_sidebar_menu_disabled(
 ) -> None:
     driver = selenium[browser_id]
     elements = _parse_tabs_list(element_list)
-    space = OZLoggedIn(driver)["data"].spaces_list[space_name]
+    space = OZLoggedIn(driver).data.spaces_list[space_name]
     error_msg = "Number of disabled elements is incorrect"
     assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
         elements
@@ -534,9 +534,9 @@ def check_number_of_providers_on_the_map_on_data_page(
 ) -> None:
     expected_number = 0 if correct_number == "no" else int(correct_number)
     driver = selenium[browser_id]
-    current_page = getattr(
-        OZLoggedIn(driver).get_page_and_click("data"), _get_subpage_name(page)
-    )
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(DataPage)
+    current_page = getattr(oz_page.data, _get_subpage_name(page))
     number_providers = len(current_page.map.providers)
     error_msg = f"found {number_providers} instead of {expected_number}"
     assert number_providers == expected_number, error_msg
@@ -548,7 +548,7 @@ def click_get_started_on_data_on_left_sidebar_menu(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].get_started()
+    OZLoggedIn(driver).data.get_started()
 
 
 @wt(
@@ -563,7 +563,7 @@ def click_option_on_welcome_page(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver)["data"].welcome_page, transform(option)).click()
+    getattr(OZLoggedIn(driver).data.welcome_page, transform(option)).click()
 
 
 @wt(parsers.parse("user of {browser_id} sees that error popup has appeared"))
@@ -586,7 +586,7 @@ def assert_harvester_on_list_on_space_harvesters_subpage(
     selenium: SeleniumDrivers, browser_id: str, harvester_name: str, see: str
 ) -> None:
     driver = selenium[browser_id]
-    harvesters_list = OZLoggedIn(driver)["data"].harvesters_page.harvesters_list
+    harvesters_list = OZLoggedIn(driver).data.harvesters_page.harvesters_list
     if see == "sees":
         error_msg = f" Harvester {harvester_name} not found on harvesters list"
         assert harvester_name in harvesters_list, error_msg
@@ -603,7 +603,7 @@ def assert_providers_list_contains_provider(
     driver = selenium[browser_id]
     if provider in hosts:
         provider = hosts[provider]["name"]
-    providers_page = OZLoggedIn(driver)["data"].providers_page
+    providers_page = OZLoggedIn(driver).data.providers_page
     header = providers_page.header
 
     if header.get_current_active_tab().lower() != "overview":
@@ -665,7 +665,7 @@ def assert_selected_provider_name_on_space_provider_header(
 ) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"].lower()
-    header = OZLoggedIn(driver)["data"].providers_page.header
+    header = OZLoggedIn(driver).data.providers_page.header
     assert (
         header.get_current_active_tab().lower() == provider_name
     ), f'provider "{provider}" not found in header label'
@@ -683,7 +683,7 @@ def assert_provider_name_on_provider_settings_menu(
 ) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    label = OZLoggedIn(driver)["data"].providers_page.settings_message
+    label = OZLoggedIn(driver).data.providers_page.settings_message
     assert (
         provider_name in label
     ), f'provider "{provider}" not found in settings message'
@@ -700,9 +700,9 @@ def assert_length_of_providers_list(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    providers_list = OZLoggedIn(driver)["data"].providers_page.providers_list
+    providers_list = OZLoggedIn(driver).data.providers_page.providers_list
     number_of_providers = int(
-        OZLoggedIn(driver)["data"].spaces_list[space_name].supporting_providers_number
+        OZLoggedIn(driver).data.spaces_list[space_name].supporting_providers_number
     )
     assert len(providers_list) == number_of_providers, (
         "length of providers list is not equal to number of "
@@ -724,7 +724,7 @@ def assert_length_of_providers_list_of_space(
     number_of_providers: str,
 ) -> None:
     driver = selenium[browser_id]
-    providers_list = OZLoggedIn(driver)["data"].providers_page.providers_list
+    providers_list = OZLoggedIn(driver).data.providers_page.providers_list
     assert len(providers_list) == int(number_of_providers), (
         f'length of providers list of space "{space_name}" is not equal'
         f" {number_of_providers}"
@@ -737,7 +737,7 @@ def click_get_support_button_on_providers_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].providers_page.add_support()
+    OZLoggedIn(driver).data.providers_page.add_support()
 
 
 @wt(parsers.parse("user of {browser_id} sees {text} alert on providers page"))
@@ -746,9 +746,9 @@ def see_insufficient_privileges_label_on_providers_page(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
     driver = selenium[browser_id]
-    item_text = OZLoggedIn(driver)[
-        "data"
-    ].providers_page.get_support_page.insufficient_privileges
+    item_text = OZLoggedIn(
+        driver
+    ).data.providers_page.get_support_page.insufficient_privileges
     assert item_text == text, f"found {item_text} alert instead of expected {text}"
 
 
@@ -762,7 +762,7 @@ def click_deploy_your_own_provider_tab_on_get_support_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].providers_page.get_support_page.deploy_provider_modal()
+    OZLoggedIn(driver).data.providers_page.get_support_page.deploy_provider_modal()
 
 
 @wt(
@@ -775,9 +775,7 @@ def click_expose_existing_data_collection_tab_on_get_support_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)[
-        "data"
-    ].providers_page.get_support_page.expose_existing_data_modal()
+    OZLoggedIn(driver).data.providers_page.get_support_page.expose_existing_data_modal()
 
 
 @wt(
@@ -797,7 +795,7 @@ def remove_harvester_from_harvesters_list(
     popup_name = "Remove this harvester"
 
     driver = selenium[browser_id]
-    harvesters_list = OZLoggedIn(driver)["data"].harvesters_page.harvesters_list
+    harvesters_list = OZLoggedIn(driver).data.harvesters_page.harvesters_list
     harvesters_list[harvester_name].click_harvester_menu_button(driver)
     Popups(driver).menu_popup_with_text.menu[popup_name]()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
@@ -814,7 +812,7 @@ def click_copy_button_on_request_support_page(
     tmp_memory: TmpMemory,
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].providers_page.get_support_page.copy()
+    OZLoggedIn(driver).data.providers_page.get_support_page.copy()
 
     item = clipboard.paste(display=displays[browser_id])
     tmp_memory[browser_id]["mailbox"]["token"] = item
@@ -832,9 +830,9 @@ def assert_copy_token_and_input_token_are_the_same(
 ) -> None:
     driver = selenium[browser_id]
     first_token = tmp_memory[browser_id]["mailbox"]["token"]
-    second_token = OZLoggedIn(driver)[
-        "data"
-    ].providers_page.get_support_page.token_textarea
+    second_token = OZLoggedIn(
+        driver
+    ).data.providers_page.get_support_page.token_textarea
     assert first_token == second_token, "two tokens are not the same"
 
 
@@ -861,7 +859,7 @@ def generate_and_send_support_token(
     displays: dict[str, str],
     tmp_memory: TmpMemory,
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id1])["data"]
+    page = OZLoggedIn(selenium[browser_id1]).data
     page.spaces_headers_list[space_name]()
     page.spaces_list[space_name].providers()
     page.providers_page.add_support()
@@ -873,7 +871,7 @@ def generate_and_send_support_token(
 @wt(parsers.re("user of (?P<browser_id>.*) copies invitation token from Spaces page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id])["data"].providers_page.get_support_page.copy()
+    OZLoggedIn(selenium[browser_id]).data.providers_page.get_support_page.copy()
 
 
 @wt(
@@ -898,7 +896,7 @@ def check_tab_name_label(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    label = OZLoggedIn(driver)["data"].tab_name
+    label = OZLoggedIn(driver).data.tab_name
     assert label.lower() == tab_name, f"User not on {tab_name} page"
 
 
@@ -910,7 +908,7 @@ def assert_opened_space_name(
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     msg = f"{space} space view is not opened"
-    assert OZLoggedIn(driver)["data"].spaces_list[space].is_active(), msg
+    assert OZLoggedIn(driver).data.spaces_list[space].is_active(), msg
 
 
 @wt(
@@ -923,7 +921,7 @@ def assert_opened_space_name(
 def assert_tabs_of_space_enabled(
     selenium: SeleniumDrivers, browser_id: str, tabs_list: str, space_name: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["data"]
+    page = OZLoggedIn(selenium[browser_id]).data
     page.spaces_headers_list[space_name]()
     space = page.spaces_list[space_name]
     tabs = SPACE_TABS if tabs_list == "all" else _parse_tabs_list(tabs_list)
@@ -942,7 +940,7 @@ def assert_tabs_of_space_enabled(
 def assert_tabs_of_space_disabled(
     selenium: SeleniumDrivers, browser_id: str, tabs_list: str, space_name: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["data"]
+    page = OZLoggedIn(selenium[browser_id]).data
     page.spaces_headers_list[space_name]()
     space = page.spaces_list[space_name]
 
@@ -957,7 +955,7 @@ def assert_error_detail_text_spaces(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    page = OZLoggedIn(driver)["data"]
+    page = OZLoggedIn(driver).data
     assert text in page.error_header, f'page with text "{text}" not found'
 
 
@@ -977,7 +975,7 @@ def check_two_providers_places(
 ) -> None:
     driver = selenium[browser_id]
     page = "providers"
-    current_page = getattr(OZLoggedIn(driver)["data"], _get_subpage_name(page))
+    current_page = getattr(OZLoggedIn(driver).data, _get_subpage_name(page))
 
     provider1_name = hosts[provider1]["name"]
     provider2_name = hosts[provider2]["name"]
@@ -1005,7 +1003,7 @@ def write_into_input_box_in_space_title_sidebar_item(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].input_rename = text
+    OZLoggedIn(driver).data.input_rename = text
 
 
 @wt(
@@ -1017,4 +1015,4 @@ def click_save_in_space_title_sidebar_item(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].save_icon()
+    OZLoggedIn(driver).data.save_icon()

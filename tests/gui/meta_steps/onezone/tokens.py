@@ -58,6 +58,7 @@ from tests.gui.steps.onezone.tokens import (
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
+from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -68,7 +69,7 @@ from tests.utils.utils import repeat_failed
 def _paste_token_into_text_field(
     selenium: SeleniumDrivers, browser_id: str, token: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["tokens"]
+    page = OZLoggedIn(selenium[browser_id]).tokens
     page.input_name = token
 
 
@@ -707,11 +708,13 @@ def remove_all_tokens(selenium: SeleniumDrivers, browser_id: str) -> None:
     modal = "Remove token"
 
     driver = selenium[browser_id]
-    tokens = OZLoggedIn(driver).get_page_and_click("tokens").sidebar.tokens
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(TokensPage)
+    tokens = oz_page.tokens.sidebar.tokens
     if len(tokens):
         tokens[0].click()
 
-        for token in OZLoggedIn(driver)["tokens"].sidebar.tokens:
+        for token in OZLoggedIn(driver).tokens.sidebar.tokens:
             token.menu_button.click()
             click_option_for_token_row_menu(driver, btn)
             click_modal_button(selenium, browser_id, button, modal)

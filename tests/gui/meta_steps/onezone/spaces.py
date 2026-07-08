@@ -138,7 +138,7 @@ def leave_spaces_in_oz_using_gui(
 
     if space_list == "all":
         space_names = [
-            elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_headers_list
+            elem.name for elem in OZLoggedIn(driver).data.spaces_headers_list
         ]
     else:
         space_names = parse_seq(space_list)
@@ -540,7 +540,7 @@ def open_space_in_spaces_list(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"]
+    page = OZLoggedIn(driver).data
     seen_spaces = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
@@ -583,7 +583,7 @@ def assert_opened_space(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"]
+    page = OZLoggedIn(driver).data
     vis_spaces = get_visible_items_list(
         page, items_type=ListElement.SPACES, main_field="name"
     )
