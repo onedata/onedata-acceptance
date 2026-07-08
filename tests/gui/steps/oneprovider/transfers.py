@@ -389,7 +389,7 @@ def _select_columns_to_be_visible_in_transfers(
 ) -> None:
     option_select = "select"
     option_unselect = "unselect"
-    columns = [column.lower() for column in columns]
+    columns = [column.lower().replace(" ", "_") for column in columns]
     transfer = OPLoggedIn(selenium[browser_id]).transfers
     transfer.configure_columns.click()
     columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns

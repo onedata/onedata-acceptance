@@ -43,7 +43,9 @@ class GenericPage(PageObject, metaclass=GenericPageMeta):
         if isinstance(list_descriptor, property):
             raise AttributeError(attr_list)
         if hasattr(list_descriptor, "__get__"):
-            return list_descriptor.__get__(self, type(self))
+            return list_descriptor.__get__(  # pylint: disable=unnecessary-dunder-call
+                self, type(self)
+            )
         return list_descriptor
 
     @property
