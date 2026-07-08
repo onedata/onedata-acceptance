@@ -250,18 +250,17 @@ def _execute_workflow_with_input_config(
 ) -> None:
     driver = selenium[browser_id]
 
-    def click_on_spaces() -> None:
+    try:
         click_element_on_lists_on_left_sidebar_menu(
             selenium, browser_id, "spaces", space
         )
-
-    try:
-        click_on_spaces()
     except IndexError:
         pass
     except RuntimeError:
         driver.switch_to.default_content()
-        click_on_spaces()
+        click_element_on_lists_on_left_sidebar_menu(
+            selenium, browser_id, "spaces", space
+        )
 
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space, "Automation Workflows"

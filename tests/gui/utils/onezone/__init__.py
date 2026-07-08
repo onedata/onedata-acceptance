@@ -1,7 +1,7 @@
 """Utils and fixtures to facilitate operations on Onezone web GUI."""
 
-__author__ = "Bartosz Walkowicz Michal Stanisz"
-__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
+__author__ = "Bartosz Walkowicz Michal Stanisz Jakub Karczewski Mateusz Zajac"
+__copyright__ = "Copyright (C) 2017-2026 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from typing import ClassVar, TypeVar
@@ -65,8 +65,8 @@ class OZLoggedIn:
     def get_page_class(page_name: PageName) -> type[SidebarPanelPage]:
         return OZLoggedIn._page_class_by_name[page_name]
 
-    def _panel_has_class(self, item: PageName, class_name: str) -> bool:
-        return element_has_class(self.get_panel_by_name(item), class_name)
+    def _panel_has_class(self, panel_name: PageName, class_name: str) -> bool:
+        return element_has_class(self.get_panel_by_name(panel_name), class_name)
 
     def is_panel_menu_expanded(self) -> bool:
         return element_has_class(self._sidebar_menu, "expanded")
