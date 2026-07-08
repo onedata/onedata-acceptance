@@ -14,7 +14,12 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
-from tests.gui.steps.common.login import login_using_basic_auth
+from tests.gui.steps.common.login import (
+    login_using_basic_auth,
+    wt_enter_password_of_user,
+    wt_enter_text_to_field_in_login_form,
+    wt_press_sign_in_btn_on_login_page,
+)
 from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.oneprovider.data_tab import (
     assert_browser_in_tab_in_op,
@@ -304,3 +309,20 @@ def change_password(
     profile.retype_new_password_box = new_password
     profile.change_password.click()
     users[username].password = new_password
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} logins as "{username}" without closing authentication'
+        " info alert"
+    )
+)
+def wt_sign_in_to_onezone_without_closing_auth_info_alert(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    username: str,
+    users: Users,
+) -> None:
+    wt_enter_text_to_field_in_login_form(selenium, browser_id, "Username", username)
+    wt_enter_password_of_user(selenium, browser_id, username, users)
+    wt_press_sign_in_btn_on_login_page(selenium, browser_id)
