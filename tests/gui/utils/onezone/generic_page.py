@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from abc import ABCMeta
 from collections.abc import Iterable
+from inspect import getattr_static
 from typing import Any, ClassVar
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -38,7 +39,12 @@ class GenericPage(PageObject, metaclass=GenericPageMeta):
 
     def _get_items_list(self, list_element: ListElement) -> Any:
         attr_list = self._list_attr_name(list_element)
-        return getattr(self, attr_list)
+        list_descriptor = getattr_static(self, attr_list)
+        if isinstance(list_descriptor, property):
+            raise AttributeError(attr_list)
+        if hasattr(list_descriptor, "__get__"):
+            return list_descriptor.__get__(self, type(self))
+        return list_descriptor
 
     @property
     def shares_list(self) -> Any:
