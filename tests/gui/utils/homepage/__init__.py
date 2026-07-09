@@ -1,14 +1,14 @@
 """Utils and fixtures to facilitate operations on Onedata homepage"""
 
-__author__ = "Mateusz Zając"
+__author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from typing import Literal
 
-from tests.gui.utils.core.base import PageObject
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.core.web_elements import WebElementsSequence
 from tests.gui.utils.homepage.documentation import (
     APIPage,
@@ -17,16 +17,11 @@ from tests.gui.utils.homepage.documentation import (
     QuickStartPage,
 )
 
+PageName = Literal["how it works", "quick start", "api", "docs"]
+
 
 class Homepage:
     _panels = WebElementsSequence(".nav-list .nav-link")
-
-    panels_classes: dict[str, type[PageObject]] = {
-        "how it works": HowItWorksPage,
-        "quick Start": QuickStartPage,
-        "api": APIPage,
-        "docs": DocsPage,
-    }
 
     def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
@@ -34,22 +29,18 @@ class Homepage:
     def __str__(self) -> str:
         return "Onedata Docs page"
 
-    def __getitem__(self, item: str) -> PageObject:
-        return get_page(self, item, False)
+    @property
+    def how_it_works(self) -> HowItWorksPage:
+        return HowItWorksPage(self.web_elem, self.web_elem, parent=self)
 
-    def get_page_and_click(self, item: str) -> PageObject:
-        return get_page(self, item)
+    @property
+    def quick_start(self) -> QuickStartPage:
+        return QuickStartPage(self.web_elem, self.web_elem, parent=self)
 
-    def get_panel_by_name(self, name: str) -> WebElement:
-        return [p for p in self._panels if p.text.lower() == name.lower()][0]
+    @property
+    def api(self) -> APIPage:
+        return APIPage(self.web_elem, self.web_elem, parent=self)
 
-
-def get_page(docs_page: "Homepage", item: str, click: bool = True) -> PageObject:
-    item = item.lower()
-    cls = docs_page.panels_classes.get(item, None)
-    if cls:
-        panel = docs_page.get_panel_by_name(item)
-        if click:
-            panel.click()
-        return cls(docs_page.web_elem, docs_page.web_elem, parent=docs_page)
-    raise RuntimeError(f'no "{item}" on {docs_page} found')
+    @property
+    def docs(self) -> DocsPage:
+        return DocsPage(self.web_elem, self.web_elem, parent=self)

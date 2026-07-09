@@ -293,7 +293,7 @@ def grant_acl_privileges_in_op_gui(
     option_in_submenu = "Files"
     path = item_list.replace('"', "")
 
-    _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu, force=False)
+    _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, space)
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space, option_in_submenu

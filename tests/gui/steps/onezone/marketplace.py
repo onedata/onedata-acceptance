@@ -28,7 +28,7 @@ def click_button_in_marketplace_subpage(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].space_marketplace_page.advertise_space_button()
+    OZLoggedIn(driver).data.space_marketplace_page.advertise_space_button()
 
 
 @wt(
@@ -44,14 +44,14 @@ def assert_marketplace_icon_in_space_sidebar(
     driver = selenium[browser_id]
     err_msg = f"Space: {space_name} does not have marketplace indicator visible"
 
-    assert OZLoggedIn(driver)["data"].spaces_list[space_name].advertised_icon, err_msg
+    assert OZLoggedIn(driver).data.spaces_list[space_name].advertised_icon, err_msg
 
 
 def get_space_from_marketplace_list(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> MarketplaceSpace:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].space_marketplace_page
+    page = OZLoggedIn(driver).data.space_marketplace_page
     return page.spaces_marketplace_list[space_name]
 
 

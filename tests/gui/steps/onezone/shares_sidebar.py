@@ -24,7 +24,7 @@ from tests.utils.utils import repeat_failed
 def assert_space_name_for_share_matches_expected(
     selenium: SeleniumDrivers, browser_id: str, share_name: str, space_name: str
 ) -> None:
-    shares_list = OZLoggedIn(selenium[browser_id])["shares"].shares_list
+    shares_list = OZLoggedIn(selenium[browser_id]).shares.shares_list
 
     found_space_name = shares_list[share_name].space_name
     assert space_name == found_space_name, (
@@ -45,7 +45,7 @@ def assert_space_name_for_share_matches_expected(
 def assert_share_name_in_shares_sidebar(
     selenium: SeleniumDrivers, browser_id: str, share_name: str
 ) -> None:
-    shares_list = OZLoggedIn(selenium[browser_id])["shares"].shares_list
+    shares_list = OZLoggedIn(selenium[browser_id]).shares.shares_list
     share_names_list = {share.name for share in shares_list}
 
     assert share_name in share_names_list, f"Share {share_name} not in shares sidebar"

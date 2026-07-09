@@ -43,6 +43,7 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.onezone import OZLoggedIn
+from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -60,8 +61,10 @@ def input_new_group_name_into_rename_group_inpux_box(group: Any, text: str) -> N
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Any:
-    page = OZLoggedIn(driver).get_page_and_click("groups")
+def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Group:
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(GroupsPage)
+    page = oz_page.groups
     return page.groups_list[group_name]
 
 
