@@ -110,8 +110,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
             granted: False
 
     And user of browser2 refreshes site
-    Then user of browser2 opens group "group5" members subpage
-    And user of browser2 cannot view group "group5" membership due to lack of privileges
+    Then user of browser2 cannot view group "group5" membership due to lack of privileges
 
 
   Scenario: User fails to rename group because of lack in privileges

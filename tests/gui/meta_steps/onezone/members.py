@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.steps.modals.modal import assert_element_text_in_modal
+from tests.gui.steps.onezone.groups import go_to_group_subpage
 from tests.gui.steps.onezone.members import (
     assert_member_is_in_parent_members_list,
     assert_privileges_in_members_subpage,
@@ -16,7 +17,10 @@ from tests.gui.steps.onezone.members import (
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.onezone import OZLoggedIn
 from tests.type_definitions import SeleniumDrivers
+from tests.utils.bdd_utils import parsers, wt
 
 
 def fail_to_set_privileges_using_op_gui(
@@ -118,3 +122,34 @@ def assert_group_in_space_using_op_gui(
         space_name,
         parent_type,
     )
+
+
+@wt(
+    parsers.re(
+        "users? of (?P<browser_ids>.*) cannot view "
+        'group "(?P<group>.*)" membership due to lack of privileges'
+    )
+)
+def assert_cannot_view_group_membership(
+    selenium: SeleniumDrivers, browser_ids: str, group: str
+) -> None:
+    for browser_id in parse_seq(browser_ids):
+        driver = selenium[browser_id]
+        oz_page = OZLoggedIn(driver)
+        go_to_group_subpage(selenium, browser_id, group, "members")
+        members_page = oz_page.groups.members_page
+
+        message_groups = members_page.lack_groups_view_privileges.text
+        message_users = members_page.lack_users_view_privileges.text
+        bulk_edit_button = members_page.bulk_edit_button
+
+        expected_message = "Insufficient privileges to access this resource."
+        err_msg = (
+            "The message about lack of privileges to view membership is not visible"
+        )
+
+        assert message_groups == expected_message, f"{err_msg} for groups"
+        assert message_users == expected_message, f"{err_msg} for users"
+        assert (
+            not bulk_edit_button.is_enabled()
+        ), "Bulk edit button is supposed to be disabled"
