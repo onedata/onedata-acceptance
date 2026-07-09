@@ -96,22 +96,22 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
   Scenario: User fails to view group because of lack in privileges
     When user of browser1 opens group "group5" members subpage
     And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
     And user of browser1 clicks on "user2" users checkbox
     And user of browser1 clicks on bulk edit button
     And user of browser1 sets following privileges on modal:
           Group management:
             granted: False
 
-    And user of browser2 opens group "group5" members subpage
-    And user of browser2 clicks "user2" user in "group2" group members users list
+    And user of browser1 clicks "group4" group in "group5" group members groups list
+    And user of browser1 clicks on "group4" groups checkbox
+    And user of browser1 clicks on bulk edit button
+    And user of browser1 sets following privileges on modal:
+          Group management:
+            granted: False
 
-    And user of browser2 clicks on "group3" member relation menu button to "group4" group
-    And user of browser2 clicks on "Remove relation" in group membership relation menu
-    And user of browser2 clicks on "Remove" button in modal "REMOVE MEMBER"
     And user of browser2 refreshes site
-
-    Then user of browser2 cannot view group "group5" membership due to lack of privileges
+    Then user of browser2 opens group "group5" members subpage
+    And user of browser2 cannot view group "group5" membership due to lack of privileges
 
 
   Scenario: User fails to rename group because of lack in privileges

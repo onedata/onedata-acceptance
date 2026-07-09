@@ -135,8 +135,8 @@ class MembersPage(PageObject):
     groups = WebItem(".group-list", cls=MembersList)
     users = WebItem(".user-list", cls=MembersUserList)
 
-    lack_groups_view_privileges = WebElement(".row:not(.user-list-row)")
-    lack_users_view_privileges = WebElement(".row.user-list-row")
+    lack_groups_view_privileges = WebElement(".row:not(.user-list-row) > .alert")
+    lack_users_view_privileges = WebElement(".row.user-list-row .alert")
 
     token = WebItem(".invitation-token-presenter", cls=InvitationTokenArea)
     memberships = WebItemsSequence(

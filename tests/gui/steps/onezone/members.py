@@ -1177,8 +1177,10 @@ def click_member_checkbox(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).groups.members_page
-
-    getattr(page, member_type).items[member_name].header.checkbox.click()
+    page.close_member(driver)
+    members = getattr(page, member_type)
+    item_checkbox = members.items[member_name].header.checkbox
+    item_checkbox.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on bulk edit button"))
@@ -1262,8 +1264,10 @@ def assert_cannot_view_group_membership(
 ) -> None:
     for browser_id in parse_seq(browser_ids):
         driver = selenium[browser_id]
+        oz_page = OZLoggedIn(driver)
+        go_to_group_subpage(selenium, browser_id, group, "members")
+        members_page = oz_page.groups.members_page
 
-        members_page = OZLoggedIn(driver).groups.members_page
         message_groups = members_page.lack_groups_view_privileges.text
         message_users = members_page.lack_users_view_privileges.text
         bulk_edit_button = members_page.bulk_edit_button
