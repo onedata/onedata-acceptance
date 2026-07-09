@@ -51,9 +51,9 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (user of )?(?P<user>.+?) creates dataset "
-        '(?P<option>.*)for item "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (user of )?(?P<user>.+?) creates dataset "
+        r'(?P<option>.*)for item "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -89,9 +89,9 @@ def create_dataset_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) fails to create dataset for"
-        ' item "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) fails to create dataset for"
+        r' item "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -125,9 +125,9 @@ def fail_to_create_dataset_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) (?P<option>does "
-        'not see|sees) dataset for item "(?P<item_name>.*)" in space'
-        ' "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) (?P<option>does "
+        r'not see|sees) dataset for item "(?P<item_name>.*)" in space'
+        r' "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -164,9 +164,9 @@ def assert_top_level_dataset_in_space_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) removes dataset for item "
-        '"(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) removes dataset for item "
+        r'"(?P<item_name>.*)" in space "(?P<space_name>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -201,9 +201,9 @@ def remove_dataset_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees (?P<option>.*) write "
-        'protection flags? for dataset for item "(?P<item_name>.*)" in'
-        ' space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) sees (?P<option>.*) write "
+        r'protection flags? for dataset for item "(?P<item_name>.*)" in'
+        r' space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -242,8 +242,8 @@ def assert_write_protection_flag_for_dataset(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that datasets "
-        'structure in space "(?P<space_name>.*)" in (?P<host>.*) '
+        r"using (?P<client>.*), (?P<user>.+?) sees that datasets "
+        r'structure in space "(?P<space_name>.*)" in (?P<host>.*) '
         r"is as follow:\n(?P<config>(.|\s)*)"
     )
 )
@@ -288,10 +288,10 @@ def check_dataset_structure_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that item"
-        ' "(?P<item_name>.*)" has effective(?P<option>.*) '
-        'write protection flags? in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) sees that item"
+        r' "(?P<item_name>.*)" has effective(?P<option>.*) '
+        r'write protection flags? in space "(?P<space_name>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -328,9 +328,9 @@ def check_effective_protection_flags_for_file(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sets(?P<option>.*) "
-        'protection flags? for dataset "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) sets(?P<option>.*) "
+        r'protection flags? for dataset "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -368,10 +368,10 @@ def set_protection_flags_for_dataset(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that dataset"
-        ' "(?P<item_name>.*)" has effective(?P<option>.*) '
-        'write protection flags? in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) sees that dataset"
+        r' "(?P<item_name>.*)" has effective(?P<option>.*) '
+        r'write protection flags? in space "(?P<space_name>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -409,9 +409,9 @@ def check_effective_protection_flags_for_dataset(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) detaches dataset "
-        'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) detaches dataset "
+        r'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -446,9 +446,9 @@ def detach_dataset_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that dataset for item"
-        ' "(?P<item_name>.*)" is detached in space "(?P<space_name>.*)"'
-        " in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) sees that dataset for item"
+        r' "(?P<item_name>.*)" is detached in space "(?P<space_name>.*)"'
+        r" in (?P<host>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -483,9 +483,9 @@ def assert_dataset_detached_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) reattaches dataset for "
-        'item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) reattaches dataset for "
+        r'item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

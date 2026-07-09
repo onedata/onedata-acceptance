@@ -17,7 +17,7 @@ import yaml
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.mixed.utils.data import (
     Content,
     ContentItem,
@@ -149,9 +149,9 @@ def create_file_in_op_oneclient_with_tokens(
 
 
 def see_items_in_op_oneclient(
-    items: str, space: str, user: str, users: Users, result: str, host: str
+    items: list[str], space: str, user: str, users: Users, result: str, host: str
 ) -> None:
-    for item in parse_seq(items):
+    for item in items:
         last_elem_in_path = os.path.basename(item)
         if last_elem_in_path.startswith("dir"):
             full_path = f"{space}/{item}"
@@ -420,7 +420,7 @@ def assert_ace_in_op_oneclient(
 ) -> None:
     ace = multi_file_steps.get_metadata(user, path, host, users)["cdmi_acl"]
     ace = json.loads(ace)[numerals[num]]
-    assert_ace(priv, item_type, ace, name, num, path)
+    assert_ace(parse_elements_sequence(priv), item_type, ace, name, num, path)
 
 
 def grant_acl_privileges_in_op_oneclient(
@@ -440,7 +440,7 @@ def grant_acl_privileges_in_op_oneclient(
         acl = []
     acl = get_acl_metadata(
         acl,
-        priv,
+        parse_elements_sequence(priv),
         item_type,
         groups,
         name,

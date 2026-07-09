@@ -69,13 +69,15 @@ def invite_user_to_cluster(
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_record_in_clusters_menu(selenium, browser_id, cluster, hosts)
-    wt_click_on_subitem_for_item(selenium, browser_id, option, sub_item, cluster, hosts)
+    wt_click_on_subitem_for_item(
+        selenium, [browser_id], option, sub_item, cluster, hosts
+    )
 
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
     close_modal(selenium, browser_id, modal)
     send_copied_item_to_other_users(
-        browser_id, item_type, browser, tmp_memory, displays, clipboard
+        browser_id, item_type, [browser], tmp_memory, displays, clipboard
     )
 
 
@@ -110,7 +112,7 @@ def change_privilege_config_in_cluster(
     cluster = "oneprovider-1"
 
     wt_click_on_subitem_for_item(
-        selenium, browser_id, "CLUSTERS", "Members", cluster, hosts
+        selenium, [browser_id], "CLUSTERS", "Members", cluster, hosts
     )
     click_element_in_members_list(selenium, browser_id, user_name, where, list_type)
     see_privileges_for_member(selenium, browser_id, where, member_type, user_name)
@@ -151,7 +153,7 @@ def add_group_to_cluster(
     click_on_record_in_clusters_menu(selenium, browser_id, cluster_name, hosts)
     wt_click_on_subitem_for_item(
         selenium,
-        browser_id,
+        [browser_id],
         sidebar,
         menu_option,
         cluster_name,
@@ -173,9 +175,9 @@ def add_group_to_cluster(
 
 @given(
     parsers.re(
-        'user of (?P<browser_id>.*) sees no "(?P<member_name>.*)" '
-        '(?P<member_type>user|group) in "(?P<name>.*)" '
-        "(?P<where>cluster|group|harvester) members"
+        r'user of (?P<browser_id>.*) sees no "(?P<member_name>.*)" '
+        r'(?P<member_type>user|group) in "(?P<name>.*)" '
+        r"(?P<where>cluster|group|harvester) members"
     )
 )
 def no_member_in_parent(
@@ -223,15 +225,15 @@ def remember_cluster_id(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<operation>removes) "
-        '"(?P<text>.*)" text from (?P<kind_of_agreement>.*) in GUI'
-        ' settings page of "(?P<record>.*)"'
+        r'"(?P<text>.*)" text from (?P<kind_of_agreement>.*) in GUI'
+        r' settings page of "(?P<record>.*)"'
     )
 )
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<operation>sets) "
-        '(?P<kind_of_agreement>.*): "(?P<text>.*)" in GUI settings page'
-        ' of "(?P<record>.*)"'
+        r'(?P<kind_of_agreement>.*): "(?P<text>.*)" in GUI settings page'
+        r' of "(?P<record>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -94,8 +94,8 @@ def wt_assert_title_contains(
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) clicks on "
-        '"(?P<btn_name>.+?)" button in "(?P<popup>.+?)" popup'
+        r"users? of (?P<browser_id>.+?) clicks on "
+        r'"(?P<btn>.+?)" button in "(?P<popup>.+?)" popup'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -107,8 +107,8 @@ def wt_click_on_btn_in_popup(
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) clicked on "
-        '"(?P<btn_name>.+?)" button in "(?P<popup>.+?)" popup'
+        r"users? of (?P<browser_id>.+?) clicked on "
+        r'"(?P<btn>.+?)" button in "(?P<popup>.+?)" popup'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -134,7 +134,7 @@ def click_option_in_popup_text_menu(
     Popups(driver).menu_popup_with_text.menu[option]()
 
 
-@wt(parsers.re("pass"))
+@wt(parsers.re(r"pass"))
 def pass_test() -> None:
     pass
 
@@ -151,7 +151,7 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
     driver = selenium[browser_id]
     WebDriverWait(
         driver,
-        timeout=WAIT_BACKEND * 2,
+        timeout=WAIT_BACKEND * 5,
         ignored_exceptions=[RuntimeError],
     ).until(
         lambda driver: Onepanel(

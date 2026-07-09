@@ -10,7 +10,7 @@ from typing import cast
 
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
 from tests.gui.utils import Homepage, Modals, Popups
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence, transform
 from tests.gui.utils.homepage.documentation import DocumentationPage, EndpointInfo
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -172,15 +172,19 @@ def assert_docs_title_contains(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that (?P<folders>.*?) sidebar folder(s are|"
         r' is) expanded in "(?P<subpage>Docs|API)" subpage in documentation'
-    )
+    ),
+    converters={
+        "folders": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_expanded_folders_in_sidebar_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: str, subpage: str, folders: str
+    selenium: SeleniumDrivers, browser_id: str, subpage: str, folders: list[str]
 ) -> None:
     driver = selenium[browser_id]
-    expected_folders = set(parse_seq(folders))
-    page = cast(DocumentationPage, Homepage(driver)[subpage])
+    expected_folders = set(folders)
+    subpage = transform(subpage)
+    page: DocumentationPage = getattr(Homepage(driver), subpage)
     found_folders = set(page.sidebar.get_expanded_folders_names())
     assert (
         found_folders == expected_folders
@@ -223,7 +227,7 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
             selenium,
             browser_id,
             "API",
-            endpoint.category,
+            [endpoint.category],
         )
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
@@ -264,7 +268,7 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(
             selenium, browser_id, "API", endpoint.label
         )
         assert_expanded_folders_in_sidebar_in_docs_subpage(
-            selenium, browser_id, "API", endpoint.category
+            selenium, browser_id, "API", [endpoint.category]
         )
         driver.close()
         driver.switch_to.window(driver.window_handles[0])

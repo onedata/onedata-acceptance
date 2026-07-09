@@ -75,9 +75,9 @@ def click_button_in_navigation_tab(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) chooses to run "
-        "(?P<ordinal>1st|2nd|3rd|4th|5th|6th) revision of "
-        '"(?P<workflow>.*?)" workflow'
+        r"user of (?P<browser_id>.*?) chooses to run "
+        r"(?P<ordinal>1st|2nd|3rd|4th|5th|6th) revision of "
+        r'"(?P<workflow>.*?)" workflow'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -168,9 +168,9 @@ def search_for_task_in_parallel_box(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) (?P<option>clicks on|closes) task "
-        '"(?P<task_name>.*?)" in (?P<ordinal>.*?) parallel box in '
-        '"(?P<lane_name>.*?)" lane in workflow visualizer'
+        r"user of (?P<browser_id>.*?) (?P<option>clicks on|closes) task "
+        r'"(?P<task_name>.*?)" in (?P<ordinal>.*?) parallel box in '
+        r'"(?P<lane_name>.*?)" lane in workflow visualizer'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -259,7 +259,7 @@ def change_tab_in_automation_subpage(
     time.sleep(0.25)
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) clicks on first executed workflow"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) clicks on first executed workflow"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_first_executed_workflow_record(
     selenium: SeleniumDrivers, browser_id: str
@@ -271,8 +271,8 @@ def expand_first_executed_workflow_record(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<workflow>.*)" menu '
-        "on workflow executions list"
+        r'user of (?P<browser_id>.*) clicks on "(?P<workflow>.*)" menu '
+        r"on workflow executions list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -285,8 +285,8 @@ def click_on_workflow_menu(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<workflow>.*)" '
-        "on workflow executions list"
+        r'user of (?P<browser_id>.*) clicks on "(?P<workflow>.*)" '
+        r"on workflow executions list"
     )
 )
 def click_and_enter_workflow(
@@ -298,8 +298,8 @@ def click_and_enter_workflow(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees)"
-        ' "(?P<workflow>.*)" on workflow executions list'
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees)"
+        r' "(?P<workflow>.*)" on workflow executions list'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -366,9 +366,9 @@ def click_button_on_status_bar(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on (?P<ordinal>|1st|2nd"
-        '|3rd|4th) revision of "(?P<workflow>.*)" in workflows list '
-        "in inventory workflows subpage"
+        r"user of (?P<browser_id>.*) clicks on (?P<ordinal>|1st|2nd"
+        r'|3rd|4th) revision of "(?P<workflow>.*)" in workflows list '
+        r"in inventory workflows subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

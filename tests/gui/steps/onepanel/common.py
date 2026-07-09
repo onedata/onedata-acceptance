@@ -11,7 +11,11 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import LoginPage, Modals, OnePage, Onepanel
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -19,52 +23,60 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.+?) clicks? on (?P<btn>.+?) "
-        "button in (?P<content>welcome|spaces|account management|"
-        "storages|provider|member) page in Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on"
+        r" (?P<btn>.+?) "
+        r"button in (?P<content>welcome|spaces|account management|"
+        r"storages|provider|member) page in Onepanel"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_content(
-    selenium: SeleniumDrivers, browser_id_list: str, btn: str, content: str
+    selenium: SeleniumDrivers, browser_id_list: list[str], btn: str, content: str
 ) -> None:
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         content = getattr(Onepanel(selenium[browser_id]).content, transform(content))
         getattr(content, transform(btn)).click()
 
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.+?) clicks? on "
-        '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
-        "item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on "
+        r'(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
+        r"item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_subitem_for_item(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
+    browser_id_list: list[str],
     sidebar: str,
     sub_item: str,
     record: str,
     hosts: Hosts,
 ) -> None:
     record = hosts[record]["name"]
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].submenu[sub_item].click()
 
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.+?) clicks? on "
-        '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
-        "item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on "
+        r'(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
+        r"item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
+    ),
+    converters={"browser_id_list": parse_elements_sequence},
 )
 def g_click_on_subitem_for_item(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
+    browser_id_list: list[str],
     sidebar: str,
     sub_item: str,
     record: str,
@@ -77,39 +89,46 @@ def g_click_on_subitem_for_item(
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.+?) clicks? on "
-        "(?P<sub_item>.+?) item in submenu of item named "
-        '"(?P<record>.+?)" in (?P<sidebar>CLUSTERS) sidebar in '
-        "Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on "
+        r"(?P<sub_item>.+?) item in submenu of item named "
+        r'"(?P<record>.+?)" in (?P<sidebar>CLUSTERS) sidebar in '
+        r"Onepanel"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_subitem_for_item_with_name(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
+    browser_id_list: list[str],
     sidebar: str,
     sub_item: str,
     record: str | int,
 ) -> None:
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].submenu[sub_item].click()
 
 
 @wt(
     parsers.re(
-        'users? of (?P<browser_id_list>.+?) clicks? on "(?P<record>.+?)"'
-        " item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on"
+        r' "(?P<record>.+?)"'
+        r" item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_sidebar_item(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
+    browser_id_list: list[str],
     sidebar: str,
     record: str,
 ) -> None:
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].click()
 

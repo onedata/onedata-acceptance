@@ -175,11 +175,11 @@ def enable_provider_cluster_registration_for_user(
     last_step = "last step"
     wt_click_on_btn_in_deployment_step(selenium, browser_id, last_step_btn, last_step)
     service = "Onezone"
-    login_using_basic_auth(selenium, browser_id, user_login, users, service)
+    login_using_basic_auth(selenium, [browser_id], [user_login], users, [service])
     send_copied_invite_token_in_oz_gui(
         selenium,
         browser_id,
-        browser_id2,
+        [browser_id2],
         tmp_memory,
         displays,
         clipboard,

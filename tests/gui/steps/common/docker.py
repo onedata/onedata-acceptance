@@ -14,7 +14,7 @@ import yaml
 from _pytest._py.path import LocalPath
 
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import given, parsers, wt
 
@@ -334,9 +334,12 @@ def wt_rm_files_to_storage_mount_point(src_path: str, hosts: Hosts) -> None:
     _docker_rm(os.path.join(MOUNT_POINT, src_path), hosts)
 
 
-@given(parsers.parse("there is no {elems} in provider's storage mount point"))
-def g_rm_many_files_from_storage_mount_point(elems: str, hosts: Hosts) -> None:
-    for elem in parse_seq(elems):
+@given(
+    parsers.parse("there is no {elems} in provider's storage mount point"),
+    converters={"elems": parse_elements_sequence},
+)
+def g_rm_many_files_from_storage_mount_point(elems: list[str], hosts: Hosts) -> None:
+    for elem in elems:
         _docker_rm(os.path.join(MOUNT_POINT, elem), hosts)
 
 

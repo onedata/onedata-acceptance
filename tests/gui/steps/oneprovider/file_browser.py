@@ -25,7 +25,12 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import Clipboard, TarTree, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
-from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    WhichBrowser,
+    parse_elements_sequence,
+    transform,
+)
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.gui.utils.oneprovider.file_browser import FileSelector
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -76,15 +81,18 @@ def click_on_status_tag_for_file_in_file_browser(
 @wt(
     parsers.parse(
         "user of {browser_id} sees only items named {item_list} in {which_browser}"
-    )
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_only_given_items_in_file_browser(
-    browser_id: str, item_list: str, tmp_memory: TmpMemory, which_browser: str
+    browser_id: str, item_list: list[str], tmp_memory: TmpMemory, which_browser: str
 ) -> None:
     file_browser = tmp_memory[browser_id][transform(which_browser)]
     files = {f.name for f in file_browser.data}
-    items = parse_seq(item_list)
+    items = item_list
     assert len(files) == len(items), "numbers of items are not equal"
     for item_name in items:
         assert item_name in files, f'not found "{item_name}" in file browser'
@@ -92,16 +100,19 @@ def assert_only_given_items_in_file_browser(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees items? named "
-        "(?P<item_list>.+?) in file browser in given order"
-    )
+        r"user of (?P<browser_id>.+?) sees items? named "
+        rf"(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) in file browser in given order"
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_presence_in_file_browser_with_order(
-    browser_id: str, item_list: str, tmp_memory: TmpMemory
+    browser_id: str, item_list: list[str], tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
-    items = iter(parse_seq(item_list))
+    items = iter(item_list)
     curr_item = next(items)
     for item in browser.data:
         if item.name == curr_item:
@@ -176,7 +187,7 @@ def wait_for_size_to_be_displayed_in_data_row(
 ) -> None:
     # refresh site after enabling size statistics to see displayed size
     # in data row
-    refresh_site(selenium, browser_id)
+    refresh_site(selenium, [browser_id])
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file_browser")
     browser = tmp_memory[browser_id]["file_browser"]
     displayed_size = browser.data[item_name].size
@@ -236,12 +247,14 @@ def click_on_item_in_file_browser(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) selects (?P<item_list>.+?) "
-        "items? from file browser with pressed shift"
-    )
+        r"user of (?P<browser_id>.+?) selects"
+        rf" (?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"items? from file browser with pressed shift"
+    ),
+    converters={"item_list": parse_elements_sequence},
 )
 def select_files_from_file_list_using_shift(
-    browser_id: str, item_list: str, tmp_memory: TmpMemory
+    browser_id: str, item_list: list[str], tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     with browser.select_files() as selector:
@@ -253,13 +266,15 @@ def select_files_from_file_list_using_shift(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) selects (?P<item_list>.+?) "
-        "items? from file browser with pressed ctrl"
-    )
+        r"user of (?P<browser_id>.+?) selects"
+        rf" (?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"items? from file browser with pressed ctrl"
+    ),
+    converters={"item_list": parse_elements_sequence},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_files_from_file_list_using_ctrl(
-    browser_id: str, item_list: str, tmp_memory: TmpMemory
+    browser_id: str, item_list: list[str], tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     with browser.select_files() as selector:
@@ -313,11 +328,12 @@ def select_first_n_files(
 @wt(
     parsers.parse(
         "user of {browser_id} deselects {item_list} item(s) from file browser"
-    )
+    ),
+    converters={"item_list": parse_elements_sequence},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def deselect_items_from_file_browser(
-    browser_id: str, item_list: str, tmp_memory: TmpMemory
+    browser_id: str, item_list: list[str], tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     with browser.select_files() as selector:
@@ -328,18 +344,18 @@ def deselect_items_from_file_browser(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _select_files(
-    browser: SelectableBrowser, selector: FileSelector, item_list: str
+    browser: SelectableBrowser, selector: FileSelector, item_list: list[str]
 ) -> None:
-    for item_name in parse_seq(item_list):
+    for item_name in item_list:
         item = browser.data[item_name]
         if not item.is_selected():
             selector.select(item)
 
 
 def _deselect_files(
-    browser: SelectableBrowser, selector: FileSelector, item_list: str
+    browser: SelectableBrowser, selector: FileSelector, item_list: list[str]
 ) -> None:
-    for item_name in parse_seq(item_list):
+    for item_name in item_list:
         item = browser.files[item_name]
         if item.is_selected():
             selector.select(item)
@@ -360,45 +376,43 @@ def deselect_all_items_from_file_browser(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that {item_list} item is selected in file browser"
-    )
-)
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that {item_list} items are selected in file browser"
-    )
+    parsers.re(
+        rf"user of (?P<browser_id>.*?) sees that "
+        rf"(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) items? "
+        r"(?:is|are) selected in file browser"
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_items_are_selected_in_file_browser(
-    browser_id: str, item_list: str, tmp_memory: TmpMemory
+    browser_id: str, item_list: list[str], tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     err_msg = 'item "{name}" is not selected while it should be'
-    for item_name in parse_seq(item_list):
+    for item_name in item_list:
         item = browser.data[item_name]
         assert item.is_selected(), err_msg.format(name=item_name)
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that {item_list} "
-        "item is not selected in file browser"
-    )
-)
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that {item_list} "
-        "items are not selected in file browser"
-    )
+    parsers.re(
+        rf"user of (?P<browser_id>.*?) sees that "
+        rf"(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) items? "
+        r"(?:is|are) not selected in file browser"
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_items_are_not_selected_in_file_browser(
-    browser_id: str, item_list: str, tmp_memory: TmpMemory
+    browser_id: str, item_list: list[str], tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     err_msg = 'item "{name}" is selected while it should not be'
-    for item_name in parse_seq(item_list):
+    for item_name in item_list:
         item = browser.data[item_name]
         assert not item.is_selected(), err_msg.format(name=item_name)
 
@@ -410,11 +424,11 @@ def assert_items_are_not_selected_in_file_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_none_item_is_selected_in_file_browser(
-    browser_id: str, item_list: str, tmp_memory: TmpMemory
+    browser_id: str, item_list: list[str], tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     err_msg = 'item "{name}" is selected while it should not be'
-    for item_name in parse_seq(item_list):
+    for item_name in item_list:
         item = browser.files[item_name]
         assert not item.is_selected(), err_msg.format(name=item_name)
 
@@ -437,7 +451,7 @@ def assert_empty_dir_msg_in_file_browser(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms create new directory using (?P<option>.*)"
+        r"user of (?P<browser_id>.*) confirms create new directory using (?P<option>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -454,7 +468,7 @@ def confirm_create_new_directory(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms rename directory using (?P<option>.*)"
+        r"user of (?P<browser_id>.*) confirms rename directory using (?P<option>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -585,15 +599,18 @@ def assert_hardlink_path_in_file_dets_modal(
     parsers.re(
         r"(using web GUI, )?user of (?P<browser_id>.*) sees paths (?P<paths>.*) of"
         r' hardlinks in "File details" modal'
-    )
+    ),
+    converters={
+        "paths": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_hardlinks_paths_in_file_dets_modal(
-    selenium: SeleniumDrivers, browser_id: str, paths: str
+    selenium: SeleniumDrivers, browser_id: str, paths: list[str]
 ) -> None:
     entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     entries_paths = [entry.get_path_string() for entry in entries]
-    parsed_paths = parse_seq(paths)
+    parsed_paths = paths
     for path in parsed_paths:
         assert path in entries_paths, f"{path} not in {entries_paths}"
 
@@ -702,22 +719,26 @@ def assert_contents_downloaded_tar_file(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that items? named"
-        " (?P<item_list>.*?) (?P<option>is|are|is not|are not) "
-        "currently visible in (?P<which>.*?) browser"
-    )
+        r"user of (?P<browser_id>.*?) sees that items? named"
+        rf" (?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) (?P<option>is|are|is not|are"
+        r" not) "
+        r"currently visible in (?P<which>.*?) browser"
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_displayed_on_page(
     browser_id: str,
-    item_list: str,
+    item_list: list[str],
     tmp_memory: TmpMemory,
     option: str,
     which: str,
 ) -> None:
     browser = tmp_memory[browser_id][f"{which}_browser"]
     visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
-    items = parse_seq(item_list)
+    items = item_list
     data = [f for f in visible_files if f]
     for name in items:
         if "not" in option:

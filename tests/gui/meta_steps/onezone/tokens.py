@@ -95,16 +95,16 @@ def paste_received_token_into_text_field(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) joins "
-        "(?P<option>group|space|inventory|harvester) using "
-        "received token"
+        r"user of (?P<browser_id>.*) joins "
+        r"(?P<option>group|space|inventory|harvester) using "
+        r"received token"
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) tries to join "
-        "(?P<option>group|space|inventory|harvester) using "
-        "received token"
+        r"user of (?P<browser_id>.*) tries to join "
+        r"(?P<option>group|space|inventory|harvester) using "
+        r"received token"
     )
 )
 def consume_received_token(
@@ -146,9 +146,9 @@ def consume_token_from_copied_token(
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) adds "
-        '(space|harvester|group) "(?P<elem_name>.*)" '
-        "to (harvester|space|inventory) using copied token"
+        r"user of (?P<browser_id>.*) adds "
+        r'(space|harvester|group) "(?P<elem_name>.*)" '
+        r"to (harvester|space|inventory) using copied token"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -212,7 +212,7 @@ def assert_alert_while_consuming_token(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) (?P<result>succeeds|fails) to consume token"
+        r"user of (?P<browser_id>.*?) (?P<result>succeeds|fails) to consume token"
     )
 )
 def result_to_consume_token(

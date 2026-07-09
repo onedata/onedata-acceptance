@@ -19,8 +19,8 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "Advertise your space" '
-        "button in Space Marketplace subpage"
+        r'user of (?P<browser_id>.*) clicks on "Advertise your space" '
+        r"button in Space Marketplace subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -33,8 +33,8 @@ def click_button_in_marketplace_subpage(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees that "(?P<space_name>.*)" '
-        "space is advertised in the marketplace in space sidebar"
+        r'user of (?P<browser_id>.*) sees that "(?P<space_name>.*)" '
+        r"space is advertised in the marketplace in space sidebar"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -119,8 +119,8 @@ def gather_events_list(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees events in modal "
-        '"Function pods activity" with following '
+        r"user of (?P<browser_id>.*) sees events in modal "
+        r'"Function pods activity" with following '
         r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
@@ -145,9 +145,9 @@ def assert_events_in_pods_monitor(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees events in modal "
-        '"Function pods activity" that contains lambda name '
-        '"(?P<lambda_name>.*)" and following '
+        r"user of (?P<browser_id>.*) sees events in modal "
+        r'"Function pods activity" that contains lambda name '
+        r'"(?P<lambda_name>.*)" and following '
         r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
@@ -197,10 +197,10 @@ def get_lambda_name(events: str) -> str:
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees following "(?P<link>.*)" '
-        '(?P<option>reason|message)s for task "(?P<task>.*)" in '
-        '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane '
-        "(?P<if_finished>after workflow execution is finished|during "
+        r'user of (?P<browser_id>.*) sees following "(?P<link>.*)" '
+        r'(?P<option>reason|message)s for task "(?P<task>.*)" in '
+        r'(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane '
+        r"(?P<if_finished>after workflow execution is finished|during "
         r"workflow execution):\n(?P<events>(.|\s)*)"
     )
 )

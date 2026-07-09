@@ -40,8 +40,8 @@ def assert_advertise_in_marketplace_toggle(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>check|uncheck)s "
-        '"Advertise in Marketplace" toggle on space configuration page'
+        r"user of (?P<browser_id>.*) (?P<option>check|uncheck)s "
+        r'"Advertise in Marketplace" toggle on space configuration page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

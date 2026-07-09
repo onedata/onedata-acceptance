@@ -11,8 +11,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
-from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -24,27 +24,29 @@ def _expand_oz_panel(driver: WebDriver, panel: str) -> None:
 
 @given(
     parsers.re(
-        r"users? of (?P<browser_id_list>.*) expanded the "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) expanded the "
         r'"(?P<panel_name>.*)" Onezone sidebar panel'
-    )
+    ),
+    converters={"browser_id_list": parse_elements_sequence},
 )
 def g_expand_oz_panel(
-    selenium: SeleniumDrivers, browser_id_list: str, panel_name: str
+    selenium: SeleniumDrivers, browser_id_list: list[str], panel_name: str
 ) -> None:
-    for browser_id in list_parser(browser_id_list):
+    for browser_id in browser_id_list:
         _expand_oz_panel(selenium[browser_id], panel_name)
 
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) expands? the "
-        '"(?P<panel_name>.*)" Onezone sidebar panel'
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) expands? the "
+        r'"(?P<panel_name>.*)" Onezone sidebar panel'
+    ),
+    converters={"browser_id_list": parse_elements_sequence},
 )
 def wt_expand_oz_panel(
-    selenium: SeleniumDrivers, browser_id_list: str, panel_name: str
+    selenium: SeleniumDrivers, browser_id_list: list[str], panel_name: str
 ) -> None:
-    for browser_id in list_parser(browser_id_list):
+    for browser_id in browser_id_list:
         _expand_oz_panel(selenium[browser_id], panel_name)
 
 
@@ -65,16 +67,16 @@ def assert_alert_with_title_in_oz(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) clicks on "
-        '"(?P<btn>Create new space|Join space)" button in expanded '
-        '"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) clicks on "
+        r'"(?P<btn>Create new space|Join space)" button in expanded '
+        r'"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) clicks on "
-        '"(?P<btn>Join a group)" button in expanded '
-        '"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) clicks on "
+        r'"(?P<btn>Join a group)" button in expanded '
+        r'"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -88,16 +90,16 @@ def click_on_btn_in_oz_panel(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that there is "
-        '(?P<item_type>provider) "(?P<item_name>.+?)" '
-        'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that there is "
+        r'(?P<item_type>provider) "(?P<item_name>.+?)" '
+        r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?P<item_type>provider) "
-        '"(?P<item_name>.+?)" has appeared in expanded '
-        '"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that (?P<item_type>provider) "
+        r'"(?P<item_name>.+?)" has appeared in expanded '
+        r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -119,44 +121,44 @@ def assert_there_is_item_with_known_name_in_oz_panel_list(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that there is "
-        '(?P<item_type>provider) named "(?P<item_name>.+?)" '
-        'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that there is "
+        r'(?P<item_type>provider) named "(?P<item_name>.+?)" '
+        r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?P<item_type>provider) "
-        'named "(?P<item_name>.+?)" has appeared in expanded '
-        '"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that (?P<item_type>provider) "
+        r'named "(?P<item_name>.+?)" has appeared in expanded '
+        r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that there is "
-        '(?P<item_type>space) named "(?P<item_name>.+?)" in expanded '
-        '"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that there is "
+        r'(?P<item_type>space) named "(?P<item_name>.+?)" in expanded '
+        r'"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?P<item_type>space) "
-        'named "(?P<item_name>.+?)" has appeared in expanded '
-        '"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that (?P<item_type>space) "
+        r'named "(?P<item_name>.+?)" has appeared in expanded '
+        r'"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that there is "
-        '(?P<item_type>group) named "(?P<item_name>.+?)" in expanded '
-        '"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that there is "
+        r'(?P<item_type>group) named "(?P<item_name>.+?)" in expanded '
+        r'"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?P<item_type>group) "
-        'named "(?P<item_name>.+?)" has appeared in expanded '
-        '"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that (?P<item_type>group) "
+        r'named "(?P<item_name>.+?)" has appeared in expanded '
+        r'"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -176,44 +178,44 @@ def assert_there_is_item_named_in_oz_panel_list(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?P<item_type>provider) "
-        'named "(?P<item_name>.+?)" has disappeared from expanded '
-        '"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that (?P<item_type>provider) "
+        r'named "(?P<item_name>.+?)" has disappeared from expanded '
+        r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that there is no "
-        '(?P<item_type>provider) named "(?P<item_name>.+?)" '
-        'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that there is no "
+        r'(?P<item_type>provider) named "(?P<item_name>.+?)" '
+        r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?P<item_type>space) "
-        'named "(?P<item_name>.+?)" has disappeared from expanded '
-        '"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that (?P<item_type>space) "
+        r'named "(?P<item_name>.+?)" has disappeared from expanded '
+        r'"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that there is no "
-        '(?P<item_type>space) named "(?P<item_name>.+?)" in expanded '
-        '"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that there is no "
+        r'(?P<item_type>space) named "(?P<item_name>.+?)" in expanded '
+        r'"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?P<item_type>group) "
-        'named "(?P<item_name>.+?)" has disappeared from expanded '
-        '"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that (?P<item_type>group) "
+        r'named "(?P<item_name>.+?)" has disappeared from expanded '
+        r'"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that there is no "
-        '(?P<item_type>group) named "(?P<item_name>.+?)" in expanded '
-        '"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that there is no "
+        r'(?P<item_type>group) named "(?P<item_name>.+?)" in expanded '
+        r'"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -369,19 +371,19 @@ def expand_items_submenu_in_oz_panel(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that there is "
-        '(?P<subitem_type>provider) "(?P<subitem_name>.+?)" in '
-        'submenu of (?P<item_type>space) named "(?P<item_name>.+?)" '
-        'in expanded "(?P<oz_panel>DATA SPACE MANAGEMENT)" '
-        "Onezone panel"
+        r"user of (?P<browser_id>.+?) sees that there is "
+        r'(?P<subitem_type>provider) "(?P<subitem_name>.+?)" in '
+        r'submenu of (?P<item_type>space) named "(?P<item_name>.+?)" '
+        r'in expanded "(?P<oz_panel>DATA SPACE MANAGEMENT)" '
+        r"Onezone panel"
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that there is "
-        '(?P<subitem_type>space) named "(?P<subitem_name>.+?)" '
-        'in submenu of (?P<item_type>provider) "(?P<item_name>.+?)" '
-        'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
+        r"user of (?P<browser_id>.+?) sees that there is "
+        r'(?P<subitem_type>space) named "(?P<subitem_name>.+?)" '
+        r'in submenu of (?P<item_type>provider) "(?P<item_name>.+?)" '
+        r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)

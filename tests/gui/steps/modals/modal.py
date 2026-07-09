@@ -275,7 +275,7 @@ def _click_on_confirmation_btn_in_modal(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>\w+) clicks "(?P<button_name>.*)" '
-        "(confirmation )?button in displayed modal"
+        r"(confirmation )?button in displayed modal"
     )
 )
 def wt_click_on_confirmation_btn_in_modal(
@@ -434,8 +434,8 @@ def assert_btn_in_modal_is_enabled(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees "(?P<text>.*)" '
-        '(?P<element>info|alert) in "(?P<modal>.*)" modal'
+        r'user of (?P<browser_id>.*) sees "(?P<text>.*)" '
+        r'(?P<element>info|alert) in "(?P<modal>.*)" modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -459,8 +459,8 @@ def assert_element_text(elem: object, selector: str, elem_text: str) -> None:
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
-        "button in (?P<panel_name>.*?) panel"
+        r'user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
+        r"button in (?P<panel_name>.*?) panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -473,14 +473,14 @@ def click_panel_button(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on clicks on question mark beside the "
-        "(?P<panel_name>.*?) type selector"
+        r"user of (?P<browser_id>.*?) clicks on clicks on question mark beside the "
+        r"(?P<panel_name>.*?) type selector"
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on clicks on question mark beside the "
-        "(?P<panel_name>Quality of Service) requirements label"
+        r"user of (?P<browser_id>.*?) clicks on clicks on question mark beside the "
+        r"(?P<panel_name>Quality of Service) requirements label"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -494,7 +494,7 @@ def click_panel_question_icon(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" link in info popup'
+        r'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" link in info popup'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -506,8 +506,8 @@ def click_popup_link(selenium: SeleniumDrivers, browser_id: str, link: str) -> N
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that there is no "
-        '"(?P<button>.*?)" button in (?P<panel_name>.*?) panel'
+        r"user of (?P<browser_id>.*?) sees that there is no "
+        r'"(?P<button>.*?)" button in (?P<panel_name>.*?) panel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -530,8 +530,8 @@ def assert_there_is_no_button_in_panel(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
-        'button in modal "(?P<modal_name>.*?)"'
+        r'user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
+        r'button in modal "(?P<modal_name>.*?)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -545,8 +545,8 @@ def click_modal_button(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" '
-        'link in modal "(?P<modal_name>.*?)"'
+        r'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" '
+        r'link in modal "(?P<modal_name>.*?)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -559,9 +559,9 @@ def click_modal_link(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
-        "into(?P<name_textfield>.*?) text field "
-        "in (?P<panel_name>.*?) panel"
+        r'user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
+        r"into(?P<name_textfield>.*?) text field "
+        r"in (?P<panel_name>.*?) panel"
     )
 )
 def wt_write_name_into_text_field_in_panel(
@@ -597,9 +597,9 @@ def write_name_into_text_field_in_panel(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
-        "into(?P<name_textfield>.*?) text field "
-        'in modal "(?P<modal_name>.*?)"'
+        r'user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
+        r"into(?P<name_textfield>.*?) text field "
+        r'in modal "(?P<modal_name>.*?)"'
     )
 )
 def wt_write_name_into_text_field_in_modal(
@@ -637,7 +637,7 @@ def write_name_into_text_field_in_modal(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that item named"
         r' "(?P<item_name>.*?)" '
-        "is shared (?P<number>.*?) times? in modal"
+        r"is shared (?P<number>.*?) times? in modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -685,9 +685,9 @@ def click_share_details_link_in_shares_panel(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on "
+        r"user of (?P<browser_id>.*?) clicks on "
         r'("(?P<owner_name>.*?)" )?(?P<icon_name>copy) icon'
-        ' in modal "(?P<modal_name>.*?)"'
+        r' in modal "(?P<modal_name>.*?)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -766,7 +766,7 @@ def assert_invalid_id_in_error_modal(
         raise ValueError(f"Unknown type {target_type}")
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" (modal|panel)'))
+@wt(parsers.re(r'user of (?P<browser_id>.*) closes "(?P<modal>.*)" (modal|panel)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_modal(selenium: SeleniumDrivers, browser_id: str, modal: str) -> None:
     modal = check_modal_name(modal)
@@ -838,8 +838,8 @@ def assert_path_where_symbolic_link_points(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>checks|unchecks) "
-        '"(?P<toggle_name>.*)" toggle in modal "(?P<modal_name>.*)"'
+        r"user of (?P<browser_id>.*) (?P<option>checks|unchecks) "
+        r'"(?P<toggle_name>.*)" toggle in modal "(?P<modal_name>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

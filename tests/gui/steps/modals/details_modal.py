@@ -97,8 +97,8 @@ def assert_tooltip_on_chart_in_modal(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<tab_name>.*)" '
-        'navigation tab in "(?P<modal>.*)" modal'
+        r'user of (?P<browser_id>.*) clicks on "(?P<tab_name>.*)" '
+        r'navigation tab in "(?P<modal>.*)" modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -112,8 +112,8 @@ def click_on_navigation_tab_in_modal(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<tab_name>.*)" '
-        "navigation tab in (?P<modal>.*) panel"
+        r'user of (?P<browser_id>.*) clicks on "(?P<tab_name>.*)" '
+        r"navigation tab in (?P<modal>.*) panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

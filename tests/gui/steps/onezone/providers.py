@@ -18,7 +18,12 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
+from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.onenv_utils import run_onenv_command
@@ -339,17 +344,24 @@ def assert_consistent_list_of_spaces_for_provider(
 
 @given(
     parsers.re(
-        r"users? of (?P<browser_id_list>.*?) clicked on "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicked on "
         r"(?P<providers>.*?) provider in expanded "
         r'"GO TO YOUR FILES" Onezone panel'
-    )
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "providers": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def g_click_on_provider_in_go_to_your_files_oz_panel(
-    selenium: SeleniumDrivers, browser_id_list: str, providers: str, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id_list: list[str],
+    providers: list[str],
+    hosts: Hosts,
 ) -> None:
-    browser_ids = parse_seq(browser_id_list)
-    provider_names = parse_seq(providers)
+    browser_ids = browser_id_list
+    provider_names = providers
     for browser_id, provider in zip_longest(
         browser_ids, provider_names, fillvalue=provider_names[-1]
     ):
@@ -487,9 +499,9 @@ def assert_provider_is_not_in_providers_list_in_data_sidebar(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) clicks on "
-        "(?P<option>Visit provider|Toggle home provider) button "
-        "on provider popover"
+        r"user of (?P<browser_id>.+?) clicks on "
+        r"(?P<option>Visit provider|Toggle home provider) button "
+        r"on provider popover"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -646,29 +658,38 @@ def wait_until_provider_goes_online_by_rest(
 
 
 def _start_and_wait_for_providers(
-    hosts: Hosts, provider_list: str, users: Users
+    hosts: Hosts, provider_list: list[str], users: Users
 ) -> None:
     start_providers(hosts, provider_list)
-    for provider in parse_seq(provider_list):
+    for provider in provider_list:
         wait_until_provider_goes_online_by_rest(hosts, provider, users)
 
 
-@wt(parsers.re(r'provider named "(?P<provider_list>.*?)" is stopped'))
-@wt(parsers.re(r"providers named (?P<provider_list>.*?) are stopped"))
-def wt_stop_providers(provider_list: str, hosts: Hosts, users: Users) -> Iterator[None]:
+@wt(
+    parsers.re(
+        rf"providers? named (?P<provider_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"(?:is|are) stopped"
+    ),
+    converters={
+        "provider_list": parse_elements_sequence,
+    },
+)
+def wt_stop_providers(
+    provider_list: list[str], hosts: Hosts, users: Users
+) -> Iterator[None]:
     _stop_providers(hosts, provider_list)
     yield
     _start_and_wait_for_providers(hosts, provider_list, users)
 
 
-def _stop_providers(hosts: Hosts, provider_list: str) -> None:
-    for provider in parse_seq(provider_list):
+def _stop_providers(hosts: Hosts, provider_list: list[str]) -> None:
+    for provider in provider_list:
         pod_name = hosts[provider]["pod_name"]
         run_onenv_command("service", ["stop", pod_name])
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def start_providers(hosts: Hosts, provider_list: str) -> None:
-    for provider in parse_seq(provider_list):
+def start_providers(hosts: Hosts, provider_list: list[str]) -> None:
+    for provider in provider_list:
         pod_name = hosts[provider]["pod_name"]
         run_onenv_command("service", ["start", pod_name])

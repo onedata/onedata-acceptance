@@ -67,7 +67,12 @@ from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.workflows_modals.audit_log import LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    parse_seq,
+    transform,
+)
 from tests.gui.utils.oneprovider.automation import Task, WorkflowLane
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -416,19 +421,25 @@ def assert_number_of_elements_in_store_details(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that each element from list "
-        '"(?P<file_list>.*?)" in "(?P<space_name>.*?)" '
-        "(?P<option>corresponds to two) instances of the element with "
-        '"file_id" in "(?P<store_name>.*?)" store'
-    )
+        r"user of (?P<browser_id>.*?) sees that each element from list "
+        rf'"(?P<file_list>{ELEMENTS_SEQUENCE_PATTERN})" in "(?P<space_name>.*?)" '
+        r"(?P<option>corresponds to two) instances of the element with "
+        r'"file_id" in "(?P<store_name>.*?)" store'
+    ),
+    converters={
+        "file_list": parse_elements_sequence,
+    },
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that (each element with |)"
-        '"file_id" in "(?P<store_name>.*?)" store details modal '
-        "(?P<option>corresponds to id of file from|is id of) "
-        '"(?P<file_list>.*?)" in "(?P<space_name>.*?)" space'
-    )
+        r"user of (?P<browser_id>.*?) sees that (each element with |)"
+        r'"file_id" in "(?P<store_name>.*?)" store details modal '
+        r"(?P<option>corresponds to id of file from|is id of) "
+        rf'"(?P<file_list>{ELEMENTS_SEQUENCE_PATTERN})" in "(?P<space_name>.*?)" space'
+    ),
+    converters={
+        "file_list": parse_elements_sequence,
+    },
 )
 def assert_file_id_in_store_details(
     browser_id: str,
@@ -437,7 +448,7 @@ def assert_file_id_in_store_details(
     clipboard: Clipboard,
     displays: dict[str, str],
     tmp_memory: TmpMemory,
-    file_list: str,
+    file_list: list[str],
     space_name: str,
     option: str,
 ) -> None:
@@ -445,7 +456,7 @@ def assert_file_id_in_store_details(
 
     page = get_op_workflow_visualizer_page(driver)
     store_type = "object"
-    files = parse_seq(file_list)
+    files = file_list
 
     elem_num = len(Modals(driver).store_details.store_content_object)
     storage_file_ids = [
@@ -647,15 +658,17 @@ def check_visual_in_store_details_modal(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees following "
-        '(?P<variable_type>.*?) represented by "(?P<item_list>.*?)" in '
-        'content in "(?P<store_name>.*?)" store details modal'
-    )
+        r"user of (?P<browser_id>.*?) sees following "
+        r"(?P<variable_type>.*?) represented by"
+        rf' "(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN})" in '
+        r'content in "(?P<store_name>.*?)" store details modal'
+    ),
+    converters={"item_list": parse_elements_sequence},
 )
 def assert_elements_in_store_details_modal(
     browser_id: str,
     selenium: SeleniumDrivers,
-    item_list: str,
+    item_list: list[str],
     store_name: str,
     variable_type: str,
 ) -> None:
@@ -663,23 +676,30 @@ def assert_elements_in_store_details_modal(
 
     if variable_type == "string":
         compare_string_in_store_details_modal(
-            item_list, modal, variable_type, store_name
+            item_list[0], modal, variable_type, store_name
         )
     elif variable_type == "array":
-        compare_array_in_store_details_modal(modal, item_list)
+        compare_array_in_store_details_modal(modal, repr(item_list))
 
     else:
-        check_visual_in_store_details_modal(modal, variable_type, item_list, store_name)
+        serialized_items = item_list[0] if len(item_list) == 1 else repr(item_list)
+        check_visual_in_store_details_modal(
+            modal, variable_type, serialized_items, store_name
+        )
 
 
 @wt(
     parsers.parse(
         "user of {browser_id} sees {item_list} datasets in "
         'Store details modal for "{store_name}" store'
-    )
+    ),
+    converters={"item_list": parse_elements_sequence},
 )
 def assert_datasets_in_store_details(
-    selenium: SeleniumDrivers, browser_id: str, store_name: str, item_list: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    store_name: str,
+    item_list: list[str],
 ) -> None:
     modal = open_store_details_modal(selenium, browser_id, store_name)
     compare_datasets_in_store_details_modal(item_list, modal, store_name)
@@ -1282,19 +1302,22 @@ def compare_audit_log_debug_entries(
     parsers.parse(
         "user of {browser_id} sees that workflow audit log contains "
         "entry with info only about file attributes {item_list}"
-    )
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+    },
 )
 def assert_workflow_audit_log_contains_entry(
     selenium: SeleniumDrivers,
     browser_id: str,
     tmpdir: LocalPath,
     tmp_memory: TmpMemory,
-    item_list: str,
+    item_list: list[str],
 ) -> bool:
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
     with open(file_path) as f:
         data_file = json.load(f)
-    parsed_items = parse_seq(item_list)
+    parsed_items = item_list
     for entry in data_file:
         try:
             content = entry["content"]

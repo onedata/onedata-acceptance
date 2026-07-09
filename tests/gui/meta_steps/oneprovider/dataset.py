@@ -167,7 +167,7 @@ def assert_top_level_dataset_in_space_in_op_gui(
         assert_items_presence_in_browser(
             selenium,
             browser_id,
-            item_name,
+            [item_name],
             tmp_memory,
             which_browser=item_browser,
         )
@@ -175,7 +175,7 @@ def assert_top_level_dataset_in_space_in_op_gui(
         assert_items_absence_in_browser(
             selenium,
             browser_id,
-            item_name,
+            [item_name],
             tmp_memory,
             which_browser=item_browser,
         )
@@ -391,7 +391,7 @@ def assert_dataset_detached_in_op_gui(
         item_browser=item_browser,
     )
     assert_items_presence_in_browser(
-        selenium, browser_id, item_name, tmp_memory, which_browser=item_browser
+        selenium, browser_id, [item_name], tmp_memory, which_browser=item_browser
     )
 
 

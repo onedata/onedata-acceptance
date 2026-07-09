@@ -16,7 +16,7 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.edit_permissions import (
     MemberAclPermission,
 )
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -87,9 +87,9 @@ def fail_to_set_posix_permission(
 
 
 def _change_acl_options(
-    option_list: str, subject: MemberAclPermission, change: str, driver: WebDriver
+    option_list: list[str], subject: MemberAclPermission, change: str, driver: WebDriver
 ) -> None:
-    for option in parse_seq(option_list):
+    for option in option_list:
         if option in ["allow", "deny"]:
             button_name = f"{option}_option"
             driver.execute_script(
@@ -114,15 +114,17 @@ def _change_acl_options(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sets (?P<option_list>.*) options? "
-        "in ACL record in edit permissions modal"
-    )
+        rf"user of (?P<browser_id>.*) sets (?P<option_list>{ELEMENTS_SEQUENCE_PATTERN})"
+        r" options? "
+        r"in ACL record in edit permissions modal"
+    ),
+    converters={"option_list": parse_elements_sequence},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_acl_options(
     selenium: SeleniumDrivers,
     browser_id: str,
-    option_list: str,
+    option_list: str | list[str],
     subject: str,
 ) -> None:
     # argument 'option_list' is one of the following patterns:
@@ -136,29 +138,34 @@ def select_acl_options(
         driver
     ).details_modal.edit_permissions.acl.member_permission_list[subject]
 
-    re_options = re.match("[Aa]ll( except )?(.*)", option_list)
-    if re_options:
-        option_list = re_options.group(2)
+    if isinstance(option_list, str):
+        re_options = re.match("[Aa]ll( except )?(.*)", option_list)
+        if re_options:
+            option_list = parse_elements_sequence(re_options.group(2))
+            for parent_permission in subject_page.acl_permission_group:
+                parent_permission.toggle.check()
+            change = f"un{change}"
+        else:
+            option_list = parse_elements_sequence(option_list)
 
+    if option_list == ["all"]:
         for parent_permission in subject_page.acl_permission_group:
             parent_permission.toggle.check()
-
-        change = f"un{change}"
-
-    _change_acl_options(option_list, subject_page, change, driver)
+    else:
+        _change_acl_options(option_list, subject_page, change, driver)
 
 
 def assert_fail_to_select_acl_option(
     selenium: SeleniumDrivers,
     browser_id: str,
-    option_list: str,
+    option_list: list[str],
     subject: str,
 ) -> None:
     driver = selenium[browser_id]
     subject_page = Modals(
         driver
     ).details_modal.edit_permissions.acl.member_permission_list[subject]
-    option = parse_seq(option_list)[0]
+    option = option_list[0]
     permissions = option.split(":")
     parent_permission_name = permissions[0].capitalize().replace("Acl", "ACL")
     parent_permission = subject_page.acl_permission_group[parent_permission_name]
@@ -210,7 +217,7 @@ def select_acl_subject(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees exactly (?P<val>\d+) ACL "
-        "records? in edit permissions panel"
+        r"records? in edit permissions panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -223,8 +230,8 @@ def assert_amount_of_acls(selenium: SeleniumDrivers, browser_id: str, val: str) 
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record "
-        "has (?P<subject_type>group|user) subject type "
-        "in edit permissions modal"
+        r"has (?P<subject_type>group|user) subject type "
+        r"in edit permissions modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -268,7 +275,7 @@ def assert_lack_of_subject(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that subject (?P<name>name|"
         r"type) is editable in (?P<num>\w+) ACL record in edit "
-        "permissions modal"
+        r"permissions modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -296,7 +303,7 @@ def assert_acl_record_editable(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that subject (?P<name>name|"
         r"type) is not editable in (?P<num>\w+) ACL record in edit "
-        "permissions modal"
+        r"permissions modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -321,10 +328,14 @@ def assert_acl_record_not_editable(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>\w+) sees that only (?P<option_list>.*)"
+        r"user of (?P<browser_id>\w+) sees that only"
+        rf" (?P<option_list>{ELEMENTS_SEQUENCE_PATTERN})"
         r" privileges? (are|is) set in (?P<num>\w+) ACL record in edit "
-        "permissions panel"
-    )
+        r"permissions panel"
+    ),
+    converters={
+        "option_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_set_acl_privileges(
@@ -332,7 +343,7 @@ def assert_set_acl_privileges(
     browser_id: str,
     num: str,
     numerals: dict[str, int],
-    option_list: str,
+    option_list: list[str],
 ) -> None:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, numerals)
@@ -340,7 +351,7 @@ def assert_set_acl_privileges(
     perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]
     perm.click()
 
-    options = [x.lower() for x in parse_seq(option_list)]
+    options = [x.lower() for x in option_list]
     is_allow_checked = perm.is_allow_option_checked()
     if options[0] in ["allow", "deny"]:
         if "deny" in options and is_allow_checked:
@@ -369,21 +380,21 @@ def assert_set_acl_privileges(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that all"
         r" privileges? are set in (?P<num>\w+) ACL record in edit "
-        "permissions panel"
+        r"permissions panel"
     )
 )
 def assert_set_all_acl_privileges(
     selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
 ) -> None:
-    option_list = "[allow, Content, Acl, Metadata, Attributes, Deletion]"
+    option_list = ["allow", "Content", "Acl", "Metadata", "Attributes", "Deletion"]
     assert_set_acl_privileges(selenium, browser_id, num, numerals, option_list)
 
 
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record"
-        " in edit permissions panel is set for (?P<sub_type>.*?) "
-        "(?P<name>.*)"
+        r" in edit permissions panel is set for (?P<sub_type>.*?) "
+        r"(?P<name>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -435,30 +446,36 @@ def click_on_btn_in_acl_record(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that (?P<subjects>.*) "
-        "(is|are) in subject list in ACL record"
-    )
+        r"(is|are) in subject list in ACL record"
+    ),
+    converters={
+        "subjects": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_subject_in_list_in_acl_record(
-    selenium: SeleniumDrivers, browser_id: str, subjects: str
+    selenium: SeleniumDrivers, browser_id: str, subjects: list[str]
 ) -> None:
     driver = selenium[browser_id]
     Modals(driver).details_modal.edit_permissions.acl.expand_dropdown()
     subject_list = Popups(driver).dropdown.options
-    for subject in parse_seq(subjects):
+    for subject in subjects:
         assert subject in subject_list, f"{subject} not found in subjects list"
 
 
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) does not see (?P<subjects>.*) "
-        "in subject list in (?P<num>.*) ACL record"
-    )
+        r"in subject list in (?P<num>.*) ACL record"
+    ),
+    converters={
+        "subjects": parse_elements_sequence,
+    },
 )
 def assert_subject_not_in_list_in_acl_record(
     selenium: SeleniumDrivers,
     browser_id: str,
-    subjects: str,
+    subjects: list[str],
     num: str,
     numerals: dict[str, int],
 ) -> None:
@@ -469,7 +486,7 @@ def assert_subject_not_in_list_in_acl_record(
     ]
     perm.expand()
     subjects_list = [x.text.lower() for x in perm.subjects_list]
-    for subject in parse_seq(subjects):
+    for subject in subjects:
         assert (
             subject.lower() not in subjects_list
         ), f"{subject} in subjects list in {num} ACL record"
@@ -523,7 +540,7 @@ def assert_no_access_tag_on_file(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>\w+) does not see "no access" tag on '
-        "(?P<item_name>.*)"
+        r"(?P<item_name>.*)"
     )
 )
 def assert_not_no_access_tag_on_file(

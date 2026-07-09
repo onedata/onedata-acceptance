@@ -89,6 +89,9 @@ def parse_seq(
     separator: Optional[str] = None,
     default: Callable[[str], T] = cast(Callable[[str], T], str),
 ) -> list[T]:
+    """Parses regex-matched or separator-delimited values into a list,
+    e.g. '["1", "2"]', '"1"', '1,2', or '1'.
+    """
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
@@ -97,6 +100,34 @@ def parse_seq(
         for el in seq.strip("[]").split(separator)
         if el != ""
     ]
+
+
+# A quoted element, including spaces and special characters, e.g. "dev-oneprovider-0"
+QUOTED_ELEMENT = r'"[^"\n]+"'
+
+# A single unquoted element without separators or whitespace, e.g. new_space1
+UNQUOTED_ELEMENT = r'[^,\[\]"\s]+'
+
+# An element inside a sequence can be quoted or contain unquoted whitespace,
+# see BRACKETED_SEQUENCE
+SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
+
+# An empty sequence, e.g. []
+EMPTY_SEQUENCE = r"\[\]"
+
+# A comma-separated sequence of elements enclosed in square brackets,
+# e.g. ["file1", "file2", "file3"] or [1 2 3]
+BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
+
+ELEMENTS_SEQUENCE_PATTERN = (
+    rf"(?:{QUOTED_ELEMENT}|{UNQUOTED_ELEMENT}|{BRACKETED_SEQUENCE}|{EMPTY_SEQUENCE})"
+)
+
+
+def parse_elements_sequence(value: str) -> list[str]:
+    if re.fullmatch(ELEMENTS_SEQUENCE_PATTERN, value) is None:
+        raise ValueError(f"Invalid elements sequence: {value!r}")
+    return parse_seq(value)
 
 
 def upload_file_path(file_name: str) -> str:
@@ -422,3 +453,16 @@ class ListElement(Enum):
 class AlertPopup(Enum):
     AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
     STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"
+
+
+PageName = Literal[
+    "data",
+    "shares",
+    "providers",
+    "groups",
+    "tokens",
+    "discovery",
+    "automation",
+    "clusters",
+    "cluster",
+]

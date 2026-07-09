@@ -337,9 +337,9 @@ def assert_all_tokens_are_type(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that "
-        'token named "(?P<token_name>.*?)" is marked as '
-        "(?P<status>active|revoked)"
+        r"user of (?P<browser_id>.*?) sees that "
+        r'token named "(?P<token_name>.*?)" is marked as '
+        r"(?P<status>active|revoked)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

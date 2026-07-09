@@ -8,7 +8,10 @@ import pytest
 from onezone_client import GroupApi, GroupCreateRequest, UserApi
 from onezone_client.rest import ApiException
 
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+)
 from tests.mixed.steps.rest.onezone.common import get_group
 from tests.mixed.type_definitions import RestOnezoneTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
@@ -17,46 +20,70 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
 
 
-@wt(parsers.re(r"(?P<user>\w+) creates groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) creates groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
+)
 def create_groups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     user_api = UserApi(user_client)
 
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         user_api.create_user_group(GroupCreateRequest(name=group_name))
 
 
-@wt(parsers.re(r"(?P<user>\w+) sees groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) sees groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
+)
 def see_groups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         assert get_group(
             group_name, user_client
         ), f"There is no group named {group_name}"
 
 
-@wt(parsers.re(r"(?P<user>\w+) does not see groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) does not see groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
+)
 def fail_to_see_groups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         try:
             get_group(group_name, user_client)
         except AssertionError:
@@ -66,21 +93,26 @@ def fail_to_see_groups_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) renames groups? (?P<group_list>.*) to"
-        " (?P<new_names>.*) using REST"
-    )
+        rf"(?P<user>\w+) renames groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+        "new_names": parse_elements_sequence,
+    },
 )
 def rename_groups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
-    new_names: str,
+    group_list: list[str],
+    new_names: list[str],
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
+    for group_name, new_name in zip(group_list, new_names):
         group = get_group(group_name, user_client)
         data = {"name": new_name}
         group_api.modify_group(group.group_id, data)
@@ -88,38 +120,51 @@ def rename_groups_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) fails to rename groups? (?P<group_list>.*)"
-        " to (?P<new_names>.*) using REST"
-    )
+        rf"(?P<user>\w+) fails to rename groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+        "new_names": parse_elements_sequence,
+    },
 )
 def fail_to_rename_groups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
-    new_names: str,
+    group_list: list[str],
+    new_names: list[str],
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
+    for group_name, new_name in zip(group_list, new_names):
         group = get_group(group_name, user_client)
         data = {"name": new_name}
         with pytest.raises(ApiException):
             group_api.modify_group(group.group_id, data)
 
 
-@wt(parsers.re(r"(?P<user>\w+) fails to remove groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) fails to remove groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
+)
 def fail_to_remove_groups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         group = get_group(group_name, user_client)
         with pytest.raises(ApiException):
             group_api.remove_group(group.group_id)
@@ -129,48 +174,60 @@ def remove_groups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         group = get_group(group_name, user_client)
         group_api.remove_group(group.group_id)
 
 
-@wt(parsers.re(r"(?P<user>\w+) leaves groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) leaves groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
+)
 def leave_groups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     user_api = UserApi(user_client)
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         group = get_group(group_name, user_client)
         user_api.leave_group(group.group_id)
 
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) adds groups? (?P<group_list>.*) as subgroup"
-        ' to group "(?P<parent>.*)" using REST'
-    )
+        rf"(?P<user>\w+) adds groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup"
+        r' to group "(?P<parent>.*)" using REST'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def add_subgroups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     parent: str,
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         parent_id = get_group(parent, user_client).group_id
         child_id = get_group(group_name, user_client).group_id
         token = group_api.create_child_group_token(parent_id)
@@ -181,13 +238,13 @@ def fail_to_add_subgroups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     parent: str,
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         parent_id = get_group(parent, user_client).group_id
         child_id = get_group(group_name, user_client).group_id
         token = group_api.create_child_group_token(parent_id)
@@ -198,7 +255,7 @@ def fail_to_add_subgroups_using_rest(
 @wt(
     parsers.re(
         r"(?P<user1>\w+) invites (?P<user2>\w+) to join group"
-        ' "(?P<group_name>.*)" using REST'
+        r' "(?P<group_name>.*)" using REST'
     )
 )
 def create_group_token_using_rest(
@@ -232,39 +289,48 @@ def join_group_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) using REST sees that users? (?P<user_list>.*) "
-        "belongs? to groups? (?P<group_list>.*)"
-    )
+        rf"(?P<user>\w+) using REST sees that users? "
+        rf"(?P<user_list>{ELEMENTS_SEQUENCE_PATTERN}) belongs? to groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN})"
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+        "user_list": parse_elements_sequence,
+    },
 )
 def assert_users_in_groups_using_rest(
     user: str,
-    user_list: str,
-    group_list: str,
+    user_list: list[str],
+    group_list: list[str],
     users: Users,
     hosts: Hosts,
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         group = get_group(group_name, user_client)
         users_id = group_api.list_group_users(group.group_id).users
 
-        for user_name in parse_seq(user_list):
+        for user_name in user_list:
             assert users[user_name].user_id in users_id
 
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) sees groups? (?P<group_list>.*) as subgroup"
-        ' to group "(?P<parent>.*)" using REST'
-    )
+        rf"(?P<user>\w+) sees groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup"
+        r' to group "(?P<parent>.*)" using REST'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def assert_subgroups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     parent: str,
     host: str = "onezone",
 ) -> None:
@@ -274,42 +340,50 @@ def assert_subgroups_using_rest(
     subgroups_names = [
         group.name for group in [group_api.get_group(g) for g in subgroups.groups]
     ]
-    for child in parse_seq(group_list):
+    for child in group_list:
         assert child in subgroups_names
 
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) removes groups? (?P<group_list>.*) as "
+        rf"(?P<user>\w+) removes groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as "
         r'subgroup of group "(?P<parent_name>.*)" using REST'
-    )
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def remove_subgroups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
-    group_list: str,
+    group_list: list[str],
     parent_name: str,
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     parent = get_group(parent_name, user_client)
-    for group_name in parse_seq(group_list):
+    for group_name in group_list:
         group = get_group(group_name, user_client)
         group_api.remove_child_group(parent.group_id, group.group_id)
 
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) fails to see groups? (?P<group_list>.*) as "
-        'subgroup to group "(?P<parent>.*)" using REST'
-    )
+        rf"(?P<user>\w+) fails to see groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as "
+        r'subgroup to group "(?P<parent>.*)" using REST'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def fail_to_see_subgroups_using_rest(
     user: str,
     users: Users,
-    group_list: str,
+    group_list: list[str],
     parent: str,
     hosts: Hosts,
     host: str = "onezone",
@@ -320,5 +394,5 @@ def fail_to_see_subgroups_using_rest(
     subgroups_names = [
         group.name for group in [group_api.get_group(g) for g in subgroups.groups]
     ]
-    for child in parse_seq(group_list):
+    for child in group_list:
         assert child not in subgroups_names

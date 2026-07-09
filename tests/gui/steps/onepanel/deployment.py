@@ -23,7 +23,11 @@ from tests.gui.steps.common.common import wait_till_error_modal_stop_appearing
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
 from tests.gui.utils.core.web_objects import ButtonPageObject
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
@@ -32,14 +36,18 @@ from tests.utils.utils import repeat_failed
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) created admin accounts? "
-        '"(?P<name>.*):(?P<passphrase>.*)"'
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) created admin"
+        r" accounts? "
+        r'"(?P<name>.*):(?P<passphrase>.*)"'
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 def g_create_admin_in_panels(
-    selenium: SeleniumDrivers, browser_id_list: str, passphrase: str
+    selenium: SeleniumDrivers, browser_id_list: list[str], passphrase: str
 ) -> None:
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         g_create_admin_in_panel(selenium, browser_id, passphrase)
 
 
@@ -59,16 +67,19 @@ def g_create_admin_in_panel(
         "user of {browser_id} enables {options} options for "
         "{host_regexp} host in step 1 of deployment process "
         "in Onepanel"
-    )
+    ),
+    converters={
+        "options": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_check_host_options_in_deployment_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
-    options: str,
+    options: list[str],
     host_regexp: str,
 ) -> None:
-    parsed_options = parse_seq(options)
+    parsed_options = options
     wt_check_host_options_list_in_deployment_step1(
         selenium, browser_id, parsed_options, host_regexp
     )
@@ -93,10 +104,10 @@ def wt_check_host_options_list_in_deployment_step1(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.+?) types "(?P<text>.+?)" to '
-        "(?P<input_box>.+?) field in "
-        "(?P<step>step 1|step 2|step 4|last step) "
-        "of deployment process in Onepanel"
+        r'user of (?P<browser_id>.+?) types "(?P<text>.+?)" to '
+        r"(?P<input_box>.+?) field in "
+        r"(?P<step>step 1|step 2|step 4|last step) "
+        r"of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -115,10 +126,10 @@ def wt_type_text_to_in_box_in_deployment_step(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) types second host to "
-        "(?P<input_box>.+?) field in "
-        "(?P<step>step 1|step 2|step 4|last step) of deployment "
-        "process in Onepanel"
+        r"user of (?P<browser_id>.+?) types second host to "
+        r"(?P<input_box>.+?) field in "
+        r"(?P<step>step 1|step 2|step 4|last step) of deployment "
+        r"process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -135,11 +146,11 @@ def wt_type_second_host_to_in_box_in_deployment_step(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) types "
-        '(?P<name_property>name|hostname) of "(?P<alias>.+?)" '
-        "(zone|provider) to (?P<input_box>.+?) field in "
-        "(?P<step>step 1|step 2) of deployment "
-        "process in Onepanel"
+        r"user of (?P<browser_id>.+?) types "
+        r'(?P<name_property>name|hostname) of "(?P<alias>.+?)" '
+        r"(zone|provider) to (?P<input_box>.+?) field in "
+        r"(?P<step>step 1|step 2) of deployment "
+        r"process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -161,9 +172,9 @@ def wt_type_property_to_in_box_in_deployment_step(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) clicks on (?P<btn>.+?) button "
-        "in (?P<step>step 1|step 2|step 3|web cert step|"
-        "step 5|last step) of deployment process in Onepanel"
+        r"user of (?P<browser_id>.+?) clicks on (?P<btn>.+?) button "
+        r"in (?P<step>step 1|step 2|step 3|web cert step|"
+        r"step 5|last step) of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -263,8 +274,8 @@ def wt_await_finish_of_cluster_deployment(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "Perform check" '
-        "button in deployment setup DNS step"
+        r'user of (?P<browser_id>.*) clicks on "Perform check" '
+        r"button in deployment setup DNS step"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -276,8 +287,8 @@ def wt_click_perform_check_in_dns_setup_step(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on Proceed "
-        "button in deployment setup DNS step"
+        r"user of (?P<browser_id>.*) clicks on Proceed "
+        r"button in deployment setup DNS step"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -289,8 +300,8 @@ def wt_click_proceed_in_dns_setup_step(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on Yes "
-        "button in warning modal in deployment setup DNS step"
+        r"user of (?P<browser_id>.*) clicks on Yes "
+        r"button in warning modal in deployment setup DNS step"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -302,8 +313,8 @@ def wt_click_yes_in_warning_modal_in_dns_setup_step(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "Setup IP addresses" '
-        "button in deployment setup IP step"
+        r'user of (?P<browser_id>.*) clicks on "Setup IP addresses" '
+        r"button in deployment setup IP step"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -319,9 +330,9 @@ def wt_click_setup_ip_in_deployment_setup_ip(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) types "(?P<new_ip>'
+        r'user of (?P<browser_id>.*) types "(?P<new_ip>'
         r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})" for "(?P<hostname>.*)" '
-        "hostname in deployment setup IP step"
+        r"hostname in deployment setup IP step"
     )
 )
 def wt_type_ip_address_for_hostname_in_deployment_setup_ip(
@@ -335,7 +346,7 @@ def wt_type_ip_address_for_hostname_in_deployment_setup_ip(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that IP address for "
+        r"user of (?P<browser_id>.*) sees that IP address for "
         r'"(?P<hostname>.*)" hostname is "(?P<expected_ip>\d{1,3}\.\d'
         r'{1,3}\.\d{1,3}\.\d{1,3})" in deployment setup IP step'
     )
@@ -356,9 +367,9 @@ def wt_assert_ip_address_in_deployment_setup_ip(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that IP address of "
-        '"(?P<host>.*)" host is that of "(?P<ip_host>.*)" in'
-        " deployment setup IP step"
+        r"user of (?P<browser_id>.*) sees that IP address of "
+        r'"(?P<host>.*)" host is that of "(?P<ip_host>.*)" in'
+        r" deployment setup IP step"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=1)
@@ -381,8 +392,8 @@ def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) activates lets encrypt toggle in "
-        "web cert step of deployment process in Onepanel"
+        r"user of (?P<browser_id>.*) activates lets encrypt toggle in "
+        r"web cert step of deployment process in Onepanel"
     )
 )
 def wt_activate_lets_encrypt_toggle_in_deployment_step4(
@@ -397,8 +408,8 @@ def wt_activate_lets_encrypt_toggle_in_deployment_step4(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) deactivates lets encrypt toggle "
-        "in web cert step of deployment process in Onepanel"
+        r"user of (?P<browser_id>.*) deactivates lets encrypt toggle "
+        r"in web cert step of deployment process in Onepanel"
     )
 )
 def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(
@@ -431,9 +442,9 @@ def wt_select_storage_type_in_deployment_step5(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) enables "(?P<option>.*?)" '
-        "in (?P<form>POSIX) form in step 5 of "
-        "deployment process in Onepanel"
+        r'user of (?P<browser_id>.*?) enables "(?P<option>.*?)" '
+        r"in (?P<form>POSIX) form in step 5 of "
+        r"deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -449,9 +460,9 @@ def wt_enable_storage_option_in_deployment_step5(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-        "(?P<input_box>.*?) field in (?P<form>POSIX) form "
-        "in step 5 of deployment process in Onepanel"
+        r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
+        r"(?P<input_box>.*?) field in (?P<form>POSIX) form "
+        r"in step 5 of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -499,9 +510,9 @@ def wt_expand_storage_item_in_deployment_step5(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) sees that "(?P<st>.*?)" '
-        "(?P<attr>Storage type|Mount point) is (?P<val>.*?) "
-        "in step 5 of deployment process in Onepanel"
+        r'user of (?P<browser_id>.*?) sees that "(?P<st>.*?)" '
+        r"(?P<attr>Storage type|Mount point) is (?P<val>.*?) "
+        r"in step 5 of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -517,8 +528,8 @@ def wt_assert_storage_attr_in_deployment_step5(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) types received registration token "
-        "in step 2 of deployment process in Onepanel"
+        r"user of (?P<browser_id>.*?) types received registration token "
+        r"in step 2 of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -531,8 +542,8 @@ def wt_type_registration_token_in_step2(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks proceed button in step 2 "
-        "of deployment process in Onepanel"
+        r"user of (?P<browser_id>.*?) clicks proceed button in step 2 "
+        r"of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -544,9 +555,9 @@ def wt_click_proceed_button_in_step2(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on link to go "
-        "to Emergency Onepanel interface in last step "
-        "of deployment process in Onepanel"
+        r"user of (?P<browser_id>.*?) clicks on link to go "
+        r"to Emergency Onepanel interface in last step "
+        r"of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

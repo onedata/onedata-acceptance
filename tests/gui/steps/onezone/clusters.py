@@ -348,8 +348,8 @@ def assert_message_on_agreement_page(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button '
-        "on (?P<kind_of_agreement>privacy policy|terms of use) page"
+        r'user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button '
+        r"on (?P<kind_of_agreement>privacy policy|terms of use) page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -65,10 +65,10 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     notify_text_regexp = ".*[Pp]rovider.*data.*modified.*"
 
     wt_click_on_subitem_for_item_with_name(
-        selenium, user, sidebar, sub_item, provider_name
+        selenium, [user], sidebar, sub_item, provider_name
     )
 
-    wt_click_on_btn_in_content(selenium, user, button, content)
+    wt_click_on_btn_in_content(selenium, [user], button, content)
     wt_type_val_to_in_box_in_provider_details_form(
         selenium, user, new_provider_name, prov_name_attr
     )
@@ -86,9 +86,9 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) deregisters "
-        'provider in "(?P<provider_name>.+?)" Oneprovider panel '
-        "service"
+        r"user of (?P<browser_id>.*?) deregisters "
+        r'provider in "(?P<provider_name>.+?)" Oneprovider panel '
+        r"service"
     )
 )
 def deregister_provider_in_op_panel_using_gui(
@@ -103,9 +103,9 @@ def deregister_provider_in_op_panel_using_gui(
     popup = "Deregister provider"
 
     wt_click_on_subitem_for_item(
-        selenium, browser_id, sidebar, sub_item, provider_name, hosts
+        selenium, [browser_id], sidebar, sub_item, provider_name, hosts
     )
-    wt_click_on_btn_in_content(selenium, browser_id, "Deregister provider", content)
+    wt_click_on_btn_in_content(selenium, [browser_id], "Deregister provider", content)
     wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup)
     notify_visible_with_text(
         selenium, browser_id, "info", ".*[Pp]rovider.*deregistered.*"
@@ -174,8 +174,8 @@ def register_provider_in_op_using_gui(
 
 @given(
     parsers.re(
-        'provider name set to name of "(?P<provider>.+?)" '
-        "(?P<by>by user of|by) (?P<browser_id>.+?) in Onepanel"
+        r'provider name set to name of "(?P<provider>.+?)" '
+        r"(?P<by>by user of|by) (?P<browser_id>.+?) in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -190,7 +190,7 @@ def change_provider_name_if_name_is_different_than_given(
     sidebar = "CLUSTERS"
 
     wt_click_on_subitem_for_item_with_name(
-        selenium, browser_id, sidebar, sub_item, record
+        selenium, [browser_id], sidebar, sub_item, record
     )
 
     current_provider = Onepanel(
@@ -246,8 +246,8 @@ def add_provider_cluster_ones3_node_rest(
 
 @wt(
     parsers.re(
-        "user (?P<user>.*?) (?P<option>starts|stops) oneS3 node in provider cluster in"
-        " (?P<provider>.*?)"
+        r"user (?P<user>.*?) (?P<option>starts|stops) oneS3 node in provider cluster in"
+        r" (?P<provider>.*?)"
     )
 )
 def stop_provider_cluster_ones3_node_rest(

@@ -110,7 +110,7 @@ def _click_menu_for_elem_somewhere_in_file_browser(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<res>.*) to rename "
-        '"(?P<path>.*)" to "(?P<new_path>.*)" in "(?P<space>.*)"'
+        r'"(?P<path>.*)" to "(?P<new_path>.*)" in "(?P<space>.*)"'
     )
 )
 def rename_item(
@@ -143,13 +143,13 @@ def rename_item(
     if res == "fails":
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_items_presence_in_browser(selenium, browser_id, new_name, tmp_memory)
+        assert_items_presence_in_browser(selenium, browser_id, [new_name], tmp_memory)
 
 
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<res>.*) to remove "
-        '"(?P<path>.*)" in "(?P<space>.*)"'
+        r'"(?P<path>.*)" in "(?P<space>.*)"'
     )
 )
 def remove_item_in_op_gui(
@@ -180,7 +180,7 @@ def remove_item_in_op_gui(
     if res == "fails":
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_items_absence_in_browser(selenium, browser_id, path, tmp_memory)
+        assert_items_absence_in_browser(selenium, browser_id, [path], tmp_memory)
 
 
 def remove_dir_and_parents_in_op_gui(
@@ -205,14 +205,14 @@ def remove_dir_and_parents_in_op_gui(
 @wt(
     parsers.re(
         r"using web gui, (?P<browser_id>\w+) (?P<res>.*) to see item "
-        'named "(?P<subfiles>.*)" in "(?P<path>.*)" in space'
-        '"(?P<space>.*)" in oneprovider-1'
+        r'named "(?P<subfiles>.*)" in "(?P<path>.*)" in space'
+        r'"(?P<space>.*)" in oneprovider-1'
     )
 )
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<res>.*) to see "
-        '(?P<subfiles>.*) in "(?P<path>.*)" in "(?P<space>.*)"'
+        r'(?P<subfiles>.*) in "(?P<path>.*)" in "(?P<space>.*)"'
     )
 )
 def see_items_in_op_gui(
@@ -246,16 +246,16 @@ def see_items_in_op_gui(
             )
 
     if res == "fails":
-        assert_items_absence_in_browser(selenium, browser_id, subfiles, tmp_memory)
+        assert_items_absence_in_browser(selenium, browser_id, [subfiles], tmp_memory)
     else:
-        assert_items_presence_in_browser(selenium, browser_id, subfiles, tmp_memory)
+        assert_items_presence_in_browser(selenium, browser_id, [subfiles], tmp_memory)
 
 
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<res>.*) to create "
         r'(?P<item_type>directory) "(?P<name>[\w._-]+)" '
-        '(in "(?P<path>.*)" )?in "(?P<space>.*)"'
+        r'(in "(?P<path>.*)" )?in "(?P<space>.*)"'
     )
 )
 def create_item_in_op_gui(
@@ -295,7 +295,7 @@ def create_item_in_op_gui(
     if res == "fails":
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_items_presence_in_browser(selenium, browser_id, name, tmp_memory)
+        assert_items_presence_in_browser(selenium, browser_id, [name], tmp_memory)
 
 
 @wt(parsers.parse('user of {browser_id} creates dir "{dir_name}" in current dir'))
@@ -323,7 +323,7 @@ def create_dir_in_current_dir(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that each file in "
-        '"(?P<directory>.*)" directory has following '
+        r'"(?P<directory>.*)" directory has following '
         r"metadata:\n(?P<config>(.|\s)*)"
     )
 )
@@ -439,7 +439,7 @@ def see_num_of_items_in_path_in_op_gui(
     except KeyError:
         navigate_to_tab_in_op_using_gui(selenium, user, provider, tab_name, hosts)
         _select_item(selenium, user, tmp_memory, path)
-        refresh_site(selenium, user)
+        refresh_site(selenium, [user])
         assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
     assert_num_of_files_are_displayed_in_browser(user, num, tmp_memory)
 
@@ -584,14 +584,14 @@ def _create_content(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
-        'root directory of "(?P<space>.*)"'
+        r'user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
+        r'root directory of "(?P<space>.*)"'
     )
 )
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
-        'root directory of "(?P<space>.*)" using (?P<provider>.*) GUI'
+        r'user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
+        r'root directory of "(?P<space>.*)" using (?P<provider>.*) GUI'
     )
 )
 def successfully_upload_file_to_op_gui(
@@ -603,13 +603,13 @@ def successfully_upload_file_to_op_gui(
 ) -> None:
     go_to_filebrowser(selenium, browser_id, tmp_memory, space)
     upload_file_to_cwd_in_file_browser(selenium, browser_id, path)
-    assert_items_presence_in_browser(selenium, browser_id, path, tmp_memory)
+    assert_items_presence_in_browser(selenium, browser_id, [path], tmp_memory)
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<res>.*) to upload "
-        '"(?P<filename>.*)" to "(?P<path>.*)" in "(?P<space>.*)"'
+        r"user of (?P<browser_id>.*) (?P<res>.*) to upload "
+        r'"(?P<filename>.*)" to "(?P<path>.*)" in "(?P<space>.*)"'
     )
 )
 def upload_file_to_op_gui(
@@ -633,7 +633,7 @@ def upload_file_to_op_gui(
         )
     if res == "succeeds":
         upload_file_to_cwd_in_file_browser(selenium, browser_id, filename)
-        assert_items_presence_in_browser(selenium, browser_id, filename, tmp_memory)
+        assert_items_presence_in_browser(selenium, browser_id, [filename], tmp_memory)
     else:
         upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id, filename)
         check_error_in_upload_presenter(selenium, browser_id)
@@ -664,7 +664,7 @@ def _select_item(
 ) -> str:
     item_name, path_list = get_item_name_and_containing_dir_path(path)
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory, "/".join(path_list))
-    select_files_from_file_list_using_ctrl(browser_id, item_name, tmp_memory)
+    select_files_from_file_list_using_ctrl(browser_id, [item_name], tmp_memory)
     return item_name
 
 

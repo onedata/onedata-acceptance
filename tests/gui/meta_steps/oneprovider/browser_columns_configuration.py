@@ -12,7 +12,11 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Popups
-from tests.gui.utils.generic import parse_seq, sort_json_from_string, transform
+from tests.gui.utils.generic import (
+    parse_elements_sequence,
+    sort_json_from_string,
+    transform,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -24,13 +28,16 @@ from tests.utils.utils import repeat_failed
         r"columns? in columns configuration popover in "
         r"(?P<which_browser>file browser|archive browser|"
         r"dataset browser) table"
-    )
+    ),
+    converters={
+        "columns": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_columns_to_be_visible_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
-    columns: str,
+    columns: list[str],
     which_browser: str,
     tmp_memory: TmpMemory,
 ) -> None:
@@ -43,7 +50,7 @@ def select_columns_to_be_visible_in_browser(
     wait_for_item_to_appear(
         Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
-    parsed_columns = [column.lower() for column in parse_seq(columns)]
+    parsed_columns = [column.lower() for column in columns]
     for column in columns_menu:
         if column.name.lower() in parsed_columns:
             getattr(columns_menu[column.name], option_select)()
@@ -59,13 +66,16 @@ def select_columns_to_be_visible_in_browser(
         r"columns? in columns configuration popover in "
         r"(?P<which_browser>file browser|archive browser|"
         r"dataset browser) table"
-    )
+    ),
+    converters={
+        "columns": parse_elements_sequence,
+    },
 )
 def change_visibility_for_browser_columns(
     selenium: SeleniumDrivers,
     browser_id: str,
     res: str,
-    columns: str,
+    columns: list[str],
     which_browser: str,
     tmp_memory: TmpMemory,
 ) -> None:
@@ -82,7 +92,7 @@ def change_visibility_for_browser_columns(
         Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    parsed_columns = [column.lower() for column in parse_seq(columns)]
+    parsed_columns = [column.lower() for column in columns]
     for column in columns_menu:
         if column.name.lower() in parsed_columns:
             if res == "enables":

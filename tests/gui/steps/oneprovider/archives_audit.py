@@ -17,7 +17,7 @@ import yaml
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import parse_elements_sequence, transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -25,17 +25,20 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees non-empty "
-        "(?P<fields>( |.)*) field(s)? of first (?P<number>.*) files and "
-        "directories in archive audit log"
-    )
+        r"user of (?P<browser_id>.*) sees non-empty "
+        r"(?P<fields>( |.)*) field(s)? of first (?P<number>.*) files and "
+        r"directories in archive audit log"
+    ),
+    converters={
+        "fields": parse_elements_sequence,
+    },
 )
 def assert_number_of_first_non_empty_column_content(
-    selenium: SeleniumDrivers, fields: str, browser_id: str, number: str
+    selenium: SeleniumDrivers, fields: list[str], browser_id: str, number: str
 ) -> None:
     expected_number = int(number)
     driver = selenium[browser_id]
-    columns_names = [transform(field) for field in parse_seq(fields)]
+    columns_names = [transform(field) for field in fields]
 
     # Because files names repeat, files names must be first loaded in order to
     # add annotations to them

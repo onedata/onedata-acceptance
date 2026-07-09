@@ -19,7 +19,7 @@ from tests.gui.steps.onezone.harvesters.data_discovery import (
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -141,15 +141,18 @@ def assert_progress_in_harvesting(
     parsers.parse(
         "user of {browser_id} unchecks all toggles apart from "
         "{stay_checked} in indices page"
-    )
+    ),
+    converters={
+        "stay_checked": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def uncheck_toggles_on_create_index_page(
-    selenium: SeleniumDrivers, browser_id: str, stay_checked: str
+    selenium: SeleniumDrivers, browser_id: str, stay_checked: list[str]
 ) -> None:
     driver = selenium[browser_id]
-    toggles_to_keep = parse_seq(stay_checked)
-    indices_page = OZLoggedIn(driver)["discovery"].indices_page
+    toggles_to_keep = stay_checked
+    indices_page = OZLoggedIn(driver).discovery.indices_page
     for toggles_group, toggle_group_types in CREATE_INDEX_TOGGLES.items():
         for toggle in toggle_group_types:
             if toggle not in toggles_to_keep:

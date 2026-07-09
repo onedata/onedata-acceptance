@@ -257,10 +257,10 @@ def assert_base_archive_for_archive_in_op_rest(
 
 @wt(
     parsers.re(
-        "using REST, (?P<user>.+?) changes archive description to "
-        '"(?P<new_description>.*)" for archive with description '
-        '"(?P<description>.*)" for item "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using REST, (?P<user>.+?) changes archive description to "
+        r'"(?P<new_description>.*)" for archive with description '
+        r'"(?P<description>.*)" for item "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -284,10 +284,10 @@ def change_archive_description_in_op_rest(
 
 @wt(
     parsers.re(
-        "using REST, (?P<user>.+?) changes archive (?P<option>.*) "
-        'callback to "(?P<new_callback>.*)" for archive with '
-        'description "(?P<description>.*)" for item "(?P<item_name>.*)" '
-        'in space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using REST, (?P<user>.+?) changes archive (?P<option>.*) "
+        r'callback to "(?P<new_callback>.*)" for archive with '
+        r'description "(?P<description>.*)" for item "(?P<item_name>.*)" '
+        r'in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

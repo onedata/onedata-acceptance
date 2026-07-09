@@ -10,7 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import OZLoggedIn
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -19,7 +19,10 @@ from tests.utils.utils import repeat_failed
 @wt(
     parsers.parse(
         'user of {browser_id} sends invitation {item_type} to "{browser_list}"'
-    )
+    ),
+    converters={
+        "browser_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def send_invitation_token_to_browser(
@@ -27,11 +30,11 @@ def send_invitation_token_to_browser(
     item_type: str,
     displays: dict[str, str],
     clipboard: Clipboard,
-    browser_list: str,
+    browser_list: list[str],
     tmp_memory: TmpMemory,
 ) -> None:
     item = clipboard.paste(display=displays[browser_id])
-    for browser in parse_seq(browser_list):
+    for browser in browser_list:
         tmp_memory[browser]["mailbox"][item_type.lower()] = item
 
 

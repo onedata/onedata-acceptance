@@ -29,9 +29,9 @@ from tests.utils.bdd_utils import parsers, wt
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) creates (?P<which>|another )task "
-        "using (?P<ordinal>1st|2nd|3rd|4th) revision of "
-        '"(?P<lambda_name>.*)" lambda in "(?P<lane_name>.*)" lane with '
+        r"user of (?P<browser_id>.*) creates (?P<which>|another )task "
+        r"using (?P<ordinal>1st|2nd|3rd|4th) revision of "
+        r'"(?P<lambda_name>.*)" lambda in "(?P<lane_name>.*)" lane with '
         r"following configuration:\n(?P<config>(.|\s)*)"
     )
 )
@@ -167,8 +167,8 @@ def _create_task_using_previously_created_lambda(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) removes "(?P<task>.*)" task'
-        ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
+        r'user of (?P<browser_id>.*) removes "(?P<task>.*)" task'
+        r' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
     )
 )
 def remove_task_from_lane(
@@ -187,8 +187,8 @@ def remove_task_from_lane(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) modifies "(?P<task>.*)" task in '
-        '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane by '
+        r'user of (?P<browser_id>.*) modifies "(?P<task>.*)" task in '
+        r'(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane by '
         r"(?P<option>adding|changing) following:\n(?P<config>(.|\s)*)"
     )
 )

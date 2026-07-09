@@ -55,7 +55,11 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    parse_seq,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -145,7 +149,7 @@ def assert_posix_permissions_in_op_gui(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sets (?P<path>.*) POSIX "
-        '(?P<perm>.*) privileges in "(?P<space>.*)"'
+        r'(?P<perm>.*) privileges in "(?P<space>.*)"'
     )
 )
 def set_posix_permissions_in_op_gui(
@@ -254,8 +258,8 @@ def _set_acl_privilages_for_selected(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>\w+) sets "(?P<item_name>.*)" '
-        "(directory|file) ACL (?P<priv>.*) privileges for"
-        " (?P<type>.*) (?P<name>.*)"
+        r"(directory|file) ACL (?P<priv>.*) privileges for"
+        r" (?P<type>.*) (?P<name>.*)"
     )
 )
 def grant_acl_privileges_to_selected_in_filebrowser(
@@ -274,15 +278,17 @@ def grant_acl_privileges_to_selected_in_filebrowser(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>\w+) sets (?P<item_list>.*) ACL "
-        "(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*) "
-        'in "(?P<space>.*)"'
-    )
+        rf"user of (?P<browser_id>\w+) sets (?P<item_list>{ELEMENTS_SEQUENCE_PATTERN})"
+        r" ACL "
+        r"(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*) "
+        r'in "(?P<space>.*)"'
+    ),
+    converters={"item_list": parse_elements_sequence},
 )
 def grant_acl_privileges_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item_list: str,
+    item_list: str | list[str],
     priv: str,
     name: str,
     tmp_memory: TmpMemory,
@@ -291,22 +297,25 @@ def grant_acl_privileges_in_op_gui(
     option_in_menu = "Data"
     option = "spaces"
     option_in_submenu = "Files"
-    path = item_list.replace('"', "")
-
-    _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu, force=False)
+    _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, space)
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space, option_in_submenu
     )
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
-    select_files_from_file_list_using_ctrl(browser_id, path, tmp_memory)
-    _set_acl_privilages_for_selected(browser_id, selenium, tmp_memory, priv, name, path)
+    if isinstance(item_list, str):
+        item_list = parse_elements_sequence(item_list)
+    select_files_from_file_list_using_ctrl(browser_id, item_list, tmp_memory)
+    selected_path = item_list[0] if len(item_list) == 1 else None
+    _set_acl_privilages_for_selected(
+        browser_id, selenium, tmp_memory, priv, name, selected_path
+    )
 
 
 @wt(
     parsers.re(
         r'user of (?P<browser_id>\w+) (?P<res>.*) to read "(?P<path>.*)"'
-        ' ACL in "(?P<space>.*)"'
+        r' ACL in "(?P<space>.*)"'
     )
 )
 def read_items_acl(
@@ -333,7 +342,7 @@ def read_items_acl(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that (?P<path>.*?) in space "
         r'"(?P<space>\w+)" (has|have) (?P<priv>.*) privileges? set for '
-        "(?P<acl_type>.*?) (?P<name>.*) in (?P<num>.*) ACL record"
+        r"(?P<acl_type>.*?) (?P<name>.*) in (?P<num>.*) ACL record"
     )
 )
 def assert_ace_in_op_gui(
@@ -360,7 +369,7 @@ def assert_ace_in_op_gui(
     )
     if acl_type != "unknown":
         assert_acl_subject(selenium, browser_id, num, numerals, acl_type, name)
-    assert_set_acl_privileges(selenium, browser_id, num, numerals, priv)
+        assert_set_acl_privileges(selenium, browser_id, num, numerals, [priv])
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
@@ -402,7 +411,7 @@ def assert_user_id_in_ace_in_op_gui(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<res>.*) to change "
-        '"(?P<path>.*)" ACL for (?P<name>.*) in "(?P<space>.*)"'
+        r'"(?P<path>.*)" ACL for (?P<name>.*) in "(?P<space>.*)"'
     )
 )
 def change_acl_privileges(
@@ -431,7 +440,10 @@ def change_acl_privileges(
 
     if res == "fails":
         assert_fail_to_select_acl_option(
-            selenium, browser_id, privileges_option_list, name
+            selenium,
+            browser_id,
+            parse_elements_sequence(privileges_option_list),
+            name,
         )
 
     else:

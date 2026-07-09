@@ -16,14 +16,18 @@ from selenium.webdriver.remote.webelement import WebElement
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.type_definitions import FilePath, TmpMemory
 from tests.gui.utils import OPLoggedIn
-from tests.gui.utils.generic import parse_seq, parse_url
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    parse_url,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 def _wait_for_op_session_to_start(
-    selenium: SeleniumDrivers, browser_id_list: str
+    selenium: SeleniumDrivers, browser_id_list: list[str]
 ) -> None:
     @repeat_failed(timeout=WAIT_BACKEND)
     def _assert_correct_url(d: WebDriver) -> None:
@@ -37,7 +41,7 @@ def _wait_for_op_session_to_start(
             )
 
     time.sleep(12)
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         driver = selenium[browser_id]
 
         _assert_correct_url(driver)
@@ -45,22 +49,30 @@ def _wait_for_op_session_to_start(
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.*?) seen that Oneprovider session has started"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) seen that"
+        r" Oneprovider session has started"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 def g_wait_for_op_session_to_start(
-    selenium: SeleniumDrivers, browser_id_list: str
+    selenium: SeleniumDrivers, browser_id_list: list[str]
 ) -> None:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*?) sees that Oneprovider session has started"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) sees that"
+        r" Oneprovider session has started"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 def wt_wait_for_op_session_to_start(
-    selenium: SeleniumDrivers, browser_id_list: str
+    selenium: SeleniumDrivers, browser_id_list: list[str]
 ) -> None:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 

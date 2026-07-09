@@ -47,10 +47,10 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) "
-        "(?P<option>succeeds|fails|tries)"
-        ' to create archive for item "(?P<item_name>.*)" in space'
-        ' "(?P<space_name>.*)" in (?P<host>.*) with following '
+        r"using (?P<client>.*), (?P<user>.+?) "
+        r"(?P<option>succeeds|fails|tries)"
+        r' to create archive for item "(?P<item_name>.*)" in space'
+        r' "(?P<space_name>.*)" in (?P<host>.*) with following '
         r"configuration:\n(?P<config>(.|\s)*)"
     )
 )
@@ -135,10 +135,10 @@ def wt_create_n_archives_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) (?P<option>does not "
-        'see|sees) archive with description: "(?P<description>.*)" for'
-        ' item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) (?P<option>does not "
+        r'see|sees) archive with description: "(?P<description>.*)" for'
+        r' item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -186,10 +186,10 @@ def assert_archive_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) (?P<option>succeeds|fails) "
-        'to remove archive with description: "(?P<description>.*)" '
-        'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) (?P<option>succeeds|fails) "
+        r'to remove archive with description: "(?P<description>.*)" '
+        r'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -227,10 +227,10 @@ def remove_archive_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees (?P<option>.*) "
-        'archive with description: "(?P<description>.*)" for dataset '
-        'for item "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) sees (?P<option>.*) "
+        r'archive with description: "(?P<description>.*)" for dataset '
+        r'for item "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -268,9 +268,9 @@ def assert_archive_with_option_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that dataset for"
-        ' item "(?P<item_name>.*)" has (?P<number>.*) archive in '
-        'space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) sees that dataset for"
+        r' item "(?P<item_name>.*)" has (?P<number>.*) archive in '
+        r'space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -308,11 +308,11 @@ def assert_number_of_archive_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that archive with "
-        'description "(?P<description>.*)" has base archive with '
-        'description "(?P<base_description>.*)" for item '
-        '"(?P<item_name>.*)" in space "(?P<space_name>.*)" in'
-        " (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) sees that archive with "
+        r'description "(?P<description>.*)" has base archive with '
+        r'description "(?P<base_description>.*)" for item '
+        r'"(?P<item_name>.*)" in space "(?P<space_name>.*)" in'
+        r" (?P<host>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -350,10 +350,10 @@ def assert_base_archive_for_archive_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that (?P<option>.*) "
-        'callback is "(?P<expected_callback>.*)" for archive with '
-        'description "(?P<description>.*)" for item "(?P<item_name>.*)"'
-        ' in space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) sees that (?P<option>.*) "
+        r'callback is "(?P<expected_callback>.*)" for archive with '
+        r'description "(?P<description>.*)" for item "(?P<item_name>.*)"'
+        r' in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -396,10 +396,10 @@ def assert_archive_callback(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) recalls archive with "
-        'description "(?P<description>.*)" into "(?P<item_name>.*)" '
-        'parent directory with target name "(?P<target_name>.*)" in '
-        'space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) recalls archive with "
+        r'description "(?P<description>.*)" into "(?P<item_name>.*)" '
+        r'parent directory with target name "(?P<target_name>.*)" in '
+        r'space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 def recall_archive_for_archive_in_op(
@@ -439,7 +439,7 @@ def recall_archive_for_archive_in_op(
 
 @wt(
     parsers.re(
-        'using (?P<client>.*), (?P<user>.+?) checks "(?P<name>.*)" '
+        r'using (?P<client>.*), (?P<user>.+?) checks "(?P<name>.*)" '
         r'archive recalled details in "(?P<space_name>.*)" in'
         r" (?P<host>.*) and sees following:\n(?P<config>(.|\s)*)"
     )
@@ -474,8 +474,8 @@ def recall_archive_details_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.+?), (?P<user>.+?) sees progress of archive "
-        'recall for "(?P<name>.*)" in "(?P<space_name>.*)" in'
+        r"using (?P<client>.+?), (?P<user>.+?) sees progress of archive "
+        r'recall for "(?P<name>.*)" in "(?P<space_name>.*)" in'
         r" (?P<host>.*):\n(?P<config>(.|\s)*)"
     )
 )
@@ -501,10 +501,10 @@ def assert_progress_of_recall_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.+?), (?P<user>.+?) cancels archive "
-        'recall for "(?P<target_name>.*)" for archive with description'
-        ' "(?P<description>.*)" for item "(?P<name>.*)" in space'
-        ' "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.+?), (?P<user>.+?) cancels archive "
+        r'recall for "(?P<target_name>.*)" for archive with description'
+        r' "(?P<description>.*)" for item "(?P<name>.*)" in space'
+        r' "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

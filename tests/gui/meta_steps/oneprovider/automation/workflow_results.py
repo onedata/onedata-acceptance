@@ -42,7 +42,7 @@ from tests.gui.utils.common.count_checksums import (
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     MetadataTab,
 )
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.gui.utils.oneprovider.automation import WorkflowVisualiser
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -146,7 +146,10 @@ def compare_store_contents(
     parsers.parse(
         "user of {browser_id} counts checksums {checksum_list} for "
         '"{file_name}" in "{space}" space'
-    )
+    ),
+    converters={
+        "checksum_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def count_checksums_for_file(
@@ -154,7 +157,7 @@ def count_checksums_for_file(
     tmp_memory: TmpMemory,
     file_name: str,
     tmpdir: LocalPath,
-    checksum_list: str,
+    checksum_list: list[str],
     selenium: SeleniumDrivers,
 ) -> None:
 
@@ -162,7 +165,7 @@ def count_checksums_for_file(
         selenium, browser_id, file_name, tmp_memory, "file browser"
     )
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
-    checksums = parse_seq(checksum_list)
+    checksums = checksum_list
     results = {}
     checksum_functions = {
         "adler32_sum": adler32_sum,
@@ -192,11 +195,14 @@ def checksums_counted_in_workflow(metadata_modal: MetadataTab) -> dict[str, str]
         "user of {browser_id} sees that checksums {checksum_list} for"
         ' "{file_name}" counted in workflow are alike to '
         "those counted earlier by user"
-    )
+    ),
+    converters={
+        "checksum_list": parse_elements_sequence,
+    },
 )
 def assert_checksums_are_the_same(
     browser_id: str,
-    checksum_list: str,
+    checksum_list: list[str],
     file_name: str,
     tmp_memory: TmpMemory,
     selenium: SeleniumDrivers,
@@ -205,7 +211,7 @@ def assert_checksums_are_the_same(
     status_type = "Metadata"
     modal_name = "Details modal"
     button = "X"
-    checksums = parse_seq(checksum_list)
+    checksums = checksum_list
 
     # checksums needs to be counted in advance using
     # count_checksums_for_file function
@@ -232,14 +238,15 @@ def assert_checksums_are_the_same(
         "user of {browser_id} sees that counted checksums"
         ' {checksum_list} for "{file_name}" are alike to those'
         " counted in workflow"
-    )
+    ),
+    converters={"checksum_list": parse_elements_sequence},
 )
 def count_checksums_and_compare_them(
     browser_id: str,
     tmp_memory: TmpMemory,
     file_name: str,
     tmpdir: LocalPath,
-    checksum_list: str,
+    checksum_list: list[str],
     selenium: SeleniumDrivers,
 ) -> None:
     count_checksums_for_file(

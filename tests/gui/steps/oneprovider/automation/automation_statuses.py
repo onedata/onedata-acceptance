@@ -119,8 +119,8 @@ def get_status(page: WorkflowExecutionPage, option: str, name: str) -> str:
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) awaits for status of "(?P<name>.*)"'
-        ' (?P<option>lane|workflow) to be "(?P<expected_status>.*)"'
+        r'user of (?P<browser_id>.*) awaits for status of "(?P<name>.*)"'
+        r' (?P<option>lane|workflow) to be "(?P<expected_status>.*)"'
     )
 )
 @repeat_failed(interval=1, timeout=120)
@@ -169,8 +169,8 @@ def assert_status(name: object, actual_status: str, expected_status: str) -> Non
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) waits for workflow "
-        '"(?P<workflow>.*)" to be (?P<option>paused|cancelled|stopped)'
+        r"user of (?P<browser_id>.*) waits for workflow "
+        r'"(?P<workflow>.*)" to be (?P<option>paused|cancelled|stopped)'
     )
 )
 @repeat_failed(

@@ -115,7 +115,7 @@ def _as_metadata_hosts(hosts: Hosts) -> MetadataHostsConfig:
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create "
-        'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
+        r'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def create_file_in_op(
@@ -222,7 +222,7 @@ def assert_file_in_op_with_token(
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        see_items_in_op_oneclient(name, space, user, users, result, oneclient_host)
+        see_items_in_op_oneclient([name], space, user, users, result, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -231,7 +231,7 @@ def assert_file_in_op_with_token(
     parsers.re(
         r"using (?P<client>.*) with identity token, (?P<user>\w+) ("
         r'?P<result>\w+) to create file named "(?P<name>.*)" using '
-        'received token in "(?P<space>.*)" in (?P<host>.*)'
+        r'received token in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def create_file_in_op_with_tokens(
@@ -283,8 +283,8 @@ def create_file_in_op_with_tokens(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create "
-        'directory named "/(?P<abs_path>.*)" in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r'directory named "/(?P<abs_path>.*)" in "(?P<space>.*)" in '
+        r"(?P<host>.*)"
     )
 )
 def create_dir_in_op(
@@ -340,7 +340,7 @@ def create_dir_in_op(
 @wt(
     parsers.re(
         r"using web GUI, (?P<user>\w+) clicks and presses enter on item "
-        'named "(?P<item_name>.*)" in "(?P<space>.*)"'
+        r'named "(?P<item_name>.*)" in "(?P<space>.*)"'
     )
 )
 def go_to_dir(
@@ -359,8 +359,8 @@ def go_to_dir(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see "
-        'item named (?P<name>[^ ]+) in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r'item named (?P<name>[^ ]+) in "(?P<space>.*)" in '
+        r"(?P<host>.*)"
     )
 )
 def see_item_in_op(
@@ -394,10 +394,10 @@ def see_item_in_op(
             space,
         )
     elif client_lower == "rest":
-        see_items_in_op_rest(user, users, host, hosts, name, result, space)
+        see_items_in_op_rest(user, users, host, hosts, [name], result, space)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        see_items_in_op_oneclient(name, space, user, users, result, oneclient_host)
+        see_items_in_op_oneclient([name], space, user, users, result, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -406,7 +406,7 @@ def see_item_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to "
         r'remove directory \(rmdir\) named "(?P<name>.*)" in '
-        '"(?P<space>.*)" in (?P<host>.*)'
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_empty_dir_in_op(
@@ -447,7 +447,7 @@ def remove_empty_dir_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes directory "
         r'\(rmdir -p\) named "(?P<name>.*)" in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r"(?P<host>.*)"
     )
 )
 def remove_empty_dir_and_parents_in_op(
@@ -522,8 +522,8 @@ def remove_dir_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) "
-        'to remove file named "(?P<name>.*)" in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r'to remove file named "(?P<name>.*)" in "(?P<space>.*)" in '
+        r"(?P<host>.*)"
     )
 )
 def remove_file_in_op(
@@ -561,8 +561,8 @@ def remove_file_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) "
-        'to remove file named "(?P<name>.*)" using received token in '
-        '"(?P<space>.*)" in (?P<host>.*)'
+        r'to remove file named "(?P<name>.*)" using received token in '
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_file_using_token_in_op(
@@ -676,7 +676,7 @@ def rename_item_in_op_using_token(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that there "
         r'(is 1|are (?P<num>\d+)) items? in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r"(?P<host>.*)"
     )
 )
 def see_num_of_items_in_op(
@@ -746,8 +746,8 @@ def write_to_file_in_op(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) reads "(?P<text>.*)" '
-        'from file named "(?P<file_name>.*)" in '
-        '"(?P<space>.*)" in (?P<host>.*)'
+        r'from file named "(?P<file_name>.*)" in '
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -859,8 +859,8 @@ def replace_in_file_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to move "
-        '"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
-        "in (?P<host>.*)"
+        r'"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 def move_file_in_op(
@@ -918,7 +918,7 @@ def copy_item_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates directory "
-        'structure in "(?P<space>.*)" space on (?P<host>.*) '
+        r'structure in "(?P<space>.*)" space on (?P<host>.*) '
         r"as follow:\n(?P<config>(.|\s)*)"
     )
 )
@@ -961,9 +961,9 @@ def create_directory_structure_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) "
-        'time of item named "(?P<file_name>.*)" in "(?P<space>.*)" '
-        "space is (?P<comparator>.*) "
-        "(?P<time2>.*) time in (?P<host>.*)"
+        r'time of item named "(?P<file_name>.*)" in "(?P<space>.*)" '
+        r"space is (?P<comparator>.*) "
+        r"(?P<time2>.*) time in (?P<host>.*)"
     )
 )
 def assert_time_relation(
@@ -997,8 +997,8 @@ def assert_time_relation(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) copies "
-        '(?P<time_name>.*) time of item named "(?P<file_name>.*)" in '
-        '"(?P<space>.*)" space in (?P<host>.*)'
+        r'(?P<time_name>.*) time of item named "(?P<file_name>.*)" in '
+        r'"(?P<space>.*)" space in (?P<host>.*)'
     )
 )
 def remember_time_for_file(
@@ -1032,9 +1032,9 @@ def remember_time_for_file(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that "
-        '(?P<time_name1>.*) time of item named "(?P<file_name>.*)" '
-        'in space "(?P<space>.*)" is (?P<comparator>.*) (than|to) '
-        "(?P<time_name2>.*) time that was copied in (?P<host>.*)"
+        r'(?P<time_name1>.*) time of item named "(?P<file_name>.*)" '
+        r'in space "(?P<space>.*)" is (?P<comparator>.*) (than|to) '
+        r"(?P<time_name2>.*) time that was copied in (?P<host>.*)"
     )
 )
 def compare_file_time_with_copied_time(
@@ -1084,9 +1084,9 @@ def compare_file_time_with_copied_time(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) "
-        'time of item named "(?P<file_name>.*)" is (?P<comparator>.*) '
-        "(than|to) (?P<time2>.*) time of item named "
-        '"(?P<file2_name>.*)" in "(?P<space>.*)" space in (?P<host>.*)'
+        r'time of item named "(?P<file_name>.*)" is (?P<comparator>.*) '
+        r"(than|to) (?P<time2>.*) time of item named "
+        r'"(?P<file2_name>.*)" in "(?P<space>.*)" space in (?P<host>.*)'
     )
 )
 def assert_files_time_relation(
@@ -1137,10 +1137,10 @@ def assert_files_time_relation(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.*) sees that "
-        '(?P<time_name>.*) time of item named "(?P<file_path>.*)" '
-        "in current space is not earlier than "
-        "(?P<time>[0-9]*) seconds ago in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.*) sees that "
+        r'(?P<time_name>.*) time of item named "(?P<file_path>.*)" '
+        r"in current space is not earlier than "
+        r"(?P<time>[0-9]*) seconds ago in (?P<host>.*)"
     )
 )
 def assert_mtime_not_earlier_than(
@@ -1163,8 +1163,8 @@ def assert_mtime_not_earlier_than(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that directory "
-        'structure in "(?P<space>.*)" space in (?P<host>.*) is as '
-        "previously created"
+        r'structure in "(?P<space>.*)" space in (?P<host>.*) is as '
+        r"previously created"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -1243,9 +1243,9 @@ def assert_directory_structure_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sets new "
-        '(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)"'
-        ' (?P<item>file|directory) in space "(?P<space>.*)" '
-        "in (?P<host>.*)"
+        r'(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)"'
+        r' (?P<item>file|directory) in space "(?P<space>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 def set_metadata_in_op(
@@ -1302,9 +1302,9 @@ def set_metadata_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that "
-        '(?P<tab_name>.*) metadata for "(?P<path>.*?)" '
-        "(?P<item>file|directory) is "
-        '(?P<val>.*) in space "(?P<space>.*)" in (?P<host>.*)'
+        r'(?P<tab_name>.*) metadata for "(?P<path>.*?)" '
+        r"(?P<item>file|directory) is "
+        r'(?P<val>.*) in space "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def assert_metadata_in_op(
@@ -1360,7 +1360,7 @@ def assert_metadata_in_op(
         r"using (?P<client>.*), (?P<user>\w+) removes all "
         r'"(?P<path>.*)" (?P<item>file|directory) '
         r'metadata in space "(?P<space>\w+)" '
-        "in (?P<host>.*)"
+        r"in (?P<host>.*)"
     )
 )
 def remove_all_metadata_in_op(
@@ -1400,10 +1400,10 @@ def remove_all_metadata_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that "
-        '(?P<tab_name>.*) metadata for "(?P<path>.*)" '
-        "(?P<item>file|directory) in space "
-        '"(?P<space>.*)" does not contain (?P<val>.*) in '
-        "(?P<host>.*)"
+        r'(?P<tab_name>.*) metadata for "(?P<path>.*)" '
+        r"(?P<item>file|directory) in space "
+        r'"(?P<space>.*)" does not contain (?P<val>.*) in '
+        r"(?P<host>.*)"
     )
 )
 def assert_no_such_metadata_in_op(
@@ -1456,7 +1456,7 @@ def assert_no_such_metadata_in_op(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) uploads "(?P<path>.*)" '
-        'to "(?P<space>.*)" in (?P<host>.*)'
+        r'to "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def upload_file_to_op(

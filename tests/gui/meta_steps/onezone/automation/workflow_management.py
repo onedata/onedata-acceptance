@@ -6,9 +6,7 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import json
 import time
-from ast import literal_eval
 from typing import Optional, cast
 
 import yaml
@@ -59,6 +57,7 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.gui.utils.oneprovider.automation import NumberInput
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_workflow_dump
@@ -312,12 +311,13 @@ def _execute_workflow_with_input_config(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
-        ' of "(?P<workflow>.*)" and waits extended time for workflow '
-        "to finish, using (?P<data_type>.*) as initial "
-        'value: "(?P<item_list>.*)" in "(?P<space>.*)" '
-        "space"
-    )
+        r"user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
+        r' of "(?P<workflow>.*)" and waits extended time for workflow '
+        r"to finish, using (?P<data_type>.*) as initial "
+        rf'value: "(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN})" in "(?P<space>.*)" '
+        r"space"
+    ),
+    converters={"item_list": parse_elements_sequence},
 )
 def execute_workflow_and_wait(
     browser_id: str,
@@ -325,7 +325,7 @@ def execute_workflow_and_wait(
     space: str,
     ordinal: str,
     workflow: str,
-    item_list: str,
+    item_list: list[str],
     data_type: str,
 ) -> None:
 
@@ -345,11 +345,12 @@ def execute_workflow_and_wait(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
-        ' of "(?P<workflow>.*)", using (?P<data_type>.*) as initial '
-        'value: "(?P<item_list>.*)" in "(?P<space>.*)" '
-        "space"
-    )
+        r"user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
+        r' of "(?P<workflow>.*)", using (?P<data_type>.*) as initial '
+        rf'value: "(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN})" in "(?P<space>.*)" '
+        r"space"
+    ),
+    converters={"item_list": parse_elements_sequence},
 )
 def execute_workflow(
     browser_id: str,
@@ -357,7 +358,7 @@ def execute_workflow(
     space: str,
     ordinal: str,
     workflow: str,
-    item_list: str,
+    item_list: list[str],
     data_type: str,
 ) -> None:
     spaces = "spaces"
@@ -374,7 +375,7 @@ def execute_workflow(
     # wait a moment for workflow revision to open
     time.sleep(1)
     if "range" in data_type:
-        range_items = literal_eval(item_list)
+        range_items = item_list
         if isinstance(range_items, list):
             for item in range_items:
                 choose_range_as_initial_workflow_value(
@@ -385,23 +386,19 @@ def execute_workflow(
                 selenium, browser_id, cast(dict[str, object], range_items), False
             )
     elif "number" in data_type:
-        items = literal_eval(item_list)
-        if isinstance(items, list):
-            for number in items:
-                numbers = get_input_element(driver, "numbers_input")
-                cast(NumberInput, numbers[len(numbers) - 1]).input = str(number)
-        else:
+        for number in item_list:
+            numbers = get_input_element(driver, "numbers_input")
+            cast(NumberInput, numbers[len(numbers) - 1]).input = str(number)
+        if not item_list:
             numbers = OPLoggedIn(driver).automation_page.numbers_input
-            cast(NumberInput, numbers[len(numbers) - 1]).input = str(item_list)
+            cast(NumberInput, numbers[len(numbers) - 1]).input = ""
     elif "string" in data_type:
-        OPLoggedIn(driver).automation_page.string_input.input = item_list
+        OPLoggedIn(driver).automation_page.string_input.input = item_list[0]
     elif "boolean" in data_type:
-        items = json.loads(item_list)
-        if isinstance(items, list):
-            for boolean in items:
-                booleans = get_input_element(driver, "booleans_input")
-                booleans[len(booleans) - 1].click()
-                Popups(driver).boolean_values.options[str(boolean).lower()].click()
+        for boolean in item_list:
+            booleans = get_input_element(driver, "booleans_input")
+            booleans[len(booleans) - 1].click()
+            Popups(driver).boolean_values.options[str(boolean).lower()].click()
     else:
         choose_file_as_initial_workflow_value(
             selenium,

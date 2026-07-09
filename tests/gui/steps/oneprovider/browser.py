@@ -18,7 +18,9 @@ from tests.gui.steps.common.miscellaneous import network_throttling_download
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,
+    parse_elements_sequence,
     parse_seq,
     sort_json_from_string,
     transform,
@@ -208,34 +210,39 @@ def _gather_data_from_browser(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees item(s) named {item_list} in "
+        "user of {browser_id} sees item(s) named "
+        "{item_list:ElementsSequence} in "
         "{which_browser:WhichBrowser}",
-        extra_types={"WhichBrowser": WhichBrowser},
+        extra_types={
+            "ElementsSequence": parse_elements_sequence,
+            "WhichBrowser": WhichBrowser,
+        },
     )
 )
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that item named {item_list} has appeared in "
-        "{which_browser:WhichBrowser}",
-        extra_types={"WhichBrowser": WhichBrowser},
-    )
-)
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that items named {item_list} have appeared"
-        " in {which_browser:WhichBrowser}",
-        extra_types={"WhichBrowser": WhichBrowser},
-    )
+    parsers.re(
+        rf"user of (?P<browser_id>.*?) sees that items? named "
+        rf"(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) (?:has|have) appeared in "
+        rf"(?P<which_browser>{r'|'.join(re.escape(item.value) for item in WhichBrowser)})"
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+    },
 )
 def wt_assert_items_presence_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item_list: str,
+    item_list: list[str],
     tmp_memory: TmpMemory,
-    which_browser: WhichBrowser,
+    which_browser: WhichBrowser | str,
 ) -> None:
+    browser_name = (
+        which_browser.value
+        if isinstance(which_browser, WhichBrowser)
+        else which_browser
+    )
     assert_items_presence_in_browser(
-        selenium, browser_id, item_list, tmp_memory, which_browser=which_browser.value
+        selenium, browser_id, item_list, tmp_memory, which_browser=browser_name
     )
 
 
@@ -243,13 +250,12 @@ def wt_assert_items_presence_in_browser(
 def assert_items_presence_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item_list: str,
+    item_list: list[str],
     tmp_memory: TmpMemory,
     which_browser: str = "file browser",
 ) -> None:
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
-    parsed_items = parse_seq(item_list)
-    for item_name in parsed_items:
+    for item_name in item_list:
         assert item_name in data, f'not found "{item_name}" in browser'
 
 
@@ -270,7 +276,7 @@ def assert_only_expected_items_presence_in_browser(
     )
 
     assert_items_presence_in_browser(
-        selenium, browser_id, ",".join(expected_items), tmp_memory, which_browser
+        selenium, browser_id, list(expected_items), tmp_memory, which_browser
     )
 
 
@@ -301,27 +307,28 @@ def check_if_item_is_dir_in_browser(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that item named {item_list} "
-        "has disappeared from {which_browser}"
-    )
-)
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that items named {item_list} "
-        "have disappeared from {which_browser}"
-    )
+    parsers.re(
+        rf"user of (?P<browser_id>.*?) sees that items? named "
+        rf"(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) (?:has|have) disappeared "
+        r"from (?P<which_browser>.*)"
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+    },
 )
 @wt(
     parsers.parse(
         "user of {browser_id} does not see any item(s) named "
         "{item_list} in {which_browser}"
-    )
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+    },
 )
 def wt_assert_items_absence_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item_list: str,
+    item_list: list[str],
     tmp_memory: TmpMemory,
     which_browser: str,
 ) -> None:
@@ -334,12 +341,12 @@ def wt_assert_items_absence_in_browser(
 def assert_items_absence_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item_list: str,
+    item_list: list[str],
     tmp_memory: TmpMemory,
     which_browser: str = "file browser",
 ) -> None:
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
-    for item_name in parse_seq(item_list):
+    for item_name in item_list:
         assert (
             item_name not in data
         ), f'found "{item_name}" in browser, while it should not'
@@ -743,9 +750,9 @@ def assert_no_column_for_item(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) saves content of "(?P<option>.*)" '
-        'column for "(?P<item_name>.*)" in '
-        "(?P<which_browser>archive file browser|file browser)"
+        r'user of (?P<browser_id>.*) saves content of "(?P<option>.*)" '
+        r'column for "(?P<item_name>.*)" in '
+        r"(?P<which_browser>archive file browser|file browser)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -765,9 +772,9 @@ def save_value_in_column_for_item(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that date time in "
-        '"(?P<option>.*)" column for "(?P<item_name>.*)" has become '
-        "more current in (?P<which_browser>archive file browser|file browser)"
+        r"user of (?P<browser_id>.*) sees that date time in "
+        r'"(?P<option>.*)" column for "(?P<item_name>.*)" has become '
+        r"more current in (?P<which_browser>archive file browser|file browser)"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -791,16 +798,19 @@ def compare_value_in_column_for_item(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees only (?P<columns>.*) columns "
-        "in (?P<which_browser>file browser|archive browser|"
-        "dataset browser)"
-    )
+        r"user of (?P<browser_id>.*) sees only (?P<columns>.*) columns "
+        r"in (?P<which_browser>file browser|archive browser|"
+        r"dataset browser)"
+    ),
+    converters={
+        "columns": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_visible_columns_in_browser(
-    browser_id: str, tmp_memory: TmpMemory, columns: str, which_browser: str
+    browser_id: str, tmp_memory: TmpMemory, columns: list[str], which_browser: str
 ) -> None:
-    parsed_columns = parse_seq(columns)
+    parsed_columns = columns
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser_columns = browser.column_headers
     browser_columns = list(map(lambda x: x.name.lower(), browser_columns))

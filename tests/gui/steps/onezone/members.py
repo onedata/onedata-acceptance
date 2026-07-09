@@ -11,6 +11,7 @@ import time
 import yaml
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
@@ -35,11 +36,17 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
+from tests.gui.utils.onezone import PageName
+from tests.gui.utils.onezone.groups.groups_page import GroupsPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import element_has_class, repeat_failed
 
 MENU_ELEM_TO_TAB_NAME = {
     "space": "data",
@@ -76,24 +83,24 @@ def get_privilege_tree(
     driver = selenium[browser_id]
     page = _find_members_page(driver, where)
     elem = getattr(page, list_type).items[member_name]
-    # wait for panel to expand
-    for _ in range(40):
-        if "active" in elem.web_elem.get_attribute("class"):
-            break
-        time.sleep(0.1)
-    else:
-        assert "active" in elem.web_elem.get_attribute(
-            "class"
-        ), f"did not manage to expand {list_type} panel of {member_name}"
+
+    if not element_has_class(elem.web_elem, "active"):
+        elem.web_elem.click()
+
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        lambda _: "active" in elem.web_elem.get_attribute("class"),
+        message=f"did not manage to expand {list_type} panel of {member_name}",
+    )
+
     return elem.privilege_tree
 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees that "(?P<member_name>.*)" '
-        "(?P<member_type>user|group) is member of "
-        '"(?P<parent_name>.*)" (?P<parent_type>space|group) '
-        "in (?P<where>space|group) memberships mode"
+        r'user of (?P<browser_id>.*) sees that "(?P<member_name>.*)" '
+        r"(?P<member_type>user|group) is member of "
+        r'"(?P<parent_name>.*)" (?P<parent_type>space|group) '
+        r"in (?P<where>space|group) memberships mode"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -126,10 +133,10 @@ def assert_element_is_member_of_parent_in_memberships(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) does not see that "
-        '"(?P<member_name>.*)" (?P<member_type>user|group) is '
-        'member of "(?P<parent_name>.*)" (?P<parent_type>space|group) '
-        "in (?P<where>space|group) memberships mode"
+        r"user of (?P<browser_id>.*) does not see that "
+        r'"(?P<member_name>.*)" (?P<member_type>user|group) is '
+        r'member of "(?P<parent_name>.*)" (?P<parent_type>space|group) '
+        r"in (?P<where>space|group) memberships mode"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -164,8 +171,8 @@ def assert_element_is_not_member_of_parent_in_memberships(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees (?P<number>.*) "
-        "membership rows? in (?P<where>space|group) memberships mode"
+        r"user of (?P<browser_id>.*) sees (?P<number>.*) "
+        r"membership rows? in (?P<where>space|group) memberships mode"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -184,12 +191,12 @@ def assert_count_membership_rows(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees "
-        "(?P<number_direct_groups>.*) direct, "
-        "(?P<number_effective_groups>.*) effective groups and "
-        "(?P<number_direct_users>.*) direct, "
-        "(?P<number_effective_users>.*) effective users in space "
-        "members tile"
+        r"user of (?P<browser_id>.*) sees "
+        r"(?P<number_direct_groups>.*) direct, "
+        r"(?P<number_effective_groups>.*) effective groups and "
+        r"(?P<number_direct_users>.*) direct, "
+        r"(?P<number_effective_users>.*) effective users in space "
+        r"members tile"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -227,8 +234,8 @@ def assert_all_members_number_in_space_members_tile(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees (?P<number>\d+) "
-        "(?P<membership_type>direct|effective) "
-        "(?P<subject_type>groups?|users?) in space members tile"
+        r"(?P<membership_type>direct|effective) "
+        r"(?P<subject_type>groups?|users?) in space members tile"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -252,9 +259,9 @@ def assert_members_number_in_space_members_tile(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
-        "member relation menu button to "
-        '"(?P<name>.*)" (?P<where>space|group)'
+        r'user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
+        r"member relation menu button to "
+        r'"(?P<name>.*)" (?P<where>space|group)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -274,8 +281,8 @@ def click_relation_menu_button(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<option>.*)" '
-        "in (?P<where>space|group) membership relation menu"
+        r'user of (?P<browser_id>.*) clicks on "(?P<option>.*)" '
+        r"in (?P<where>space|group) membership relation menu"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -288,10 +295,10 @@ def click_option_in_relation_menu_button(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks "(?P<type_name>.*)" '
-        "(?P<type>user|group) to close his dropdown list in "
-        '"(?P<member_name>.*)" (?P<where>space|group|cluster|harvester) '
-        "members (?P<list_type>users|groups) list"
+        r'user of (?P<browser_id>.*) clicks "(?P<type_name>.*)" '
+        r"(?P<type>user|group) to close his dropdown list in "
+        r'"(?P<member_name>.*)" (?P<where>space|group|cluster|harvester) '
+        r"members (?P<list_type>users|groups) list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -309,10 +316,10 @@ def click_element_to_close_its_dropdown(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks "(?P<member_name>.*)" '
-        '(?P<member_type>user|group) in "(?P<name>.*)" '
-        "(?P<where>space|group|cluster|harvester|automation) members "
-        "(?P<list_type>users|groups) list"
+        r'user of (?P<browser_id>.*) clicks "(?P<member_name>.*)" '
+        r'(?P<member_type>user|group) in "(?P<name>.*)" '
+        r"(?P<where>space|group|cluster|harvester|automation) members "
+        r"(?P<list_type>users|groups) list"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -353,10 +360,10 @@ def click_generate_token_in_subgroups_list(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<button>.*)" button '
-        "in (?P<member>users|groups) list menu in "
-        '"(?P<name>.*)" (?P<where>group|space|cluster|harvester'
-        "|automation) members view"
+        r'user of (?P<browser_id>.*) clicks on "(?P<button>.*)" button '
+        r"in (?P<member>users|groups) list menu in "
+        r'"(?P<name>.*)" (?P<where>group|space|cluster|harvester'
+        r"|automation) members view"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -375,8 +382,8 @@ def click_on_option_in_members_list_menu(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that area with "
-        "(?P<who>user|group) invitation token has appeared"
+        r"user of (?P<browser_id>.*) sees that area with "
+        r"(?P<who>user|group) invitation token has appeared"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -399,7 +406,7 @@ def assert_generated_token_is_present(
         raise RuntimeError("No token area found on page") from exc
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) copies invitation token from modal"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) copies invitation token from modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token_from_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     Modals(selenium[browser_id]).invite_using_token.copy()
@@ -407,8 +414,8 @@ def copy_token_from_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        '"(?P<child>.*)" as "(?P<parent>.*)" child'
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
+        r'"(?P<child>.*)" as "(?P<parent>.*)" child'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -433,11 +440,11 @@ def assert_element_is_groups_child(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        '"(?P<member_name>.*)" (?P<member_type>user|group) '
-        'on "(?P<parent_name>.*)" ('
-        "?P<parent_type>user|group|space|cluster) "
-        "members list"
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
+        r'"(?P<member_name>.*)" (?P<member_type>user|group) '
+        r'on "(?P<parent_name>.*)" ('
+        r"?P<parent_type>user|group|space|cluster) "
+        r"members list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -482,9 +489,9 @@ def assert_member_is_in_parent_members_list(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        '"(?P<username>.*)" user on "(?P<space_name>.*)" '
-        "space members list"
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
+        r'"(?P<username>.*)" user on "(?P<space_name>.*)" '
+        r"space members list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -513,9 +520,9 @@ def check_user_in_space_members_list(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) removes "(?P<member_name>.*)" '
-        '(?P<member_type>user|group) from "(?P<name>.*)" '
-        "(?P<where>cluster|group|harvester|space|automation) members"
+        r'user of (?P<browser_id>.*) removes "(?P<member_name>.*)" '
+        r'(?P<member_type>user|group) from "(?P<name>.*)" '
+        r"(?P<where>cluster|group|harvester|space|automation) members"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -563,8 +570,8 @@ def remove_member_from_parent(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks "(?P<option>( |.)*)" for '
-        '"(?P<username>.*)" user in users list'
+        r'user of (?P<browser_id>.*) clicks "(?P<option>( |.)*)" for '
+        r'"(?P<username>.*)" user in users list'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -579,16 +586,18 @@ def click_member_option_on_members_page(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees (?P<options>( |.)*) (is|are) "
-        '(?P<state>enabled|disabled) for "(?P<username>.*)" user in '
-        "users list"
-    )
+        rf"user of (?P<browser_id>.*) sees "
+        rf"(?P<options>{ELEMENTS_SEQUENCE_PATTERN}) (is|are) "
+        r'(?P<state>enabled|disabled) for "(?P<username>.*)" user in '
+        r"users list"
+    ),
+    converters={"options": parse_elements_sequence},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_options_for_user_are_enabled_or_disabled(
     selenium: SeleniumDrivers,
     browser_id: str,
-    options: str,
+    options: list[str],
     username: str,
     state: str,
 ) -> None:
@@ -596,7 +605,7 @@ def assert_options_for_user_are_enabled_or_disabled(
     page = OZLoggedIn(driver)["data"].members_page
     page.users.items[username].click_member_menu_button(driver)
 
-    for option in parse_seq(options):
+    for option in options:
         enabled = Popups(driver).menu_popup_with_text.menu[option].is_enabled()
         error_msg = f"Popup {option} is in invalid state"
         if state == "enabled":
@@ -617,7 +626,7 @@ def _get_cluster_members(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees "(?P<member_name>.*)" user in cluster members'
+        r'user of (?P<browser_id>.*) sees "(?P<member_name>.*)" user in cluster members'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
@@ -633,8 +642,8 @@ def assert_user_in_cluster_members_page(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) does not see "(?P<member_name>.*)" '
-        "user in cluster members"
+        r'user of (?P<browser_id>.*) does not see "(?P<member_name>.*)" '
+        r"user in cluster members"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -650,8 +659,8 @@ def assert_user_not_in_cluster_members_page(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) copies "(?P<group>.*)" '
-        "(?P<who>user|group) invitation token"
+        r'user of (?P<browser_id>.*) copies "(?P<group>.*)" '
+        r"(?P<who>user|group) invitation token"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -678,8 +687,8 @@ def copy_invitation_token(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) gets group "(?P<group>.*)" '
-        "(?P<who>user|group) invitation token"
+        r'user of (?P<browser_id>.*) gets group "(?P<group>.*)" '
+        r"(?P<who>user|group) invitation token"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -701,10 +710,10 @@ def get_invitation_token(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>sets|fails to set) "
-        'following privileges for "(?P<member_name>.*)" '
-        "(?P<member_type>user|group) "
-        "in (?P<where>space|group|harvester|cluster|automation) members "
+        r"user of (?P<browser_id>.*) (?P<option>sets|fails to set) "
+        r'following privileges for "(?P<member_name>.*)" '
+        r"(?P<member_type>user|group) "
+        r"in (?P<where>space|group|harvester|cluster|automation) members "
         r"subpage:\n(?P<config>(.|\s)*)"
     )
 )
@@ -828,7 +837,7 @@ def set_some_privileges_in_members_subpage_other_granted(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sets following privileges on modal:"
+        r"user of (?P<browser_id>.*) sets following privileges on modal:"
         r"\n(?P<config>(.|\s)*)"
     )
 )
@@ -844,10 +853,10 @@ def set_privileges_in_members_subpage_on_modal(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees following "
-        "(?P<option>effective |)privileges of "
-        '"(?P<member_name>.*)" (?P<member_type>user|group) '
-        "in (?P<where>space|group|harvester|automation|cluster) "
+        r"user of (?P<browser_id>.*) sees following "
+        r"(?P<option>effective |)privileges of "
+        r'"(?P<member_name>.*)" (?P<member_type>user|group) '
+        r"in (?P<where>space|group|harvester|automation|cluster) "
         r"members subpage:\n(?P<config>(.|\s)*)"
     )
 )
@@ -877,7 +886,7 @@ def assert_privileges_in_members_subpage(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees following privileges on modal:"
+        r"user of (?P<browser_id>.*) sees following privileges on modal:"
         r"\n(?P<config>(.|\s)*)"
     )
 )
@@ -892,9 +901,9 @@ def assert_privileges_in_members_subpage_on_modal(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks (?P<option>Save|Discard) "
-        'button for "(?P<member_name>.*)" (?P<member_type>user|group) '
-        "in (?P<where>space|group|cluster|harvester) members subpage"
+        r"user of (?P<browser_id>.*) clicks (?P<option>Save|Discard) "
+        r'button for "(?P<member_name>.*)" (?P<member_type>user|group) '
+        r"in (?P<where>space|group|cluster|harvester) members subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -928,16 +937,18 @@ def click_button_on_element_header_in_members_and_wait(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees (?P<labels>( |.)*) status "
-        'labels? for "(?P<member_name>.*)" (?P<member_type>user|group) '
-        "in (?P<where>space|group|cluster|harvester) members subpage"
-    )
+        rf"user of (?P<browser_id>.*) sees "
+        rf"(?P<labels>{ELEMENTS_SEQUENCE_PATTERN}) status "
+        r'labels? for "(?P<member_name>.*)" (?P<member_type>user|group) '
+        r"in (?P<where>space|group|cluster|harvester) members subpage"
+    ),
+    converters={"labels": parse_elements_sequence},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def ckeck_status_labels_for_member_of_space(
     selenium: SeleniumDrivers,
     browser_id: str,
-    labels: str,
+    labels: list[str],
     member_name: str,
     member_type: str,
     where: str,
@@ -948,7 +959,7 @@ def ckeck_status_labels_for_member_of_space(
     page = _find_members_page(driver, where)
     member = getattr(page, member_type).items[member_name]
     status_labels = [x.text for x in member.status_labels]
-    expected_labels = parse_seq(labels)
+    expected_labels = labels
 
     assert len(status_labels) == len(
         expected_labels
@@ -959,10 +970,10 @@ def ckeck_status_labels_for_member_of_space(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees "
-        "(?P<alert_text>Insufficient privileges) alert "
-        'for "(?P<member_name>.*)" (?P<member_type>user|group) '
-        "in (?P<where>space|group|cluster) members subpage"
+        r"user of (?P<browser_id>.*) sees "
+        r"(?P<alert_text>Insufficient privileges) alert "
+        r'for "(?P<member_name>.*)" (?P<member_type>user|group) '
+        r"in (?P<where>space|group|cluster) members subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -985,9 +996,9 @@ def see_insufficient_permissions_alert_for_member(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees "
-        '"(?P<alert_text>Insufficient privileges)" alert '
-        "in (?P<where>space|group|cluster|harvester) members subpage"
+        r"user of (?P<browser_id>.*) sees "
+        r'"(?P<alert_text>Insufficient privileges)" alert '
+        r"in (?P<where>space|group|cluster|harvester) members subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1001,10 +1012,10 @@ def assert_insufficient_permission_alert_in_members_subpage(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees privileges for "
-        '"(?P<member_name>.*)" (?P<member_type>user|group) '
-        "in (?P<where>space|group|cluster|harvester|automation) "
-        "members subpage"
+        r"user of (?P<browser_id>.*) sees privileges for "
+        r'"(?P<member_name>.*)" (?P<member_type>user|group) '
+        r"in (?P<where>space|group|cluster|harvester|automation) "
+        r"members subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1026,10 +1037,10 @@ def see_privileges_for_member(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        '"(?P<member_name>.*)" (?P<member_type>user|group) '
-        'in "(?P<name>.*)" harvester members '
-        "(?P<list_type>users|groups) list"
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
+        r'"(?P<member_name>.*)" (?P<member_type>user|group) '
+        r'in "(?P<item_name>.*)" (?P<item_type>automation|harvester) members '
+        r"(users|groups) list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1039,10 +1050,14 @@ def check_element_in_members_subpage(
     option: str,
     member_name: str,
     member_type: str,
-    list_type: str,
+    item_type: str,
 ) -> None:
+    if item_type == "harvester":
+        item_type = "discovery"
+
     driver = selenium[browser_id]
-    member_list = getattr(OZLoggedIn(driver)["discovery"].members_page, list_type).items
+    page = getattr(OZLoggedIn(driver), item_type)
+    member_list = getattr(page.members_page, f"{member_type}s").items
     if option == "sees":
         try:
             err_msg = f"{member_name} {member_type} not found"
@@ -1059,8 +1074,8 @@ def check_element_in_members_subpage(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees (?P<number>\d+) "
-        "(?P<member_type>user|group)s? in "
-        "(?P<where>space|group|cluster|harvester) members subpage"
+        r"(?P<member_type>user|group)s? in "
+        r"(?P<where>space|group|cluster|harvester) members subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1126,7 +1141,7 @@ def assert_privilege_config_for_user(
     elif item_type == "cluster":
         click_on_record_in_clusters_menu(selenium, browser_id, item_name, hosts)
         wt_click_on_subitem_for_item(
-            selenium, browser_id, option, option2, item_name, hosts
+            selenium, [browser_id], option, option2, item_name, hosts
         )
 
     click_element_in_members_list(selenium, browser_id, name, item_type, list_type)
@@ -1138,7 +1153,7 @@ def assert_privilege_config_for_user(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on (?P<member_type>users|groups) checkbox"
+        r"user of (?P<browser_id>.*) clicks on (?P<member_type>users|groups) checkbox"
     )
 )
 def click_on_bulk_checkbox(
@@ -1152,18 +1167,20 @@ def click_on_bulk_checkbox(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
-        "(?P<member_type>users|groups) checkbox"
+        r'user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
+        r"(?P<list_type>users|groups) checkbox"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_member_checkbox(
-    selenium: SeleniumDrivers, browser_id: str, member_name: str, member_type: str
+    selenium: SeleniumDrivers, browser_id: str, member_name: str, list_type: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["groups"].members_page
-
-    getattr(page, member_type).items[member_name].header.checkbox.click()
+    page = OZLoggedIn(driver).groups.members_page
+    page.close_member(driver)
+    members = getattr(page, list_type)
+    item_checkbox = members.items[member_name].header.checkbox
+    item_checkbox.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on bulk edit button"))
@@ -1175,10 +1192,10 @@ def click_on_bulk_edit(browser_id: str, selenium: SeleniumDrivers) -> None:
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees "(?P<alert_text>As a '
-        "space owner, you are authorized to perform all operations, "
-        'regardless of the assigned privileges.)" warning '
-        'for "(?P<username>.*)" user in space members subpage'
+        r'user of (?P<browser_id>.*) sees "(?P<alert_text>As a '
+        r"space owner, you are authorized to perform all operations, "
+        r'regardless of the assigned privileges.)" warning '
+        r'for "(?P<username>.*)" user in space members subpage'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1232,4 +1249,4 @@ def assert_onezone_members_page_opened(
     selenium: SeleniumDrivers, browser_id: str, where: str
 ) -> None:
     driver = selenium[browser_id]
-    _ = OZLoggedIn(driver)[where].members_page
+    _ = getattr(OZLoggedIn(driver), where).members_page

@@ -313,7 +313,7 @@ def assert_archive_in_op_gui(
         assert_items_presence_in_browser(
             selenium,
             browser_id,
-            item_name,
+            [item_name],
             tmp_memory,
             which_browser=ARCHIVE_FILE_BROWSER,
         )
@@ -647,7 +647,7 @@ def check_size_stats_for_archive_per_provider(
                 hosts,
                 browser_id,
                 stat_type,
-                provider,
+                [provider],
                 expected_value,
             )
         else:

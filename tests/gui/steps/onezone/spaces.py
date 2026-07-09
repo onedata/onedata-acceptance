@@ -20,7 +20,13 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.generic import ListElement, parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    ListElement,
+    parse_elements_sequence,
+    transform,
+)
+from tests.gui.utils.onezone import PageName
 from tests.gui.utils.onezone.data_page import DataPage, Space
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -68,9 +74,9 @@ def _parse_tabs_list(tabs: str) -> list[str]:
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on "
-        '"(?P<button_name>Create space|Marketplace)" button in '
-        "spaces sidebar"
+        r"user of (?P<browser_id>.*?) clicks on "
+        r'"(?P<button_name>Create space|Marketplace)" button in '
+        r"spaces sidebar"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -173,7 +179,7 @@ def assert_new_created_space_has_appeared_on_spaces(
     ), f'space "{space_name}" not found'
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) clicks on "Automation" in the main menu'))
+@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on "Automation" in the main menu'))
 def click_on_automation_option_in_the_sidebar(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
@@ -200,12 +206,15 @@ def click_on_option_in_the_sidebar(
 @wt(
     parsers.parse(
         'user of {browser_id} can see tabs "{tabs}" are disabled in the main menu'
-    )
+    ),
+    converters={
+        "tabs": parse_elements_sequence,
+    },
 )
 def wt_assert_main_tabs_disabled(
-    selenium: SeleniumDrivers, browser_id: str, tabs: str
+    selenium: SeleniumDrivers, browser_id: str, tabs: list[str]
 ) -> None:
-    for tab in parse_seq(tabs):
+    for tab in tabs:
         assert_main_tab_disabled(selenium, browser_id, tab)
 
 
@@ -221,8 +230,8 @@ def assert_main_tab_disabled(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) closes the temporary "
-        "sidebar by clicking on the background"
+        r"user of (?P<browser_id>.*?) closes the temporary "
+        r"sidebar by clicking on the background"
     )
 )
 def close_sidebar_by_click_on_background(
@@ -250,8 +259,8 @@ def _click_on_option_in_the_sidebar(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks "(?P<name>.*?)" '
-        "on the (?P<option>spaces|groups|harvesters) list in the sidebar"
+        r'user of (?P<browser_id>.*?) clicks "(?P<name>.*?)" '
+        r"on the (?P<option>spaces|groups|harvesters) list in the sidebar"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -300,7 +309,7 @@ def click_on_option_in_space_menu(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<button>.*)" button in space menu'
+        r'user of (?P<browser_id>.*) clicks on "(?P<button>.*)" button in space menu'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -315,7 +324,7 @@ def click_on_option_in_menu(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on (?P<button_name>Leave|Cancel) button"
+        r"user of (?P<browser_id>.*?) clicks on (?P<button_name>Leave|Cancel) button"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -327,8 +336,8 @@ def click_confirm_or_cancel_button_on_leave_space_page(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on "
-        'understand notice checkbox in "Remove space" modal'
+        r"user of (?P<browser_id>.*?) clicks on "
+        r'understand notice checkbox in "Remove space" modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -340,7 +349,7 @@ def check_remove_space_understand_notice(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks on "Remove" button in "Remove space" modal'
+        r'user of (?P<browser_id>.*?) clicks on "Remove" button in "Remove space" modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -399,9 +408,9 @@ def _get_subpage_name(subpage: str) -> str:
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks "(?P<provider>.*)" '
-        "provider icon on the map on (?P<page>overview|providers) data "
-        "page"
+        r'user of (?P<browser_id>.*) clicks "(?P<provider>.*)" '
+        r"provider icon on the map on (?P<page>overview|providers) data "
+        r"page"
     )
 )
 def click_provider_on_the_map_on_data_page(
@@ -419,9 +428,9 @@ def click_provider_on_the_map_on_data_page(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) hovers over "
-        "provider icon on the map on (?P<page>overview|providers) data "
-        'page and sees that provider name is "(?P<provider>.*)"'
+        r"user of (?P<browser_id>.*) hovers over "
+        r"provider icon on the map on (?P<page>overview|providers) data "
+        r'page and sees that provider name is "(?P<provider>.*)"'
     )
 )
 def hover_provider_on_the_map_on_data_page(
@@ -439,9 +448,9 @@ def hover_provider_on_the_map_on_data_page(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks the map on "
-        "(?P<space_name>.*) space (?P<page>overview|providers) data "
-        "page"
+        r"user of (?P<browser_id>.*?) clicks the map on "
+        r"(?P<space_name>.*) space (?P<page>overview|providers) data "
+        r"page"
     )
 )
 def click_the_map_on_data_page(
@@ -453,8 +462,8 @@ def click_the_map_on_data_page(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks "(?P<option>.*?)" '
-        'of "(?P<space_name>.*?)" space in the sidebar'
+        r'user of (?P<browser_id>.*?) clicks "(?P<option>.*?)" '
+        r'of "(?P<space_name>.*?)" space in the sidebar'
     )
 )
 def click_on_option_of_space_on_left_sidebar_menu(
@@ -497,32 +506,36 @@ def _get_number_of_disabled_elements_on_left_sidebar_menu(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that (?P<element_list>.*) "
-        'of "(?P<space_name>.*?)" in the sidebar are disabled'
-    )
+        r"user of (?P<browser_id>.*?) sees that"
+        rf" (?P<element_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r'of "(?P<space_name>.*?)" in the sidebar are disabled'
+    ),
+    converters={"element_list": parse_elements_sequence},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_option_of_space_on_left_sidebar_menu_disabled(
-    selenium: SeleniumDrivers, browser_id: str, space_name: str, element_list: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    element_list: list[str],
 ) -> None:
     driver = selenium[browser_id]
-    elements = _parse_tabs_list(element_list)
-    space = OZLoggedIn(driver)["data"].spaces_list[space_name]
+    space = OZLoggedIn(driver).data.spaces_list[space_name]
     error_msg = "Number of disabled elements is incorrect"
     assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
-        elements
+        element_list
     ), error_msg
 
-    for element_name in elements:
+    for element_name in element_list:
         error_msg = f' "{element_name}" button is not in disabled state'
         assert space.is_element_disabled(element_name), error_msg
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees (?P<correct_number>.*) "
-        "providers? on the map on (?P<space_name>.*) "
-        "space (?P<page>.*) data page"
+        r"user of (?P<browser_id>.*) sees (?P<correct_number>.*) "
+        r"providers? on the map on (?P<space_name>.*) "
+        r"space (?P<page>.*) data page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -553,9 +566,9 @@ def click_get_started_on_data_on_left_sidebar_menu(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks "
-        "(?P<option>Create a space|join an existing space) "
-        "on Welcome page"
+        r"user of (?P<browser_id>.*?) clicks "
+        r"(?P<option>Create a space|join an existing space) "
+        r"on Welcome page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -576,9 +589,9 @@ def assert_error_popup_has_appeared(selenium: SeleniumDrivers, browser_id: str) 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<see>does not see|sees) "
-        '"(?P<harvester_name>.*)" in harvesters list '
-        "on space harvesters subpage"
+        r"user of (?P<browser_id>.*) (?P<see>does not see|sees) "
+        r'"(?P<harvester_name>.*)" in harvesters list '
+        r"on space harvesters subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -618,9 +631,9 @@ def assert_providers_list_contains_provider(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>check|uncheck)s "
-        "(?P<toggle>.*) toggle in selected provider settings "
-        "on providers page"
+        r"user of (?P<browser_id>.*) (?P<option>check|uncheck)s "
+        r"(?P<toggle>.*) toggle in selected provider settings "
+        r"on providers page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -870,7 +883,7 @@ def generate_and_send_support_token(
     tmp_memory[browser_id2]["mailbox"]["token"] = item
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) copies invitation token from Spaces page"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) copies invitation token from Spaces page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token(selenium: SeleniumDrivers, browser_id: str) -> None:
     OZLoggedIn(selenium[browser_id])["data"].providers_page.get_support_page.copy()
@@ -878,7 +891,7 @@ def copy_token(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms create new space using (?P<option>.*)"
+        r"user of (?P<browser_id>.*) confirms create new space using (?P<option>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -915,18 +928,20 @@ def assert_opened_space_name(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that (?P<tabs_list>.*) tabs? "
-        'of "(?P<space_name>.*)" are enabled'
-    )
+        r"user of (?P<browser_id>.*) sees that"
+        rf" (?P<tabs_list>{ELEMENTS_SEQUENCE_PATTERN}) tabs? "
+        r'of "(?P<space_name>.*)" are enabled'
+    ),
+    converters={"tabs_list": parse_elements_sequence},
 )
 @repeat_failed(WAIT_BACKEND * 3)
 def assert_tabs_of_space_enabled(
-    selenium: SeleniumDrivers, browser_id: str, tabs_list: str, space_name: str
+    selenium: SeleniumDrivers, browser_id: str, tabs_list: list[str], space_name: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id])["data"]
     page.spaces_headers_list[space_name]()
     space = page.spaces_list[space_name]
-    tabs = SPACE_TABS if tabs_list == "all" else _parse_tabs_list(tabs_list)
+    tabs = SPACE_TABS if tabs_list == ["all"] else tabs_list
 
     for tab in tabs:
         assert space.is_element_enabled(tab), f"Tab {tab} is not enabled for {space}"
@@ -934,19 +949,21 @@ def assert_tabs_of_space_enabled(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that (?P<tabs_list>.*) tabs? "
-        'of "(?P<space_name>.*)" (are|is) disabled'
-    )
+        r"user of (?P<browser_id>.*) sees that"
+        rf" (?P<tabs_list>{ELEMENTS_SEQUENCE_PATTERN}) tabs? "
+        r'of "(?P<space_name>.*)" (are|is) disabled'
+    ),
+    converters={"tabs_list": parse_elements_sequence},
 )
 @repeat_failed(WAIT_BACKEND * 2)
 def assert_tabs_of_space_disabled(
-    selenium: SeleniumDrivers, browser_id: str, tabs_list: str, space_name: str
+    selenium: SeleniumDrivers, browser_id: str, tabs_list: list[str], space_name: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id])["data"]
     page.spaces_headers_list[space_name]()
     space = page.spaces_list[space_name]
 
-    for tab in _parse_tabs_list(tabs_list):
+    for tab in tabs_list:
         assert space.is_element_disabled(tab), f"Tab {tab} is not disabled for {space}"
 
 

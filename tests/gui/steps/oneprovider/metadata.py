@@ -15,7 +15,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     XattrMetadataEntry,
 )
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -38,19 +38,22 @@ def assert_all_metadata_tabs_marked_empty(
 @wt(
     parsers.parse(
         "user of {browser_id} sees {tab_list} navigation tabs in metadata panel"
-    )
+    ),
+    converters={
+        "tab_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_metadata_panel_displayed(
-    selenium: SeleniumDrivers, browser_id: str, tab_list: str
+    selenium: SeleniumDrivers, browser_id: str, tab_list: list[str]
 ) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     nav = modal.navigation
-    for tab in parse_seq(tab_list):
+    for tab in tab_list:
         assert nav[tab] is not None, f"no navigation tab {tab} found"
 
 
-@wt(parsers.re("user of (?P<browser_id>.*?) sees that there is no xattrs metadata"))
+@wt(parsers.re(r"user of (?P<browser_id>.*?) sees that there is no xattrs metadata"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_xattrs_metadata_for_item(
     selenium: SeleniumDrivers, browser_id: str
@@ -152,8 +155,8 @@ def click_on_del_metadata_record_button(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) types '(?P<text>.+?)' "
-        "to (?P<tab_name>JSON|RDF) textarea in metadata panel"
+        r"user of (?P<browser_id>.+?) types '(?P<text>.+?)' "
+        r"to (?P<tab_name>JSON|RDF) textarea in metadata panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -167,9 +170,9 @@ def type_text_to_metadata_textarea(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) "
-        "textarea in metadata panel "
-        "contains '(?P<expected_metadata>.*)'"
+        r"user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) "
+        r"textarea in metadata panel "
+        r"contains '(?P<expected_metadata>.*)'"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -226,8 +229,8 @@ def assert_textarea_is_empty_for_metadata(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) cleans (?P<tab_name>JSON|RDF) "
-        "textarea in metadata panel"
+        r"user of (?P<browser_id>.+?) cleans (?P<tab_name>JSON|RDF) "
+        r"textarea in metadata panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

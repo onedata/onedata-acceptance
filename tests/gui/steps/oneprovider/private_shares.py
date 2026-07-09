@@ -70,8 +70,8 @@ def write_input_in_form_in_shares_interface(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button '
-        'in "Dublin Core Metadata" form on share\'s private interface'
+        r'user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button '
+        r'in "Dublin Core Metadata" form on share\'s private interface'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -84,8 +84,8 @@ def click_button_in_form_in_shares_interface(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button in'
-        ' "Description" form on share\'s private interface'
+        r'user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button in'
+        r' "Description" form on share\'s private interface'
     )
 )
 def click_button_in_description_form(

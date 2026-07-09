@@ -24,7 +24,7 @@ from oneprovider_client.rest import ApiException as OPException
 from tests import OP_REST_PORT
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import CDMIClient as cdmi
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.mixed.oneprovider_client import ApiClient
 from tests.mixed.oneprovider_client.models.inline_response2015 import InlineResponse2015
 from tests.mixed.oneprovider_client.models.share import Share
@@ -217,13 +217,13 @@ def see_items_in_op_rest(
     users: Users,
     host: str,
     hosts: Hosts,
-    path_list: str,
+    path_list: list[str],
     result: str,
     space: str,
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(client)
-    for path in parse_seq(path_list):
+    for path in path_list:
         path = f"{space}/{path}"
         check_if_item_exists_or_not_exists(result, path, client, file_api)
 
@@ -324,7 +324,7 @@ def assert_ace_in_op_rest(
 ) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     ace = client.read_metadata(path)["metadata"]["cdmi_acl"][numerals[num]]
-    assert_ace(priv, item_type, ace, name, num, path)
+    assert_ace(parse_elements_sequence(priv), item_type, ace, name, num, path)
 
 
 def grant_acl_privileges_in_op_rest(
@@ -343,7 +343,9 @@ def grant_acl_privileges_in_op_rest(
         acl = client.read_metadata(path)["metadata"]["cdmi_acl"]
     except KeyError:
         acl = []
-    acl = get_acl_metadata(acl, priv, item_type, groups, name, users, path)
+    acl = get_acl_metadata(
+        acl, parse_elements_sequence(priv), item_type, groups, name, users, path
+    )
     client.write_metadata(path, {"cdmi_acl": acl})
 
 

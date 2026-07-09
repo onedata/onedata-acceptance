@@ -44,8 +44,8 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) adds xattr entry with "
-        'key "(?P<key_name>.*?)" and value "(?P<value>.*?)"'
+        r"user of (?P<browser_id>.*?) adds xattr entry with "
+        r'key "(?P<key_name>.*?)" and value "(?P<value>.*?)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -64,9 +64,9 @@ def get_modal_name_from_item_name(item_name: str) -> str:
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) adds and saves '(?P<text>.*?)' "
-        "(?P<input_type>JSON|RDF) metadata "
-        'for "(?P<item_name>.*?)"'
+        r"user of (?P<browser_id>.*?) adds and saves '(?P<text>.*?)' "
+        r"(?P<input_type>JSON|RDF) metadata "
+        r'for "(?P<item_name>.*?)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -94,9 +94,9 @@ def add_json_rdf_metadata_for_item(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) opens metadata panel on "
-        "(?P<tab>JSON|RDF) "
-        'tab for "(?P<item_name>.*?)"(?P<dir> directory|)'
+        r"user of (?P<browser_id>.*?) opens metadata panel on "
+        r"(?P<tab>JSON|RDF) "
+        r'tab for "(?P<item_name>.*?)"(?P<dir> directory|)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -116,10 +116,10 @@ def open_json_rdf_metadata_for_item(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) (?P<res>.*) to write "
-        '"(?P<path>.*)" (?P<item>file|directory)'
-        " (?P<tab_name>xattrs|JSON|RDF) metadata: ('|\")(?P<val>.*)('|\")"
-        ' in "(?P<space>.*)"'
+        r"user of (?P<browser_id>.*?) (?P<res>.*) to write "
+        r'"(?P<path>.*)" (?P<item>file|directory)'
+        r" (?P<tab_name>xattrs|JSON|RDF) metadata: ('|\")(?P<val>.*)('|\")"
+        r' in "(?P<space>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -174,11 +174,11 @@ def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: str) -
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<res>.*) to read "
-        '"(?P<path>.*)" (?P<item>file|directory) '
-        "(?P<tab_name>xattrs|JSON|RDF) "
-        'metadata: "(?P<val>.*)"'
-        ' in "(?P<space>.*)"'
+        r"user of (?P<browser_id>.*) (?P<res>.*) to read "
+        r'"(?P<path>.*)" (?P<item>file|directory) '
+        r"(?P<tab_name>xattrs|JSON|RDF) "
+        r'metadata: "(?P<val>.*)"'
+        r' in "(?P<space>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

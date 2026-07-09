@@ -16,7 +16,7 @@ import yaml
 from tests import OP_REST_PORT
 from tests.gui.sse_fixtures import MonitorEntry
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.mixed.type_definitions import (
     EventResult,
     ExpectedAttrs,
@@ -56,11 +56,14 @@ class SpaceFilesMonitorFactory(Protocol):
     parsers.parse(
         'user {user} starts observing file events on "{attrs}" on dir "{dir_path}" in'
         ' space "{space}" in {host}'
-    )
+    ),
+    converters={
+        "attrs": parse_elements_sequence,
+    },
 )
 def wt_start_observing_file_events(
     user: str,
-    attrs: str,
+    attrs: list[str],
     dir_path: str,
     space: str,
     space_files_monitor_factory: SpaceFilesMonitorFactory,
@@ -72,7 +75,7 @@ def wt_start_observing_file_events(
 ) -> None:
     space_id = spaces[space]
     token = users[user].token
-    observed_attrs = parse_seq(attrs)
+    observed_attrs = attrs
     provider_hostname = hosts[host]["hostname"]
     op_authority = f"{provider_hostname}:{OP_REST_PORT}"
     dir_path = f"{space}/{dir_path}"

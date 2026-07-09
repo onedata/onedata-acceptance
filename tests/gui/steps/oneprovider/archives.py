@@ -575,8 +575,8 @@ def hover_over_option_in_data_row_menu_in_archive_browser(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) (?P<res>does not see|sees) "
-        'link "(?P<link>.*?)" in archive browser'
+        r"user of (?P<browser_id>.*?) (?P<res>does not see|sees) "
+        r'link "(?P<link>.*?)" in archive browser'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -36,8 +36,8 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) opens (?P<provider>.*) "
-        'Oneprovider transfers for "(?P<space>.*)" space'
+        r"user of (?P<browser_id>.*) opens (?P<provider>.*) "
+        r'Oneprovider transfers for "(?P<space>.*)" space'
     )
 )
 def open_transfers_page(
@@ -56,9 +56,9 @@ def open_transfers_page(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) opens transfer page using "
-        '"(?P<link>.*)" link on "Distribution" tab for '
-        '"(?P<file>.*)" file'
+        r"user of (?P<browser_id>.*) opens transfer page using "
+        r'"(?P<link>.*)" link on "Distribution" tab for '
+        r'"(?P<file>.*)" file'
     )
 )
 def open_transfer_page_by_clicking_on_link(
@@ -141,7 +141,7 @@ def replicate_and_wait_to_complete(
     hosts: Hosts,
 ) -> None:
     replicate_files_to_provider(
-        selenium, browser_id, names, tmp_memory, provider, hosts, "replicates"
+        selenium, browser_id, [names], tmp_memory, [provider], hosts, "replicates"
     )
     wait_for_all_transfers_to_start_and_finish(
         selenium, browser_id, provider, space, hosts

@@ -105,7 +105,8 @@ def assert_correct_user_name_in_oz(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees "(?P<username>.*?)" alias in the sidebar panel'
+        r'user of (?P<browser_id>.*) sees "(?P<username>.*?)" alias in the sidebar'
+        r" panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

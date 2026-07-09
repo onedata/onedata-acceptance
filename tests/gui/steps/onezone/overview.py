@@ -54,7 +54,7 @@ def click_cancel_rename_button_on_overview_page(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms rename the space using (?P<option>.*)"
+        r"user of (?P<browser_id>.*) confirms rename the space using (?P<option>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

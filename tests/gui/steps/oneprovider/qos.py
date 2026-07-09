@@ -19,7 +19,7 @@ from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import parse_elements_sequence, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import wt
 from tests.utils.user_utils import Users
@@ -79,17 +79,20 @@ def select_option_qos(
     parsers.parse(
         "user of {browser_id} sees the following logs in audit log files list"
         ' in given order for "{files_list}" files:\n{config}'
-    )
+    ),
+    converters={
+        "files_list": parse_elements_sequence,
+    },
 )
 def assert_audit_log_logs_for_each_file_in_list(
-    selenium: SeleniumDrivers, browser_id: str, files_list: str, config: str
+    selenium: SeleniumDrivers, browser_id: str, files_list: list[str], config: str
 ) -> None:
     driver = selenium[browser_id]
     modal_qos = Modals(driver).details_modal.qos
     entries = modal_qos.audit_log_list.entries
     expected_logs = cast(list[dict[str, str]], yaml.load(config, yaml.Loader))
 
-    files = parse_seq(files_list)
+    files = files_list
     for file_name in files:
         if len(files) > 1:
             actual_logs = [
@@ -390,14 +393,17 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees (?P<providers>.*?) "
-        'providers? on values list in "Add QoS condition" popup'
-    )
+        r"user of (?P<browser_id>.*?) sees (?P<providers>.*?) "
+        r'providers? on values list in "Add QoS condition" popup'
+    ),
+    converters={
+        "providers": parse_elements_sequence,
+    },
 )
 def assert_list_of_providers_in_add_cond_popup(
-    selenium: SeleniumDrivers, browser_id: str, providers: str, hosts: Hosts
+    selenium: SeleniumDrivers, browser_id: str, providers: list[str], hosts: Hosts
 ) -> None:
-    expected = [hosts[provider]["name"] for provider in parse_seq(providers)]
+    expected = [hosts[provider]["name"] for provider in providers]
 
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
@@ -409,14 +415,17 @@ def assert_list_of_providers_in_add_cond_popup(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees (?P<storages>.*?) "
-        'storages? on values list in "Add QoS condition" popup'
-    )
+        r"user of (?P<browser_id>.*?) sees (?P<storages>.*?) "
+        r'storages? on values list in "Add QoS condition" popup'
+    ),
+    converters={
+        "storages": parse_elements_sequence,
+    },
 )
 def assert_list_of_storages_in_add_cond_popup(
-    selenium: SeleniumDrivers, browser_id: str, storages: str, hosts: Hosts
+    selenium: SeleniumDrivers, browser_id: str, storages: list[str], hosts: Hosts
 ) -> None:
-    expected_expressions = parse_seq(storages)
+    expected_expressions = storages
     expected = []
     separator = f" {PROVIDER_PREFIX_CHAR}"
     for expression in expected_expressions:
@@ -457,8 +466,8 @@ def click_add_in_add_cond_popup(selenium: SeleniumDrivers, browser_id: str) -> N
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that (?P<number>.*?) "
-        "storages? match(es)? condition in QoS panel"
+        r"user of (?P<browser_id>.*?) sees that (?P<number>.*?) "
+        r"storages? match(es)? condition in QoS panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -477,16 +486,19 @@ def assert_num_of_matching_storages(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that matching storages? "
-        "(is|are) (?P<storages>.+)"
-    )
+        r"user of (?P<browser_id>.*?) sees that matching storages? "
+        r"(is|are) (?P<storages>.+)"
+    ),
+    converters={
+        "storages": parse_elements_sequence,
+    },
 )
 def assert_matching_storage(
-    selenium: SeleniumDrivers, browser_id: str, storages: str, hosts: Hosts
+    selenium: SeleniumDrivers, browser_id: str, storages: list[str], hosts: Hosts
 ) -> None:
     css_sel = ".storages-matching-info-icon"
     driver = selenium[browser_id]
-    expected_expressions = parse_seq(storages)
+    expected_expressions = storages
     expected = []
     for expression in expected_expressions:
         [name, provider] = expression.split(" provided by ")
@@ -528,7 +540,7 @@ def choose_operator_in_add_cond_popup(
     getattr(popup, f"{operator.lower()}_operator").click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<text>.*?)" in QoS panel'))
+@wt(parsers.re(r'user of (?P<browser_id>.*?) sees "(?P<text>.*?)" in QoS panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_label_in_qos_modal(
     selenium: SeleniumDrivers, browser_id: str, text: str

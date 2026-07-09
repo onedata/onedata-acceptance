@@ -11,7 +11,12 @@ from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
-from tests.gui.utils.generic import ListElement, parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    ListElement,
+    parse_elements_sequence,
+    transform,
+)
 from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -20,7 +25,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on Create group button in groups sidebar"
+        r"user of (?P<browser_id>.*) clicks on Create group button in groups sidebar"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -52,18 +57,24 @@ def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_ids>.*) (?P<option>does not see|sees) "
-        'group "(?P<group>.*)" on groups list'
-    )
+        rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"(?P<option>does not see|sees) "
+        r'group "(?P<group>.*)" on groups list'
+    ),
+    converters={
+        "browser_ids": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_group_exists(
     selenium: SeleniumDrivers,
-    browser_ids: str,
+    browser_ids: list[str],
     option: str,
     group: str,
 ) -> None:
-    for browser_id in parse_seq(browser_ids):
+    for browser_id in browser_ids:
+        oz_page = OZLoggedIn(selenium[browser_id])
+        oz_page.open_panel(GroupsPage)
         groups_count = len(
             _find_groups(
                 OZLoggedIn(selenium[browser_id]).get_page_and_click("groups"),
@@ -96,8 +107,8 @@ def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) ->
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) opens group "(?P<group>.*)" '
-        "(?P<subpage>members|hierarchy|main) subpage"
+        r'user of (?P<browser_id>.*) opens group "(?P<group>.*)" '
+        r"(?P<subpage>members|hierarchy|main) subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -119,7 +130,7 @@ def assert_error_page_appeared(
     assert page.main_page.error_label == text, f'page with text "{text}" not found'
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) confirms using (?P<option>.*)"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) confirms using (?P<option>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_add_group(selenium: SeleniumDrivers, browser_id: str, option: str) -> None:
     if option == "enter":
@@ -130,8 +141,8 @@ def confirm_add_group(selenium: SeleniumDrivers, browser_id: str, option: str) -
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on group "
-        '"(?P<group_name>.*)" menu button in hierarchy subpage'
+        r"user of (?P<browser_id>.*) clicks on group "
+        r'"(?P<group_name>.*)" menu button in hierarchy subpage'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -148,9 +159,9 @@ def click_on_group_trigger(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on group "
-        '"(?P<group_name>.*)" menu button to (?P<relation>.*) relation '
-        "in hierarchy subpage"
+        r"user of (?P<browser_id>.*) clicks on group "
+        r'"(?P<group_name>.*)" menu button to (?P<relation>.*) relation '
+        r"in hierarchy subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -202,9 +213,9 @@ def write_name_group_in_create_new_child_group_modal(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        '"(?P<group_name>.*)" as a (?P<relation>child|parent) '
-        'of "(?P<active_group>.*)" in hierarchy subpage'
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
+        r'"(?P<group_name>.*)" as a (?P<relation>child|parent) '
+        r'of "(?P<active_group>.*)" in hierarchy subpage'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -228,7 +239,7 @@ def assert_list_of_children_contains_group(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks show parent groups in hierarchy subpage"
+        r"user of (?P<browser_id>.*) clicks show parent groups in hierarchy subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

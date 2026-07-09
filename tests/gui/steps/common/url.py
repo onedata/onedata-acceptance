@@ -22,9 +22,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Popups
-from tests.gui.utils.core.web_objects import ButtonPageObject
-from tests.gui.utils.generic import AlertPopup, parse_seq, parse_url
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    AlertPopup,
+    parse_elements_sequence,
+    parse_seq,
+    parse_url,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -42,17 +46,25 @@ HOST_PATTERN = (
     r")"
 )
 
-HOSTS_LIST_PATTERN = (
-    rf"(?:"
-    rf"{HOST_PATTERN}"
-    rf"|"
-    rf"\[\s*{HOST_PATTERN}(?:\s*,\s*{HOST_PATTERN})*\s*\]"
-    rf")"
+HOST_ELEMENT_PATTERN = rf'(?:{HOST_PATTERN}|"{HOST_PATTERN}")'
+HOSTS_SEQUENCE_PATTERN = (
+    rf"(?:{HOST_ELEMENT_PATTERN}|"
+    rf"\[\s*{HOST_ELEMENT_PATTERN}(?:\s*,\s*{HOST_ELEMENT_PATTERN})*\s*\]|"
+    rf"\[\s*\])"
 )
 
 
+def parse_hosts_sequence(value: str) -> list[str]:
+    if re.fullmatch(HOSTS_SEQUENCE_PATTERN, value) is None:
+        raise ValueError(f"Invalid hosts sequence: {value!r}")
+    return parse_seq(value)
+
+
 def open_onedata_service_page(
-    selenium: SeleniumDrivers, browser_id_list: str, hosts_list: str, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id_list: list[str],
+    hosts_list: list[str],
+    hosts: Hosts,
 ) -> None:
     """hosts_list may contains:
     onezone,
@@ -62,7 +74,7 @@ def open_onedata_service_page(
     emergency interface of Onepanel
     emergency interface of Onezone
     """
-    for browser_id, host in zip(parse_seq(browser_id_list), parse_seq(hosts_list)):
+    for browser_id, host in zip(browser_id_list, hosts_list):
         driver = selenium[browser_id]
         if host == "emergency interface of Onepanel":
             host = "oneprovider-1 provider panel"
@@ -91,31 +103,45 @@ def open_onedata_service_page(
 
 @given(
     parsers.re(
-        r"users? of (?P<browser_id_list>.+?) opened "
-        rf"(?P<hosts_list>{HOSTS_LIST_PATTERN}) "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) opened "
+        rf"(?P<hosts_list>{HOSTS_SEQUENCE_PATTERN}) "
         r"page"
-    )
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "hosts_list": parse_hosts_sequence,
+    },
 )
 def g_open_onedata_service_page(
-    selenium: SeleniumDrivers, browser_id_list: str, hosts_list: str, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id_list: list[str],
+    hosts_list: list[str],
+    hosts: Hosts,
 ) -> None:
     open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
 @wt(
     parsers.re(
-        r"users? of (?P<browser_id_list>.+?) opens "
-        rf"(?P<hosts_list>{HOSTS_LIST_PATTERN}) "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) opens "
+        rf"(?P<hosts_list>{HOSTS_SEQUENCE_PATTERN}) "
         r"page"
-    )
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "hosts_list": parse_hosts_sequence,
+    },
 )
 def wt_open_onedata_service_page(
-    selenium: SeleniumDrivers, browser_id_list: str, hosts_list: str, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id_list: list[str],
+    hosts_list: list[str],
+    hosts: Hosts,
 ) -> None:
     open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
-@wt(parsers.re("user of (?P<browser_id>.+) should be redirected to (?P<page>.+) page"))
+@wt(parsers.re(r"user of (?P<browser_id>.+) should be redirected to (?P<page>.+) page"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_being_redirected_to_page(
     page: str, selenium: SeleniumDrivers, browser_id: str
@@ -151,7 +177,7 @@ def change_application_path(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?:url|URL) matches: (?P<path>.+)"
+        r"user of (?P<browser_id>.+?) sees that (?:url|URL) matches: (?P<path>.+)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -178,7 +204,7 @@ def _open_url(selenium: SeleniumDrivers, browser_id: str, url: str) -> None:
     )
 
 
-@wt(parsers.re("user of (?P<browser_id>.+?) opens received (?:url|URL)"))
+@wt(parsers.re(r"user of (?P<browser_id>.+?) opens received (?:url|URL)"))
 def open_received_url_with_base_url(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -304,22 +330,40 @@ def cp_part_of_url(
     )
 
 
-@wt(parsers.parse("using web GUI, {browser_id_list} refreshes site"))
-@wt(parsers.re("users? of (?P<browser_id_list>.*?) refreshes site"))
-def refresh_site(selenium: SeleniumDrivers, browser_id_list: str) -> None:
-    for browser_id in parse_seq(browser_id_list):
+@wt(
+    parsers.parse(
+        "using web GUI, {browser_id_list:ElementsSequence} refreshes site",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    )
+)
+@wt(
+    parsers.re(
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) refreshes site"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
+)
+def refresh_site(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
+    for browser_id in browser_id_list:
         selenium[browser_id].refresh()
 
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*?) refreshes site and waits for page to load"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"refreshes site and waits for page to load"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
-def refresh_site_and_wait(selenium: SeleniumDrivers, browser_id_list: str) -> None:
-    for browser_id in parse_seq(browser_id_list):
+def refresh_site_and_wait(
+    selenium: SeleniumDrivers, browser_id_list: list[str]
+) -> None:
+    for browser_id in browser_id_list:
         selenium[browser_id].refresh()
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         assert_main_page_loaded(selenium, browser_id)
 
 
@@ -394,7 +438,7 @@ def wait_till_alert_info_popup_disappear(
 @wt(parsers.parse("if {client} is web GUI, {user} refreshes site"))
 def if_gui_refresh_site(selenium: SeleniumDrivers, client: str, user: str) -> None:
     if client == "web GUI":
-        refresh_site(selenium, user)
+        refresh_site(selenium, [user])
 
 
 @wt(parsers.parse("user of {browser_id} refreshes webapp"))

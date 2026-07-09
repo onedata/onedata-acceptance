@@ -38,7 +38,10 @@ from tests.gui.steps.oneprovider_common import (
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -46,12 +49,15 @@ from tests.utils.utils import repeat_failed
 
 @given(
     parsers.re(
-        'opened "(?P<tab_name>spaces)" tab in web GUI by '
-        "(users? of )?(?P<browser_id_list>.*)"
-    )
+        r'opened "(?P<tab_name>spaces)" tab in web GUI by '
+        rf"(users? of )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 def go_to_tab_in_provider(
-    browser_id_list: str, tab_name: str, selenium: SeleniumDrivers
+    browser_id_list: list[str], tab_name: str, selenium: SeleniumDrivers
 ) -> None:
     g_click_on_the_given_main_menu_tab(selenium, browser_id_list, tab_name)
 
@@ -66,9 +72,9 @@ def navigate_to_tab_in_op_using_gui(
     title = selenium[user].title
 
     if "onezone" in title.lower():
-        g_wt_visit_op(selenium, user, provider, hosts)
+        g_wt_visit_op(selenium, [user], [provider], hosts)
 
-    wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
+    wt_click_on_the_given_main_menu_tab(selenium, [user], main_menu_tab)
 
 
 def assert_cannot_click_replicate_button(
@@ -81,35 +87,33 @@ def assert_cannot_click_replicate_button(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) "
-        r"(?P<result>replicates|fails to replicate) (?P<names>.*)"
-        r" to each provider: (?P<providers>.*)"
-    )
-)
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) "
-        r'(?P<result>replicates|fails to replicate) "(?P<names>.*)"'
-        r' to provider "(?P<providers>.*)"'
-    )
+        rf"(?P<result>replicates|fails to replicate) "
+        rf"(?P<names>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        rf"(?:each provider: |provider )(?P<providers>{ELEMENTS_SEQUENCE_PATTERN})"
+    ),
+    converters={
+        "names": parse_elements_sequence,
+        "providers": parse_elements_sequence,
+    },
 )
 def replicate_files_to_provider(
     selenium: SeleniumDrivers,
     browser_id: str,
-    names: str,
+    names: list[str],
     tmp_memory: TmpMemory,
-    providers: str,
+    providers: list[str],
     hosts: Hosts,
     result: str,
 ) -> None:
     details_modal_str = "Details modal"
-    for name in parse_seq(names):
+    for name in names:
         click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, "Data distribution"
         )
         assert_tab_in_modal(selenium, browser_id, "Distribution", details_modal_str)
 
-        for provider in parse_seq(providers):
+        for provider in providers:
             if is_current_item_fully_on_provider(
                 selenium[browser_id], hosts[provider]["name"]
             ):
@@ -145,7 +149,7 @@ def assert_eviction_done(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees file chunks for file "
+        r"user of (?P<browser_id>.*) sees file chunks for file "
         r'"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'
     )
 )
@@ -184,7 +188,7 @@ def _assert_file_chunks(
             )
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
+@wt(parsers.re(r'user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
 def create_directory(
     selenium: SeleniumDrivers, browser_id: str, name: str, tmp_memory: TmpMemory
 ) -> None:
@@ -196,14 +200,14 @@ def create_directory(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name)
     confirm_create_new_directory(selenium, browser_id, option)
-    assert_items_presence_in_browser(selenium, browser_id, name, tmp_memory)
+    assert_items_presence_in_browser(selenium, browser_id, [name], tmp_memory)
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) "
-        '(?P<result>migrates|fails to migrate) "(?P<name>.*)" from '
-        'provider "(?P<source>.*)" to provider "(?P<target>.*)"'
+        r"user of (?P<browser_id>.*) "
+        r'(?P<result>migrates|fails to migrate) "(?P<name>.*)" from '
+        r'provider "(?P<source>.*)" to provider "(?P<target>.*)"'
     )
 )
 def migrate_file_to_provider(

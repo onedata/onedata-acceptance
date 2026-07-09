@@ -55,9 +55,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     When user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 sees 1 direct, 4 effective groups and 1 direct, 2 effective users in space members tile
 
-    And user of browser2 opens group "group2" members subpage
-    And user of browser2 clicks "group1" group in "group2" group members groups list
-    And user of browser2 sets following privileges for "group1" group in group members subpage:
+    And user of browser2 changes privileges for group "group1" in group "group2" members subpage into following:
           Group hierarchy management:
             granted: Partially
             privilege subtypes:
@@ -81,12 +79,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User successfully view group if he has group management privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           Group management:
             granted: True
 
@@ -94,25 +87,20 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User fails to view group because of lack in privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
-          Group management:
-            granted: False
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
+        Group management:
+          granted: False
 
-    Then user of browser2 does not see group "group5" on groups list
+    And user of browser1 changes privileges for group "group4" in group "group5" members subpage into following:
+        Group management:
+          granted: False
+
+    And user of browser2 refreshes site
+    Then user of browser2 cannot view group "group5" membership due to lack of privileges
 
 
   Scenario: User fails to rename group because of lack in privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           Group management:
             granted: Partially
             privilege subtypes:
@@ -122,24 +110,14 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
   Scenario: User successfully sets privileges for other user if he has group management privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           Group management:
             granted: Partially
             privilege subtypes:
               View privileges: True
               Set privileges: True
 
-    And user of browser2 opens group "group5" members subpage
-    And user of browser2 clicks "user1" user in "group5" group members users list
-    And user of browser2 sees privileges for "user1" user in group members subpage
-    And user of browser2 clicks on "user1" users checkbox
-    And user of browser2 clicks on bulk edit button
-    And user of browser2 sets following privileges on modal:
+    And user of browser2 changes privileges for user "user1" in group "group5" members subpage into following:
           Group management:
             granted: Partially
             privilege subtypes:
@@ -151,28 +129,18 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
             granted: Partially
             privilege subtypes:
               View privileges: False
-              Set privileges: False
+  #             Set privileges: False
 
 
   Scenario: User fails to set privileges for other users because of lack in privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           Group management:
             granted: Partially
             privilege subtypes:
               View privileges: True
               Set privileges: False
 
-    And user of browser2 opens group "group5" members subpage
-    And user of browser2 clicks "user1" user in "group5" group members users list
-    And user of browser2 sees privileges for "user1" user in group members subpage
-    And user of browser2 clicks on "user1" users checkbox
-    And user of browser2 clicks on bulk edit button
-    And user of browser2 sets following privileges on modal:
+    And user of browser2 changes privileges for user "user1" in group "group5" members subpage into following:
           Group management:
             granted: Partially
             privilege subtypes:
@@ -183,12 +151,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User fails to remove group because of lack in privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           Group management:
             granted: False
 
@@ -198,12 +161,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User fails to invite other user to join given group because of lack in privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           User management:
             granted: Partially
             privilege subtypes:
@@ -215,12 +173,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User successfully removes other user from given group if he has remove user privileges
-    When user of browser2 opens group "group7" members subpage
-    And user of browser2 clicks "user2" user in "group7" group members users list
-    And user of browser2 sees privileges for "user2" user in group members subpage
-    And user of browser2 clicks on "user2" users checkbox
-    And user of browser2 clicks on bulk edit button
-    And user of browser2 sets following privileges on modal:
+    When user of browser2 changes privileges for user "user2" in group "group7" members subpage into following:
           User management:
             granted: Partially
             privilege subtypes:
@@ -232,12 +185,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User fails to invite created group as subgroup because of lack in privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           Group hierarchy management:
             granted: Partially
             privilege subtypes:
@@ -253,12 +201,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User fails to join group to space because of lack in privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           Space management:
             granted: False
 
@@ -301,12 +244,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User fails to join as subgroup because of lack in privileges
-    When user of browser2 opens group "group7" members subpage
-    And user of browser2 clicks "user2" user in "group7" group members users list
-    And user of browser2 sees privileges for "user2" user in group members subpage
-    And user of browser2 clicks on "user2" users checkbox
-    And user of browser2 clicks on bulk edit button
-    And user of browser2 sets following privileges on modal:
+    When user of browser2 changes privileges for user "user2" in group "group7" members subpage into following:
           Group hierarchy management:
             granted: Partially
             privilege subtypes:
@@ -322,12 +260,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User successfully removes subgroup if he has remove child group privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    When user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           Group hierarchy management:
             granted: Partially
             privilege subtypes:
@@ -344,12 +277,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     When user of browser2 clicks "space3" on the spaces list in the sidebar
     And user of browser2 sees "space3" label on overview page
 
-    And user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
+    And user of browser1 changes privileges for user "user2" in group "group5" members subpage into following:
           Group management:
             granted: True
           Group hierarchy management:

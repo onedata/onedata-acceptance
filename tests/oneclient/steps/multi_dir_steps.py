@@ -62,7 +62,7 @@ def create(
 @when(
     parsers.re(
         r"(?P<user>\w+) creates directory and parents (?P<paths>.*)\s"
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def create_parents(user: str, paths: str, client_node: str, users: Users) -> None:
@@ -81,7 +81,7 @@ def create_parents(user: str, paths: str, client_node: str, users: Users) -> Non
 @wt(
     parsers.re(
         r"(?P<user>\w+) fails to create directories (?P<dirs>.*)\son "
-        "(?P<client_node>.*)"
+        r"(?P<client_node>.*)"
     )
 )
 def fail_to_create(user: str, dirs: str, client_node: str, users: Users) -> None:
@@ -109,7 +109,7 @@ def delete_empty_base(
 @wt(
     parsers.re(
         r"(?P<user>\w+) deletes directories \(rmdir\) (?P<dirs>.*) on "
-        "(?P<client_node>.*)"
+        r"(?P<client_node>.*)"
     )
 )
 def delete_empty(user: str, dirs: str, client_node: str, users: Users) -> None:
@@ -119,7 +119,7 @@ def delete_empty(user: str, dirs: str, client_node: str, users: Users) -> None:
 @wt(
     parsers.re(
         r"(?P<user>\w+) fails to delete directories \(rmdir\) "
-        "(?P<dirs>.*) on (?P<client_node>.*)"
+        r"(?P<dirs>.*) on (?P<client_node>.*)"
     )
 )
 def fail_to_delete_empty(user: str, dirs: str, client_node: str, users: Users) -> None:
@@ -155,7 +155,7 @@ def purge_all_user_spaces(user: str, client_node: str, users: Users) -> None:
 @wt(
     parsers.re(
         r"(?P<user>\w+) deletes directories \(rm -rf\) (?P<dirs>.*) on "
-        "(?P<client_node>.*)"
+        r"(?P<client_node>.*)"
     )
 )
 def delete_non_empty(user: str, dirs: str, client_node: str, users: Users) -> None:
@@ -202,7 +202,7 @@ def delete_dir_by_id(user: str, client_node: str, users: Users, file_id: str) ->
 @when(
     parsers.re(
         r"(?P<user>\w+) deletes directory \(rmdir -p\) "
-        "(?P<paths>.*) on (?P<client_node>.*)"
+        r"(?P<paths>.*) on (?P<client_node>.*)"
     )
 )
 def delete_parents(user: str, paths: str, client_node: str, users: Users) -> None:
@@ -256,7 +256,7 @@ def cannot_list_dir(user: str, directory: str, client_node: str, users: Users) -
 @when(
     parsers.re(
         r"(?P<user>\w+) copies directory (?P<dir1>.*) to (?P<dir2>.*) "
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def copy_dir(user: str, dir1: str, dir2: str, client_node: str, users: Users) -> None:
@@ -272,9 +272,9 @@ def copy_dir(user: str, dir1: str, dir2: str, client_node: str, users: Users) ->
 
 @given(
     parsers.re(
-        "there (is|are) director(y|ies) (?P<paths>.*) owned by "
-        "(?P<uid>.*):(?P<gid>.*) in container "
-        '"(?P<container>.*)" on provider "(?P<provider>.*)"'
+        r"there (is|are) director(y|ies) (?P<paths>.*) owned by "
+        r"(?P<uid>.*):(?P<gid>.*) in container "
+        r'"(?P<container>.*)" on provider "(?P<provider>.*)"'
     )
 )
 def create_in_container(
@@ -290,9 +290,9 @@ def create_in_container(
 
 @wt(
     parsers.re(
-        "delete is performed on director(y|ies) (?P<paths>.*) in "
-        'container "(?P<container>.*)" on provider '
-        '"(?P<provider>.*)"'
+        r"delete is performed on director(y|ies) (?P<paths>.*) in "
+        r'container "(?P<container>.*)" on provider '
+        r'"(?P<provider>.*)"'
     )
 )
 def remove_in_container(

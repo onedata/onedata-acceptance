@@ -144,7 +144,7 @@ def create_reg_file(
 @wt(
     parsers.re(
         r"(?P<user>\w+) fails to create regular files (?P<files>.*) "
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def create_reg_file_fail(
@@ -161,7 +161,7 @@ def create_reg_file_fail(
     parsers.re(
         r"(?P<user>\w+) creates child files of (?P<parent_dir>.*) "
         r"with names in range \[(?P<lower>.*), (?P<upper>.*)\) on "
-        "(?P<client_node>.*)"
+        r"(?P<client_node>.*)"
     )
 )
 def create_many(
@@ -181,7 +181,7 @@ def create_many(
 @wt(
     parsers.re(
         r"(?P<user>\w+) can stat (?P<files>.*) in (?P<path>.*)"
-        " on (?P<client_node>.*)"
+        r" on (?P<client_node>.*)"
     )
 )
 def stat_present(
@@ -253,7 +253,7 @@ def ls_empty(directory: str, user: str, client_node: str, users: Users) -> None:
     parsers.re(
         r"(?P<user>\w+) lists children of (?P<parent_dir>.*) and gets "
         r"names in range \[(?P<lower>.*), (?P<upper>.*)\) on "
-        "(?P<client_node>.*)"
+        r"(?P<client_node>.*)"
     )
 )
 def ls_children(
@@ -303,7 +303,7 @@ def mv_base(
 @wt(
     parsers.re(
         r"(?P<user>\w+) renames (?P<file1>.*) to (?P<file2>.*)"
-        " on (?P<client_node>.*)"
+        r" on (?P<client_node>.*)"
     )
 )
 def rename(user: str, file1: str, file2: str, client_node: str, users: Users) -> None:
@@ -335,7 +335,7 @@ def rename_base(
 @wt(
     parsers.re(
         r"(?P<user>\w+) fails to rename (?P<file1>.*) to "
-        "(?P<file2>.*) on (?P<client_node>.*)"
+        r"(?P<file2>.*) on (?P<client_node>.*)"
     )
 )
 def rename_fail(
@@ -347,7 +347,7 @@ def rename_fail(
 @wt(
     parsers.re(
         r"(?P<user>\w+) can't stat (?P<files>.*) in (?P<path>.*) on "
-        "(?P<client_node>.*)"
+        r"(?P<client_node>.*)"
     )
 )
 def stat_absent(
@@ -373,7 +373,7 @@ def stat_absent(
 @wt(
     parsers.re(
         r"(?P<user>\w+) doesn't see (?P<files>.*) in (?P<path>.*) "
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def ls_absent(user: str, files: str, path: str, client_node: str, users: Users) -> None:
@@ -419,7 +419,7 @@ def shell_move_base(
 @wt(
     parsers.re(
         r"(?P<user>\w+) fails to move (?P<file1>.*) to (?P<file2>.*) "
-        "using shell command on (?P<client_node>.*)"
+        r"using shell command on (?P<client_node>.*)"
     )
 )
 def shell_move_fail(
@@ -463,7 +463,7 @@ def delete_file_fail(user: str, files: str, client_node: str, users: Users) -> N
 @wt(
     parsers.re(
         r"size of (?P<user>\w+)'s (?P<file>.*) is (?P<size>.*) bytes "
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def check_size(
@@ -539,7 +539,7 @@ def check_type(
 @then(
     parsers.re(
         r"(?P<user>\w+) checks using shell stat if file type "
-        "of (?P<file>.*) is (?P<file_type>.*) on (?P<client_node>.*)"
+        r"of (?P<file>.*) is (?P<file_type>.*) on (?P<client_node>.*)"
     )
 )
 def shell_check_type(
@@ -568,7 +568,7 @@ def shell_check_type(
 @wt(
     parsers.re(
         r"mode of (?P<user>\w+)'s (?P<file>.*) is (?P<mode>.*) on "
-        "(?P<client_node>.*)"
+        r"(?P<client_node>.*)"
     )
 )
 @repeat_failed(interval=1, timeout=30, exceptions=AssertionError)
@@ -607,7 +607,7 @@ def change_mode_base(
 @wt(
     parsers.re(
         r"(?P<user>\w+) changes (?P<file>.*) mode to (?P<mode>.*) on "
-        "(?P<client_node>.*)"
+        r"(?P<client_node>.*)"
     )
 )
 def change_mode(
@@ -619,7 +619,7 @@ def change_mode(
 @wt(
     parsers.re(
         r"(?P<user>\w+) fails to change (?P<file>.*) mode to "
-        "(?P<mode>.*) on (?P<client_node>.*)"
+        r"(?P<mode>.*) on (?P<client_node>.*)"
     )
 )
 def change_mode_fail(
@@ -631,15 +631,15 @@ def change_mode_fail(
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file>.*) is "
-        "(?P<comparator>.*) to (?P<time2>.*) time on "
-        "(?P<client_node>.*)"
+        r"(?P<comparator>.*) to (?P<time2>.*) time on "
+        r"(?P<client_node>.*)"
     )
 )
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file>.*) is "
-        "(?P<comparator>.*) than (?P<time2>.*) time on "
-        "(?P<client_node>.*)"
+        r"(?P<comparator>.*) than (?P<time2>.*) time on "
+        r"(?P<client_node>.*)"
     )
 )
 def check_time(
@@ -702,15 +702,15 @@ def check_files_time(
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file1>.*) is "
-        "(?P<comparator>.*) to recorded one of (?P<file2>.*) on "
-        "(?P<client_node>.*)"
+        r"(?P<comparator>.*) to recorded one of (?P<file2>.*) on "
+        r"(?P<client_node>.*)"
     )
 )
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file1>.*) is "
-        "(?P<comparator>.*) than recorded one of (?P<file2>.*) on "
-        "(?P<client_node>.*)"
+        r"(?P<comparator>.*) than recorded one of (?P<file2>.*) on "
+        r"(?P<client_node>.*)"
     )
 )
 def cmp_time_to_previous(
@@ -767,7 +767,7 @@ def touch_file(user: str, files: str, client_node: str, users: Users) -> None:
 @when(
     parsers.re(
         r"(?P<user>\w+) fails to update (?P<files>.*) timestamps "
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def touch_file_fail(user: str, files: str, client_node: str, users: Users) -> None:
@@ -778,7 +778,7 @@ def touch_file_fail(user: str, files: str, client_node: str, users: Users) -> No
     parsers.re(
         r"(?P<user>\w+) sets extended attribute (?P<name>[.\w]+) "
         r"with value (?P<value>.*) on (?P<file>\w+)"
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def set_xattr(
@@ -879,7 +879,7 @@ def check_xattr_doesnt_exist(
     parsers.re(
         r"(?P<user>\w+) checks if (?P<file>\w+) has extended "
         r"attribute (?P<name>[.\w]+) with string value "
-        '"(?P<value>.*)" on (?P<client_node>.*)'
+        r'"(?P<value>.*)" on (?P<client_node>.*)'
     )
 )
 def check_string_xattr(
@@ -904,7 +904,7 @@ def check_string_xattr(
     parsers.re(
         r"(?P<user>\w+) checks if (?P<file>\w+) has extended "
         r"attribute (?P<name>[.\w]+) with numeric value (?P<value>.*) "
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def check_numeric_xattr(
@@ -925,7 +925,7 @@ def check_numeric_xattr(
     parsers.re(
         r"(?P<user>\w+) checks if (?P<file>\w+) has extended "
         r'attribute (?P<name>[.\w]+) with JSON value "(?P<value>.*)" '
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def check_json_xattr(
@@ -1003,8 +1003,8 @@ def assert_file_ownership(
 
 @wt(
     parsers.re(
-        'there is file "(?P<path>.*)" in container "(?P<container>.*)" '
-        'on provider "(?P<provider>.*)"'
+        r'there is file "(?P<path>.*)" in container "(?P<container>.*)" '
+        r'on provider "(?P<provider>.*)"'
     )
 )
 def assert_file_exists_on_storage(
@@ -1024,8 +1024,8 @@ def assert_file_exists_on_storage(
 
 @wt(
     parsers.re(
-        'file "(?P<path>.*)" in container "(?P<container>.*)" '
-        'on provider "(?P<provider>.*)" has owner\'s UID and GID '
+        r'file "(?P<path>.*)" in container "(?P<container>.*)" '
+        r'on provider "(?P<provider>.*)" has owner\'s UID and GID '
         r"equal to (?P<uid>[\d]+) and (?P<gid>[\d]+) respectively"
     )
 )

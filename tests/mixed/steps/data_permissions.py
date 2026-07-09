@@ -45,9 +45,9 @@ def _remove_parent_acl_from_string(priv: str) -> str:
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sets new ACE for "
-        '(?P<path>.*?) in space "(?P<space>.*)" with (?P<priv>.*) '
-        "privileges? set for (?P<item_type>.*?) (?P<name>.*) "
-        "in (?P<host>.*)"
+        r'(?P<path>.*?) in space "(?P<space>.*)" with (?P<priv>.*) '
+        r"privileges? set for (?P<item_type>.*?) (?P<name>.*) "
+        r"in (?P<host>.*)"
     )
 )
 def grant_acl_privileges_in_op(
@@ -111,9 +111,9 @@ def grant_acl_privileges_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that (?P<path>.*?)"
-        ' in space "(?P<space>.*)" (has|have) (?P<priv>.*) '
-        "privileges? set for (?P<item_type>.*?) (?P<name>.*) in "
-        "(?P<num>.*) ACL record in (?P<host>.*)"
+        r' in space "(?P<space>.*)" (has|have) (?P<priv>.*) '
+        r"privileges? set for (?P<item_type>.*?) (?P<name>.*) in "
+        r"(?P<num>.*) ACL record in (?P<host>.*)"
     )
 )
 def assert_ace_in_op(
@@ -183,8 +183,8 @@ def assert_ace_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees "
-        'that POSIX permission for item named "(?P<item_path>.*)" in '
-        '"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'
+        r'that POSIX permission for item named "(?P<item_path>.*)" in '
+        r'"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -225,8 +225,8 @@ def assert_posix_permissions_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to set "
-        '"(?P<mode>.*)" POSIX permission for item named '
-        '"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'
+        r'"(?P<mode>.*)" POSIX permission for item named '
+        r'"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def set_posix_permissions_in_op(

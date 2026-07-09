@@ -28,7 +28,6 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.workflows_modals.audit_log import AuditLog, LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneprovider.automation import Task
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -125,10 +124,10 @@ def assert_no_data_message_processing_chart(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that (?P<option>.*?) "
-        "processing speed (?P<compare_option>is greater or equal|is "
-        "equal|is greater than) (?P<number>.*?) per second on chart with processing "
-        "stats"
+        r"user of (?P<browser_id>.*?) sees that (?P<option>.*?) "
+        r"processing speed (?P<compare_option>is greater or equal|is "
+        r"equal|is greater than) (?P<number>.*?) per second on chart with processing "
+        r"stats"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -216,9 +215,9 @@ def open_store_details_modal(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def compare_datasets_in_store_details_modal(
-    item_list: str, modal: StoreDetails, store_name: str
+    item_list: list[str], modal: StoreDetails, store_name: str
 ) -> None:
-    parsed_items = parse_seq(item_list)
+    parsed_items = item_list
     actual_items = [elem.name for elem in modal.store_content_list]
     for item in parsed_items:
         err_msg = f"{item} is not in Store details modal for {store_name} store"

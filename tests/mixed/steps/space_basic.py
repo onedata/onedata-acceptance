@@ -28,7 +28,7 @@ from tests.gui.meta_steps.onezone.spaces import (
     rename_spaces_in_oz_using_gui,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.onezone.members import (
     add_users_to_space_in_oz_using_rest,
@@ -85,15 +85,18 @@ def _as_provider_hosts(hosts: Hosts) -> HostsConfig:
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) creates "
-        'spaces? (?P<space_list>.+?) in "(?P<host>.+?)" '
-        "Onezone service"
-    )
+        r"using (?P<client>.*), (?P<user>.+?) creates "
+        rf'spaces? (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)" '
+        r"Onezone service"
+    ),
+    converters={
+        "space_list": parse_elements_sequence,
+    },
 )
 def create_spaces_in_oz(
     client: str,
     user: str,
-    space_list: str,
+    space_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -105,7 +108,7 @@ def create_spaces_in_oz(
 
     if client.lower() == "rest":
         create_spaces_in_oz_using_rest(
-            user, _as_space_users(users), hosts, host, parse_seq(space_list), spaces
+            user, _as_space_users(users), hosts, host, space_list, spaces
         )
     elif client.lower() == "web gui":
 
@@ -123,15 +126,19 @@ def create_spaces_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) leaves spaces? "
-        'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
-        "service"
-    )
+        r"using (?P<client>.*), (?P<user>.+?) leaves spaces? "
+        rf'named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)"'
+        r" Onezone "
+        r"service"
+    ),
+    converters={
+        "space_list": parse_elements_sequence,
+    },
 )
 def leave_spaces_in_oz(
     client: str,
     user: str,
-    space_list: str,
+    space_list: list[str],
     host: str,
     selenium: SeleniumDrivers,
     users: Users,
@@ -153,16 +160,21 @@ def leave_spaces_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) renames spaces? "
-        "named (?P<space_list>.+?) to (?P<new_names_list>.+?) "
-        'in "(?P<host>.+?)" Onezone service'
-    )
+        r"using (?P<client>.*), (?P<user>.+?) renames spaces? "
+        rf"named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) to"
+        rf" (?P<new_names_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r'in "(?P<host>.+?)" Onezone service'
+    ),
+    converters={
+        "new_names_list": parse_elements_sequence,
+        "space_list": parse_elements_sequence,
+    },
 )
 def rename_spaces_in_oz(
     client: str,
     user: str,
-    space_list: str,
-    new_names_list: str,
+    space_list: list[str],
+    new_names_list: list[str],
     host: str,
     selenium: SeleniumDrivers,
     users: Users,
@@ -190,22 +202,30 @@ def rename_spaces_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) removes spaces? "
-        'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
-        "service"
-    )
+        r"using (?P<client>.*), (?P<user>.+?) removes spaces? "
+        rf'named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)"'
+        r" Onezone "
+        r"service"
+    ),
+    converters={
+        "space_list": parse_elements_sequence,
+    },
 )
 @wt(
     parsers.re(
-        "using (?P<client>.*), user of (?P<user>.+?) removes spaces? "
-        'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
-        "service"
-    )
+        r"using (?P<client>.*), user of (?P<user>.+?) removes spaces? "
+        rf'named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)"'
+        r" Onezone "
+        r"service"
+    ),
+    converters={
+        "space_list": parse_elements_sequence,
+    },
 )
 def remove_spaces_in_oz(
     client: str,
     user: str,
-    space_list: str,
+    space_list: list[str],
     host: str,
     users: Users,
     hosts: Hosts,
@@ -223,14 +243,18 @@ def remove_spaces_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) removes "
-        '(?P<user_list>.+?) from space "(?P<space_name>.+?)" in '
-        '"(?P<host>.+?)" Onezone service'
-    )
+        r"using (?P<client>.*), (?P<user>.+?) removes "
+        rf"(?P<user_list>{ELEMENTS_SEQUENCE_PATTERN}) from space"
+        r' "(?P<space_name>.+?)" in '
+        r'"(?P<host>.+?)" Onezone service'
+    ),
+    converters={
+        "user_list": parse_elements_sequence,
+    },
 )
 def delete_users_from_space_in_oz(
     client: str,
-    user_list: str,
+    user_list: list[str],
     space_name: str,
     host: str,
     users: Users,
@@ -250,14 +274,17 @@ def delete_users_from_space_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) adds "
-        '(?P<user_list>.+?) to "(?P<space_name>.+?)" in '
-        '"(?P<host>.+?)" Onezone service'
-    )
+        r"using (?P<client>.*), (?P<user>.+?) adds "
+        rf'(?P<user_list>{ELEMENTS_SEQUENCE_PATTERN}) to "(?P<space_name>.+?)" in '
+        r'"(?P<host>.+?)" Onezone service'
+    ),
+    converters={
+        "user_list": parse_elements_sequence,
+    },
 )
 def add_users_to_space_in_oz(
     client: str,
-    user_list: str,
+    user_list: list[str],
     space_name: str,
     host: str,
     users: Users,
@@ -277,9 +304,9 @@ def add_users_to_space_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) removes support "
-        'from provider "(?P<provider_name>.+?)" for space named '
-        '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'
+        r"using (?P<client>.*), (?P<user>.+?) removes support "
+        r'from provider "(?P<provider_name>.+?)" for space named '
+        r'"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'
     )
 )
 def remove_provider_support_for_space_in_oz(
@@ -318,15 +345,17 @@ def remove_provider_support_for_space_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) invites "
-        '(?P<user_list>.+?) to space named "(?P<space_name>.+?)" in '
-        '"(?P<host>.+?)" Onezone service'
-    )
+        r"using (?P<client>.*), (?P<user>.+?) invites "
+        rf"(?P<user_list>{ELEMENTS_SEQUENCE_PATTERN}) to space named"
+        r' "(?P<space_name>.+?)" in '
+        r'"(?P<host>.+?)" Onezone service'
+    ),
+    converters={"user_list": parse_elements_sequence},
 )
 def invite_other_users_to_space(
     client: str,
     user: str,
-    user_list: str,
+    user_list: list[str],
     space_name: str,
     host: str,
     selenium: SeleniumDrivers,
@@ -340,16 +369,17 @@ def invite_other_users_to_space(
 
     if client.lower() == "rest":
 
-        invite_other_users_to_space_using_rest(
-            user,
-            _as_member_users(users),
-            host,
-            hosts,
-            space_name,
-            spaces,
-            tmp_memory,
-            user_list,
-        )
+        for invited_user in user_list:
+            invite_other_users_to_space_using_rest(
+                user,
+                _as_member_users(users),
+                host,
+                hosts,
+                space_name,
+                spaces,
+                tmp_memory,
+                invited_user,
+            )
 
     elif client.lower() == "web gui":
 
@@ -368,14 +398,17 @@ def invite_other_users_to_space(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user_list>.+?) joins to "
-        'space using received (?P<item_name>.+?) in "(?P<host>.+?)" '
-        "Onezone service"
-    )
+        rf"using (?P<client>.*), (?P<user_list>{ELEMENTS_SEQUENCE_PATTERN}) joins to "
+        r'space using received (?P<item_name>.+?) in "(?P<host>.+?)" '
+        r"Onezone service"
+    ),
+    converters={
+        "user_list": parse_elements_sequence,
+    },
 )
 def join_space_in_oz(
     client: str,
-    user_list: str,
+    user_list: list[str],
     item_name: str,
     host: str,
     selenium: SeleniumDrivers,
@@ -398,15 +431,19 @@ def join_space_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that "
-        "spaces? named (?P<space_list>.+?) (has|have) appeared in "
-        '"(?P<host>.+?)" Onezone service'
-    )
+        r"using (?P<client>.*), (?P<user>.+?) sees that "
+        rf"spaces? named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) (has|have)"
+        r" appeared in "
+        r'"(?P<host>.+?)" Onezone service'
+    ),
+    converters={
+        "space_list": parse_elements_sequence,
+    },
 )
 def assert_there_are_spaces_in_oz(
     client: str,
     user: str,
-    space_list: str,
+    space_list: list[str],
     selenium: SeleniumDrivers,
     users: Users,
     hosts: Hosts,
@@ -427,15 +464,19 @@ def assert_there_are_spaces_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that "
-        "spaces? named (?P<space_list>.+?) (has|have) disappeared "
-        'from "(?P<host>.+?)" Onezone service'
-    )
+        r"using (?P<client>.*), (?P<user>.+?) sees that "
+        rf"spaces? named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) (has|have)"
+        r" disappeared "
+        r'from "(?P<host>.+?)" Onezone service'
+    ),
+    converters={
+        "space_list": parse_elements_sequence,
+    },
 )
 def assert_there_are_no_spaces_in_oz(
     client: str,
     user: str,
-    space_list: str,
+    space_list: list[str],
     host: str,
     selenium: SeleniumDrivers,
     users: Users,
@@ -457,16 +498,22 @@ def assert_there_are_no_spaces_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that "
-        "spaces? named (?P<space_list>.+?) (has|have) been renamed to "
-        '(?P<new_names_list>.+?) in "(?P<host>.+?)" Onezone service'
-    )
+        r"using (?P<client>.*), (?P<user>.+?) sees that "
+        rf"spaces? named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) (has|have) been"
+        r" renamed to "
+        rf'(?P<new_names_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)" Onezone'
+        r" service"
+    ),
+    converters={
+        "new_names_list": parse_elements_sequence,
+        "space_list": parse_elements_sequence,
+    },
 )
 def assert_spaces_have_been_renamed_in_oz(
     client: str,
     user: str,
-    space_list: str,
-    new_names_list: str,
+    space_list: list[str],
+    new_names_list: list[str],
     host: str,
     selenium: SeleniumDrivers,
     users: Users,
@@ -496,16 +543,19 @@ def assert_spaces_have_been_renamed_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that there "
-        "(is|are) no supporting providers? "
-        "(?P<providers_list>.+?) for space named "
-        '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'
-    )
+        r"using (?P<client>.*), (?P<user>.+?) sees that there "
+        r"(is|are) no supporting providers? "
+        rf"(?P<providers_list>{ELEMENTS_SEQUENCE_PATTERN}) for space named "
+        r'"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'
+    ),
+    converters={
+        "providers_list": parse_elements_sequence,
+    },
 )
 def assert_there_is_no_provider_for_space_in_oz(
     client: str,
     user: str,
-    providers_list: str,
+    providers_list: list[str],
     space_name: str,
     host: str,
     selenium: SeleniumDrivers,
@@ -536,15 +586,18 @@ def assert_there_is_no_provider_for_space_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that "
-        "(?P<user_list>.+?) (is|are) members? of "
-        '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'
-    )
+        r"using (?P<client>.*), (?P<user>.+?) sees that "
+        rf"(?P<user_list>{ELEMENTS_SEQUENCE_PATTERN}) (is|are) members? of "
+        r'"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'
+    ),
+    converters={
+        "user_list": parse_elements_sequence,
+    },
 )
 def assert_user_is_member_of_space(
     client: str,
     user: str,
-    user_list: str,
+    user_list: list[str],
     space_name: str,
     host: str,
     spaces: Mapping[str, str],
@@ -567,10 +620,10 @@ def assert_user_is_member_of_space(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees provider "
-        '"(?P<provider_name>.+?)" with hostname matches that of '
-        '"(?P<provider>.+?)" provider in "(?P<host>.+?)" Onezone '
-        "service"
+        r"using (?P<client>.*), (?P<user>.+?) sees provider "
+        r'"(?P<provider_name>.+?)" with hostname matches that of '
+        r'"(?P<provider>.+?)" provider in "(?P<host>.+?)" Onezone '
+        r"service"
     )
 )
 def assert_provider_has_given_name_and_known_hostname_in_oz(

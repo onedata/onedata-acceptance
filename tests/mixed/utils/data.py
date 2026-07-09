@@ -13,7 +13,6 @@ import pytest
 import yaml
 
 from tests.gui.meta_steps.oneprovider.files_tree import build_tree_config
-from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
 from tests.mixed.type_definitions import (
     Acl,
@@ -157,14 +156,14 @@ ACL_MASK = {
 
 
 def assert_ace(
-    priv: str,
+    priv: list[str],
     item_type: str,
     ace: Mapping[str, str],
     name: str,
     num: int | str,
     path: str,
 ) -> None:
-    parsed_priv = parse_seq(priv)
+    parsed_priv = priv
     if "deny" in parsed_priv:
         acetype = "0x1"
         parsed_priv.remove("deny")
@@ -186,7 +185,7 @@ def assert_ace(
 
 def get_acl_metadata(
     curr_acl: Iterable[AclEntry],
-    priv: str,
+    priv: list[str],
     item_type: str,
     groups: Mapping[str, str],
     name: str,
@@ -196,7 +195,7 @@ def get_acl_metadata(
     acl = list(curr_acl)
     acl.append({})
     ace = acl[-1]
-    parsed_priv = parse_seq(priv)
+    parsed_priv = priv
     if "deny" in parsed_priv:
         acetype = "0x1"
         parsed_priv.remove("deny")

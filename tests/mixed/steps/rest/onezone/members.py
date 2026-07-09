@@ -10,7 +10,6 @@ from typing import cast
 import yaml
 from onezone_client.rest import ApiException
 
-from tests.gui.utils.generic import parse_seq
 from tests.mixed.onezone_client import SpaceApi
 from tests.mixed.steps.rest.onezone.common import get_group
 from tests.mixed.type_definitions import (
@@ -245,7 +244,7 @@ def assert_group_in_space_using_rest(
 
 
 def add_users_to_space_in_oz_using_rest(
-    user_list: str,
+    user_list: list[str],
     users: Users,
     zone_name: str,
     hosts: Hosts,
@@ -256,7 +255,7 @@ def add_users_to_space_in_oz_using_rest(
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
-    for _user in parse_seq(user_list):
+    for _user in user_list:
         space_api.add_space_user(spaces[space_name], users[_user].user_id)
 
 
@@ -276,7 +275,7 @@ def add_group_to_space_using_rest(
 
 
 def delete_users_from_space_in_oz_using_rest(
-    user_list: str,
+    user_list: list[str],
     users: Users,
     zone_name: str,
     hosts: Hosts,
@@ -287,7 +286,7 @@ def delete_users_from_space_in_oz_using_rest(
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
-    for _user in parse_seq(user_list):
+    for _user in user_list:
         space_api.remove_space_user(spaces[space_name], users[_user].user_id)
 
 
@@ -312,13 +311,13 @@ def assert_user_is_member_of_space_rest(
     spaces: IdMap,
     user: str,
     users: Users,
-    user_list: str,
+    user_list: list[str],
     zone_name: str,
     hosts: Hosts,
 ) -> None:
     space_users = get_users_id_list(user, users, hosts, zone_name, spaces, space_name)
 
-    for username in parse_seq(user_list):
+    for username in user_list:
         assert (
             users[username].user_id in space_users
         ), f"There is no user {username} in space {space_name}"

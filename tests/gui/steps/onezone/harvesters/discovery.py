@@ -78,10 +78,10 @@ def check_element_exists_on_sidebar_list(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on "
-        '"(?P<option>Rename|Leave|Remove)" '
-        'button in harvester "(?P<name>.*)" menu '
-        "in the sidebar"
+        r"user of (?P<browser_id>.*) clicks on "
+        r'"(?P<option>Rename|Leave|Remove)" '
+        r'button in harvester "(?P<name>.*)" menu '
+        r"in the sidebar"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -117,8 +117,8 @@ def confirm_harvester_rename_using_button(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks (?P<option>.*?) "
-        'of "(?P<harvester_name>.*?)" harvester in the sidebar'
+        r"user of (?P<browser_id>.*?) clicks (?P<option>.*?) "
+        r'of "(?P<harvester_name>.*?)" harvester in the sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -143,9 +143,9 @@ def click_option_in_discovery_page_menu(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees "
-        "(?P<alert_text>Insufficient privileges) alert "
-        "on (?P<where>Spaces|Indices) subpage"
+        r"user of (?P<browser_id>.*) sees "
+        r"(?P<alert_text>Insufficient privileges) alert "
+        r"on (?P<where>Spaces|Indices) subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

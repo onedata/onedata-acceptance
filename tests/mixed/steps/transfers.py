@@ -66,7 +66,7 @@ def replicate_file_to_provider_op(
         result = "replicates"
         go_to_filebrowser(selenium, user, tmp_memory, space)
         replicate_files_to_provider(
-            selenium, user, path, tmp_memory, provider_to, hosts, result
+            selenium, user, [path], tmp_memory, [provider_to], hosts, result
         )
     else:
         raise NoSuchClientException(f"Client {client} not found")
@@ -228,7 +228,7 @@ def upload_file_to_provider_browser(
     tmpdir: LocalPath,
 ) -> None:
     if client.lower() == "web gui":
-        wt_visit_file_browser(selenium, provider, space, user, tmp_memory, hosts)
+        wt_visit_file_browser(selenium, [provider], [space], [user], tmp_memory, hosts)
         upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
     else:
         raise NoSuchClientException(f"Client {client} not found")

@@ -21,7 +21,7 @@ from tests.gui.steps.common.miscellaneous import (
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils import Modals, OPLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import parse_elements_sequence, transform
 from tests.gui.utils.oneprovider.transfers import (
     TransferRecord,
     TransferRecordActive,
@@ -83,7 +83,7 @@ def _assert_transfer(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
+        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
         r" in ended transfers:\n(?P<desc>(.|\s)*)"
     )
 )
@@ -110,7 +110,7 @@ def assert_ended_transfer(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
+        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
         r" in waiting transfers:\n(?P<desc>(.|\s)*)"
     )
 )
@@ -137,14 +137,14 @@ def assert_waiting_transfer(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer "
-        "in transfers tab for (?P<state>certain file)"
+        r"user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer "
+        r"in transfers tab for (?P<state>certain file)"
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer "
-        "in (?P<state>waiting|ended) transfers"
+        r"user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer "
+        r"in (?P<state>waiting|ended) transfers"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -164,7 +164,7 @@ def cancel_or_rerun_transfer(
     click_option_in_popup_labeled_menu(selenium, browser_id, option)
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) waits for all transfers to start"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) waits for all transfers to start"))
 @repeat_failed(
     interval=1,
     timeout=420,
@@ -178,7 +178,7 @@ def wait_for_waiting_transfer_to_start(
     ), "Waiting transfers did not start"
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) waits for all transfers to finish"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) waits for all transfers to finish"))
 @repeat_failed(
     interval=1,
     timeout=240,
@@ -192,7 +192,7 @@ def wait_for_ongoing_tranfers_to_finish(
     ), "Ongoing transfers did not finish"
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) expands first transfer record"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) expands first transfer record"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
@@ -201,8 +201,8 @@ def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that there is non-zero "
-        "throughput in transfer chart"
+        r"user of (?P<browser_id>.*) sees that there is non-zero "
+        r"throughput in transfer chart"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -226,8 +226,8 @@ def check_provider_in_migrate_dropdown(driver: WebDriver, provider_name: str) ->
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) migrates selected item from "
-        'provider "(?P<source>.*)" to provider "(?P<target>.*)"'
+        r"user of (?P<browser_id>.*) migrates selected item from "
+        r'provider "(?P<source>.*)" to provider "(?P<target>.*)"'
     )
 )
 def migrate_item(
@@ -256,8 +256,8 @@ def migrate_item(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) replicates selected item"
-        ' to provider "(?P<provider>.*)"'
+        r"user of (?P<browser_id>.*) replicates selected item"
+        r' to provider "(?P<provider>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -320,7 +320,7 @@ def fail_to_click_option_in_data_distribution_popup(
 
 @wt(
     parsers.re(
-        'user of {browser_id} sees "see history" button in data distribution modal'
+        r'user of {browser_id} sees "see history" button in data distribution modal'
     )
 )
 @repeat_failed(interval=1, timeout=90)
@@ -334,7 +334,7 @@ def assert_see_history_btn_shown(selenium: SeleniumDrivers, browser_id: str) -> 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) selects "(?P<space>.*)" space in transfers tab'
+        r'user of (?P<browser_id>.*) selects "(?P<space>.*)" space in transfers tab'
     )
 )
 def change_transfer_space(
@@ -343,7 +343,7 @@ def change_transfer_space(
     OPLoggedIn(selenium[browser_id]).transfers.spaces[space].select()
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) waits for Transfers page to load"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) waits for Transfers page to load"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_transfers_page_to_load(selenium: SeleniumDrivers, browser_id: str) -> None:
     switch_to_iframe(selenium, browser_id)
@@ -353,17 +353,17 @@ def wait_for_transfers_page_to_load(selenium: SeleniumDrivers, browser_id: str) 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) does not see "(?P<options>Replicate '
-        'here|Migrate...|Evict)" options when clicking on provider "('
-        '?P<provider>.*)" menu button'
-    )
+        r'user of (?P<browser_id>.*) does not see "(?P<option>Replicate '
+        r'here|Migrate...|Evict)" options when clicking on provider "('
+        r'?P<provider>.*)" menu button'
+    ),
 )
 def assert_option_in_provider_popup_menu(
     selenium: SeleniumDrivers,
     browser_id: str,
     provider: str,
     hosts: Hosts,
-    options: str,
+    option: str,
 ) -> None:
 
     driver = selenium[browser_id]
@@ -374,8 +374,7 @@ def assert_option_in_provider_popup_menu(
     ].menu_button()
 
     menu = Popups(driver).menu_popup_with_text.menu
-    for element in parse_seq(options):
-        assert element not in menu, f"{element} should not be in selection menu"
+    assert option not in menu, f"{option} should not be in selection menu"
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -411,27 +410,33 @@ def _get_transfers_and_enable_initial_cols(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) enables only (?P<columns>.*) "
-        "columns in columns configuration popover in "
-        "transfers table"
-    )
+        r"user of (?P<browser_id>.*) enables only (?P<columns>.*) "
+        r"columns in columns configuration popover in "
+        r"transfers table"
+    ),
+    converters={
+        "columns": parse_elements_sequence,
+    },
 )
 def select_columns_to_be_visible_in_transfers(
-    selenium: SeleniumDrivers, browser_id: str, columns: str
+    selenium: SeleniumDrivers, browser_id: str, columns: list[str]
 ) -> None:
-    _select_columns_to_be_visible_in_transfers(selenium, browser_id, parse_seq(columns))
+    _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees only (?P<columns>.*) columns in transfers"
-    )
+        r"user of (?P<browser_id>.*) sees only (?P<columns>.*) columns in transfers"
+    ),
+    converters={
+        "columns": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_visible_columns_in_transfers(
-    browser_id: str, columns: str, selenium: SeleniumDrivers
+    browser_id: str, columns: list[str], selenium: SeleniumDrivers
 ) -> None:
-    parsed_columns = parse_seq(columns)
+    parsed_columns = columns
     transfers = OPLoggedIn(selenium[browser_id]).transfers
     transfers_columns = transfers.column_headers
     transfers_columns = list(map(lambda x: x.name.lower(), transfers_columns))

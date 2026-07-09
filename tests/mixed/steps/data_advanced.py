@@ -95,8 +95,8 @@ def request_space_support_using_rest_for_space_with_alias(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates "
-        'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
-        " (?P<host>.*)"
+        r'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
+        r" (?P<host>.*)"
     )
 )
 def create_file_in_op_in_space_with_alias(
@@ -125,8 +125,8 @@ def create_file_in_op_in_space_with_alias(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) writes "(?P<content>.*)" to '
-        'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
-        " (?P<host>.*)"
+        r'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
+        r" (?P<host>.*)"
     )
 )
 def write_to_file_in_op_in_space_with_alias(
@@ -154,8 +154,8 @@ def write_to_file_in_op_in_space_with_alias(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) reads "(?P<content>.*)" from '
-        'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
-        " (?P<host>.*)"
+        r'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
+        r" (?P<host>.*)"
     )
 )
 def read_from_file_in_op_in_space_with_alias(
@@ -182,8 +182,8 @@ def read_from_file_in_op_in_space_with_alias(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) removes space with test alias "
-        '"(?P<alias>.*)" in "(?P<host>.+?)" Onezone service'
+        r"using (?P<client>.*), (?P<user>.+?) removes space with test alias "
+        r'"(?P<alias>.*)" in "(?P<host>.+?)" Onezone service'
     )
 )
 def remove_space_with_alias_in_oz(
@@ -208,8 +208,9 @@ def remove_space_with_alias_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) renames space with test alias "
-        '"(?P<alias>.*)" to "(?P<new_space_name>.*)" in "(?P<host>.+?)" Onezone service'
+        r"using (?P<client>.*), (?P<user>.+?) renames space with test alias "
+        r'"(?P<alias>.*)" to "(?P<new_space_name>.*)" in "(?P<host>.+?)" Onezone'
+        r" service"
     )
 )
 def rename_space_with_alias_in_oz(

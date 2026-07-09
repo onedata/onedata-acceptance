@@ -163,8 +163,8 @@ def get_data_type_of_array_initial_value_store(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>sees|does not see) "
-        '"(?P<group>.*)" group in "Select groups" modal'
+        r"user of (?P<browser_id>.*) (?P<option>sees|does not see) "
+        r'"(?P<group>.*)" group in "Select groups" modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

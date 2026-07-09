@@ -103,10 +103,10 @@ def assert_origin_run_number_for_run_in_lane(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that "
-        '(?P<option>run|origin run|run type|status) is "(?P<value>.*?)" '
-        'for run "(?P<number>.*?)" for "(?P<lane_name>.*?)" lane in'
-        " popup that appeared after clicking run indicator"
+        r"user of (?P<browser_id>.*?) sees that "
+        r'(?P<option>run|origin run|run type|status) is "(?P<value>.*?)" '
+        r'for run "(?P<number>.*?)" for "(?P<lane_name>.*?)" lane in'
+        r" popup that appeared after clicking run indicator"
     )
 )
 def assert_status_for_run_in_popup(

@@ -193,9 +193,9 @@ def create_lambda_using_gui(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) changes (?P<ordinal>|1st |2nd |3rd "
-        "|4th )(?P<option>argument|result|configuration parameters) "
-        'named "(?P<name>.*)" to be "(?P<param_type>.*)" type'
+        r"user of (?P<browser_id>.*) changes (?P<ordinal>|1st |2nd |3rd "
+        r"|4th )(?P<option>argument|result|configuration parameters) "
+        r'named "(?P<name>.*)" to be "(?P<param_type>.*)" type'
     )
 )
 def change_parameter_type_in_lambda_form(
@@ -236,10 +236,10 @@ def change_parameter_type_in_lambda_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) adds "
-        "(?P<ordinal>|1st |2nd |3rd |4th )(?P<option>argument|result"
-        '|configuration parameters) named "(?P<name>.*)" '
-        'of "(?P<param_type>.*)" type'
+        r"user of (?P<browser_id>.*) adds "
+        r"(?P<ordinal>|1st |2nd |3rd |4th )(?P<option>argument|result"
+        r'|configuration parameters) named "(?P<name>.*)" '
+        r'of "(?P<param_type>.*)" type'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -271,8 +271,8 @@ def add_parameter_into_lambda_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) modifies "
-        "(?P<ordinal>|1st |2nd |3rd |4th )argument named "
+        r"user of (?P<browser_id>.*) modifies "
+        r"(?P<ordinal>|1st |2nd |3rd |4th )argument named "
         r'"(?P<name>.*)" by:\n(?P<config>(.|\s)*)'
     )
 )

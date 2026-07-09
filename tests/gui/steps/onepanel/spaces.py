@@ -22,7 +22,12 @@ from tests.gui.steps.common.url import wait_till_alert_info_popup_disappear
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
-from tests.gui.utils.generic import AlertPopup, implicit_wait, parse_seq, transform
+from tests.gui.utils.generic import (
+    AlertPopup,
+    implicit_wait,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -68,8 +73,8 @@ def wt_click_on_support_space_btn_on_condition(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) selects (?P<btn>MiB|GiB|TiB) "
-        "radio button in support space form in Onepanel"
+        r"user of (?P<browser_id>.+?) selects (?P<btn>MiB|GiB|TiB) "
+        r"radio button in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -81,8 +86,8 @@ def wt_select_unit_in_space_support_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) selects (?P<btn>auto|manual) "
-        "radio button in support space form in Onepanel"
+        r"user of (?P<browser_id>.+?) selects (?P<btn>auto|manual) "
+        r"radio button in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -95,8 +100,8 @@ def wt_select_mode_in_space_support_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) clicks on Support space "
-        "button in support space form in Onepanel"
+        r"user of (?P<browser_id>.+?) clicks on Support space "
+        r"button in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -416,7 +421,7 @@ def wt_clicks_on_btn_in_cease_support_modal(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\S+) removes space using "
-        "delete space modal invoked from provided link"
+        r"delete space modal invoked from provided link"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -447,7 +452,7 @@ def login_and_remove_space_instead_of_revoke(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(3)
-    login_using_basic_auth(selenium, browser_id, user, users, "Onezone")
+    login_using_basic_auth(selenium, [browser_id], [user], users, ["Onezone"])
     modal_name = "Remove space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(selenium[browser_id]).remove_modal.understand_notice()
@@ -532,15 +537,18 @@ def assert_correct_number_displayed_on_sync_charts(
 @wt(
     parsers.parse(
         'user of {browser_id} sees {tab_list} navigation tabs for space "{space_name}"'
-    )
+    ),
+    converters={
+        "tab_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_space_displayed(
-    selenium: SeleniumDrivers, browser_id: str, tab_list: str, space_name: str
+    selenium: SeleniumDrivers, browser_id: str, tab_list: list[str], space_name: str
 ) -> None:
     nav = Onepanel(selenium[browser_id]).content.spaces.spaces[space_name].navigation
 
-    for tab in parse_seq(tab_list):
+    for tab in tab_list:
         assert (
             getattr(nav, transform(tab, strip_char='"')) is not None
         ), f"no navigation tab {tab} found"
