@@ -1248,3 +1248,33 @@ def assert_onezone_members_page_opened(
 ) -> None:
     driver = selenium[browser_id]
     _ = getattr(OZLoggedIn(driver), where).members_page
+
+
+@wt(
+    parsers.re(
+        "users? of (?P<browser_ids>.*) cannot view "
+        'group "(?P<group>.*)" membership due to lack of privileges'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_cannot_view_group_membership(
+    selenium: SeleniumDrivers, browser_ids: str, group: str
+) -> None:
+    for browser_id in parse_seq(browser_ids):
+        driver = selenium[browser_id]
+
+        members_page = OZLoggedIn(driver).groups.members_page
+        message_groups = members_page.lack_groups_view_privileges.text
+        message_users = members_page.lack_users_view_privileges.text
+        bulk_edit_button = members_page.bulk_edit_button
+
+        expected_message = "Insufficient privileges to access this resource."
+        err_msg = (
+            "The message about lack of privileges to view membership is not visible"
+        )
+
+        assert message_groups == expected_message, f"{err_msg} for groups"
+        assert message_users == expected_message, f"{err_msg} for users"
+        assert (
+            not bulk_edit_button.is_enabled()
+        ), "Bulk edit button is supposed to be disabled"
