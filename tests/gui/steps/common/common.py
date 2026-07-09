@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
+from functools import partial
 from typing import Any, Protocol, cast
 
 from selenium.common.exceptions import TimeoutException
@@ -271,9 +272,7 @@ def wait_till_error_modal_stop_appearing(driver: SeleniumDrivers) -> None:
 
     try:
         wait_till_popup_or_modal_disappear(
-            driver=driver,
-            css_sel=".alert-global.modal.in .modal-dialog",
-            handler=error_modal_close_button,
+            driver, ".alert-global.modal.in .modal-dialog", error_modal_close_button
         )
     except TimeoutException as exc:
         raise AssertionError("Error modal is still visible") from exc
@@ -292,8 +291,7 @@ def try_click_without_throwing_error(action: Callable[[], object]) -> None:
 def wait_till_popup_or_modal_disappear(
     driver: WebDriver,
     css_sel: str,
-    handler: Callable[..., ButtonPageObject],
-    *args: Any,
+    btn_handler: Callable[[WebDriver], ButtonPageObject],
 ) -> None:
     try:
         WebDriverWait(driver, WAIT_FRONTEND).until(
@@ -302,7 +300,7 @@ def wait_till_popup_or_modal_disappear(
     except TimeoutException:
         return
 
-    try_click_without_throwing_error(lambda: handler(driver, *args).click())
+    try_click_without_throwing_error(lambda: btn_handler(driver).click())
 
     WebDriverWait(driver, WAIT_FRONTEND).until(
         invisibility_of_element_located((By.CSS_SELECTOR, css_sel))
@@ -324,8 +322,5 @@ def wait_till_alert_info_popup_disappear(
         return Popups(driver).get_alert_popup(alert_popup).close
 
     wait_till_popup_or_modal_disappear(
-        driver,
-        css_sel,
-        alert_popup_close_button,
-        alert_popup,
+        driver, css_sel, partial(alert_popup_close_button, alert_popup=alert_popup)
     )
