@@ -10,13 +10,10 @@ import re
 import time
 from typing import cast
 
-from selenium.common.exceptions import (
-    NoSuchElementException,
-    StaleElementReferenceException,
-)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.expected_conditions import invisibility_of_element
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_till_error_modal_stop_appearing
@@ -209,15 +206,8 @@ def wt_try_to_register_prov_using_register_btn(
 def wait_for_provider_registration(
     driver: WebDriver, registration_btn: ButtonPageObject
 ) -> None:
-
-    def is_registration_finished() -> bool:
-        try:
-            return not registration_btn.is_displayed()
-        except (NoSuchElementException, StaleElementReferenceException):
-            return True
-
     WebDriverWait(driver, 120).until(
-        lambda _: is_registration_finished(),
+        invisibility_of_element(registration_btn.web_elem),
         "Provider registration is still in progress after 120s",
     )
 
