@@ -26,6 +26,7 @@ from tests.gui.meta_steps.onezone.groups import (
     see_groups_using_op_gui,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN
 from tests.mixed.steps.rest.onezone.group_management import (
     add_subgroups_using_rest,
     assert_subgroups_using_rest,
@@ -54,7 +55,8 @@ from tests.utils.user_utils import Users
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates groups? "
-        '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
+        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" Onezone'
+        r" service"
     )
 )
 def create_groups(
@@ -83,7 +85,11 @@ def create_groups(
     )
 )
 def create_groups_with_token(
-    user: str, group_name: str, host: str, tmp_memory: TmpMemory, hosts: Hosts
+    user: str,
+    group_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    hosts: Hosts,
 ) -> None:
     group_type = "team"
     zone_hostname = hosts[host]["hostname"]
@@ -107,22 +113,26 @@ def create_groups_with_token(
     )
 )
 def fail_to_create_group_with_token(
-    user: str, group_name: str, host: str, tmp_memory: TmpMemory, hosts: Hosts
+    user: str,
+    group_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    hosts: Hosts,
 ) -> None:
     try:
         create_groups_with_token(user, group_name, host, tmp_memory, hosts)
         raise AssertionError(
             "function: create_groups_with_token worked but it should not"
         )
-    except HTTPUnauthorized as err:
-        if err.status_code == 404:
-            pass
+    except HTTPUnauthorized:
+        pass
 
 
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees( that)?"
-        " groups? named (?P<group_list>.*?)( ha(s|ve) appeared)? in"
+        rf" groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN})( ha(s|ve)"
+        r" appeared)? in"
         ' "(?P<host>.*)" Onezone service'
     )
 )
@@ -147,7 +157,8 @@ def assert_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) renames groups? "
-        "(?P<group_list>.*)to (?P<new_names>.*) in "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN})to "
+        rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) in "
         '"(?P<host>.*)" Onezone service'
     )
 )
@@ -173,7 +184,7 @@ def rename_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) does not see "
-        'groups? named (?P<group_list>.*) in "(?P<host>.*)" '
+        rf'groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" '
         "Onezone service"
     )
 )
@@ -198,7 +209,8 @@ def fail_to_see_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes groups? "
-        '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
+        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" Onezone'
+        r" service"
     )
 )
 def remove_groups(
@@ -222,7 +234,8 @@ def remove_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) leaves groups? "
-        '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
+        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" Onezone'
+        r" service"
     )
 )
 def leave_groups(
@@ -246,7 +259,8 @@ def leave_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) adds groups? "
-        '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" in'
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
+        r' "(?P<parent>.*)" in'
         ' "(?P<host>.*)" Onezone service'
     )
 )
@@ -283,7 +297,7 @@ def add_subgroups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes subgroups? "
-        '(?P<group_list>.*) from group "(?P<parent>.*)" in'
+        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) from group "(?P<parent>.*)" in'
         ' "(?P<host>.*)" Onezone service'
     )
 )
@@ -316,7 +330,8 @@ def remove_subgroups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees groups? "
-        '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" '
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
+        r' "(?P<parent>.*)" '
         'in "(?P<host>.*)" Onezone service'
     )
 )
@@ -342,8 +357,9 @@ def assert_subgroups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) does not see groups? "
-        '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)"'
-        ' in "(?P<host>.*)" Onezone service'
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
+        r' "(?P<parent>.*)"'
+        r' in "(?P<host>.*)" Onezone service'
     )
 )
 def fail_to_see_subgroups(
@@ -356,7 +372,6 @@ def fail_to_see_subgroups(
     selenium: SeleniumDrivers,
     parent: str,
 ) -> None:
-
     if client.lower() == "rest":
         fail_to_see_subgroups_using_rest(user, users, group_list, parent, hosts, host)
     elif client.lower() == "web gui":
@@ -431,7 +446,8 @@ def join_group(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) fails to rename"
-        " groups? (?P<group_list>.*) to (?P<new_names>.*) in"
+        rf" groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) in"
         ' "(?P<host>.*)" Onezone service'
     )
 )
@@ -459,7 +475,8 @@ def fail_to_rename_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) fails to remove"
-        ' groups? (?P<group_list>.*?) in "(?P<host>.*)" Onezone service'
+        rf' groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)"'
+        r" Onezone service"
     )
 )
 def fail_to_remove_groups(
@@ -485,7 +502,7 @@ def fail_to_remove_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) fails to join"
-        " groups? (?P<group_list>.*?) as subgroup to group "
+        rf" groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group "
         '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'
     )
 )

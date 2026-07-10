@@ -89,6 +89,9 @@ def parse_seq(
     separator: Optional[str] = None,
     default: Callable[[str], T] = cast(Callable[[str], T], str),
 ) -> list[T]:
+    """Parses regex-matched or separator-delimited values into a list,
+    e.g. '["1", "2"]', '"1"', '1,2', or '1'.
+    """
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
@@ -435,3 +438,17 @@ PageName = Literal[
     "clusters",
     "cluster",
 ]
+
+
+ELEMENTS_SEQUENCE_PATTERN = (
+    r"(?:"
+    # A quoted element, including spaces and special characters
+    r'"[^"\r\n]+"'
+    r"|"
+    # A single unquoted element without separators or whitespace
+    r'[^,\[\]"\s]+'
+    r"|"
+    # A comma-separated sequence of quoted or unquoted elements in square brackets
+    r"\[\s*[^,\]\r\n]+(?:\s*,\s*[^,\]\r\n]+)*\s*\]"
+    r")"
+)

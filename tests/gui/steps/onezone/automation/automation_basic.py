@@ -17,6 +17,7 @@ from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
     parse_seq,
     transform,
     upload_file_path,
@@ -118,7 +119,8 @@ def confirm_rename_the_inventory(selenium: SeleniumDrivers, browser_id: str) -> 
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_ids>.*) (?P<option>does not see|sees) "
+        rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"(?P<option>does not see|sees) "
         'inventory "(?P<inventory>.*)" on inventory list'
     )
 )

@@ -16,7 +16,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
@@ -25,7 +25,8 @@ from tests.utils.utils import repeat_failed
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) created admin accounts? "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) created admin"
+        r" accounts? "
         '"(?P<name>.*):(?P<passphrase>.*)"'
     )
 )

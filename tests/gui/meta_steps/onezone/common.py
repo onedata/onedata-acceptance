@@ -35,6 +35,7 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN
 from tests.gui.utils.onezone.members_subpage import MembershipRow
 from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
@@ -46,7 +47,8 @@ from tests.utils.utils import repeat_failed
 
 @given(
     parsers.re(
-        "opened (?P<browser_id_list>.*) with (?P<user_list>.*) "
+        rf"opened (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) with "
+        r"(?P<user_list>.*) "
         "signed in to (?P<host_list>.*) service"
     )
 )
@@ -132,7 +134,7 @@ def g_wt_visit_op(
 @given(
     parsers.re(
         "opened (?P<providers_list>.*) Oneprovider view in web GUI "
-        "by (users? of )?(?P<browser_id_list>.*)"
+        rf"by (users? of )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -144,7 +146,7 @@ def g_visit_op(
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) opens? "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) opens? "
         "(?P<providers_list>.*) Oneprovider view in web GUI"
     )
 )
@@ -184,7 +186,7 @@ def visit_file_browser(
     parsers.re(
         "opened (?P<providers_list>.*) Oneprovider file browser "
         "for (?P<spaces_list>.*) space in web GUI "
-        "by (users? of )?(?P<browser_id_list>.*)"
+        rf"by (users? of )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
     )
 )
 def g_visit_file_browser(
@@ -207,7 +209,7 @@ def g_visit_file_browser(
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) opens? "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) opens? "
         "(?P<providers_list>.*) Oneprovider file browser "
         "for (?P<spaces_list>.*) space"
     )

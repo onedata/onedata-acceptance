@@ -10,7 +10,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -45,7 +45,7 @@ def _click_on_tab_in_main_menu_sidebar(driver: WebDriver, tab: str) -> None:
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) clicked on the "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicked on the "
         '"(?P<main_menu_tab>.*)" tab in main menu sidebar'
     )
 )
@@ -59,7 +59,7 @@ def g_click_on_the_given_main_menu_tab(
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) clicks on the "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks on the "
         '"(?P<main_menu_tab>.*)" tab in main menu sidebar'
     )
 )

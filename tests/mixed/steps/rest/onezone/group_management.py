@@ -8,7 +8,7 @@ import pytest
 from onezone_client import GroupApi, GroupCreateRequest, UserApi
 from onezone_client.rest import ApiException
 
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq
 from tests.mixed.steps.rest.onezone.common import get_group
 from tests.mixed.type_definitions import RestOnezoneTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
@@ -17,7 +17,12 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
 
 
-@wt(parsers.re(r"(?P<user>\w+) creates groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) creates groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    )
+)
 def create_groups_using_rest(
     user: str,
     users: Users,
@@ -32,7 +37,12 @@ def create_groups_using_rest(
         user_api.create_user_group(GroupCreateRequest(name=group_name))
 
 
-@wt(parsers.re(r"(?P<user>\w+) sees groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) sees groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    )
+)
 def see_groups_using_rest(
     user: str,
     users: Users,
@@ -47,7 +57,12 @@ def see_groups_using_rest(
         ), f"There is no group named {group_name}"
 
 
-@wt(parsers.re(r"(?P<user>\w+) does not see groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) does not see groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    )
+)
 def fail_to_see_groups_using_rest(
     user: str,
     users: Users,
@@ -66,8 +81,9 @@ def fail_to_see_groups_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) renames groups? (?P<group_list>.*) to"
-        " (?P<new_names>.*) using REST"
+        rf"(?P<user>\w+) renames groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
     )
 )
 def rename_groups_using_rest(
@@ -88,8 +104,9 @@ def rename_groups_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) fails to rename groups? (?P<group_list>.*)"
-        " to (?P<new_names>.*) using REST"
+        rf"(?P<user>\w+) fails to rename groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
     )
 )
 def fail_to_rename_groups_using_rest(
@@ -109,7 +126,12 @@ def fail_to_rename_groups_using_rest(
             group_api.modify_group(group.group_id, data)
 
 
-@wt(parsers.re(r"(?P<user>\w+) fails to remove groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) fails to remove groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    )
+)
 def fail_to_remove_groups_using_rest(
     user: str,
     users: Users,
@@ -139,7 +161,12 @@ def remove_groups_using_rest(
         group_api.remove_group(group.group_id)
 
 
-@wt(parsers.re(r"(?P<user>\w+) leaves groups? (?P<group_list>.*) using REST"))
+@wt(
+    parsers.re(
+        rf"(?P<user>\w+) leaves groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) using REST"
+    )
+)
 def leave_groups_using_rest(
     user: str,
     users: Users,
@@ -156,7 +183,8 @@ def leave_groups_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) adds groups? (?P<group_list>.*) as subgroup"
+        rf"(?P<user>\w+) adds groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup"
         ' to group "(?P<parent>.*)" using REST'
     )
 )
@@ -232,8 +260,9 @@ def join_group_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) using REST sees that users? (?P<user_list>.*) "
-        "belongs? to groups? (?P<group_list>.*)"
+        rf"(?P<user>\w+) using REST sees that users? "
+        rf"(?P<user_list>{ELEMENTS_SEQUENCE_PATTERN}) belongs? to groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN})"
     )
 )
 def assert_users_in_groups_using_rest(
@@ -256,7 +285,8 @@ def assert_users_in_groups_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) sees groups? (?P<group_list>.*) as subgroup"
+        rf"(?P<user>\w+) sees groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup"
         ' to group "(?P<parent>.*)" using REST'
     )
 )
@@ -280,7 +310,8 @@ def assert_subgroups_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) removes groups? (?P<group_list>.*) as "
+        rf"(?P<user>\w+) removes groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as "
         r'subgroup of group "(?P<parent_name>.*)" using REST'
     )
 )
@@ -302,7 +333,8 @@ def remove_subgroups_using_rest(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) fails to see groups? (?P<group_list>.*) as "
+        rf"(?P<user>\w+) fails to see groups? "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as "
         'subgroup to group "(?P<parent>.*)" using REST'
     )
 )

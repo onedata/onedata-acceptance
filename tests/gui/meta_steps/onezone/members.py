@@ -17,7 +17,7 @@ from tests.gui.steps.onezone.members import (
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq
 from tests.gui.utils.onezone import OZLoggedIn
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -126,7 +126,7 @@ def assert_group_in_space_using_op_gui(
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_ids>.*) cannot view "
+        rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) cannot view "
         'group "(?P<group>.*)" membership due to lack of privileges'
     )
 )

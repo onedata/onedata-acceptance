@@ -11,7 +11,12 @@ from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
-from tests.gui.utils.generic import ListElement, parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    ListElement,
+    parse_seq,
+    transform,
+)
 from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -54,7 +59,8 @@ def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_ids>.*) (?P<option>does not see|sees) "
+        rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"(?P<option>does not see|sees) "
         'group "(?P<group>.*)" on groups list'
     )
 )

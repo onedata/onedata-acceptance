@@ -24,7 +24,12 @@ from tests.gui.steps.common.common import try_click_without_throwing_error
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.core.web_objects import ButtonPageObject
-from tests.gui.utils.generic import AlertPopup, parse_seq, parse_url
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    AlertPopup,
+    parse_seq,
+    parse_url,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -305,7 +310,11 @@ def cp_part_of_url(
 
 
 @wt(parsers.parse("using web GUI, {browser_id_list} refreshes site"))
-@wt(parsers.re("users? of (?P<browser_id_list>.*?) refreshes site"))
+@wt(
+    parsers.re(
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) refreshes site"
+    )
+)
 def refresh_site(selenium: SeleniumDrivers, browser_id_list: str) -> None:
     for browser_id in parse_seq(browser_id_list):
         selenium[browser_id].refresh()
@@ -313,7 +322,8 @@ def refresh_site(selenium: SeleniumDrivers, browser_id_list: str) -> None:
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*?) refreshes site and waits for page to load"
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"refreshes site and waits for page to load"
     )
 )
 def refresh_site_and_wait(selenium: SeleniumDrivers, browser_id_list: str) -> None:

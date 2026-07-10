@@ -18,6 +18,7 @@ from tests.gui.steps.common.miscellaneous import network_throttling_download
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,
     parse_seq,
     sort_json_from_string,
@@ -214,17 +215,10 @@ def _gather_data_from_browser(
     )
 )
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that item named {item_list} has appeared in "
-        "{which_browser:WhichBrowser}",
-        extra_types={"WhichBrowser": WhichBrowser},
-    )
-)
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that items named {item_list} have appeared"
-        " in {which_browser:WhichBrowser}",
-        extra_types={"WhichBrowser": WhichBrowser},
+    parsers.re(
+        rf"user of (?P<browser_id>.*?) sees that items? named "
+        rf"(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) (?:has|have) appeared in "
+        rf"(?P<which_browser>{'|'.join(re.escape(item.value) for item in WhichBrowser)})"
     )
 )
 def wt_assert_items_presence_in_browser(
@@ -232,10 +226,15 @@ def wt_assert_items_presence_in_browser(
     browser_id: str,
     item_list: str,
     tmp_memory: TmpMemory,
-    which_browser: WhichBrowser,
+    which_browser: WhichBrowser | str,
 ) -> None:
+    browser_name = (
+        which_browser.value
+        if isinstance(which_browser, WhichBrowser)
+        else which_browser
+    )
     assert_items_presence_in_browser(
-        selenium, browser_id, item_list, tmp_memory, which_browser=which_browser.value
+        selenium, browser_id, item_list, tmp_memory, which_browser=browser_name
     )
 
 
@@ -301,15 +300,10 @@ def check_if_item_is_dir_in_browser(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that item named {item_list} "
-        "has disappeared from {which_browser}"
-    )
-)
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that items named {item_list} "
-        "have disappeared from {which_browser}"
+    parsers.re(
+        rf"user of (?P<browser_id>.*?) sees that items? named "
+        rf"(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) (?:has|have) disappeared "
+        r"from (?P<which_browser>.*)"
     )
 )
 @wt(
