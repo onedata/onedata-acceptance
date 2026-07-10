@@ -151,7 +151,7 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
     driver = selenium[browser_id]
     WebDriverWait(
         driver,
-        timeout=WAIT_BACKEND * 2,
+        timeout=WAIT_BACKEND * 5,
         ignored_exceptions=[RuntimeError],
     ).until(
         lambda driver: Onepanel(

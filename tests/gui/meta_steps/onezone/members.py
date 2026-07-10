@@ -13,7 +13,11 @@ from tests.gui.steps.onezone.members import (
     assert_member_is_in_parent_members_list,
     assert_privileges_in_members_subpage,
     click_element_in_members_list,
+    click_member_checkbox,
+    click_on_bulk_edit,
     click_on_option_in_members_list_menu,
+    see_privileges_for_member,
+    set_privileges_in_members_subpage_on_modal,
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
@@ -153,3 +157,29 @@ def assert_cannot_view_group_membership(
         assert (
             not bulk_edit_button.is_enabled()
         ), "Bulk edit button is supposed to be disabled"
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>\w+) changes privileges for"
+        r' (?P<member_type>user|group) "(?P<member_name>\w+)" in group'
+        r' "(?P<group_name>\w+)" members subpage into following:\n'
+        r"(?P<config>(.|\s)*)"
+    )
+)
+def choose_member_and_set_privileges_on_groups_subpage(
+    selenium: SeleniumDrivers,
+    group_name: str,
+    browser_id: str,
+    member_name: str,
+    member_type: str,
+    config: str,
+) -> None:
+    go_to_group_subpage(selenium, browser_id, group_name, "members")
+    click_element_in_members_list(
+        selenium, browser_id, member_name, "group", f"{member_type}s"
+    )
+    see_privileges_for_member(selenium, browser_id, "group", member_type, member_name)
+    click_member_checkbox(selenium, browser_id, member_name, f"{member_type}s")
+    click_on_bulk_edit(browser_id, selenium)
+    set_privileges_in_members_subpage_on_modal(selenium, browser_id, config)

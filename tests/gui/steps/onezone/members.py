@@ -1173,17 +1173,17 @@ def click_on_bulk_checkbox(
 @wt(
     parsers.re(
         'user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
-        "(?P<member_type>users|groups) checkbox"
+        "(?P<list_type>users|groups) checkbox"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_member_checkbox(
-    selenium: SeleniumDrivers, browser_id: str, member_name: str, member_type: str
+    selenium: SeleniumDrivers, browser_id: str, member_name: str, list_type: str
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).groups.members_page
     page.close_member(driver)
-    members = getattr(page, member_type)
+    members = getattr(page, list_type)
     item_checkbox = members.items[member_name].header.checkbox
     item_checkbox.click()
 
