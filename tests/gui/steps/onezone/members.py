@@ -1042,10 +1042,10 @@ def see_privileges_for_member(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        '"(?P<member_name>.*)" (?P<member_type>user|group) '
-        'in "(?P<name>.*)" harvester members '
-        "(?P<list_type>users|groups) list"
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
+        r'"(?P<member_name>.*)" (?P<member_type>user|group) '
+        r'in "(?P<item_name>.*)" (?P<item_type>automation|harvester) members '
+        r"(users|groups) list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1055,10 +1055,14 @@ def check_element_in_members_subpage(
     option: str,
     member_name: str,
     member_type: str,
-    list_type: str,
+    item_type: str,
 ) -> None:
+    if item_type == "harvester":
+        item_type = "discovery"
+
     driver = selenium[browser_id]
-    member_list = getattr(OZLoggedIn(driver).discovery.members_page, list_type).items
+    page = getattr(OZLoggedIn(driver), item_type)
+    member_list = getattr(page.members_page, f"{member_type}s").items
     if option == "sees":
         try:
             err_msg = f"{member_name} {member_type} not found"

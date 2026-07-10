@@ -290,7 +290,7 @@ Feature: Management of inventories members
 
     # User1 removes group from inventory
     And user of browser1 removes "group2" group from "inventory1" automation members
-    Then user of browser1 does not see group "group2" on groups list
+    And user of browser1 does not see "group2" group in "inventory1" automation members groups list
 
 
   Scenario: User successfully manages lambda with manage lambda privilege
