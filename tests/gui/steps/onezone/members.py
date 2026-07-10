@@ -12,6 +12,7 @@ from typing import cast
 import yaml
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
@@ -81,15 +82,15 @@ def get_privilege_tree(
     driver = selenium[browser_id]
     page = _find_members_page(driver, where)
     elem = getattr(page, list_type).items[member_name]
-    # wait for panel to expand
-    for _ in range(40):
-        if "active" in elem.web_elem.get_attribute("class"):
-            break
-        time.sleep(0.1)
-    else:
-        assert "active" in elem.web_elem.get_attribute(
-            "class"
-        ), f"did not manage to expand {list_type} panel of {member_name}"
+
+    if "active" not in elem.web_elem.get_attribute("class"):
+        elem.web_elem.click()
+
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        lambda _: "active" in elem.web_elem.get_attribute("class"),
+        message=f"did not manage to expand {list_type} panel of {member_name}",
+    )
+
     return elem.privilege_tree
 
 
