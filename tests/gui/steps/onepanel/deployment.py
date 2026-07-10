@@ -195,10 +195,15 @@ def wt_try_to_register_prov_using_register_btn(
     btn = "Register"
     step = getattr(Onepanel(driver).content.deployment, step.lower().replace(" ", ""))
     btn = getattr(step, transform(btn))
-    btn.click()
 
-    # if error modal occurred close it and repeat function execution
-    wait_till_error_modal_stop_appearing(driver)
+    for _ in range(6):
+        btn.click()
+        try:
+            wait_till_error_modal_stop_appearing(driver)
+            break
+        except AssertionError:
+            pass
+
     # wait for provider registration, due to rare possibilities it can take some time
     wait_for_provider_registration(driver, btn)
 
