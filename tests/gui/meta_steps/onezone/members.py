@@ -183,3 +183,30 @@ def choose_member_and_set_privileges_on_groups_subpage(
     click_member_checkbox(selenium, browser_id, member_name, f"{member_type}s")
     click_on_bulk_edit(browser_id, selenium)
     set_privileges_in_members_subpage_on_modal(selenium, browser_id, config)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>\w+) sees following "
+        r"(?P<option>effective |)privileges for "
+        r'(?P<member_type>user|group) "(?P<member_name>[^"]+)" in group '
+        r'"(?P<group_name>[^"]+)" members subpage:\n'
+        r"(?P<config>(.|\s)*)"
+    )
+)
+def choose_member_and_assert_privileges_on_groups_subpage(
+    selenium: SeleniumDrivers,
+    group_name: str,
+    browser_id: str,
+    member_name: str,
+    member_type: str,
+    option: str,
+    config: str,
+) -> None:
+    go_to_group_subpage(selenium, browser_id, group_name, "members")
+    click_element_in_members_list(
+        selenium, browser_id, member_name, "group", f"{member_type}s"
+    )
+    assert_privileges_in_members_subpage(
+        selenium, browser_id, member_name, member_type, "group", config, option
+    )
