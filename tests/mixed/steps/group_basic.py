@@ -157,7 +157,7 @@ def assert_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) renames groups? "
-        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN})to "
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
         rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) in "
         '"(?P<host>.*)" Onezone service'
     )
