@@ -181,25 +181,27 @@ def see_files_with_order(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} opens Data Discovery page of "{harvester_name}" harvester'
+    parsers.re(
+        r"user of (?P<browser_id>\w+) opens (?P<subpage>Data Discovery"
+        '|Spaces|Indices) page of "(?P<harvester_name>[^"]+)" harvester'
     )
 )
-def open_data_discovery_of_harvester(
-    selenium: SeleniumDrivers, browser_id: str, harvester_name: str
+def open_discovery_subpage_of_harvester(
+    selenium: SeleniumDrivers, browser_id: str, harvester_name: str, subpage: str
 ) -> None:
-    option = "Discovery"
+    panel_name = "Discovery"
     list_name = "harvesters"
-    option2 = "data discovery"
+    subpage = subpage.lower()
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option)
+    click_on_option_in_the_sidebar(selenium, browser_id, panel_name)
     click_element_on_lists_on_left_sidebar_menu(
         selenium, browser_id, list_name, harvester_name
     )
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option2
+        selenium, browser_id, harvester_name, subpage
     )
-    assert_data_discovery_page(selenium, browser_id)
+    if subpage == "data discovery":
+        assert_data_discovery_page(selenium, browser_id)
 
 
 @wt(
