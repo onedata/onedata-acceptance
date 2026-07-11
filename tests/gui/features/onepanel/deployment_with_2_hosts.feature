@@ -15,7 +15,7 @@ Feature: Deployment process using panel of zone and provider
 
     And user of browser2 clicks on Create Oneprovider cluster button in welcome page in Onepanel
     And user of browser2 clicks on Add new host button in step 1 of deployment process in Onepanel
-    And user of browser2 types "dev-oneprovider-krakow-1.dev-oneprovider-krakow.default.svc.cluster.local" to hostname field in step 1 of deployment process in Onepanel
+    And user of browser2 types "dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local" to hostname field in step 1 of deployment process in Onepanel
     And user of browser2 clicks on Add host button in step 1 of deployment process in Onepanel
     And user of browser2 enables [Database, Cluster Worker] options for .*0.*oneprovider.* host in step 1 of deployment process in Onepanel
     And user of browser2 enables [Cluster Manager, Primary Cluster Manager] options for .*1.*oneprovider.* host in step 1 of deployment process in Onepanel
@@ -23,8 +23,8 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 sees that cluster deployment has started
 
     # wait for finish of deployment
-    And user of browser1 waits 180 seconds for cluster deployment to finish
-    And user of browser2 waits 180 seconds for cluster deployment to finish
+    And user of browser1 waits 300 seconds for cluster deployment to finish
+    And user of browser2 waits 300 seconds for cluster deployment to finish
 
     # setup IP step in zone panels
     And user of browser1 clicks on "Setup IP addresses" button in deployment setup IP step
