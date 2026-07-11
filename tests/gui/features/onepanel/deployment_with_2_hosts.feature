@@ -91,4 +91,4 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 sees that [Database, Cluster Worker] options are enabled for .*0.*oneprovider.* host in Nodes page in Onepanel
     And user of browser2 sees that [Cluster Manager, Primary Cluster Manager] options are enabled for .*1.*oneprovider.* host in Nodes page in Onepanel
     And user of browser2 sees that [Database, Cluster Worker] options cannot be changed for .*0.*oneprovider.* host in Nodes page in Onepanel
-    And user of browser2 sees that [Cluster Manager, Primary Cluster Manager] options cannot be changed for .*0.*oneprovider.* host in Nodes page in Onepanel
+    And user of browser2 sees that [Cluster Manager, Primary Cluster Manager] options cannot be changed for .*1.*oneprovider.* host in Nodes page in Onepanel
