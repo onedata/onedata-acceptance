@@ -140,8 +140,9 @@ class Popups:
     workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
-    alert_info_popup = WebItem(".alert-info", cls=AlertInfoPopup)
+
     alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
+    notify_popups = WebItemsSequence(".ember-notify-cn", cls=AlertInfoPopup)
 
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
@@ -150,7 +151,10 @@ class Popups:
         return "popups"
 
     def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
-        return self.alert_info_popups[alert_popup.value]
+        for popups in (self.alert_info_popups, self.notify_popups):
+            if alert_popup.value in popups:
+                return popups[alert_popup.value]
+        raise RuntimeError(f'No alert popup with message "{alert_popup.value}"')
 
     def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0
