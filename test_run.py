@@ -313,6 +313,8 @@ sys.exit(ret)
                '--local'] + pass_args
         if args.env_file:
             cmd += [f'--env-file={args.env_file}']
+        if int(args.repeats) > 1:
+            cmd += [f'--count={args.repeats}']
         ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     else:
