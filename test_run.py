@@ -249,11 +249,11 @@ def main():
         dest='local_charts_path')
 
     parser.add_argument(
-        '--repeats',
+        '--count',
         action='store',
         default='1',
         help='Repeat suite N times on the same deployment',
-        dest='repeats')
+        dest='count')
 
     parser.add_argument(
         '--timeout',
@@ -313,8 +313,6 @@ sys.exit(ret)
                '--local'] + pass_args
         if args.env_file:
             cmd += [f'--env-file={args.env_file}']
-        if int(args.repeats) > 1:
-            cmd += [f'--count={args.repeats}']
         ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     else:
@@ -339,7 +337,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             no_clean=['--no-clean'] if not args.clean else [],
             env_file=['--env-file={}'.format(args.env_file)] if args.env_file else [],
             timeout=['--timeout={}'.format(args.timeout)] if args.timeout else [],
-            repeats=['--count={}'.format(args.repeats)] if int(args.repeats) > 1 else [],
+            repeats=['--count={}'.format(args.count)] if int(args.count) > 1 else [],
             images_opt=images_opt if images_opt else [],
             home=os.path.expanduser('~')
         )
