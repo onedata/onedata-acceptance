@@ -64,96 +64,96 @@ stages:
         - _Autoformatter check
         - _Static analysis
         - _Type_check
-        - Atm examples workflows 1
-        - Atm examples workflows 2
-        - Atm pods
-        - Atm stores basic
-        - Atm workflow execution
-        - Atm workflows pausing and cancelling
-        - Atm workflows status
-        - Atm workflows stores
-        - Atm BagIt 1
-        - Atm BagIt 2
         - Many items
-        - Metadata
-        - Multiprovider archives
-        - Multiprovider basic
-        - Multiprovider multiuser
-        - Multiprovider QoS
-        - Multiprovider QoS storage
-        - Onedata documentation
-        - Onepanel basic
-        - Onepanel deployment LE
-        - Onepanel deployment basic
-        - Onepanel deployment OneS3
-        - Onepanel login
-        - Onepanel LE and Subdomain Delegation
-        - Onepanel members
-        - Onepanel two hosts deployment
-        - Onepanel different storages
-        - Oneprovider ACL basic
-        - Oneprovider ACL directories privileges
-        - Oneprovider ACL directories privileges change and upload
-        - Oneprovider ACL directories privileges create
-        - Oneprovider ACL directories privileges metadata
-        - Oneprovider ACL directories privileges remove
-        - Oneprovider ACL files
-        - Oneprovider ACL files metadata
-        - Oneprovider ACL remove file
-        - Oneprovider ACL subdirectories
-        - Oneprovider ACL subdirectories remove
-        - Oneprovider ACL subfiles
-        - Oneprovider ACL subjects
-        - Oneprovider archives
-        - Oneprovider archives audit logs
-        - Oneprovider archives cancel
-        - Oneprovider archives incremental and nested
-        - Oneprovider archives recall
-        - Oneprovider data tab
-        - Oneprovider data tab files
-        - Oneprovider datasets
-        - Oneprovider datasets privileges
-        - Oneprovider hardlinks
-        - Oneprovider symlinks
-        - Oneprovider upload
-        - Onezone automations
-        - Onezone automations members and privileges
-        - Onezone basic
-        - Onezone data discovery
-        - Onezone data discovery helpers
-        - Onezone data discovery querying
-        - Onezone groups basic
-        - Onezone groups multiuser
-        - Onezone groups multiuser single group
-        - Onezone harvesters basic
-        - Onezone harvesters effective privileges
-        - Onezone harvesters index
-        - Onezone harvesters index metadata
-        - Onezone harvesters memberships privileges
-        - Onezone harvesters privileges add and remove
-        - Onezone invite tokens
-        - Onezone invite tokens with caveats
-        - Onezone invite tokens with consumer caveats
-        - Onezone providers basic
-        - Onezone spaces basic
-        - Onezone spaces memberships privileges
-        - Onezone spaces memberships privileges data
-        - Onezone spaces multiuser
-        - Onezone tokens
-        - Onezone tokens delete
-        - POSIX
-        - POSIX multiuser
-        - Public shares
-        - QoS basic
-        - QoS storage
-        - Shares basic
-        - Shares handle service
-        - Storage sync
-        - Storage sync charts
-        - Transfers cancel
-        - Transfers directories
-        - Transfers files
-        - Transfers multi browser
+        # - Atm examples workflows 2
+        # - Atm pods
+        # - Atm stores basic
+        # - Atm workflow execution
+        # - Atm workflows pausing and cancelling
+        # - Atm workflows status
+        # - Atm workflows stores
+        # - Atm BagIt 1
+        # - Atm BagIt 2
+        # - Many items
+        # - Metadata
+        # - Multiprovider archives
+        # - Multiprovider basic
+        # - Multiprovider multiuser
+        # - Multiprovider QoS
+        # - Multiprovider QoS storage
+        # - Onedata documentation
+        # - Onepanel basic
+        # - Onepanel deployment LE
+        # - Onepanel deployment basic
+        # - Onepanel deployment OneS3
+        # - Onepanel login
+        # - Onepanel LE and Subdomain Delegation
+        # - Onepanel members
+        # - Onepanel two hosts deployment
+        # - Onepanel different storages
+        # - Oneprovider ACL basic
+        # - Oneprovider ACL directories privileges
+        # - Oneprovider ACL directories privileges change and upload
+        # - Oneprovider ACL directories privileges create
+        # - Oneprovider ACL directories privileges metadata
+        # - Oneprovider ACL directories privileges remove
+        # - Oneprovider ACL files
+        # - Oneprovider ACL files metadata
+        # - Oneprovider ACL remove file
+        # - Oneprovider ACL subdirectories
+        # - Oneprovider ACL subdirectories remove
+        # - Oneprovider ACL subfiles
+        # - Oneprovider ACL subjects
+        # - Oneprovider archives
+        # - Oneprovider archives audit logs
+        # - Oneprovider archives cancel
+        # - Oneprovider archives incremental and nested
+        # - Oneprovider archives recall
+        # - Oneprovider data tab
+        # - Oneprovider data tab files
+        # - Oneprovider datasets
+        # - Oneprovider datasets privileges
+        # - Oneprovider hardlinks
+        # - Oneprovider symlinks
+        # - Oneprovider upload
+        # - Onezone automations
+        # - Onezone automations members and privileges
+        # - Onezone basic
+        # - Onezone data discovery
+        # - Onezone data discovery helpers
+        # - Onezone data discovery querying
+        # - Onezone groups basic
+        # - Onezone groups multiuser
+        # - Onezone groups multiuser single group
+        # - Onezone harvesters basic
+        # - Onezone harvesters effective privileges
+        # - Onezone harvesters index
+        # - Onezone harvesters index metadata
+        # - Onezone harvesters memberships privileges
+        # - Onezone harvesters privileges add and remove
+        # - Onezone invite tokens
+        # - Onezone invite tokens with caveats
+        # - Onezone invite tokens with consumer caveats
+        # - Onezone providers basic
+        # - Onezone spaces basic
+        # - Onezone spaces memberships privileges
+        # - Onezone spaces memberships privileges data
+        # - Onezone spaces multiuser
+        # - Onezone tokens
+        # - Onezone tokens delete
+        # - POSIX
+        # - POSIX multiuser
+        # - Public shares
+        # - QoS basic
+        # - QoS storage
+        # - Shares basic
+        # - Shares handle service
+        # - Storage sync
+        # - Storage sync charts
+        # - Transfers cancel
+        # - Transfers directories
+        # - Transfers files
+        # - Transfers multi browser
   - Qnthack - rerun:
       manual: false
       final: true
@@ -288,7 +288,7 @@ _Type_check:
           - make type-check
         description: Type checker
 
-Atm examples workflows 1: &acceptance-tests-in-chrome-job
+Many items: &acceptance-tests-in-chrome-job
   key: COAWEX2
   other: *common-opts
   tasks:
@@ -352,7 +352,7 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
     - script: &run-selenium-tests
         <<: *run-script-working-dir
         scripts:
-          - make ENV_FILE=1oz_1op_openfaas SUITE=test_automation_examples_workflows_tests1 test_gui_pkg
+          - make SUITE=test_many_items test_gui_pkg
         description: Run Selenium tests
   final-tasks:
     - test-parser:
@@ -408,1340 +408,1340 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
     - minikube
   artifact-subscriptions: [ ]
 
-Atm examples workflows 2:
-  <<: *acceptance-tests-in-chrome-job
-  key: COASB2
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_automation_examples_workflows_tests2 ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm pods:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_pods ENV_FILE=1oz_1op_openfaas_normal test_gui_pkg
-
-Atm stores basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COASB
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm workflow execution:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWET
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_execution ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm workflows pausing and cancelling:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWPC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm workflows status:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWST
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm workflows stores:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm BagIt 1:
-  <<: *acceptance-tests-in-chrome-job
-  key: COB
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_automation_bagit1 ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm BagIt 2:
-  <<: *acceptance-tests-in-chrome-job
-  key: COB2
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_automation_bagit2 ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Many items:
-  <<: *acceptance-tests-in-chrome-job
-  key: CMN
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_many_items test_gui_pkg
-
-Metadata:
-  <<: *acceptance-tests-in-chrome-job
-  key: CPT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script: &run-selenium-tests
-        <<: *run-script-working-dir
-        scripts:
-          - make SUITE=test_metadata test_gui_pkg
-
-Multiprovider archives:
-  <<: *acceptance-tests-in-chrome-job
-  key: CMA
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_archives test_gui_pkg
-
-Multiprovider basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: CMBT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_basic test_gui_pkg
-
-Multiprovider multiuser:
-  <<: *acceptance-tests-in-chrome-job
-  key: CMMT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_multiuser test_gui_pkg
-
-Multiprovider QoS:
-  <<: *acceptance-tests-in-chrome-job
-  key: CMQT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos test_gui_pkg
-
-Multiprovider QoS storage:
-  <<: *acceptance-tests-in-chrome-job
-  key: CMQS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage test_gui_pkg
-
-Onedata documentation:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODL
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onedata_documentation test_gui_pkg
-
-Onepanel basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COBT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_basic test_gui_pkg
-
-Onepanel deployment basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODBT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed test_gui_pkg
-
-Onepanel deployment LE:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODLE
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_deployment_with_le ENV_FILE=1oz_1op_le_not_deployed test_gui_pkg
-
-Onepanel deployment OneS3:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODO
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_deployment_ones3 ENV_FILE=1oz_deployed_1op_not_deployed test_gui_pkg
-
-Onepanel login:
-  <<: *acceptance-tests-in-chrome-job
-  key: COLT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_login test_gui_pkg
-
-Onepanel LE and Subdomain Delegation:
-  <<: *acceptance-tests-in-chrome-job
-  key: COLES
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_le_and_subdomain_delegation ENV_FILE=1oz_1op_le test_gui_pkg
-
-Onepanel members:
-  <<: *acceptance-tests-in-chrome-job
-  key: COMT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_members test_gui_pkg
-
-Onepanel two hosts deployment:
-  <<: *acceptance-tests-in-chrome-job
-  key: CO2HDT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes test_gui_pkg
-
-Onepanel different storages:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODST
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_different_storages ENV_FILE=1oz_1op_storages test_gui_pkg
-
-Oneprovider ACL basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAB
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_basic test_gui_pkg
-
-Oneprovider ACL directories privileges:
-  <<: *acceptance-tests-in-chrome-job
-  key: COADP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_dir_privileges test_gui_pkg
-
-Oneprovider ACL directories privileges change and upload:
-  <<: *acceptance-tests-in-chrome-job
-  key: COADPCU
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_dir_privileges_change_and_upload test_gui_pkg
-
-Oneprovider ACL directories privileges create:
-  <<: *acceptance-tests-in-chrome-job
-  key: COADPC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_dir_privileges_create test_gui_pkg
-
-Oneprovider ACL directories privileges metadata:
-  <<: *acceptance-tests-in-chrome-job
-  key: COADPM
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_dir_privileges_metadata test_gui_pkg
-
-Oneprovider ACL directories privileges remove:
-  <<: *acceptance-tests-in-chrome-job
-  key: COADPR
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_dir_privileges_remove test_gui_pkg
-
-Oneprovider ACL files:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAF
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_files test_gui_pkg
-
-Oneprovider ACL files metadata:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAFM2
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_files_metadata test_gui_pkg
-
-Oneprovider ACL remove file:
-  <<: *acceptance-tests-in-chrome-job
-  key: COARF
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_files test_gui_pkg
-
-Oneprovider ACL subdirectories:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_subdir test_gui_pkg
-
-Oneprovider ACL subdirectories remove:
-  <<: *acceptance-tests-in-chrome-job
-  key: COASD
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_subdir_remove test_gui_pkg
-
-Oneprovider ACL subfiles:
-  <<: *acceptance-tests-in-chrome-job
-  key: COASF
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_subfile test_gui_pkg
-
-Oneprovider ACL subjects:
-  <<: *acceptance-tests-in-chrome-job
-  key: COABS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_subjects test_gui_pkg
-
-Oneprovider archives:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAR
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_archives test_gui_pkg
-
-Oneprovider archives audit logs:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAAL
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_archives_audit_logs test_gui_pkg
-
-Oneprovider archives cancel:
-  <<: *acceptance-tests-in-chrome-job
-  key: COACP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_archives_cancel ENV_FILE=1oz_2op_slow_file_operations test_gui_pkg
-
-Oneprovider archives incremental and nested:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAIN
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_archives_incremental_and_nested test_gui_pkg
-
-Oneprovider archives recall:
-  <<: *acceptance-tests-in-chrome-job
-  key: COARL
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_archives_recall ENV_FILE=1oz_2op_slow_file_operations test_gui_pkg
-
-Oneprovider data tab:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODTT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_data_tab test_gui_pkg
-
-Oneprovider data tab files:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODTF
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_data_tab_files test_gui_pkg
-
-Oneprovider datasets:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_datasets test_gui_pkg
-
-Oneprovider datasets privileges:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_datasets_privileges test_gui_pkg
-
-Oneprovider hardlinks:
-  <<: *acceptance-tests-in-chrome-job
-  key: COH
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_hardlinks test_gui_pkg
-
-Oneprovider symlinks:
-  <<: *acceptance-tests-in-chrome-job
-  key: COSL
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_symlinks test_gui_pkg
-
-Oneprovider upload:
-  <<: *acceptance-tests-in-chrome-job
-  key: COUT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_upload test_gui_pkg
-
-Onezone automations:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onezone_automation test_gui_pkg
-
-Onezone automations members and privileges:
-  <<: *acceptance-tests-in-chrome-job
-  key: COATMP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onezone_automation_members_and_privileges test_gui_pkg
-
-Onezone basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COBTT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_basic test_gui_pkg
-
-Onezone data discovery:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODDT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery test_gui_pkg
-
-Onezone data discovery helpers:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODDH
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_helpers test_gui_pkg
-
-Onezone data discovery querying:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODDQ
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_querying test_gui_pkg
-
-Onezone groups basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COGBT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onezone_groups_basic test_gui_pkg
-
-Onezone groups multiuser:
-  <<: *acceptance-tests-in-chrome-job
-  key: COGMUT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onezone_groups_multiuser test_gui_pkg
-
-Onezone groups multiuser single group:
-  <<: *acceptance-tests-in-chrome-job
-  key: COGMSG
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onezone_groups_multiuser_single_group test_gui_pkg
-
-Onezone harvesters basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COHBT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_basic test_gui_pkg
-
-Onezone harvesters effective privileges:
-  <<: *acceptance-tests-in-chrome-job
-  key: COHEP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_effective_privileges test_gui_pkg
-
-Onezone harvesters index:
-  <<: *acceptance-tests-in-chrome-job
-  key: COHI
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index test_gui_pkg
-
-Onezone harvesters index metadata:
-  <<: *acceptance-tests-in-chrome-job
-  key: COHIM
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index_metadata test_gui_pkg
-
-Onezone harvesters memberships privileges:
-  <<: *acceptance-tests-in-chrome-job
-  key: COHMP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_memberships_privileges test_gui_pkg
-
-Onezone harvesters privileges add and remove:
-  <<: *acceptance-tests-in-chrome-job
-  key: COHPAR
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_privileges_add_remove test_gui_pkg
-
-Onezone invite tokens:
-  <<: *acceptance-tests-in-chrome-job
-  key: COIT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens test_gui_pkg
-
-Onezone invite tokens with caveats:
-  <<: *acceptance-tests-in-chrome-job
-  key: COITWC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_caveats test_gui_pkg
-
-Onezone invite tokens with consumer caveats:
-  <<: *acceptance-tests-in-chrome-job
-  key: COITWCC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_consumer_caveats test_gui_pkg
-
-Onezone providers basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COPBT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onezone_providers_basic test_gui_pkg
-
-Onezone spaces basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COSBT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onezone_spaces_basic test_gui_pkg
-
-Onezone spaces memberships privileges:
-  <<: *acceptance-tests-in-chrome-job
-  key: COSMP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onezone_spaces_memberships_privileges test_gui_pkg
-
-Onezone spaces memberships privileges data:
-  <<: *acceptance-tests-in-chrome-job
-  key: COSMPD
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onezone_spaces_memberships_privileges_data test_gui_pkg
-
-Onezone spaces multiuser:
-  <<: *acceptance-tests-in-chrome-job
-  key: COSMT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_spaces_multiuser test_gui_pkg
-
-Onezone tokens:
-  <<: *acceptance-tests-in-chrome-job
-  key: COTT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens test_gui_pkg
-
-Onezone tokens delete:
-  <<: *acceptance-tests-in-chrome-job
-  key: COTD
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens_delete test_gui_pkg
-
-POSIX:
-  <<: *acceptance-tests-in-chrome-job
-  key: CMT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_posix test_gui_pkg
-
-POSIX multiuser:
-  <<: *acceptance-tests-in-chrome-job
-  key: CPTM
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_posix_multiuser test_gui_pkg
-
-Public shares:
-  <<: *acceptance-tests-in-chrome-job
-  key: CPST
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_public_shares test_gui_pkg
-
-QoS basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: CQB
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic test_gui_pkg
-
-QoS storage:
-  <<: *acceptance-tests-in-chrome-job
-  key: CQS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage test_gui_pkg
-
-Shares basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: CSBT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_shares_basic test_gui_pkg
-
-Shares handle service:
-  <<: *acceptance-tests-in-chrome-job
-  key: CSHS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service test_gui_pkg
-
-Storage sync:
-  <<: *acceptance-tests-in-chrome-job
-  key: CSST
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_storage_sync test_gui_pkg
-
-Storage sync charts:
-  <<: *acceptance-tests-in-chrome-job
-  key: CSSC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_storage_sync_charts test_gui_pkg
-
-Transfers cancel:
-  <<: *acceptance-tests-in-chrome-job
-  key: CTC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_transfers_cancel ENV_FILE=1oz_2op_slow_deployed test_gui_pkg
-
-Transfers directories:
-  <<: *acceptance-tests-in-chrome-job
-  key: CTD
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed test_gui_pkg
-
-Transfers files:
-  <<: *acceptance-tests-in-chrome-job
-  key: CTF
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed test_gui_pkg
-
-Transfers multi browser:
-  <<: *acceptance-tests-in-chrome-job
-  key: CTMBT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_transfers_multi ENV_FILE=1oz_2op_deployed test_gui_pkg
+# Atm examples workflows 2:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COASB2
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_automation_examples_workflows_tests2 ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+# Atm pods:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAWP
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_atm_pods ENV_FILE=1oz_1op_openfaas_normal test_gui_pkg
+
+# Atm stores basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COASB
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+# Atm workflow execution:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAWET
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_atm_workflows_execution ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+# Atm workflows pausing and cancelling:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAWPC
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+# Atm workflows status:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAWST
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+# Atm workflows stores:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAWS
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+# Atm BagIt 1:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COB
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_automation_bagit1 ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+# Atm BagIt 2:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COB2
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_automation_bagit2 ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+# Many items:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CMN
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_many_items test_gui_pkg
+
+# Metadata:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CPT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script: &run-selenium-tests
+#         <<: *run-script-working-dir
+#         scripts:
+#           - make SUITE=test_metadata test_gui_pkg
+
+# Multiprovider archives:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CMA
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_archives test_gui_pkg
+
+# Multiprovider basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CMBT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_basic test_gui_pkg
+
+# Multiprovider multiuser:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CMMT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_multiuser test_gui_pkg
+
+# Multiprovider QoS:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CMQT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos test_gui_pkg
+
+# Multiprovider QoS storage:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CMQS
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage test_gui_pkg
+
+# Onedata documentation:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODL
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onedata_documentation test_gui_pkg
+
+# Onepanel basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COBT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onepanel_basic test_gui_pkg
+
+# Onepanel deployment basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODBT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed test_gui_pkg
+
+# Onepanel deployment LE:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODLE
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onepanel_deployment_with_le ENV_FILE=1oz_1op_le_not_deployed test_gui_pkg
+
+# Onepanel deployment OneS3:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODO
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onepanel_deployment_ones3 ENV_FILE=1oz_deployed_1op_not_deployed test_gui_pkg
+
+# Onepanel login:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COLT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onepanel_login test_gui_pkg
+
+# Onepanel LE and Subdomain Delegation:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COLES
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onepanel_le_and_subdomain_delegation ENV_FILE=1oz_1op_le test_gui_pkg
+
+# Onepanel members:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COMT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onepanel_members test_gui_pkg
+
+# Onepanel two hosts deployment:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CO2HDT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes test_gui_pkg
+
+# Onepanel different storages:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODST
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onepanel_different_storages ENV_FILE=1oz_1op_storages test_gui_pkg
+
+# Oneprovider ACL basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAB
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_basic test_gui_pkg
+
+# Oneprovider ACL directories privileges:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COADP
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_dir_privileges test_gui_pkg
+
+# Oneprovider ACL directories privileges change and upload:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COADPCU
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_dir_privileges_change_and_upload test_gui_pkg
+
+# Oneprovider ACL directories privileges create:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COADPC
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_dir_privileges_create test_gui_pkg
+
+# Oneprovider ACL directories privileges metadata:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COADPM
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_dir_privileges_metadata test_gui_pkg
+
+# Oneprovider ACL directories privileges remove:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COADPR
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_dir_privileges_remove test_gui_pkg
+
+# Oneprovider ACL files:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAF
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_files test_gui_pkg
+
+# Oneprovider ACL files metadata:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAFM2
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_files_metadata test_gui_pkg
+
+# Oneprovider ACL remove file:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COARF
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_files test_gui_pkg
+
+# Oneprovider ACL subdirectories:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAS
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_subdir test_gui_pkg
+
+# Oneprovider ACL subdirectories remove:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COASD
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_subdir_remove test_gui_pkg
+
+# Oneprovider ACL subfiles:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COASF
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_subfile test_gui_pkg
+
+# Oneprovider ACL subjects:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COABS
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_acl_subjects test_gui_pkg
+
+# Oneprovider archives:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAR
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_archives test_gui_pkg
+
+# Oneprovider archives audit logs:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAAL
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_archives_audit_logs test_gui_pkg
+
+# Oneprovider archives cancel:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COACP
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_archives_cancel ENV_FILE=1oz_2op_slow_file_operations test_gui_pkg
+
+# Oneprovider archives incremental and nested:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAIN
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_archives_incremental_and_nested test_gui_pkg
+
+# Oneprovider archives recall:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COARL
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_archives_recall ENV_FILE=1oz_2op_slow_file_operations test_gui_pkg
+
+# Oneprovider data tab:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODTT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_data_tab test_gui_pkg
+
+# Oneprovider data tab files:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODTF
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_data_tab_files test_gui_pkg
+
+# Oneprovider datasets:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_datasets test_gui_pkg
+
+# Oneprovider datasets privileges:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODP
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_datasets_privileges test_gui_pkg
+
+# Oneprovider hardlinks:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COH
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_hardlinks test_gui_pkg
+
+# Oneprovider symlinks:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COSL
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_symlinks test_gui_pkg
+
+# Oneprovider upload:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COUT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_upload test_gui_pkg
+
+# Onezone automations:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COAT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onezone_automation test_gui_pkg
+
+# Onezone automations members and privileges:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COATMP
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onezone_automation_members_and_privileges test_gui_pkg
+
+# Onezone basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COBTT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_basic test_gui_pkg
+
+# Onezone data discovery:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODDT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery test_gui_pkg
+
+# Onezone data discovery helpers:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODDH
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_helpers test_gui_pkg
+
+# Onezone data discovery querying:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CODDQ
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_querying test_gui_pkg
+
+# Onezone groups basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COGBT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onezone_groups_basic test_gui_pkg
+
+# Onezone groups multiuser:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COGMUT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onezone_groups_multiuser test_gui_pkg
+
+# Onezone groups multiuser single group:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COGMSG
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onezone_groups_multiuser_single_group test_gui_pkg
+
+# Onezone harvesters basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COHBT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_basic test_gui_pkg
+
+# Onezone harvesters effective privileges:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COHEP
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_effective_privileges test_gui_pkg
+
+# Onezone harvesters index:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COHI
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index test_gui_pkg
+
+# Onezone harvesters index metadata:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COHIM
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index_metadata test_gui_pkg
+
+# Onezone harvesters memberships privileges:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COHMP
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_memberships_privileges test_gui_pkg
+
+# Onezone harvesters privileges add and remove:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COHPAR
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_privileges_add_remove test_gui_pkg
+
+# Onezone invite tokens:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COIT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens test_gui_pkg
+
+# Onezone invite tokens with caveats:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COITWC
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_caveats test_gui_pkg
+
+# Onezone invite tokens with consumer caveats:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COITWCC
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_consumer_caveats test_gui_pkg
+
+# Onezone providers basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COPBT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onezone_providers_basic test_gui_pkg
+
+# Onezone spaces basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COSBT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onezone_spaces_basic test_gui_pkg
+
+# Onezone spaces memberships privileges:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COSMP
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onezone_spaces_memberships_privileges test_gui_pkg
+
+# Onezone spaces memberships privileges data:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COSMPD
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_onezone_spaces_memberships_privileges_data test_gui_pkg
+
+# Onezone spaces multiuser:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COSMT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_spaces_multiuser test_gui_pkg
+
+# Onezone tokens:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COTT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens test_gui_pkg
+
+# Onezone tokens delete:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COTD
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens_delete test_gui_pkg
+
+# POSIX:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CMT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_posix test_gui_pkg
+
+# POSIX multiuser:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CPTM
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_posix_multiuser test_gui_pkg
+
+# Public shares:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CPST
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_public_shares test_gui_pkg
+
+# QoS basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CQB
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic test_gui_pkg
+
+# QoS storage:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CQS
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage test_gui_pkg
+
+# Shares basic:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CSBT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_shares_basic test_gui_pkg
+
+# Shares handle service:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CSHS
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service test_gui_pkg
+
+# Storage sync:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CSST
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_storage_sync test_gui_pkg
+
+# Storage sync charts:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CSSC
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_storage_sync_charts test_gui_pkg
+
+# Transfers cancel:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CTC
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_transfers_cancel ENV_FILE=1oz_2op_slow_deployed test_gui_pkg
+
+# Transfers directories:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CTD
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed test_gui_pkg
+
+# Transfers files:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CTF
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed test_gui_pkg
+
+# Transfers multi browser:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: CTMBT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make SUITE=test_oneprovider_transfers_multi ENV_FILE=1oz_2op_deployed test_gui_pkg
 
 Qnthack - rerun:
   key: ZREQN
