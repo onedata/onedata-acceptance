@@ -70,7 +70,7 @@ checkout_getting_started:
 RECORDING_OPTION            ?= failed
 BROWSER                     ?= Chrome
 TIMEOUT			            ?= 600
-REPEATS                     ?= 1
+REPEATS                     ?= 5
 RERUNS                      ?= 1
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
@@ -91,7 +91,7 @@ endif
 
 test_gui:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	-k=${KEYWORDS} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
+	-k=${KEYWORDS} --timeout ${TIMEOUT} --reruns ${RERUNS} --repeats ${REPEATS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
 
 test_gui_pkg: test_gui
 test_gui_src: SOURCES = --sources
