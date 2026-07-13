@@ -65,6 +65,22 @@ stages:
         - _Static analysis
         - _Type_check
         - Many items
+        - Many items1
+        - Many items2
+        - Many items3
+        - Many items4
+        - Many items5
+        - Many items6
+        - Many items7
+        - Many items8
+        - Many items9
+        - Many items10
+        - Many items11
+        - Many items12
+        - Many items13
+        - Many items14
+        - Many items15
+        - Many items16
         # - Atm examples workflows 2
         # - Atm pods
         # - Atm stores basic
@@ -408,7 +424,7 @@ Many items: &acceptance-tests-in-chrome-job
     - minikube
   artifact-subscriptions: [ ]
 
-Many items:
+Many items1:
   <<: *acceptance-tests-in-chrome-job
   key: CMN1
   tasks:
@@ -423,7 +439,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items2:
   <<: *acceptance-tests-in-chrome-job
   key: CMN2
   tasks:
@@ -438,7 +454,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items3:
   <<: *acceptance-tests-in-chrome-job
   key: CMN3
   tasks:
@@ -453,7 +469,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items4:
   <<: *acceptance-tests-in-chrome-job
   key: CMN4
   tasks:
@@ -468,7 +484,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items5:
   <<: *acceptance-tests-in-chrome-job
   key: CMN5
   tasks:
@@ -483,7 +499,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items6:
   <<: *acceptance-tests-in-chrome-job
   key: CMN6
   tasks:
@@ -498,7 +514,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items7:
   <<: *acceptance-tests-in-chrome-job
   key: CMN7
   tasks:
@@ -513,7 +529,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items8:
   <<: *acceptance-tests-in-chrome-job
   key: CMN8
   tasks:
@@ -528,7 +544,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items9:
   <<: *acceptance-tests-in-chrome-job
   key: CMN9
   tasks:
@@ -543,7 +559,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items10:
   <<: *acceptance-tests-in-chrome-job
   key: CMN10
   tasks:
@@ -558,7 +574,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items11:
   <<: *acceptance-tests-in-chrome-job
   key: CMN11
   tasks:
@@ -573,7 +589,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items12:
   <<: *acceptance-tests-in-chrome-job
   key: CMN12
   tasks:
@@ -588,7 +604,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items13:
   <<: *acceptance-tests-in-chrome-job
   key: CMN13
   tasks:
@@ -603,7 +619,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items14:
   <<: *acceptance-tests-in-chrome-job
   key: CMN14
   tasks:
@@ -618,7 +634,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items15:
   <<: *acceptance-tests-in-chrome-job
   key: CMN15
   tasks:
@@ -633,7 +649,7 @@ Many items:
         scripts:
           - make SUITE=test_many_items test_gui_pkg
 
-Many items:
+Many items16:
   <<: *acceptance-tests-in-chrome-job
   key: CMN16
   tasks:
