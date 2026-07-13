@@ -61,6 +61,6 @@ def screens() -> list[int]:
     return [0, 1]
 
 
-# scenarios("../features/onezone/many_items/many_shares.feature")
-scenarios("../features/onezone/many_items/many_spaces.feature")
+scenarios("../features/onezone/many_items/many_shares.feature")
+# scenarios("../features/onezone/many_items/many_spaces.feature")
 # scenarios("../features/onezone/many_items/many_groups.feature")
