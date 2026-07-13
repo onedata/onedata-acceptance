@@ -23,19 +23,17 @@ from tests.utils.bdd_utils import parsers, wt
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) opens (?P<subpage>Data Discovery"
-        '|Spaces|Indices) page of "(?P<harvester_name>[^"]+)" harvester'
+        r'|Spaces|Indices) page of "(?P<harvester_name>[^"]+)" harvester'
     )
 )
 def open_discovery_subpage_of_harvester(
     selenium: SeleniumDrivers, browser_id: str, harvester_name: str, subpage: str
 ) -> None:
-    panel_name = "Discovery"
-    list_name = "harvesters"
     subpage = subpage.lower()
 
-    click_on_option_in_the_sidebar(selenium, browser_id, panel_name)
+    click_on_option_in_the_sidebar(selenium, browser_id, "Discovery")
     click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, list_name, harvester_name
+        selenium, browser_id, "harvesters", harvester_name
     )
     click_on_option_of_harvester_on_left_sidebar_menu(
         selenium, browser_id, harvester_name, subpage
