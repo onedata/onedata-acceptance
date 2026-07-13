@@ -65,6 +65,22 @@ stages:
         - _Static analysis
         - _Type_check
         - Many items
+        - Many items1
+        - Many items2
+        - Many items3
+        - Many items4
+        - Many items5
+        - Many items6
+        - Many items7
+        - Many items8
+        - Many items9
+        - Many items10
+        - Many items11
+        - Many items12
+        - Many items13
+        - Many items14
+        - Many items15
+        - Many items16
         # - Atm examples workflows 2
         # - Atm pods
         # - Atm stores basic
@@ -407,6 +423,246 @@ Many items: &acceptance-tests-in-chrome-job
   requirements:
     - minikube
   artifact-subscriptions: [ ]
+
+Many items1:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN1
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items2:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN2
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items3:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN3
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items4:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN4
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items5:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN5
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items6:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN6
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items7:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN7
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items8:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN8
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items9:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN9
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items10:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN10
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items11:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN11
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items12:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN12
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items13:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN13
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items14:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN14
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items15:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN15
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
+
+Many items16:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN16
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_pkg
 
 # Atm examples workflows 2:
 #   <<: *acceptance-tests-in-chrome-job
