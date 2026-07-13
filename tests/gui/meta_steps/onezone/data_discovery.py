@@ -14,15 +14,7 @@ import yaml
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
-    assert_data_discovery_page,
     click_button_on_data_disc_page,
-)
-from tests.gui.steps.onezone.harvesters.discovery import (
-    click_on_option_of_harvester_on_left_sidebar_menu,
-)
-from tests.gui.steps.onezone.spaces import (
-    click_element_on_lists_on_left_sidebar_menu,
-    click_on_option_in_the_sidebar,
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
@@ -178,30 +170,6 @@ def see_files_with_order(
     assert len(files_list) == len(data_dict)
     for pair in zip(files_list, data_dict):
         assert pair[0] == pair[1], "Files are not in order"
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>\w+) opens (?P<subpage>Data Discovery"
-        '|Spaces|Indices) page of "(?P<harvester_name>[^"]+)" harvester'
-    )
-)
-def open_discovery_subpage_of_harvester(
-    selenium: SeleniumDrivers, browser_id: str, harvester_name: str, subpage: str
-) -> None:
-    panel_name = "Discovery"
-    list_name = "harvesters"
-    subpage = subpage.lower()
-
-    click_on_option_in_the_sidebar(selenium, browser_id, panel_name)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, list_name, harvester_name
-    )
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, subpage
-    )
-    if subpage == "data discovery":
-        assert_data_discovery_page(selenium, browser_id)
 
 
 @wt(
