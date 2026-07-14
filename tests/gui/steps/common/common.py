@@ -267,15 +267,12 @@ def wait_for_sliding_panel_to_stop_moving(
 
 
 def wait_till_error_modal_stop_appearing(driver: SeleniumDrivers) -> None:
-    def error_modal_close_button(driver: SeleniumDrivers) -> ButtonPageObject:
+    def error_modal_close_button_fun(driver: SeleniumDrivers) -> ButtonPageObject:
         return Modals(driver).error.close
 
-    try:
-        wait_till_popup_or_modal_disappear(
-            driver, ".alert-global.modal.in .modal-dialog", error_modal_close_button
-        )
-    except TimeoutException as exc:
-        raise AssertionError("Error modal is still visible") from exc
+    wait_till_popup_or_modal_disappear(
+        driver, ".alert-global.modal.in .modal-dialog", error_modal_close_button_fun
+    )
 
 
 def try_click_without_throwing_error(action: Callable[[], object]) -> None:
@@ -305,7 +302,8 @@ def wait_till_popup_or_modal_disappear(
     )
 
     WebDriverWait(driver, WAIT_FRONTEND).until(
-        invisibility_of_element_located((By.CSS_SELECTOR, css_sel))
+        invisibility_of_element_located((By.CSS_SELECTOR, css_sel)),
+        message="Error modal is still visible",
     )
 
 
@@ -317,11 +315,11 @@ def wait_till_alert_info_popup_disappear(
     # If it appeared and was not closed, raise.
     css_sel = ".alert-info"
 
-    def alert_popup_close_button(
+    def alert_popup_close_button_fun(
         driver: WebDriver,
         alert_popup: AlertPopup,
     ) -> ButtonPageObject:
         return Popups(driver).get_alert_popup(alert_popup).close
 
-    partial_close_alert = partial(alert_popup_close_button, alert_popup=alert_popup)
+    partial_close_alert = partial(alert_popup_close_button_fun, alert_popup=alert_popup)
     wait_till_popup_or_modal_disappear(driver, css_sel, partial_close_alert)
