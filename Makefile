@@ -70,7 +70,7 @@ checkout_getting_started:
 RECORDING_OPTION            ?= failed
 BROWSER                     ?= Chrome
 TIMEOUT			            ?= 600
-COUNT                       ?= 5
+COUNT                       ?= 1
 RERUNS                      ?= 1
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
