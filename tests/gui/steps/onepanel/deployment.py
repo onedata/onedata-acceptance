@@ -203,7 +203,10 @@ def register_prov_using_register_btn(
     max_time = 120
     start_time = time.time()
     while time.time() - start_time < max_time:
-        try_click_without_throwing_error(lambda: step.register, timeout=1)
+        try_click_without_throwing_error(
+            lambda: step.register.click(),  # pylint: disable=unnecessary-lambda
+            timeout=1,
+        )
         if _check_error_modal_appeared_or_registration_finished(driver):
             return
         time.sleep(0.1)
@@ -233,41 +236,6 @@ def _is_element_visible_on_page(driver: WebDriver, css_sel: str) -> bool:
         return visibility_of_element_located((By.CSS_SELECTOR, css_sel))(driver)
     except NoSuchElementException:
         return False
-
-
-# @wt(
-#     parsers.parse(
-#         "user of {browser_id} tries to register provider using Register button in"
-#         " step 2 of deployment process in Onepanel"
-#     )
-# )
-# def wt_try_to_register_prov_using_register_btn(
-#     selenium: SeleniumDrivers, browser_id: str
-# ) -> None:
-#     driver = selenium[browser_id]
-#     btn = "Register"
-#     step = Onepanel(driver).content.deployment.step2
-#     btn = getattr(step, transform(btn))
-#     breakpoint()
-#     for _ in range(10):
-#         btn.click()
-#         breakpoint()
-#         try:
-#             if not _is_element_visible_on_page(
-#                 driver, ".alert-global.modal.in .modal-dialog"
-#             ):
-#                 break
-#             wait_till_error_modal_stop_appearing(driver)
-
-#         except TimeoutException:
-#             pass
-#     else:
-#         raise AssertionError(
-#             "Failed to register provider and close error modal after 6 trials"
-#         )
-
-#     # wait for provider registration, due to rare possibilities it can take some time
-#     wait_for_provider_registration(driver, ".submit-buttons-col .btn")
 
 
 def wait_for_provider_registration(
