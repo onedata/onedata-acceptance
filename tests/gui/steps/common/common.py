@@ -275,9 +275,11 @@ def wait_till_error_modal_stop_appearing(driver: SeleniumDrivers) -> None:
     )
 
 
-def try_click_without_throwing_error(action: Callable[[], object]) -> None:
+def try_click_without_throwing_error(
+    action: Callable[[], object], timeout=WAIT_FRONTEND // 2
+) -> None:
 
-    @repeat_failed(timeout=WAIT_FRONTEND // 2)
+    @repeat_failed(timeout=timeout)
     def perform(_action: Callable[[], object]) -> None:
         _action()
 
