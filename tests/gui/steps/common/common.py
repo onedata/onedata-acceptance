@@ -57,6 +57,20 @@ class VisibleItem(Protocol):
     def __getattr__(self, name: str) -> Any: ...
 
 
+def get_alert_css_selector(alert_popup: AlertPopup) -> str:
+    match alert_popup:
+        case AlertPopup.TOKEN_CREATED:
+            return ".ember-notify-show"
+
+        case (
+            AlertPopup.AUTHENTICATION_SUCCEEDED | AlertPopup.STORAGE_IMPORT_SCAN_STARTED
+        ):
+            return ".alert-info"
+
+        case _:
+            raise ValueError(f"Unsupported alert popup: {alert_popup}")
+
+
 def assert_n_items_in_items_list(
     page: GenericPage | Browser,
     selenium: dict[str, WebDriver],
@@ -315,7 +329,7 @@ def wait_till_alert_info_popup_disappear(
 ) -> None:
     # If popup doesn't appear, don't throw an error.
     # If it appeared and was not closed, raise.
-    css_sel = ".alert-info"
+    css_sel = get_alert_css_selector(alert_popup)
 
     def alert_popup_close_button_fun(
         driver: WebDriver,

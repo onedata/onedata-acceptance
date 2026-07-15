@@ -15,6 +15,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
+from tests.gui.steps.common.common import wait_till_alert_info_popup_disappear
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
@@ -57,6 +58,7 @@ from tests.gui.steps.onezone.tokens import (
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.generic import AlertPopup
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -264,6 +266,7 @@ def _create_token_of_type(
             selenium, browser_id, "Register Oneprovider"
         )
     click_create_token_button_in_create_token_page(selenium, browser_id)
+    wait_till_alert_info_popup_disappear(selenium[browser_id], AlertPopup.TOKEN_CREATED)
 
 
 @wt(
