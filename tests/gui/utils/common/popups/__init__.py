@@ -141,6 +141,7 @@ class Popups:
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
 
+    alert_info_popup = WebItem(".alert-info", cls=AlertInfoPopup)
     alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
     notify_popups = WebItemsSequence(".ember-notify-cn", cls=AlertInfoPopup)
 
