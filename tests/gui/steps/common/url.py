@@ -11,15 +11,11 @@ from typing import Union
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.expected_conditions import (
-    staleness_of,
-)
+from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import (
-    wait_till_alert_info_popup_disappear,
-)
+from tests.gui.steps.common.common import wait_till_alert_info_popup_disappear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.generic import AlertPopup, parse_seq, parse_url
 from tests.type_definitions import Hosts, SeleniumDrivers
