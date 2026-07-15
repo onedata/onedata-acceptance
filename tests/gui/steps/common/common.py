@@ -298,12 +298,14 @@ def wait_till_popup_or_modal_disappear(
         )
     except TimeoutException:
         return
+
     try_click_without_throwing_error(
         lambda: btn_handler(driver).click()  # pylint: disable=unnecessary-lambda
     )
 
     WebDriverWait(driver, WAIT_FRONTEND).until(
-        invisibility_of_element_located((By.CSS_SELECTOR, css_sel))
+        invisibility_of_element_located((By.CSS_SELECTOR, css_sel)),
+        message="Error modal is still visible",
     )
 
 
@@ -319,11 +321,11 @@ def wait_till_alert_info_popup_disappear(
         else ".alert-info"
     )
 
-    def alert_popup_close_button(
+    def alert_popup_close_button_fun(
         driver: WebDriver,
         alert_popup: AlertPopup,
     ) -> ButtonPageObject:
         return Popups(driver).get_alert_popup(alert_popup).close
 
-    partial_close_alert = partial(alert_popup_close_button, alert_popup=alert_popup)
+    partial_close_alert = partial(alert_popup_close_button_fun, alert_popup=alert_popup)
     wait_till_popup_or_modal_disappear(driver, css_sel, partial_close_alert)
