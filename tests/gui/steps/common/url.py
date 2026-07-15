@@ -9,21 +9,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 from typing import Union
 
-from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.expected_conditions import (
-    invisibility_of_element_located,
-    staleness_of,
-    visibility_of_element_located,
-)
+from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import try_click_without_throwing_error
+from tests.gui.steps.common.common import wait_till_alert_info_popup_disappear
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Popups
-from tests.gui.utils.core.web_objects import ButtonPageObject
 from tests.gui.utils.generic import AlertPopup, parse_seq, parse_url
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -337,33 +330,6 @@ def wait_till_main_content_loaded(driver: WebDriver) -> None:
         By.CSS_SELECTOR, ".main-menu-content li.main-menu-item"
     )
     assert len(elems) > 0, "did not manage to load main page"
-
-
-def wait_till_alert_info_popup_disappear(
-    driver: WebDriver,
-    alert_popup: AlertPopup,
-) -> None:
-    # If popup don't appear don't throw error
-    # If appeared and not closed raise
-    css_sel = ".alert-info"
-    try:
-        WebDriverWait(driver, WAIT_FRONTEND).until(
-            visibility_of_element_located((By.CSS_SELECTOR, css_sel))
-        )
-    except TimeoutException:
-        pass
-    else:
-
-        def alert_popup_close_button() -> ButtonPageObject:
-            return Popups(driver).get_alert_popup(alert_popup).close
-
-        try_click_without_throwing_error(
-            lambda: alert_popup_close_button().click()
-        )  # pylint: disable=unnecessary-lambda
-
-        WebDriverWait(driver, WAIT_FRONTEND).until(
-            invisibility_of_element_located((By.CSS_SELECTOR, css_sel))
-        )
 
 
 @wt(parsers.parse("if {client} is web GUI, {user} refreshes site"))

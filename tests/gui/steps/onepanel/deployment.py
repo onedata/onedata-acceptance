@@ -8,12 +8,22 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import cast
+from typing import Optional, cast
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.expected_conditions import (
+    invisibility_of_element_located,
+    visibility_of_element_located,
+)
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import (
+    try_click_without_throwing_error,
+    wait_till_error_modal_stop_appearing,
+)
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
 from tests.gui.utils.generic import parse_seq, transform
@@ -181,25 +191,60 @@ def wt_click_on_btn_in_deployment_step(
 @wt(
     parsers.parse(
         "user of {browser_id} tries to register provider using Register button in"
-        " {step} of deployment process in Onepanel"
+        " step 2 of deployment process in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
-def wt_try_to_register_prov_using_register_btn(
-    selenium: SeleniumDrivers, browser_id: str, step: str
+def register_prov_using_register_btn(
+    selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    btn = "Register"
-    step = getattr(Onepanel(driver).content.deployment, step.lower().replace(" ", ""))
-    getattr(step, transform(btn)).click()
+    step = Onepanel(driver).content.deployment.step2
 
-    # if error modal occurred close it and repeat function execution
+    max_time = 120
+    start_time = time.time()
+    while time.time() - start_time < max_time:
+        try_click_without_throwing_error(
+            lambda: step.register.click(),  # pylint: disable=unnecessary-lambda
+            timeout=1,
+        )
+        if _check_error_modal_appeared_or_registration_finished(driver):
+            return
+        time.sleep(0.1)
+    raise AssertionError("Registering provider failed after 120s")
+
+
+def _check_error_modal_appeared_or_registration_finished(
+    driver: WebDriver,
+) -> Optional[bool]:
+    error_modal_css_sel = ".alert-global.modal.in .modal-dialog"
+    sidebar_css_sel = ".one-sidebar.sidebar-clusters"
+
+    if _is_element_visible_on_page(driver, error_modal_css_sel):  # error modal appeared
+        wait_till_error_modal_stop_appearing(driver)
+        return False
+
+    if _is_element_visible_on_page(
+        driver, sidebar_css_sel
+    ):  # sidebar is visible, it means we closed deployment page
+        return True
+
+    return None  # neither error modal appeared nor the deployment page closed
+
+
+def _is_element_visible_on_page(driver: WebDriver, css_sel: str) -> bool:
     try:
-        error_modal = Modals(driver).error
-        error_modal.close.click()
-        raise AssertionError("Did not menage to register provider")
-    except RuntimeError:
-        pass
+        return visibility_of_element_located((By.CSS_SELECTOR, css_sel))(driver)
+    except NoSuchElementException:
+        return False
+
+
+def wait_for_provider_registration(
+    driver: WebDriver, register_btn_css_sel: str
+) -> None:
+    WebDriverWait(driver, 120).until(
+        invisibility_of_element_located((By.CSS_SELECTOR, register_btn_css_sel)),
+        "Provider registration is still in progress after 120s",
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
