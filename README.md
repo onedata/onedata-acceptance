@@ -103,7 +103,7 @@ Example of a 2 provider deployment with specified onezone and oneprovider images
 
 # Useful test_run parameters
 
-* `--count N` - repeats every selected test `N` times on the same deployment.
+* `--count N` - repeats every test in the suite `N` times on the same deployment.
 * `--reruns N` - reruns failed tests up to `N` times. Unlike `--count`, successful
   tests are not repeated.
 * `--timeout SECONDS` - sets the timeout used while waiting for the Onedata
