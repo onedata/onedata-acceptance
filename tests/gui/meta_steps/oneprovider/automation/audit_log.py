@@ -606,24 +606,27 @@ def assert_each_element_checksum_content_in_store(
 
 
 def check_visual_in_store_details_modal(
-    modal: StoreDetails, variable_type: str, item_list: str, store_name: str
+    modal: StoreDetails,
+    variable_type: str,
+    serialized_items: str,
+    store_name: str,
 ) -> None:
     if variable_type == "booleans":
-        boolean_items = cast(list[bool], json.loads(item_list))
+        boolean_items = cast(list[bool], json.loads(serialized_items))
         compare_booleans_in_store_details_modal(boolean_items, modal)
     elif variable_type == "boolean":
         err_msg = (
             f"{modal.raw_view} in store details modal does not match"
-            f" expected {item_list}"
+            f" expected {serialized_items}"
         )
-        assert modal.raw_view == item_list, err_msg
+        assert modal.raw_view == serialized_items, err_msg
     else:
         parsed_items = cast(
             list[AuditLogValue] | AuditLogContent,
             (
-                literal_eval(item_list)
+                literal_eval(serialized_items)
                 if variable_type != "files"
-                else parse_seq(item_list)
+                else parse_seq(serialized_items)
             ),
         )
         for elem in modal.store_content_list:
@@ -659,14 +662,14 @@ def check_visual_in_store_details_modal(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees following "
-        r'(?P<variable_type>.*?) represented by "(?P<item_list>.*?)" in '
+        r'(?P<variable_type>.*?) represented by "(?P<serialized_items>.*?)" in '
         r'content in "(?P<store_name>.*?)" store details modal'
     )
 )
 def assert_elements_in_store_details_modal(
     browser_id: str,
     selenium: SeleniumDrivers,
-    item_list: str,
+    serialized_items: str,
     store_name: str,
     variable_type: str,
 ) -> None:
@@ -674,13 +677,15 @@ def assert_elements_in_store_details_modal(
 
     if variable_type == "string":
         compare_string_in_store_details_modal(
-            item_list, modal, variable_type, store_name
+            serialized_items, modal, variable_type, store_name
         )
     elif variable_type == "array":
-        compare_array_in_store_details_modal(modal, item_list)
+        compare_array_in_store_details_modal(modal, serialized_items)
 
     else:
-        check_visual_in_store_details_modal(modal, variable_type, item_list, store_name)
+        check_visual_in_store_details_modal(
+            modal, variable_type, serialized_items, store_name
+        )
 
 
 @wt(

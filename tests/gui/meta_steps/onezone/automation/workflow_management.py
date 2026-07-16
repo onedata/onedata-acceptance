@@ -321,7 +321,7 @@ def _execute_workflow_with_input_config(
         r"user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
         r' of "(?P<workflow>.*)" and waits extended time for workflow '
         r"to finish, using (?P<data_type>.*) as initial "
-        r'value: "(?P<item_list>.*)" in "(?P<space>.*)" '
+        r'value: "(?P<serialized_value>.*)" in "(?P<space>.*)" '
         r"space"
     )
 )
@@ -331,7 +331,7 @@ def execute_workflow_and_wait(
     space: str,
     ordinal: str,
     workflow: str,
-    item_list: str,
+    serialized_value: str,
     data_type: str,
 ) -> None:
 
@@ -341,7 +341,7 @@ def execute_workflow_and_wait(
         space,
         ordinal,
         workflow,
-        item_list,
+        serialized_value,
         data_type,
     )
 
@@ -353,7 +353,7 @@ def execute_workflow_and_wait(
     parsers.re(
         r"user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
         r' of "(?P<workflow>.*)", using (?P<data_type>.*) as initial '
-        r'value: "(?P<item_list>.*)" in "(?P<space>.*)" '
+        r'value: "(?P<serialized_value>.*)" in "(?P<space>.*)" '
         r"space"
     )
 )
@@ -363,7 +363,7 @@ def execute_workflow(
     space: str,
     ordinal: str,
     workflow: str,
-    item_list: str,
+    serialized_value: str,
     data_type: str,
 ) -> None:
     spaces = "spaces"
@@ -380,7 +380,7 @@ def execute_workflow(
     # wait a moment for workflow revision to open
     time.sleep(1)
     if "range" in data_type:
-        range_items = literal_eval(item_list)
+        range_items = literal_eval(serialized_value)
         if isinstance(range_items, list):
             for item in range_items:
                 choose_range_as_initial_workflow_value(
@@ -391,18 +391,18 @@ def execute_workflow(
                 selenium, browser_id, cast(dict[str, object], range_items), False
             )
     elif "number" in data_type:
-        items = literal_eval(item_list)
+        items = literal_eval(serialized_value)
         if isinstance(items, list):
             for number in items:
                 numbers = get_input_element(driver, "numbers_input")
                 cast(NumberInput, numbers[len(numbers) - 1]).input = str(number)
         else:
             numbers = OPLoggedIn(driver).automation_page.numbers_input
-            cast(NumberInput, numbers[len(numbers) - 1]).input = str(item_list)
+            cast(NumberInput, numbers[len(numbers) - 1]).input = str(serialized_value)
     elif "string" in data_type:
-        OPLoggedIn(driver).automation_page.string_input.input = item_list
+        OPLoggedIn(driver).automation_page.string_input.input = serialized_value
     elif "boolean" in data_type:
-        items = json.loads(item_list)
+        items = json.loads(serialized_value)
         if isinstance(items, list):
             for boolean in items:
                 booleans = get_input_element(driver, "booleans_input")
@@ -412,7 +412,7 @@ def execute_workflow(
         choose_file_as_initial_workflow_value(
             selenium,
             browser_id,
-            item_list,
+            serialized_value,
             data_type,
         )
 
