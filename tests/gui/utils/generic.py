@@ -441,16 +441,18 @@ PageName = Literal[
 ]
 
 
-# A quoted element, including spaces and special characters.
+# A quoted element, including spaces and special characters, e.g. "dev-oneprovider-0"
 QUOTED_ELEMENT = r'"[^"\n]+"'
 
-# A single unquoted element without separators or whitespace.
+# A single unquoted element without separators or whitespace, e.g. new_space1
 UNQUOTED_ELEMENT = r'[^,\[\]"\s]+'
 
-# An element inside a sequence can be quoted or contain unquoted whitespace.
+# An element inside a sequence can be quoted or contain unquoted whitespace,
+# see BRACKETED_SEQUENCE
 SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
 
-# A comma-separated sequence of elements enclosed in square brackets.
+# A comma-separated sequence of elements enclosed in square brackets,
+# e.g. ["file1", "file2", "file3"] or [1 2 3]
 BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}" rf"(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
 
 ELEMENTS_SEQUENCE_PATTERN = (
