@@ -436,8 +436,7 @@ def assert_token_on_tokens_list(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) succeeds to type "(?P<token_name>.*?)" to token'
-        r" name "
-        r'input box in "Create new token" view'
+        r' name input box in "Create new token" view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
