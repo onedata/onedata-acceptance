@@ -29,4 +29,4 @@ Feature: Oneprovider transfers basic functionality
   Examples:
     |columns_list                             | expected_columns_list                       |
     |["User", "Type & Destination", "Status"] | ["User", "Type & Destination", "Status"]     |
-    |["Type & Destination", "Processed"]      | ["Type & Destination", "Processed", "Status] |
+    |["Type & Destination", "Processed"]      | ["Type & Destination", "Processed", "Status"] |

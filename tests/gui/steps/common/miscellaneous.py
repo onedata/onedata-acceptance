@@ -95,7 +95,7 @@ def wt_assert_title_contains(
 @wt(
     parsers.re(
         "users? of (?P<browser_id_list>.*) clicks on "
-        '"(?P<btn_name>.+?)" button in "(?P<popup>.+?)" popup'
+        '"(?P<btn>.+?)" button in "(?P<popup>.+?)" popup'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -440,15 +440,18 @@ PageName = Literal[
 ]
 
 
+# A quoted element, including spaces and special characters.
+QUOTED_ELEMENT = r'"[^"\n]+"'
+
+# A single unquoted element without separators or whitespace.
+UNQUOTED_ELEMENT = r'[^,\[\]"\s]+'
+
+# An element inside a sequence can be quoted or contain unquoted whitespace.
+SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
+
+# A comma-separated sequence of elements enclosed in square brackets.
+BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}" rf"(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
+
 ELEMENTS_SEQUENCE_PATTERN = (
-    r"(?:"
-    # A quoted element, including spaces and special characters
-    r'"[^"\r\n]+"'
-    r"|"
-    # A single unquoted element without separators or whitespace
-    r'[^,\[\]"\s]+'
-    r"|"
-    # A comma-separated sequence of quoted or unquoted elements in square brackets
-    r"\[\s*[^,\]\r\n]+(?:\s*,\s*[^,\]\r\n]+)*\s*\]"
-    r")"
+    rf"(?:{QUOTED_ELEMENT}|{UNQUOTED_ELEMENT}|{BRACKETED_SEQUENCE})"
 )
