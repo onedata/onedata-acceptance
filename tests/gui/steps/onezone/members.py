@@ -43,7 +43,7 @@ from tests.gui.utils.onezone.groups.groups_page import GroupsPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import element_has_class, repeat_failed
 
 MENU_ELEM_TO_TAB_NAME = {
     "space": "data",
@@ -83,7 +83,7 @@ def get_privilege_tree(
     page = _find_members_page(driver, where)
     elem = getattr(page, list_type).items[member_name]
 
-    if "active" not in elem.web_elem.get_attribute("class"):
+    if not element_has_class(elem.web_elem, "active"):
         elem.web_elem.click()
 
     WebDriverWait(driver, WAIT_FRONTEND).until(
