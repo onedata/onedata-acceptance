@@ -23,7 +23,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
 
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -251,7 +251,9 @@ class ArchiveHeader(PageObject):
     back_to_dataset_page = Button(".content-back-arrow-icon")
 
 
-class DataPage(GenericPage):
+class DataPage(SidebarPanelPage):
+    panel_name = "data"
+
     create_space_button = Button(".one-sidebar-toolbar-button .oneicon-add-filled")
 
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")
@@ -277,6 +279,7 @@ class DataPage(GenericPage):
     welcome_page = WebItem(".main-content", cls=WelcomePage)
     harvesters_page = WebItem(".main-content", cls=HarvestersPage)
     dataset_header = WebItem(".main-content", cls=DatasetHeader)
+    archive_header = WebItem(".main-content", cls=ArchiveHeader)
     configuration_page = WebItem(".main-content", cls=SpaceConfigurationPage)
     space_marketplace_page = WebItem(".main-content", cls=SpaceMarketplacePage)
 

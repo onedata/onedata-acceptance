@@ -55,9 +55,14 @@ def _assert_transfer(
             transfer_val = getattr(transfer, key.replace(" ", "_"))
         except (RuntimeError, NoSuchElementException):
             # if key differs from column name, consider creating suitable dict
-            cols = [key.replace(" ", "_")]
-            _select_columns_to_be_visible_in_transfers(selenium, browser_id, cols)
-            transfer_val = getattr(transfer, key.replace(" ", "_"))
+            key = key.replace(" ", "_")
+            if key in ["type", "destination"]:
+                _select_columns_to_be_visible_in_transfers(
+                    selenium, browser_id, ["type_&_destination"]
+                )
+            else:
+                _select_columns_to_be_visible_in_transfers(selenium, browser_id, [key])
+            transfer_val = getattr(transfer, key)
         try:
             assert transfer_val == str(
                 val
@@ -87,7 +92,7 @@ def _assert_transfer(
         r" in ended transfers:\n(?P<desc>(.|\s)*)"
     )
 )
-@repeat_failed(interval=0.5, timeout=240)
+@repeat_failed(interval=0.5, timeout=30)
 def assert_ended_transfer(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -383,7 +388,7 @@ def _select_columns_to_be_visible_in_transfers(
 ) -> None:
     option_select = "select"
     option_unselect = "unselect"
-    columns = [column.lower() for column in columns]
+    columns = [column.lower().replace(" ", "_") for column in columns]
     transfer = OPLoggedIn(selenium[browser_id]).transfers
     transfer.configure_columns.click()
     columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
@@ -391,7 +396,8 @@ def _select_columns_to_be_visible_in_transfers(
         Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
     for column in columns_menu:
-        if column.name.lower() in columns:
+        column_name = column.name.lower().replace(" ", "_")
+        if column_name in columns:
             getattr(columns_menu[column.name], option_select)()
         else:
             getattr(columns_menu[column.name], option_unselect)()
@@ -403,7 +409,7 @@ def _select_columns_to_be_visible_in_transfers(
 def _get_transfers_and_enable_initial_cols(
     browser_id: str, selenium: SeleniumDrivers
 ) -> _TransfersTab:
-    columns = ["user", "type", "status"]
+    columns = ["user", "type & destination", "status"]
     _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
     return OPLoggedIn(selenium[browser_id]).transfers
 

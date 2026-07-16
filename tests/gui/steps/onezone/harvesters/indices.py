@@ -46,7 +46,7 @@ def click_on_member_menu_option_in_harvester_indices_page(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["discovery"].indices_page.menu_button.click()
+    OZLoggedIn(driver).discovery.indices_page.menu_button.click()
     Popups(driver).menu_popup_with_text.menu[text]()
 
 
@@ -60,7 +60,7 @@ def type_index_name_to_input_field_in_indices_page(
     selenium: SeleniumDrivers, browser_id: str, index_name: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["discovery"].indices_page.name_input = index_name
+    OZLoggedIn(driver).discovery.indices_page.name_input = index_name
 
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in indices page"))
@@ -69,7 +69,7 @@ def click_create_button_in_indices_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["discovery"].indices_page.create_button()
+    OZLoggedIn(driver).discovery.indices_page.create_button()
 
 
 @wt(
@@ -82,7 +82,7 @@ def assert_index_has_appeared_in_indices_page(
     selenium: SeleniumDrivers, browser_id: str, index_name: str
 ) -> None:
     driver = selenium[browser_id]
-    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver).discovery.indices_page.indices_list
     assert index_name in indices_list, f'index "{index_name}" not found'
 
 
@@ -96,7 +96,7 @@ def expand_index_record_in_indices_page(
     selenium: SeleniumDrivers, browser_id: str, index_name: str | int
 ) -> None:
     driver = selenium[browser_id]
-    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver).discovery.indices_page.indices_list
     indices_list[index_name].click()
 
 
@@ -110,7 +110,7 @@ def assert_used_by_gui_tag_on_indices_page(
     selenium: SeleniumDrivers, browser_id: str, index: str | int
 ) -> None:
     driver = selenium[browser_id]
-    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver).discovery.indices_page.indices_list
     assert indices_list[
         index
     ].is_used_by_gui_tag_visible(), f"Used by GUI tag is not visible for {index}"
@@ -128,7 +128,7 @@ def assert_progress_in_harvesting(
 ) -> None:
     driver = selenium[browser_id]
     value = "100%"
-    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver).discovery.indices_page.indices_list
     progress_values = indices_list[index_name].progress_values
 
     for progress in progress_values:
@@ -174,7 +174,7 @@ def change_indices_on_gui_plugin_tab(
     selenium: SeleniumDrivers, browser_id: str, index_name: str
 ) -> None:
     driver = selenium[browser_id]
-    gui_plugin_tab = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
+    gui_plugin_tab = OZLoggedIn(driver).discovery.configuration_page.gui_plugin_tab
     gui_plugin_tab.indices_edit()
     gui_plugin_tab.choose_indices_expand()
     Popups(driver).power_select.choose_item(index_name)

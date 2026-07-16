@@ -6,17 +6,22 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from collections.abc import Callable, Sequence
+from contextlib import suppress
+from functools import partial
 from typing import Any, Protocol, cast
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.expected_conditions import (
+    invisibility_of_element_located,
+    visibility_of_element_located,
+)
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.steps.common.url import wait_till_popup_or_modal_disappear
-from tests.gui.utils import OZLoggedIn
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
     ArchiveAuditLog,
@@ -25,7 +30,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
     ArchiveRecallInformation,
 )
 from tests.gui.utils.core.web_objects import ButtonPageObject
-from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.generic import AlertPopup, ListElement, transform
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.type_definitions import SeleniumDrivers
@@ -50,6 +55,20 @@ class VisibleItem(Protocol):
     web_elem: WebElement
 
     def __getattr__(self, name: str) -> Any: ...
+
+
+def get_alert_css_selector(alert_popup: AlertPopup) -> str:
+    match alert_popup:
+        case AlertPopup.TOKEN_CREATED:
+            return ".ember-notify-show"
+
+        case (
+            AlertPopup.AUTHENTICATION_SUCCEEDED | AlertPopup.STORAGE_IMPORT_SCAN_STARTED
+        ):
+            return ".alert-info"
+
+        case _:
+            raise ValueError(f"Unsupported alert popup: {alert_popup}")
 
 
 def assert_n_items_in_items_list(
@@ -103,11 +122,11 @@ def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
 
 def _get_page(where: str, driver: WebDriver) -> Any:
     if where == "shares":
-        return OZLoggedIn(driver)["shares"]
+        return OZLoggedIn(driver).shares
     if where == "groups":
-        return OZLoggedIn(driver)["groups"]
+        return OZLoggedIn(driver).groups
     if where == "spaces":
-        return OZLoggedIn(driver)["data"]
+        return OZLoggedIn(driver).data
     raise AssertionError(f"page {where} not found")
 
 
@@ -262,14 +281,61 @@ def wait_for_sliding_panel_to_stop_moving(
 
 
 def wait_till_error_modal_stop_appearing(driver: SeleniumDrivers) -> None:
-    def error_modal_close_button(driver: SeleniumDrivers) -> ButtonPageObject:
+    def error_modal_close_button_fun(driver: SeleniumDrivers) -> ButtonPageObject:
         return Modals(driver).error.close
 
+    wait_till_popup_or_modal_disappear(
+        driver, ".alert-global.modal.in .modal-dialog", error_modal_close_button_fun
+    )
+
+
+def try_click_without_throwing_error(
+    action: Callable[[], object], timeout: float = WAIT_FRONTEND // 2
+) -> None:
+
+    @repeat_failed(timeout=timeout)
+    def perform(_action: Callable[[], object]) -> None:
+        _action()
+
+    with suppress(Exception):
+        perform(action)
+
+
+def wait_till_popup_or_modal_disappear(
+    driver: WebDriver,
+    css_sel: str,
+    btn_handler: Callable[[WebDriver], ButtonPageObject],
+) -> None:
     try:
-        wait_till_popup_or_modal_disappear(
-            driver=driver,
-            css_sel=".alert-global.modal.in .modal-dialog",
-            handler=error_modal_close_button,
+        WebDriverWait(driver, WAIT_FRONTEND).until(
+            visibility_of_element_located((By.CSS_SELECTOR, css_sel))
         )
-    except TimeoutException as exc:
-        raise AssertionError("Error modal is still visible") from exc
+    except TimeoutException:
+        return
+
+    try_click_without_throwing_error(
+        lambda: btn_handler(driver).click()  # pylint: disable=unnecessary-lambda
+    )
+
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        invisibility_of_element_located((By.CSS_SELECTOR, css_sel)),
+        message="Error modal is still visible",
+    )
+
+
+def wait_till_alert_info_popup_disappear(
+    driver: WebDriver,
+    alert_popup: AlertPopup,
+) -> None:
+    # If popup doesn't appear, don't throw an error.
+    # If it appeared and was not closed, raise.
+    css_sel = get_alert_css_selector(alert_popup)
+
+    def alert_popup_close_button_fun(
+        driver: WebDriver,
+        alert_popup: AlertPopup,
+    ) -> ButtonPageObject:
+        return Popups(driver).get_alert_popup(alert_popup).close
+
+    partial_close_alert = partial(alert_popup_close_button_fun, alert_popup=alert_popup)
+    wait_till_popup_or_modal_disappear(driver, css_sel, partial_close_alert)

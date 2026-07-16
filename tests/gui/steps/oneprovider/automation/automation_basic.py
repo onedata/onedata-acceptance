@@ -376,7 +376,7 @@ def click_on_workflow_in_inventory_subpage(
     selenium: SeleniumDrivers, browser_id: str, ordinal: str, workflow: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["automation"]
+    page = OZLoggedIn(driver).automation
     revision = from_ordinal_number_to_int(ordinal) - 1
     page.workflows_page.workflows_list[workflow].revision_list[revision].click()
     # wait for page to open

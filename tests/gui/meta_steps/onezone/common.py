@@ -40,6 +40,7 @@ from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.gui.utils.onezone.members_subpage import MembershipRow
+from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -112,7 +113,9 @@ def login_using_gui(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def visit_op(selenium: SeleniumDrivers, browser_id: str, provider_name: str) -> None:
     driver = selenium[browser_id]
-    providers_panel = OZLoggedIn(driver).get_page_and_click("providers")
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(ProvidersPage)
+    providers_panel = oz_page.providers
     time.sleep(0.5)
     providers_panel[provider_name]()
     click_visit_provider(driver)
@@ -293,7 +296,7 @@ def search_for_members(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["profile"].profile()
+    OZLoggedIn(driver).profile.profile()
     Popups(driver).user_account_menu.options["Logout"].click()
 
 
@@ -303,7 +306,7 @@ def logout_from_onezone_emergency_panel(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    button = OZLoggedIn(driver)["profile"].logout.web_elem
+    button = OZLoggedIn(driver).profile.logout.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
 
 
@@ -317,7 +320,7 @@ def change_username(
     users: Users,
 ) -> None:
     driver = selenium[browser_id]
-    profile = OZLoggedIn(driver)["profile"]
+    profile = OZLoggedIn(driver).profile
     profile.profile()
     Popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_username()
@@ -337,7 +340,7 @@ def change_password(
 ) -> None:
     driver = selenium[browser_id]
     cur_passwd = users[username].password
-    profile = OZLoggedIn(driver)["profile"]
+    profile = OZLoggedIn(driver).profile
     profile.profile()
     Popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_password()

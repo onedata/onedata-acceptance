@@ -48,4 +48,4 @@ def click_group_on_groups_on_left_sidebar_menu(
     selenium: SeleniumDrivers, browser_id: str, group_name: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["groups"].groups_list[group_name].click()
+    OZLoggedIn(driver).groups.groups_list[group_name].click()

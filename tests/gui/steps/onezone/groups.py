@@ -32,7 +32,9 @@ from tests.utils.utils import repeat_failed
 def click_create_group_button_in_panel(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    OZLoggedIn(selenium[browser_id]).get_page_and_click("groups").create_group()
+    oz_page = OZLoggedIn(selenium[browser_id])
+    oz_page.open_panel(GroupsPage)
+    oz_page.groups.create_group()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into group name text field'))
@@ -40,7 +42,7 @@ def click_create_group_button_in_panel(
 def input_name_into_input_box_on_main_groups_page(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
-    OZLoggedIn(selenium[browser_id])["groups"].input_box.value = text
+    OZLoggedIn(selenium[browser_id]).groups.input_box.value = text
 
 
 @wt(parsers.parse("user of {browser_id} clicks on confirmation button"))
@@ -48,7 +50,7 @@ def input_name_into_input_box_on_main_groups_page(
 def confirm_name_input_on_main_groups_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    OZLoggedIn(selenium[browser_id])["groups"].input_box.confirm()
+    OZLoggedIn(selenium[browser_id]).groups.input_box.confirm()
 
 
 def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
@@ -77,7 +79,7 @@ def assert_group_exists(
         oz_page.open_panel(GroupsPage)
         groups_count = len(
             _find_groups(
-                OZLoggedIn(selenium[browser_id]).get_page_and_click("groups"),
+                oz_page.groups,
                 group,
             )
         )
@@ -93,7 +95,7 @@ def click_on_option_of_group_menu_on_left_sidebar_menu(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    page = OZLoggedIn(driver)["groups"]
+    page = OZLoggedIn(driver).groups
     page.groups_list[group_name]()
     getattr(page.groups_list[group_name], transform(option))()
 
@@ -101,7 +103,7 @@ def click_on_option_of_group_menu_on_left_sidebar_menu(
 @wt(parsers.parse("user of {browser_id} sees that create group button is inactive"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) -> None:
-    page = OZLoggedIn(selenium[browser_id])["groups"]
+    page = OZLoggedIn(selenium[browser_id]).groups
     assert not page.input_box.confirm.is_enabled(), '"Create group" button is enabled'
 
 
@@ -115,7 +117,9 @@ def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) ->
 def go_to_group_subpage(
     selenium: SeleniumDrivers, browser_id: str, group: str, subpage: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
+    oz_page = OZLoggedIn(selenium[browser_id])
+    oz_page.open_panel(GroupsPage)
+    page = oz_page.groups
     page.groups_list[group]()
     if subpage != "main":
         getattr(page.groups_list[group], subpage)()
@@ -126,7 +130,7 @@ def go_to_group_subpage(
 def assert_error_page_appeared(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["groups"]
+    page = OZLoggedIn(selenium[browser_id]).groups
     assert page.main_page.error_label == text, f'page with text "{text}" not found'
 
 
@@ -151,8 +155,8 @@ def click_on_group_trigger(
 ) -> None:
     driver = selenium[browser_id]
     (
-        OZLoggedIn(driver)["groups"]
-        .main_page.hierarchy.groups[group_name]
+        OZLoggedIn(driver)
+        .groups.main_page.hierarchy.groups[group_name]
         .click_group_menu_button(driver)
     )
 
@@ -173,8 +177,8 @@ def click_on_group_relation_trigger(
 ) -> None:
     driver = selenium[browser_id]
     (
-        OZLoggedIn(driver)["groups"]
-        .main_page.hierarchy.groups[group_name]
+        OZLoggedIn(driver)
+        .groups.main_page.hierarchy.groups[group_name]
         .click_relation_menu_button(driver, relation)
     )
 
@@ -229,7 +233,7 @@ def assert_list_of_children_contains_group(
     relation_name = "children" if relation == "child" else "parents"
 
     groups = getattr(
-        OZLoggedIn(selenium[browser_id])["groups"].main_page.hierarchy, relation_name
+        OZLoggedIn(selenium[browser_id]).groups.main_page.hierarchy, relation_name
     )
     if option == "sees":
         assert group_name in groups
@@ -246,11 +250,7 @@ def assert_list_of_children_contains_group(
 def click_show_parent_groups_in_hierarchy_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    (
-        OZLoggedIn(selenium[browser_id])[
-            "groups"
-        ].main_page.hierarchy.show_parent_groups()
-    )
+    (OZLoggedIn(selenium[browser_id]).groups.main_page.hierarchy.show_parent_groups())
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" error on groups page'))
@@ -258,7 +258,7 @@ def click_show_parent_groups_in_hierarchy_page(
 def assert_error_detail_text(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["groups"]
+    page = OZLoggedIn(selenium[browser_id]).groups
     assert text in page.main_page.error_header, f'page with text "{text}" not found'
 
 
@@ -268,7 +268,7 @@ def assert_user_sees_group_page(
     selenium: SeleniumDrivers, browser_id: str, group_name: str
 ) -> None:
     driver = selenium[browser_id]
-    group_name_on_page = OZLoggedIn(driver)["groups"].selected_group_name
+    group_name_on_page = OZLoggedIn(driver).groups.selected_group_name
     err_msg = f"expected group name {group_name}, found {group_name_on_page}"
     assert group_name_on_page == group_name, err_msg
 
@@ -286,7 +286,7 @@ def assert_group_in_groups_page(
     driver = selenium[browser_id]
 
     group_headers = get_visible_items_list(
-        OZLoggedIn(driver)["groups"], ListElement.GROUPS_HEADERS, "name"
+        OZLoggedIn(driver).groups, ListElement.GROUPS_HEADERS, "name"
     )
 
     header = [header for header in group_headers if header.name == group_name]

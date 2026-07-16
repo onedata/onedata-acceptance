@@ -25,7 +25,7 @@ from tests.utils.utils import repeat_failed
 def click_on_btn_for_user_full_name_edit_box_in_oz(
     selenium: SeleniumDrivers, browser_id: str, btn: str
 ) -> None:
-    getattr(OZLoggedIn(selenium[browser_id])["profile"].edit_box, btn).click()
+    getattr(OZLoggedIn(selenium[browser_id]).profile.edit_box, btn).click()
 
 
 @wt(
@@ -37,7 +37,7 @@ def click_on_btn_for_user_full_name_edit_box_in_oz(
 def type_text_into_user_full_name_edit_box_in_oz(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
-    OZLoggedIn(selenium[browser_id])["profile"].edit_box.value = text
+    OZLoggedIn(selenium[browser_id]).profile.edit_box.value = text
 
 
 @wt(
@@ -50,7 +50,7 @@ def type_text_into_user_full_name_edit_box_in_oz(
 def activate_user_full_name_edit_box_in_oz(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    OZLoggedIn(selenium[browser_id])["profile"].rename_full_name()
+    OZLoggedIn(selenium[browser_id]).profile.rename_full_name()
 
 
 @wt(
@@ -63,7 +63,7 @@ def activate_user_full_name_edit_box_in_oz(
 def assert_correct_usr_full_name_in_oz(
     selenium: SeleniumDrivers, browser_id: str, expected_full_name: str
 ) -> None:
-    displayed_full_name = OZLoggedIn(selenium[browser_id])["profile"].full_name
+    displayed_full_name = OZLoggedIn(selenium[browser_id]).profile.full_name
     err_msg = (
         f'expected "{expected_full_name}" as user full name, but instead'
         f' displayed is "{displayed_full_name}" in USER FULL NAME oz panel'

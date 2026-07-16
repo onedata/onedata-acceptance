@@ -16,7 +16,7 @@ from tests.gui.utils import OZLoggedIn, Popups, PrivacyPolicy, TermsOfUse
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import transform
-from tests.gui.utils.onezone.clusters_page import MenuItem
+from tests.gui.utils.onezone.clusters_page import ClustersPage, MenuItem
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -28,16 +28,16 @@ def click_button_in_cluster_page(
     selenium: SeleniumDrivers, browser_id: str, button: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(
-        OZLoggedIn(driver).get_page_and_click("clusters"), transform(button)
-    ).click()
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(ClustersPage)
+    getattr(oz_page.clusters, transform(button)).click()
 
 
 @wt(parsers.parse("user of {browser_id} copies registration token from clusters page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_registration_cluster_token(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["clusters"].token_page.copy()
+    OZLoggedIn(driver).clusters.token_page.copy()
 
 
 @wt(
@@ -50,7 +50,7 @@ def click_docs_link_in_clusters_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["clusters"].token_page.onedatify_documentation.click()
+    OZLoggedIn(driver).clusters.token_page.onedatify_documentation.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{record}" in clusters menu'))
@@ -65,7 +65,9 @@ def assert_record_in_clusters_menu(
 
 def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence:
     driver = selenium[browser_id]
-    return OZLoggedIn(driver).get_page_and_click("clusters").menu
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(ClustersPage)
+    return oz_page.clusters.menu
 
 
 def _get_cluster_record(
@@ -100,7 +102,7 @@ def assert_subpage_in_cluster_page(
     selenium: SeleniumDrivers, browser_id: str, record: str, hosts: Hosts
 ) -> None:
     driver = selenium[browser_id]
-    page_name = OZLoggedIn(driver)["clusters"].page_name
+    page_name = OZLoggedIn(driver).clusters.page_name
     record_name = hosts[record]["name"]
     err_msg = f"user does not see {record} page in Clusters page"
     assert page_name == record_name, err_msg
@@ -112,7 +114,7 @@ def click_option_of_record_in_the_sidebar(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["clusters"].submenu[option].click()
+    OZLoggedIn(driver).clusters.submenu[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{button}" button in GUI settings page'))
@@ -121,7 +123,7 @@ def click_button_in_gui_settings_page(
     selenium: SeleniumDrivers, browser_id: str, button: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver)["clusters"].gui_settings_page, transform(button))()
+    getattr(OZLoggedIn(driver).clusters.gui_settings_page, transform(button))()
 
 
 @wt(
@@ -134,9 +136,7 @@ def write_input_in_gui_settings_page(
     selenium: SeleniumDrivers, browser_id: str, box: str, text: str
 ) -> None:
     driver = selenium[browser_id]
-    input_box = getattr(
-        OZLoggedIn(driver)["clusters"].gui_settings_page, transform(box)
-    )
+    input_box = getattr(OZLoggedIn(driver).clusters.gui_settings_page, transform(box))
     _enter_text(input_box, text)
 
 
@@ -154,7 +154,7 @@ def remove_notification_in_gui_settings_page(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_the_understand_notice(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["clusters"].deregistration_checkbox()
+    OZLoggedIn(driver).clusters.deregistration_checkbox()
 
 
 @wt(
@@ -308,7 +308,7 @@ def click_deregister_link_in_cluster_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["clusters"].deregister_label.click()
+    OZLoggedIn(driver).clusters.deregister_label.click()
 
 
 @wt(
@@ -371,5 +371,7 @@ def go_to_agreement_page(
     selenium: SeleniumDrivers, browser_id: str, kind_of_agreement: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["profile"].profile()
+    oz_page = OZLoggedIn(driver)
+    oz_page.expand_panel_if_needed()
+    oz_page.profile.profile()
     Popups(driver).user_account_menu.options[kind_of_agreement].click()

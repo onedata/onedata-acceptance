@@ -16,6 +16,7 @@ from tests.gui.steps.onezone.automation.automation_basic import collapse_revisio
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
+from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.gui.utils.onezone.workflows_subpage import JSONWorkflowsPanel
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -34,7 +35,7 @@ def click_add_new_button_in_menu_bar(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver)["automation"].main_page, transform(option)).click()
+    getattr(OZLoggedIn(driver).automation.main_page, transform(option)).click()
     wait_for_sliding_panel_to_stop_moving(
         driver, WAIT_FRONTEND, '[data-one-carousel-slide-id="editor"]'
     )
@@ -50,7 +51,7 @@ def click_add_new_button_in_menu_bar(
 def write_text_into_lambda_form(
     selenium: SeleniumDrivers, browser_id: str, text: str, text_field: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     label = getattr(page.lambdas_page.form, transform(text_field))
     setattr(label, "value", text)
 
@@ -65,7 +66,7 @@ def write_text_into_lambda_form(
 def switch_toggle_in_lambda_form(
     selenium: SeleniumDrivers, browser_id: str, option: str, toggle: str
 ) -> None:
-    subpage = OZLoggedIn(selenium[browser_id])["automation"].lambdas_page.form
+    subpage = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
     toggle = transform(toggle) + "_toggle"
     getattr(getattr(subpage, toggle), option[:-1])()
 
@@ -81,7 +82,7 @@ def switch_toggle_in_lambda_form(
 def confirm_lambda_creation_or_edition(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
 
     if option == "task":
         page.workflows_page.task_form.create_button.click()
@@ -106,7 +107,7 @@ def choose_option_in_dropdown_menu_in_task_page(
     object_type: str,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["automation"].workflows_page.task_form
+    page = OZLoggedIn(driver).automation.workflows_page.task_form
     if object_type == "result":
         page.results[object_name + ":"].add_mapping()
         page.results[object_name + ":"].target_store_dropdown[-1].click()
@@ -143,7 +144,7 @@ def write_text_into_editor_bracket(
     object_type: str,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["automation"].workflows_page.task_form
+    page = OZLoggedIn(driver).automation.workflows_page.task_form
     if object_type == "result":
         page.results[object_name + ":"].json_editor = input_value
     elif object_type == "argument":
@@ -162,7 +163,7 @@ def write_text_into_editor_bracket(
 def write_text_into_workflow_name_on_main_workflows_page(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     page.workflows_page.workflow_creator.workflow_name.value = text
 
 
@@ -173,7 +174,7 @@ def write_text_into_workflow_name_on_main_workflows_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_workflow_creation(selenium: SeleniumDrivers, browser_id: str) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     page.workflows_page.workflow_creator.create_button.click()
 
 
@@ -184,7 +185,7 @@ def confirm_workflow_creation(selenium: SeleniumDrivers, browser_id: str) -> Non
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_store_button(selenium: SeleniumDrivers, browser_id: str) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     page.workflows_page.workflow_visualiser.add_store_button.click()
 
 
@@ -198,7 +199,7 @@ def click_add_store_button(selenium: SeleniumDrivers, browser_id: str) -> None:
 def assert_store_in_store_list(
     selenium: SeleniumDrivers, browser_id: str, store_name: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     stores_list = page.workflows_page.workflow_visualiser.stores_list
 
     assert store_name in stores_list, f"Store: {store_name} not found"
@@ -215,7 +216,7 @@ def assert_store_in_store_list(
 def click_add_lane_button_in_workflow_visualizer(
     selenium: SeleniumDrivers, browser_id: str, option: str, tmp_memory: TmpMemory
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     modal_name = "create new lane"
     if "right" in option:
         page.workflows_page.workflow_visualiser.create_lane_button[-1].click()
@@ -231,7 +232,7 @@ def click_add_lane_button_in_workflow_visualizer(
 def assert_lane_in_workflow_visualizer(
     selenium: SeleniumDrivers, browser_id: str, lane_name: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     workflow_visualizer = page.workflows_page.workflow_visualiser.workflow_lanes
 
     assert lane_name in workflow_visualizer, f"Lane: {lane_name} not found"
@@ -247,7 +248,7 @@ def assert_lane_in_workflow_visualizer(
 def add_parallel_box_to_lane(
     selenium: SeleniumDrivers, browser_id: str, lane_name: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     workflow_visualiser = page.workflows_page.workflow_visualiser
     workflow_visualiser.workflow_lanes[lane_name].add_parallel_box_button.click()
 
@@ -262,7 +263,7 @@ def add_parallel_box_to_lane(
 def add_task_to_empty_parallel_box(
     selenium: SeleniumDrivers, browser_id: str, lane_name: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane_name]
     lane.empty_parallel_box.add_task_button.click()
 
@@ -281,7 +282,7 @@ def assert_task_in_lane_in_workflow(
     task_name: str,
     option: str,
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     workflow_visualiser = page.workflows_page.workflow_visualiser
     task = workflow_visualiser.workflow_lanes[lane_name].parallel_box.task_list
 
@@ -301,7 +302,7 @@ def assert_task_in_lane_in_workflow(
 def write_task_name_in_task_edition_text_field(
     selenium: SeleniumDrivers, browser_id: str, task_name: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     page.workflows_page.task_form.task_name.value = task_name
 
 
@@ -321,7 +322,9 @@ def click_option_in_task_menu_button(
     option: str,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver).get_page_and_click("automation")
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(AutomationPage)
+    page = oz_page.automation
     workflow_visualiser = page.workflows_page.workflow_visualiser
     box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
     box.task_list[task_name].menu_button.click()
@@ -338,7 +341,7 @@ def click_option_in_task_menu_button(
 def insert_text_in_textfield_of_workflow(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     page.workflows_page.workflow_name_input.value = text
 
 
@@ -356,7 +359,7 @@ def insert_text_in_textfield_of_workflow(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_workflow(selenium: SeleniumDrivers, browser_id: str) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     page.workflows_page.workflow_save_button.click()
 
 
@@ -371,7 +374,7 @@ def click_button_in_workflow(selenium: SeleniumDrivers, browser_id: str) -> None
 def add_lambda_revision_to_workflow(
     selenium: SeleniumDrivers, browser_id: str, lambda_name: str, ordinal: str
 ) -> None:
-    subpage = OZLoggedIn(selenium[browser_id])["automation"].lambdas_page
+    subpage = OZLoggedIn(selenium[browser_id]).automation.lambdas_page
     lambda_object = subpage.lambdas_list[lambda_name]
     revision = lambda_object.revision_list[ordinal[:-2]]
 
@@ -394,7 +397,7 @@ def add_lambda_revision_to_workflow(
 def add_another_parallel_box_to_lane(
     selenium: SeleniumDrivers, browser_id: str, lane_name: str, position: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id])["automation"]
+    page = OZLoggedIn(selenium[browser_id]).automation
     workflow_visualiser = page.workflows_page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
 

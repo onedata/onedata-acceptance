@@ -353,7 +353,7 @@ def go_back_to_dataset_page_from_archive_browser(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver)["data"].archive_header.back_to_dataset_page()
+    OZLoggedIn(driver).data.archive_header.back_to_dataset_page()
 
 
 def assert_not_archive_with_description(

@@ -228,9 +228,7 @@ def see_items_in_op_gui(
 
     try:
         option_in_menu = "Data"
-        _click_on_option_in_the_sidebar(
-            selenium, browser_id, option_in_menu, force=False
-        )
+        _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu)
         option = "Files"
         _click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space, option, force=False
@@ -372,7 +370,7 @@ def go_to_and_assert_browser(
 ) -> None:
     option = "Data"
     element = "spaces"
-    _click_on_option_in_the_sidebar(selenium, browser_id, option, force=False)
+    _click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_element_on_lists_on_left_sidebar_menu(
         selenium, browser_id, element, space_name
     )
@@ -761,7 +759,7 @@ def go_to_filebrowser(
     option_in_menu = "Data"
     option_in_space_submenu = "Files"
 
-    _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu, force=False)
+    _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu)
     _click_on_option_of_space_on_left_sidebar_menu(
         selenium,
         browser_id,

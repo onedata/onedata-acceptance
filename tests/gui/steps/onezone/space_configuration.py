@@ -26,7 +26,7 @@ def assert_advertise_in_marketplace_toggle(
     selenium: SeleniumDrivers, browser_id: str, checked: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].configuration_page
+    page = OZLoggedIn(driver).data.configuration_page
 
     if "not" in checked:
         assert (
@@ -49,7 +49,7 @@ def advertise_space_on_space_configuration_page(
     browser_id: str, selenium: SeleniumDrivers, option: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].configuration_page
+    page = OZLoggedIn(driver).data.configuration_page
     getattr(page.advertise_toggle, option)()
 
 
@@ -64,7 +64,7 @@ def click_button_on_space_configuration_page(
     browser_id: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].configuration_page
+    page = OZLoggedIn(driver).data.configuration_page
     page.marketplace_link.click()
 
 
@@ -79,7 +79,7 @@ def assert_contact_email_address(
     browser_id: str, selenium: SeleniumDrivers, email_address: str
 ) -> None:
     driver = selenium[browser_id]
-    contact_email = OZLoggedIn(driver)["data"].configuration_page.contact_email
+    contact_email = OZLoggedIn(driver).data.configuration_page.contact_email
     err_msg = (
         f"Email address {contact_email.name} displayed on space "
         f"configuration page, does not match expected {email_address}"
@@ -98,7 +98,7 @@ def set_space_data_in_configuration_tab(
 ) -> None:
     driver = selenium[browser_id]
     data_type = transform(data_type)
-    page = getattr(OZLoggedIn(driver)["data"].configuration_page, data_type)
+    page = getattr(OZLoggedIn(driver).data.configuration_page, data_type)
     page.click()
     page.value = data_name
     if with_save:
@@ -125,7 +125,7 @@ def set_description_of_a_space(
     with_save: bool = True,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].configuration_page
+    page = OZLoggedIn(driver).data.configuration_page
     page.editor_description_mode.click()
     page.description_text_area = description
     if with_save:
@@ -142,7 +142,7 @@ def add_tags_in_space_configuration_tab(
     with_save: bool = True,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].configuration_page
+    page = OZLoggedIn(driver).data.configuration_page
     page.space_tags_editor.click()
     page.space_tags_editor.add_tag.click()
     getattr(Popups(driver).spaces_tags, tag_type).click()
@@ -165,9 +165,8 @@ def check_header_info_in_space_configuration(
     selenium: SeleniumDrivers, browser_id: str, label_info: str
 ) -> None:
     driver = selenium[browser_id]
-    header_label_message = OZLoggedIn(driver)[
-        "data"
-    ].configuration_page.header_label_warning
+    configuration_page = OZLoggedIn(driver).data.configuration_page
+    header_label_message = configuration_page.header_label_warning
     err_msg = f"expected {label_info} header label instead of {header_label_message}"
     assert header_label_message == str(label_info), err_msg
 
@@ -195,7 +194,7 @@ def check_message_after_hovering_over_toggle(
         )
     }
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].configuration_page
+    page = OZLoggedIn(driver).data.configuration_page
     page.move_to_toggle(driver)
     toggle_info = Popups(driver).toggle_label
     expected_message = messages_dict[message_type]
@@ -217,7 +216,7 @@ def change_org_name_in_space_conf(
     selenium: SeleniumDrivers, browser_id: str, org_name: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].configuration_page
+    page = OZLoggedIn(driver).data.configuration_page
     page.organization_name.click()
     page.organization_name.value = str(org_name)
     page.organization_name.confirm.click()

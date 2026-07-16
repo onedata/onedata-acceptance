@@ -6,7 +6,6 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import cast
 
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
 from tests.gui.utils import Homepage, Modals, Popups
@@ -117,7 +116,8 @@ def assert_active_sidebar_link_in_docs_subpage(
 ) -> None:
     driver = selenium[browser_id]
     # inherits from DocumentationPage
-    page = cast(DocumentationPage, Homepage(driver)[subpage])
+    subpage = transform(subpage)
+    page: DocumentationPage = getattr(Homepage(driver), subpage)
     active_links = page.sidebar.get_active_rows_names()
     assert (
         len(active_links) == 1
@@ -139,7 +139,8 @@ def assert_active_chapter_tab_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, chapter: str
 ) -> None:
     driver = selenium[browser_id]
-    page = cast(DocumentationPage, Homepage(driver)[subpage])
+    subpage = transform(subpage)
+    page: DocumentationPage = getattr(Homepage(driver), subpage)
     active_tabs = page.chapters.get_active_chapter_tabs_names()
     assert (
         len(active_tabs) == 1
@@ -155,7 +156,8 @@ def assert_user_sees_name_in_header_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, name: str
 ) -> None:
     driver = selenium[browser_id]
-    page = cast(DocumentationPage, Homepage(driver)[subpage])
+    subpage = transform(subpage)
+    page: DocumentationPage = getattr(Homepage(driver), subpage)
     assert (
         page.current_header == name
     ), f"Expected header: {name}, but found header: {page.current_header}"

@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import cast
 
 import yaml
 from selenium.webdriver.common.by import By
@@ -64,7 +65,9 @@ def _find_members_page(driver: WebDriver, where: str) -> MembersPage:
     tab_name = _change_to_tab_name(where)
     if tab_name == "clusters":
         return Onepanel(driver).content.members
-    return OZLoggedIn(driver)[tab_name].members_page
+    page_name = cast(PageName, tab_name)
+    tab = getattr(OZLoggedIn(driver), page_name)
+    return tab.members_page
 
 
 def _change_membership_to_name(membership_type: str, subject_type: str) -> str:
@@ -114,8 +117,9 @@ def assert_element_is_member_of_parent_in_memberships(
     where: str,
 ) -> None:
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
-    records = OZLoggedIn(driver)[where].members_page.memberships
+    where = cast(PageName, _change_to_tab_name(where))
+    tab = getattr(OZLoggedIn(driver), where)
+    records = tab.members_page.memberships
 
     def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
@@ -150,8 +154,9 @@ def assert_element_is_not_member_of_parent_in_memberships(
     parent_type: str,
 ) -> None:
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
-    records = OZLoggedIn(driver)[where].members_page.memberships
+    where = cast(PageName, _change_to_tab_name(where))
+    tab = getattr(OZLoggedIn(driver), where)
+    records = tab.members_page.memberships
 
     def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
@@ -180,8 +185,9 @@ def assert_count_membership_rows(
     selenium: SeleniumDrivers, browser_id: str, number: str, where: str
 ) -> None:
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
-    records = OZLoggedIn(driver)[where].members_page.memberships
+    where = cast(PageName, _change_to_tab_name(where))
+    tab = getattr(OZLoggedIn(driver), where)
+    records = tab.members_page.memberships
     count_records = len(records)
 
     assert count_records == int(
@@ -247,10 +253,9 @@ def assert_members_number_in_space_members_tile(
     subject_type: str,
 ) -> None:
     driver = selenium[browser_id]
-    members_tile = OZLoggedIn(driver)["data"].overview_page.members_tile
+    members_tile = OZLoggedIn(driver).data.overview_page.members_tile
     name = _change_membership_to_name(membership_type, subject_type)
     members_count = getattr(members_tile, name)
-
     error_msg = (
         f"found {number} {membership_type} {subject_type} instead of {members_count}"
     )
@@ -269,8 +274,9 @@ def click_relation_menu_button(
     selenium: SeleniumDrivers, browser_id: str, member_name: str, name: str, where: str
 ) -> None:
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
-    records = OZLoggedIn(driver)[where].members_page.memberships
+    where = cast(PageName, _change_to_tab_name(where))
+    tab = getattr(OZLoggedIn(driver), where)
+    records = tab.members_page.memberships
 
     def click_on_menu(record: MembershipRow, member_index: int) -> bool:
         record.relations[member_index].click_relation_menu_button(driver)
@@ -352,7 +358,9 @@ def click_element_in_members_list(
 def click_generate_token_in_subgroups_list(
     selenium: SeleniumDrivers, browser_id: str, group: str, member: str
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
+    oz_page = OZLoggedIn(selenium[browser_id])
+    oz_page.open_panel(GroupsPage)
+    page = oz_page.groups
     page.groups_list[group]()
     page.groups_list[group].members()
     getattr(page.main_page.members, member).generate_token()
@@ -426,7 +434,9 @@ def assert_element_is_groups_child(
     child: str,
     parent: str,
 ) -> None:
-    page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
+    oz_page = OZLoggedIn(selenium[browser_id])
+    oz_page.open_panel(GroupsPage)
+    page = oz_page.groups
     page.groups_list[parent]()
     page.groups_list[parent].members()
 
@@ -503,7 +513,7 @@ def check_user_in_space_members_list(
     space_name: str,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"]
+    page = OZLoggedIn(driver).data
     page.spaces_headers_list[space_name]()
     page.spaces_list[space_name].members()
     try:
@@ -537,9 +547,10 @@ def remove_member_from_parent(
 ) -> None:
     driver = selenium[browser_id]
     if where != "cluster":
-        main_page = OZLoggedIn(selenium[browser_id]).get_page_and_click(
-            _change_to_tab_name(where)
-        )
+        page_name = cast(PageName, _change_to_tab_name(where))
+        oz_page = OZLoggedIn(selenium[browser_id])
+        oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
+        main_page = getattr(oz_page, page_name)
         list_name = f"{where}s_list"
         getattr(main_page, list_name)[name]()
         getattr(main_page, list_name)[name].members()
@@ -579,7 +590,7 @@ def click_member_option_on_members_page(
     selenium: SeleniumDrivers, browser_id: str, option: str, username: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].members_page
+    page = OZLoggedIn(driver).data.members_page
     page.users.items[username].click_member_menu_button(driver)
     Popups(driver).menu_popup_with_text.menu[option]()
 
@@ -602,7 +613,7 @@ def assert_options_for_user_are_enabled_or_disabled(
     state: str,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].members_page
+    page = OZLoggedIn(driver).data.members_page
     page.users.items[username].click_member_menu_button(driver)
 
     for option in options:
@@ -672,7 +683,9 @@ def copy_invitation_token(
     tmp_memory: TmpMemory,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver).get_page_and_click("groups")
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(GroupsPage)
+    page = oz_page.groups
     page.groups_list[group]()
 
     getattr(page.main_page.members, who + "s").header.menu_button()
@@ -700,7 +713,7 @@ def get_invitation_token(
     tmp_memory: TmpMemory,
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["groups"]
+    page = OZLoggedIn(driver).groups
     page.groups_list[group]()
     page.main_page.menu_button()
     Popups(driver).menu_popup_with_text.menu["Invite " + who]()
@@ -1160,7 +1173,7 @@ def click_on_bulk_checkbox(
     browser_id: str, member_type: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["groups"].members_page
+    page = OZLoggedIn(driver).groups.members_page
     members_list = getattr(page, member_type)
     members_list.header.checkbox.click()
 
@@ -1187,7 +1200,7 @@ def click_member_checkbox(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_bulk_edit(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["groups"].members_page.bulk_edit_button.click()
+    OZLoggedIn(driver).groups.members_page.bulk_edit_button.click()
 
 
 @wt(
@@ -1203,7 +1216,7 @@ def assert_ownership_privileges_warning_appeared_for_user(
     selenium: SeleniumDrivers, browser_id: str, username: str, alert_text: str
 ) -> None:
     driver = selenium[browser_id]
-    members_list = OZLoggedIn(driver)["data"].members_page.users
+    members_list = OZLoggedIn(driver).data.members_page.users
     error_msg = f'alert with text "{alert_text}" not found'
     ownership_warning = members_list.items[username].ownership_warning.text
     assert alert_text in ownership_warning, error_msg
@@ -1220,7 +1233,7 @@ def assert_number_items_in_members_onezone(
     selenium: SeleniumDrivers, browser_id: str, number: str, item_type: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["clusters"].members_page
+    page = OZLoggedIn(driver).clusters.members_page
     actual_number = getattr(page, f"{transform(item_type)}_number")
     assert (
         actual_number == number
@@ -1237,7 +1250,7 @@ def click_on_button_in_members_onezone(
     selenium: SeleniumDrivers, browser_id: str, button_name: str, where: str
 ) -> None:
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)[where].members_page
+    page = getattr(OZLoggedIn(driver), where).members_page
     getattr(page, transform(button_name)).click()
 
 

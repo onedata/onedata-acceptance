@@ -23,6 +23,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_editor_bracket,
 )
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -178,9 +179,9 @@ def remove_task_from_lane(
     option = "Remove"
 
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["automation"]
-    lane_page = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane_page.parallel_box.task_list[task].menu_button()
+    page = OZLoggedIn(driver).automation
+    lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane_obj.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu[option]()
     click_modal_button(selenium, browser_id, option, modal)
 
@@ -209,9 +210,11 @@ def modify_task_results(
     task_option = "task"
 
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver).get_page_and_click("automation")
-    lane_page = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane_page.parallel_box.task_list[task].menu_button()
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(AutomationPage)
+    page = oz_page.automation
+    lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane_obj.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu[button]()
     # wait for task form to open
     time.sleep(1)
