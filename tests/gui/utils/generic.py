@@ -451,13 +451,25 @@ UNQUOTED_ELEMENT = r'[^,\[\]"\s]+'
 # see BRACKETED_SEQUENCE
 SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
 
-# A comma-separated sequence of elements enclosed in square brackets,
-# e.g. ["file1", "file2", "file3"] or [1 2 3]
+# A comma-separated sequence of elements enclosed in square brackets.
+# Examples:
+#   [abc]                  -> element 1: abc
+#   [abc, def]             -> element 1: abc       | element 2: def
+#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
+#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
+#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
 BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}" rf"(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
 
-# A sequence of elements that might contain one or more elements,
-# e.g. "dev-oneprovider-0" or ["file1", "file2", "file3"]
-# see QUOTED_ELEMENT, UNQUOTED_ELEMENT, BRACKETED_SEQUENCE
+# An element sequence can be:
+#   abc                    -> element 1: abc
+#   abc-def                -> element 1: abc-def
+#   "abc def"              -> element 1: abc def
+#   "abc, def"             -> element 1: abc, def
+#   [abc]                  -> element 1: abc
+#   [abc, def]             -> element 1: abc       | element 2: def
+#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
+#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
+#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
 ELEMENTS_SEQUENCE_PATTERN = (
     rf"(?:{QUOTED_ELEMENT}|{UNQUOTED_ELEMENT}|{BRACKETED_SEQUENCE})"
 )
