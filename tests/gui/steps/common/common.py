@@ -82,6 +82,12 @@ def assert_n_items_in_items_list(
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
+
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        lambda _: len(get_visible_items_list(page, items_type, main_field)) > 0,
+        message=f"Waiting for initial {items_type.value} to appear failed",
+    )
+
     while not stop_scrolling_flag:
         new_items = get_visible_items_list(page, items_type, main_field)
         new_items_fields = [getattr(el, main_field) for el in new_items]
