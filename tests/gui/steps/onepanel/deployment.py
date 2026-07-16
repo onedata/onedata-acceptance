@@ -26,7 +26,6 @@ from tests.gui.steps.common.common import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
-from tests.gui.utils.core.web_objects import ButtonPageObject
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
