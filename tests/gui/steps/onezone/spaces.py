@@ -66,6 +66,8 @@ def click_on_space_in_menu_list(
 
 
 def _parse_tabs_list(tabs: str) -> list[str]:
+    if tabs == "all":
+        return [tabs]
     parsed_tabs = tabs.split('"')[1:-1]
     return [transform(e).replace(",", "") for e in parsed_tabs if e != ", "]
 
@@ -509,7 +511,7 @@ def _get_number_of_disabled_elements_on_left_sidebar_menu(
         rf" (?P<element_list>{ELEMENTS_SEQUENCE_PATTERN}) "
         r'of "(?P<space_name>.*?)" in the sidebar are disabled'
     ),
-    converters={"element_list": parse_elements_sequence},
+    converters={"element_list": _parse_tabs_list},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_option_of_space_on_left_sidebar_menu_disabled(
@@ -929,7 +931,7 @@ def assert_opened_space_name(
         rf" (?P<tabs_list>{ELEMENTS_SEQUENCE_PATTERN}) tabs? "
         r'of "(?P<space_name>.*)" are enabled'
     ),
-    converters={"tabs_list": parse_elements_sequence},
+    converters={"tabs_list": _parse_tabs_list},
 )
 @repeat_failed(WAIT_BACKEND * 3)
 def assert_tabs_of_space_enabled(
@@ -950,7 +952,7 @@ def assert_tabs_of_space_enabled(
         rf" (?P<tabs_list>{ELEMENTS_SEQUENCE_PATTERN}) tabs? "
         r'of "(?P<space_name>.*)" (are|is) disabled'
     ),
-    converters={"tabs_list": parse_elements_sequence},
+    converters={"tabs_list": _parse_tabs_list},
 )
 @repeat_failed(WAIT_BACKEND * 2)
 def assert_tabs_of_space_disabled(

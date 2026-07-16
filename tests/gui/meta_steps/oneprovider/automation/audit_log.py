@@ -659,16 +659,14 @@ def check_visual_in_store_details_modal(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees following "
-        r"(?P<variable_type>.*?) represented by"
-        rf' "(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN})" in '
+        r'(?P<variable_type>.*?) represented by "(?P<item_list>.*?)" in '
         r'content in "(?P<store_name>.*?)" store details modal'
-    ),
-    converters={"item_list": parse_elements_sequence},
+    )
 )
 def assert_elements_in_store_details_modal(
     browser_id: str,
     selenium: SeleniumDrivers,
-    item_list: list[str],
+    item_list: str,
     store_name: str,
     variable_type: str,
 ) -> None:
@@ -676,16 +674,13 @@ def assert_elements_in_store_details_modal(
 
     if variable_type == "string":
         compare_string_in_store_details_modal(
-            item_list[0], modal, variable_type, store_name
+            item_list, modal, variable_type, store_name
         )
     elif variable_type == "array":
-        compare_array_in_store_details_modal(modal, repr(item_list))
+        compare_array_in_store_details_modal(modal, item_list)
 
     else:
-        serialized_items = item_list[0] if len(item_list) == 1 else repr(item_list)
-        check_visual_in_store_details_modal(
-            modal, variable_type, serialized_items, store_name
-        )
+        check_visual_in_store_details_modal(modal, variable_type, item_list, store_name)
 
 
 @wt(

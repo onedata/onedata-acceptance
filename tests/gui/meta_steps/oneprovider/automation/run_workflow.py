@@ -196,7 +196,7 @@ def fails_to_choose_directory_as_initial_workflow_value(
 def choose_file_as_initial_workflow_value(
     selenium: SeleniumDrivers,
     browser_id: str,
-    file_list: list[str],
+    file_list: str | list[str],
     data_type: str,
 ) -> None:
     switch_to_iframe(selenium, browser_id)
