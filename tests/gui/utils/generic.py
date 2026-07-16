@@ -455,6 +455,9 @@ SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
 # e.g. ["file1", "file2", "file3"] or [1 2 3]
 BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}" rf"(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
 
+# A sequence of elements that might contain one or more elements,
+# e.g. "dev-oneprovider-0" or ["file1", "file2", "file3"]
+# see QUOTED_ELEMENT, UNQUOTED_ELEMENT, BRACKETED_SEQUENCE
 ELEMENTS_SEQUENCE_PATTERN = (
     rf"(?:{QUOTED_ELEMENT}|{UNQUOTED_ELEMENT}|{BRACKETED_SEQUENCE})"
 )
