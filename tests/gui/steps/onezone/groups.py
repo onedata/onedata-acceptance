@@ -106,8 +106,8 @@ def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) ->
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) opens group "(?P<group>.*)" '
-        "(?P<subpage>members|hierarchy|main) subpage"
+        r'user of (?P<browser_id>.*) opens group "(?P<group_name>.*)" '
+        r"(?P<subpage>members|hierarchy|main) subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
