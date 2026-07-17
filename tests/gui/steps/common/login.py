@@ -10,7 +10,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.url import assert_main_page_loaded
+from tests.gui.steps.common.url import (
+    HOSTS_SEQUENCE_PATTERN,
+    assert_main_page_loaded,
+    parse_hosts_sequence,
+)
 from tests.gui.utils import LoginPage, OnePage
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
@@ -81,11 +85,11 @@ def _login_to_service(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) logged "
         rf"as (?P<user_id_list>{ELEMENTS_SEQUENCE_PATTERN}) to"
-        rf" (?P<service_list>{ELEMENTS_SEQUENCE_PATTERN}) service"
+        rf" (?P<service_list>{HOSTS_SEQUENCE_PATTERN}) service"
     ),
     converters={
         "browser_id_list": parse_elements_sequence,
-        "service_list": parse_elements_sequence,
+        "service_list": parse_hosts_sequence,
         "user_id_list": parse_elements_sequence,
     },
 )
@@ -93,11 +97,11 @@ def _login_to_service(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) logs? "
         rf"as (?P<user_id_list>{ELEMENTS_SEQUENCE_PATTERN}) to"
-        rf" (?P<service_list>{ELEMENTS_SEQUENCE_PATTERN}) service"
+        rf" (?P<service_list>{HOSTS_SEQUENCE_PATTERN}) service"
     ),
     converters={
         "browser_id_list": parse_elements_sequence,
-        "service_list": parse_elements_sequence,
+        "service_list": parse_hosts_sequence,
         "user_id_list": parse_elements_sequence,
     },
 )

@@ -37,6 +37,7 @@ HOST_PATTERN = (
     r"onezone|"
     r"Onezone|"
     r"emergency interface of Onepanel|"
+    r"emergency interface of Onezone|"
     r"node[0-9]+ of oneprovider-[0-9]+ provider panel"
     r")"
 )
