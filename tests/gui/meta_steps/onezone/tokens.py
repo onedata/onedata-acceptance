@@ -67,7 +67,6 @@ from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def _paste_token_into_text_field(
     selenium: SeleniumDrivers, browser_id: str, token: str
 ) -> None:
@@ -76,7 +75,6 @@ def _paste_token_into_text_field(
 
 
 @wt(parsers.parse("user of {browser_id} pastes copied token into token text field"))
-@repeat_failed(timeout=WAIT_BACKEND)
 def paste_copied_token_into_text_field(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -88,7 +86,6 @@ def paste_copied_token_into_text_field(
 
 
 @wt(parsers.parse("user of {browser_id} pastes received token into token text field"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def paste_received_token_into_text_field(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
@@ -154,7 +151,6 @@ def consume_token_from_copied_token(
         r"to (harvester|space|inventory) using copied token"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_element_with_copied_token(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -177,7 +173,6 @@ def add_element_with_copied_token(
         'user of {browser_id} {result} to consume token for "{elem_name}" {elem}'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def result_to_consume_token_for_elem(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -196,7 +191,6 @@ def result_to_consume_token_for_elem(
         "tokens page while trying to consume token"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_alert_while_consuming_token(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -287,7 +281,6 @@ def create_number_of_typed_token(
         "user of {browser_id} creates token with following configuration:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_token_with_config(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -380,7 +373,9 @@ def _create_token_with_config(
 
     if name:
         type_new_token_name(selenium, browser_id, name)
+
     choose_token_type_to_create(selenium, browser_id, token_type)
+
     if invite_type:
         choose_invite_type_in_oz_token_page(selenium, browser_id, invite_type)
     if invite_target:
@@ -476,7 +471,6 @@ def _set_tokens_caveats(
         "is as following:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_configuration(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -544,7 +538,6 @@ def assert_token_configuration(
     )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_configuration_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -679,7 +672,6 @@ def assert_token_caveats(
 
 
 @wt(parsers.parse('user of {browser_id} revokes token named "{token_name}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def revoke_token(selenium: SeleniumDrivers, browser_id: str, token_name: str) -> None:
     option = "Modify"
     action = "revoke"
@@ -692,7 +684,6 @@ def revoke_token(selenium: SeleniumDrivers, browser_id: str, token_name: str) ->
 
 
 @wt(parsers.parse('user of {browser_id} removes token named "{token_name}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_token(selenium: SeleniumDrivers, browser_id: str, token_name: str) -> None:
     btn = "remove"
     button = "Remove"
@@ -703,7 +694,6 @@ def remove_token(selenium: SeleniumDrivers, browser_id: str, token_name: str) ->
 
 
 @wt(parsers.parse("user of {browser_id} removes all tokens"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_all_tokens(selenium: SeleniumDrivers, browser_id: str) -> None:
     btn = "remove"
     button = "Remove"

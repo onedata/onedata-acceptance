@@ -648,7 +648,7 @@ def check_size_stats_for_archive_per_provider(
                 browser_id,
                 stat_type,
                 [provider],
-                expected_value,
+                [expected_value],
             )
         else:
             check_content_for_provider(
