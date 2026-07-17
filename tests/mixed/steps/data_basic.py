@@ -359,7 +359,7 @@ def go_to_dir(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see "
-        r'item named (?P<name>[^ ]+) in "(?P<space>.*)" in '
+        r'item named "(?P<name>[^ ]+)" in "(?P<space>.*)" in '
         r"(?P<host>.*)"
     )
 )
@@ -377,18 +377,17 @@ def see_item_in_op(
 ) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
-        item_name = name
-        name_list = name.replace('"', "")
+        name_list = name
         path = ""
         if "/" in name_list:
-            item_name = name_list.split("/")[-1]
-            path = name_list.replace(item_name, "")[:-1]
+            name = name_list.split("/")[-1]
+            path = name_list.replace(name, "")[:-1]
 
         see_items_in_op_gui(
             selenium,
             user,
             path,
-            [item_name],
+            [name],
             tmp_memory,
             result,
             space,
