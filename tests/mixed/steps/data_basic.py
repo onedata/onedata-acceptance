@@ -388,7 +388,7 @@ def see_item_in_op(
             selenium,
             user,
             path,
-            item_name,
+            [item_name],
             tmp_memory,
             result,
             space,

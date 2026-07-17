@@ -77,7 +77,12 @@ from tests.gui.type_definitions import (
     TmpMemory,
 )
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.generic import WhichBrowser, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    WhichBrowser,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
@@ -205,21 +210,25 @@ def remove_dir_and_parents_in_op_gui(
 @wt(
     parsers.re(
         r"using web gui, (?P<browser_id>\w+) (?P<res>.*) to see item "
-        r'named "(?P<subfiles>.*)" in "(?P<path>.*)" in space'
+        rf'named (?P<subfiles>{ELEMENTS_SEQUENCE_PATTERN}) '
+        r'in "(?P<path>.*)" in space'
         r'"(?P<space>.*)" in oneprovider-1'
-    )
+    ),
+    converters={"subfiles": parse_elements_sequence},
 )
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<res>.*) to see "
-        r'(?P<subfiles>.*) in "(?P<path>.*)" in "(?P<space>.*)"'
-    )
+        rf'(?P<subfiles>{ELEMENTS_SEQUENCE_PATTERN}) '
+        r'in "(?P<path>.*)" in "(?P<space>.*)"'
+    ),
+    converters={"subfiles": parse_elements_sequence},
 )
 def see_items_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
     path: str,
-    subfiles: str,
+    subfiles: list[str],
     tmp_memory: TmpMemory,
     res: str,
     space: str,
@@ -244,9 +253,9 @@ def see_items_in_op_gui(
             )
 
     if res == "fails":
-        assert_items_absence_in_browser(selenium, browser_id, [subfiles], tmp_memory)
+        assert_items_absence_in_browser(selenium, browser_id, subfiles, tmp_memory)
     else:
-        assert_items_presence_in_browser(selenium, browser_id, [subfiles], tmp_memory)
+        assert_items_presence_in_browser(selenium, browser_id, subfiles, tmp_memory)
 
 
 @wt(
