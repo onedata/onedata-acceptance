@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Optional
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -17,6 +19,7 @@ from tests.gui.utils.core.web_elements import (
 from tests.gui.utils.onezone.common import EditBox, InputBox
 from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
+from tests.utils.utils import element_has_class
 
 from .hierarchy_subpage import GroupHierarchyPage
 
@@ -27,6 +30,12 @@ class Group(Element):
     members = NamedButton(".one-list-level-2 .item-header", text="Members")
     hierarchy = NamedButton(".one-list-level-2 .item-header", text="Hierarchy")
     edit_box = WebItem(".name-editor", cls=EditBox)
+
+    def get_active_subpage(self) -> Optional[str]:
+        for subpage in ["members", "hierarchy"]:
+            if element_has_class(getattr(self, subpage).web_elem, "active"):
+                return subpage
+        return None
 
 
 class GroupHeader(Element):
@@ -76,3 +85,10 @@ class GroupsPage(SidebarPanelPage):
     members_page = WebItem(".main-content", cls=MembersPage)
 
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
+
+    def get_visible_active_group_name(self) -> Optional[str]:
+        groups = self.get_visible_elements_list(self.groups_list)
+        for group in groups:
+            if element_has_class(group.web_elem, "active"):
+                return group.name
+        return None

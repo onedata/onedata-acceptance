@@ -16,7 +16,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.type_definitions import FilePath, TmpMemory
 from tests.gui.utils import OPLoggedIn
-from tests.gui.utils.generic import parse_seq, parse_url
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq, parse_url
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -45,7 +45,8 @@ def _wait_for_op_session_to_start(
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.*?) seen that Oneprovider session has started"
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) seen that"
+        r" Oneprovider session has started"
     )
 )
 def g_wait_for_op_session_to_start(
@@ -56,7 +57,8 @@ def g_wait_for_op_session_to_start(
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*?) sees that Oneprovider session has started"
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) sees that"
+        r" Oneprovider session has started"
     )
 )
 def wt_wait_for_op_session_to_start(

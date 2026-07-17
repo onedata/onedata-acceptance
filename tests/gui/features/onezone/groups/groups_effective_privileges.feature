@@ -59,26 +59,21 @@ Feature: Groups effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parent direct privileges and its direct privileges
-    When user of browser clicks on "Groups" in the main menu
-    And user of browser opens group "grandparent_group" members subpage
-    And user of browser clicks "parent_group1" group in "grandparent_group" group members groups list
-    And user of browser sees following privileges of "parent_group1" group in group members subpage:
+    When user of browser sees following privileges for group "parent_group1" in group "grandparent_group" members subpage:
           User management:
             granted: True
           Cluster management:
             granted: True
           Harvester management:
             granted: False
-    And user of browser clicks "child_group1" group in "grandparent_group" group members groups list
-    And user of browser sees following privileges of "child_group1" group in group members subpage:
+    And user of browser sees following privileges for group "child_group1" in group "grandparent_group" members subpage:
           User management:
             granted: False
           Cluster management:
             granted: False
           Harvester management:
             granted: True
-    And user of browser clicks "child_group1" group in "grandparent_group" group members groups list
-    Then user of browser sees following effective privileges of "child_group1" group in group members subpage:
+    Then user of browser sees following effective privileges for group "child_group1" in group "grandparent_group" members subpage:
           User management:
             granted: True
           Cluster management:
@@ -88,26 +83,21 @@ Feature: Groups effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parent direct privileges and its direct privileges
-    When user of browser clicks on "Groups" in the main menu
-    And user of browser opens group "grandparent_group" members subpage
-    And user of browser clicks "parent_group1" group in "grandparent_group" group members groups list
-    And user of browser sees following privileges of "parent_group1" group in group members subpage:
+    When user of browser sees following privileges for group "parent_group1" in group "grandparent_group" members subpage:
           Group hierarchy management:
             granted: False
           User management:
             granted: True
           Cluster management:
             granted: True
-    And user of browser clicks "user2" user in "grandparent_group" group members users list
-    And user of browser sees following privileges of "user2" user in group members subpage:
+    And user of browser sees following privileges for user "user2" in group "grandparent_group" members subpage:
           Group hierarchy management:
             granted: True
           User management:
             granted: False
           Cluster management:
             granted: False
-    And user of browser clicks "user2" user in "grandparent_group" group members users list
-    Then user of browser sees following effective privileges of "user2" user in group members subpage:
+    Then user of browser sees following effective privileges for user "user2" in group "grandparent_group" members subpage:
           Group hierarchy management:
             granted: True
           User management:
@@ -117,10 +107,7 @@ Feature: Groups effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on "Groups" in the main menu
-    And user of browser opens group "grandparent_group" members subpage
-    And user of browser clicks "parent_group1" group in "grandparent_group" group members groups list
-    And user of browser sees following privileges of "parent_group1" group in group members subpage:
+    When user of browser sees following privileges for group "parent_group1" in group "grandparent_group" members subpage:
           Group hierarchy management:
             granted: False
           User management:
@@ -129,8 +116,7 @@ Feature: Groups effective privileges
             granted: True
           Harvester management:
             granted: False
-    And user of browser clicks "parent_group2" group in "grandparent_group" group members groups list
-    And user of browser sees following privileges of "parent_group2" group in group members subpage:
+    And user of browser sees following privileges for group "parent_group2" in group "grandparent_group" members subpage:
           Group hierarchy management:
             granted: True
           User management:
@@ -139,8 +125,7 @@ Feature: Groups effective privileges
             granted: False
           Harvester management:
             granted: True
-    And user of browser clicks "child_group2" group in "grandparent_group" group members groups list
-    Then user of browser sees following effective privileges of "child_group2" group in group members subpage:
+    Then user of browser sees following effective privileges for group "child_group2" in group "grandparent_group" members subpage:
           Group hierarchy management:
             granted: True
           User management:
@@ -152,10 +137,7 @@ Feature: Groups effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on "Groups" in the main menu
-    And user of browser opens group "grandparent_group" members subpage
-    And user of browser clicks "parent_group1" group in "grandparent_group" group members groups list
-    And user of browser sees following privileges of "parent_group1" group in group members subpage:
+    When user of browser sees following privileges for group "parent_group1" in group "grandparent_group" members subpage:
           Group hierarchy management:
             granted: False
           User management:
@@ -164,8 +146,7 @@ Feature: Groups effective privileges
             granted: True
           Harvester management:
             granted: False
-    And user of browser clicks "parent_group2" group in "grandparent_group" group members groups list
-    And user of browser sees following privileges of "parent_group2" group in group members subpage:
+    And user of browser sees following privileges for group "parent_group2" in group "grandparent_group" members subpage:
           Group hierarchy management:
             granted: True
           User management:
@@ -174,8 +155,7 @@ Feature: Groups effective privileges
             granted: False
           Harvester management:
             granted: True
-    And user of browser clicks "user3" user in "grandparent_group" group members users list
-    Then user of browser sees following effective privileges of "user3" user in group members subpage:
+    Then user of browser sees following effective privileges for user "user3" in group "grandparent_group" members subpage:
           Group hierarchy management:
             granted: True
           User management:

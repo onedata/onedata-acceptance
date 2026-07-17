@@ -38,7 +38,7 @@ from tests.gui.steps.oneprovider_common import (
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -47,7 +47,7 @@ from tests.utils.utils import repeat_failed
 @given(
     parsers.re(
         'opened "(?P<tab_name>spaces)" tab in web GUI by '
-        "(users? of )?(?P<browser_id_list>.*)"
+        rf"(users? of )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
     )
 )
 def go_to_tab_in_provider(
@@ -81,15 +81,9 @@ def assert_cannot_click_replicate_button(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) "
-        r"(?P<result>replicates|fails to replicate) (?P<names>.*)"
-        r" to each provider: (?P<providers>.*)"
-    )
-)
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) "
-        r'(?P<result>replicates|fails to replicate) "(?P<names>.*)"'
-        r' to provider "(?P<providers>.*)"'
+        rf"(?P<result>replicates|fails to replicate) "
+        rf"(?P<names>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        rf"(?:each provider: |provider )(?P<providers>{ELEMENTS_SEQUENCE_PATTERN})"
     )
 )
 def replicate_files_to_provider(

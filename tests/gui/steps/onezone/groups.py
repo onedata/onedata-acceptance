@@ -11,7 +11,12 @@ from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
-from tests.gui.utils.generic import ListElement, parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    ListElement,
+    parse_seq,
+    transform,
+)
 from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -54,7 +59,8 @@ def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_ids>.*) (?P<option>does not see|sees) "
+        rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"(?P<option>does not see|sees) "
         'group "(?P<group>.*)" on groups list'
     )
 )
@@ -100,20 +106,24 @@ def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) ->
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) opens group "(?P<group>.*)" '
-        "(?P<subpage>members|hierarchy|main) subpage"
+        r'user of (?P<browser_id>.*) opens group "(?P<group_name>.*)" '
+        r"(?P<subpage>members|hierarchy|main) subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_group_subpage(
-    selenium: SeleniumDrivers, browser_id: str, group: str, subpage: str
+    selenium: SeleniumDrivers, browser_id: str, group_name: str, subpage: str
 ) -> None:
     oz_page = OZLoggedIn(selenium[browser_id])
     oz_page.open_panel(GroupsPage)
-    page = oz_page.groups
-    page.groups_list[group]()
-    if subpage != "main":
-        getattr(page.groups_list[group], subpage)()
+    groups_page = oz_page.groups
+    group: Group = groups_page.groups_list[group_name]
+
+    if groups_page.get_visible_active_group_name() != group_name:
+        group.click()
+
+    if subpage != "main" and group.get_active_subpage() != subpage:
+        getattr(group, subpage)()
 
 
 @wt(parsers.parse('user of {browser_id} see that page with text "{text}" appeared'))

@@ -25,7 +25,13 @@ from tests.gui.steps.common.miscellaneous import (
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
-from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    WhichBrowser,
+    parse_seq,
+    transform,
+    upload_file_path,
+)
 from tests.gui.utils.oneprovider.breadcrumbs import _Breadcrumbs
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -1006,15 +1012,9 @@ def toggle_include_virtual_size_in_size_statistics(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that "
-        r"(?P<elem_type>physical_size|logical_size|virtual_size)s for "
-        r"(?P<providers>.*?) are (?P<expected_sizes>.*?)"
-    )
-)
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*?) sees that "
-        r"(?P<elem_type>physical_size|logical_size|virtual_size) for "
-        r'"(?P<providers>.*?)" is "(?P<expected_sizes>.*?)"'
+        r"(?P<elem_type>physical_size|logical_size|virtual_size)s? for "
+        rf"(?P<providers>{ELEMENTS_SEQUENCE_PATTERN}) (?:is|are) "
+        rf"(?P<expected_sizes>{ELEMENTS_SEQUENCE_PATTERN})"
     )
 )
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)

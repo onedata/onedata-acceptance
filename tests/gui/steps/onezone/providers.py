@@ -17,7 +17,7 @@ from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq, transform
 from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -152,7 +152,7 @@ def click_on_world_map(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @given(
     parsers.re(
-        r"users? of (?P<browser_id_list>.*?) clicked on "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicked on "
         r"(?P<providers>.*?) provider in expanded "
         r'"GO TO YOUR FILES" Onezone panel'
     )
@@ -448,8 +448,12 @@ def _start_and_wait_for_providers(
         wait_until_provider_goes_online_by_rest(hosts, provider, users)
 
 
-@wt(parsers.re(r'provider named "(?P<provider_list>.*?)" is stopped'))
-@wt(parsers.re(r"providers named (?P<provider_list>.*?) are stopped"))
+@wt(
+    parsers.re(
+        rf"providers? named (?P<provider_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"(?:is|are) stopped"
+    )
+)
 def wt_stop_providers(provider_list: str, hosts: Hosts, users: Users) -> Iterator[None]:
     _stop_providers(hosts, provider_list)
     yield

@@ -89,6 +89,9 @@ def parse_seq(
     separator: Optional[str] = None,
     default: Callable[[str], T] = cast(Callable[[str], T], str),
 ) -> list[T]:
+    """Parses regex-matched or separator-delimited values into a list,
+    e.g. '["1", "2"]', '"1"', '1,2', or '1'.
+    """
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
@@ -436,3 +439,37 @@ PageName = Literal[
     "clusters",
     "cluster",
 ]
+
+
+# A quoted element, including spaces and special characters, e.g. "dev-oneprovider-0"
+QUOTED_ELEMENT = r'"[^"\n]+"'
+
+# A single unquoted element without separators or whitespace, e.g. new_space1
+UNQUOTED_ELEMENT = r'[^,\[\]"\s]+'
+
+# An element inside a sequence can be quoted or contain unquoted whitespace,
+# see BRACKETED_SEQUENCE
+SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
+
+# A comma-separated sequence of elements enclosed in square brackets.
+# Examples:
+#   [abc]                  -> element 1: abc
+#   [abc, def]             -> element 1: abc       | element 2: def
+#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
+#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
+#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
+BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}" rf"(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
+
+# An element sequence can be:
+#   abc                    -> element 1: abc
+#   abc-def                -> element 1: abc-def
+#   "abc def"              -> element 1: abc def
+#   "abc, def"             -> element 1: abc, def
+#   [abc]                  -> element 1: abc
+#   [abc, def]             -> element 1: abc       | element 2: def
+#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
+#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
+#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
+ELEMENTS_SEQUENCE_PATTERN = (
+    rf"(?:{QUOTED_ELEMENT}|{UNQUOTED_ELEMENT}|{BRACKETED_SEQUENCE})"
+)

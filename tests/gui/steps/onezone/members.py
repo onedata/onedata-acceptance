@@ -12,6 +12,7 @@ from typing import cast
 import yaml
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
@@ -42,7 +43,7 @@ from tests.gui.utils.onezone.groups.groups_page import GroupsPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import element_has_class, repeat_failed
 
 MENU_ELEM_TO_TAB_NAME = {
     "space": "data",
@@ -81,15 +82,15 @@ def get_privilege_tree(
     driver = selenium[browser_id]
     page = _find_members_page(driver, where)
     elem = getattr(page, list_type).items[member_name]
-    # wait for panel to expand
-    for _ in range(40):
-        if "active" in elem.web_elem.get_attribute("class"):
-            break
-        time.sleep(0.1)
-    else:
-        assert "active" in elem.web_elem.get_attribute(
-            "class"
-        ), f"did not manage to expand {list_type} panel of {member_name}"
+
+    if not element_has_class(elem.web_elem, "active"):
+        elem.web_elem.click()
+
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        lambda _: "active" in elem.web_elem.get_attribute("class"),
+        message=f"did not manage to expand {list_type} panel of {member_name}",
+    )
+
     return elem.privilege_tree
 
 
@@ -1041,10 +1042,10 @@ def see_privileges_for_member(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        '"(?P<member_name>.*)" (?P<member_type>user|group) '
-        'in "(?P<name>.*)" harvester members '
-        "(?P<list_type>users|groups) list"
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
+        r'"(?P<member_name>.*)" (?P<member_type>user|group) '
+        r'in "(?P<item_name>.*)" (?P<item_type>automation|harvester) members '
+        r"(users|groups) list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1054,10 +1055,14 @@ def check_element_in_members_subpage(
     option: str,
     member_name: str,
     member_type: str,
-    list_type: str,
+    item_type: str,
 ) -> None:
+    if item_type == "harvester":
+        item_type = "discovery"
+
     driver = selenium[browser_id]
-    member_list = getattr(OZLoggedIn(driver).discovery.members_page, list_type).items
+    page = getattr(OZLoggedIn(driver), item_type)
+    member_list = getattr(page.members_page, f"{member_type}s").items
     if option == "sees":
         try:
             err_msg = f"{member_name} {member_type} not found"
@@ -1168,17 +1173,19 @@ def click_on_bulk_checkbox(
 @wt(
     parsers.re(
         'user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
-        "(?P<member_type>users|groups) checkbox"
+        "(?P<list_type>users|groups) checkbox"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_member_checkbox(
-    selenium: SeleniumDrivers, browser_id: str, member_name: str, member_type: str
+    selenium: SeleniumDrivers, browser_id: str, member_name: str, list_type: str
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).groups.members_page
-
-    getattr(page, member_type).items[member_name].header.checkbox.click()
+    page.close_member(driver)
+    members = getattr(page, list_type)
+    item_checkbox = members.items[member_name].header.checkbox
+    item_checkbox.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on bulk edit button"))

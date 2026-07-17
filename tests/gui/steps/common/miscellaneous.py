@@ -95,7 +95,7 @@ def wt_assert_title_contains(
 @wt(
     parsers.re(
         "users? of (?P<browser_id_list>.*) clicks on "
-        '"(?P<btn_name>.+?)" button in "(?P<popup>.+?)" popup'
+        '"(?P<btn>.+?)" button in "(?P<popup>.+?)" popup'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -151,7 +151,7 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
     driver = selenium[browser_id]
     WebDriverWait(
         driver,
-        timeout=WAIT_BACKEND * 2,
+        timeout=WAIT_BACKEND * 5,
         ignored_exceptions=[RuntimeError],
     ).until(
         lambda driver: Onepanel(

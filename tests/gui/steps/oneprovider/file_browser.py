@@ -25,7 +25,12 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import Clipboard, TarTree, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
-from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    WhichBrowser,
+    parse_seq,
+    transform,
+)
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.gui.utils.oneprovider.file_browser import FileSelector
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -360,13 +365,10 @@ def deselect_all_items_from_file_browser(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that {item_list} item is selected in file browser"
-    )
-)
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that {item_list} items are selected in file browser"
+    parsers.re(
+        rf"user of (?P<browser_id>.*?) sees that "
+        rf"(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) items? "
+        r"(?:is|are) selected in file browser"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -381,15 +383,10 @@ def assert_items_are_selected_in_file_browser(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that {item_list} "
-        "item is not selected in file browser"
-    )
-)
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that {item_list} "
-        "items are not selected in file browser"
+    parsers.re(
+        rf"user of (?P<browser_id>.*?) sees that "
+        rf"(?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) items? "
+        r"(?:is|are) not selected in file browser"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

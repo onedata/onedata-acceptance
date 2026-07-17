@@ -8,20 +8,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq
 from tests.utils.bdd_utils import parsers, wt
 
 
 @wt(
     parsers.re(
         "user of (?P<browser_id>.*?) sends copied (?P<item_type>.*?) "
-        "to users? of (?P<browser_list>.*)"
-    )
-)
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.*?) sends copied (?P<item_type>.*?) "
-        "to user of (?P<browser_list>.*)"
+        rf"to users? of (?P<browser_list>{ELEMENTS_SEQUENCE_PATTERN})"
     )
 )
 def send_copied_item_to_other_users(

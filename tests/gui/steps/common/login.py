@@ -12,7 +12,7 @@ import time
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.url import assert_main_page_loaded
 from tests.gui.utils import LoginPage, OnePage
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq, transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -75,13 +75,13 @@ def _login_to_service(
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) logged "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) logged "
         "as (?P<user_id_list>.*) to (?P<service_list>.*) service"
     )
 )
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*) logs? "
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) logs? "
         "as (?P<user_id_list>.*) to (?P<service_list>.*) service"
     )
 )

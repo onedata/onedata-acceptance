@@ -21,13 +21,21 @@ from urllib3.exceptions import HTTPError
 
 from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_seq, redirect_display
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_seq,
+    redirect_display,
+)
 from tests.type_definitions import JsonObject, SeleniumDrivers, WebDriverFactory
 from tests.utils.bdd_utils import parsers
 
 
-@given(parsers.parse("user opened {browser_id_list} window"))
-@given(parsers.parse("users opened {browser_id_list} browsers' windows"))
+@given(
+    parsers.re(
+        rf"users? opened (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"(?:window|browsers' windows)"
+    )
+)
 def create_instances_of_webdriver(
     selenium: SeleniumDrivers,
     driver: WebDriverFactory,
