@@ -115,14 +115,18 @@ def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) ->
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_group_subpage(
-    selenium: SeleniumDrivers, browser_id: str, group: str, subpage: str
+    selenium: SeleniumDrivers, browser_id: str, group_name: str, subpage: str
 ) -> None:
     oz_page = OZLoggedIn(selenium[browser_id])
     oz_page.open_panel(GroupsPage)
-    page = oz_page.groups
-    page.groups_list[group]()
-    if subpage != "main":
-        getattr(page.groups_list[group], subpage)()
+    groups_page = oz_page.groups
+    group: Group = groups_page.groups_list[group_name]
+
+    if groups_page.get_visible_active_group_name() != group_name:
+        group.click()
+
+    if subpage != "main" and group.get_active_subpage() != subpage:
+        getattr(group, subpage)()
 
 
 @wt(parsers.parse('user of {browser_id} see that page with text "{text}" appeared'))

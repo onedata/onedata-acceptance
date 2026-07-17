@@ -8,11 +8,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
-from tests.gui.steps.common.common import get_visible_items_list
+from tests.gui.steps.common.common import VisibleItem, get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -578,18 +578,12 @@ def open_space_in_spaces_list(
     raise AssertionError(f"did not manage to open space {space_name}")
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _get_visible_spaces_list(page: DataPage) -> list[WebElement]:
-    return page.get_visible_spaces_list()
-
-
 @wt(
     parsers.parse(
         'user of {browser_id} can see that opened space is "{space_name}" on the spaces'
         " list in the sidebar"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_opened_space(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
@@ -598,7 +592,16 @@ def assert_opened_space(
     vis_spaces = get_visible_items_list(
         page, items_type=ListElement.SPACES, main_field="name"
     )
-    space = [space for space in vis_spaces if space.name == space_name][0]
+
+    def get_opened_spaces_with_name(space_name: str) -> list[VisibleItem]:
+        return [space for space in vis_spaces if space.name == space_name]
+
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        lambda _: len(get_opened_spaces_with_name(space_name)) > 0,
+        message=f"Could not find opened space {space_name} in visible spaces",
+    )
+
+    space = get_opened_spaces_with_name(space_name)[0]
 
     err_msg = f"Space {space_name} is not opened."
     assert space.is_displayed(), err_msg

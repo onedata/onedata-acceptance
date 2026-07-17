@@ -26,8 +26,11 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
 )
 from tests.gui.utils.onezone import OZLoggedIn
+from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup.spaces import WAIT_FRONTEND
+from tests.utils.utils import repeat_failed
 
 
 def fail_to_set_privileges_using_op_gui(
@@ -131,6 +134,22 @@ def assert_group_in_space_using_op_gui(
     )
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _assert_message_and_bulk_edit_btn(
+    members_page: MembersPage, expected_message: str
+) -> None:
+    message_groups = members_page.lack_groups_view_privileges.text
+    message_users = members_page.lack_users_view_privileges.text
+    bulk_edit_button = members_page.bulk_edit_button
+
+    err_msg = "The message about lack of privileges to view membership is not visible"
+    assert message_groups == expected_message, f"{err_msg} for groups"
+    assert message_users == expected_message, f"{err_msg} for users"
+    assert (
+        not bulk_edit_button.is_enabled()
+    ), "Bulk edit button is supposed to be disabled"
+
+
 @wt(
     parsers.re(
         rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) cannot view "
@@ -147,22 +166,11 @@ def assert_cannot_view_group_membership(
         driver = selenium[browser_id]
         oz_page = OZLoggedIn(driver)
         go_to_group_subpage(selenium, browser_id, group, "members")
+
         members_page = oz_page.groups.members_page
-
-        message_groups = members_page.lack_groups_view_privileges.text
-        message_users = members_page.lack_users_view_privileges.text
-        bulk_edit_button = members_page.bulk_edit_button
-
         expected_message = "Insufficient privileges to access this resource."
-        err_msg = (
-            "The message about lack of privileges to view membership is not visible"
-        )
 
-        assert message_groups == expected_message, f"{err_msg} for groups"
-        assert message_users == expected_message, f"{err_msg} for users"
-        assert (
-            not bulk_edit_button.is_enabled()
-        ), "Bulk edit button is supposed to be disabled"
+        _assert_message_and_bulk_edit_btn(members_page, expected_message)
 
 
 @wt(

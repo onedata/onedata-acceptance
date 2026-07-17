@@ -20,5 +20,5 @@ Feature: Management of a great number of spaces
     And user of browser sees that "space1" has appeared on the spaces list in the sidebar
     And user of browser is idle for 5 seconds
     And user of browser opens "space250" space on the spaces list in the sidebar
-    And user of browser refreshes site
+    And user of browser refreshes site and waits for page to load
     And user of browser can see that opened space is "space250" on the spaces list in the sidebar
