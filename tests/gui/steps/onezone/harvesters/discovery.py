@@ -243,6 +243,7 @@ def assert_space_has_appeared_in_discovery_page(
     ), f'space "{space_name}" not found'
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_remove_space_option_in_menu_in_discover_spaces_page(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:

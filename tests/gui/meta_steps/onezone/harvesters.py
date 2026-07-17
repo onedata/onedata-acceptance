@@ -59,7 +59,6 @@ from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_space_from_harvester(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
@@ -78,7 +77,6 @@ def remove_space_from_harvester(
         'from harvester "{harvester_name}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_space_from_given_harvester(
     selenium: SeleniumDrivers, browser_id: str, space_name: str, harvester_name: str
 ) -> None:
@@ -100,7 +98,6 @@ def remove_space_from_given_harvester(
         'user of {browser_id} removes "{harvester_name}" harvester in Onezone page'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_harvester(
     selenium: SeleniumDrivers, browser_id: str, harvester_name: str
 ) -> None:
@@ -122,7 +119,6 @@ def remove_harvester(
         'user of {browser_id} creates "{harvester_name}" harvester in Onezone page'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -158,7 +154,6 @@ def create_harvester(
         "dropdown"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def join_space_to_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -200,7 +195,6 @@ def join_space_to_harvester(
         "using available groups dropdown"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -260,7 +254,6 @@ def create_index_in_harvester(
         'from "{harvester_name}" harvester to user of {browser_id2}'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def send_invitation_token(
     selenium: SeleniumDrivers,
     browser_id1: str,
