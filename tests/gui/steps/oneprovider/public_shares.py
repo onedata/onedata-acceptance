@@ -260,16 +260,6 @@ def check_item_presence_in_dublin_core_metadata(
         raise RuntimeError(f'{item} was not found in "Dublin Core Metadata"')
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*?) sees that (?P<which>.*?) (is|are) "
-        r'(?P<data>.*?) in "Dublin Core Metadata" on share\'s '
-        r"(public|private) interface"
-    ),
-    converters={
-        "data": parse_elements_sequence,
-    },
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_data_in_dublin_core_metadata(
     browser_id: str, data: list[str], selenium: SeleniumDrivers

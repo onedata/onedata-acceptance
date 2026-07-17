@@ -402,10 +402,9 @@ def assert_properties_in_dublin_core_metadata_form(
     parsed_config = yaml.load(config, yaml.Loader)
     for _, data in parsed_config.items():
         if not isinstance(data, list):
-            assert_data_in_dublin_core_metadata(browser_id, data, selenium)
+            assert_data_in_dublin_core_metadata(browser_id, [data], selenium)
         else:
-            for item in data:
-                assert_data_in_dublin_core_metadata(browser_id, item, selenium)
+            assert_data_in_dublin_core_metadata(browser_id, data, selenium)
 
 
 @wt(
