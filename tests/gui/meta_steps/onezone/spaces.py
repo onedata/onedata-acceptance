@@ -67,7 +67,6 @@ from tests.gui.utils.generic import (
     ListElement,
     parse_elements_sequence,
 )
-from tests.gui.utils.onezone.data_page import DataPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users

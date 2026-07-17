@@ -210,7 +210,7 @@ def remove_dir_and_parents_in_op_gui(
 @wt(
     parsers.re(
         r"using web gui, (?P<browser_id>\w+) (?P<res>.*) to see item "
-        rf'named (?P<subfiles>{ELEMENTS_SEQUENCE_PATTERN}) '
+        rf"named (?P<subfiles>{ELEMENTS_SEQUENCE_PATTERN}) "
         r'in "(?P<path>.*)" in space'
         r'"(?P<space>.*)" in oneprovider-1'
     ),
@@ -219,7 +219,7 @@ def remove_dir_and_parents_in_op_gui(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<res>.*) to see "
-        rf'(?P<subfiles>{ELEMENTS_SEQUENCE_PATTERN}) '
+        rf"(?P<subfiles>{ELEMENTS_SEQUENCE_PATTERN}) "
         r'in "(?P<path>.*)" in "(?P<space>.*)"'
     ),
     converters={"subfiles": parse_elements_sequence},
