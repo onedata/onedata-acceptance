@@ -10,7 +10,7 @@ from _pytest._py.path import LocalPath
 
 from tests.gui.meta_steps.oneprovider.common import (
     migrate_file_to_provider,
-    replicate_files_to_provider,
+    replicate_files_to_providers,
 )
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.meta_steps.oneprovider.transfers import (
@@ -65,7 +65,7 @@ def replicate_file_to_provider_op(
     elif client.lower() == "web gui":
         result = "replicates"
         go_to_filebrowser(selenium, user, tmp_memory, space)
-        replicate_files_to_provider(
+        replicate_files_to_providers(
             selenium, user, [path], tmp_memory, [provider_to], hosts, result
         )
     else:

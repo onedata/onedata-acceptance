@@ -96,7 +96,7 @@ def assert_cannot_click_replicate_button(
         "providers": parse_elements_sequence,
     },
 )
-def replicate_files_to_provider(
+def replicate_files_to_providers(
     selenium: SeleniumDrivers,
     browser_id: str,
     names: list[str],

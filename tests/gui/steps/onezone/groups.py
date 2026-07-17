@@ -109,7 +109,7 @@ def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) ->
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) opens group "(?P<group>.*)" '
+        r'user of (?P<browser_id>.*) opens group "(?P<group_name>.*)" '
         r"(?P<subpage>members|hierarchy|main) subpage"
     )
 )

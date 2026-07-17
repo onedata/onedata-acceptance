@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.meta_steps.oneprovider.common import replicate_files_to_provider
+from tests.gui.meta_steps.oneprovider.common import replicate_files_to_providers
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.browser import (
@@ -28,7 +28,11 @@ from tests.gui.steps.oneprovider.transfers import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -126,22 +130,23 @@ def wait_for_all_transfers_to_start_and_finish(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.+) "
-        r'replicates (?P<names>.*) in space "(?P<space>.+)"'
+        rf'replicates (?P<names>{ELEMENTS_SEQUENCE_PATTERN}) in space "(?P<space>.+)"'
         r' to provider "(?P<provider>.+)"'
         r" and waits for all transfers to complete"
-    )
+    ),
+    converters={"names": parse_elements_sequence},
 )
 def replicate_and_wait_to_complete(
     selenium: SeleniumDrivers,
     browser_id: str,
-    names: str,
+    names: list[str],
     space: str,
     provider: str,
     tmp_memory: TmpMemory,
     hosts: Hosts,
 ) -> None:
-    replicate_files_to_provider(
-        selenium, browser_id, [names], tmp_memory, [provider], hosts, "replicates"
+    replicate_files_to_providers(
+        selenium, browser_id, names, tmp_memory, [provider], hosts, "replicates"
     )
     wait_for_all_transfers_to_start_and_finish(
         selenium, browser_id, provider, space, hosts
