@@ -318,13 +318,13 @@ def assert_ace_in_op_rest(
     numerals: dict[str, int],
     path: str,
     num: str,
-    priv: str,
+    privileges: str,
     item_type: str,
     name: str,
 ) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     ace = client.read_metadata(path)["metadata"]["cdmi_acl"][numerals[num]]
-    assert_ace(parse_elements_sequence(priv), item_type, ace, name, num, path)
+    assert_ace(parse_elements_sequence(privileges), item_type, ace, name, num, path)
 
 
 def grant_acl_privileges_in_op_rest(
@@ -333,7 +333,7 @@ def grant_acl_privileges_in_op_rest(
     host: str,
     hosts: Hosts,
     path: str,
-    priv: str,
+    privileges: str,
     item_type: str,
     name: str,
     groups: Mapping[str, str],
@@ -344,7 +344,13 @@ def grant_acl_privileges_in_op_rest(
     except KeyError:
         acl = []
     acl = get_acl_metadata(
-        acl, parse_elements_sequence(priv), item_type, groups, name, users, path
+        acl,
+        parse_elements_sequence(privileges),
+        item_type,
+        groups,
+        name,
+        users,
+        path,
     )
     client.write_metadata(path, {"cdmi_acl": acl})
 

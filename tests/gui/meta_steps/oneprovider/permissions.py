@@ -207,27 +207,27 @@ def fail_to_set_posix_permissions_in_op_gui(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>\w+) adds ACE with (?P<priv>.*) "
+        r"user of (?P<browser_id>\w+) adds ACE with (?P<privileges>.*) "
         r"privileges? set for (?P<type>.*?) (?P<name>.*)"
     )
 )
 def set_acl_entry_in_op_gui(
-    selenium: SeleniumDrivers, browser_id: str, priv: str, name: str
+    selenium: SeleniumDrivers, browser_id: str, privileges: str, name: str
 ) -> None:
     permission_type = "acl"
 
     select_permission_type(selenium, browser_id, permission_type)
     select_acl_subject(selenium, browser_id, name)
     expand_subject_record_in_edit_permissions_modal(selenium, browser_id, name)
-    select_acl_options(selenium, browser_id, priv, name)
+    select_acl_options(selenium, browser_id, privileges, name)
     click_on_record_header_in_edit_permissions_modal(selenium, browser_id, name)
 
 
-def _set_acl_privilages_for_selected(
+def _set_acl_privileges_for_selected(
     browser_id: str,
     selenium: SeleniumDrivers,
     tmp_memory: TmpMemory,
-    priv: str,
+    privileges: str,
     name: str,
     path: Optional[str] = None,
 ) -> None:
@@ -248,7 +248,7 @@ def _set_acl_privilages_for_selected(
         choose_option_from_selection_menu(browser_id, selenium, option, tmp_memory)
     assert_tab_in_modal(selenium, browser_id, option, modal_name)
 
-    set_acl_entry_in_op_gui(selenium, browser_id, priv, name)
+    set_acl_entry_in_op_gui(selenium, browser_id, privileges, name)
     click_panel_button(selenium, browser_id, button, panel)
     if check_warning_modal(selenium, browser_id):
         click_modal_button(selenium, browser_id, proceed_button, warning_modal)
@@ -258,21 +258,26 @@ def _set_acl_privilages_for_selected(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>\w+) sets "(?P<item_name>.*)" '
-        r"(directory|file) ACL (?P<priv>.*) privileges for"
+        r"(directory|file) ACL (?P<privileges>.*) privileges for"
         r" (?P<type>.*) (?P<name>.*)"
     )
 )
 def grant_acl_privileges_to_selected_in_filebrowser(
     selenium: SeleniumDrivers,
     browser_id: str,
-    priv: str,
+    privileges: str,
     name: str,
     tmp_memory: TmpMemory,
     item_name: str,
 ) -> None:
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
-    _set_acl_privilages_for_selected(
-        browser_id, selenium, tmp_memory, priv, name, item_name
+    _set_acl_privileges_for_selected(
+        browser_id,
+        selenium,
+        tmp_memory,
+        privileges,
+        name,
+        item_name,
     )
 
 
@@ -280,7 +285,7 @@ def grant_acl_privileges_to_selected_in_filebrowser(
     parsers.re(
         rf"user of (?P<browser_id>\w+) sets (?P<item_list>{ELEMENTS_SEQUENCE_PATTERN})"
         r" ACL "
-        r"(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*) "
+        r"(?P<privileges>.*) privileges for (?P<type>.*) (?P<name>.*) "
         r'in "(?P<space>.*)"'
     ),
     converters={"item_list": parse_elements_sequence},
@@ -289,7 +294,7 @@ def grant_acl_privileges_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
     item_list: str | list[str],
-    priv: str,
+    privileges: str,
     name: str,
     tmp_memory: TmpMemory,
     space: str,
@@ -307,8 +312,13 @@ def grant_acl_privileges_in_op_gui(
         item_list = parse_elements_sequence(item_list)
     select_files_from_file_list_using_ctrl(browser_id, item_list, tmp_memory)
     selected_path = item_list[0] if len(item_list) == 1 else None
-    _set_acl_privilages_for_selected(
-        browser_id, selenium, tmp_memory, priv, name, selected_path
+    _set_acl_privileges_for_selected(
+        browser_id,
+        selenium,
+        tmp_memory,
+        privileges,
+        name,
+        selected_path,
     )
 
 
@@ -341,14 +351,14 @@ def read_items_acl(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that (?P<path>.*?) in space "
-        r'"(?P<space>\w+)" (has|have) (?P<priv>.*) privileges? set for '
+        r'"(?P<space>\w+)" (has|have) (?P<privileges>.*) privileges? set for '
         r"(?P<acl_type>.*?) (?P<name>.*) in (?P<num>.*) ACL record"
     )
 )
 def assert_ace_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
-    priv: str,
+    privileges: str,
     acl_type: str,
     name: str,
     num: str,
@@ -369,7 +379,7 @@ def assert_ace_in_op_gui(
     )
     if acl_type != "unknown":
         assert_acl_subject(selenium, browser_id, num, numerals, acl_type, name)
-        assert_set_acl_privileges(selenium, browser_id, num, numerals, [priv])
+        assert_set_acl_privileges(selenium, browser_id, num, numerals, privileges)
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 

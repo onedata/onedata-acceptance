@@ -413,14 +413,14 @@ def assert_ace_in_op_oneclient(
     host: str,
     path: str,
     num: str,
-    priv: str,
+    privileges: str,
     item_type: str,
     name: str,
     numerals: dict[str, int],
 ) -> None:
     ace = multi_file_steps.get_metadata(user, path, host, users)["cdmi_acl"]
     ace = json.loads(ace)[numerals[num]]
-    assert_ace(parse_elements_sequence(priv), item_type, ace, name, num, path)
+    assert_ace(parse_elements_sequence(privileges), item_type, ace, name, num, path)
 
 
 def grant_acl_privileges_in_op_oneclient(
@@ -428,7 +428,7 @@ def grant_acl_privileges_in_op_oneclient(
     users: Users,
     host: str,
     path: str,
-    priv: str,
+    privileges: str,
     item_type: str,
     groups: Mapping[str, str],
     name: str,
@@ -440,7 +440,7 @@ def grant_acl_privileges_in_op_oneclient(
         acl = []
     acl = get_acl_metadata(
         acl,
-        parse_elements_sequence(priv),
+        parse_elements_sequence(privileges),
         item_type,
         groups,
         name,
