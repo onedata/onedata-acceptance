@@ -169,7 +169,6 @@ def leave_spaces_in_oz_using_gui(
         "space_list": parse_elements_sequence,
     },
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_spaces_in_oz_using_gui(
     selenium: SeleniumDrivers, browser_id: str, space_list: list[str]
 ) -> None:

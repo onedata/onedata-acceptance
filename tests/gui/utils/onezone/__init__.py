@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2017-2026 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from typing import ClassVar, TypeVar
+from weakref import WeakKeyDictionary
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -32,6 +33,10 @@ PageT = TypeVar("PageT", bound=SidebarPanelPage)
 
 
 class OZLoggedIn:
+    _current_page_cls_by_driver: ClassVar[
+        WeakKeyDictionary[WebDriver, type[SidebarPanelPage]]
+    ] = WeakKeyDictionary()
+
     _page_class_by_name: ClassVar[dict[PageName, type[SidebarPanelPage]]] = {
         "data": DataPage,
         "shares": SharesPage,
@@ -57,11 +62,11 @@ class OZLoggedIn:
 
     def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
-        self._current_page_cls: type[SidebarPanelPage] = DataPage
+        self._current_page_cls_by_driver.setdefault(driver, DataPage)
 
     @property
     def current_page_cls(self) -> type[SidebarPanelPage]:
-        return self._current_page_cls
+        return self._current_page_cls_by_driver[self.web_elem]
 
     def __str__(self) -> str:
         return "Onezone page"
@@ -119,7 +124,7 @@ class OZLoggedIn:
         self._wait_for_panel_to_expand()
 
     def open_panel(self, page_cls: type[PageT]) -> None:
-        if page_cls == self._current_page_cls:
+        if page_cls == self.current_page_cls:
             return
 
         self.expand_panel_if_needed()
@@ -128,7 +133,7 @@ class OZLoggedIn:
         if not self.is_panel_selected(panel_name):
             self.click_on_sidebar_menu_panel(panel_name)
 
-        self._current_page_cls = page_cls
+        self._current_page_cls_by_driver[self.web_elem] = page_cls
 
     @property
     def data(self) -> DataPage:

@@ -215,8 +215,7 @@ def rename_spaces_in_oz(
     parsers.re(
         r"using (?P<client>.*), user of (?P<user>.+?) removes spaces? "
         rf'named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)"'
-        r" Onezone "
-        r"service"
+        r" Onezone service"
     ),
     converters={
         "space_list": parse_elements_sequence,
