@@ -395,6 +395,7 @@ def _create_token_with_config(
             tmp_memory,
         )
     click_create_token_button_in_create_token_page(selenium, browser_id)
+    wait_till_alert_info_popup_disappear(selenium[browser_id], AlertPopup.TOKEN_CREATED)
 
 
 def _set_tokens_caveats(
@@ -772,6 +773,7 @@ def create_token_with_basic_template(
     choose_token_template(selenium, browser_id, template)
     type_new_token_name(selenium, browser_id, name)
     click_create_token_button_in_create_token_page(selenium, browser_id)
+    wait_till_alert_info_popup_disappear(selenium[browser_id], AlertPopup.TOKEN_CREATED)
 
 
 @wt(

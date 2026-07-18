@@ -57,6 +57,11 @@ class OZLoggedIn:
 
     def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
+        self._current_page_cls: type[SidebarPanelPage] = DataPage
+
+    @property
+    def current_page_cls(self) -> type[SidebarPanelPage]:
+        return self._current_page_cls
 
     def __str__(self) -> str:
         return "Onezone page"
@@ -114,10 +119,16 @@ class OZLoggedIn:
         self._wait_for_panel_to_expand()
 
     def open_panel(self, page_cls: type[PageT]) -> None:
+        if page_cls == self._current_page_cls:
+            return
+
         self.expand_panel_if_needed()
         panel_name = page_cls.panel_name
+
         if not self.is_panel_selected(panel_name):
             self.click_on_sidebar_menu_panel(panel_name)
+
+        self._current_page_cls = page_cls
 
     @property
     def data(self) -> DataPage:
