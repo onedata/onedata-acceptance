@@ -43,9 +43,12 @@ def click_on_option_in_account_settings_in_oz(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
     driver = selenium[browser_id]
+    oz_page = OZLoggedIn(driver)
     if option == "Manage account":
-        OZLoggedIn(driver).open_panel(ManageAccountPage)
+        oz_page.open_panel(ManageAccountPage)
     Popups(driver).user_account_menu.options[option].click()
+    if option == "Logout":
+        oz_page.set_current_page(DataPage)
 
 
 @wt(parsers.parse("user of {browser_id} clicks on menu button on Profile page"))

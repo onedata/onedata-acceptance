@@ -72,6 +72,9 @@ class OZLoggedIn:
     def current_page_cls(self) -> type[GenericPage]:
         return self._current_page_by_session_id[self._session_id]
 
+    def set_current_page(self, page_cls: type[GenericPage]) -> None:
+        self._current_page_by_session_id[self._session_id] = page_cls
+
     def __str__(self) -> str:
         return "Onezone page"
 
@@ -141,7 +144,7 @@ class OZLoggedIn:
             if not self.is_panel_selected(panel_name):
                 self.click_on_sidebar_menu_panel(panel_name)
 
-        self._current_page_by_session_id[self._session_id] = page_cls
+        self.set_current_page(page_cls)
 
     @property
     def data(self) -> DataPage:
