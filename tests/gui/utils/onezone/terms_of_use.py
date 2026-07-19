@@ -5,9 +5,8 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
 from tests.gui.utils.core.web_elements import Button, WebElement
+from tests.webdriver import WebDriver
 
 
 class TermsOfUse:

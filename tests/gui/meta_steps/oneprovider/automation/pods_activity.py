@@ -10,7 +10,6 @@ import time
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -26,6 +25,7 @@ from tests.gui.utils.common.modals.workflows_modals.function_pods_activity impor
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 def change_tab_in_function_pods_activity_modal(

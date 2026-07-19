@@ -11,7 +11,6 @@ import yaml
 from pytest_bdd import parsers
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
@@ -24,6 +23,7 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import wt
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 # Character used to separate provider name from storage name in QoS expressions editor.
 # Eg. "storage is my_posix @provider-krakow"

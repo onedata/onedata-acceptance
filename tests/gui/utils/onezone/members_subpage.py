@@ -13,7 +13,6 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
@@ -29,6 +28,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonPageObject
+from tests.webdriver import WebDriver
 
 
 class MembersHeaderRow(PageObject):

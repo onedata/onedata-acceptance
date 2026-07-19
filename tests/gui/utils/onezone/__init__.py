@@ -5,10 +5,8 @@ __copyright__ = "Copyright (C) 2017-2026 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from typing import ClassVar, TypeVar
-from weakref import WeakKeyDictionary
 
 from selenium.webdriver import ActionChains
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -17,6 +15,7 @@ from tests.gui.utils.generic import PageName
 from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import element_has_class, repeat_failed
+from tests.webdriver import WebDriver
 
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage
@@ -33,9 +32,7 @@ PageT = TypeVar("PageT", bound=SidebarPanelPage)
 
 
 class OZLoggedIn:
-    _current_page_cls_by_driver: ClassVar[
-        WeakKeyDictionary[WebDriver, type[SidebarPanelPage]]
-    ] = WeakKeyDictionary()
+    _current_page_by_session_id: ClassVar[dict[str, type[SidebarPanelPage]]] = {}
 
     _page_class_by_name: ClassVar[dict[PageName, type[SidebarPanelPage]]] = {
         "data": DataPage,
@@ -62,11 +59,18 @@ class OZLoggedIn:
 
     def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
-        self._current_page_cls_by_driver.setdefault(driver, DataPage)
+        self._current_page_by_session_id.setdefault(self._session_id, DataPage)
+
+    @property
+    def _session_id(self) -> str:
+        session_id = self.web_elem.session_id
+        if session_id is None:
+            raise RuntimeError("WebDriver has no active session")
+        return session_id
 
     @property
     def current_page_cls(self) -> type[SidebarPanelPage]:
-        return self._current_page_cls_by_driver[self.web_elem]
+        return self._current_page_by_session_id[self._session_id]
 
     def __str__(self) -> str:
         return "Onezone page"
@@ -133,7 +137,7 @@ class OZLoggedIn:
         if not self.is_panel_selected(panel_name):
             self.click_on_sidebar_menu_panel(panel_name)
 
-        self._current_page_cls_by_driver[self.web_elem] = page_cls
+        self._current_page_by_session_id[self._session_id] = page_cls
 
     @property
     def data(self) -> DataPage:

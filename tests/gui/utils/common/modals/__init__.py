@@ -5,9 +5,8 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
 from tests.gui.utils.core.web_elements import WebItem
+from tests.webdriver import WebDriver
 
 from .archives_modals.archive_audit_log import ArchiveAuditLog
 from .archives_modals.archive_details import ArchiveDetails

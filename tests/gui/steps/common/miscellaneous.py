@@ -13,7 +13,6 @@ import yaml
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -28,6 +27,7 @@ from tests.utils.entities_setup import (
     GUI_DOWNLOAD_CHUNK_SIZE,
 )
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 @repeat_failed(attempts=WAIT_FRONTEND)

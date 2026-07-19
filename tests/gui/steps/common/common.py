@@ -12,7 +12,6 @@ from typing import Any, Protocol, cast
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import (
     invisibility_of_element_located,
@@ -36,6 +35,7 @@ from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 class Checkable(Protocol):

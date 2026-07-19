@@ -10,7 +10,6 @@ from typing import Optional, overload
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -33,6 +32,7 @@ from tests.gui.utils.oneprovider.automation import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 # this step is created to avoid using repeat_failed in metasteps

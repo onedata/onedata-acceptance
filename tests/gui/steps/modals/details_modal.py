@@ -7,8 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from datetime import datetime
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.modals.modal import check_modal_name
@@ -22,6 +20,7 @@ from tests.gui.utils.generic import transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 @wt(

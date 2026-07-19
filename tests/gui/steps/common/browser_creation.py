@@ -16,7 +16,6 @@ from _pytest._py.path import LocalPath
 from pytest_bdd import given
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.remote.webdriver import WebDriver
 from urllib3.exceptions import HTTPError
 
 from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
@@ -28,6 +27,7 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import JsonObject, SeleniumDrivers, WebDriverFactory
 from tests.utils.bdd_utils import parsers
+from tests.webdriver import WebDriver
 
 
 @given(

@@ -11,7 +11,6 @@ from typing import Dict, List, Optional
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
@@ -23,6 +22,7 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 class ErrorLogRow(BrowserRow):

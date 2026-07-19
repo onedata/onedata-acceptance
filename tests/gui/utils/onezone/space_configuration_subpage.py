@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from selenium.webdriver import ActionChains
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
@@ -21,6 +20,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import EditBox
+from tests.webdriver import WebDriver
 
 
 class SpaceTag(PageObject):

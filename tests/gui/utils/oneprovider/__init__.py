@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
-from selenium.webdriver.remote.webdriver import WebDriver
+from tests.webdriver import WebDriver
 
 from ..core.web_elements import Label, WebItem
 from .archive_browser import ArchiveBrowser

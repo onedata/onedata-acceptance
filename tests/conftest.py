@@ -25,7 +25,6 @@ from _pytest.reports import TestReport
 from py.xml import html  # pylint: disable=import-error, no-name-in-module
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import Chrome
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.events import EventFiringWebDriver
 from urllib3.exceptions import MaxRetryError
 
@@ -56,6 +55,7 @@ from tests.utils.environment_utils import clean_env, start_environment
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
 from tests.utils.user_utils import User, Users
+from tests.webdriver import WebDriver
 
 html.__tagspec__.update({x: 1 for x in ("video", "source")})
 VIDEO_ATTRS = {
@@ -516,7 +516,7 @@ def chrome_driver(capabilities: JsonObject) -> WebDriverFactory:
 # The reason of using this class is gathering all logs.
 # Without it each call of get_log() returns but also removes logs,
 # so calling it before making report causes loss of logs.
-class ChromeWithAllLogs(Chrome):
+class ChromeWithAllLogs(Chrome, WebDriver):
     def __init__(self, *args: object, **kwargs: object) -> None:
         self.all_logs: defaultdict[str, list[LogEntry]] = defaultdict(list)
         super().__init__(*args, **kwargs)

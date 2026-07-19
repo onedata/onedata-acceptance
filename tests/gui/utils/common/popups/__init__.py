@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.web_elements import (
     Label,
@@ -16,6 +14,7 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.generic import AlertPopup
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 from .alert_info_popup import AlertInfoPopup
 from .archive_row_menu import ArchiveRowMenu

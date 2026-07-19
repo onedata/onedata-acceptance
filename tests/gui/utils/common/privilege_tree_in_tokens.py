@@ -8,7 +8,6 @@ import time
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.type_definitions import (
@@ -26,6 +25,7 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 class PrivilegeRow(PageObject):

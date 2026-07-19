@@ -10,7 +10,6 @@ import time
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
@@ -24,6 +23,7 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 def _wait_for_op_session_to_start(

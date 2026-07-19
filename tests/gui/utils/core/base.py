@@ -3,10 +3,10 @@
 from abc import ABC, ABCMeta, abstractmethod
 from typing import Optional, cast
 
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.utils.generic import click_on_web_elem
+from tests.webdriver import WebDriver
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"

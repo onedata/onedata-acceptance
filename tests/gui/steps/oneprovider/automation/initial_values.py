@@ -8,8 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Optional, Protocol, cast
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectsSequence
@@ -17,6 +15,7 @@ from tests.gui.utils.oneprovider.automation import InitialValueStore
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 class InitialValueOption(Protocol):

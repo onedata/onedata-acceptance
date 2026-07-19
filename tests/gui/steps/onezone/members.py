@@ -11,7 +11,6 @@ from typing import cast
 
 import yaml
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -48,6 +47,7 @@ from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import element_has_class, repeat_failed
+from tests.webdriver import WebDriver
 
 MENU_ELEM_TO_TAB_NAME = {
     "space": "data",

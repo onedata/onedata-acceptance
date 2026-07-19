@@ -8,7 +8,6 @@ import re
 
 import pytest
 from selenium.common.exceptions import InvalidElementStateException, JavascriptException
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
@@ -20,6 +19,7 @@ from tests.gui.utils.generic import parse_elements_sequence, parse_seq
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 def _get_index(

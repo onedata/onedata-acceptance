@@ -7,8 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Literal
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
 from tests.gui.utils.core.web_elements import WebElementsSequence
 from tests.gui.utils.homepage.documentation import (
     APIPage,
@@ -16,6 +14,7 @@ from tests.gui.utils.homepage.documentation import (
     HowItWorksPage,
     QuickStartPage,
 )
+from tests.webdriver import WebDriver
 
 PageName = Literal["how it works", "quick start", "api", "docs"]
 

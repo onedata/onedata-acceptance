@@ -12,7 +12,6 @@ from typing import Optional, cast
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import (
     invisibility_of_element_located,
     visibility_of_element_located,
@@ -35,6 +34,7 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
 from tests.utils.utils import repeat_failed
+from tests.webdriver import WebDriver
 
 
 @given(
