@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.onezone.uploads_page import UploadsPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -81,7 +82,7 @@ def assert_file_is_uploaded(
 def click_on_uploads_in_the_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver).uploads_web_elem.click()
+    OZLoggedIn(driver).open_panel(UploadsPage)
 
 
 def click_on_provider_in_uploads_sidebar_with_provider_name(

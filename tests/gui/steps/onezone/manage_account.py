@@ -12,6 +12,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.onezone.data_page import DataPage
+from tests.gui.utils.onezone.manage_account_page import ManageAccountPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -41,7 +42,10 @@ def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) ->
 def click_on_option_in_account_settings_in_oz(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    Popups(selenium[browser_id]).user_account_menu.options[option].click()
+    driver = selenium[browser_id]
+    if option == "Manage account":
+        OZLoggedIn(driver).open_panel(ManageAccountPage)
+    Popups(driver).user_account_menu.options[option].click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on menu button on Profile page"))

@@ -12,7 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 from tests.gui.utils.generic import PageName
-from tests.gui.utils.onezone.generic_page import SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import GenericPage, SidebarPanelPage
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import element_has_class, repeat_failed
 from tests.webdriver import WebDriver
@@ -28,11 +28,11 @@ from .shares_page import SharesPage
 from .tokens_page import TokensPage
 from .uploads_page import UploadsPage
 
-PageT = TypeVar("PageT", bound=SidebarPanelPage)
+PageT = TypeVar("PageT", bound=GenericPage)
 
 
 class OZLoggedIn:
-    _current_page_by_session_id: ClassVar[dict[str, type[SidebarPanelPage]]] = {}
+    _current_page_by_session_id: ClassVar[dict[str, type[GenericPage]]] = {}
 
     _page_class_by_name: ClassVar[dict[PageName, type[SidebarPanelPage]]] = {
         "data": DataPage,
@@ -69,7 +69,7 @@ class OZLoggedIn:
         return session_id
 
     @property
-    def current_page_cls(self) -> type[SidebarPanelPage]:
+    def current_page_cls(self) -> type[GenericPage]:
         return self._current_page_by_session_id[self._session_id]
 
     def __str__(self) -> str:
@@ -128,14 +128,18 @@ class OZLoggedIn:
         self._wait_for_panel_to_expand()
 
     def open_panel(self, page_cls: type[PageT]) -> None:
-        if page_cls == self.current_page_cls:
+        if page_cls is self.current_page_cls:
             return
 
         self.expand_panel_if_needed()
-        panel_name = page_cls.panel_name
 
-        if not self.is_panel_selected(panel_name):
-            self.click_on_sidebar_menu_panel(panel_name)
+        if page_cls is UploadsPage:
+            self.uploads_web_elem.click()
+        elif issubclass(page_cls, SidebarPanelPage):
+            panel_name = page_cls.panel_name
+
+            if not self.is_panel_selected(panel_name):
+                self.click_on_sidebar_menu_panel(panel_name)
 
         self._current_page_by_session_id[self._session_id] = page_cls
 

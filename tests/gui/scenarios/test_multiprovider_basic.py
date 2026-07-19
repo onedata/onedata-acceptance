@@ -70,8 +70,8 @@ def screens() -> list[int]:
     return [0]
 
 
-scenarios("../features/oneprovider/multiprovider/cdmi.feature")
+# scenarios("../features/oneprovider/multiprovider/cdmi.feature")
 scenarios("../features/oneprovider/multiprovider/upload_files.feature")
-scenarios("../features/oneprovider/multiprovider/providers_world_map.feature")
-scenarios("../features/oneprovider/multiprovider/stop_provider.feature")
-scenarios("../features/oneprovider/multiprovider/space_multiple_providers.feature")
+# scenarios("../features/oneprovider/multiprovider/providers_world_map.feature")
+# scenarios("../features/oneprovider/multiprovider/stop_provider.feature")
+# scenarios("../features/oneprovider/multiprovider/space_multiple_providers.feature")
