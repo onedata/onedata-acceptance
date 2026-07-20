@@ -4,7 +4,7 @@ using web GUI
 
 from typing import Any
 
-from tests.webdriver import WebDriver
+from selenium.webdriver.remote.webdriver import WebDriver
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"

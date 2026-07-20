@@ -13,6 +13,7 @@ from typing import ClassVar, Optional
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject
@@ -24,7 +25,6 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 from ..core import scroll_to_css_selector
 from .breadcrumbs import Breadcrumbs

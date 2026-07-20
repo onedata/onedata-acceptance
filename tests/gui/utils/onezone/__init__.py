@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar, TypeVar
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -15,7 +16,6 @@ from tests.gui.utils.generic import PageName
 from tests.gui.utils.onezone.generic_page import GenericPage, SidebarPanelPage
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import element_has_class, repeat_failed
-from tests.webdriver import WebDriver
 
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage

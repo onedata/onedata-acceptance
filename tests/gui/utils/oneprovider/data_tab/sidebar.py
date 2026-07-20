@@ -12,6 +12,7 @@ from typing import Optional
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
@@ -22,7 +23,6 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
 )
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceSelector
-from tests.webdriver import WebDriver
 
 
 class DataTabSidebar(PageObject):

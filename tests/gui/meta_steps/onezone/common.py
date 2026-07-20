@@ -10,6 +10,7 @@ from typing import cast
 from _pytest._py.path import LocalPath
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
@@ -46,7 +47,6 @@ from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 
 @given(

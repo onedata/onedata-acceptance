@@ -10,6 +10,7 @@ import re
 from typing import Union
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -26,7 +27,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 HOST_PATTERN = (
     r"(?:"

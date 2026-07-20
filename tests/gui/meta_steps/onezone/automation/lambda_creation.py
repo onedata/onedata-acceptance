@@ -13,6 +13,7 @@ import time
 import yaml
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
@@ -39,7 +40,6 @@ from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 ALL_LAMBDA_NAMES = []
 

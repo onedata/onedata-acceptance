@@ -17,6 +17,7 @@ from typing import TypedDict, cast
 import yaml
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import GUI_LOGDIR
 from tests.gui.conftest import WAIT_FRONTEND
@@ -77,7 +78,6 @@ from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 
 class AuditLogDebugContent(TypedDict):

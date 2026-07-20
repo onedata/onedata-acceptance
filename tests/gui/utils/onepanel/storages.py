@@ -8,6 +8,7 @@ import re
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core import scroll_to_css_selector
@@ -25,7 +26,6 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.onezone.common import InputBox
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 
 class StoragePathType(PageObject):

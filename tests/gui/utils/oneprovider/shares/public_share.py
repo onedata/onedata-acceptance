@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
@@ -14,7 +16,6 @@ from tests.gui.utils.core.web_elements import (
     WebElementsSequence,
     WebItem,
 )
-from tests.webdriver import WebDriver
 
 from ...core.base import PageObject
 from ..breadcrumbs import Breadcrumbs

@@ -10,6 +10,7 @@ import time
 
 import pytest
 from _pytest._py.path import LocalPath
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import (
     WAIT_BACKEND,
@@ -40,7 +41,6 @@ from tests.utils.entities_setup import (
     UPLOAD_INACTIVITY_PERIOD_SEC,
 )
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

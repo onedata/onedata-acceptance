@@ -10,10 +10,10 @@ from collections.abc import Callable
 from os import PathLike
 from typing import Any, Literal, TypedDict
 
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from tests.type_definitions import JsonObject
-from tests.webdriver import WebDriver
 
 type TmpMemory = defaultdict[str, dict[str, Any]]
 

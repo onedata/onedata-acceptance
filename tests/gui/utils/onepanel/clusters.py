@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Input,
@@ -17,7 +19,6 @@ from tests.gui.utils.core.web_objects import (
     ButtonWithTextPageObject,
     PageObjectsSequence,
 )
-from tests.webdriver import WebDriver
 
 
 class WelcomePage(PageObject):

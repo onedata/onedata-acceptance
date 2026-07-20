@@ -18,12 +18,12 @@ from typing import Literal, Optional, TypeVar, cast, overload
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from tests import gui
 from tests.gui.type_definitions import WebElemRoot
 from tests.type_definitions import JsonValue
-from tests.webdriver import WebDriver
 
 T = TypeVar("T")
 

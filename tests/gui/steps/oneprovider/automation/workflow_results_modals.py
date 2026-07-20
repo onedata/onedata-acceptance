@@ -9,6 +9,7 @@ import json
 import time
 from datetime import datetime
 
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -32,7 +33,6 @@ from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 
 @wt(parsers.parse("user of {browser_id} sees that chart with processing stats exist"))

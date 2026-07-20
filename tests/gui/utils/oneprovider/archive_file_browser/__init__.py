@@ -7,9 +7,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from functools import partial
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.core.web_elements import WebItem
-from tests.webdriver import WebDriver
 
 from ..browser import Browser
 from .data_row import DataRow

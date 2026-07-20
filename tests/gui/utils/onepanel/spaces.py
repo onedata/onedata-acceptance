@@ -10,6 +10,7 @@ from typing import Protocol, cast
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.utils.common.common import DropdownSelector, Toggle
@@ -25,7 +26,6 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
-from tests.webdriver import WebDriver
 
 DEFAULT_IMPORT_STRATEGY_CONFIG = {
     "Mode": "auto",

@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
@@ -22,7 +23,6 @@ from tests.gui.utils.onezone.tokens_page import TokenRow, TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

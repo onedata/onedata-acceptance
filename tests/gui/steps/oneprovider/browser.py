@@ -11,6 +11,8 @@ from collections.abc import Callable, Collection, Sequence
 from datetime import datetime
 from typing import Optional, Protocol
 
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import network_throttling_download
 from tests.gui.type_definitions import TmpMemory
@@ -28,7 +30,6 @@ from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 
 class MenuOption(Protocol):

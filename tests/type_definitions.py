@@ -17,8 +17,7 @@ from typing import (
 )
 
 from _pytest.fixtures import FixtureRequest
-
-from tests.webdriver import WebDriver
+from selenium.webdriver.remote.webdriver import WebDriver
 
 type JsonValue = Optional[
     str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]

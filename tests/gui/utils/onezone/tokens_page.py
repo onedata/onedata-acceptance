@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
@@ -23,7 +24,6 @@ from tests.gui.utils.core.web_elements import (
 from tests.gui.utils.onezone.common import InputBox
 from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.gui.utils.onezone.token_caveats import CaveatField
-from tests.webdriver import WebDriver
 
 
 class TokenRow(PageObject):

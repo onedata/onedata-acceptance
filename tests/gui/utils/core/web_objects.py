@@ -3,10 +3,10 @@
 from collections.abc import Iterator, Sequence
 from typing import Optional
 
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.utils.generic import nth
-from tests.webdriver import WebDriver
 
 from .base import PageObject
 

@@ -9,6 +9,7 @@ import os
 from typing import Optional
 
 from _pytest._py.path import LocalPath
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
@@ -29,7 +30,6 @@ from tests.gui.utils.onezone.workflows_subpage import Workflow, WorkflowVisualis
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 
 @wt(

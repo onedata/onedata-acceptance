@@ -8,12 +8,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import xml.etree.ElementTree as ET
 from typing import Optional
 
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import PublicShareView as public_share
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 NAMESPACES_OPENAIRE = {
     "oaire": "http://namespace.openaire.eu/schema/oaire/",

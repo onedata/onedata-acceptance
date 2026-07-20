@@ -11,6 +11,7 @@ from collections.abc import Iterator
 from itertools import zip_longest
 
 import requests
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -28,7 +29,6 @@ from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
-from tests.webdriver import WebDriver
 
 TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
 TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 120

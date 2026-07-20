@@ -1,6 +1,6 @@
 """Utils for common operations in GUI tests"""
 
-from tests.webdriver import WebDriver
+from selenium.webdriver.remote.webdriver import WebDriver
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
