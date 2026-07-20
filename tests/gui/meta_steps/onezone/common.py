@@ -302,7 +302,8 @@ def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ManageAccountPage)
     oz_page.profile.profile.click()
-    Popups(driver).user_account_menu.options["Logout"].click()
+    button = Popups(driver).user_account_menu.options["Logout"].web_elem
+    ActionChains(driver).move_to_element(button).click(button).perform()
     oz_page.set_current_page(DataPage)
 
 
