@@ -112,8 +112,8 @@ def start_query_block(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on add another query block icon "
-        "in data discovery page"
+        "user of {browser_id} clicks on add another query block icon"
+        " in data discovery page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -151,8 +151,8 @@ def open_condition_properties_list(selenium: SeleniumDrivers, browser_id: str) -
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {properties_list:ElementsSequence} on condition"
-        " properties list",
+        "user of {browser_id} sees {properties_list:ElementsSequence} on "
+        "condition properties list",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )

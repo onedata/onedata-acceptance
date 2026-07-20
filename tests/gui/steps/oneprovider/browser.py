@@ -585,8 +585,8 @@ def click_on_state_view_mode_tab(
 
 @wt(
     parsers.re(
-        r"(using web GUI, )?user of (?P<browser_id>.*) clicks on menu for"
-        r' "(?P<item_name>.*)" '
+        r"(using web GUI, )?user of (?P<browser_id>.*) clicks on menu "
+        r'for "(?P<item_name>.*)" '
         r"(?P<type>dataset|directory|file) in (?P<which_browser>.*)"
     )
 )

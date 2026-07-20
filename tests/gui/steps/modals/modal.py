@@ -180,8 +180,8 @@ def assert_modal_does_not_appear(
 )
 @wt(
     parsers.re(
-        r'(using web GUI, )?user of (?P<browser_id>.*) sees that "(?P<modal_name>.*)"'
-        r" modal has appeared"
+        r"(using web GUI, )?user of (?P<browser_id>.*) sees that "
+        r'"(?P<modal_name>.*)" modal has appeared'
     )
 )
 def wt_wait_for_modal_to_appear(
@@ -380,8 +380,8 @@ def assert_modal_option_is_not_selected(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{btn_name}" item displayed '
-        "in modal is disabled"
+        'user of {browser_id} sees that "{btn_name}" item '
+        "displayed in modal is disabled"
     )
 )
 def assert_btn_in_modal_is_disabled(

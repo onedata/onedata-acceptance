@@ -187,8 +187,8 @@ def assert_details_of_recent_transfer_op(
 
 @wt(
     parsers.parse(
-        'using {client}, {user} waits for last transfer to finish in space "{space}" in'
-        " provider {host}"
+        "using {client}, {user} waits for last transfer to finish in space "
+        '"{space}" in provider {host}'
     )
 )
 def wait_for_recent_transfer_to_finish_op(

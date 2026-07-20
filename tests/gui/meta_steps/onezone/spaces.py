@@ -540,8 +540,8 @@ def copy_command_from_rest_api_modal(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} opens "{space_name}" space on the spaces'
-        " list in the sidebar"
+        'user of {browser_id} opens "{space_name}" space on the '
+        "spaces list in the sidebar"
     )
 )
 def open_space_in_spaces_list(
@@ -577,8 +577,8 @@ def open_space_in_spaces_list(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} can see that opened space is "{space_name}" on the spaces'
-        " list in the sidebar"
+        'user of {browser_id} can see that opened space is "{space_name}" on the '
+        "spaces list in the sidebar"
     )
 )
 def assert_opened_space(

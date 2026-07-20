@@ -568,8 +568,8 @@ def wt_execute_non_bagit_part_of_the_workflows(
 @wt(
     parsers.re(
         r"using REST, (?P<user>.*) executes bagit-uploader workflow with "
-        r'(?P<archive_types>.*) bagit archives? on space "(?P<space>.*)" '
-        r"in (?P<host>.*)"
+        r"(?P<archive_types>.*) bagit archives? on space "
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def wt_execute_part_of_the_workflows(

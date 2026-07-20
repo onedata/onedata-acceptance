@@ -85,8 +85,8 @@ def ls_absent(user: str, files: str, path: str, users: Users) -> None:
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) fails to move (?P<file1>.*) to (?P<file2>.*)"
-        r" using shell command"
+        r"(?P<user>\w+) fails to move (?P<file1>.*) to "
+        r"(?P<file2>.*) using shell command"
     )
 )
 def shell_move_fail(user: str, file1: str, file2: str, users: Users) -> None:

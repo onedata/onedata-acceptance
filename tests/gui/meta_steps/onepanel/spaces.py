@@ -394,8 +394,8 @@ def set_quota_in_auto_cleaning(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} starts scan using "Start scan" button and waits till'
-        " finished in Onepanel"
+        'user of {browser_id} starts scan using "Start scan" button and waits '
+        "till finished in Onepanel"
     )
 )
 def run_scan_and_wait_till_finished(selenium: SeleniumDrivers, browser_id: str) -> None:

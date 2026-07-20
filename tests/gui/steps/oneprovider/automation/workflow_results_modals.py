@@ -126,8 +126,8 @@ def assert_no_data_message_processing_chart(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that (?P<option>.*?) "
         r"processing speed (?P<compare_option>is greater or equal|is "
-        r"equal|is greater than) (?P<number>.*?) per second on chart with processing "
-        r"stats"
+        r"equal|is greater than) (?P<number>.*?) per second on chart"
+        r" with processing stats"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

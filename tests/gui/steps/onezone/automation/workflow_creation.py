@@ -94,8 +94,8 @@ def confirm_lambda_creation_or_edition(
     parsers.re(
         r'user of (?P<browser_id>.*) chooses "(?P<option>.*)" in '
         r'(?P<dropdown_name>.*) in "(?P<object_name>.*)" '
-        r"(?P<object_type>result|argument|configuration parameters) in "
-        r"task creation page"
+        r"(?P<object_type>result|argument|configuration parameters)"
+        r" in task creation page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

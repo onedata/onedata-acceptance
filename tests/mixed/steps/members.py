@@ -77,8 +77,8 @@ def fail_to_set_privileges_in_space_in_oz(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) sees following privileges"
         r' of "(?P<member_name>.*)" (?P<member_type>user|group) in space'
-        r' "(?P<space_name>.*)" in "(?P<host>.+?)" Onezone service:'
-        r"\n(?P<config>(.|\s)*)"
+        r' "(?P<space_name>.*)" in "(?P<host>.+?)" Onezone '
+        r"service:\n(?P<config>(.|\s)*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -86,8 +86,8 @@ def _as_provider_hosts(hosts: Hosts) -> HostsConfig:
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) creates "
-        rf'spaces? (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)" '
-        r"Onezone service"
+        rf"spaces? (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.+?)" Onezone service'
     ),
     converters={
         "space_list": parse_elements_sequence,
@@ -127,8 +127,8 @@ def create_spaces_in_oz(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) leaves spaces? "
-        rf'named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)"'
-        r" Onezone service"
+        rf"named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.+?)" Onezone service'
     ),
     converters={
         "space_list": parse_elements_sequence,
@@ -202,8 +202,8 @@ def rename_spaces_in_oz(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) removes spaces? "
-        rf'named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)"'
-        r" Onezone service"
+        rf"named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.+?)" Onezone service'
     ),
     converters={
         "space_list": parse_elements_sequence,
@@ -212,8 +212,8 @@ def rename_spaces_in_oz(
 @wt(
     parsers.re(
         r"using (?P<client>.*), user of (?P<user>.+?) removes spaces? "
-        rf'named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)"'
-        r" Onezone service"
+        rf"named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.+?)" Onezone service'
     ),
     converters={
         "space_list": parse_elements_sequence,
@@ -493,10 +493,10 @@ def assert_there_are_no_spaces_in_oz(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) sees that "
-        rf"spaces? named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) (has|have) been"
-        r" renamed to "
-        rf'(?P<new_names_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)" Onezone'
-        r" service"
+        rf"spaces? named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"(has|have) been renamed to "
+        rf"(?P<new_names_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.+?)" Onezone service'
     ),
     converters={
         "new_names_list": parse_elements_sequence,
@@ -669,8 +669,8 @@ def assert_spaces_in_mount_point(
 
 @wt(
     parsers.parse(
-        'using {client}, {user} sees spaces "{expected_spaces}" in mount point, waiting'
-        " up to {timeout:d}s"
+        'using {client}, {user} sees spaces "{expected_spaces}" in mount point, '
+        "waiting up to {timeout:d}s"
     )
 )
 def assert_spaces_in_mount_point_with_waiting(
@@ -722,8 +722,8 @@ def assert_spaces_with_ids_in_mount_point(
 @wt(
     parsers.parse(
         'using {client}, {user} sees spaces "{expected_spaces}" from "{zone_name}"'
-        " Onezone service, annotated with their ids in mount point, waiting up to"
-        " {timeout:d}s"
+        " Onezone service, annotated with their ids in mount point, "
+        "waiting up to {timeout:d}s"
     )
 )
 def assert_spaces_with_ids_in_mount_point_with_waiting(

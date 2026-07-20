@@ -40,8 +40,8 @@ from tests.utils.user_utils import Users
 @wt(
     parsers.re(
         r"using (?P<client>.*), user (?P<user>.+?) sees that "
-        r'"(?P<path1>.*)" symlink points to "(?P<path2>.*)" in "(?P<space>.*)"'
-        r" in (?P<host>.*)"
+        r'"(?P<path1>.*)" symlink points to "(?P<path2>.*)" in '
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def assert_file_symlink_value(
@@ -155,8 +155,8 @@ def create_file_symlink(
 @wt(
     parsers.re(
         r"using (?P<client>.*), user (?P<user>.+) creates"
-        r' symlink located in "(?P<symlink_path>.*)" pointing to "(?P<file_path>.*)" in'
-        r' "(?P<space>.*)"'
+        r' symlink located in "(?P<symlink_path>.*)" pointing to '
+        r'"(?P<file_path>.*)" in "(?P<space>.*)"'
     )
 )
 def create_symlink_oneclient(
@@ -230,8 +230,8 @@ def create_file_hardlink(
 @wt(
     parsers.re(
         r"using (?P<client>.*), user (?P<user>.*) creates hardlink of "
-        r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" directory in'
-        r' "(?P<space>.*)"'
+        r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" '
+        r'directory in "(?P<space>.*)"'
     )
 )
 def create_hardlink_oneclient(

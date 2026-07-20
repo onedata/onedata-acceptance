@@ -175,8 +175,8 @@ def g_add_space_to_harvester(
 @wt(
     parsers.re(
         r"using REST, user (?P<username>.*) adds spaces? "
-        rf'(?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) to "(?P<harvester_name>.*)"'
-        r" harvester"
+        rf"(?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        r'"(?P<harvester_name>.*)" harvester'
     ),
     converters={"space_list": parse_elements_sequence},
 )

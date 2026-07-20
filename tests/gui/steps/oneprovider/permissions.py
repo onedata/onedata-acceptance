@@ -328,8 +328,8 @@ def assert_acl_record_not_editable(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that only (?P<option_list>.*)"
-        r" privileges? (are|is) set in (?P<num>\w+) ACL record in edit "
-        r"permissions panel"
+        r" privileges? (are|is) set in (?P<num>\w+) ACL record in "
+        r"edit permissions panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -168,8 +168,8 @@ def click_on_group_trigger(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) clicks on group "
-        r'"(?P<group_name>.*)" menu button to (?P<relation>.*) relation '
-        r"in hierarchy subpage"
+        r'"(?P<group_name>.*)" menu button to (?P<relation>.*) '
+        r"relation in hierarchy subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -279,8 +279,8 @@ def assert_user_sees_group_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} can see there is group "{group_name}" on the groups list'
-        " in the sidebar"
+        'user of {browser_id} can see there is group "{group_name}" on the '
+        "groups list in the sidebar"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)

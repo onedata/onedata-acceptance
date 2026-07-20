@@ -37,8 +37,8 @@ def assert_all_metadata_tabs_marked_empty(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {tab_list:ElementsSequence} navigation tabs in"
-        " metadata panel",
+        "user of {browser_id} sees {tab_list:ElementsSequence} navigation"
+        " tabs in metadata panel",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )

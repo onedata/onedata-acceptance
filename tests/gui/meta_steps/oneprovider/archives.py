@@ -593,8 +593,8 @@ def recalled_archive_details_in_op_gui(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that current size statistics are "
-        "as follow:\n{config}"
+        "user of {browser_id} sees that current size statistics "
+        "are as follow:\n{config}"
     )
 )
 def check_size_stats_for_archive(

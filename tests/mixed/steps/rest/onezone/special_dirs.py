@@ -485,8 +485,8 @@ def try_to_add_json_metadata_to_special_dir_by_id(
 
 @wt(
     parsers.parse(
-        "using REST, {user} fails to establish dataset on the {name:SpecialDir} in"
-        " {host}",
+        "using REST, {user} fails to establish dataset on the "
+        "{name:SpecialDir} in {host}",
         extra_types={"SpecialDir": SpecialDir},
     )
 )

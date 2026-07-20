@@ -207,8 +207,8 @@ def assert_base_archive_description_for_latest_created_archive(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that base archive for "
         r'archive with description: "(?P<description>.*?)" is archive '
-        r'with description: "(?P<base_description>.*?)" on archives list'
-        r" in archive browser"
+        r'with description: "(?P<base_description>.*?)" on archives '
+        r"list in archive browser"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

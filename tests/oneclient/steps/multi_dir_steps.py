@@ -80,8 +80,8 @@ def create_parents(user: str, paths: str, client_node: str, users: Users) -> Non
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) fails to create directories (?P<dirs>.*)\son "
-        r"(?P<client_node>.*)"
+        r"(?P<user>\w+) fails to create directories "
+        r"(?P<dirs>.*)\son (?P<client_node>.*)"
     )
 )
 def fail_to_create(user: str, dirs: str, client_node: str, users: Users) -> None:
@@ -108,8 +108,8 @@ def delete_empty_base(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) deletes directories \(rmdir\) (?P<dirs>.*) on "
-        r"(?P<client_node>.*)"
+        r"(?P<user>\w+) deletes directories \(rmdir\) (?P<dirs>.*) "
+        r"on (?P<client_node>.*)"
     )
 )
 def delete_empty(user: str, dirs: str, client_node: str, users: Users) -> None:
@@ -154,8 +154,8 @@ def purge_all_user_spaces(user: str, client_node: str, users: Users) -> None:
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) deletes directories \(rm -rf\) (?P<dirs>.*) on "
-        r"(?P<client_node>.*)"
+        r"(?P<user>\w+) deletes directories \(rm -rf\) (?P<dirs>.*) "
+        r"on (?P<client_node>.*)"
     )
 )
 def delete_non_empty(user: str, dirs: str, client_node: str, users: Users) -> None:

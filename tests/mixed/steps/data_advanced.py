@@ -94,8 +94,8 @@ def request_space_support_using_rest_for_space_with_alias(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates "
-        r'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
-        r" (?P<host>.*)"
+        r'file named "(?P<file_name>.*)" in space with test alias '
+        r'"(?P<alias>.*)" in (?P<host>.*)'
     )
 )
 def create_file_in_op_in_space_with_alias(
@@ -124,8 +124,8 @@ def create_file_in_op_in_space_with_alias(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) writes "(?P<content>.*)" to '
-        r'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
-        r" (?P<host>.*)"
+        r'file named "(?P<file_name>.*)" in space with test alias '
+        r'"(?P<alias>.*)" in (?P<host>.*)'
     )
 )
 def write_to_file_in_op_in_space_with_alias(
@@ -153,8 +153,8 @@ def write_to_file_in_op_in_space_with_alias(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) reads "(?P<content>.*)" from '
-        r'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
-        r" (?P<host>.*)"
+        r'file named "(?P<file_name>.*)" in space with test alias '
+        r'"(?P<alias>.*)" in (?P<host>.*)'
     )
 )
 def read_from_file_in_op_in_space_with_alias(
@@ -208,8 +208,8 @@ def remove_space_with_alias_in_oz(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) renames space with test alias "
-        r'"(?P<alias>.*)" to "(?P<new_space_name>.*)" in "(?P<host>.+?)" Onezone'
-        r" service"
+        r'"(?P<alias>.*)" to "(?P<new_space_name>.*)" in '
+        r'"(?P<host>.+?)" Onezone service'
     )
 )
 def rename_space_with_alias_in_oz(

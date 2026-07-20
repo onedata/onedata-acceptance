@@ -203,8 +203,8 @@ def click_on_context_menu_item(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on button "Show more physical locations" in'
-        " details modal"
+        'user of {browser_id} clicks on button "Show more physical '
+        'locations" in details modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

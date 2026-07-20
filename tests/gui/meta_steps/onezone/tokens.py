@@ -833,8 +833,8 @@ def _copy_object_id(
 @given(
     parsers.parse(
         "using web GUI, {user} creates access token with caveats "
-        'set for object ID for "{name}" in space '
-        r'"{space}" in {host}'
+        'set for object ID for "{name}" in '
+        r'space "{space}" in {host}'
     )
 )
 def create_token_with_object_id(

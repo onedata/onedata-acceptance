@@ -169,8 +169,8 @@ def wt_assert_successful_login(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) sees that he was logged out from"
-        r" (Onepanel|Onezone)"
+        r"user of (?P<browser_id>.*) sees that he was logged out "
+        r"from (Onepanel|Onezone)"
     )
 )
 @wt(parsers.re(r"user of (?P<browser_id>.*) sees (Onepanel|Onezone) login page"))

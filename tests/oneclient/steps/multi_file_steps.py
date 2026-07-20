@@ -602,8 +602,8 @@ def change_mode_base(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) changes (?P<file>.*) mode to (?P<mode>.*) on "
-        r"(?P<client_node>.*)"
+        r"(?P<user>\w+) changes (?P<file>.*) mode to (?P<mode>.*) "
+        r"on (?P<client_node>.*)"
     )
 )
 def change_mode(

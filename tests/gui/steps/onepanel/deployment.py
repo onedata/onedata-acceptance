@@ -602,8 +602,8 @@ def add_prov_with_oz_subdomain_to_etc_host(hosts: Hosts, provider: str) -> None:
 
 @wt(
     parsers.parse(
-        "user of {browser_id} waits till login page of emergency interface of Onepanel"
-        " appears"
+        "user of {browser_id} waits till login page of emergency "
+        "interface of Onepanel appears"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)

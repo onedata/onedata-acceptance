@@ -132,8 +132,8 @@ def does_bucket_exist(s3: S3Client, bucket_name: str) -> bool:
 
 @wt(
     parsers.parse(
-        "using OneS3 and head bucket boto3 function, user {user} can see there is a"
-        ' space "{space_name}"'
+        "using OneS3 and head bucket boto3 function, user {user} can see there is"
+        ' a space "{space_name}"'
     )
 )
 def wt_assert_bucket_exists(
@@ -236,8 +236,8 @@ def list_bucket_content(s3: S3Client, bucket_name: str) -> list[str]:
 
 @wt(
     parsers.parse(
-        "using OneS3, user {user} can see items {items:ElementsSequence} in"
-        ' "{space_name}"',
+        "using OneS3, user {user} can see items "
+        '{items:ElementsSequence} in "{space_name}"',
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )

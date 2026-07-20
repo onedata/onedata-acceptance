@@ -80,8 +80,8 @@ def click_on_status_tag_for_file_in_file_browser(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees only items named {item_list:ElementsSequence} in"
-        " {which_browser}",
+        "user of {browser_id} sees only items named "
+        "{item_list:ElementsSequence} in {which_browser}",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
@@ -325,8 +325,8 @@ def select_first_n_files(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} deselects {item_list:ElementsSequence} item(s) from file"
-        " browser",
+        "user of {browser_id} deselects {item_list:ElementsSequence} "
+        "item(s) from file browser",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
@@ -528,8 +528,8 @@ def count_files_while_scrolling(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} can see that file owner is "{owner}" in file details'
-        " modal"
+        "user of {browser_id} can see that file owner is "
+        '"{owner}" in file details modal'
     )
 )
 def check_file_owner_in_file_details_modal(

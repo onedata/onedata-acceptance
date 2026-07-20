@@ -284,8 +284,8 @@ def grant_acl_privileges_to_selected_in_filebrowser(
 @wt(
     parsers.re(
         rf"user of (?P<browser_id>\w+) sets (?P<item_list>{ELEMENTS_SEQUENCE_PATTERN})"
-        r" ACL (?P<privileges>.*) privileges for (?P<type>.*) (?P<name>.*) "
-        r'in "(?P<space>.*)"'
+        r" ACL (?P<privileges>.*) privileges for (?P<type>.*) "
+        r'(?P<name>.*) in "(?P<space>.*)"'
     ),
     converters={"item_list": parse_elements_sequence},
 )

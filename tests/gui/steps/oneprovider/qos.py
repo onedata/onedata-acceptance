@@ -59,8 +59,8 @@ def assert_all_qualities_of_service_are_fulfilled(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} selects "{option_name}" view in Show Details toggle in'
-        " QoS panel"
+        'user of {browser_id} selects "{option_name}" view in Show '
+        "Details toggle in QoS panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

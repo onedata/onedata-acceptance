@@ -97,9 +97,8 @@ def open_onedata_service_page(
 
 @given(
     parsers.re(
-        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) opened "
-        rf"(?P<hosts_list>{HOSTS_SEQUENCE_PATTERN}) "
-        r"page"
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        rf"opened (?P<hosts_list>{HOSTS_SEQUENCE_PATTERN}) page"
     ),
     converters={
         "browser_id_list": parse_elements_sequence,
@@ -117,9 +116,8 @@ def g_open_onedata_service_page(
 
 @wt(
     parsers.re(
-        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) opens "
-        rf"(?P<hosts_list>{HOSTS_SEQUENCE_PATTERN}) "
-        r"page"
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        rf"opens (?P<hosts_list>{HOSTS_SEQUENCE_PATTERN}) page"
     ),
     converters={
         "browser_id_list": parse_elements_sequence,
@@ -295,8 +293,8 @@ def open_site_url(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} opens URL received from user of {browser2_id} without"
-        " waiting"
+        "user of {browser_id} opens URL received from user of "
+        "{browser2_id} without waiting"
     )
 )
 def open_received_url_without_waiting(

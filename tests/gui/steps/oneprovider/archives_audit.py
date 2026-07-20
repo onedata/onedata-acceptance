@@ -118,8 +118,8 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 @wt(
     parsers.parse(
         "user of {browser_id} sees logs about directories or files "
-        "ordered ascendingly by name index with prefix dir_ or file_ "
-        "in archive audit log"
+        "ordered ascendingly by name index with prefix dir_ or "
+        "file_ in archive audit log"
     )
 )
 def assert_ascending_file_or_dir_names(
@@ -260,8 +260,8 @@ def click_on_item_in_archive_audit_log(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on item "{file_name}" using scroll in archive'
-        " audit log"
+        'user of {browser_id} clicks on item "{file_name}" using '
+        "scroll in archive audit log"
     )
 )
 def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(

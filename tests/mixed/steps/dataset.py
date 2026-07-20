@@ -443,8 +443,8 @@ def detach_dataset_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) sees that dataset for item"
-        r' "(?P<item_name>.*)" is detached in space "(?P<space_name>.*)"'
-        r" in (?P<host>.*)"
+        r' "(?P<item_name>.*)" is detached in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

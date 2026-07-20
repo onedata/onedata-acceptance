@@ -33,8 +33,8 @@ def write_text_base(
 
 @wt(
     parsers.re(
-        r'(?P<user>\w+) writes "(?P<text>.*)" to (?P<file>[^\s]+) on '
-        r"(?P<client_node>.*)"
+        r'(?P<user>\w+) writes "(?P<text>.*)" to (?P<file>[^\s]+) '
+        r"on (?P<client_node>.*)"
     )
 )
 def write_text(user: str, text: str, file: str, client_node: str, users: Users) -> None:

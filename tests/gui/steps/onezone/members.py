@@ -844,8 +844,8 @@ def set_some_privileges_in_members_subpage_other_granted(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) sets following privileges on modal:"
-        r"\n(?P<config>(.|\s)*)"
+        r"user of (?P<browser_id>.*) sets following privileges on "
+        r"modal:\n(?P<config>(.|\s)*)"
     )
 )
 def set_privileges_in_members_subpage_on_modal(
@@ -893,8 +893,8 @@ def assert_privileges_in_members_subpage(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) sees following privileges on modal:"
-        r"\n(?P<config>(.|\s)*)"
+        r"user of (?P<browser_id>.*) sees following privileges on "
+        r"modal:\n(?P<config>(.|\s)*)"
     )
 )
 def assert_privileges_in_members_subpage_on_modal(
@@ -1042,8 +1042,8 @@ def see_privileges_for_member(
     parsers.re(
         r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
         r'"(?P<member_name>.*)" (?P<member_type>user|group) '
-        r'in "(?P<item_name>.*)" (?P<item_type>automation|harvester) members '
-        r"(users|groups) list"
+        r'in "(?P<item_name>.*)" (?P<item_type>automation|harvester) '
+        r"members (users|groups) list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1213,8 +1213,8 @@ def assert_ownership_privileges_warning_appeared_for_user(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {number} {item_type} in Onezone clusters members"
-        " page"
+        "user of {browser_id} sees {number} {item_type} in "
+        "Onezone clusters members page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

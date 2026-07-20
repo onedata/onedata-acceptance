@@ -100,8 +100,8 @@ def select_initial_items_for_workflow_in_modal(
     parsers.re(
         r"user of (?P<browser_id>.*) chooses"
         rf" (?P<file_list>{ELEMENTS_SEQUENCE_PATTERN}) file as "
-        r'initial value of "(?P<store_name>.*)" store for workflow in '
-        r'"Select files" modal'
+        r'initial value of "(?P<store_name>.*)" store for workflow '
+        r'in "Select files" modal'
     ),
     converters={"file_list": parse_elements_sequence},
 )

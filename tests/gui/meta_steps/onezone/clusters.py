@@ -232,8 +232,8 @@ def remember_cluster_id(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) (?P<operation>sets) "
-        r'(?P<kind_of_agreement>.*): "(?P<text>.*)" in GUI settings page'
-        r' of "(?P<record>.*)"'
+        r'(?P<kind_of_agreement>.*): "(?P<text>.*)" in GUI settings '
+        r'page of "(?P<record>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

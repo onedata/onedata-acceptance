@@ -55,8 +55,8 @@ from tests.utils.user_utils import Users
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates groups? "
-        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" Onezone'
-        r" service"
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
     ),
     converters={
         "group_list": parse_elements_sequence,
@@ -192,8 +192,8 @@ def rename_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) does not see "
-        rf'groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" '
-        r"Onezone service"
+        rf"groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
     ),
     converters={
         "group_list": parse_elements_sequence,
@@ -220,8 +220,8 @@ def fail_to_see_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes groups? "
-        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" Onezone'
-        r" service"
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
     ),
     converters={
         "group_list": parse_elements_sequence,
@@ -248,8 +248,8 @@ def remove_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) leaves groups? "
-        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" Onezone'
-        r" service"
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
     ),
     converters={
         "group_list": parse_elements_sequence,
@@ -504,8 +504,8 @@ def fail_to_rename_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) fails to remove"
-        rf' groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)"'
-        r" Onezone service"
+        rf" groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
     ),
     converters={
         "group_list": parse_elements_sequence,

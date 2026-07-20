@@ -203,8 +203,8 @@ def click_button_in_harvester_spaces_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{element_name}" from dropdown '
-        "in add {element} modal"
+        'user of {browser_id} chooses "{element_name}" from dropdown'
+        " in add {element} modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

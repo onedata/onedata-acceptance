@@ -210,8 +210,8 @@ def change_provider_name_if_name_is_different_than_given(
 
 @wt(
     parsers.parse(
-        "user {user} sees that oneS3 node in provider cluster in {provider} is of"
-        ' status "{status}"'
+        "user {user} sees that oneS3 node in provider cluster in {provider} "
+        'is of status "{status}"'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -245,8 +245,8 @@ def add_provider_cluster_ones3_node_rest(
 
 @wt(
     parsers.re(
-        r"user (?P<user>.*?) (?P<option>starts|stops) oneS3 node in provider cluster in"
-        r" (?P<provider>.*?)"
+        r"user (?P<user>.*?) (?P<option>starts|stops) oneS3 node in provider "
+        r"cluster in (?P<provider>.*?)"
     )
 )
 def stop_provider_cluster_ones3_node_rest(

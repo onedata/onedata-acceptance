@@ -230,8 +230,8 @@ def assert_checksums_are_the_same(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that counted checksums"
-        ' {checksum_list:ElementsSequence} for "{file_name}" are alike to those'
-        " counted in workflow",
+        ' {checksum_list:ElementsSequence} for "{file_name}" are alike to '
+        "those counted in workflow",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )

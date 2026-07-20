@@ -134,8 +134,8 @@ def _click_copy_hostname(driver: WebDriver) -> None:
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.+?) does not see provider popover "
-        r"on Onezone world map"
+        r"user of (?P<browser_id>.+?) does not see provider "
+        r"popover on Onezone world map"
     )
 )
 def assert_no_provider_popup_on_world_map(

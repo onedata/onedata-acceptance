@@ -167,8 +167,8 @@ def go_to_inventory_subpage(
 
 @wt(
     parsers.parse(
-        'user of {browser_ids:ElementsSequence} sees "{text}" label in "{inventory}"'
-        " main page",
+        'user of {browser_ids:ElementsSequence} sees "{text}" label in '
+        '"{inventory}" main page',
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )

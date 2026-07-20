@@ -145,8 +145,8 @@ def g_wt_visit_op(
 @given(
     parsers.re(
         rf"opened (?P<providers_list>{ELEMENTS_SEQUENCE_PATTERN}) Oneprovider view in"
-        r" web GUI "
-        rf"by (users? of )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
+        r" web GUI by (users? of"
+        rf" )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
     ),
     converters={
         "browser_id_list": parse_elements_sequence,
@@ -210,8 +210,8 @@ def visit_file_browser(
 
 @given(
     parsers.re(
-        rf"opened (?P<providers_list>{ELEMENTS_SEQUENCE_PATTERN}) Oneprovider file"
-        r" browser "
+        rf"opened (?P<providers_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"Oneprovider file browser "
         rf"for (?P<spaces_list>{ELEMENTS_SEQUENCE_PATTERN}) space in web GUI "
         rf"by (users? of )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
     ),
@@ -365,8 +365,8 @@ def change_password(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} logins as "{username}" without closing authentication'
-        " info alert"
+        'user of {browser_id} logins as "{username}" without closing '
+        "authentication info alert"
     )
 )
 def wt_sign_in_to_onezone_without_closing_auth_info_alert(

@@ -134,8 +134,8 @@ def wt_assert_new_file_event_in_observed_directory(
 
 @wt(
     parsers.parse(
-        'user {user} can see deleted file event about "{path}" in space "{space}" in'
-        " {host}"
+        'user {user} can see deleted file event about "{path}" in '
+        'space "{space}" in {host}'
     )
 )
 def wt_assert_deleted_file_event_in_observed_directory(

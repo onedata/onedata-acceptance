@@ -250,8 +250,8 @@ def copy_url_of_share(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} renames current share to "{new_name}"'
-        " in single share view"
+        "user of {browser_id} renames current share to "
+        '"{new_name}" in single share view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -332,8 +332,8 @@ def add_description_to_share_on_private_interface(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} fills the input fields of Dublin Core form"
-        " with:\n{config}"
+        "user of {browser_id} fills the input fields of Dublin "
+        "Core form with:\n{config}"
     )
 )
 def fill_inputs_in_dublin_core_metadata_form(
@@ -448,8 +448,8 @@ def send_public_handle_link_to_user(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} fills text section fields of EDM metadata form"
-        " with:\n{config}"
+        "user of {browser_id} fills text section fields of EDM "
+        "metadata form with:\n{config}"
     )
 )
 def fill_inputs_in_edm_metadata_form(

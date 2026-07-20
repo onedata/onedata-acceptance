@@ -513,8 +513,8 @@ def upload_file_to_cwd_in_data_tab(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload files from local directory "{directory_path}" '
-        "to remote current dir"
+        "menu bar to upload files from local directory "
+        '"{directory_path}" to remote current dir'
     )
 )
 def upload_files_to_cwd_in_data_tab(
@@ -981,8 +981,8 @@ def check_data_distribution_size_for_provider(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "Show statistics per provider" button'
-        " on Size stats modal"
+        'user of {browser_id} clicks "Show statistics per provider" '
+        "button on Size stats modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1076,8 +1076,8 @@ def check_error_cell_for_provider(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.+?) sees that content for "(?P<provider>.+?)" is'
-        r' "(?P<content>.+?)"'
+        r'user of (?P<browser_id>.+?) sees that content for "(?P<provider>.+?)"'
+        r' is "(?P<content>.+?)"'
     )
 )
 @repeat_failed(WAIT_FRONTEND)
@@ -1102,8 +1102,8 @@ def check_content_for_provider(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that contents for {providers:ElementsSequence} are"
-        " {contents}",
+        "user of {browser_id} sees that contents for "
+        "{providers:ElementsSequence} are {contents}",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )

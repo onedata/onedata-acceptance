@@ -335,8 +335,8 @@ def assert_option_disabled_in_automation_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "{option}" option in run menu '
-        'for "{lane_name}" lane'
+        'user of {browser_id} clicks "{option}" option in run menu'
+        ' for "{lane_name}" lane'
     )
 )
 def click_option_for_lane(

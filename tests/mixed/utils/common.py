@@ -214,8 +214,8 @@ def _execute_curl_command(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} executes copied command with environment"
-        " variables:\n{config}"
+        "user of {browser_id} executes copied command with "
+        "environment variables:\n{config}"
     )
 )
 def execute_copied_curl_command_with_env_vars(
@@ -323,8 +323,8 @@ def assert_command_output_contains(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that output of executed command is equal to:"
-        ' "{expected_output}"'
+        "user of {browser_id} sees that output of executed command is equal "
+        'to: "{expected_output}"'
     )
 )
 def assert_command_output_equals(tmp_memory: TmpMemory, expected_output: str) -> None:
@@ -335,8 +335,8 @@ def assert_command_output_equals(tmp_memory: TmpMemory, expected_output: str) ->
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that executed curl command returned successful HTTP"
-        " code"
+        "user of {browser_id} sees that executed curl command "
+        "returned successful HTTP code"
     )
 )
 def assert_curl_command_successful_http_code(tmp_memory: TmpMemory) -> None:

@@ -37,8 +37,8 @@ def replace_cert_for_one_not_including_s3_in_op(hosts: HostsConfig, prov: str) -
 
 @wt(
     parsers.parse(
-        '{user} replaces web cert for one not including OneS3 domain in "{provider}"'
-        " provider"
+        "{user} replaces web cert for one not including OneS3 domain "
+        'in "{provider}" provider'
     )
 )
 def wt_replace_cert_for_one_not_including_s3_in_op(
