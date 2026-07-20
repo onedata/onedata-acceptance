@@ -151,11 +151,10 @@ def uncheck_toggles_on_create_index_page(
     selenium: SeleniumDrivers, browser_id: str, stay_checked: list[str]
 ) -> None:
     driver = selenium[browser_id]
-    toggles_to_keep = stay_checked
     indices_page = OZLoggedIn(driver).discovery.indices_page
     for toggles_group, toggle_group_types in CREATE_INDEX_TOGGLES.items():
         for toggle in toggle_group_types:
-            if toggle not in toggles_to_keep:
+            if toggle not in stay_checked:
                 if toggles_group == "rejection_toggles":
                     getattr(indices_page, toggle).click()
                 else:
@@ -287,10 +286,10 @@ def assert_creation_time_on_data_discovery_page(
     timestamp = float(
         DataDiscovery(driver).results_list[2].text.split(",")[0].split(": ")[2]
     )
-    err_msg = (
+    error_message = (
         "archive creation time is not compatible with creation time on archives page"
     )
-    assert (created_at - 60) < timestamp < (created_at + 60), err_msg
+    assert (created_at - 60) < timestamp < (created_at + 60), error_message
 
 
 @wt(

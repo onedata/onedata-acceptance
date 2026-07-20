@@ -442,16 +442,15 @@ def select_columns_to_be_visible_in_transfers(
 def assert_visible_columns_in_transfers(
     browser_id: str, columns: list[str], selenium: SeleniumDrivers
 ) -> None:
-    parsed_columns = columns
     transfers = OPLoggedIn(selenium[browser_id]).transfers
     transfers_columns = transfers.column_headers
     transfers_columns = list(map(lambda x: x.name.lower(), transfers_columns))
-    err_msg = (
+    error_message = (
         "there is different number of columns visible: "
-        f"{len(transfers_columns)} than expected: {len(parsed_columns)}, in "
+        f"{len(transfers_columns)} than expected: {len(columns)}, in "
         "transfers"
     )
-    assert len(parsed_columns) == len(transfers_columns), err_msg
-    for column in parsed_columns:
+    assert len(columns) == len(transfers_columns), error_message
+    for column in columns:
         if column.lower() not in transfers_columns:
             raise AssertionError(f"column {column} is not visible in transfers")

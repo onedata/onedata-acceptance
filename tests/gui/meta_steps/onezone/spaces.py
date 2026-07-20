@@ -176,12 +176,11 @@ def remove_spaces_in_oz_using_gui(
     option = "Remove"
     modal = "Remove space"
 
-    space_names = space_list
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
     click_on_option_in_the_sidebar(selenium, browser_id, where)
-    for space_name in space_names:
+    for space_name in space_list:
         click_on_option_in_space_menu(selenium, browser_id, space_name, option)
         check_remove_space_understand_notice(selenium, browser_id)
         click_modal_button(selenium, browser_id, option, modal)
@@ -601,6 +600,6 @@ def assert_opened_space(
 
     space = get_opened_spaces_with_name(space_name)[0]
 
-    err_msg = f"Space {space_name} is not opened."
-    assert space.is_displayed(), err_msg
-    assert "active" in space.web_elem.get_attribute("class"), err_msg
+    error_message = f"Space {space_name} is not opened."
+    assert space.is_displayed(), error_message
+    assert "active" in space.web_elem.get_attribute("class"), error_message

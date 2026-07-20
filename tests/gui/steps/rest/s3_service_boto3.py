@@ -117,12 +117,11 @@ def wt_assert_listed_buckets(
 ) -> None:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_spaces = list_buckets(s3)
-    parsed_spaces = spaces_list
-    err_msg = (
-        f"Expected spaces: {parsed_spaces},\n does not match to actual ones:"
+    error_message = (
+        f"Expected spaces: {spaces_list},\n does not match to actual ones:"
         f" {actual_spaces}"
     )
-    assert set(actual_spaces) == set(parsed_spaces), err_msg
+    assert set(actual_spaces) == set(spaces_list), error_message
 
 
 def does_bucket_exist(s3: S3Client, bucket_name: str) -> bool:
@@ -221,11 +220,11 @@ def wt_assert_file_content_read_from_bucket(
 ) -> None:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_content = read_file_content_from_bucket(s3, space_name, file_name)
-    err_msg = (
+    error_message = (
         f"Actual content:\n {actual_content}\n is different than expected:\n"
         f" {file_content}\n for file {file_name}"
     )
-    assert actual_content == file_content, err_msg
+    assert actual_content == file_content, error_message
 
 
 def list_bucket_content(s3: S3Client, bucket_name: str) -> list[str]:

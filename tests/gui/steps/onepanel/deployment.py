@@ -68,7 +68,7 @@ def g_create_admin_in_panel(
 @wt(
     parsers.parse(
         "user of {browser_id} enables {options} options for "
-        "{host_regexp} host in step 1 of deployment process "
+        "{host_pattern} host in step 1 of deployment process "
         "in Onepanel"
     ),
     converters={
@@ -80,11 +80,10 @@ def wt_check_host_options_in_deployment_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
     options: list[str],
-    host_regexp: str,
+    host_pattern: str,
 ) -> None:
-    parsed_options = options
     wt_check_host_options_list_in_deployment_step1(
-        selenium, browser_id, parsed_options, host_regexp
+        selenium, browser_id, options, host_pattern
     )
 
 
@@ -93,13 +92,13 @@ def wt_check_host_options_list_in_deployment_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
     options: list[str],
-    host_regexp: str,
+    host_pattern: str,
 ) -> None:
     options = [transform(option) for option in options]
     # without this, deployment failed randomly when launched locally
     time.sleep(5)
     for host in Onepanel(selenium[browser_id]).content.deployment.step1.hosts:
-        if re.match(host_regexp, host.name):
+        if re.match(host_pattern, host.name):
             for option in options:
                 getattr(host, option).check()
     time.sleep(1)
@@ -242,9 +241,9 @@ def _check_error_modal_appeared_or_registration_finished(
     return None  # neither error modal appeared nor the deployment page closed
 
 
-def _is_element_visible_on_page(driver: WebDriver, css_sel: str) -> bool:
+def _is_element_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
     try:
-        return visibility_of_element_located((By.CSS_SELECTOR, css_sel))(driver)
+        return visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
     except NoSuchElementException:
         return False
 
@@ -536,16 +535,16 @@ def wt_expand_storage_item_in_deployment_step5(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) sees that "(?P<st>.*?)" '
-        r"(?P<attr>Storage type|Mount point) is (?P<val>.*?) "
+        r"(?P<attribute>Storage type|Mount point) is (?P<val>.*?) "
         r"in step 5 of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_storage_attr_in_deployment_step5(
-    selenium: SeleniumDrivers, browser_id: str, st: str, attr: str, val: str
+    selenium: SeleniumDrivers, browser_id: str, st: str, attribute: str, val: str
 ) -> None:
     storages = Onepanel(selenium[browser_id]).content.deployment.step5.storages
-    displayed_val = getattr(storages[st], transform(attr)).lower()
+    displayed_val = getattr(storages[st], transform(attribute)).lower()
     assert (
         displayed_val == val.lower()
     ), f"expected {displayed_val} as storage attribute; got {val}"

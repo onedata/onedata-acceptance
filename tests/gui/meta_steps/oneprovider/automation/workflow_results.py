@@ -165,7 +165,6 @@ def count_checksums_for_file(
         selenium, browser_id, file_name, tmp_memory, "file browser"
     )
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
-    checksums = checksum_list
     results = {}
     checksum_functions = {
         "adler32_sum": adler32_sum,
@@ -174,9 +173,9 @@ def count_checksums_for_file(
         "sha512_sum": sha512_sum,
     }
 
-    for checksum in checksums:
-        sum_name = checksum + "_sum"
-        results[checksum] = checksum_functions[sum_name](downloaded_file)
+    for checksum in checksum_list:
+        checksum_function_name = checksum + "_sum"
+        results[checksum] = checksum_functions[checksum_function_name](downloaded_file)
 
     tmp_memory["checksums_" + file_name] = results
 
@@ -211,7 +210,6 @@ def assert_checksums_are_the_same(
     status_type = "Metadata"
     modal_name = "Details modal"
     button = "X"
-    checksums = checksum_list
 
     # checksums needs to be counted in advance using
     # count_checksums_for_file function
@@ -222,13 +220,13 @@ def assert_checksums_are_the_same(
     metadata_modal = Modals(selenium[browser_id]).details_modal.metadata
     workflow_checksum = checksums_counted_in_workflow(metadata_modal)
 
-    for key in checksums:
-        err_msg = (
+    for key in checksum_list:
+        error_message = (
             f"{key} checksum counted by user is {counted_checksum[key]},"
             " and is different from checksum counted in workflow: "
             f"{workflow_checksum[key]}"
         )
-        assert workflow_checksum[key] == counted_checksum[key], err_msg
+        assert workflow_checksum[key] == counted_checksum[key], error_message
 
     click_modal_button(selenium, browser_id, button, modal_name)
 

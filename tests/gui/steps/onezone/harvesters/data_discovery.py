@@ -162,12 +162,11 @@ def assert_properties_on_condition_properties_list(
     selenium: SeleniumDrivers, browser_id: str, properties_list: list[str]
 ) -> None:
     driver = selenium[browser_id]
-    properties = properties_list
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
-    for prop in properties:
+    for property_name in properties_list:
         assert query_builder_popup.assert_property(
-            prop
-        ), f"{prop} property not found in condition properties list"
+            property_name
+        ), f"{property_name} property not found in condition properties list"
 
 
 @wt(

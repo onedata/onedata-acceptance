@@ -375,9 +375,9 @@ def assert_num_of_files_are_displayed_in_browser(
     which_browser: str = "file_browser",
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser)]
-    err_msg = "displayed number of files {} does not match expected {}"
+    error_message = "displayed number of files {} does not match expected {}"
     files_num = browser.data.count()
-    assert files_num == num, err_msg.format(files_num, num)
+    assert files_num == num, error_message.format(files_num, num)
 
 
 @wt(
@@ -411,8 +411,8 @@ def assert_status_tag_for_file_in_browser(
     which_browser: str = "file browser",
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser)]
-    err_msg = f"{status_type} tag for {item_name} in {which_browser} not visible"
-    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
+    error_message = f"{status_type} tag for {item_name} in {which_browser} not visible"
+    assert browser.data[item_name].is_tag_visible(transform(status_type)), error_message
 
 
 @wt(
@@ -454,11 +454,11 @@ def assert_status_tag_text_for_file_in_browser(
     )
     browser = tmp_memory[browser_id][transform(which_browser)]
     actual_text = browser.data[item_name].get_tag_text(transform(status_type))
-    err_msg = (
+    error_message = (
         f"{status_type} tag for {item_name} in browser has text "
         f"{actual_text} not {text}"
     )
-    assert actual_text == text, err_msg
+    assert actual_text == text, error_message
 
 
 @wt(
@@ -492,11 +492,11 @@ def assert_not_status_tag_for_file_in_browser(
     which_browser: str = "file browser",
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser)]
-    err_msg = (
+    error_message = (
         f"{status_type} tag for {item_name} in {which_browser} visible, "
         "while should not be"
     )
-    assert not browser.data[item_name].is_tag_visible(status_type), err_msg
+    assert not browser.data[item_name].is_tag_visible(status_type), error_message
 
 
 def _choose_menu(
@@ -550,13 +550,13 @@ def assert_option_state_in_data_row_menu(
     option_state: str,
     which_browser: str,
 ) -> None:
-    err_msg = (
+    error_message = (
         f"{option} option is not {option_state} in opened item menu in file browser"
     )
 
     menu = _choose_menu(selenium, browser_id, which_browser)
     menu_option = menu.return_option(option)
-    assert menu_option.get_state() == option_state, err_msg
+    assert menu_option.get_state() == option_state, error_message
 
 
 @wt(
@@ -663,12 +663,12 @@ def assert_value_in_column_for_item(
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], transform(option))
-    err_msg = (
+    error_message = (
         f"displayed {option} {item_elem} for {item_name} does not "
         f"match expected {value}"
     )
 
-    assert value == item_elem, err_msg
+    assert value == item_elem, error_message
 
 
 @wt(
@@ -714,11 +714,13 @@ def assert_value_in_xattr_or_json_column_for_item(
         expected_value = value
 
     if res == "has":
-        err_msg = err_msg_prefix + f" does not match expected {expected_value}"
-        assert expected_value == item_elem, err_msg
+        error_message = err_msg_prefix + f" does not match expected {expected_value}"
+        assert expected_value == item_elem, error_message
     else:
-        err_msg = err_msg_prefix + f" is not supposed to be equal to {expected_value}"
-        assert expected_value != item_elem, err_msg
+        error_message = (
+            err_msg_prefix + f" is not supposed to be equal to {expected_value}"
+        )
+        assert expected_value != item_elem, error_message
 
 
 @wt(
@@ -792,8 +794,10 @@ def compare_value_in_column_for_item(
     old_value = tmp_memory["columns-content"][item_name]
     new_value = datetime.strptime(new_value, "%d %b %Y %H:%M:%S")
     old_value = datetime.strptime(old_value, "%d %b %Y %H:%M:%S")
-    err_msg = f"visible date time: {new_value} is not more current than {old_value}"
-    assert new_value > old_value, err_msg
+    error_message = (
+        f"visible date time: {new_value} is not more current than {old_value}"
+    )
+    assert new_value > old_value, error_message
 
 
 @wt(
@@ -810,17 +814,16 @@ def compare_value_in_column_for_item(
 def assert_visible_columns_in_browser(
     browser_id: str, tmp_memory: TmpMemory, columns: list[str], which_browser: str
 ) -> None:
-    parsed_columns = columns
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser_columns = browser.column_headers
     browser_columns = list(map(lambda x: x.name.lower(), browser_columns))
-    err_msg = (
+    error_message = (
         "there is different number of columns visible: "
-        f"{len(browser_columns)} than expected: {len(parsed_columns)}, in "
+        f"{len(browser_columns)} than expected: {len(columns)}, in "
         f"{which_browser}"
     )
-    assert len(parsed_columns) == len(browser_columns), err_msg
-    for column in parsed_columns:
+    assert len(columns) == len(browser_columns), error_message
+    for column in columns:
         if column.lower() not in browser_columns:
             raise AssertionError(f"column {column} is not visible in {which_browser}")
 

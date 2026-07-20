@@ -280,13 +280,11 @@ def create_imported_storage_luma_mappings_lf(
     onepanel_credentials: User,
     users: Users,
 ) -> None:
-    uids = uid_list
-    users_list = user_list
     storage_id = get_first_storage_id_by_name(
         storage, provider, hosts, onepanel_credentials
     )
 
-    mappings = zip(uids, users_list)
+    mappings = zip(uid_list, user_list)
     for uid, user in mappings:
         _insert_mapping_of_uid_into_lf(
             uid, user, provider, hosts, onepanel_credentials, storage_id, users

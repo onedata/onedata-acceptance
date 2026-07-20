@@ -92,9 +92,8 @@ def assert_audit_log_logs_for_each_file_in_list(
     entries = modal_qos.audit_log_list.entries
     expected_logs = cast(list[dict[str, str]], yaml.load(config, yaml.Loader))
 
-    files = files_list
-    for file_name in files:
-        if len(files) > 1:
+    for file_name in files_list:
+        if len(files_list) > 1:
             actual_logs = [
                 entry.event.text for entry in entries if entry.file.text == file_name
             ]
@@ -425,10 +424,9 @@ def assert_list_of_providers_in_add_cond_popup(
 def assert_list_of_storages_in_add_cond_popup(
     selenium: SeleniumDrivers, browser_id: str, storages: list[str], hosts: Hosts
 ) -> None:
-    expected_expressions = storages
     expected = []
     separator = f" {PROVIDER_PREFIX_CHAR}"
-    for expression in expected_expressions:
+    for expression in storages:
         [name, provider] = expression.split(separator)
         provider_name = hosts[provider]["name"]
         expected.append(f"{name} {PROVIDER_PREFIX_CHAR}{provider_name}")
@@ -496,20 +494,19 @@ def assert_num_of_matching_storages(
 def assert_matching_storage(
     selenium: SeleniumDrivers, browser_id: str, storages: list[str], hosts: Hosts
 ) -> None:
-    css_sel = ".storages-matching-info-icon"
+    css_selector = ".storages-matching-info-icon"
     driver = selenium[browser_id]
-    expected_expressions = storages
     expected = []
-    for expression in expected_expressions:
+    for expression in storages:
         [name, provider] = expression.split(" provided by ")
         provider_name = hosts[provider]["name"]
         expected.append(f"{name} provided by {provider_name}")
 
-    scroll_to_css_selector_bottom(driver, css_sel)
-    driver.find_element(By.CSS_SELECTOR, css_sel).click()
+    scroll_to_css_selector_bottom(driver, css_selector)
+    driver.find_element(By.CSS_SELECTOR, css_selector).click()
     compare_matching_storages(driver, expected)
     # unclick element
-    driver.find_element(By.CSS_SELECTOR, css_sel).click()
+    driver.find_element(By.CSS_SELECTOR, css_selector).click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -583,14 +580,18 @@ def assert_qos_status_in_browser(
 
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
-    vis_status = getattr(browser.data[item_name], "qos_status")
-    err_msg = (
+    visible_status = getattr(browser.data[item_name], "qos_status")
+    error_message = (
         f"status {status} for item {item_name} is not displayed in {which_browser}"
     )
     if status.lower() == "impossible":
-        assert "qos-status-impossible" in vis_status.get_attribute("class"), err_msg
+        assert "qos-status-impossible" in visible_status.get_attribute(
+            "class"
+        ), error_message
     elif status.lower() == "fulfilled":
-        assert "qos-status-fulfilled" in vis_status.get_attribute("class"), err_msg
+        assert "qos-status-fulfilled" in visible_status.get_attribute(
+            "class"
+        ), error_message
 
 
 @wt(

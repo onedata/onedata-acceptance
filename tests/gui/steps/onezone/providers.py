@@ -46,9 +46,11 @@ def assert_popup_for_provider_with_name_has_appeared_on_map(
     selenium: SeleniumDrivers, browser_id: str, provider_name: str
 ) -> None:
     driver = selenium[browser_id]
-    err_msg = 'Popup displayed for provider named "{}" instead of "{}"'
-    prov = Popups(driver).provider_map_popover.provider_name
-    assert provider_name == prov, err_msg.format(prov, provider_name)
+    error_message = 'Popup displayed for provider named "{}" instead of "{}"'
+    expected_provider_name = Popups(driver).provider_map_popover.provider_name
+    assert provider_name == expected_provider_name, error_message.format(
+        expected_provider_name, provider_name
+    )
 
 
 @wt(
@@ -67,14 +69,16 @@ def assert_popup_for_provider_has_appeared_on_map(
     displays: dict[str, str],
 ) -> None:
     driver = selenium[browser_id]
-    err_msg = 'Popup displayed for provider named "{}" instead of "{}"'
+    error_message = 'Popup displayed for provider named "{}" instead of "{}"'
     try:
-        prov = Popups(driver).provider_map_popover.provider_name
+        expected_provider_name = Popups(driver).provider_map_popover.provider_name
     except RuntimeError:
         Popups(driver).provider_details.values[0].copy_to_clipboard()
-        prov = clipboard.paste(display=displays[browser_id])
+        expected_provider_name = clipboard.paste(display=displays[browser_id])
     provider_name = hosts[provider]["name"]
-    assert provider_name == prov, err_msg.format(prov, provider_name)
+    assert provider_name == expected_provider_name, error_message.format(
+        expected_provider_name, provider_name
+    )
 
 
 @wt(
@@ -172,10 +176,8 @@ def g_click_on_provider_in_go_to_your_files_oz_panel(
     providers: list[str],
     hosts: Hosts,
 ) -> None:
-    browser_ids = browser_id_list
-    provider_names = providers
     for browser_id, provider in zip_longest(
-        browser_ids, provider_names, fillvalue=provider_names[-1]
+        browser_id_list, providers, fillvalue=providers[-1]
     ):
         provider_name = hosts[provider]["name"]
         OZLoggedIn(selenium[browser_id]).data.providers[provider_name].click()

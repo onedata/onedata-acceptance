@@ -76,12 +76,12 @@ def assert_value_of_last_column_is_bigger_than_zero(
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
     values = modal.get_last_column_value()
-    err_msg = (
+    error_message = (
         f"Last column {values[0][1]} is {values[0][0]} and"
         f" {values[1][1]} is {values[1][0]} when one of them should be "
         "bigger than zero"
     )
-    assert values[0][0] > 0 or values[1][0] > 0, err_msg
+    assert values[0][0] > 0 or values[1][0] > 0, error_message
 
 
 @wt(
@@ -115,11 +115,11 @@ def assert_no_data_message_processing_chart(
 ) -> None:
     switch_to_iframe(selenium, browser_id)
     actual_message = Modals(selenium[browser_id]).task_time_series.no_data_message
-    err_msg = (
+    error_message = (
         f'Actual message: "{actual_message}" on chart with processing'
         f' stats is not "{message}" as expected'
     )
-    assert actual_message == message, err_msg
+    assert actual_message == message, error_message
 
 
 @wt(
@@ -143,16 +143,16 @@ def assert_number_of_proceeded_files(
     values = modal.get_max_value()
     for value in values:
         if option in value[1].lower():
-            err_msg = (
+            error_message = (
                 f"Processing speed is {value[0]} {option} per second "
                 f"but expected value {compare_option} {number} per second."
             )
             if compare_option == "is greater or equal":
-                assert value[0] >= float(number), err_msg
+                assert value[0] >= float(number), error_message
             elif compare_option == "is greater than":
-                assert value[0] > float(number), err_msg
+                assert value[0] > float(number), error_message
             else:
-                assert value[0] == float(number), err_msg
+                assert value[0] == float(number), error_message
             break
     else:
         raise RuntimeError(
@@ -217,11 +217,10 @@ def open_store_details_modal(
 def compare_datasets_in_store_details_modal(
     item_list: list[str], modal: StoreDetails, store_name: str
 ) -> None:
-    parsed_items = item_list
     actual_items = [elem.name for elem in modal.store_content_list]
-    for item in parsed_items:
-        err_msg = f"{item} is not in Store details modal for {store_name} store"
-        assert item in actual_items, err_msg
+    for item in item_list:
+        error_message = f"{item} is not in Store details modal for {store_name} store"
+        assert item in actual_items, error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -229,10 +228,10 @@ def compare_booleans_in_store_details_modal(
     item_list: list[bool], modal: StoreDetails
 ) -> None:
     actual = [elem.value for elem in modal.store_content_list]
-    err_msg = f"Actual boolean list {actual} does not match expected {item_list}"
+    error_message = f"Actual boolean list {actual} does not match expected {item_list}"
     assert actual.count("true") == item_list.count(True) and actual.count(
         "false"
-    ) == item_list.count(False), err_msg
+    ) == item_list.count(False), error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -240,11 +239,11 @@ def compare_string_in_store_details_modal(
     item: str, modal: StoreDetails, variable_type: str, store_name: str
 ) -> None:
     actual = modal.raw_view.replace('"', "")
-    err_msg = (
+    error_message = (
         f"expected {variable_type} {item} does not contain"
         f" {actual} in {store_name} store details modal"
     )
-    assert actual == str(item), err_msg
+    assert actual == str(item), error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -342,8 +341,8 @@ def check_number_of_elements_in_store_details_modal(
     driver = selenium[browser_id]
     scroll_to_bottom_of_the_table(driver)
     actual_number = get_last_item_number_in_table(driver)
-    err_msg = (
+    error_message = (
         f"Expected number of elements {number} is not equal to actual "
         f'number {actual_number} in "{store_name}" store details modal'
     )
-    assert actual_number == int(number), err_msg
+    assert actual_number == int(number), error_message

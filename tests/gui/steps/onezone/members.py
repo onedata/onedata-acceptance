@@ -471,28 +471,28 @@ def assert_member_is_in_parent_members_list(
     page = _find_members_page(driver, parent_type)
 
     if option == "sees":
-        err_msg = (
+        error_message = (
             f'{member_type} "{member_name}" not found on'
             f' {parent_type} "{parent_name}" members list'
         )
         try:
             if member_type == "user":
-                assert page.users.items[member_name].is_displayed(), err_msg
+                assert page.users.items[member_name].is_displayed(), error_message
             else:
-                assert page.groups.items[member_name].is_displayed(), err_msg
+                assert page.groups.items[member_name].is_displayed(), error_message
         except RuntimeError as exc:
-            raise AssertionError(err_msg) from exc
+            raise AssertionError(error_message) from exc
 
     else:
-        err_msg = (
+        error_message = (
             f'{member_type} "{member_name}" found on'
             f' {parent_type} "{parent_name}" members list'
         )
         try:
             if member_type == "user":
-                assert not page.users.items[member_name].is_displayed(), err_msg
+                assert not page.users.items[member_name].is_displayed(), error_message
             else:
-                assert not page.groups.items[member_name].is_displayed(), err_msg
+                assert not page.groups.items[member_name].is_displayed(), error_message
         except RuntimeError:
             pass
 
@@ -958,7 +958,7 @@ def click_button_on_element_header_in_members_and_wait(
     converters={"labels": parse_elements_sequence},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def ckeck_status_labels_for_member_of_space(
+def check_status_labels_for_member_of_space(
     selenium: SeleniumDrivers,
     browser_id: str,
     labels: list[str],
@@ -972,12 +972,9 @@ def ckeck_status_labels_for_member_of_space(
     page = _find_members_page(driver, where)
     member = getattr(page, member_type).items[member_name]
     status_labels = [x.text for x in member.status_labels]
-    expected_labels = labels
 
-    assert len(status_labels) == len(
-        expected_labels
-    ), f"Invalid status labels for {member_name}"
-    for x in expected_labels:
+    assert len(status_labels) == len(labels), f"Invalid status labels for {member_name}"
+    for x in labels:
         assert x in status_labels, f'"{x}" label not found for {member_name}'
 
 
@@ -1073,10 +1070,10 @@ def check_element_in_members_subpage(
     member_list = getattr(page.members_page, f"{member_type}s").items
     if option == "sees":
         try:
-            err_msg = f"{member_name} {member_type} not found"
-            assert member_name in member_list, err_msg
+            error_message = f"{member_name} {member_type} not found"
+            assert member_name in member_list, error_message
         except RuntimeError as exc:
-            raise AssertionError(err_msg) from exc
+            raise AssertionError(error_message) from exc
     else:
         try:
             assert member_name not in member_list, f"{member_name} {member_type}"

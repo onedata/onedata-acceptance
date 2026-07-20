@@ -197,7 +197,7 @@ def assert_audit_log_in_store(
         store_type,
     )
 
-    err_msg = (
+    error_message = (
         "There is no information about algorithm, checksum or file id "
         f"in audit log in {store_name} store details"
     )
@@ -205,7 +205,7 @@ def assert_audit_log_in_store(
         store_details["algorithm"]
         and store_details["checksum"]
         and store_details["fileId"]
-    ), err_msg
+    ), error_message
 
     tmp_memory[f"{store_name}_store_log"] = store_details
 
@@ -314,11 +314,11 @@ def compare_audit_log_to_store_log(
 
     audit_log = json.loads(clipboard.paste(display=displays[browser_id]))
 
-    err_msg = (
+    error_message = (
         f'Audit logs for {elem_type} "{elem_name}" does not contain '
         f"audit log for {store_name} store"
     )
-    assert store_audit_log == audit_log["content"], err_msg
+    assert store_audit_log == audit_log["content"], error_message
 
 
 @wt(
@@ -456,9 +456,8 @@ def assert_file_id_in_store_details(
 
     page = get_op_workflow_visualizer_page(driver)
     store_type = "object"
-    files = file_list
 
-    elem_num = len(Modals(driver).store_details.store_content_object)
+    element_count = len(Modals(driver).store_details.store_content_object)
     storage_file_ids = [
         json.loads(
             open_modal_and_get_store_content(
@@ -472,7 +471,7 @@ def assert_file_id_in_store_details(
                 i,
             )
         )["fileId"]
-        for i in range(elem_num)
+        for i in range(element_count)
     ]
 
     file_ids = [
@@ -485,16 +484,16 @@ def assert_file_id_in_store_details(
             clipboard,
             displays,
         )
-        for file in files
+        for file in file_list
     ]
 
     for storage_file_id in storage_file_ids:
-        err_msg = (
+        error_message = (
             f'"file_id" in "{store_name}" store details modal is not '
-            f'id of "{files}" from "{space_name}" space'
+            f'id of "{file_list}" from "{space_name}" space'
         )
 
-        assert storage_file_id in file_ids, err_msg
+        assert storage_file_id in file_ids, error_message
 
     if "two" in option:
         assert len(storage_file_ids) == 2 * len(file_ids), (
@@ -537,8 +536,8 @@ def assert_each_element_contains_some_information(
     actual_data = []
     get_op_workflow_visualizer_page(driver)
     modal = Modals(driver).store_details
-    elem_num = len(modal.store_content_object)
-    for i in range(elem_num):
+    element_count = len(modal.store_content_object)
+    for i in range(element_count):
         store_content = json.loads(
             get_store_content(modal, store_type, i, clipboard, displays, browser_id)
         )
@@ -581,28 +580,28 @@ def assert_each_element_checksum_content_in_store(
     expected_data = yaml.load(content, yaml.Loader)
     get_op_workflow_visualizer_page(driver)
     modal = Modals(driver).store_details
-    elem_num = len(modal.store_content_object)
-    for i in range(elem_num):
+    element_count = len(modal.store_content_object)
+    for i in range(element_count):
         store_content = json.loads(
             get_store_content(modal, store_type, i, clipboard, displays, browser_id)
         )
         modal.close_details()
         expected_sha256 = expected_data["checksums"]["sha256"]["status"]
         actual_sha256 = store_content["checksums"]["sha256"]["status"]
-        err_msg = (
+        error_message = (
             f"expected sha256 status {expected_sha256} does not match "
             f"actual {actual_sha256} for {i} element in {store_name}"
             " details modal"
         )
-        assert expected_sha256 == actual_sha256, err_msg
+        assert expected_sha256 == actual_sha256, error_message
         expected_md5 = expected_data["checksums"]["md5"]["status"]
         actual_md5 = store_content["checksums"]["md5"]["status"]
-        err_msg = (
+        error_message = (
             f"expected md5 status {expected_md5} does not match "
             f"actual {actual_md5} for {i} element in {store_name}"
             " details modal"
         )
-        assert expected_md5 == actual_md5, err_msg
+        assert expected_md5 == actual_md5, error_message
 
 
 def check_visual_in_store_details_modal(
@@ -615,11 +614,11 @@ def check_visual_in_store_details_modal(
         boolean_items = cast(list[bool], json.loads(serialized_items))
         compare_booleans_in_store_details_modal(boolean_items, modal)
     elif variable_type == "boolean":
-        err_msg = (
+        error_message = (
             f"{modal.raw_view} in store details modal does not match"
             f" expected {serialized_items}"
         )
-        assert modal.raw_view == serialized_items, err_msg
+        assert modal.raw_view == serialized_items, error_message
     else:
         parsed_items = cast(
             list[AuditLogValue] | AuditLogContent,
@@ -651,12 +650,12 @@ def check_visual_in_store_details_modal(
                     f"this {variable_type} is not handled in this function"
                 )
 
-            err_msg = (
+            error_message = (
                 f"expected {variable_type} {parsed_items} does not "
                 f"contain {expected} in {store_name} store details"
                 " modal"
             )
-            assert expected in parsed_items, err_msg
+            assert expected in parsed_items, error_message
 
 
 @wt(
@@ -718,8 +717,8 @@ def assert_file_in_store_details(
     modal = open_store_details_modal(selenium, browser_id, store_name)
     actual_file = modal.single_file_container.name
 
-    err_msg = f"{file} is not in Store details modal for {store_name} store"
-    assert file == actual_file, err_msg
+    error_message = f"{file} is not in Store details modal for {store_name} store"
+    assert file == actual_file, error_message
     modal.close()
 
 
@@ -744,10 +743,10 @@ def wt_click_on_elem_in_store_details_modal(
 def check_if_element_is_selected(
     tmp_memory: TmpMemory, browser_id: str, name: str, which_browser: str
 ) -> None:
-    err_msg = f"Element {name} is not selected in {which_browser}"
+    error_message = f"Element {name} is not selected in {which_browser}"
     browser = tmp_memory[browser_id][transform(which_browser)]
     if_selected = browser.data[name].is_selected()
-    assert if_selected, err_msg
+    assert if_selected, error_message
 
 
 @wt(
@@ -828,8 +827,8 @@ def assert_content_of_store(
     if len(modal.store_content_list) == 0:
         modal.copy_button()
         item = json.loads(clipboard.paste(display=displays[browser_id]))
-        err_msg = "expected value: {} differs from actual one: {}"
-        assert data[0] == item, err_msg.format(data[0], item)
+        error_message = "expected value: {} differs from actual one: {}"
+        assert data[0] == item, error_message.format(data[0], item)
     else:
         modal.store_content_list[0].click()
         modal.copy_button()
@@ -898,7 +897,7 @@ def compare_content_reason_of_task_audit_log(
     displays: dict[str, str],
     task_name: str,
 ) -> None:
-    err_msg = (
+    error_message = (
         f'Reason: "{reason}" in audit log for "{task_name}" '
         f'task does not contain "{actual_reason}" as expected'
     )
@@ -908,9 +907,9 @@ def compare_content_reason_of_task_audit_log(
         )
         actual_reason_text = cast(str, actual_reason)
         for reason_elem in reason_data:
-            assert reason_elem in actual_reason_text, err_msg
+            assert reason_elem in actual_reason_text, error_message
     elif isinstance(reason, str) and "file checksum" in reason:
-        assert reason == cast(str, actual_reason).replace(":", ""), err_msg
+        assert reason == cast(str, actual_reason).replace(":", ""), error_message
     else:
         if isinstance(reason, dict):
             reason_details = cast(AuditLogContent, reason["details"])
@@ -1099,17 +1098,17 @@ def assert_element_content_in_task_audit_log(
     actual_data = actual_data.replace("(data/) ", "")
     actual_data = actual_data.lower()
     if isinstance(expected_data, list):
-        err_msg = (
+        error_message = (
             f'actual {element} content for task:\n "{actual_data}"\n is not '
             f'in expected cases:\n "{expected_data}"'
         )
-        assert actual_data in expected_data, err_msg
+        assert actual_data in expected_data, error_message
     else:
-        err_msg = (
+        error_message = (
             f'actual {element} content for task:\n "{actual_data}"\n is not '
             f'as expected:\n "{expected_data}"'
         )
-        assert actual_data == expected_data, err_msg
+        assert actual_data == expected_data, error_message
     modal.x()
     click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, close)
 
@@ -1219,11 +1218,11 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
         with open(file_path) as f:
             data = json.load(f)
             log_entries = len(modal.logs_entry)
-            err_msg = (
+            error_message = (
                 "there is different number of log entries in file "
                 f"{len(data)} and visible {log_entries}"
             )
-            assert len(data) == log_entries, err_msg
+            assert len(data) == log_entries, error_message
             for i in range(log_entries):
                 file_log = data[i]
                 idx = log_entries - i - 1
@@ -1232,10 +1231,10 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
                 visible_log = json.loads(clipboard.paste(display=displays[browser_id]))
                 # remove 'source' from dict
                 visible_log.pop("source")
-                err_msg = (
+                error_message = (
                     f"logs in file: {file_log} and visible {visible_log}are different"
                 )
-                assert file_log == visible_log, err_msg
+                assert file_log == visible_log, error_message
                 modal.close_details.click()
     else:
         raise RuntimeError(f"file {file_name} has not been downloaded")
@@ -1276,8 +1275,8 @@ def _assert_workflow_audit_log_contains_entries(
     for expected_entry in data:
         if assert_expected_in_entries(expected_entry, data_file):
             continue
-        err_msg = f"there is no entry {expected_entry} in workflow audit log"
-        raise RuntimeError(err_msg)
+        error_message = f"there is no entry {expected_entry} in workflow audit log"
+        raise RuntimeError(error_message)
     modal.x()
 
 
@@ -1317,20 +1316,19 @@ def assert_workflow_audit_log_contains_entry(
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
     with open(file_path) as f:
         data_file = json.load(f)
-    parsed_items = item_list
     for entry in data_file:
         try:
             content = entry["content"]
-            if _assert_all_items_in_json(parsed_items, content) and (
-                len(parsed_items) == len(content)
+            if _assert_all_items_in_json(item_list, content) and (
+                len(item_list) == len(content)
             ):
                 return True
         except KeyError:
             pass
-    err_msg = (
-        f"there is no entry containing data about {parsed_items} in workflow audit log"
+    error_message = (
+        f"there is no entry containing data about {item_list} in workflow audit log"
     )
-    raise RuntimeError(err_msg)
+    raise RuntimeError(error_message)
 
 
 def _assert_all_items_in_json(item_list: list[str], data: AuditLogContent) -> bool:
@@ -1352,10 +1350,10 @@ def assert_no_debug_entry_in_workflow_audit_log(
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
     with open(file_path) as f:
         data_file: list[AuditLogContent] = json.load(f)
-        err_msg = "workflow audit log contains debug entry"
+        error_message = "workflow audit log contains debug entry"
         assert not any(
             entry.get("severity", "") == "debug" for entry in data_file
-        ), err_msg
+        ), error_message
 
 
 def _get_workflow_audit_log(
