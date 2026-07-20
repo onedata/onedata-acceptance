@@ -4,6 +4,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import re
 import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
@@ -344,3 +345,20 @@ def wait_till_alert_info_popup_disappear(
 
     partial_close_alert = partial(alert_popup_close_button_fun, alert_popup=alert_popup)
     wait_till_popup_or_modal_disappear(driver, css_selector, partial_close_alert)
+
+
+def parse_size(size: str) -> float:
+    units = ["B", "KiB", "MiB", "GiB"]
+    units_reg = "|".join(units)
+
+    match = re.fullmatch(
+        rf"\s*(?P<value>\d+(?:\.\d+)?)\s*(?P<unit>{units_reg})\s*",
+        size,
+    )
+
+    if match is None:
+        raise ValueError(f"Unsupported size format: {size!r}")
+
+    value = float(match.group("value"))
+    unit = match.group("unit")
+    return value * 1024 ** (units.index(unit))

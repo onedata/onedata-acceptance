@@ -7,13 +7,13 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-import re
 import time
 from collections.abc import Callable
 from datetime import datetime
 from typing import List
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import parse_size
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
@@ -119,18 +119,28 @@ def assert_recall_duration_in_archive_recall_information_modal(
 @wt(parsers.parse("user of {browser_id} sees that not all {kind} were recalled"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_all_files_were_recalled(
-    selenium: SeleniumDrivers, browser_id: str, kind: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    kind: str,
 ) -> None:
-    kind = kind + " recalled"
-    characters = "[\nMiB ]"
+    recalled_kind = f"{kind} recalled"
+
     data_info = getattr(
-        Modals(selenium[browser_id]).archive_recall_information, transform(kind)
+        Modals(selenium[browser_id]).archive_recall_information,
+        transform(recalled_kind),
     )
-    info = re.sub(characters, "", data_info).split("/")
-    all_data = float(info[1])
-    recalled = float(info[0]) / 1024 if "KiB" in data_info else float(info[0])
-    error_message = f"Number of recalled {kind} is not smaller then all {kind}"
-    assert all_data > recalled, error_message
+
+    recalled_text, all_data_text = data_info.replace("\n", "").split("/", maxsplit=1)
+    if kind == "data":
+        recalled = parse_size(recalled_text)
+        all_data = parse_size(all_data_text)
+    else:
+        recalled = int(recalled_text)
+        all_data = int(all_data_text)
+
+    assert (
+        recalled < all_data
+    ), f"Number of recalled {kind} is not smaller than all {kind}: {data_info!r}"
 
 
 @wt(
