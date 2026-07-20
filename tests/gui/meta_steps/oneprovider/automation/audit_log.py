@@ -689,10 +689,10 @@ def assert_elements_in_store_details_modal(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {item_list} datasets in "
-        'Store details modal for "{store_name}" store'
+        "user of {browser_id} sees {item_list:ElementsSequence} datasets in "
+        'Store details modal for "{store_name}" store',
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={"item_list": parse_elements_sequence},
 )
 def assert_datasets_in_store_details(
     selenium: SeleniumDrivers,
@@ -1300,11 +1300,9 @@ def compare_audit_log_debug_entries(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that workflow audit log contains "
-        "entry with info only about file attributes {item_list}"
+        "entry with info only about file attributes {item_list:ElementsSequence}",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "item_list": parse_elements_sequence,
-    },
 )
 def assert_workflow_audit_log_contains_entry(
     selenium: SeleniumDrivers,

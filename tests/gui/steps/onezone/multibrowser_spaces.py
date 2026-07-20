@@ -18,11 +18,10 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sends invitation {item_type} to "{browser_list}"'
+        "user of {browser_id} sends invitation {item_type} to"
+        ' "{browser_list:ElementsSequence}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "browser_list": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def send_invitation_token_to_browser(

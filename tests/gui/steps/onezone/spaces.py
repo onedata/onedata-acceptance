@@ -205,11 +205,10 @@ def click_on_option_in_the_sidebar(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} can see tabs "{tabs}" are disabled in the main menu'
+        'user of {browser_id} can see tabs "{tabs:ElementsSequence}" are disabled in'
+        " the main menu",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "tabs": parse_elements_sequence,
-    },
 )
 def wt_assert_main_tabs_disabled(
     selenium: SeleniumDrivers, browser_id: str, tabs: list[str]

@@ -1107,11 +1107,10 @@ def check_content_for_provider(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that contents for {providers} are {contents}"
+        "user of {browser_id} sees that contents for {providers:ElementsSequence} are"
+        " {contents}",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "providers": parse_elements_sequence,
-    },
 )
 def check_content_for_providers(
     selenium: SeleniumDrivers,

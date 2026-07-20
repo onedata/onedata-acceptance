@@ -168,11 +168,10 @@ def go_to_inventory_subpage(
 
 @wt(
     parsers.parse(
-        'user of {browser_ids} sees "{text}" label in "{inventory}" main page'
+        'user of {browser_ids:ElementsSequence} sees "{text}" label in "{inventory}"'
+        " main page",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "browser_ids": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_text_in_inventory_page(

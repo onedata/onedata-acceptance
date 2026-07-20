@@ -140,11 +140,9 @@ def assert_progress_in_harvesting(
 @wt(
     parsers.parse(
         "user of {browser_id} unchecks all toggles apart from "
-        "{stay_checked} in indices page"
+        "{stay_checked:ElementsSequence} in indices page",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "stay_checked": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def uncheck_toggles_on_create_index_page(

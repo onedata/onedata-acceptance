@@ -54,12 +54,10 @@ class SpaceFilesMonitorFactory(Protocol):
 
 @wt(
     parsers.parse(
-        'user {user} starts observing file events on "{attributes}" on dir'
-        ' "{directory_path}" in space "{space}" in {host}'
+        'user {user} starts observing file events on "{attributes:ElementsSequence}" on'
+        ' dir "{directory_path}" in space "{space}" in {host}',
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "attributes": parse_elements_sequence,
-    },
 )
 def wt_start_observing_file_events(
     user: str,

@@ -151,11 +151,10 @@ def open_condition_properties_list(selenium: SeleniumDrivers, browser_id: str) -
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {properties_list} on condition properties list"
+        "user of {browser_id} sees {properties_list:ElementsSequence} on condition"
+        " properties list",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "properties_list": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_properties_on_condition_properties_list(

@@ -319,11 +319,9 @@ def check_if_item_is_dir_in_browser(
 @wt(
     parsers.parse(
         "user of {browser_id} does not see any item(s) named "
-        "{item_list} in {which_browser}"
+        "{item_list:ElementsSequence} in {which_browser}",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "item_list": parse_elements_sequence,
-    },
 )
 def wt_assert_items_absence_in_browser(
     selenium: SeleniumDrivers,

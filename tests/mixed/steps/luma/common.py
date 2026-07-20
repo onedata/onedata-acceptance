@@ -264,12 +264,9 @@ def set_default_display_credentials_luma_lf(
     parsers.parse(
         'LUMA local feed mappings for imported storage "{storage}" '
         'at "{provider}" are created between '
-        "{uid_list} and {user_list}"
+        "{uid_list:ElementsSequence} and {user_list:ElementsSequence}",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "uid_list": parse_elements_sequence,
-        "user_list": parse_elements_sequence,
-    },
 )
 def create_imported_storage_luma_mappings_lf(
     storage: str,

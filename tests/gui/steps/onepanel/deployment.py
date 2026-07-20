@@ -67,13 +67,11 @@ def g_create_admin_in_panel(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} enables {options} options for "
+        "user of {browser_id} enables {options:ElementsSequence} options for "
         "{host_pattern} host in step 1 of deployment process "
-        "in Onepanel"
+        "in Onepanel",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "options": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_check_host_options_in_deployment_step1(

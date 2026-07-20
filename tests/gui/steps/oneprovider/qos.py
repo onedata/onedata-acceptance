@@ -78,11 +78,9 @@ def select_option_qos(
 @wt(
     parsers.parse(
         "user of {browser_id} sees the following logs in audit log files list"
-        ' in given order for "{files_list}" files:\n{config}'
+        ' in given order for "{files_list:ElementsSequence}" files:\n{config}',
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "files_list": parse_elements_sequence,
-    },
 )
 def assert_audit_log_logs_for_each_file_in_list(
     selenium: SeleniumDrivers, browser_id: str, files_list: list[str], config: str

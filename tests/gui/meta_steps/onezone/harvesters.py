@@ -445,9 +445,9 @@ def check_harvesting_process_in_harvester(
 @wt(
     parsers.parse(
         'user of {browser_id} creates new index "{index_name}" that '
-        'includes {toggles_list} toggles for "{harvester_name}"'
+        'includes {toggles_list:ElementsSequence} toggles for "{harvester_name}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={"toggles_list": parse_elements_sequence},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_with_toggles_list(

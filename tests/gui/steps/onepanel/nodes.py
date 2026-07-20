@@ -19,12 +19,10 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {options} options are "
-        "enabled for {host_pattern} host in Nodes page in Onepanel"
+        "user of {browser_id} sees that {options:ElementsSequence} options are "
+        "enabled for {host_pattern} host in Nodes page in Onepanel",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "options": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_enabled_for_host_in_nodes(
@@ -44,13 +42,11 @@ def wt_assert_options_enabled_for_host_in_nodes(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {options} options cannot "
+        "user of {browser_id} sees that {options:ElementsSequence} options cannot "
         "be changed for {host_pattern} host in Nodes page "
-        "in Onepanel"
+        "in Onepanel",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "options": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_cannot_be_changed_for_host_in_nodes(

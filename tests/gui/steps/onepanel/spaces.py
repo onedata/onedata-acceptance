@@ -536,11 +536,10 @@ def assert_correct_number_displayed_on_sync_charts(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees {tab_list} navigation tabs for space "{space_name}"'
+        "user of {browser_id} sees {tab_list:ElementsSequence} navigation tabs for"
+        ' space "{space_name}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "tab_list": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_space_displayed(

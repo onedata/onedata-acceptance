@@ -335,8 +335,10 @@ def wt_rm_files_to_storage_mount_point(src_path: str, hosts: Hosts) -> None:
 
 
 @given(
-    parsers.parse("there is no {elems} in provider's storage mount point"),
-    converters={"elems": parse_elements_sequence},
+    parsers.parse(
+        "there is no {elems:ElementsSequence} in provider's storage mount point",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 def g_rm_many_files_from_storage_mount_point(elems: list[str], hosts: Hosts) -> None:
     for elem in elems:

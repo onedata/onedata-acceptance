@@ -841,12 +841,10 @@ def create_files_names_alphabetically(
 @given(
     parsers.parse(
         "using REST, {user} creates {number} empty files in "
-        'directories {dir_list} named "file_001", "file_002", ...,'
-        ' "file_N" supported by "{provider}" provider'
+        'directories {dir_list:ElementsSequence} named "file_001", "file_002", ...,'
+        ' "file_N" supported by "{provider}" provider',
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "dir_list": parse_elements_sequence,
-    },
 )
 def create_files_names_alphabetically_with_dir_list(
     user: str,

@@ -74,8 +74,10 @@ from tests.utils.utils import repeat_failed
 
 
 @wt(
-    parsers.parse('user of {user} creates "{space_list}" space in Onezone'),
-    converters={"space_list": parse_elements_sequence},
+    parsers.parse(
+        'user of {user} creates "{space_list:ElementsSequence}" space in Onezone',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(

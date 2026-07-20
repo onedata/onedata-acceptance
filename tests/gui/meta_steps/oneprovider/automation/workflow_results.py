@@ -144,12 +144,10 @@ def compare_store_contents(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} counts checksums {checksum_list} for "
-        '"{file_name}" in "{space}" space'
+        "user of {browser_id} counts checksums {checksum_list:ElementsSequence} for "
+        '"{file_name}" in "{space}" space',
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "checksum_list": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def count_checksums_for_file(
@@ -191,13 +189,11 @@ def checksums_counted_in_workflow(metadata_modal: MetadataTab) -> dict[str, str]
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that checksums {checksum_list} for"
+        "user of {browser_id} sees that checksums {checksum_list:ElementsSequence} for"
         ' "{file_name}" counted in workflow are alike to '
-        "those counted earlier by user"
+        "those counted earlier by user",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "checksum_list": parse_elements_sequence,
-    },
 )
 def assert_checksums_are_the_same(
     browser_id: str,
@@ -234,10 +230,10 @@ def assert_checksums_are_the_same(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that counted checksums"
-        ' {checksum_list} for "{file_name}" are alike to those'
-        " counted in workflow"
+        ' {checksum_list:ElementsSequence} for "{file_name}" are alike to those'
+        " counted in workflow",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={"checksum_list": parse_elements_sequence},
 )
 def count_checksums_and_compare_them(
     browser_id: str,

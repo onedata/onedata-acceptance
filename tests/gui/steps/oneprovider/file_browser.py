@@ -80,11 +80,10 @@ def click_on_status_tag_for_file_in_file_browser(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees only items named {item_list} in {which_browser}"
+        "user of {browser_id} sees only items named {item_list:ElementsSequence} in"
+        " {which_browser}",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "item_list": parse_elements_sequence,
-    },
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_only_given_items_in_file_browser(
@@ -326,9 +325,10 @@ def select_first_n_files(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} deselects {item_list} item(s) from file browser"
+        "user of {browser_id} deselects {item_list:ElementsSequence} item(s) from file"
+        " browser",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={"item_list": parse_elements_sequence},
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def deselect_items_from_file_browser(

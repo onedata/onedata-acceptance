@@ -101,15 +101,15 @@ def list_buckets(s3: S3Client) -> list[str]:
 @wt(
     parsers.parse(
         "using OneS3 and list buckets boto3 function, user {user} can see spaces"
-        ' "{spaces_list}"'
+        ' "{spaces_list:ElementsSequence}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
     ),
-    converters={
-        "spaces_list": parse_elements_sequence,
-    },
 )
 @wt(
-    parsers.parse('using OneS3, user {user} can see spaces "{spaces_list}"'),
-    converters={"spaces_list": parse_elements_sequence},
+    parsers.parse(
+        'using OneS3, user {user} can see spaces "{spaces_list:ElementsSequence}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
 def wt_assert_listed_buckets(
@@ -235,8 +235,11 @@ def list_bucket_content(s3: S3Client, bucket_name: str) -> list[str]:
 
 
 @wt(
-    parsers.parse('using OneS3, user {user} can see items {items} in "{space_name}"'),
-    converters={"items": parse_elements_sequence},
+    parsers.parse(
+        "using OneS3, user {user} can see items {items:ElementsSequence} in"
+        ' "{space_name}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 def wt_assert_bucket_content(
     space_name: str,
