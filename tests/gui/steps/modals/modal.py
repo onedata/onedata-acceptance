@@ -263,10 +263,10 @@ def _click_on_confirmation_btn_in_modal(
     button_name = button_name.lower()
     modal = tmp_memory[browser_id]["window"]["modal"]
     buttons = modal.find_elements(By.CSS_SELECTOR, "button")
-    err_msg = f"clicking on {button_name} in displayed modal disabled"
+    error_message = f"clicking on {button_name} in displayed modal disabled"
     for btn in buttons:
         if btn.text.lower() == button_name:
-            click_on_btn(driver, btn, err_msg)
+            click_on_btn(driver, btn, error_message)
             break
     else:
         raise RuntimeError(f"no button named {button_name} found")
@@ -353,8 +353,8 @@ def click_on_button_in_active_modal(
         button = modal.find_element(By.CSS_SELECTOR, ".modal-footer button.btn-default")
 
     @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
-    def click_on_btn(d: WebDriver, btn: WebElement, err_msg: str) -> None:
-        click_on_web_elem(d, btn, err_msg)
+    def click_on_btn(d: WebDriver, btn: WebElement, error_message: str) -> None:
+        click_on_web_elem(d, btn, error_message)
 
     click_on_btn(driver, button, f"{option} btn for displayed modal disabled")
 
@@ -371,11 +371,11 @@ def assert_modal_option_is_not_selected(
     options = modal.find_elements(
         By.CSS_SELECTOR, ".one-option-button, .one-option-button .oneicon"
     )
-    err_msg = f'option "{text}" is selected while it should not be'
+    error_message = f'option "{text}" is selected while it should not be'
     for option, checkbox in zip(options[::2], options[1::2]):
         if option.text == text:
             checkbox_css = checkbox.get_attribute("class")
-            assert "oneicon-checkbox-empty" in checkbox_css, err_msg
+            assert "oneicon-checkbox-empty" in checkbox_css, error_message
 
 
 @wt(
@@ -650,8 +650,8 @@ def assert_number_of_shares_in_modal(
     navigation = Modals(driver).details_modal.navigation
     links = shares_tab.share_options
     info = look_for_tab_name(navigation, name)
-    err_msg = f"Item {item_name} is not shared {number} times"
-    assert _assert_number_of_shares_in_modal(int(number), links, info), err_msg
+    error_message = f"Item {item_name} is not shared {number} times"
+    assert _assert_number_of_shares_in_modal(int(number), links, info), error_message
 
 
 def look_for_tab_name(navigation: PageObjectsSequence, name: str) -> str:
@@ -751,17 +751,17 @@ def assert_invalid_id_in_error_modal(
     assert (
         "is invalid" in modal_text
     ), "There is no info about invalid target in error modal"
-    err_msg = (
+    error_message = (
         f"There is no info about id of invalid target {target_name} in error modal"
     )
     if target_type == "group":
-        assert groups[target_name] in modal_text, err_msg
+        assert groups[target_name] in modal_text, error_message
     elif target_type == "space":
-        assert spaces[target_name] in modal_text, err_msg
+        assert spaces[target_name] in modal_text, error_message
     elif target_type == "inventory":
-        assert inventories[target_name] in modal_text, err_msg
+        assert inventories[target_name] in modal_text, error_message
     elif target_type == "harvester":
-        assert harvesters[target_name] in modal_text, err_msg
+        assert harvesters[target_name] in modal_text, error_message
     else:
         raise ValueError(f"Unknown type {target_type}")
 

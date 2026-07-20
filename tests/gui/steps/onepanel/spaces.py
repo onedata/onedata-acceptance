@@ -344,10 +344,10 @@ def wt_assert_proper_space_configuration_in_panel(
     space.navigation.overview()
     displayed_conf = getattr(space.overview, sync_type.lower() + "_strategy")
 
-    for attr, val in yaml.load(conf, yaml.Loader).items():
-        displayed_val = displayed_conf[attr]
+    for attribute, val in yaml.load(conf, yaml.Loader).items():
+        displayed_val = displayed_conf[attribute]
         assert str(val).lower() == displayed_val.lower(), (
-            f"Displayed {displayed_val} as {attr} instead of expected {val} in"
+            f"Displayed {displayed_val} as {attribute} instead of expected {val} in"
             f' {sync_type} strategy of "{space_name}" configuration'
         )
 
@@ -653,8 +653,8 @@ def click_option_on_dropdown_rule(
         else:
             break
     else:
-        err_msg = f"Failed do set {rule} for {option}"
-        assert tab.selective_cleaning_form[rule].value_limit == option, err_msg
+        error_message = f"Failed do set {rule} for {option}"
+        assert tab.selective_cleaning_form[rule].value_limit == option, error_message
 
 
 @wt(
@@ -747,8 +747,8 @@ def see_released_size_in_cleaning_report(
 
         if released_size == size:
             return
-    err_msg = f"released size: {released_size}  is not expected size: {size}"
-    assert False, err_msg
+    error_message = f"released size: {released_size}  is not expected size: {size}"
+    assert False, error_message
 
 
 def toggle_in_storage_import_configuration_is_enabled(

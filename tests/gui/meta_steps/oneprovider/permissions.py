@@ -413,8 +413,10 @@ def assert_user_id_in_ace_in_op_gui(
     )
     visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num, numerals)
     user_id = users[name].user_id
-    err_msg = f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
-    assert visible_id == user_id, err_msg
+    error_message = (
+        f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
+    )
+    assert visible_id == user_id, error_message
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 

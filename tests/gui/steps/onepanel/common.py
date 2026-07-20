@@ -269,8 +269,8 @@ def assert_label_content_in_onepanel_view(
 ) -> None:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
-    err_msg = f"{label} should be {label_content} but is {actual_label}"
-    assert actual_label == label_content, err_msg
+    error_message = f"{label} should be {label_content} but is {actual_label}"
+    assert actual_label == label_content, error_message
 
 
 @wt(
@@ -289,8 +289,8 @@ def assert_label_ends_with_in_onepanel_view(
 ) -> None:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
-    err_msg = f"{label} should end with {suffix} but it is {actual_label}"
-    assert actual_label.endswith(suffix), err_msg
+    error_message = f"{label} should end with {suffix} but it is {actual_label}"
+    assert actual_label.endswith(suffix), error_message
 
 
 @wt(
@@ -311,8 +311,8 @@ def assert_label_contains_prov_domain_in_onepanel_view(
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
     expected_domain = hosts[host]["hostname"]
-    err_msg = f"Expected domain: {expected_domain} is not in {actual_label}"
-    assert expected_domain in actual_label, err_msg
+    error_message = f"Expected domain: {expected_domain} is not in {actual_label}"
+    assert expected_domain in actual_label, error_message
 
 
 @wt(
@@ -328,8 +328,8 @@ def assert_warning_in_dns_names_in_onepanel_view(
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_warning = nav.dns_names_warning
     warning = warning.replace("\\", "")
-    err_msg = f"Actual warning {actual_warning} does not match expected {warning}"
-    assert warning in actual_warning, err_msg
+    error_message = f"Actual warning {actual_warning} does not match expected {warning}"
+    assert warning in actual_warning, error_message
 
 
 @wt(

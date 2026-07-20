@@ -37,7 +37,7 @@ from tests.utils.user_utils import Users
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sets options for {host_regexp} host in "
+        "user of {browser_id} sets options for {host_pattern} host in "
         "step 1 of deployment process with following "
         "configuration:\n{config}"
     )
@@ -45,7 +45,7 @@ from tests.utils.user_utils import Users
 def setup_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
-    host_regexp: str,
+    host_pattern: str,
     config: str,
     hosts: Hosts,
 ) -> None:
@@ -60,13 +60,13 @@ def setup_step1(
      - Cluster Manager
      - Primary Cluster Manager
     """
-    _setup_step1(selenium, browser_id, host_regexp, config, hosts)
+    _setup_step1(selenium, browser_id, host_pattern, config, hosts)
 
 
 def _setup_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
-    host_regexp: str,
+    host_pattern: str,
     configuration: str,
     hosts: Hosts,
 ) -> None:
@@ -76,9 +76,9 @@ def _setup_step1(
     btn = "Deploy"
 
     wt_check_host_options_list_in_deployment_step1(
-        selenium, browser_id, options, host_regexp
+        selenium, browser_id, options, host_pattern
     )
-    if "onezone" in host_regexp:
+    if "onezone" in host_pattern:
         zone_for_name, zone_for_domain = _parse_zone_data(
             config["zone name"], config["zone domain"]
         )

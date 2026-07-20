@@ -96,8 +96,8 @@ class QOSParams(PageObject):
 
     def delete_first_additional_param(self) -> None:
         if self.enabled_remove_icons:
-            css_sel = ".remove-param"
-            scroll_to_css_selector(self.driver, css_sel)
+            css_selector = ".remove-param"
+            scroll_to_css_selector(self.driver, css_selector)
             self.enabled_remove_icons[0].click()
 
 
@@ -186,8 +186,8 @@ class StorageContentPage(PageObject):
         for index, record in enumerate(self.storages):
             if record.name == storage_name:
                 driver.execute_script(f'$(".btn-default")[{index}].click();')
-                err_msg = f"{record.name} is not expanded after being clicked"
-                assert record.is_expanded(), err_msg
+                error_message = f"{record.name} is not expanded after being clicked"
+                assert record.is_expanded(), error_message
                 break
         else:
             raise RuntimeError(

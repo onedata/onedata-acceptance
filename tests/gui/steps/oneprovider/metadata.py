@@ -110,17 +110,21 @@ def type_text_to_val_of_attr_in_new_xattr_entry(
 @wt(
     parsers.parse(
         "user of {browser_id} sees xattr metadata entry "
-        'with key "{attr_key}" and value "{attr_val}"'
+        'with key "{attr_key}" and value "{attribute_value}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_there_is_such_xattr_meta_record(
-    selenium: SeleniumDrivers, browser_id: str, attr_key: str, attr_val: str
+    selenium: SeleniumDrivers, browser_id: str, attr_key: str, attribute_value: str
 ) -> None:
-    attr_val = attr_val.lower()
+    attribute_value = attribute_value.lower()
     modal = Modals(selenium[browser_id]).details_modal.metadata
-    err_msg = f'no metadata entry "{attr_key}" with value "{attr_val}" found'
-    assert modal.xattrs.entries[attr_key].value.lower() == attr_val, err_msg
+    error_message = (
+        f'no metadata entry "{attr_key}" with value "{attribute_value}" found'
+    )
+    assert (
+        modal.xattrs.entries[attr_key].value.lower() == attribute_value
+    ), error_message
 
 
 @wt(
@@ -133,8 +137,8 @@ def assert_there_is_no_such_meta_record(
     selenium: SeleniumDrivers, browser_id: str, key_name: str
 ) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
-    err_msg = f"metadata entry {key_name} found while should not be"
-    assert key_name not in modal.xattrs.entries, err_msg
+    error_message = f"metadata entry {key_name} found while should not be"
+    assert key_name not in modal.xattrs.entries, error_message
 
 
 @wt(
@@ -187,17 +191,17 @@ def assert_textarea_contains_record(
     if tab_name.lower() == "json":
         parsed_expected_metadata = json.loads(expected_metadata)
         metadata = json.loads(tab.text_area)
-        err_msg = f"got {metadata} instead of expected {parsed_expected_metadata}"
+        error_message = f"got {metadata} instead of expected {parsed_expected_metadata}"
         assert all(
             metadata.get(key, None) == value
             for key, value in parsed_expected_metadata.items()
-        ), err_msg
+        ), error_message
     else:
-        err_msg = (
+        error_message = (
             f"text in textarea: {tab.text_area} does not contain "
             f"{expected_metadata} but {tab.text_area}"
         )
-        assert expected_metadata in tab.text_area, err_msg
+        assert expected_metadata in tab.text_area, error_message
 
 
 def assert_textarea_not_contain_record(
@@ -223,8 +227,8 @@ def assert_textarea_is_empty_for_metadata(
 ) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
-    err_msg = f"{tab_name} textarea is not empty"
-    assert tab.text_area == "", err_msg
+    error_message = f"{tab_name} textarea is not empty"
+    assert tab.text_area == "", error_message
 
 
 @wt(

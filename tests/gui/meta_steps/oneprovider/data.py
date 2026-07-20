@@ -354,18 +354,18 @@ def check_metadata_for_file_in_directory(
         time.sleep(1)
         modal = Modals(selenium[browser_id]).details_modal
         entries = [entry.key for entry in modal.metadata.xattrs.entries]
-        err_msg = (
+        error_message = (
             f"Number of expected metadata entries ({len(metadata)}) does"
             " not equal number of actual metadata entries "
             f"({len(entries)}) for {item.name} in {directory}"
         )
-        assert len(entries) == len(metadata), err_msg
+        assert len(entries) == len(metadata), error_message
         for expected in metadata:
-            err_msg2 = (
+            error_message2 = (
                 f"{expected} metadata key is not in metadata for "
                 f"{item.name} in {directory}"
             )
-            assert expected in entries, err_msg2
+            assert expected in entries, error_message2
         modal.x()
 
 
@@ -1258,8 +1258,8 @@ def delete_first_n_files_with_fixed_step(
             selenium,
         )
         deleted_files += num_remaining_files_to_delete
-    err_msg = f"deleted {deleted_files} files instead of {num_files_to_delete}"
-    assert deleted_files == files_number, err_msg
+    error_message = f"deleted {deleted_files} files instead of {num_files_to_delete}"
+    assert deleted_files == files_number, error_message
 
 
 @wt(

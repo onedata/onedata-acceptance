@@ -104,8 +104,8 @@ def assert_mes_at_field_in_space_details_in_overview(
     details_tile = OZLoggedIn(driver).data.overview_page.space_details_tile
     field = transform(field)
     visible_mes = getattr(details_tile, field)
-    err_msg = f"user sees {visible_mes} instead of {text} at {field}"
-    assert text == visible_mes, err_msg
+    error_message = f"user sees {visible_mes} instead of {text} at {field}"
+    assert text == visible_mes, error_message
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -117,10 +117,10 @@ def assert_tags_in_space_details_in_overview(
     details_tile = OZLoggedIn(driver).data.overview_page.space_details_tile
     visible_mes = getattr(details_tile, tags)
     visible_tags = [t.text.split("\n")[0] for t in visible_mes]
-    err_msg = f"user sees tags: {visible_tags} instead of {tags_to_check}"
-    assert len(tags_to_check) == len(visible_tags), err_msg
+    error_message = f"user sees tags: {visible_tags} instead of {tags_to_check}"
+    assert len(tags_to_check) == len(visible_tags), error_message
     for tag in tags_to_check:
-        assert tag in visible_tags, err_msg
+        assert tag in visible_tags, error_message
 
 
 @wt(
@@ -138,11 +138,15 @@ def assert_space_advertised_in_space_marketplace_in_overview(
     marketplace_tile = OZLoggedIn(driver).data.overview_page.marketplace_tile
     advertise_info = marketplace_tile.advertise_info
     if option == "is":
-        err_msg = f"space should be advertised but visible info is {advertise_info}"
-        assert advertise_info == "Space advertised", err_msg
+        error_message = (
+            f"space should be advertised but visible info is {advertise_info}"
+        )
+        assert advertise_info == "Space advertised", error_message
     elif option == "is not":
-        err_msg = f"space should not be advertised but visible info is {advertise_info}"
-        assert advertise_info == "Not advertised", err_msg
+        error_message = (
+            f"space should not be advertised but visible info is {advertise_info}"
+        )
+        assert advertise_info == "Not advertised", error_message
 
 
 @wt(

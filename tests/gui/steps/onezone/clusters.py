@@ -104,8 +104,8 @@ def assert_subpage_in_cluster_page(
     driver = selenium[browser_id]
     page_name = OZLoggedIn(driver).clusters.page_name
     record_name = hosts[record]["name"]
-    err_msg = f"user does not see {record} page in Clusters page"
-    assert page_name == record_name, err_msg
+    error_message = f"user does not see {record} page in Clusters page"
+    assert page_name == record_name, error_message
 
 
 @wt(parsers.parse('user of {browser_id} clicks {option} of "{record}" in the sidebar'))
@@ -339,11 +339,11 @@ def click_button_in_cookies_popup(
 def assert_message_on_agreement_page(
     selenium: SeleniumDrivers, browser_id: str, text: str, kind_of_agreement: str
 ) -> None:
-    err_msg = f"Message on {kind_of_agreement} page is not as expected"
+    error_message = f"Message on {kind_of_agreement} page is not as expected"
     if kind_of_agreement == "privacy policy":
-        assert PrivacyPolicy(selenium[browser_id]).message.text == text, err_msg
+        assert PrivacyPolicy(selenium[browser_id]).message.text == text, error_message
     else:
-        assert TermsOfUse(selenium[browser_id]).message.text == text, err_msg
+        assert TermsOfUse(selenium[browser_id]).message.text == text, error_message
 
 
 @wt(

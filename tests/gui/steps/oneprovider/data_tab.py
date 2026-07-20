@@ -215,8 +215,10 @@ def _is_space_viewed_space_in_data_tab_in_op(
 ) -> None:
     selector = OPLoggedIn(driver).data.sidebar.space_selector
     displayed_name = selector.selected_space_name
-    err_msg = 'current directory tree is displayed for "{}" instead of "{}"'
-    assert displayed_name == space_name, err_msg.format(displayed_name, space_name)
+    error_message = 'current directory tree is displayed for "{}" instead of "{}"'
+    assert displayed_name == space_name, error_message.format(
+        displayed_name, space_name
+    )
     if is_home:
         assert (
             selector.is_selected_space_home() is True
@@ -450,16 +452,16 @@ def upload_automation_file_to_cwd_in_file_browser(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload files from local directory "{dir_path}" '
+        'menu bar to upload files from local directory "{directory_path}" '
         "to remote current dir without waiting for upload to finish"
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab_no_waiting(
-    selenium: SeleniumDrivers, browser_id: str, dir_path: str, tmpdir: LocalPath
+    selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
 ) -> None:
     driver = selenium[browser_id]
-    directory = tmpdir.join(browser_id, *dir_path.split("/"))
+    directory = tmpdir.join(browser_id, *directory_path.split("/"))
     if directory.isdir():
         OPLoggedIn(driver).file_browser.upload_files(
             "\n".join(str(item) for item in directory.listdir() if item.isfile())
@@ -484,15 +486,17 @@ def upload_file_to_cwd_in_file_browser(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload files from local directory "{dir_path}" '
+        'menu bar to upload files from local directory "{directory_path}" '
         "to remote current dir and waits extended time for upload to "
         "finish"
     )
 )
 def upload_files_to_cwd_in_data_tab_extended_wait(
-    selenium: SeleniumDrivers, browser_id: str, dir_path: str, tmpdir: LocalPath
+    selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
 ) -> None:
-    upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path, tmpdir)
+    upload_files_to_cwd_in_data_tab_no_waiting(
+        selenium, browser_id, directory_path, tmpdir
+    )
     wait_extended_time_for_file_upload_to_finish(selenium, browser_id)
 
 
@@ -513,14 +517,16 @@ def upload_file_to_cwd_in_data_tab(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload files from local directory "{dir_path}" '
+        'menu bar to upload files from local directory "{directory_path}" '
         "to remote current dir"
     )
 )
 def upload_files_to_cwd_in_data_tab(
-    selenium: SeleniumDrivers, browser_id: str, dir_path: str, tmpdir: LocalPath
+    selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
 ) -> None:
-    upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path, tmpdir)
+    upload_files_to_cwd_in_data_tab_no_waiting(
+        selenium, browser_id, directory_path, tmpdir
+    )
     wait_for_file_upload_to_finish(selenium, browser_id)
 
 
@@ -1160,9 +1166,9 @@ def assert_value_in_column_for_item(
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], transform(option))
-    err_msg = (
+    error_message = (
         f"displayed {option} {item_elem} for {item_name} does not "
         f"match expected {value}"
     )
 
-    assert value == item_elem, err_msg
+    assert value == item_elem, error_message

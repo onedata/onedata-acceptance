@@ -64,9 +64,9 @@ def assert_correct_usr_full_name_in_oz(
     selenium: SeleniumDrivers, browser_id: str, expected_full_name: str
 ) -> None:
     displayed_full_name = OZLoggedIn(selenium[browser_id]).profile.full_name
-    err_msg = (
+    error_message = (
         f'expected "{expected_full_name}" as user full name, but instead'
         f' displayed is "{displayed_full_name}" in USER FULL NAME oz panel'
     )
 
-    assert displayed_full_name == expected_full_name, err_msg
+    assert displayed_full_name == expected_full_name, error_message

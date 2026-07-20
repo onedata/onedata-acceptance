@@ -273,8 +273,8 @@ def assert_user_sees_group_page(
 ) -> None:
     driver = selenium[browser_id]
     group_name_on_page = OZLoggedIn(driver).groups.selected_group_name
-    err_msg = f"expected group name {group_name}, found {group_name_on_page}"
-    assert group_name_on_page == group_name, err_msg
+    error_message = f"expected group name {group_name}, found {group_name_on_page}"
+    assert group_name_on_page == group_name, error_message
 
 
 @wt(

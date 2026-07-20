@@ -526,8 +526,8 @@ def assert_no_access_tag_on_file(
     browser_id: str, item_name: str, tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
-    err_msg = f'"No access" tag for {item_name} in file browser not visible'
-    assert browser.data[item_name].tag_label == "No access", err_msg
+    error_message = f'"No access" tag for {item_name} in file browser not visible'
+    assert browser.data[item_name].tag_label == "No access", error_message
 
 
 @wt(
@@ -540,8 +540,8 @@ def assert_not_no_access_tag_on_file(
     browser_id: str, item_name: str, tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
-    err_msg = f'"No access" tag for {item_name} in file browser visible'
-    assert not browser.data[item_name].is_tag_visible("no_access"), err_msg
+    error_message = f'"No access" tag for {item_name} in file browser visible'
+    assert not browser.data[item_name].is_tag_visible("no_access"), error_message
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

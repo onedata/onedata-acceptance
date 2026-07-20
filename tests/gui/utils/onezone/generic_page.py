@@ -105,9 +105,9 @@ class GenericPage(PageObject, metaclass=GenericPageMeta):
         return self._get_items_list(ListElement.WORKFLOWS)
 
     def __getitem__(self, item: int | str) -> Any:
-        for attr in ListElement:
+        for attribute in ListElement:
             try:
-                return self._get_items_list(attr)[item]
+                return self._get_items_list(attribute)[item]
             except AttributeError:
                 pass
         raise ValueError("there is not any elements list member in class instance")

@@ -159,13 +159,13 @@ def wait_for_item_to_disappear(item: WebElement) -> None:
 
 @repeat_failed(timeout=WAIT_NORMAL_DOWNLOAD)
 def wait_for_file_with_unknown_name_to_download(
-    n_files_before_download: int, dir_path: FilePath
+    n_files_before_download: int, directory_path: FilePath
 ) -> None:
     # wait for a file to download, we don`t know the name of the file
     # so there is a way we can check that file was downloaded
-    n_files_after_download = len(os.listdir(dir_path))
+    n_files_after_download = len(os.listdir(directory_path))
     assert n_files_after_download > n_files_before_download, "Downloading did not start"
-    file_name = os.listdir(dir_path)[-1]
+    file_name = os.listdir(directory_path)[-1]
     assert_file_download_finished(file_name)
 
 

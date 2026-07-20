@@ -238,43 +238,43 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
 
 def find_web_elem(
     web_elem_root: WebElemRoot,
-    css_sel: str,
-    err_msg: str | Callable[[], str],
+    css_selector: str,
+    error_message: str | Callable[[], str],
     scroll: bool = True,
 ) -> WebElement:
     try:
         if scroll:
-            _scroll_to_css_sel(web_elem_root, css_sel)
-        item = web_elem_root.find_element(By.CSS_SELECTOR, css_sel)
+            _scroll_to_css_selector(web_elem_root, css_selector)
+        item = web_elem_root.find_element(By.CSS_SELECTOR, css_selector)
     except NoSuchElementException as exc:
-        if callable(err_msg):
-            err_msg = err_msg()
-        raise RuntimeError(err_msg) from exc
+        if callable(error_message):
+            error_message = error_message()
+        raise RuntimeError(error_message) from exc
     return item
 
 
 def find_web_elem_with_text(
     web_elem_root: WebElemRoot,
-    css_sel: str,
+    css_selector: str,
     text: str,
-    err_msg: str | Callable[[], str],
+    error_message: str | Callable[[], str],
     scroll: bool = True,
 ) -> WebElement:
-    items = web_elem_root.find_elements(By.CSS_SELECTOR, css_sel)
+    items = web_elem_root.find_elements(By.CSS_SELECTOR, css_selector)
     if scroll:
-        _scroll_to_css_sel(web_elem_root, css_sel)
+        _scroll_to_css_selector(web_elem_root, css_selector)
     for item in items:
         if item.text.lower() == text.lower():
             return item
-    if callable(err_msg):
-        err_msg = err_msg()
-    raise RuntimeError(f'Css element with "{text}" text not found. {err_msg}')
+    if callable(error_message):
+        error_message = error_message()
+    raise RuntimeError(f'Css element with "{text}" text not found. {error_message}')
 
 
 def click_on_web_elem(
     driver: WebDriver,
     web_elem: WebElement,
-    err_msg: str | Callable[[], str],
+    error_message: str | Callable[[], str],
     delay: bool | float = True,
 ) -> None:
     disabled = "disabled" in web_elem.get_attribute("class")
@@ -293,17 +293,17 @@ def click_on_web_elem(
         action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
         action.perform()
     else:
-        if callable(err_msg):
-            err_msg = err_msg()
-        raise RuntimeError(err_msg)
+        if callable(error_message):
+            error_message = error_message()
+        raise RuntimeError(error_message)
 
 
-def _scroll_to_css_sel(web_elem_root: WebElemRoot, css_sel: str) -> None:
+def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> None:
     driver = getattr(web_elem_root, "parent", web_elem_root)
     driver.execute_script(
         "var el = (typeof $ === 'function' ? "
-        f"$('{css_sel}')[0] : "
-        f"document.querySelector('{css_sel}')); "
+        f"$('{css_selector}')[0] : "
+        f"document.querySelector('{css_selector}')); "
         "el && el.scrollIntoView(true);"
     )
 

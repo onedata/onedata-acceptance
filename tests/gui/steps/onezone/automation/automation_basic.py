@@ -179,9 +179,11 @@ def assert_text_in_inventory_page(
     selenium: SeleniumDrivers, browser_ids: list[str], text: str
 ) -> None:
     for browser_id in browser_ids:
-        err_msg = OZLoggedIn(selenium[browser_id]).automation.privileges_err_msg
+        error_message = OZLoggedIn(
+            selenium[browser_id]
+        ).automation.privileges_error_message
 
-        assert text in err_msg, f"Error message: {text} not found"
+        assert text in error_message, f"Error message: {text} not found"
 
 
 @wt(
@@ -274,8 +276,8 @@ def assert_number_of_lambdas(
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     lambdas_number = len(page.lambdas_page.lambdas_list)
-    err_msg = f"number of lambdas is {lambdas_number} instead of {number}"
-    assert lambdas_number == int(number), err_msg
+    error_message = f"number of lambdas is {lambdas_number} instead of {number}"
+    assert lambdas_number == int(number), error_message
 
 
 @wt(

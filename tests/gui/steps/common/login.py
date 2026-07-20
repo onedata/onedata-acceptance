@@ -187,12 +187,12 @@ def wt_assert_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_err_msg_about_credentials(
+def wt_assert_error_message_about_credentials(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     assert LoginPage(
         selenium[browser_id]
-    ).err_msg, "no err msg about invalid credentials found"
+    ).error_message, "no err msg about invalid credentials found"
 
 
 @wt(
@@ -205,7 +205,7 @@ def wt_assert_err_msg_about_credentials(
 def assert_sign_in_notification(
     text: str, selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    err_msg = "sign in notification message is not as expected"
+    error_message = "sign in notification message is not as expected"
     assert (
         LoginPage(selenium[browser_id]).login_notification_message.text == text
-    ), err_msg
+    ), error_message

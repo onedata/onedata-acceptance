@@ -142,9 +142,11 @@ def _assert_message_and_bulk_edit_btn(
     message_users = members_page.lack_users_view_privileges.text
     bulk_edit_button = members_page.bulk_edit_button
 
-    err_msg = "The message about lack of privileges to view membership is not visible"
-    assert message_groups == expected_message, f"{err_msg} for groups"
-    assert message_users == expected_message, f"{err_msg} for users"
+    error_message = (
+        "The message about lack of privileges to view membership is not visible"
+    )
+    assert message_groups == expected_message, f"{error_message} for groups"
+    assert message_users == expected_message, f"{error_message} for users"
     assert (
         not bulk_edit_button.is_enabled()
     ), "Bulk edit button is supposed to be disabled"

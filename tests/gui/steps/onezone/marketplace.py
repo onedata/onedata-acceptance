@@ -42,9 +42,11 @@ def assert_marketplace_icon_in_space_sidebar(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    err_msg = f"Space: {space_name} does not have marketplace indicator visible"
+    error_message = f"Space: {space_name} does not have marketplace indicator visible"
 
-    assert OZLoggedIn(driver).data.spaces_list[space_name].advertised_icon, err_msg
+    assert (
+        OZLoggedIn(driver).data.spaces_list[space_name].advertised_icon
+    ), error_message
 
 
 def get_space_from_marketplace_list(
@@ -75,7 +77,7 @@ def assert_element_in_space_marketplace(
     space = get_space_from_marketplace_list(selenium, browser_id, space_name)
     element = getattr(space, transform(element_type))
     name_of_element = element_type.capitalize()
-    err_msg = (
+    error_message = (
         f"{name_of_element}: {element} displayed in advertised space:"
         f" {space_name}, does not match expected: {element_data}"
     )
@@ -83,7 +85,7 @@ def assert_element_in_space_marketplace(
     if element_type == "creation time" and element_data == "current":
         element_data = get_today_date()
 
-    assert element_data in element, err_msg
+    assert element_data in element, error_message
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

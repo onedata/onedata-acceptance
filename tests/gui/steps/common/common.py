@@ -259,10 +259,10 @@ def scroll_and_get_columns(
 
 
 def element_rect_stable(
-    css_sel: str, checks: int = 5, interval: float = 0.1
+    css_selector: str, checks: int = 5, interval: float = 0.1
 ) -> Callable[[WebDriver], bool]:
     def _predicate(driver: WebDriver) -> bool:
-        web_element = driver.find_element(By.CSS_SELECTOR, css_sel)
+        web_element = driver.find_element(By.CSS_SELECTOR, css_selector)
 
         last_rect = web_element.rect
         for _ in range(checks):
@@ -279,10 +279,10 @@ def element_rect_stable(
 
 # TODO: VFS-12424 Add class to fully-transitioned file details panel
 def wait_for_sliding_panel_to_stop_moving(
-    driver: WebDriver, timeout: int, css_sel: str
+    driver: WebDriver, timeout: int, css_selector: str
 ) -> None:
     WebDriverWait(driver=driver, timeout=timeout).until(
-        element_rect_stable(css_sel=css_sel)
+        element_rect_stable(css_selector=css_selector)
     )
 
 
@@ -309,12 +309,12 @@ def try_click_without_throwing_error(
 
 def wait_till_popup_or_modal_disappear(
     driver: WebDriver,
-    css_sel: str,
+    css_selector: str,
     btn_handler: Callable[[WebDriver], ButtonPageObject],
 ) -> None:
     try:
         WebDriverWait(driver, WAIT_FRONTEND).until(
-            visibility_of_element_located((By.CSS_SELECTOR, css_sel))
+            visibility_of_element_located((By.CSS_SELECTOR, css_selector))
         )
     except TimeoutException:
         return
@@ -324,7 +324,7 @@ def wait_till_popup_or_modal_disappear(
     )
 
     WebDriverWait(driver, WAIT_FRONTEND).until(
-        invisibility_of_element_located((By.CSS_SELECTOR, css_sel)),
+        invisibility_of_element_located((By.CSS_SELECTOR, css_selector)),
         message="Error modal is still visible",
     )
 
@@ -335,7 +335,7 @@ def wait_till_alert_info_popup_disappear(
 ) -> None:
     # If popup doesn't appear, don't throw an error.
     # If it appeared and was not closed, raise.
-    css_sel = get_alert_css_selector(alert_popup)
+    css_selector = get_alert_css_selector(alert_popup)
 
     def alert_popup_close_button_fun(
         driver: WebDriver,
@@ -344,4 +344,4 @@ def wait_till_alert_info_popup_disappear(
         return Popups(driver).get_alert_popup(alert_popup).close
 
     partial_close_alert = partial(alert_popup_close_button_fun, alert_popup=alert_popup)
-    wait_till_popup_or_modal_disappear(driver, css_sel, partial_close_alert)
+    wait_till_popup_or_modal_disappear(driver, css_selector, partial_close_alert)

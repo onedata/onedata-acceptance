@@ -73,8 +73,10 @@ def assert_lambda_name_in_tab_name(
     modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, tab)
     pod_name = modal.pods_list[0].pod_name
-    err_msg = f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
-    assert lambda_name in pod_name, err_msg
+    error_message = (
+        f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
+    )
+    assert lambda_name in pod_name, error_message
 
 
 @wt(
@@ -178,8 +180,10 @@ def assert_events_containing_lambda_name(
                 matching.append(elem)
                 break
 
-        err_msg = f"{option}: {event} that contains {lambda_name} has not been found"
-        assert matching, err_msg
+        error_message = (
+            f"{option}: {event} that contains {lambda_name} has not been found"
+        )
+        assert matching, error_message
 
 
 def get_lambda_name(events: str) -> str:
@@ -274,11 +278,11 @@ def check_number_of_events(
         Modals(driver).function_pods_activity.get_number_of_data_rows(driver)
     )
     expected_num = int(exp_num)
-    err_msg = (
+    error_message = (
         f'numer of events on "Pods activity" ({actual_num}) for task '
         f'"{task}" is not about {expected_num}'
     )
-    assert abs(actual_num - expected_num) <= 3, err_msg
+    assert abs(actual_num - expected_num) <= 3, error_message
 
 
 @wt(

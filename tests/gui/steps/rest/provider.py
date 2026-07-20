@@ -45,8 +45,8 @@ def assert_provider_ones3_status_ok(provider: str, hosts: Hosts) -> None:
         port=ONES3_PORT,
         path="/.__onedata__status__",
     ).json()
-    err_msg = f"Status of OneS3 is {status["isOk"]}"
-    assert status["isOk"], err_msg
+    error_message = f"Status of OneS3 is {status["isOk"]}"
+    assert status["isOk"], error_message
 
 
 def add_provider_service_node(

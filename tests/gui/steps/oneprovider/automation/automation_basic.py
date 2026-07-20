@@ -310,11 +310,11 @@ def assert_workflow_on_executed_workflows_list(
 
     workflow_executions_list = page.workflow_executions_list
     if option == "does not see":
-        err_msg = f"Workflow: {workflow} is on workflow executions list"
-        assert workflow not in workflow_executions_list, err_msg
+        error_message = f"Workflow: {workflow} is on workflow executions list"
+        assert workflow not in workflow_executions_list, error_message
     else:
-        err_msg = f"Workflow: {workflow} is not on workflow executions list"
-        assert workflow in workflow_executions_list, err_msg
+        error_message = f"Workflow: {workflow} is not on workflow executions list"
+        assert workflow in workflow_executions_list, error_message
 
 
 @wt(
@@ -326,11 +326,11 @@ def assert_workflow_on_executed_workflows_list(
 def assert_option_disabled_in_automation_page(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    err_msg = (
+    error_message = (
         f"Option {option} is not disabled in data row menu in automation workflows page"
     )
     disabled_options = Popups(selenium[browser_id]).workflow_menu.disabled_options
-    assert option in disabled_options, err_msg
+    assert option in disabled_options, error_message
 
 
 @wt(

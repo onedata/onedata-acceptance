@@ -60,7 +60,7 @@ class AutomationPage(SidebarPanelPage):
 
     lambdas_page = WebItem(".main-content", cls=LambdasPage)
 
-    privileges_err_msg = Label(".alert-promise-error")
+    privileges_error_message = Label(".alert-promise-error")
 
     _upload_input_workflow = WebElement(".upload-atm-workflow-schema-action-input")
 

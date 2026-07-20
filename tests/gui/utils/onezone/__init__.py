@@ -102,16 +102,15 @@ class OZLoggedIn:
             raise RuntimeError(
                 f'cannot get "{panel_name}" panel, because main panel is not expanded'
             )
-        expected_panel = panel_name
         for panel in self._panels:
             name = panel.text.lower()
-            if name == expected_panel:
+            if name == panel_name:
                 return panel
-            if name == "cluster" and expected_panel == "clusters":
+            if name == "cluster" and panel_name == "clusters":
                 return panel
-            if name == "clusters" and expected_panel == "cluster":
+            if name == "clusters" and panel_name == "cluster":
                 return panel
-        raise RuntimeError(f'no "{expected_panel}" on {self} found')
+        raise RuntimeError(f'no "{panel_name}" on {self} found')
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def click_on_sidebar_menu_panel(self, panel_name: PageName) -> None:

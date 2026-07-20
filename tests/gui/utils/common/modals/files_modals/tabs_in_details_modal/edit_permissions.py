@@ -111,10 +111,10 @@ class MemberAclPermission(PageObject):
         return "active" in self.allow_option.get_attribute("class")
 
     def scroll_to_elem_on_acl_permission_group(self, elem: AclPermissionGroup) -> None:
-        css_sel = "#" + elem.get_elem_id()
+        css_selector = "#" + elem.get_elem_id()
         self.driver.execute_script(
-            f"var el = (typeof $ === 'function' ? $('{css_sel}')[0] : "
-            f"document.querySelector('{css_sel}')); "
+            f"var el = (typeof $ === 'function' ? $('{css_selector}')[0] : "
+            f"document.querySelector('{css_selector}')); "
             "el && el.scrollIntoView(true);"
         )
 

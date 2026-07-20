@@ -217,10 +217,10 @@ def choose_token_type_to_create(
     getattr(OZLoggedIn(driver).tokens.create_token_page, option).click()
     # ensure correct option is selected
     option_input = f"{token_type}_input"
-    err_msg = f"did not manage to select {option}"
+    error_message = f"did not manage to select {option}"
     assert getattr(
         OZLoggedIn(driver).tokens.create_token_page, option_input
-    ).is_selected(), err_msg
+    ).is_selected(), error_message
 
 
 @wt(parsers.parse("user of {browser_id} clicks on copy button in token view"))
@@ -606,11 +606,13 @@ def assert_token_on_token_page_sidebar(
     tokens_page = OZLoggedIn(driver).tokens.sidebar
 
     if ability_to_see == "sees":
-        err_msg = f"token list on sidebar should contain {token_name}"
-        assert token_name in {token.name for token in tokens_page.tokens}, err_msg
+        error_message = f"token list on sidebar should contain {token_name}"
+        assert token_name in {token.name for token in tokens_page.tokens}, error_message
     if ability_to_see == "does not see":
-        err_msg = f"token list on sidebar should not contain {token_name}"
-        assert token_name not in {token.name for token in tokens_page.tokens}, err_msg
+        error_message = f"token list on sidebar should not contain {token_name}"
+        assert token_name not in {
+            token.name for token in tokens_page.tokens
+        }, error_message
 
 
 def choose_token_template(

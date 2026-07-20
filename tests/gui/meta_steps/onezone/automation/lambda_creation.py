@@ -213,11 +213,11 @@ def change_parameter_type_in_lambda_form(
     ordinal = "1st" if not ordinal else ordinal
     bracket_name = "bracket_" + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
-    css_sel = "#" + object_bracket.name.web_elem.get_attribute("id")
+    css_selector = "#" + object_bracket.name.web_elem.get_attribute("id")
 
     try_to_close_workflow_creation_popup(driver)
 
-    scroll_to_css_selector(driver, css_sel)
+    scroll_to_css_selector(driver, css_selector)
 
     split_type = param_type.replace(")", "").split(" (")
     new_type = split_type[0] if "array" in param_type else param_type
@@ -261,8 +261,8 @@ def add_parameter_into_lambda_form(
     object_bracket = getattr(subpage, bracket_name)
 
     name_input = object_bracket.name
-    css_sel = "#" + name_input.web_elem.get_attribute("id")
-    scroll_to_css_selector(driver, css_sel)
+    css_selector = "#" + name_input.web_elem.get_attribute("id")
+    scroll_to_css_selector(driver, css_selector)
     name_input.value = name
 
     object_bracket.type_dropdown.click()
@@ -294,9 +294,9 @@ def modify_parameter_in_lambda_form(
             setts.file_type()
             Popups(driver).power_select.choose_item(val)
         if arg == "Carried file attributes":
-            # remove default file attrs
-            for attr in setts.attrs:
-                attr.x()
+            # remove default file attributes
+            for attribute in setts.attributes:
+                attribute.x()
             setts.carried_file_attrs()
             for el in val:
                 try:
@@ -438,9 +438,9 @@ def assert_downloaded_and_uploaded_lambda_dumps_the_same(
         uploaded_dump["revision"]["atmLambdaRevision"]["_data"].pop("checksum")
     except KeyError:
         pass
-    err_msg = (
+    error_message = (
         f"Lambda dumps differ, uploaded: {uploaded_dump}, downloaded: {downloaded_dump}"
     )
     # test may start failing, because correct order in dicts is not guaranteed
     # in order to fix implement keys sorting
-    assert downloaded_dump == uploaded_dump, err_msg
+    assert downloaded_dump == uploaded_dump, error_message

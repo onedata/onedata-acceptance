@@ -701,7 +701,7 @@ def assert_value_in_xattr_or_json_column_for_item(
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], option)
-    err_msg_prefix = f"displayed {option} value {item_elem} for {item_name}"
+    error_message_prefix = f"displayed {option} value {item_elem} for {item_name}"
 
     if option == "json":
         if not item_elem.endswith("…"):  # json column is not truncated in UI
@@ -714,11 +714,13 @@ def assert_value_in_xattr_or_json_column_for_item(
         expected_value = value
 
     if res == "has":
-        error_message = err_msg_prefix + f" does not match expected {expected_value}"
+        error_message = (
+            error_message_prefix + f" does not match expected {expected_value}"
+        )
         assert expected_value == item_elem, error_message
     else:
         error_message = (
-            err_msg_prefix + f" is not supposed to be equal to {expected_value}"
+            error_message_prefix + f" is not supposed to be equal to {expected_value}"
         )
         assert expected_value != item_elem, error_message
 

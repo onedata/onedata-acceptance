@@ -173,8 +173,8 @@ def assert_group_in_select_initial_groups_modal(
 ) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).select_groups
-    err_msg = "there {} visible {} in select groups modal, but should {}"
+    error_message = "there {} visible {} in select groups modal, but should {}"
     if option == "sees":
-        assert group in modal.groups, err_msg.format("is not", group, "be")
+        assert group in modal.groups, error_message.format("is not", group, "be")
     else:
-        assert group not in modal.groups, err_msg.format("is", group, "not be")
+        assert group not in modal.groups, error_message.format("is", group, "not be")

@@ -71,8 +71,8 @@ def assert_button_in_modal_not_active(
 ) -> None:
     driver = selenium[browser_id]
     modal_page = getattr(Modals(driver), check_modal_name(modal))
-    err_msg = f'"{element}" button is in active state'
-    assert not modal_page.is_element_active(transform(element)), err_msg
+    error_message = f'"{element}" button is in active state'
+    assert not modal_page.is_element_active(transform(element)), error_message
 
 
 @wt(
@@ -150,11 +150,11 @@ def assert_tab_in_modal(
         )
 
     active_tab = getattr(Modals(driver), modal_name_transformed).active_tab
-    err_msg = (
+    error_message = (
         f"Expected tab: {tab} does not match actual active tab: "
         f"{active_tab} on modal {modal_name}"
     )
-    assert tab in active_tab, err_msg
+    assert tab in active_tab, error_message
 
 
 @wt(

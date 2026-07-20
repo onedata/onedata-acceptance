@@ -61,8 +61,8 @@ def assert_alert_with_title_in_oz(
 ) -> None:
     driver = selenium[browser_id]
     alert = OZLoggedIn(driver).provider_alert_message
-    err_msg = f"expected alert: {title}, found: {alert}"
-    assert alert == title, err_msg
+    error_message = f"expected alert: {title}, found: {alert}"
+    assert alert == title, error_message
 
 
 @wt(
@@ -329,11 +329,11 @@ def assert_number_of_items_match_items_counter(
     subitems = getattr(item, f"{counter_type}s")
     counter = int(getattr(item, f"{counter_type}s_count"))
 
-    err_msg = (
+    error_message = (
         "{type}s counter number {counter} does not match displayed "
         "number of {type}s {list_len}"
     )
-    assert counter == subitems.count(), err_msg.format(
+    assert counter == subitems.count(), error_message.format(
         type=counter_type, counter=counter, list_len=subitems.count()
     )
 
@@ -370,8 +370,8 @@ def expand_items_submenu_in_oz_panel(
     items = getattr(panel, f"{item_type}s")
     item = items[item_name]
     item.expand()
-    err_msg = 'submenu for {type} named "{name}" has not been expanded'
-    assert item.is_expanded(), err_msg.format(type=item_type, name=item_name)
+    error_message = 'submenu for {type} named "{name}" has not been expanded'
+    assert item.is_expanded(), error_message.format(type=item_type, name=item_name)
 
 
 @wt(

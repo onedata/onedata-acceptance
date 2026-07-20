@@ -117,7 +117,7 @@ def wt_expand_storage_item_in_storages_page_op_panel(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
-        r"(?P<attr>.*?) is (?P<val>.*?) "
+        r"(?P<attribute>.*?) is (?P<val>.*?) "
         r"in storages page in Onepanel"
     )
 )
@@ -126,14 +126,14 @@ def wt_assert_storage_attr_in_storages_page_op_panel(
     selenium: SeleniumDrivers,
     browser_id: str,
     storage: str,
-    attr: str,
+    attribute: str,
     val: str,
 ) -> None:
     storages = Onepanel(selenium[browser_id]).content.storages.storages
-    displayed_val = getattr(storages[storage], transform(attr)).lower()
+    displayed_val = getattr(storages[storage], transform(attribute)).lower()
     assert (
         displayed_val == val.lower()
-    ), f"got {displayed_val} as storage's {attr} instead of expected {val}"
+    ), f"got {displayed_val} as storage's {attribute} instead of expected {val}"
 
 
 @wt(

@@ -61,12 +61,12 @@ def check_element_exists_on_sidebar_list(
     driver = selenium[browser_id]
 
     if list_type == "harvesters":
-        list_type, attr = "discovery", ListElement.HARVESTERS
+        list_type, attribute = "discovery", ListElement.HARVESTERS
     else:
-        attr = ListElement.AUTOMATIONS
+        attribute = ListElement.AUTOMATIONS
 
     elements_list = get_visible_items_list(
-        getattr(OZLoggedIn(driver), list_type), attr, main_field="name"
+        getattr(OZLoggedIn(driver), list_type), attribute, main_field="name"
     )
     elements_names = [elem.name for elem in elements_list]
 

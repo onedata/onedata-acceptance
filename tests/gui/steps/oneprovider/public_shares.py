@@ -135,8 +135,8 @@ def assert_proper_description(
     _change_iframe_for_public_share_page(selenium, browser_id)
 
     description_on_page = public_share(driver).description
-    err_msg = f"found {description_on_page} instead of {description}"
-    assert description_on_page == description, err_msg
+    error_message = f"found {description_on_page} instead of {description}"
+    assert description_on_page == description, error_message
 
 
 @wt(
@@ -225,8 +225,8 @@ def assert_tab_in_public_share(
     tabs = driver.find_elements(By.CSS_SELECTOR, ".nav-tabs-share-mode li")
     for tab in tabs:
         if transform(tab.text) == tab_name:
-            err_msg = f"tab {tab_name} is not active"
-            assert "active" in tab.get_attribute("class"), err_msg
+            error_message = f"tab {tab_name} is not active"
+            assert "active" in tab.get_attribute("class"), error_message
             return
     raise AssertionError(f"did not manage to find tab {tab_name}")
 

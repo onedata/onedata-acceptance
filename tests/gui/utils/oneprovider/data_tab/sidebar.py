@@ -99,10 +99,10 @@ class DirectoryTree(PageObject, ExpandableMixin):
         return f"DirectoryTree({self.pwd()}) in {self.parent}"
 
     def __iter__(self) -> Iterator["DirectoryTree"]:
-        css_sel = "ul.data-files-tree-list li:not(.clickable)"
+        css_selector = "ul.data-files-tree-list li:not(.clickable)"
         return (
             DirectoryTree(self.driver, dir_tree, self, children=dir_tree)
-            for dir_tree in self._children.find_elements(By.CSS_SELECTOR, css_sel)
+            for dir_tree in self._children.find_elements(By.CSS_SELECTOR, css_selector)
         )
 
     def __getitem__(self, name: str) -> "DirectoryTree":

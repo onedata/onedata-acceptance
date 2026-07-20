@@ -226,15 +226,17 @@ def register_prov_using_register_btn(
 def _check_error_modal_appeared_or_registration_finished(
     driver: WebDriver,
 ) -> Optional[bool]:
-    error_modal_css_sel = ".alert-global.modal.in .modal-dialog"
-    sidebar_css_sel = ".one-sidebar.sidebar-clusters"
+    error_modal_css_selector = ".alert-global.modal.in .modal-dialog"
+    sidebar_css_selector = ".one-sidebar.sidebar-clusters"
 
-    if _is_element_visible_on_page(driver, error_modal_css_sel):  # error modal appeared
+    if _is_element_visible_on_page(
+        driver, error_modal_css_selector
+    ):  # error modal appeared
         wait_till_error_modal_stop_appearing(driver)
         return False
 
     if _is_element_visible_on_page(
-        driver, sidebar_css_sel
+        driver, sidebar_css_selector
     ):  # sidebar is visible, it means we closed deployment page
         return True
 
@@ -249,10 +251,10 @@ def _is_element_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
 
 
 def wait_for_provider_registration(
-    driver: WebDriver, register_btn_css_sel: str
+    driver: WebDriver, register_btn_css_selector: str
 ) -> None:
     WebDriverWait(driver, 120).until(
-        invisibility_of_element_located((By.CSS_SELECTOR, register_btn_css_sel)),
+        invisibility_of_element_located((By.CSS_SELECTOR, register_btn_css_selector)),
         "Provider registration is still in progress after 120s",
     )
 

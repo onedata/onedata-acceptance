@@ -237,7 +237,7 @@ def assert_content_in_audit_log_in_store(
         store_type,
     )
 
-    err_msg1 = (
+    error_message1 = (
         "There is no information about destination path, size or "
         f"source URL in audit log in {store_name} store details"
     )
@@ -245,7 +245,7 @@ def assert_content_in_audit_log_in_store(
         store_details["destinationPath"]
         and store_details["sourceUrl"]
         and store_details["size"]
-    ), err_msg1
+    ), error_message1
 
     actual_expected = {
         "sourceUrl": "source URL",
@@ -260,10 +260,10 @@ def assert_content_in_audit_log_in_store(
             else store_details[actual]
         )
         expected_elem = expected_data[expected]
-        err_msg2 = (
+        error_message2 = (
             f"Actual {actual} {actual_elem} is not the same as expected {expected_elem}"
         )
-        assert actual_elem == expected_elem, err_msg2
+        assert actual_elem == expected_elem, error_message2
 
 
 def get_store_audit_log(

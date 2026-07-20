@@ -104,11 +104,11 @@ def assert_correct_user_name_in_oz(
 ) -> None:
     driver = selenium[browser_id]
     displayed_user_name = OZLoggedIn(driver).profile.user_name
-    err_msg = (
+    error_message = (
         f"expected {expected_user_name} as user name, but instead "
         f"displayed is {displayed_user_name} in USER NAME oz panel"
     )
-    assert displayed_user_name == expected_user_name, err_msg
+    assert displayed_user_name == expected_user_name, error_message
 
 
 @wt(
@@ -122,12 +122,12 @@ def wt_assert_user_alias_in_sidebar(
     selenium: SeleniumDrivers, browser_id: str, username: str
 ) -> None:
     driver = selenium[browser_id]
-    err_msg = "User alias: {} not found in the sidebar, visible alias: {}"
+    error_message = "User alias: {} not found in the sidebar, visible alias: {}"
 
     try:
         name = OZLoggedIn(driver).profile_username
-        assert name == username, err_msg.format(username, name)
+        assert name == username, error_message.format(username, name)
     except AssertionError:
         OZLoggedIn(driver).profile.profile()
         name = OZLoggedIn(driver).profile_username
-        assert name == username, err_msg.format(username, name)
+        assert name == username, error_message.format(username, name)

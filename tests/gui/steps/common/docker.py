@@ -381,8 +381,10 @@ def wt_assert_file_in_path_with_content(path: str, content: str, hosts: Hosts) -
     if path[0] == "/":
         path = path[1::]
     output = _docker_cat(os.path.join(MOUNT_POINT, path), hosts).decode("utf-8")
-    err_msg = f"content of the file {path} is expected to be {content} but is {output}"
-    assert output == content, err_msg
+    error_message = (
+        f"content of the file {path} is expected to be {content} but is {output}"
+    )
+    assert output == content, error_message
 
 
 def docker_ls(path: str, hosts: Hosts) -> list[str]:

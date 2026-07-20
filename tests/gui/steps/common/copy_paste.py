@@ -46,10 +46,10 @@ def assert_copied_token_match_displayed_one(
 ) -> None:
     displayed_token = tmp_memory[browser_id]["token"]
     copied_token = clipboard.paste(display=displays[browser_id])
-    err_msg = (
+    error_message = (
         f"Displayed token: {displayed_token} does not match copied one: {copied_token}"
     )
-    assert copied_token == displayed_token, err_msg
+    assert copied_token == displayed_token, error_message
 
 
 @wt(
@@ -65,8 +65,8 @@ def assert_copied_token_does_not_match_displayed_one(
 ) -> None:
     displayed_token = tmp_memory[browser_id]["token"]
     copied_token = clipboard.paste(display=displays[browser_id])
-    err_msg = (
+    error_message = (
         f"Displayed token: {displayed_token} match copied one: {copied_token} "
         "while it should not be"
     )
-    assert copied_token != displayed_token, err_msg
+    assert copied_token != displayed_token, error_message

@@ -151,9 +151,11 @@ def set_metadata_in_op_gui(
         space,
     )
     if tab_name == "xattrs":
-        attr, val = val.split("=")
-        type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, attr)
-        type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, val, attr)
+        attribute, val = val.split("=")
+        type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, attribute)
+        type_text_to_val_of_attr_in_new_xattr_entry(
+            selenium, browser_id, val, attribute
+        )
     else:
         click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
         type_text_to_metadata_textarea(selenium, browser_id, val, tab_name)
@@ -210,8 +212,8 @@ def assert_metadata_in_op_gui(
         _assert_metadata_loading_alert(selenium, browser_id)
     else:
         if tab_name == "xattrs":
-            attr, val = val.split("=")
-            assert_there_is_such_xattr_meta_record(selenium, browser_id, attr, val)
+            attribute, val = val.split("=")
+            assert_there_is_such_xattr_meta_record(selenium, browser_id, attribute, val)
         else:
             click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
             assert_textarea_contains_record(selenium, browser_id, val, tab_name)
@@ -244,8 +246,8 @@ def assert_such_metadata_not_exist_in_op_gui(
     )
 
     if tab_name == "xattrs":
-        attr, val = val.split("=")
-        assert_there_is_no_such_meta_record(selenium, browser_id, attr)
+        attribute, val = val.split("=")
+        assert_there_is_no_such_meta_record(selenium, browser_id, attribute)
     else:
         click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
         assert_textarea_not_contain_record(selenium, browser_id, val, tab_name)

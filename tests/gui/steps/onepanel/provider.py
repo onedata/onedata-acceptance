@@ -19,7 +19,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*?) sees that (?P<attr>ID|"
+        r"user of (?P<browser_id>.*?) sees that (?P<attribute>ID|"
         r"Provider name|Subdomain|Domain|URLs|Latitude|Longitude) "
         r'attribute is equal to "(?P<val>.*?)" '
         r"in Provider panel"
@@ -27,20 +27,20 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_value_of_provider_attribute(
-    selenium: SeleniumDrivers, browser_id: str, attr: str, val: str
+    selenium: SeleniumDrivers, browser_id: str, attribute: str, val: str
 ) -> None:
     details = Onepanel(selenium[browser_id]).content.provider.details
-    displayed_val = getattr(details, transform(attr))
+    displayed_val = getattr(details, transform(attribute))
     assert (
         displayed_val == val
-    ), f"displayed {displayed_val} instead of expected {val} as provider's {attr}"
+    ), f"displayed {displayed_val} instead of expected {val} as provider's {attribute}"
 
 
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that "
-        r"(?P<attr>Provider name|Domain) attribute is "
-        r'equal to the (?P<prop>name|hostname) of "(?P<host>.*?)" '
+        r"(?P<attribute>Provider name|Domain) attribute is "
+        r'equal to the (?P<property_name>name|hostname) of "(?P<host>.*?)" '
         r"provider in Provider panel"
     )
 )
@@ -48,33 +48,33 @@ def wt_assert_value_of_provider_attribute(
 def wt_assert_value_of_provider_attribute_is_known(
     selenium: SeleniumDrivers,
     browser_id: str,
-    attr: str,
-    prop: str,
+    attribute: str,
+    property_name: str,
     host: str,
     hosts: Hosts,
 ) -> None:
-    expected_val = cast(dict[str, str], hosts[host])[prop]
+    expected_val = cast(dict[str, str], hosts[host])[property_name]
     details = Onepanel(selenium[browser_id]).content.provider.details
-    displayed_val = getattr(details, transform(attr))
+    displayed_val = getattr(details, transform(attribute))
     assert displayed_val == expected_val, (
         f"displayed {displayed_val} instead of expected {expected_val} as"
-        f" provider's {attr}"
+        f" provider's {attribute}"
     )
 
 
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) types "(?P<val>.*?)" to '
-        r"(?P<attr>Provider name|Subdomain|Domain|Latitude|Longitude) "
+        r"(?P<attribute>Provider name|Subdomain|Domain|Latitude|Longitude) "
         r"input box in modify provider details form in Provider panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_val_to_in_box_in_provider_details_form(
-    selenium: SeleniumDrivers, browser_id: str, val: str, attr: str
+    selenium: SeleniumDrivers, browser_id: str, val: str, attribute: str
 ) -> None:
     form = Onepanel(selenium[browser_id]).content.provider.form
-    setattr(form, transform(attr), val)
+    setattr(form, transform(attribute), val)
 
 
 @wt(
@@ -95,7 +95,7 @@ def wt_check_request_subdomain_toggle_in_provider_details_form(
     parsers.re(
         r"user of (?P<browser_id>.*?) types (?P<host_property>name|"
         r'hostname) of "(?P<host>.*?)" provider to '
-        r"(?P<attr>Provider name|Subdomain|Domain) input box in modify provider"
+        r"(?P<attribute>Provider name|Subdomain|Domain) input box in modify provider"
         r" details form in Provider panel"
     )
 )
@@ -105,13 +105,13 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(
     browser_id: str,
     host_property: str,
     host: str,
-    attr: str,
+    attribute: str,
     hosts: Hosts,
 ) -> None:
     form = Onepanel(selenium[browser_id]).content.provider.form
     setattr(
         form,
-        transform(attr),
+        transform(attribute),
         cast(dict[str, str], hosts[host])[host_property],
     )
 

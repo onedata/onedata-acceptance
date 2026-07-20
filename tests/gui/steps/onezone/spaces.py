@@ -185,8 +185,8 @@ def click_on_automation_option_in_the_sidebar(
 ) -> None:
     option = "Automation"
     page = _click_on_option_in_the_sidebar(selenium, browser_id, option)
-    err_msg = 'Clicking on the "Automation" in the main menu did not succeed'
-    assert page, err_msg
+    error_message = 'Clicking on the "Automation" in the main menu did not succeed'
+    assert page, error_message
     tmp_memory[browser_id]["oz_page"] = page
 
 
@@ -238,8 +238,8 @@ def close_sidebar_by_click_on_background(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    css_sel = ".sidenav-backdrop"
-    el = driver.find_element(By.CSS_SELECTOR, css_sel)
+    css_selector = ".sidenav-backdrop"
+    el = driver.find_element(By.CSS_SELECTOR, css_selector)
     el.click()
 
 

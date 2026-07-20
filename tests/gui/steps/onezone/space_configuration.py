@@ -80,12 +80,12 @@ def assert_contact_email_address(
 ) -> None:
     driver = selenium[browser_id]
     contact_email = OZLoggedIn(driver).data.configuration_page.contact_email
-    err_msg = (
+    error_message = (
         f"Email address {contact_email.name} displayed on space "
         f"configuration page, does not match expected {email_address}"
     )
 
-    assert email_address in contact_email.name, err_msg
+    assert email_address in contact_email.name, error_message
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -167,8 +167,10 @@ def check_header_info_in_space_configuration(
     driver = selenium[browser_id]
     configuration_page = OZLoggedIn(driver).data.configuration_page
     header_label_message = configuration_page.header_label_warning
-    err_msg = f"expected {label_info} header label instead of {header_label_message}"
-    assert header_label_message == str(label_info), err_msg
+    error_message = (
+        f"expected {label_info} header label instead of {header_label_message}"
+    )
+    assert header_label_message == str(label_info), error_message
 
 
 @wt(
@@ -198,11 +200,11 @@ def check_message_after_hovering_over_toggle(
     page.move_to_toggle(driver)
     toggle_info = Popups(driver).toggle_label
     expected_message = messages_dict[message_type]
-    err_msg = (
+    error_message = (
         f"expected {expected_message} info to be visible instead of "
         f"{toggle_info} after hovering over toggle {toggle_name}"
     )
-    assert toggle_info == messages_dict[message_type], err_msg
+    assert toggle_info == messages_dict[message_type], error_message
 
 
 @wt(

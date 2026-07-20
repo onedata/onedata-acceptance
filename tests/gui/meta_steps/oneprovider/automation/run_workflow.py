@@ -161,7 +161,7 @@ def provide_text_to_string_initial_workflow_value_store(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) sees "(?P<expected_err_msg>.*)" '
+        r'user of (?P<browser_id>.*) sees "(?P<expected_error_message>.*)" '
         r'message while choosing "(?P<dir_name>.*)" directory as initial '
         r'value for workflow in "Select files" modal'
     )
@@ -170,16 +170,16 @@ def fails_to_choose_directory_as_initial_workflow_value(
     selenium: SeleniumDrivers,
     browser_id: str,
     dir_name: str,
-    expected_err_msg: str,
+    expected_error_message: str,
 ) -> None:
     data_type = "directory"
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     open_initial_modal(data_type, driver)
     Modals(driver).select_files.files[dir_name].click()
-    actual_err_msg = Modals(driver).select_files.error_msg
-    assert actual_err_msg == expected_err_msg, (
-        f'User does not see expected error: "{expected_err_msg}" while trying'
+    actual_error_message = Modals(driver).select_files.error_msg
+    assert actual_error_message == expected_error_message, (
+        f'User does not see expected error: "{expected_error_message}" while trying'
         f' to set "{dir_name}" as initial value for workflow'
     )
 
@@ -266,8 +266,10 @@ def assert_no_suspended_workflows_in_atm_subpage(
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Suspended")
-    err_msg = "Workflow did not finished successfully and it is in suspended state."
-    assert len(page.workflow_executions_list) == 0, err_msg
+    error_message = (
+        "Workflow did not finished successfully and it is in suspended state."
+    )
+    assert len(page.workflow_executions_list) == 0, error_message
 
 
 @wt(

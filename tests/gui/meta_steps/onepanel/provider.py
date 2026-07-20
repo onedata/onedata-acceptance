@@ -227,8 +227,8 @@ def assert_provider_cluster_ones3_node_status_rest(
         hosts, provider, onepanel_credentials, OnedataService.ONES3
     )
     exp_res = {host: status}
-    err_msg = f"expected {exp_res}, but got {res}"
-    assert exp_res == res, err_msg
+    error_message = f"expected {exp_res}, but got {res}"
+    assert exp_res == res, error_message
 
 
 @wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))

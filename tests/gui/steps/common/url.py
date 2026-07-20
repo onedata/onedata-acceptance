@@ -178,14 +178,14 @@ def change_application_path(
 def is_url_matching(selenium: SeleniumDrivers, browser_id: str, path: str) -> None:
     driver = selenium[browser_id]
     regexp = r"{}$".format(path.replace("\\", "\\\\"))
-    err_msg = rf"expected url: {path} does not match current one: {{}}"
+    error_message = rf"expected url: {path} does not match current one: {{}}"
 
     @repeat_failed(timeout=WAIT_BACKEND)
     def assert_url_match(d: WebDriver, regex: str, msg: str) -> None:
         curr_url = d.current_url
         assert re.match(regex, curr_url), msg.format(curr_url)
 
-    assert_url_match(driver, regexp, err_msg)
+    assert_url_match(driver, regexp, error_message)
 
 
 def _open_url(selenium: SeleniumDrivers, browser_id: str, url: str) -> None:
@@ -412,5 +412,5 @@ def assert_image_in_browser(
 ) -> None:
     driver = selenium[browser_id]
     url = driver.find_elements(By.TAG_NAME, "img")[0].get_attribute("src")
-    err_msg = f"{image_name} is not visible in browser"
-    assert image_name in url, err_msg
+    error_message = f"{image_name} is not visible in browser"
+    assert image_name in url, error_message

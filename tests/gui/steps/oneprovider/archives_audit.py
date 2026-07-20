@@ -97,13 +97,15 @@ def assert_decreasing_creation_times_in_archives_audit_log(
                 current_time = datetime.strptime(
                     current + "000", "%d %b %Y %H:%M:%S.%f"
                 )
-                err_msg = f"time {current_time} following {last} is not smaller"
-                assert current_time <= cast(datetime, last), err_msg
+                error_message = f"time {current_time} following {last} is not smaller"
+                assert current_time <= cast(datetime, last), error_message
                 last = current_time
             elif column_name == "time_taken":
                 current_duration = parse_time(current)
-                err_msg = f"time {current_duration} following {last} is not smaller"
-                assert current_duration <= cast(int | float, last), err_msg
+                error_message = (
+                    f"time {current_duration} following {last} is not smaller"
+                )
+                assert current_duration <= cast(int | float, last), error_message
                 last = cast(int, current_duration)
 
     _scroll_and_check_condition(browser_id, selenium, condition, start_value)
@@ -128,8 +130,8 @@ def assert_ascending_file_or_dir_names(
         currents = modal.get_visible_rows_of_single_column("file")[index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
-            err_msg = f"index {current_} following {last} is not bigger"
-            assert current_ > last, err_msg
+            error_message = f"index {current_} following {last} is not bigger"
+            assert current_ > last, error_message
             last = current_
 
     _scroll_and_check_condition(browser_id, selenium, condition, start_value)
@@ -160,8 +162,8 @@ def assert_n_logs_about_archivisation_finished(
             index:
         ]
         for event in visible_events:
-            err_msg = f"visible event {event} is not expected"
-            assert event in expected_events, err_msg
+            error_message = f"visible event {event} is not expected"
+            assert event in expected_events, error_message
 
     checked_elems = _scroll_and_check_condition(browser_id, selenium, condition)
     assert (
@@ -230,8 +232,12 @@ def _check_entries_in_archive_audit_log(
     visible_logs = modal.data_row
     data = yaml.load(config, yaml.Loader)
     for item in data.keys():
-        err_msg = f"there is no visible log: {item}: {data[item]} in archive audit log"
-        assert item in visible_logs and data[item] == visible_logs[item].event, err_msg
+        error_message = (
+            f"there is no visible log: {item}: {data[item]} in archive audit log"
+        )
+        assert (
+            item in visible_logs and data[item] == visible_logs[item].event
+        ), error_message
 
 
 @wt(
@@ -410,11 +416,11 @@ def assert_pattern_at_field_in_archive_audit_log(
     if mes_type not in patterns:
         raise AssertionError("Empty pattern, unknown this message type")
     pattern = patterns[mes_type]
-    err_msg = (
+    error_message = (
         f"message at field is {visible_message}, which does not"
         f" correspond to the type {mes_type}"
     )
-    assert pattern.fullmatch(visible_message), err_msg
+    assert pattern.fullmatch(visible_message), error_message
 
 
 def parse_time(str_time: str) -> int | float:

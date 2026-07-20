@@ -105,8 +105,8 @@ def assert_link_on_shares_interface(
     browser_id: str, link: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    err_msg = f'Link on share\'s private interface is not "{link}"'
-    assert private_share(driver).link_name == link, err_msg
+    error_message = f'Link on share\'s private interface is not "{link}"'
+    assert private_share(driver).link_name == link, error_message
 
 
 @wt(
@@ -315,11 +315,11 @@ def assert_nth_val_edm_form_in_shares_interface(
         if item.name.lower() == section_name.lower():
             if idx == 0:
                 item_value = item.value.text
-                err_msg = (
+                error_message = (
                     f"Expected value: {expected_value} but got {item_value} for item"
                     f" {section_name}"
                 )
-                assert item_value == expected_value, err_msg
+                assert item_value == expected_value, error_message
                 return
             idx -= 1
     raise AssertionError(f"item {section_name} not found")
@@ -357,8 +357,8 @@ def assert_warning_message_in_shares_page(
 ) -> None:
     driver = selenium[browser_id]
     warning = private_share(driver).alert_warning
-    err_msg = f"Expected alert message: {mess_text} but got: {warning.text}"
-    assert mess_text in warning.text, err_msg
+    error_message = f"Expected alert message: {mess_text} but got: {warning.text}"
+    assert mess_text in warning.text, error_message
 
 
 @wt(
