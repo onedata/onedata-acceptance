@@ -827,15 +827,15 @@ def assert_successful_workflow_executions(
     hosts: Hosts,
     workflow_executions: WorkflowExecutions,
 ) -> None:
-    err_msgs = []
+    error_messages = []
     for wid in workflow_executions.keys():
         mes = get_workflow_execution_details(
             user, users, host, hosts, wid, details=["name", "status"]
         )
         if mes["status"] != "finished":
-            err_msgs.append((workflow_executions[wid], mes["status"]))
-    if any(err_msgs):
-        raise AssertionError(f"workflows: {err_msgs} did not finish successfully")
+            error_messages.append((workflow_executions[wid], mes["status"]))
+    if any(error_messages):
+        raise AssertionError(f"workflows: {error_messages} did not finish successfully")
 
 
 @wt(
@@ -920,8 +920,10 @@ def assert_workflow_execution_details(
         elif "$(resolve_inventory_id" in val:
             val = val.replace("$(resolve_inventory_id ", "").replace(")", "")
             val = inventories[val]
-        err_msg = f"Value of {key} is expected to be {val}, but got {details[key]}"
-        assert details[key] == val, err_msg
+        error_message = (
+            f"Value of {key} is expected to be {val}, but got {details[key]}"
+        )
+        assert details[key] == val, error_message
 
 
 @wt(
@@ -948,11 +950,11 @@ def compare_stores_id_after_retry_from_workflow_execution_details(
     exception_store_id = details["lanes"][0]["runs"][1]["exceptionStoreId"]
     # second run
     iterated_store_id = details["lanes"][0]["runs"][0]["iteratedStoreId"]
-    err_msg = (
+    error_message = (
         f"Exception store id from previous run {exception_store_id} "
         f"should be the same as iterated store id {iterated_store_id}"
     )
-    assert exception_store_id == iterated_store_id, err_msg
+    assert exception_store_id == iterated_store_id, error_message
 
 
 @wt(

@@ -239,8 +239,8 @@ def assert_group_in_space_using_rest(
     space_api = SpaceApi(user_client_oz)
     group = get_group(group_name, user_client_oz).group_id
     space_groups = space_api.list_space_groups(spaces[space_name]).groups
-    err_msg = f'"{group_name}" not in space "{space_name}" members page'
-    assert group in space_groups, err_msg
+    error_message = f'"{group_name}" not in space "{space_name}" members page'
+    assert group in space_groups, error_message
 
 
 def add_users_to_space_in_oz_using_rest(

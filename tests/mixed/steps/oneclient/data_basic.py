@@ -242,10 +242,10 @@ def get_time_for_file_in_op_oneclient(
 ) -> float:
     user_obj = users[user]
     client = user_obj.clients[client_node]
-    attr = time_attr(time_name)
+    attribute = time_attr(time_name)
     file_path = client.absolute_path(file)
     stat_result = client.stat(file_path)
-    file_time = getattr(stat_result, attr)
+    file_time = getattr(stat_result, attribute)
     return file_time
 
 
@@ -263,11 +263,11 @@ def compare_file_time_with_copied_time_in_op_oneclient(
     time1 = get_time_for_file_in_op_oneclient(
         users, user, client_node, time_name1, file
     )
-    err_msg = (
+    error_message = (
         f"Time comparison failed. \nTime1: {time_name1} = {time1} \n"
         f"Time2: {time_name2} = {time2} \nComparator: {comparator}"
     )
-    assert compare(time1, time2, comparator), err_msg
+    assert compare(time1, time2, comparator), error_message
 
 
 def assert_space_content_in_op_oneclient(
@@ -348,29 +348,29 @@ def set_posix_permissions_in_op_oneclient(
 
 
 def set_metadata_in_op_oneclient(
-    attr_val: str, attr_type: str, path: str, user: str, users: Users, host: str
+    attribute_value: str, attr_type: str, path: str, user: str, users: Users, host: str
 ) -> None:
     if attr_type == "xattrs":
-        attr, attr_val = attr_val.split("=")
+        attribute, attribute_value = attribute_value.split("=")
     else:
-        attr = f"onedata_{attr_type.lower()}"
+        attribute = f"onedata_{attr_type.lower()}"
 
-    multi_file_steps.set_xattr(user, path, attr, attr_val, host, users)
+    multi_file_steps.set_xattr(user, path, attribute, attribute_value, host, users)
 
 
 def assert_metadata_in_op_oneclient(
-    attr_val: str, attr_type: str, path: str, user: str, users: Users, host: str
+    attribute_value: str, attr_type: str, path: str, user: str, users: Users, host: str
 ) -> None:
     if attr_type == "xattrs":
-        attr, val = attr_val.split("=")
-        multi_file_steps.check_string_xattr(user, path, attr, val, host, users)
+        attribute, val = attribute_value.split("=")
+        multi_file_steps.check_string_xattr(user, path, attribute, val, host, users)
     elif attr_type.lower() == "json":
         multi_file_steps.check_json_xattr(
-            user, path, "onedata_json", attr_val, host, users
+            user, path, "onedata_json", attribute_value, host, users
         )
     else:
         multi_file_steps.check_string_xattr(
-            user, path, "onedata_rdf", attr_val, host, users
+            user, path, "onedata_rdf", attribute_value, host, users
         )
 
 
@@ -387,11 +387,11 @@ def assert_no_such_metadata_in_op_oneclient(
 ) -> None:
     metadata = multi_file_steps.get_metadata(user, path, host, users)
     if tab_name == "xattrs":
-        attr, val = val.split("=")
+        attribute, val = val.split("=")
     else:
-        attr = f"onedata_{tab_name.lower()}"
+        attribute = f"onedata_{tab_name.lower()}"
     try:
-        metadata_value = metadata[attr]
+        metadata_value = metadata[attribute]
     except KeyError:
         pass
     else:

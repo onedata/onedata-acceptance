@@ -466,11 +466,11 @@ def get_time_for_file_in_op_rest(
 ) -> float:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
-    attr = time_attr(time_name, "cdmi")
+    attribute = time_attr(time_name, "cdmi")
     date_fmt = "%Y-%m-%dT%H:%M:%SZ"
 
     try:
-        time = datetime.strptime(metadata[attr], date_fmt)
+        time = datetime.strptime(metadata[attribute], date_fmt)
     except KeyError as ex:
         raise AssertionError(f"File {path} has no {ex.args[0]} metadata") from ex
 
@@ -489,11 +489,11 @@ def compare_file_time_with_copied_time_in_op_rest(
     time_name2: str,
 ) -> None:
     time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time_name1)
-    err_msg = (
+    error_message = (
         f"Time comparison failed. \nTime1: {time_name1} = {time1} \n"
         f"Time2: {time_name2} = {time2} \nComparator: {comparator}"
     )
-    assert compare(time1, time2, comparator), err_msg
+    assert compare(time1, time2, comparator), error_message
 
 
 def assert_files_time_relation_in_op_rest(
@@ -510,12 +510,12 @@ def assert_files_time_relation_in_op_rest(
     time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time1_name)
     time2 = get_time_for_file_in_op_rest(path2, user, users, host, hosts, time2_name)
 
-    err_msg = (
+    error_message = (
         f"Time comparison failed. \nTime1: {time1_name} = {time1} \n"
         f"Time2: {time2_name} = {time2} \nComparator: {comparator}"
     )
 
-    assert compare(time1, time2, comparator), err_msg
+    assert compare(time1, time2, comparator), error_message
 
 
 def assert_time_relation_in_op_rest(

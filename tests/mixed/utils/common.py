@@ -315,10 +315,10 @@ def assert_command_output_contains(
                 assert el in output[k], f"item {el} not in output command {output[k]}"
         else:
             val = try_to_resolve_items(str(v), request)
-            err_msg = (
+            error_message = (
                 f"expected {k}: {val} from REST command in output, but got {output[k]}"
             )
-            assert str(output[k]) == str(val), err_msg
+            assert str(output[k]) == str(val), error_message
 
 
 @wt(
@@ -329,8 +329,8 @@ def assert_command_output_contains(
 )
 def assert_command_output_equals(tmp_memory: TmpMemory, expected_output: str) -> None:
     output = tmp_memory["output"]
-    err_msg = f"expected command output to be {expected_output}, but got {output}"
-    assert expected_output == output, err_msg
+    error_message = f"expected command output to be {expected_output}, but got {output}"
+    assert expected_output == output, error_message
 
 
 @wt(
@@ -343,14 +343,14 @@ def assert_curl_command_successful_http_code(tmp_memory: TmpMemory) -> None:
     http_status_code = tmp_memory["http status code"]
     command_output = tmp_memory["output"]
     command_stderr = tmp_memory["stderr"]
-    err_msg = (
+    error_message = (
         f"Expected 2xx http status code but got: {http_status_code}\n"
         "--- Captured curl stdout ---\n"
         f"{command_output}\n"
         "--- Captured curl stderr ---\n"
         f"{command_stderr}"
     )
-    assert http_status_code.startswith("2"), err_msg
+    assert http_status_code.startswith("2"), error_message
 
 
 @wt(

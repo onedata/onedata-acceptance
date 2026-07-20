@@ -129,9 +129,8 @@ def wt_assert_new_file_event_in_observed_directory(
     file_id = get_file_id_cached(
         f"{space}/{path}", provider_hostname, users[user].token
     )
-    expected_result = file_id
     assert_file_action_in_observed_directory(
-        tmp_memory, async_loop_in_thread, ObservedFileAction.CREATION, expected_result
+        tmp_memory, async_loop_in_thread, ObservedFileAction.CREATION, file_id
     )
 
 
@@ -155,9 +154,8 @@ def wt_assert_deleted_file_event_in_observed_directory(
     file_id = get_file_id_cached(
         f"{space}/{path}", provider_hostname, users[user].token
     )
-    expected_result = file_id
     assert_file_action_in_observed_directory(
-        tmp_memory, async_loop_in_thread, ObservedFileAction.DELETION, expected_result
+        tmp_memory, async_loop_in_thread, ObservedFileAction.DELETION, file_id
     )
 
 

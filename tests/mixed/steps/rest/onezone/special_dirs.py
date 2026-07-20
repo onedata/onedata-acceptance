@@ -147,14 +147,16 @@ def get_share_container_id(
         tmp_memory[SpecialDir.SHARE_CONTAINER] = {user: share_details.root_file_id}
 
 
-def _assert_ex_err_msg_rest(err_msg: str) -> None:
+def _assert_ex_error_message_rest(error_message: str) -> None:
     assert any(
-        ex in err_msg for ex in EX_ERR_MSGS_REST
-    ), f"Unexpected error occurred:\n {err_msg}"
+        ex in error_message for ex in EX_ERR_MSGS_REST
+    ), f"Unexpected error occurred:\n {error_message}"
 
 
-def _assert_ex_err_msg_oc(err_msg: str) -> None:
-    assert EX_ERR_MSG_OC in err_msg, f"Unexpected error occurred:\n {err_msg}"
+def _assert_ex_error_message_oc(error_message: str) -> None:
+    assert (
+        EX_ERR_MSG_OC in error_message
+    ), f"Unexpected error occurred:\n {error_message}"
 
 
 @wt(
@@ -179,7 +181,7 @@ def try_to_remove_special_dir(
         hosts,
         host,
         tmp_memory[name][user],
-        err_msg=f"{name.value} was deleted!",
+        error_message=f"{name.value} was deleted!",
     )
 
 
@@ -190,21 +192,21 @@ def try_to_remove_special_dir_by_id(
     hosts: Hosts,
     host: str,
     dir_id: str,
-    err_msg: str = "",
+    error_message: str = "",
 ) -> None:
     if client.lower() == "rest":
         try:
             remove_file_by_id_rest(users, user, hosts, host, dir_id)
-            raise AssertionError(err_msg)
+            raise AssertionError(error_message)
         except ApiException as e:
-            _assert_ex_err_msg_rest(str(e))
+            _assert_ex_error_message_rest(str(e))
     elif "oneclient" in client.lower():
         try:
             oneclient_host = change_client_name_to_hostname(client.lower())
             delete_dir_by_id(user, oneclient_host, users, dir_id)
-            raise AssertionError(err_msg)
+            raise AssertionError(error_message)
         except OSError as e:
-            _assert_ex_err_msg_oc(str(e))
+            _assert_ex_error_message_oc(str(e))
     else:
         raise NoSuchClientException(f"unknown client {client}")
 
@@ -222,7 +224,7 @@ def try_to_remove_user_root_dir_by_path(client: str, users: Users, user: str) ->
             try_to_delete_root_dir(user, oneclient_host, users)
             raise AssertionError("Space root dir was deleted!")
         except OSError as e:
-            _assert_ex_err_msg_oc(str(e))
+            _assert_ex_error_message_oc(str(e))
     else:
         raise NoSuchClientException(f"unknown client {client}")
 
@@ -249,7 +251,7 @@ def try_to_move_special_dir(
         hosts,
         host,
         tmp_memory[name][user],
-        err_msg=f"Moved {name.value}, but moving should have failed",
+        error_message=f"Moved {name.value}, but moving should have failed",
     )
 
 
@@ -260,13 +262,13 @@ def try_to_move_special_dir_by_id(
     hosts: Hosts,
     host: str,
     dir_id: str,
-    err_msg: Optional[str] = None,
+    error_message: Optional[str] = None,
 ) -> None:
     if client.lower() == "rest":
         try:
             cdmi_client = cdmi(hosts[host]["ip"], users[user].token)
             cdmi_client.move_item_by_id(dir_id, "/new_name")
-            raise AssertionError(err_msg)
+            raise AssertionError(error_message)
         except HTTPBadRequest as e:
             assert "Operation failed with POSIX error: enoent." in str(
                 e
@@ -275,7 +277,7 @@ def try_to_move_special_dir_by_id(
         try:
             oneclient_host = change_client_name_to_hostname(client.lower())
             move_dir_by_id(user, oneclient_host, users, dir_id, "new_name")
-            raise AssertionError(err_msg)
+            raise AssertionError(error_message)
         except OSError as e:
             # Because the share container id is very long other error can occur
             assert "Operation not supported" in str(e) or "File name too long" in str(
@@ -298,7 +300,7 @@ def try_to_move_user_root_dir_by_path(client: str, user: str, users: Users) -> N
             try_to_move_root_dir(user, oneclient_host, users, "new_name")
             raise AssertionError("moved user root dir, but moving should have failed")
         except OSError as e:
-            _assert_ex_err_msg_oc(str(e))
+            _assert_ex_error_message_oc(str(e))
     else:
         raise NoSuchClientException(f"unknown client {client}")
 
@@ -328,7 +330,7 @@ def try_to_create_file_in_special_dir(
         host,
         tmp_memory[name][user],
         file_name,
-        err_msg=f"File created in {name.value}, but creation should have failed",
+        error_message=f"File created in {name.value}, but creation should have failed",
     )
 
 
@@ -340,21 +342,21 @@ def try_to_create_file_in_special_dir_by_id(
     host: str,
     dir_id: str,
     file_name: str,
-    err_msg: str = "",
+    error_message: str = "",
 ) -> None:
     if client.lower() == "rest":
         try:
             create_empty_file_in_dir_rest(users, user, hosts, host, dir_id, file_name)
-            raise AssertionError(err_msg)
+            raise AssertionError(error_message)
         except HTTPBadRequest as e:
-            _assert_ex_err_msg_rest(str(e))
+            _assert_ex_error_message_rest(str(e))
     elif "oneclient" in client.lower():
         try:
             oneclient_host = change_client_name_to_hostname(client.lower())
             create_file_in_dir_by_id(user, oneclient_host, users, dir_id, file_name)
-            raise AssertionError(err_msg)
+            raise AssertionError(error_message)
         except OSError as e:
-            _assert_ex_err_msg_oc(str(e))
+            _assert_ex_error_message_oc(str(e))
 
 
 @wt(
@@ -374,7 +376,7 @@ def try_to_create_file_in_user_root_dir_by_path(
                 "file created in user root dir, but creation should have failed"
             )
         except OSError as e:
-            _assert_ex_err_msg_oc(str(e))
+            _assert_ex_error_message_oc(str(e))
 
 
 @wt(
@@ -400,7 +402,9 @@ def try_to_add_qos_to_special_dir(
         host,
         tmp_memory[name][user],
         expression,
-        err_msg=f"Qos requirement added to {name.value}, but adding should have failed",
+        error_message=(
+            f"Qos requirement added to {name.value}, but adding should have failed"
+        ),
     )
 
 
@@ -411,7 +415,7 @@ def try_to_add_qos_to_special_dir_by_id(
     host: str,
     dir_id: str,
     expression: str,
-    err_msg: str = "",
+    error_message: str = "",
 ) -> None:
     try:
         create_qos_requirement_in_op_by_id_rest(
@@ -422,9 +426,9 @@ def try_to_add_qos_to_special_dir_by_id(
             expression,
             dir_id,
         )
-        raise AssertionError(err_msg)
+        raise AssertionError(error_message)
     except ApiException as e:
-        _assert_ex_err_msg_rest(str(e))
+        _assert_ex_error_message_rest(str(e))
 
 
 @wt(
@@ -450,7 +454,9 @@ def try_to_add_json_metadata_to_special_dir(
         host,
         tmp_memory[name][user],
         expression,
-        err_msg=f"Json metadata added to {name.value}, but adding should have failed",
+        error_message=(
+            f"Json metadata added to {name.value}, but adding should have failed"
+        ),
     )
 
 
@@ -461,7 +467,7 @@ def try_to_add_json_metadata_to_special_dir_by_id(
     host: str,
     dir_id: str,
     expression: str,
-    err_msg: str = "",
+    error_message: str = "",
 ) -> None:
     try:
         add_json_metadata_to_file_rest(
@@ -472,9 +478,9 @@ def try_to_add_json_metadata_to_special_dir_by_id(
             expression,
             dir_id,
         )
-        raise AssertionError(err_msg)
+        raise AssertionError(error_message)
     except ApiException as e:
-        _assert_ex_err_msg_rest(str(e))
+        _assert_ex_error_message_rest(str(e))
 
 
 @wt(
@@ -498,7 +504,7 @@ def try_to_establish_dataset_on_special_dir(
         hosts,
         host,
         tmp_memory[name][user],
-        err_msg=(
+        error_message=(
             f"Established dataset on {name.value}, but establishing should have failed"
         ),
     )
@@ -510,10 +516,10 @@ def try_to_establish_dataset_on_special_dir_by_id(
     hosts: Hosts,
     host: str,
     dir_id: str,
-    err_msg: str = "",
+    error_message: str = "",
 ) -> None:
     try:
         create_dataset_in_op_by_id_rest(user, users, hosts, host, dir_id, "")
-        raise AssertionError(err_msg)
+        raise AssertionError(error_message)
     except ApiException as e:
-        _assert_ex_err_msg_rest(str(e))
+        _assert_ex_error_message_rest(str(e))

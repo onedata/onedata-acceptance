@@ -29,9 +29,11 @@ def assert_metadata_in_op_rest(
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     if tab_name.lower() == "xattrs":
-        attr, val = val.split("=")
-        assert attr in metadata, f"{path} has no {attr} {tab_name} metadata"
-        assert val == metadata[attr], f"{path} has no {attr} = {val} {tab_name}"
+        attribute, val = val.split("=")
+        assert attribute in metadata, f"{path} has no {attribute} {tab_name} metadata"
+        assert (
+            val == metadata[attribute]
+        ), f"{path} has no {attribute} = {val} {tab_name}"
     else:
         metadata = metadata[f"onedata_{tab_name.lower()}"]
         if "onedata_base64" in metadata:
@@ -60,12 +62,12 @@ def set_metadata_in_op_rest(
 ) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     if tab_name == "xattrs":
-        attr, val = val.split("=")
+        attribute, val = val.split("=")
     else:
-        attr = f"onedata_{tab_name.lower()}"
+        attribute = f"onedata_{tab_name.lower()}"
         if tab_name.lower() == "json":
             val = json.loads(val)
-    client.write_metadata(path, {attr: val})
+    client.write_metadata(path, {attribute: val})
 
 
 def add_json_metadata_to_file_rest(
@@ -100,11 +102,11 @@ def assert_no_such_metadata_in_op_rest(
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     if tab_name == "xattrs":
-        attr, val = val.split("=")
+        attribute, val = val.split("=")
     else:
-        attr = f"onedata_{tab_name.lower()}"
+        attribute = f"onedata_{tab_name.lower()}"
     try:
-        metadata = metadata[attr]
+        metadata = metadata[attribute]
     except KeyError:
         pass
     else:
