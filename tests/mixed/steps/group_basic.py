@@ -111,8 +111,7 @@ def create_groups_with_token(
 @wt(
     parsers.re(
         r'(?P<user>\w+) fails to create group "(?P<group_name>.*)" '
-        r'using REST using received token in "(?P<host>.*)" Onezone'
-        r" service"
+        r'using REST using received token in "(?P<host>.*)" Onezone service'
     )
 )
 def fail_to_create_group_with_token(
@@ -135,8 +134,7 @@ def fail_to_create_group_with_token(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees( that)?"
         rf" groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN})( ha(s|ve)"
-        r" appeared)? in"
-        r' "(?P<host>.*)" Onezone service'
+        r' appeared)? in "(?P<host>.*)" Onezone service'
     ),
     converters={
         "group_list": parse_elements_sequence,
@@ -279,8 +277,7 @@ def leave_groups(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) adds groups? "
         rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
-        r' "(?P<parent>.*)" in'
-        r' "(?P<host>.*)" Onezone service'
+        r' "(?P<parent>.*)" in "(?P<host>.*)" Onezone service'
     ),
     converters={
         "group_list": parse_elements_sequence,
@@ -356,8 +353,7 @@ def remove_subgroups(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees groups? "
         rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
-        r' "(?P<parent>.*)" '
-        r'in "(?P<host>.*)" Onezone service'
+        r' "(?P<parent>.*)" in "(?P<host>.*)" Onezone service'
     ),
     converters={
         "group_list": parse_elements_sequence,
@@ -386,8 +382,7 @@ def assert_subgroups(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) does not see groups? "
         rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
-        r' "(?P<parent>.*)"'
-        r' in "(?P<host>.*)" Onezone service'
+        r' "(?P<parent>.*)" in "(?P<host>.*)" Onezone service'
     ),
     converters={
         "group_list": parse_elements_sequence,
@@ -414,8 +409,7 @@ def fail_to_see_subgroups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user1>\w+) invites "
-        r'(?P<user2>\w+) to group "(?P<group>.*)" in "(?P<host>.*)" '
-        r"Onezone service"
+        r'(?P<user2>\w+) to group "(?P<group>.*)" in "(?P<host>.*)" Onezone service'
     )
 )
 def invite_to_group(

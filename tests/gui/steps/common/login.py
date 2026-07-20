@@ -182,8 +182,7 @@ def wt_assert_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees error message "
-        r"about invalid credentials in (Onepanel|Onezone) "
-        r"login page"
+        r"about invalid credentials in (Onepanel|Onezone) login page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

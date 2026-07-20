@@ -77,8 +77,7 @@ def confirm_name_input_on_main_automation_page(
     parsers.re(
         r"user of (?P<browser_id>.*) clicks on "
         r'"(?P<option>Rename|Leave|Remove)" '
-        r'button in inventory "(?P<inventory>.*)" menu in the '
-        r"sidebar"
+        r'button in inventory "(?P<inventory>.*)" menu in the sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

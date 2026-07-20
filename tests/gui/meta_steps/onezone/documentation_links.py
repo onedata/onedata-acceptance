@@ -9,7 +9,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
 from tests.gui.utils import Homepage, Modals, Popups
-from tests.gui.utils.generic import parse_elements_sequence, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.gui.utils.homepage.documentation import DocumentationPage, EndpointInfo
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -172,7 +176,8 @@ def assert_docs_title_contains(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*?) sees that (?P<folders>.*?) sidebar folder(s are|"
+        rf"user of (?P<browser_id>.*?) sees that "
+        rf"(?P<folders>{ELEMENTS_SEQUENCE_PATTERN}) sidebar folder(s are|"
         r' is) expanded in "(?P<subpage>Docs|API)" subpage in documentation'
     ),
     converters={

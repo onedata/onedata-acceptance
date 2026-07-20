@@ -268,8 +268,7 @@ def set_gui_settings(
 @wt(
     parsers.parse(
         "user of {browser_id} inserts {kind_of_agreement} link in "
-        "cookie consent notification in GUI settings page of "
-        '"{record}"'
+        'cookie consent notification in GUI settings page of "{record}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

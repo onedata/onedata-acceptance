@@ -26,8 +26,7 @@ def get_run_indicators_for_lane(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that run indicator with "
-        '"{number}" number has appeared on run bar for '
-        '"{lane_name}" lane'
+        '"{number}" number has appeared on run bar for "{lane_name}" lane'
     )
 )
 def assert_run_indicator_for_lane(
@@ -44,8 +43,7 @@ def assert_run_indicator_for_lane(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that run indicator with "{number}"'
-        ' number is the only indicator on run bar for "{lane_name}"'
-        " lane"
+        ' number is the only indicator on run bar for "{lane_name}" lane'
     )
 )
 def assert_certain_indicator_is_only_one_in_lane(

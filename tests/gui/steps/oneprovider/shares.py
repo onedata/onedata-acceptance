@@ -188,8 +188,7 @@ def assert_share_in_shares_browser_in_shares_page(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that there is "{share_name}" '
-        "share that points to deleted directory "
-        "on shares view"
+        "share that points to deleted directory on shares view"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

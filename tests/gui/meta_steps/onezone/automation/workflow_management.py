@@ -321,8 +321,7 @@ def _execute_workflow_with_input_config(
         r"user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
         r' of "(?P<workflow>.*)" and waits extended time for workflow '
         r"to finish, using (?P<data_type>.*) as initial "
-        r'value: "(?P<serialized_value>.*)" in "(?P<space>.*)" '
-        r"space"
+        r'value: "(?P<serialized_value>.*)" in "(?P<space>.*)" space'
     )
 )
 def execute_workflow_and_wait(
@@ -353,8 +352,7 @@ def execute_workflow_and_wait(
     parsers.re(
         r"user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
         r' of "(?P<workflow>.*)", using (?P<data_type>.*) as initial '
-        r'value: "(?P<serialized_value>.*)" in "(?P<space>.*)" '
-        r"space"
+        r'value: "(?P<serialized_value>.*)" in "(?P<space>.*)" space'
     )
 )
 def execute_workflow(

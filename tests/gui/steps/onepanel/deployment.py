@@ -40,8 +40,7 @@ from tests.utils.utils import repeat_failed
 @given(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) created admin"
-        r" accounts? "
-        r'"(?P<name>.*):(?P<passphrase>.*)"'
+        r' accounts? "(?P<name>.*):(?P<passphrase>.*)"'
     ),
     converters={
         "browser_id_list": parse_elements_sequence,
@@ -68,8 +67,7 @@ def g_create_admin_in_panel(
 @wt(
     parsers.parse(
         "user of {browser_id} enables {options:ElementsSequence} options for "
-        "{host_pattern} host in step 1 of deployment process "
-        "in Onepanel",
+        "{host_pattern} host in step 1 of deployment process in Onepanel",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
@@ -128,8 +126,7 @@ def wt_type_text_to_in_box_in_deployment_step(
     parsers.re(
         r"user of (?P<browser_id>.+?) types second host to "
         r"(?P<input_box>.+?) field in "
-        r"(?P<step>step 1|step 2|step 4|last step) of deployment "
-        r"process in Onepanel"
+        r"(?P<step>step 1|step 2|step 4|last step) of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -149,8 +146,7 @@ def wt_type_second_host_to_in_box_in_deployment_step(
         r"user of (?P<browser_id>.+?) types "
         r'(?P<name_property>name|hostname) of "(?P<alias>.+?)" '
         r"(zone|provider) to (?P<input_box>.+?) field in "
-        r"(?P<step>step 1|step 2) of deployment "
-        r"process in Onepanel"
+        r"(?P<step>step 1|step 2) of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -520,8 +516,7 @@ def wt_click_on_add_btn_in_storage_add_form(
 @wt(
     parsers.parse(
         'user of {browser_id} expands "{storage}" record on '
-        "storages list in step 5 of deployment process "
-        "in Onepanel"
+        "storages list in step 5 of deployment process in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -291,8 +291,7 @@ def create_in_container(
 @wt(
     parsers.re(
         r"delete is performed on director(y|ies) (?P<paths>.*) in "
-        r'container "(?P<container>.*)" on provider '
-        r'"(?P<provider>.*)"'
+        r'container "(?P<container>.*)" on provider "(?P<provider>.*)"'
     )
 )
 def remove_in_container(

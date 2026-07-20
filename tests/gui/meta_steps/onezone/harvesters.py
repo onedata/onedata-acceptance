@@ -155,8 +155,7 @@ def create_harvester(
 @wt(
     parsers.parse(
         'user of {browser_id} adds "{space_name}" space to '
-        '"{harvester_name}" harvester using available spaces '
-        "dropdown"
+        '"{harvester_name}" harvester using available spaces dropdown'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -22,8 +22,7 @@ DATASET_BROWSER = "dataset browser"
 @wt(
     parsers.parse(
         "user of {browser_id} sees that {kind} write protection "
-        "toggle is checked in Ancestor Datasets row in Datasets "
-        "modal"
+        "toggle is checked in Ancestor Datasets row in Datasets modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

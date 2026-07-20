@@ -283,8 +283,7 @@ def create_file_in_op_with_tokens(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create "
-        r'directory named "/(?P<abs_path>.*)" in "(?P<space>.*)" in '
-        r"(?P<host>.*)"
+        r'directory named "/(?P<abs_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def create_dir_in_op(
@@ -359,8 +358,7 @@ def go_to_dir(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see "
-        r'item named "(?P<name>[^ ]+)" in "(?P<space>.*)" in '
-        r"(?P<host>.*)"
+        r'item named "(?P<name>[^ ]+)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def see_item_in_op(
@@ -445,8 +443,7 @@ def remove_empty_dir_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes directory "
-        r'\(rmdir -p\) named "(?P<name>.*)" in "(?P<space>.*)" in '
-        r"(?P<host>.*)"
+        r'\(rmdir -p\) named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_empty_dir_and_parents_in_op(
@@ -483,8 +480,7 @@ def remove_empty_dir_and_parents_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes directory "
-        r'\(rm -rf\) named "(?P<name>.*)" in "(?P<space>.*)" in '
-        r"(?P<host>.*)"
+        r'\(rm -rf\) named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_dir_in_op(
@@ -521,8 +517,7 @@ def remove_dir_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) "
-        r'to remove file named "(?P<name>.*)" in "(?P<space>.*)" in '
-        r"(?P<host>.*)"
+        r'to remove file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_file_in_op(
@@ -634,8 +629,7 @@ def rename_item_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) "
         r'renames item named "(?P<old_name>.*)" to "(?P<new_name>.*)" '
-        r'using received access token in "(?P<space>.*)" '
-        r"in (?P<host>.*)"
+        r'using received access token in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def rename_item_in_op_using_token(
@@ -674,8 +668,7 @@ def rename_item_in_op_using_token(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that there "
-        r'(is 1|are (?P<num>\d+)) items? in "(?P<space>.*)" in '
-        r"(?P<host>.*)"
+        r'(is 1|are (?P<num>\d+)) items? in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def see_num_of_items_in_op(
@@ -787,8 +780,7 @@ def read_from_file_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>(succeeds|fails)) to append"
-        r' "(?P<text>.*)" '
-        r'to file under a path "(?P<file_name>.*)" in '
+        r' "(?P<text>.*)" to file under a path "(?P<file_name>.*)" in '
         r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
@@ -858,8 +850,7 @@ def replace_in_file_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to move "
-        r'"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
-        r"in (?P<host>.*)"
+        r'"(?P<src_path>.*)" to "(?P<dst_path>.*)" in (?P<host>.*)'
     )
 )
 def move_file_in_op(
@@ -888,8 +879,7 @@ def move_file_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) copies "
         r"(?P<item_type>(directory|file)) named "
-        r'"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
-        r"in (?P<host>.*)"
+        r'"(?P<src_path>.*)" to "(?P<dst_path>.*)" in (?P<host>.*)'
     )
 )
 def copy_item_in_op(
@@ -1162,8 +1152,7 @@ def assert_mtime_not_earlier_than(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that directory "
-        r'structure in "(?P<space>.*)" space in (?P<host>.*) is as '
-        r"previously created"
+        r'structure in "(?P<space>.*)" space in (?P<host>.*) is as previously created'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -1243,8 +1232,7 @@ def assert_directory_structure_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sets new "
         r'(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)"'
-        r' (?P<item>file|directory) in space "(?P<space>.*)" '
-        r"in (?P<host>.*)"
+        r' (?P<item>file|directory) in space "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def set_metadata_in_op(
@@ -1358,8 +1346,7 @@ def assert_metadata_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes all "
         r'"(?P<path>.*)" (?P<item>file|directory) '
-        r'metadata in space "(?P<space>\w+)" '
-        r"in (?P<host>.*)"
+        r'metadata in space "(?P<space>\w+)" in (?P<host>.*)'
     )
 )
 def remove_all_metadata_in_op(
@@ -1401,8 +1388,7 @@ def remove_all_metadata_in_op(
         r"using (?P<client>.*), (?P<user>\w+) sees that "
         r'(?P<tab_name>.*) metadata for "(?P<path>.*)" '
         r"(?P<item>file|directory) in space "
-        r'"(?P<space>.*)" does not contain (?P<val>.*) in '
-        r"(?P<host>.*)"
+        r'"(?P<space>.*)" does not contain (?P<val>.*) in (?P<host>.*)'
     )
 )
 def assert_no_such_metadata_in_op(

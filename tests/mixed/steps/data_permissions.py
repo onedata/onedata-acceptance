@@ -46,8 +46,7 @@ def _remove_parent_acl_from_string(privileges: str) -> str:
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sets new ACE for "
         r'(?P<path>.*?) in space "(?P<space>.*)" with (?P<privileges>.*) '
-        r"privileges? set for (?P<item_type>.*?) (?P<name>.*) "
-        r"in (?P<host>.*)"
+        r"privileges? set for (?P<item_type>.*?) (?P<name>.*) in (?P<host>.*)"
     )
 )
 def grant_acl_privileges_in_op(

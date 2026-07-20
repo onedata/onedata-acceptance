@@ -94,8 +94,7 @@ def add_json_rdf_metadata_for_item(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*?) opens metadata panel on "
-        r"(?P<tab>JSON|RDF) "
+        r"user of (?P<browser_id>.*?) opens metadata panel on (?P<tab>JSON|RDF) "
         r'tab for "(?P<item_name>.*?)"(?P<dir> directory|)'
     )
 )
@@ -179,8 +178,7 @@ def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: str) -
         r"user of (?P<browser_id>.*) (?P<res>.*) to read "
         r'"(?P<path>.*)" (?P<item>file|directory) '
         r"(?P<tab_name>xattrs|JSON|RDF) "
-        r'metadata: "(?P<val>.*)"'
-        r' in "(?P<space>.*)"'
+        r'metadata: "(?P<val>.*)" in "(?P<space>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

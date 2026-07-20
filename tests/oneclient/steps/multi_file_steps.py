@@ -160,8 +160,7 @@ def create_reg_file_fail(
 @wt(
     parsers.re(
         r"(?P<user>\w+) creates child files of (?P<parent_dir>.*) "
-        r"with names in range \[(?P<lower>.*), (?P<upper>.*)\) on "
-        r"(?P<client_node>.*)"
+        r"with names in range \[(?P<lower>.*), (?P<upper>.*)\) on (?P<client_node>.*)"
     )
 )
 def create_many(
@@ -252,8 +251,7 @@ def ls_empty(directory: str, user: str, client_node: str, users: Users) -> None:
 @wt(
     parsers.re(
         r"(?P<user>\w+) lists children of (?P<parent_dir>.*) and gets "
-        r"names in range \[(?P<lower>.*), (?P<upper>.*)\) on "
-        r"(?P<client_node>.*)"
+        r"names in range \[(?P<lower>.*), (?P<upper>.*)\) on (?P<client_node>.*)"
     )
 )
 def ls_children(
@@ -346,8 +344,7 @@ def rename_fail(
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) can't stat (?P<files>.*) in (?P<path>.*) on "
-        r"(?P<client_node>.*)"
+        r"(?P<user>\w+) can't stat (?P<files>.*) in (?P<path>.*) on (?P<client_node>.*)"
     )
 )
 def stat_absent(
@@ -567,8 +564,7 @@ def shell_check_type(
 
 @wt(
     parsers.re(
-        r"mode of (?P<user>\w+)'s (?P<file>.*) is (?P<mode>.*) on "
-        r"(?P<client_node>.*)"
+        r"mode of (?P<user>\w+)'s (?P<file>.*) is (?P<mode>.*) on (?P<client_node>.*)"
     )
 )
 @repeat_failed(interval=1, timeout=30, exceptions=AssertionError)
@@ -631,15 +627,13 @@ def change_mode_fail(
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file>.*) is "
-        r"(?P<comparator>.*) to (?P<time2>.*) time on "
-        r"(?P<client_node>.*)"
+        r"(?P<comparator>.*) to (?P<time2>.*) time on (?P<client_node>.*)"
     )
 )
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file>.*) is "
-        r"(?P<comparator>.*) than (?P<time2>.*) time on "
-        r"(?P<client_node>.*)"
+        r"(?P<comparator>.*) than (?P<time2>.*) time on (?P<client_node>.*)"
     )
 )
 def check_time(
@@ -702,15 +696,13 @@ def check_files_time(
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file1>.*) is "
-        r"(?P<comparator>.*) to recorded one of (?P<file2>.*) on "
-        r"(?P<client_node>.*)"
+        r"(?P<comparator>.*) to recorded one of (?P<file2>.*) on (?P<client_node>.*)"
     )
 )
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file1>.*) is "
-        r"(?P<comparator>.*) than recorded one of (?P<file2>.*) on "
-        r"(?P<client_node>.*)"
+        r"(?P<comparator>.*) than recorded one of (?P<file2>.*) on (?P<client_node>.*)"
     )
 )
 def cmp_time_to_previous(

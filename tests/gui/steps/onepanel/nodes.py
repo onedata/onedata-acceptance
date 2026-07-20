@@ -43,8 +43,7 @@ def wt_assert_options_enabled_for_host_in_nodes(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that {options:ElementsSequence} options cannot "
-        "be changed for {host_pattern} host in Nodes page "
-        "in Onepanel",
+        "be changed for {host_pattern} host in Nodes page in Onepanel",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )

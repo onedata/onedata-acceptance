@@ -270,8 +270,7 @@ def assert_id_on_data_discovery_page(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that archives creation time in"
-        " results list on data discovery page is the same as on "
-        "the archives page"
+        " results list on data discovery page is the same as on the archives page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

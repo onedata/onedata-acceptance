@@ -275,8 +275,7 @@ def assert_no_suspended_workflows_in_atm_subpage(
 @wt(
     parsers.parse(
         'user of {browser_id} awaits for status of task "{task}" in '
-        '{ordinal} parallel box in "{lane}" lane to be '
-        '"{expected_status}"'
+        '{ordinal} parallel box in "{lane}" lane to be "{expected_status}"'
     )
 )
 def await_for_task_status(

@@ -21,7 +21,11 @@ from tests.gui.steps.common.miscellaneous import (
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils import Modals, OPLoggedIn, Popups
-from tests.gui.utils.generic import parse_elements_sequence, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.gui.utils.oneprovider.transfers import (
     TransferRecord,
     TransferRecordActive,
@@ -305,8 +309,7 @@ def click_menu_button_in_data_distribution_panel(
 @wt(
     parsers.parse(
         'user of {browser_id} cannot click "{option}" option in data'
-        ' row menu for "{provider}" provider in "Data distribution" '
-        "panel"
+        ' row menu for "{provider}" provider in "Data distribution" panel'
     )
 )
 def fail_to_click_option_in_data_distribution_popup(
@@ -416,9 +419,9 @@ def _get_transfers_and_enable_initial_cols(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) enables only (?P<columns>.*) "
-        r"columns in columns configuration popover in "
-        r"transfers table"
+        rf"user of (?P<browser_id>.*) enables only "
+        rf"(?P<columns>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"columns in columns configuration popover in transfers table"
     ),
     converters={
         "columns": parse_elements_sequence,
@@ -432,7 +435,8 @@ def select_columns_to_be_visible_in_transfers(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) sees only (?P<columns>.*) columns in transfers"
+        rf"user of (?P<browser_id>.*) sees only "
+        rf"(?P<columns>{ELEMENTS_SEQUENCE_PATTERN}) columns in transfers"
     ),
     converters={
         "columns": parse_elements_sequence,

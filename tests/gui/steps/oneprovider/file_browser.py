@@ -580,8 +580,7 @@ def assert_num_of_hardlinks_in_file_details_modal(
 @wt(
     parsers.re(
         r'(using web GUI, )?user of (?P<browser_id>.*) sees that path of "(?P<file>.*)"'
-        r" hardlink "
-        r'is "(?P<path>.*)" in "File details" modal'
+        r' hardlink is "(?P<path>.*)" in "File details" modal'
     )
 )
 def assert_hardlink_path_in_file_details_modal(
@@ -596,7 +595,8 @@ def assert_hardlink_path_in_file_details_modal(
 
 @wt(
     parsers.re(
-        r"(using web GUI, )?user of (?P<browser_id>.*) sees paths (?P<paths>.*) of"
+        rf"(using web GUI, )?user of (?P<browser_id>.*) sees paths "
+        rf"(?P<paths>{ELEMENTS_SEQUENCE_PATTERN}) of"
         r' hardlinks in "File details" modal'
     ),
     converters={
@@ -616,8 +616,7 @@ def assert_hardlinks_paths_in_file_details_modal(
 @wt(
     parsers.re(
         r"(using web GUI, )?user of (?P<browser_id>.*) sees that (?P<link_property>.*)"
-        r' is "(?P<value>.*)" '
-        r'in "Symbolic link details" modal'
+        r' is "(?P<value>.*)" in "Symbolic link details" modal'
     )
 )
 def assert_property_in_symlink_details_modal(
@@ -719,8 +718,7 @@ def assert_contents_downloaded_tar_file(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that items? named"
         rf" (?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) (?P<option>is|are|is not|are"
-        r" not) "
-        r"currently visible in (?P<which>.*?) browser"
+        r" not) currently visible in (?P<which>.*?) browser"
     ),
     converters={
         "item_list": parse_elements_sequence,

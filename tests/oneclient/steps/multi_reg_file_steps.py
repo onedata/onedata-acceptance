@@ -115,8 +115,7 @@ def count_md5(
 @wt(
     parsers.re(
         r"(?P<user_name>.*) writes (?P<megabytes>.*) MB of random "
-        r"characters to (?P<file>.*) on (?P<client_node>.*) and "
-        r"saves MD5"
+        r"characters to (?P<file>.*) on (?P<client_node>.*) and saves MD5"
     )
 )
 def write_rand_text(
@@ -203,8 +202,7 @@ def cannot_read(user: str, file: str, client_node: str, users: Users) -> None:
 
 @when(
     parsers.re(
-        r'(?P<user>\w+) appends "(?P<text>.*)" to (?P<file>.*) on '
-        r"(?P<client_node>.*)"
+        r'(?P<user>\w+) appends "(?P<text>.*)" to (?P<file>.*) on (?P<client_node>.*)'
     )
 )
 def append(user: str, text: str, file: str, client_node: str, users: Users) -> None:
@@ -363,8 +361,7 @@ def close_file(user: str, file: str, client_node: str, users: Users) -> None:
 @wt(
     parsers.re(
         r"(?P<user>\w+) sets current file position at offset "
-        r"(?P<offset>.*) in previously opened (?P<file>.*) on"
-        r" (?P<client_node>.*)"
+        r"(?P<offset>.*) in previously opened (?P<file>.*) on (?P<client_node>.*)"
     )
 )
 @wt(

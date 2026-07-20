@@ -139,8 +139,7 @@ def _get_page(where: str, driver: WebDriver) -> Any:
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) can see there are (?P<number>\d+)"
-        r" (?P<items_type>.*) on the (?P<list_type>.*)"
-        r" list in the sidebar",
+        r" (?P<items_type>.*) on the (?P<list_type>.*) list in the sidebar",
     ),
     converters={
         "number": int,

@@ -70,8 +70,7 @@ def remove_storage_in_op_panel_using_gui(
     parsers.re(
         r'user of (?P<browser_id>.+?) adds "(?P<name>.*)" storage '
         r'in "(?P<provider_name>.+?)" Oneprovider panel service '
-        r"with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r"with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def add_storage_in_op_panel_using_gui(

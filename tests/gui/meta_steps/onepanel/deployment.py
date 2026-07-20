@@ -189,8 +189,7 @@ def enable_provider_cluster_registration_for_user(
 @wt(
     parsers.parse(
         "user of {browser_id} registers provider in step 2 of "
-        "deployment process in Onepanel with following config:\n"
-        "{config}"
+        "deployment process in Onepanel with following config:\n{config}"
     )
 )
 def setup_step2(

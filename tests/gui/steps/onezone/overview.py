@@ -126,8 +126,7 @@ def assert_tags_in_space_details_in_overview(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that the space {option} "
-        "advertised in the Marketplace tile in space overview "
-        "subpage"
+        "advertised in the Marketplace tile in space overview subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

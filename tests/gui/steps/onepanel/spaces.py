@@ -54,8 +54,7 @@ def wt_select_storage_in_support_space_form(
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on Support space button "
-        "in spaces page in Onepanel if there are some spaces "
-        "already supported"
+        "in spaces page in Onepanel if there are some spaces already supported"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -220,8 +219,7 @@ def wt_select_strategy_in_conf_in_support_space_form(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" '
-        r"to (?P<input_box>.*) input field in support space form "
-        r"in Onepanel"
+        r"to (?P<input_box>.*) input field in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -436,8 +434,7 @@ def remove_space_instead_of_revoke(selenium: SeleniumDrivers, browser_id: str) -
 @wt(
     parsers.parse(
         'user of {browser_id} logs in as "{user}" to Onezone service '
-        "and removes space using delete space modal invoked from "
-        "provided link"
+        "and removes space using delete space modal invoked from provided link"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

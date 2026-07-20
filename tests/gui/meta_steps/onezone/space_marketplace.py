@@ -128,8 +128,7 @@ def _configure_space_manually(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees advertised space "
-        "on Space Marketplace "
+        "user of {browser_id} sees advertised space on Space Marketplace "
         "subpage with following parameters:\n{config}"
     )
 )

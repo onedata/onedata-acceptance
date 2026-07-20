@@ -228,8 +228,7 @@ def _is_space_viewed_space_in_data_tab_in_op(
 @given(
     parsers.re(
         r"user of (?P<browser_id>.+?) seen that displayed directory "
-        r"tree in sidebar panel belonged to (?P<is_home>(home "
-        r")?)space "
+        r"tree in sidebar panel belonged to (?P<is_home>(home )?)space "
         r'named "(?P<space_name>.+?)'
     )
 )
@@ -373,8 +372,7 @@ def assert_diff_in_len_of_dir_name_before_and_now(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.+?) expands data tab sidebar to the "
-        r"(?P<direction>right|left) of approximately "
-        r"(?P<offset>\d+)px"
+        r"(?P<direction>right|left) of approximately (?P<offset>\d+)px"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -487,8 +485,7 @@ def upload_file_to_cwd_in_file_browser(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
         'menu bar to upload files from local directory "{directory_path}" '
-        "to remote current dir and waits extended time for upload to "
-        "finish"
+        "to remote current dir and waits extended time for upload to finish"
     )
 )
 def upload_files_to_cwd_in_data_tab_extended_wait(
@@ -503,8 +500,7 @@ def upload_files_to_cwd_in_data_tab_extended_wait(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload local file "{file_path}" '
-        "to remote current dir"
+        'menu bar to upload local file "{file_path}" to remote current dir'
     )
 )
 def upload_file_to_cwd_in_data_tab(
@@ -533,8 +529,7 @@ def upload_files_to_cwd_in_data_tab(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload {number} local files "{file_path}" '
-        "to remote current dir"
+        'menu bar to upload {number} local files "{file_path}" to remote current dir'
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)

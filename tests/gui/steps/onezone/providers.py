@@ -37,8 +37,7 @@ TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 120
 @wt(
     parsers.parse(
         "user of {browser_id} sees that provider popup for "
-        'provider named "{provider_name}" has appeared on '
-        "world map"
+        'provider named "{provider_name}" has appeared on world map'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -102,8 +101,7 @@ def assert_provider_hostname_matches_known_domain(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that hostname in displayed "
-        "provider popup matches test hostname of provider "
-        '"{provider}"'
+        'provider popup matches test hostname of provider "{provider}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -161,7 +159,7 @@ def click_on_world_map(selenium: SeleniumDrivers, browser_id: str) -> None:
 @given(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicked on "
-        r"(?P<providers>.*?) provider in expanded "
+        rf"(?P<providers>{ELEMENTS_SEQUENCE_PATTERN}) provider in expanded "
         r'"GO TO YOUR FILES" Onezone panel'
     ),
     converters={
@@ -200,8 +198,7 @@ def wt_click_on_provider_in_go_to_your_files_oz_panel(
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on provider named "
-        '"{provider}" in expanded "GO TO YOUR FILES" Onezone '
-        "panel"
+        '"{provider}" in expanded "GO TO YOUR FILES" Onezone panel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -294,8 +291,7 @@ def assert_provider_is_not_in_providers_list_in_data_sidebar(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.+?) clicks on "
-        r"(?P<option>Visit provider|Toggle home provider) button "
-        r"on provider popover"
+        r"(?P<option>Visit provider|Toggle home provider) button on provider popover"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -360,8 +356,7 @@ def assert_len_of_spaces_list_in_provider_popover(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.+) opens "(?P<provider>oneprovider-[0-9]+)"'
-        r" provider menu "
-        r"on space providers data page"
+        r" provider menu on space providers data page"
     )
 )
 def click_on_menu_button_of_provider_on_providers_list(

@@ -61,8 +61,7 @@ def open_transfers_page(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) opens transfer page using "
-        r'"(?P<link>.*)" link on "Distribution" tab for '
-        r'"(?P<file>.*)" file'
+        r'"(?P<link>.*)" link on "Distribution" tab for "(?P<file>.*)" file'
     )
 )
 def open_transfer_page_by_clicking_on_link(

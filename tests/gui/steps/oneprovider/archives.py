@@ -190,8 +190,7 @@ def compare_base_archive_name_with_archive_with_description(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that base archive for "
         r"latest created archive is archive with description:"
-        r' "(?P<base_description>.*?)" on archives list'
-        r" in archive browser"
+        r' "(?P<base_description>.*?)" on archives list in archive browser'
     )
 )
 def assert_base_archive_description_for_latest_created_archive(
@@ -498,8 +497,7 @@ def assert_item_from_modal_with_copied(
 @wt(
     parsers.parse(
         'user of {browser_id} writes "{text}" into edit '
-        "description and successfully saves it, in archive details "
-        "modal"
+        "description and successfully saves it, in archive details modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -600,8 +598,7 @@ def assert_archive_creation_link(
 @wt(
     parsers.parse(
         "user of {browser_id} sees popup message about insufficient "
-        'privileges requiring "{privilege}" privilege in archive '
-        "browser"
+        'privileges requiring "{privilege}" privilege in archive browser'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

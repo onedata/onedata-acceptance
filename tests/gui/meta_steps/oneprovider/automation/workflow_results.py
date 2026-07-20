@@ -289,8 +289,7 @@ def assert_status_of_task_is_one_of_two(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that status of task "{task}" in '
-        '{ordinal} parallel box in "{lane}" lane is '
-        '"{expected_status}"'
+        '{ordinal} parallel box in "{lane}" lane is "{expected_status}"'
     )
 )
 def assert_status_of_task(

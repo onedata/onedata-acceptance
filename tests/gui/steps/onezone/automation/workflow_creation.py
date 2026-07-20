@@ -309,8 +309,7 @@ def write_task_name_in_task_edition_text_field(
 @wt(
     parsers.parse(
         'user of {browser_id} clicks on "{option}" button in task '
-        '"{task_name}" menu in "{lane_name}" lane '
-        "in workflow visualizer"
+        '"{task_name}" menu in "{lane_name}" lane in workflow visualizer'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

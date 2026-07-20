@@ -254,8 +254,7 @@ def assert_there_is_no_item_named_in_oz_panel_list(
         r"user of (?P<browser_id>.+?) sees that "
         r"(?P<counter_type>provider)s counter for (?P<item_type>space) "
         r'named "(?P<item_name>.+?)" displays (?P<number>\d+) '
-        r'in expanded "(?P<oz_panel>DATA SPACE MANAGEMENT)" '
-        r"Onezone panel"
+        r'in expanded "(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -379,8 +378,7 @@ def expand_items_submenu_in_oz_panel(
         r"user of (?P<browser_id>.+?) sees that there is "
         r'(?P<subitem_type>provider) "(?P<subitem_name>.+?)" in '
         r'submenu of (?P<item_type>space) named "(?P<item_name>.+?)" '
-        r'in expanded "(?P<oz_panel>DATA SPACE MANAGEMENT)" '
-        r"Onezone panel"
+        r'in expanded "(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'
     )
 )
 @wt(

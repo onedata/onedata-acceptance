@@ -479,8 +479,7 @@ def assert_file_content_in_op_gui(
 @given(
     parsers.re(
         r"directory structure created by (?P<user>\w+) "
-        r'in "(?P<space>.*)" space on (?P<host>.*) as follows:\n'
-        r"(?P<config>(.|\s)*)"
+        r'in "(?P<space>.*)" space on (?P<host>.*) as follows:\n(?P<config>(.|\s)*)'
     )
 )
 def g_create_directory_structure(

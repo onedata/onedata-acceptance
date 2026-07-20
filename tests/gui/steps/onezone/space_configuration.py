@@ -176,8 +176,7 @@ def check_header_info_in_space_configuration(
 @wt(
     parsers.parse(
         'user of {browser_id} sees "{message_type}" message after '
-        'hovering over "{toggle_name}" toggle in '
-        "configuration space"
+        'hovering over "{toggle_name}" toggle in configuration space'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -109,8 +109,7 @@ def assert_file_hardlinks(
     parsers.re(
         r"using (?P<client>.*), user( of)? (?P<user>.+) creates"
         r' symlink located in "(?P<path>.*)" pointing to "(?P<file_name>.*)" in'
-        r' "(?P<space>.*)" in file browser'
-        r" in (?P<host>.*)"
+        r' "(?P<space>.*)" in file browser in (?P<host>.*)'
     )
 )
 def create_file_symlink(
@@ -187,8 +186,7 @@ def create_symlink_oneclient(
     parsers.re(
         r"using (?P<client>.*), user( of)? (?P<user>.*) creates hardlink of "
         r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" directory in'
-        r' "(?P<space>.*)"'
-        r" in (?P<host>.*)"
+        r' "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def create_file_hardlink(
@@ -286,8 +284,7 @@ def assert_hardlink_between_files_rest(
 @wt(
     parsers.re(
         r'using (?P<client>\w+), user (?P<user>\w+) can see that "(?P<file_path1>.*)"'
-        r' and "(?P<file_path2>.*)" are'
-        r" hardlinked"
+        r' and "(?P<file_path2>.*)" are hardlinked'
     )
 )
 def assert_hardlink_between_files_oneclient(

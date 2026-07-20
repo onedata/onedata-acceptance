@@ -416,8 +416,7 @@ def assert_status_tag_for_file_in_browser(
 @wt(
     parsers.parse(
         "user of {browser_id} sees {status_type} "
-        'status tag with "{text}" text for "{item_name}" '
-        "in {which_browser}"
+        'status tag with "{text}" text for "{item_name}" in {which_browser}'
     )
 )
 def wt_assert_status_tag_text_for_file_in_browser(
@@ -674,8 +673,7 @@ def assert_value_in_column_for_item(
         r"user of (?P<browser_id>.*) sees that item named "
         r'"(?P<item_name>.*)" (?P<res>has|does not have)'
         r' "(?P<value>.*)" value in (?P<option>xattr)'
-        r" column in (?P<which_browser>archive file browser|"
-        r"file browser)"
+        r" column in (?P<which_browser>archive file browser|file browser)"
     )
 )
 @wt(
@@ -802,9 +800,9 @@ def compare_value_in_column_for_item(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) sees only (?P<columns>.*) columns "
-        r"in (?P<which_browser>file browser|archive browser|"
-        r"dataset browser)"
+        rf"user of (?P<browser_id>.*) sees only "
+        rf"(?P<columns>{ELEMENTS_SEQUENCE_PATTERN}) columns "
+        r"in (?P<which_browser>file browser|archive browser|dataset browser)"
     ),
     converters={
         "columns": parse_elements_sequence,

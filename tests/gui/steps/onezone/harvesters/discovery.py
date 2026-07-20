@@ -46,8 +46,7 @@ def click_create_button_in_discovery_page(
     parsers.re(
         r'user of (?P<browser_id>.*) sees that "(?P<name>.*)" has'
         r" (?P<option>appeared|disappeared) on the"
-        r" (?P<list_type>harvesters|automation) "
-        r"list in the sidebar"
+        r" (?P<list_type>harvesters|automation) list in the sidebar"
     ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -80,8 +79,7 @@ def check_element_exists_on_sidebar_list(
     parsers.re(
         r"user of (?P<browser_id>.*) clicks on "
         r'"(?P<option>Rename|Leave|Remove)" '
-        r'button in harvester "(?P<name>.*)" menu '
-        r"in the sidebar"
+        r'button in harvester "(?P<name>.*)" menu in the sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -176,8 +174,7 @@ def type_text_to_input_field_in_discovery_page(
 @wt(
     parsers.parse(
         "user of {browser_id} types the endpoint of deployed "
-        "elasticsearch client to {input_name} input field "
-        "in discovery page"
+        "elasticsearch client to {input_name} input field in discovery page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

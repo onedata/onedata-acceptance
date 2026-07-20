@@ -859,8 +859,7 @@ def switch_toggle_in_modal(
 @wt(
     parsers.parse(
         "user of {browser_id} accepts terms of privacy in Space "
-        'Marketplace using checkbox in modal "Advertise space in '
-        'the marketplace"'
+        'Marketplace using checkbox in modal "Advertise space in the marketplace"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

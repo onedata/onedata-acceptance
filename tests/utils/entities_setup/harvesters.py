@@ -29,8 +29,7 @@ MutableIdMap = MutableMapping[str, str]
     parsers.re(
         r"using REST, user (?P<user>.*) creates "
         rf"(?P<harvesters_list>{ELEMENTS_SEQUENCE_PATTERN}) harvesters? in"
-        r' "(?P<service>.*)" '
-        r"Onezone service"
+        r' "(?P<service>.*)" Onezone service'
     ),
     converters={
         "harvesters_list": parse_elements_sequence,
@@ -39,8 +38,7 @@ MutableIdMap = MutableMapping[str, str]
 @given(
     parsers.re(
         rf"user (?P<user>.*) has (?P<harvesters_list>{ELEMENTS_SEQUENCE_PATTERN})"
-        r" harvesters? "
-        r'in "(?P<service>.*)" Onezone service'
+        r' harvesters? in "(?P<service>.*)" Onezone service'
     ),
     converters={
         "harvesters_list": parse_elements_sequence,
@@ -156,8 +154,7 @@ def _remove_harvester(
 @given(
     parsers.re(
         rf"spaces? (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) belongs? to "
-        r'"(?P<harvester_name>.*)" harvester of user '
-        r"(?P<username>.*)"
+        r'"(?P<harvester_name>.*)" harvester of user (?P<username>.*)'
     ),
     converters={"space_list": parse_elements_sequence},
 )

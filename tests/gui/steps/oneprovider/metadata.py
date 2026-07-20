@@ -143,8 +143,7 @@ def assert_there_is_no_such_meta_record(
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on delete "
-        "icon for xattr metadata entry with key "
-        '"{attr_name}"'
+        'icon for xattr metadata entry with key "{attr_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

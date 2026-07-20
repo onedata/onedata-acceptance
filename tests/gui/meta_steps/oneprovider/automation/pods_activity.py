@@ -62,8 +62,7 @@ def wait_for_ongoing_pods_to_be_terminated(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that name of first pod in tab "
-        '"{tab}" in modal "Function pods activity" contains lambda '
-        'name "{lambda_name}"'
+        '"{tab}" in modal "Function pods activity" contains lambda name "{lambda_name}"'
     )
 )
 def assert_lambda_name_in_tab_name(

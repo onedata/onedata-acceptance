@@ -75,8 +75,7 @@ def _parse_tabs_list(tabs: str) -> list[str]:
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) clicks on "
-        r'"(?P<button_name>Create space|Marketplace)" button in '
-        r"spaces sidebar"
+        r'"(?P<button_name>Create space|Marketplace)" button in spaces sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -409,8 +408,7 @@ def _get_subpage_name(subpage: str) -> str:
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*) clicks "(?P<provider>.*)" '
-        r"provider icon on the map on (?P<page>overview|providers) data "
-        r"page"
+        r"provider icon on the map on (?P<page>overview|providers) data page"
     )
 )
 def click_provider_on_the_map_on_data_page(
@@ -449,8 +447,7 @@ def hover_provider_on_the_map_on_data_page(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) clicks the map on "
-        r"(?P<space_name>.*) space (?P<page>overview|providers) data "
-        r"page"
+        r"(?P<space_name>.*) space (?P<page>overview|providers) data page"
     )
 )
 def click_the_map_on_data_page(
@@ -567,8 +564,7 @@ def click_get_started_on_data_on_left_sidebar_menu(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) clicks "
-        r"(?P<option>Create a space|join an existing space) "
-        r"on Welcome page"
+        r"(?P<option>Create a space|join an existing space) on Welcome page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -632,8 +628,7 @@ def assert_providers_list_contains_provider(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) (?P<option>check|uncheck)s "
-        r"(?P<toggle>.*) toggle in selected provider settings "
-        r"on providers page"
+        r"(?P<toggle>.*) toggle in selected provider settings on providers page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

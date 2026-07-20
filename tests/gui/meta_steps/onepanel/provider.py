@@ -87,8 +87,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) deregisters "
-        r'provider in "(?P<provider_name>.+?)" Oneprovider panel '
-        r"service"
+        r'provider in "(?P<provider_name>.+?)" Oneprovider panel service'
     )
 )
 def deregister_provider_in_op_panel_using_gui(

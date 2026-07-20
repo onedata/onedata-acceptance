@@ -21,8 +21,7 @@ from tests.utils.utils import repeat_failed
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that (?P<attribute>ID|"
         r"Provider name|Subdomain|Domain|URLs|Latitude|Longitude) "
-        r'attribute is equal to "(?P<val>.*?)" '
-        r"in Provider panel"
+        r'attribute is equal to "(?P<val>.*?)" in Provider panel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -199,8 +198,7 @@ def wt_enter_test_domain_in_deployment_step2(
 
 matcher_wt_assert_value_of_provider_domain = parsers.re(
     r"user of (?P<browser_id>.+?) sees that Domain attribute "
-    r'is equal to test hostname of "(?P<provider>.+?)" in '
-    r"Provider panel"
+    r'is equal to test hostname of "(?P<provider>.+?)" in Provider panel'
 )
 
 

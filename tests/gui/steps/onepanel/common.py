@@ -24,8 +24,7 @@ from tests.utils.utils import repeat_failed
 @wt(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on"
-        r" (?P<btn>.+?) "
-        r"button in (?P<content>welcome|spaces|account management|"
+        r" (?P<btn>.+?) button in (?P<content>welcome|spaces|account management|"
         r"storages|provider|member) page in Onepanel"
     ),
     converters={
@@ -91,8 +90,7 @@ def g_click_on_subitem_for_item(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on "
         r"(?P<sub_item>.+?) item in submenu of item named "
-        r'"(?P<record>.+?)" in (?P<sidebar>CLUSTERS) sidebar in '
-        r"Onepanel"
+        r'"(?P<record>.+?)" in (?P<sidebar>CLUSTERS) sidebar in Onepanel'
     ),
     converters={
         "browser_id_list": parse_elements_sequence,
@@ -114,8 +112,7 @@ def wt_click_on_subitem_for_item_with_name(
 @wt(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on"
-        r' "(?P<record>.+?)"'
-        r" item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
+        r' "(?P<record>.+?)" item in (?P<sidebar>CLUSTERS) sidebar in Onepanel'
     ),
     converters={
         "browser_id_list": parse_elements_sequence,

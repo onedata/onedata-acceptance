@@ -201,8 +201,7 @@ def assert_count_membership_rows(
         r"(?P<number_direct_groups>.*) direct, "
         r"(?P<number_effective_groups>.*) effective groups and "
         r"(?P<number_direct_users>.*) direct, "
-        r"(?P<number_effective_users>.*) effective users in space "
-        r"members tile"
+        r"(?P<number_effective_users>.*) effective users in space members tile"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -453,8 +452,7 @@ def assert_element_is_groups_child(
         r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
         r'"(?P<member_name>.*)" (?P<member_type>user|group) '
         r'on "(?P<parent_name>.*)" ('
-        r"?P<parent_type>user|group|space|cluster) "
-        r"members list"
+        r"?P<parent_type>user|group|space|cluster) members list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -500,8 +498,7 @@ def assert_member_is_in_parent_members_list(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        r'"(?P<username>.*)" user on "(?P<space_name>.*)" '
-        r"space members list"
+        r'"(?P<username>.*)" user on "(?P<space_name>.*)" space members list'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -599,8 +596,7 @@ def click_member_option_on_members_page(
     parsers.re(
         rf"user of (?P<browser_id>.*) sees "
         rf"(?P<options>{ELEMENTS_SEQUENCE_PATTERN}) (is|are) "
-        r'(?P<state>enabled|disabled) for "(?P<username>.*)" user in '
-        r"users list"
+        r'(?P<state>enabled|disabled) for "(?P<username>.*)" user in users list'
     ),
     converters={"options": parse_elements_sequence},
 )
@@ -775,8 +771,7 @@ def try_setting_privileges_in_members_subpage(
     parsers.re(
         r"user of (?P<browser_id>.*) sets all privileges (?P<value>true|false) for "
         r'"(?P<member_name>.*)" (?P<member_type>user|group) '
-        r"in (?P<where>space|group|harvester|cluster|automation) "
-        r"members subpage"
+        r"in (?P<where>space|group|harvester|cluster|automation) members subpage"
     )
 )
 def set_all_privileges_true_in_members_subpage(
@@ -810,8 +805,7 @@ def set_all_privileges_true_in_members_subpage(
         r"user of (?P<browser_id>.*) sets following privileges for "
         r'"(?P<member_name>.*)" (?P<member_type>user|group) '
         r"in (?P<where>space|group|harvester|cluster) members subpage "
-        r"when all other (?P<are_granted>are|are not) granted:"
-        r"\n(?P<config>(.|\s)*)"
+        r"when all other (?P<are_granted>are|are not) granted:\n(?P<config>(.|\s)*)"
     )
 )
 def set_some_privileges_in_members_subpage_other_granted(
@@ -1024,8 +1018,7 @@ def assert_insufficient_permission_alert_in_members_subpage(
     parsers.re(
         r"user of (?P<browser_id>.*) sees privileges for "
         r'"(?P<member_name>.*)" (?P<member_type>user|group) '
-        r"in (?P<where>space|group|cluster|harvester|automation) "
-        r"members subpage"
+        r"in (?P<where>space|group|cluster|harvester|automation) members subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1107,8 +1100,7 @@ def check_list_length_on_members_subpage(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that {item_type} "{item_name}" has '
-        'following privilege configuration for {target} "{name}":'
-        "\n{config}"
+        'following privilege configuration for {target} "{name}":\n{config}'
     )
 )
 def assert_privilege_config_for_user(

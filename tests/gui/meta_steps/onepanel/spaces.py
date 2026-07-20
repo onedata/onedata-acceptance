@@ -62,8 +62,7 @@ from tests.utils.utils import repeat_failed
     parsers.re(
         r'user of (?P<user>.+?) supports "(?P<space_name>.*)" space '
         r'in "(?P<provider_name>.+?)" Oneprovider panel service '
-        r"with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r"with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def support_space_in_op_panel_using_gui(

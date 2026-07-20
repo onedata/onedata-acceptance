@@ -16,7 +16,11 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.edit_permissions import (
     MemberAclPermission,
 )
-from tests.gui.utils.generic import parse_elements_sequence, parse_seq
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    parse_seq,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -271,8 +275,7 @@ def assert_lack_of_subject(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that subject (?P<name>name|"
-        r"type) is editable in (?P<num>\w+) ACL record in edit "
-        r"permissions modal"
+        r"type) is editable in (?P<num>\w+) ACL record in edit permissions modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -299,8 +302,7 @@ def assert_acl_record_editable(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that subject (?P<name>name|"
-        r"type) is not editable in (?P<num>\w+) ACL record in edit "
-        r"permissions modal"
+        r"type) is not editable in (?P<num>\w+) ACL record in edit permissions modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -372,8 +374,7 @@ def assert_set_acl_privileges(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that all"
-        r" privileges? are set in (?P<num>\w+) ACL record in edit "
-        r"permissions panel"
+        r" privileges? are set in (?P<num>\w+) ACL record in edit permissions panel"
     )
 )
 def assert_set_all_acl_privileges(
@@ -386,8 +387,7 @@ def assert_set_all_acl_privileges(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record"
-        r" in edit permissions panel is set for (?P<sub_type>.*?) "
-        r"(?P<name>.*)"
+        r" in edit permissions panel is set for (?P<sub_type>.*?) (?P<name>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -438,7 +438,8 @@ def click_on_btn_in_acl_record(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>\w+) sees that (?P<subjects>.*) "
+        rf"user of (?P<browser_id>\w+) sees that "
+        rf"(?P<subjects>{ELEMENTS_SEQUENCE_PATTERN}) "
         r"(is|are) in subject list in ACL record"
     ),
     converters={
@@ -458,7 +459,8 @@ def assert_subject_in_list_in_acl_record(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>\w+) does not see (?P<subjects>.*) "
+        rf"user of (?P<browser_id>\w+) does not see "
+        rf"(?P<subjects>{ELEMENTS_SEQUENCE_PATTERN}) "
         r"in subject list in (?P<num>.*) ACL record"
     ),
     converters={
@@ -532,8 +534,7 @@ def assert_no_access_tag_on_file(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>\w+) does not see "no access" tag on '
-        r"(?P<item_name>.*)"
+        r'user of (?P<browser_id>\w+) does not see "no access" tag on (?P<item_name>.*)'
     )
 )
 def assert_not_no_access_tag_on_file(

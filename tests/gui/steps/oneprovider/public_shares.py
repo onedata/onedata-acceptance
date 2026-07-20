@@ -17,7 +17,11 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils import PublicShareView as public_share
-from tests.gui.utils.generic import parse_elements_sequence, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -39,9 +43,7 @@ def change_public_share_cwd_using_breadcrumbs(
 @wt(
     parsers.parse(
         "user of {browser_id} changes current working "
-        "directory to current share using breadcrumbs on "
-        "share's "
-        "public interface"
+        "directory to current share using breadcrumbs on share's public interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -79,8 +81,7 @@ def assert_public_share_named(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that current working directory "
-        "path visible in share's public interface file browser "
-        "is as follows: {cwd}"
+        "path visible in share's public interface file browser is as follows: {cwd}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -288,7 +289,7 @@ def copy_link_in_shares_interface(browser_id: str, selenium: SeleniumDrivers) ->
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that XML data contains "
-        r"(?P<data>.*?) on share's (public|private) interface"
+        rf"(?P<data>{ELEMENTS_SEQUENCE_PATTERN}) on share's (public|private) interface"
     ),
     converters={
         "data": parse_elements_sequence,

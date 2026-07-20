@@ -71,6 +71,7 @@ from tests.gui.utils.common.xml_addons import (
     resolve_xml_tag_for_et_search,
 )
 from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,
     parse_elements_sequence,
     transform,
@@ -272,8 +273,7 @@ def rename_share_from_single_view(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) copies command for "(?P<command>.*?)"'
-        r" operation in"
-        r" API section from (file|directory) details modal"
+        r" operation in API section from (file|directory) details modal"
     )
 )
 def copy_command_from_api_in_file_details_modal(
@@ -603,7 +603,8 @@ def rename_share_on_private_interface(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that (?P<metadata_type>DataCite|OpenAIRE)"
         r" XML data contains nodes like:"
-        r" (?P<data>.*?) on share's (private|public) interface"
+        rf" (?P<data>{ELEMENTS_SEQUENCE_PATTERN}) on share's "
+        r"(private|public) interface"
     ),
     converters={
         "data": parse_elements_sequence,

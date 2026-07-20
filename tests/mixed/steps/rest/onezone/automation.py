@@ -103,8 +103,7 @@ def upload_workflow_from_automation_examples_rest(
 @given(
     parsers.parse(
         'there is "{workflow_name}" workflow dump uploaded by '
-        'user {user} in inventory "{inventory}" in "{zone_name}" '
-        "Onezone service"
+        'user {user} in inventory "{inventory}" in "{zone_name}" Onezone service'
     )
 )
 def upload_workflow_from_upload_files_rest(
@@ -487,8 +486,7 @@ def force_continue_workflow_rest(
 @wt(
     parsers.parse(
         'using REST, {user} reruns execution of "{workflow_name}"'
-        " workflow from lane run {lane_run}, lane index {lane_id} "
-        "in {host}"
+        " workflow from lane run {lane_run}, lane index {lane_id} in {host}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -512,8 +510,7 @@ def rerun_workflow_rest(
 @wt(
     parsers.parse(
         'using REST, {user} retries execution of "{workflow_name}" '
-        "workflow from lane run {lane_run}, lane index {lane_id} "
-        "in {host}"
+        "workflow from lane run {lane_run}, lane index {lane_id} in {host}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -960,8 +957,7 @@ def compare_stores_id_after_retry_from_workflow_execution_details(
 @wt(
     parsers.parse(
         "using REST, {user} sees the resource not found error when "
-        'trying to get "{workflow_name}" workflow execution '
-        "details in {host}"
+        'trying to get "{workflow_name}" workflow execution details in {host}'
     )
 )
 def fail_to_get_workflow_execution_details(

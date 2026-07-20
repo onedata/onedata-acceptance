@@ -19,7 +19,11 @@ from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
-from tests.gui.utils.generic import parse_elements_sequence, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import wt
 from tests.utils.user_utils import Users
@@ -390,7 +394,7 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*?) sees (?P<providers>.*?) "
+        rf"user of (?P<browser_id>.*?) sees (?P<providers>{ELEMENTS_SEQUENCE_PATTERN}) "
         r'providers? on values list in "Add QoS condition" popup'
     ),
     converters={
@@ -412,7 +416,7 @@ def assert_list_of_providers_in_add_cond_popup(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*?) sees (?P<storages>.*?) "
+        rf"user of (?P<browser_id>.*?) sees (?P<storages>{ELEMENTS_SEQUENCE_PATTERN}) "
         r'storages? on values list in "Add QoS condition" popup'
     ),
     converters={
@@ -483,7 +487,7 @@ def assert_num_of_matching_storages(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that matching storages? "
-        r"(is|are) (?P<storages>.+)"
+        rf"(is|are) (?P<storages>{ELEMENTS_SEQUENCE_PATTERN})"
     ),
     converters={
         "storages": parse_elements_sequence,

@@ -17,7 +17,11 @@ import yaml
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
-from tests.gui.utils.generic import parse_elements_sequence, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -26,7 +30,8 @@ from tests.utils.utils import repeat_failed
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees non-empty "
-        r"(?P<fields>( |.)*) field(s)? of first (?P<number>.*) files and "
+        rf"(?P<fields>{ELEMENTS_SEQUENCE_PATTERN}) field(s)? of first "
+        r"(?P<number>.*) files and "
         r"directories in archive audit log"
     ),
     converters={
@@ -62,8 +67,7 @@ def assert_number_of_first_non_empty_column_content(
 @wt(
     parsers.parse(
         "user of {browser_id} sees entries ordered from shortest to "
-        'longest times in column "{column_name}" in archive '
-        "audit log"
+        'longest times in column "{column_name}" in archive audit log'
     )
 )
 @wt(

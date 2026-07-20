@@ -94,15 +94,13 @@ def paste_received_token_into_text_field(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) joins "
-        r"(?P<option>group|space|inventory|harvester) using "
-        r"received token"
+        r"(?P<option>group|space|inventory|harvester) using received token"
     )
 )
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) tries to join "
-        r"(?P<option>group|space|inventory|harvester) using "
-        r"received token"
+        r"(?P<option>group|space|inventory|harvester) using received token"
     )
 )
 def consume_received_token(

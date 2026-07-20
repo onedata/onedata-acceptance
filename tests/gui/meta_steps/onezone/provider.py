@@ -126,8 +126,7 @@ def revoke_support_of_provider_in_list(
 @wt(
     parsers.parse(
         "a file under the path from the user of {browser_id} "
-        'clipboard exists, with content "{content}" in provider\'s '
-        "storage mount point"
+        'clipboard exists, with content "{content}" in provider\'s storage mount point'
     )
 )
 def assert_file_with_content_in_provider_storage(

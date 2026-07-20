@@ -406,8 +406,7 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that number of elements in the "
-        'content of the "{store_name}" store details modal'
-        " is {number}"
+        'content of the "{store_name}" store details modal is {number}'
     )
 )
 def assert_number_of_elements_in_store_details(
@@ -510,8 +509,7 @@ def assert_file_id_in_store_details(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that element in the content of the"
-        ' "{store_name}" store details modal contains following '
-        "{option}:\n{content}"
+        ' "{store_name}" store details modal contains following {option}:\n{content}'
     )
 )
 @wt(
@@ -1024,8 +1022,7 @@ def assert_content_of_user_task_audit_log(
     parsers.parse(
         "user of {browser_id} sees expected exception for "
         '{file_name} in "{element}" content of audit log in task '
-        '"{task_name}" in {ordinal} parallel box '
-        'in lane "{lane_name}"'
+        '"{task_name}" in {ordinal} parallel box in lane "{lane_name}"'
     )
 )
 def assert_exception_in_element_content_in_task_audit_log(

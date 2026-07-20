@@ -66,8 +66,7 @@ def create_space_with_alias_in_oz(
     parsers.parse(
         "using {client}, {user} generates space support "
         'token for space with test alias "{alias}" in '
-        '"{host}" Onezone service and sends it to '
-        "{supporting_user}"
+        '"{host}" Onezone service and sends it to {supporting_user}'
     )
 )
 def request_space_support_using_rest_for_space_with_alias(

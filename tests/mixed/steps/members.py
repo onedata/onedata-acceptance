@@ -178,8 +178,7 @@ def assert_not_user_in_space_in_oz(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>.+?) adds "(?P<group_name>.*)" '
-        r'to space named "(?P<space_name>.*)" in "(?P<host>.+?)" '
-        r"Onezone service"
+        r'to space named "(?P<space_name>.*)" in "(?P<host>.+?)" Onezone service'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

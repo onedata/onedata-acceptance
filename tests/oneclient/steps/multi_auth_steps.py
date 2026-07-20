@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Mapping
 from typing import cast
 
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import EnvDesc, Hosts
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, then
@@ -18,9 +18,10 @@ from tests.utils.utils import assert_
 
 @given(
     parsers.re(
-        r"oneclients (?P<client_ids>.*)\n"
-        r"mounted on client_hosts (?P<client_hosts>.*) respectively,\n"
-        r"using (?P<tokens>.*) by (?P<user_names>.*)"
+        rf"oneclients (?P<client_ids>{ELEMENTS_SEQUENCE_PATTERN})\n"
+        rf"mounted on client_hosts (?P<client_hosts>{ELEMENTS_SEQUENCE_PATTERN}) "
+        rf"respectively,\nusing (?P<tokens>.*) by "
+        rf"(?P<user_names>{ELEMENTS_SEQUENCE_PATTERN})"
     ),
     converters={
         "client_hosts": parse_elements_sequence,

@@ -179,8 +179,7 @@ def assert_cannot_view_group_membership(
     parsers.re(
         r"user of (?P<browser_id>\w+) changes privileges for"
         r' (?P<member_type>user|group) "(?P<member_name>\w+)" in group'
-        r' "(?P<group_name>\w+)" members subpage into following:\n'
-        r"(?P<config>(.|\s)*)"
+        r' "(?P<group_name>\w+)" members subpage into following:\n(?P<config>(.|\s)*)'
     )
 )
 def choose_member_and_set_privileges_on_groups_subpage(
@@ -206,8 +205,7 @@ def choose_member_and_set_privileges_on_groups_subpage(
         r"user of (?P<browser_id>\w+) sees following "
         r"(?P<option>effective |)privileges for "
         r'(?P<member_type>user|group) "(?P<member_name>[^"]+)" in group '
-        r'"(?P<group_name>[^"]+)" members subpage:\n'
-        r"(?P<config>(.|\s)*)"
+        r'"(?P<group_name>[^"]+)" members subpage:\n(?P<config>(.|\s)*)'
     )
 )
 def choose_member_and_assert_privileges_on_groups_subpage(

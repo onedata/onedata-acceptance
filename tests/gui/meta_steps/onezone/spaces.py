@@ -423,8 +423,7 @@ def leave_user_spaces_in_onezone_using_rest(
 @wt(
     parsers.parse(
         'user of {browser_id} adds "{harvester_name}" harvester to '
-        '"{space_name}" space using available harvesters '
-        "dropdown"
+        '"{space_name}" space using available harvesters dropdown'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -461,8 +460,7 @@ def add_harvester_to_existing_space(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*) adds "(?P<group_name>.*)" group to '
-        r'"(?P<where_name>.*)" (?P<where>group|space) using available '
-        r"groups dropdown"
+        r'"(?P<where_name>.*)" (?P<where>group|space) using available groups dropdown'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

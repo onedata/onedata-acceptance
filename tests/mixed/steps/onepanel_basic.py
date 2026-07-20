@@ -104,8 +104,7 @@ def _as_credentials(credentials: User) -> CredentialsLike:
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) changes his "
-        r'password to "(?P<new_password>.+?)" in "(?P<host>.+?)" '
-        r"Onezone panel service"
+        r'password to "(?P<new_password>.+?)" in "(?P<host>.+?)" Onezone panel service'
     )
 )
 def change_user_password_in_oz_panel(
@@ -371,8 +370,7 @@ def assert_there_is_no_provider_in_oz(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) sees that "
         r'provider "(?P<provider_name>.+?)" does not support '
-        r'space named "(?P<space_name>.+?)" in "(?P<host>.+?)" '
-        r"Onezone service"
+        r'space named "(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'
     )
 )
 def assert_provider_does_not_support_space_in_oz(
@@ -509,16 +507,14 @@ def request_space_support(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) supports "
         r'"(?P<space_name>.*)" space in "(?P<host>.+?)" Oneprovider '
-        r"panel service with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r"panel service with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 @wt(
     parsers.re(
         r"using (?P<client>REST), (?P<user>.+?) supports space with test alias "
         r'"(?P<space_name>.*)" in "(?P<host>.+?)" Oneprovider '
-        r"panel service with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r"panel service with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def support_space_in_op_panel(
@@ -608,8 +604,7 @@ def w_assert_space_is_supported_by_provider_in_oz(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) revokes "
         r'"(?P<provider_name>.+?)" provider space support for space '
-        r'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider '
-        r"panel service"
+        r'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider panel service'
     )
 )
 def revoke_space_support_in_op_panel(
@@ -719,8 +714,7 @@ def cp_files_to_path_in_space_root_dir(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) sees that "
         r"(?P<sync_type>import) strategy configuration for "
-        r'"(?P<space>.+?)" in "(?P<host>.+?)" is as follow:\n'
-        r"(?P<config>(.|\s)*)"
+        r'"(?P<space>.+?)" in "(?P<host>.+?)" is as follow:\n(?P<config>(.|\s)*)'
     )
 )
 def assert_proper_space_configuration_in_op_panel(

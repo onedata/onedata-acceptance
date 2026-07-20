@@ -137,8 +137,7 @@ def wt_create_n_archives_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) (?P<option>does not "
         r'see|sees) archive with description: "(?P<description>.*)" for'
-        r' item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        r"in (?P<host>.*)"
+        r' item "(?P<item_name>.*)" in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -188,8 +187,7 @@ def assert_archive_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) (?P<option>succeeds|fails) "
         r'to remove archive with description: "(?P<description>.*)" '
-        r'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        r"in (?P<host>.*)"
+        r'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -311,8 +309,7 @@ def assert_number_of_archive_in_op(
         r"using (?P<client>.*), (?P<user>.+?) sees that archive with "
         r'description "(?P<description>.*)" has base archive with '
         r'description "(?P<base_description>.*)" for item '
-        r'"(?P<item_name>.*)" in space "(?P<space_name>.*)" in'
-        r" (?P<host>.*)"
+        r'"(?P<item_name>.*)" in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

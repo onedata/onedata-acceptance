@@ -128,8 +128,7 @@ def create_spaces_in_oz(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) leaves spaces? "
         rf'named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)"'
-        r" Onezone "
-        r"service"
+        r" Onezone service"
     ),
     converters={
         "space_list": parse_elements_sequence,
@@ -204,8 +203,7 @@ def rename_spaces_in_oz(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) removes spaces? "
         rf'named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.+?)"'
-        r" Onezone "
-        r"service"
+        r" Onezone service"
     ),
     converters={
         "space_list": parse_elements_sequence,
@@ -398,8 +396,7 @@ def invite_other_users_to_space(
 @wt(
     parsers.re(
         rf"using (?P<client>.*), (?P<user_list>{ELEMENTS_SEQUENCE_PATTERN}) joins to "
-        r'space using received (?P<item_name>.+?) in "(?P<host>.+?)" '
-        r"Onezone service"
+        r'space using received (?P<item_name>.+?) in "(?P<host>.+?)" Onezone service'
     ),
     converters={
         "user_list": parse_elements_sequence,
@@ -432,8 +429,7 @@ def join_space_in_oz(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) sees that "
         rf"spaces? named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) (has|have)"
-        r" appeared in "
-        r'"(?P<host>.+?)" Onezone service'
+        r' appeared in "(?P<host>.+?)" Onezone service'
     ),
     converters={
         "space_list": parse_elements_sequence,
@@ -465,8 +461,7 @@ def assert_there_are_spaces_in_oz(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) sees that "
         rf"spaces? named (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) (has|have)"
-        r" disappeared "
-        r'from "(?P<host>.+?)" Onezone service'
+        r' disappeared from "(?P<host>.+?)" Onezone service'
     ),
     converters={
         "space_list": parse_elements_sequence,
@@ -621,8 +616,7 @@ def assert_user_is_member_of_space(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) sees provider "
         r'"(?P<provider_name>.+?)" with hostname matches that of '
-        r'"(?P<provider>.+?)" provider in "(?P<host>.+?)" Onezone '
-        r"service"
+        r'"(?P<provider>.+?)" provider in "(?P<host>.+?)" Onezone service'
     )
 )
 def assert_provider_has_given_name_and_known_hostname_in_oz(
