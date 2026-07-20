@@ -299,8 +299,11 @@ def search_for_members(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
+
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ManageAccountPage)
+    oz_page.expand_panel_if_needed()
+
     oz_page.profile.profile.click()
     button = Popups(driver).user_account_menu.options["Logout"].web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
@@ -315,6 +318,7 @@ def logout_from_onezone_emergency_panel(
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ManageAccountPage)
+    oz_page.expand_panel_if_needed()
     button = oz_page.profile.logout.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
     oz_page.set_current_page(ClustersPage)
@@ -332,6 +336,7 @@ def change_username(
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ManageAccountPage)
+    oz_page.expand_panel_if_needed()
     profile = oz_page.profile
     profile.profile.click()
     Popups(driver).user_account_menu.options["Manage account"].click()
@@ -354,6 +359,7 @@ def change_password(
     cur_passwd = users[username].password
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ManageAccountPage)
+    oz_page.expand_panel_if_needed()
     profile = oz_page.profile
     profile.profile.click()
     Popups(driver).user_account_menu.options["Manage account"].click()

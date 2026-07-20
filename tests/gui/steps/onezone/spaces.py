@@ -223,7 +223,7 @@ def assert_main_tab_disabled(
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
     oz_page.expand_panel_if_needed()
-    assert OZLoggedIn(driver).is_panel_disabled(
+    assert oz_page.is_panel_disabled(
         cast(PageName, tab.lower())
     ), f"tab {tab} should be disabled but is not"
 
