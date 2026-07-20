@@ -26,8 +26,9 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).open_panel(DataPage)
-    button = OZLoggedIn(driver).profile.profile.web_elem
+    oz_page = OZLoggedIn(driver)
+    oz_page.expand_panel_if_needed()
+    button = oz_page.profile.profile.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
 
 

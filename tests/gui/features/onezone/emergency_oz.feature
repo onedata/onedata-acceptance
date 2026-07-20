@@ -97,7 +97,7 @@ Feature: Basic management of emergency Onezone panel
     And user of browser clicks open in onezone in Onepanel login page
     And user of browser logs as admin to Onezone service
     And user of browser expands account settings dropdown in the sidebar
-    And user of browser goes to Terms of use page
+    And user of browser goes to "Terms of use" page
     Then user of browser sees "test terms of use" on terms of use page
     And user of browser clicks "Back to main page" button on terms of use page
     And user of browser removes "test terms of use" text from terms of use in GUI settings page of "onezone"

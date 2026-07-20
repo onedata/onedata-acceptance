@@ -21,6 +21,8 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
+from tests.gui.utils.onezone import OZLoggedIn
+from tests.gui.utils.onezone.clusters_page import ClustersPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -79,6 +81,10 @@ def _login_to_service(
         else:
             _login_using_basic_auth(LoginPage(driver), username, password)
         assert_main_page_loaded(selenium, browser_id)
+
+        oz_page = OZLoggedIn(driver)
+        if "emergency" in service:
+            oz_page.set_current_page(ClustersPage)
 
 
 @given(

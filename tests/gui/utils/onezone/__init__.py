@@ -75,6 +75,9 @@ class OZLoggedIn:
     def set_current_page(self, page_cls: type[GenericPage]) -> None:
         self._current_page_by_session_id[self._session_id] = page_cls
 
+    def get_current_page(self) -> type[GenericPage]:
+        return self._current_page_by_session_id[self._session_id]
+
     def __str__(self) -> str:
         return "Onezone page"
 
