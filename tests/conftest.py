@@ -516,7 +516,7 @@ def chrome_driver(capabilities: JsonObject) -> WebDriverFactory:
 # The reason of using this class is gathering all logs.
 # Without it each call of get_log() returns but also removes logs,
 # so calling it before making report causes loss of logs.
-class ChromeWithAllLogs(Chrome, WebDriver):
+class ChromeWithAllLogs(Chrome):
     def __init__(self, *args: object, **kwargs: object) -> None:
         self.all_logs: defaultdict[str, list[LogEntry]] = defaultdict(list)
         super().__init__(*args, **kwargs)

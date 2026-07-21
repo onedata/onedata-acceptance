@@ -18,7 +18,6 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
 from tests.gui.utils.generic import transform
-from tests.gui.utils.onezone.discovery_page import DiscoveryPage
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow, TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -167,7 +166,7 @@ def click_on_confirm_button_on_tokens_page(
 ) -> None:
     oz_page = OZLoggedIn(selenium[browser_id])
     oz_page.tokens.confirm_button()
-    oz_page.set_current_page(DiscoveryPage)
+    oz_page.update_current_page()
 
 
 @wt(

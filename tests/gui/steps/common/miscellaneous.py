@@ -134,7 +134,7 @@ def click_option_in_popup_text_menu(
     Popups(driver).menu_popup_with_text.menu[option]()
 
 
-@wt(parsers.re(r"pass"))
+@wt(parsers.re("pass"))
 def pass_test() -> None:
     pass
 
