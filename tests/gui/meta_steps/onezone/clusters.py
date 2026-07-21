@@ -7,7 +7,9 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from functools import partial
 
+import pytest
 from selenium.common.exceptions import TimeoutException
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -37,9 +39,11 @@ from tests.gui.steps.onezone.members import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.rest.provider import GuiMessageId, modify_gui_setting_message
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 
@@ -242,9 +246,11 @@ def set_gui_settings(
     browser_id: str,
     record: str,
     hosts: Hosts,
-    kind_of_agreement: str,
+    kind_of_agreement: GuiMessageId,
     text: str,
     operation: str,
+    onepanel_credentials: User,
+    request: pytest.FixtureRequest,
 ) -> None:
     menu = "Clusters"
     option = "GUI settings"
@@ -261,8 +267,21 @@ def set_gui_settings(
             selenium, browser_id, kind_of_agreement
         )
     click_button_in_gui_settings_page(selenium, browser_id, button)
+
     # wait for save button to be clicked
     time.sleep(0.1)
+
+    if operation == "sets":
+        request.addfinalizer(
+            partial(
+                modify_gui_setting_message,
+                hosts,
+                host=record,
+                message_id=kind_of_agreement,
+                onepanel_credentials=onepanel_credentials,
+                new_message="",
+            )
+        )
 
 
 @wt(
