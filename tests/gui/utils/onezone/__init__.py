@@ -75,7 +75,7 @@ class OZLoggedIn:
     def set_current_page(self, page_cls: type[GenericPage]) -> None:
         self._current_page_by_session_id[self._session_id] = page_cls
 
-    def set_default_current_page(
+    def set_current_page_during_login_logout(
         self, *, is_login: bool, emergency_interface: bool
     ) -> None:
         # Emergency interface sessions always start with `ClustersPage` as the

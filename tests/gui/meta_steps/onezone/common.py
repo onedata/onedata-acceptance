@@ -305,7 +305,7 @@ def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None
     oz_page.profile.profile.click()
     button = Popups(driver).user_account_menu.options["Logout"].web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
-    oz_page.set_default_current_page(
+    oz_page.set_current_page_during_login_logout(
         is_login=False,
         emergency_interface=False,
     )
@@ -322,7 +322,7 @@ def logout_from_onezone_emergency_panel(
     oz_page.expand_panel_if_needed()
     button = oz_page.profile.logout.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
-    oz_page.set_default_current_page(
+    oz_page.set_current_page_during_login_logout(
         is_login=False,
         emergency_interface=True,
     )

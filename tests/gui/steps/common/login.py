@@ -81,7 +81,7 @@ def _login_to_service(
             _login_using_basic_auth(LoginPage(driver), username, password)
         assert_main_page_loaded(selenium, browser_id)
 
-        OZLoggedIn(driver).set_default_current_page(
+        OZLoggedIn(driver).set_current_page_during_login_logout(
             is_login=True,
             emergency_interface="emergency" in service,
         )
