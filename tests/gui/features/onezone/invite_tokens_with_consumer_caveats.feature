@@ -50,8 +50,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
     And user of browser2 clicks on "Consume token" button in tokens sidebar
     And user of browser2 pastes received token into token text field
     And user of browser2 chooses "group1" group from dropdown on tokens page
-    And user of browser2 clicks on Confirm button on consume token page
-    Then user of browser2 sees an success notify with text matching to: .*joined.*
+    Then user of browser2 succeeds to consume token using Confirm button
     And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
     And user of browser2 sees that space "space1" has following privilege configuration for group "group1":
           privileges:

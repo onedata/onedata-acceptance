@@ -16,9 +16,8 @@ Feature: Inviting member to cluster
     And user of browser1 clicks on "Tokens" in the main menu
     And user of browser1 clicks on "Consume token" button in tokens sidebar
     And user of browser1 pastes copied token into token text field
-    And user of browser1 clicks on Confirm button on consume token page
+    And user of browser1 succeeds to consume token using Confirm button
     And user of browser2 refreshes site
     And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 sees "oneprovider-1" in clusters menu
     Then user of browser2 sees that number of direct users is equal 2 on cluster members page
-

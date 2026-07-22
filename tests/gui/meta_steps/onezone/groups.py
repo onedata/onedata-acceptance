@@ -422,6 +422,8 @@ def fail_to_add_subgroups_using_op_gui(
         error = "Consuming token failed"
         modal = "error"
 
-        add_element_with_copied_token(selenium, user, child, clipboard, displays)
+        add_element_with_copied_token(
+            selenium, user, child, clipboard, displays, result="fails"
+        )
         assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal)

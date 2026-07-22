@@ -10,13 +10,9 @@ import re
 import time
 from typing import Optional, cast
 
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.expected_conditions import (
-    invisibility_of_element_located,
-    visibility_of_element_located,
-)
+from selenium.webdriver.support.expected_conditions import invisibility_of_element_located
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -28,6 +24,7 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
+    is_element_visible_on_page,
     parse_elements_sequence,
     transform,
 )
@@ -223,25 +220,18 @@ def _check_error_modal_appeared_or_registration_finished(
     error_modal_css_selector = ".alert-global.modal.in .modal-dialog"
     sidebar_css_selector = ".one-sidebar.sidebar-clusters"
 
-    if _is_element_visible_on_page(
+    if is_element_visible_on_page(
         driver, error_modal_css_selector
     ):  # error modal appeared
         wait_till_error_modal_stop_appearing(driver)
         return False
 
-    if _is_element_visible_on_page(
+    if is_element_visible_on_page(
         driver, sidebar_css_selector
     ):  # sidebar is visible, it means we closed deployment page
         return True
 
     return None  # neither error modal appeared nor the deployment page closed
-
-
-def _is_element_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
-    try:
-        return visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
-    except NoSuchElementException:
-        return False
 
 
 def wait_for_provider_registration(

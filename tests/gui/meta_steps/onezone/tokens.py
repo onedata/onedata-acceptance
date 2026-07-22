@@ -10,7 +10,7 @@ import time
 from typing import Optional
 
 import yaml
-from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -18,12 +18,11 @@ from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
 from tests.gui.steps.common.common import (
-    wait_for_element_to_appear,
     wait_till_alert_info_popup_disappear,
+    wait_till_error_modal_stop_appearing,
     wait_till_popup_or_modal_disappear,
 )
 from tests.gui.steps.common.notifies import notify_visible_with_text
-from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
@@ -65,7 +64,7 @@ from tests.gui.steps.onezone.tokens import (
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import AlertPopup
+from tests.gui.utils.generic import AlertPopup, is_element_visible_on_page
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -106,22 +105,59 @@ def _click_confirm_btn(driver: WebDriver) -> None:
 
 
 @wt(
-    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
+    parsers.re(
+        r'user of (?P<browser_id>.*?) (?P<result>succeeds|fails) to consume token using Confirm button and sees following message: "(?P<message>.*?)"'
+        r'on a (modal|popup)'
+    )
 )
-def click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
-    selenium: SeleniumDrivers, browser_id: str
+def consume_token_using_confirm_button(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    result: str,
+    message: str,
+    close_error_modal: bool = True,
 ) -> None:
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
     _click_confirm_btn(driver)
 
-    error_modal_css_sel = ".alert-global.modal.in .modal-dialog"
-    try:
-        wait_for_element_to_appear(driver, error_modal_css_sel, timeout=WAIT_FRONTEND)
-    except TimeoutException:
-        # if the error modal did not appear, it is needed to wait for the page refresh
-        wait_till_main_content_loaded(driver)
-        oz_page.update_current_page()
+    max_time = WAIT_FRONTEND
+    start_time = time.time()
+    while time.time() - start_time < max_time:
+        is_success_wanted = result == "succeeds"
+        checked_result = _check_error_modal_appeared_or_token_consumed(
+            driver, close_error_modal, message
+        )
+        if checked_result is not None:
+            if checked_result:
+                OZLoggedIn(driver).update_current_page()
+            assert checked_result == is_success_wanted, (
+                f"Token consumption {'succeeded' if checked_result else 'failed'}, "
+                f"but was expected to {'succeed' if is_success_wanted else 'fail'}"
+            )
+            return
+        time.sleep(0.1)
+    raise AssertionError("Consuming token did not have any effect")
+
+
+def _check_error_modal_appeared_or_token_consumed(
+    selenium: SeleniumDrivers, browser_id: str, close_error_modal: bool, message: str
+) -> Optional[bool]:
+    driver = selenium[browser_id]
+    error_modal_css_selector = ".alert-global.modal.in .modal-dialog"
+
+    if is_element_visible_on_page(
+        driver, error_modal_css_selector
+    ):  # error modal appeared
+        if close_error_modal:
+            wait_till_error_modal_stop_appearing(driver)
+        return False
+
+    if notify_visible_with_text(
+        selenium, browser_id, "success", message
+    ):  # notify is visible, it means we consumed the token
+        return True
+
+    return None  # neither error modal appeared nor the deployment page closed
 
 
 @wt(
@@ -130,25 +166,37 @@ def click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
         r"(?P<option>group|space|inventory|harvester) using received token"
     )
 )
+def consume_received_token(
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
+) -> None:
+    _prepare_received_token_for_consumption(selenium, browser_id, tmp_memory)
+    consume_token_using_confirm_button(selenium, browser_id, "succeeds", ".*joined.*")
+
+
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) tries to join "
         r"(?P<option>group|space|inventory|harvester) using received token"
     )
 )
-def consume_received_token(
+def try_to_consume_received_token(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
-    # step doesn`t check whether token consumption was successful
+    _prepare_received_token_for_consumption(selenium, browser_id, tmp_memory)
+    consume_token_using_confirm_button(
+        selenium, browser_id, "fails", close_error_modal=False
+    )
+
+
+def _prepare_received_token_for_consumption(
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
+) -> None:
     option = "Tokens"
     button = "Consume token"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_received_token_into_text_field(selenium, browser_id, tmp_memory)
-    click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
-        selenium, browser_id
-    )
 
 
 @wt(
@@ -202,30 +250,75 @@ def consume_token_from_copied_token(
     clipboard: Clipboard,
     displays: dict[str, str],
 ) -> None:
+    _prepare_copied_token_for_consumption(
+        selenium, browser_id, clipboard, displays
+    )
+    consume_token_using_confirm_button(selenium, browser_id, "succeeds")
+
+
+@wt(parsers.parse("user of {browser_id} fails to join group using copied token"))
+def fail_to_consume_copied_token(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
+    _prepare_copied_token_for_consumption(
+        selenium, browser_id, clipboard, displays
+    )
+    consume_token_using_confirm_button(
+        selenium, browser_id, "fails", close_error_modal=False
+    )
+
+
+def _prepare_copied_token_for_consumption(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
     option = "Tokens"
     button = "Consume token"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays)
-    click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
-        selenium, browser_id
-    )
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} adds group "{elem_name}" as subgroup using copied token'
+    parsers.re(
+        r'user of (?P<browser_id>.*) (?P<result>adds|fails to add) group '
+        r'"(?P<elem_name>.*)" as subgroup using copied token'
     )
 )
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) adds "
+        r"user of (?P<browser_id>.*) (?P<result>adds|fails to add) "
         r'(space|harvester|group) "(?P<elem_name>.*)" '
         r"to (harvester|space|inventory) using copied token"
     )
 )
 def add_element_with_copied_token(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    elem_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    result: str = "adds",
+) -> None:
+    _prepare_element_token_for_consumption(
+        selenium, browser_id, elem_name, clipboard, displays
+    )
+    expected_result = "succeeds" if result == "adds" else "fails"
+    consume_token_using_confirm_button(
+        selenium,
+        browser_id,
+        expected_result,
+        close_error_modal=expected_result == "succeeds",
+    )
+
+
+def _prepare_element_token_for_consumption(
     selenium: SeleniumDrivers,
     browser_id: str,
     elem_name: str,
@@ -239,9 +332,6 @@ def add_element_with_copied_token(
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays)
     select_member_from_dropdown(selenium, browser_id, elem_name)
-    click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
-        selenium, browser_id
-    )
 
 
 @wt(
@@ -257,8 +347,10 @@ def result_to_consume_token_for_elem(
     clipboard: Clipboard,
     displays: dict[str, str],
 ) -> None:
-    add_element_with_copied_token(selenium, browser_id, elem_name, clipboard, displays)
-    _result_to_consume_token(selenium, browser_id, result)
+    _prepare_element_token_for_consumption(
+        selenium, browser_id, elem_name, clipboard, displays
+    )
+    consume_token_using_confirm_button(selenium, browser_id, result)
 
 
 @wt(
@@ -295,25 +387,10 @@ def result_to_consume_token(
     clipboard: Clipboard,
     displays: dict[str, str],
 ) -> None:
-    consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
-    _result_to_consume_token(selenium, browser_id, result)
-
-
-def _result_to_consume_token(
-    selenium: SeleniumDrivers, browser_id: str, result: str
-) -> None:
-    if result == "succeeds":
-        notify_type = "success"
-        text_regexp = ".*joined.*"
-
-        notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
-    else:
-        text = "Consuming token failed"
-        button = "Close"
-        modal = "Error"
-
-        assert_error_modal_with_text_appeared(selenium, browser_id, text)
-        click_modal_button(selenium, browser_id, button, modal)
+    _prepare_copied_token_for_consumption(
+        selenium, browser_id, clipboard, displays
+    )
+    consume_token_using_confirm_button(selenium, browser_id, result)
 
 
 def _create_token_of_type(

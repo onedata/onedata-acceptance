@@ -255,7 +255,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser1 copies invitation token from modal
     And user of browser1 closes "Invite using token" modal
 
-    And user of browser2 adds group "group7" as subgroup using copied token
+    And user of browser2 fails to add group "group7" as subgroup using copied token
     Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
 
