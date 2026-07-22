@@ -17,6 +17,7 @@ from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.clusters_page import ClustersPage, MenuItem
+from tests.gui.utils.onezone.data_page import DataPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -104,8 +105,8 @@ def assert_subpage_in_cluster_page(
     driver = selenium[browser_id]
     page_name = OZLoggedIn(driver).clusters.page_name
     record_name = hosts[record]["name"]
-    err_msg = f"user does not see {record} page in Clusters page"
-    assert page_name == record_name, err_msg
+    error_message = f"user does not see {record} page in Clusters page"
+    assert page_name == record_name, error_message
 
 
 @wt(parsers.parse('user of {browser_id} clicks {option} of "{record}" in the sidebar'))
@@ -322,7 +323,8 @@ def click_on_link_in_cookies_popup(
 ) -> None:
     driver = selenium[browser_id]
     kind_of_agreement = transform(kind_of_agreement) + "_link"
-    getattr(Popups(driver).cookies, kind_of_agreement)()
+    OZLoggedIn(driver).set_current_page(ClustersPage)
+    getattr(Popups(driver).cookies, kind_of_agreement).click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{button}" button in cookies popup'))
@@ -339,17 +341,17 @@ def click_button_in_cookies_popup(
 def assert_message_on_agreement_page(
     selenium: SeleniumDrivers, browser_id: str, text: str, kind_of_agreement: str
 ) -> None:
-    err_msg = f"Message on {kind_of_agreement} page is not as expected"
+    error_message = f"Message on {kind_of_agreement} page is not as expected"
     if kind_of_agreement == "privacy policy":
-        assert PrivacyPolicy(selenium[browser_id]).message.text == text, err_msg
+        assert PrivacyPolicy(selenium[browser_id]).message.text == text, error_message
     else:
-        assert TermsOfUse(selenium[browser_id]).message.text == text, err_msg
+        assert TermsOfUse(selenium[browser_id]).message.text == text, error_message
 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button '
-        "on (?P<kind_of_agreement>privacy policy|terms of use) page"
+        r'user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button '
+        r"on (?P<kind_of_agreement>privacy policy|terms of use) page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -359,19 +361,27 @@ def click_button_on_agreement_page(
     button: str,
     kind_of_agreement: str,
 ) -> None:
+    driver = selenium[browser_id]
     if kind_of_agreement == "privacy policy":
-        getattr(PrivacyPolicy(selenium[browser_id]), transform(button))()
+        getattr(PrivacyPolicy(driver), transform(button))()
     else:
-        getattr(TermsOfUse(selenium[browser_id]), transform(button))()
+        getattr(TermsOfUse(driver), transform(button))()
+    OZLoggedIn(driver).set_current_page(DataPage)
 
 
-@wt(parsers.parse("user of {browser_id} goes to {kind_of_agreement} page"))
+@wt(parsers.parse('user of {browser_id} goes to "{kind_of_agreement}" page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_agreement_page(
     selenium: SeleniumDrivers, browser_id: str, kind_of_agreement: str
 ) -> None:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
+
+    # TODO: VFS-13725 user cannot go to terms of use while on Clusters Sidebar Panel page
+    if oz_page.get_current_page() == ClustersPage:
+        oz_page.open_panel(DataPage)
+
     oz_page.expand_panel_if_needed()
-    oz_page.profile.profile()
+    oz_page.profile.profile.click()
     Popups(driver).user_account_menu.options[kind_of_agreement].click()
+    oz_page.set_current_page(ClustersPage)

@@ -22,8 +22,7 @@ DATASET_BROWSER = "dataset browser"
 @wt(
     parsers.parse(
         "user of {browser_id} sees that {kind} write protection "
-        "toggle is checked in Ancestor Datasets row in Datasets "
-        "modal"
+        "toggle is checked in Ancestor Datasets row in Datasets modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -64,8 +63,8 @@ def assert_toggle_checked_on_item_in_ancestor_list(
     driver = selenium[browser_id]
     protection_kind = f"{kind}_protection_toggle"
     item = Modals(driver).datasets.ancestors[name]
-    err_msg = f"{kind} write protection toggle is unchecked on {name}"
-    assert getattr(item, protection_kind).is_checked(), err_msg
+    error_message = f"{kind} write protection toggle is unchecked on {name}"
+    assert getattr(item, protection_kind).is_checked(), error_message
 
 
 @wt(
@@ -81,8 +80,8 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(
     driver = selenium[browser_id]
     protection_kind = f"{kind}_protection_toggle"
     item = Modals(driver).datasets.ancestors[name]
-    err_msg = f"{kind} write protection toggle is checked on {name}"
-    assert getattr(item, protection_kind).is_unchecked(), err_msg
+    error_message = f"{kind} write protection toggle is checked on {name}"
+    assert getattr(item, protection_kind).is_unchecked(), error_message
 
 
 @wt(
@@ -164,8 +163,10 @@ def assert_path_to_root_file(
 ) -> None:
     browser = tmp_memory[browser_id][transform(DATASET_BROWSER)]
     path_to_root = browser.data[name].path_to_root_file
-    err_msg = f'Path to root: "{path_to_root} does not match expected path: "{path}"'
-    assert path == path_to_root, err_msg
+    error_message = (
+        f'Path to root: "{path_to_root} does not match expected path: "{path}"'
+    )
+    assert path == path_to_root, error_message
 
 
 @wt(
@@ -187,11 +188,11 @@ def assert_one_of_two_dataset_has_deleted_root(
                     number_of_deleted_icon += 1
             except RuntimeError:
                 pass
-    err_msg = (
+    error_message = (
         "Number of deleted icon in detached dataset list "
         f"is {number_of_deleted_icon}, but should be 1"
     )
-    assert number_of_deleted_icon == 1, err_msg
+    assert number_of_deleted_icon == 1, error_message
 
 
 @wt(

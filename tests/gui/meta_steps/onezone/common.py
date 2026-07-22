@@ -20,13 +20,16 @@ from tests.gui.steps.common.login import (
     wt_enter_text_to_field_in_login_form,
     wt_press_sign_in_btn_on_login_page,
 )
-from tests.gui.steps.common.url import g_open_onedata_service_page
+from tests.gui.steps.common.url import (
+    HOSTS_SEQUENCE_PATTERN,
+    g_open_onedata_service_page,
+    parse_hosts_sequence,
+)
 from tests.gui.steps.oneprovider.data_tab import (
     assert_browser_in_tab_in_op,
     choose_provider_in_selected_page,
     click_choose_other_oneprovider_on_file_browser,
 )
-from tests.gui.steps.onezone.providers import parse_seq
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
@@ -35,11 +38,11 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.onezone.manage_account_page import ManageAccountPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow
 from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
-from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
@@ -48,12 +51,17 @@ from tests.utils.utils import repeat_failed
 @given(
     parsers.re(
         rf"opened (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) with "
-        r"(?P<user_list>.*) "
-        "signed in to (?P<host_list>.*) service"
-    )
+        rf"(?P<user_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        rf"signed in to (?P<host_list>{HOSTS_SEQUENCE_PATTERN}) service"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "user_list": parse_elements_sequence,
+        "host_list": parse_hosts_sequence,
+    },
 )
 def login_using_gui(
-    host_list: str,
+    host_list: list[str],
     selenium: SeleniumDrivers,
     driver: WebDriver,
     tmpdir: LocalPath,
@@ -65,8 +73,8 @@ def login_using_gui(
     screen_height: int,
     hosts: Hosts,
     users: Users,
-    browser_id_list: str,
-    user_list: str,
+    browser_id_list: list[str],
+    user_list: list[str],
     test_type: str,
     capabilities: JsonObject,
 ) -> None:
@@ -86,7 +94,7 @@ def login_using_gui(
     g_open_onedata_service_page(selenium, user_list, host_list, hosts)
     browsers_to_users = selenium["request"].getfixturevalue("browsers_to_users")
 
-    for browser, user in zip(parse_seq(browser_id_list), parse_seq(user_list)):
+    for browser, user in zip(browser_id_list, user_list):
         browsers_to_users[browser] = user
         if test_type == "gui":
             selenium[browser] = selenium[user]
@@ -120,26 +128,36 @@ def click_visit_provider(driver: WebDriver) -> None:
 
 
 def g_wt_visit_op(
-    selenium: SeleniumDrivers, browser_id_list: str, providers_list: str, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id_list: list[str],
+    providers_list: list[str],
+    hosts: Hosts,
 ) -> None:
-    parsed_providers = list_parser(providers_list)
     for browser_id, provider in zip_longest(
-        list_parser(browser_id_list),
-        parsed_providers,
-        fillvalue=parsed_providers[-1],
+        browser_id_list,
+        providers_list,
+        fillvalue=providers_list[-1],
     ):
         visit_op(selenium, browser_id, hosts[provider]["name"])
 
 
 @given(
     parsers.re(
-        "opened (?P<providers_list>.*) Oneprovider view in web GUI "
-        rf"by (users? of )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
-    )
+        rf"opened (?P<providers_list>{ELEMENTS_SEQUENCE_PATTERN}) Oneprovider view in"
+        r" web GUI by (users? of"
+        rf" )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "providers_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_visit_op(
-    selenium: SeleniumDrivers, browser_id_list: str, providers_list: str, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id_list: list[str],
+    providers_list: list[str],
+    hosts: Hosts,
 ) -> None:
     g_wt_visit_op(selenium, browser_id_list, providers_list, hosts)
 
@@ -147,21 +165,28 @@ def g_visit_op(
 @wt(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) opens? "
-        "(?P<providers_list>.*) Oneprovider view in web GUI"
-    )
+        rf"(?P<providers_list>{ELEMENTS_SEQUENCE_PATTERN}) Oneprovider view in web GUI"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "providers_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_visit_op(
-    selenium: SeleniumDrivers, browser_id_list: str, providers_list: str, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id_list: list[str],
+    providers_list: list[str],
+    hosts: Hosts,
 ) -> None:
     g_wt_visit_op(selenium, browser_id_list, providers_list, hosts)
 
 
 def visit_file_browser(
     selenium: SeleniumDrivers,
-    providers_list: str,
-    spaces_list: str,
-    browser_id_list: str,
+    providers_list: list[str],
+    spaces_list: list[str],
+    browser_id_list: list[str],
     tmp_memory: TmpMemory,
     hosts: Hosts,
 ) -> None:
@@ -169,9 +194,9 @@ def visit_file_browser(
     option_in_submenu = "Files"
 
     for browser_id, provider, space in zip_longest(
-        parse_seq(browser_id_list),
-        parse_seq(providers_list),
-        parse_seq(spaces_list),
+        browser_id_list,
+        providers_list,
+        spaces_list,
     ):
         click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, space)
         click_on_option_of_space_on_left_sidebar_menu(
@@ -184,16 +209,22 @@ def visit_file_browser(
 
 @given(
     parsers.re(
-        "opened (?P<providers_list>.*) Oneprovider file browser "
-        "for (?P<spaces_list>.*) space in web GUI "
+        rf"opened (?P<providers_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"Oneprovider file browser "
+        rf"for (?P<spaces_list>{ELEMENTS_SEQUENCE_PATTERN}) space in web GUI "
         rf"by (users? of )?(?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN})"
-    )
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "providers_list": parse_elements_sequence,
+        "spaces_list": parse_elements_sequence,
+    },
 )
 def g_visit_file_browser(
     selenium: SeleniumDrivers,
-    providers_list: str,
-    spaces_list: str,
-    browser_id_list: str,
+    providers_list: list[str],
+    spaces_list: list[str],
+    browser_id_list: list[str],
     tmp_memory: TmpMemory,
     hosts: Hosts,
 ) -> None:
@@ -210,15 +241,20 @@ def g_visit_file_browser(
 @wt(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) opens? "
-        "(?P<providers_list>.*) Oneprovider file browser "
-        "for (?P<spaces_list>.*) space"
-    )
+        rf"(?P<providers_list>{ELEMENTS_SEQUENCE_PATTERN}) Oneprovider file browser "
+        rf"for (?P<spaces_list>{ELEMENTS_SEQUENCE_PATTERN}) space"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "providers_list": parse_elements_sequence,
+        "spaces_list": parse_elements_sequence,
+    },
 )
 def wt_visit_file_browser(
     selenium: SeleniumDrivers,
-    providers_list: str,
-    spaces_list: str,
-    browser_id_list: str,
+    providers_list: list[str],
+    spaces_list: list[str],
+    browser_id_list: list[str],
     tmp_memory: TmpMemory,
     hosts: Hosts,
 ) -> None:
@@ -261,8 +297,18 @@ def search_for_members(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).profile.profile()
-    Popups(driver).user_account_menu.options["Logout"].click()
+
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(ManageAccountPage)
+    oz_page.expand_panel_if_needed()
+
+    oz_page.profile.profile.click()
+    button = Popups(driver).user_account_menu.options["Logout"].web_elem
+    ActionChains(driver).move_to_element(button).click(button).perform()
+    oz_page.set_current_page_during_login_logout(
+        is_login=False,
+        emergency_interface=False,
+    )
 
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone Emergency panel"))
@@ -271,8 +317,15 @@ def logout_from_onezone_emergency_panel(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    button = OZLoggedIn(driver).profile.logout.web_elem
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(ManageAccountPage)
+    oz_page.expand_panel_if_needed()
+    button = oz_page.profile.logout.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
+    oz_page.set_current_page_during_login_logout(
+        is_login=False,
+        emergency_interface=True,
+    )
 
 
 @wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))
@@ -285,8 +338,11 @@ def change_username(
     users: Users,
 ) -> None:
     driver = selenium[browser_id]
-    profile = OZLoggedIn(driver).profile
-    profile.profile()
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(ManageAccountPage)
+    oz_page.expand_panel_if_needed()
+    profile = oz_page.profile
+    profile.profile.click()
     Popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_username()
     profile.edit_user_name_box.value = new_username
@@ -305,8 +361,11 @@ def change_password(
 ) -> None:
     driver = selenium[browser_id]
     cur_passwd = users[username].password
-    profile = OZLoggedIn(driver).profile
-    profile.profile()
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(ManageAccountPage)
+    oz_page.expand_panel_if_needed()
+    profile = oz_page.profile
+    profile.profile.click()
     Popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_password()
     profile.current_password_box = cur_passwd
@@ -318,8 +377,8 @@ def change_password(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} logins as "{username}" without closing authentication'
-        " info alert"
+        'user of {browser_id} logins as "{username}" without closing '
+        "authentication info alert"
     )
 )
 def wt_sign_in_to_onezone_without_closing_auth_info_alert(

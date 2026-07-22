@@ -99,8 +99,7 @@ def add_qos_requirement_in_modal(
 @wt(
     parsers.parse(
         "user of {browser_id} creates {replicas_number} replicas of "
-        '"{expression}" QoS requirement for "{item_name}" in space '
-        '"{space_name}"'
+        '"{expression}" QoS requirement for "{item_name}" in space "{space_name}"'
     )
 )
 def add_qos_requirement_in_modal_with_replicas(

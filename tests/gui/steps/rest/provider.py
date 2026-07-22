@@ -4,6 +4,7 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 import json
+from typing import Literal
 
 from requests import Response
 
@@ -19,6 +20,20 @@ from tests.utils.rest_utils import (
     http_post,
 )
 from tests.utils.user_utils import User, Users
+
+type GuiMessageType = Literal[
+    "cookie consent notification",
+    "privacy policy",
+    "terms of use",
+    "sign in notification",
+]
+
+GUI_MESSAGE_REST_NAME_BY_TYPE: dict[GuiMessageType, str] = {
+    "cookie consent notification": "cookie_consent_notification",
+    "privacy policy": "privacy_policy",
+    "terms of use": "terms_of_use",
+    "sign in notification": "signin_notification",
+}
 
 
 def get_provider_id(provider: str, hosts: Hosts, users: Users) -> str:
@@ -45,8 +60,8 @@ def assert_provider_ones3_status_ok(provider: str, hosts: Hosts) -> None:
         port=ONES3_PORT,
         path="/.__onedata__status__",
     ).json()
-    err_msg = f"Status of OneS3 is {status["isOk"]}"
-    assert status["isOk"], err_msg
+    error_message = f"Status of OneS3 is {status["isOk"]}"
+    assert status["isOk"], error_message
 
 
 def add_provider_service_node(
@@ -108,5 +123,35 @@ def start_stop_provider_service_node(
         path=get_panel_rest_path("provider", service.value, host)
         + f"?started={"true" if start else "false"}",
         auth=(onepanel_username, onepanel_password),
+    )
+    return res
+
+
+def modify_gui_setting_message(
+    hosts: Hosts,
+    host: str,
+    message_id: GuiMessageType,
+    onepanel_credentials: User,
+    new_message: str,
+) -> Response:
+    zone_hostname = hosts[host]["hostname"]
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    res = http_patch(
+        ip=zone_hostname,
+        port=PANEL_REST_PORT,
+        path=get_panel_rest_path(
+            "zone",
+            "gui_messages",
+            GUI_MESSAGE_REST_NAME_BY_TYPE[message_id],
+        ),
+        auth=(onepanel_username, onepanel_password),
+        data=json.dumps(
+            {
+                "enabled": True,
+                "body": new_message,
+            }
+        ),
     )
     return res

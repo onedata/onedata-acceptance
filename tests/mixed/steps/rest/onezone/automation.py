@@ -103,8 +103,7 @@ def upload_workflow_from_automation_examples_rest(
 @given(
     parsers.parse(
         'there is "{workflow_name}" workflow dump uploaded by '
-        'user {user} in inventory "{inventory}" in "{zone_name}" '
-        "Onezone service"
+        'user {user} in inventory "{inventory}" in "{zone_name}" Onezone service'
     )
 )
 def upload_workflow_from_upload_files_rest(
@@ -487,8 +486,7 @@ def force_continue_workflow_rest(
 @wt(
     parsers.parse(
         'using REST, {user} reruns execution of "{workflow_name}"'
-        " workflow from lane run {lane_run}, lane index {lane_id} "
-        "in {host}"
+        " workflow from lane run {lane_run}, lane index {lane_id} in {host}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -512,8 +510,7 @@ def rerun_workflow_rest(
 @wt(
     parsers.parse(
         'using REST, {user} retries execution of "{workflow_name}" '
-        "workflow from lane run {lane_run}, lane index {lane_id} "
-        "in {host}"
+        "workflow from lane run {lane_run}, lane index {lane_id} in {host}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -570,9 +567,9 @@ def wt_execute_non_bagit_part_of_the_workflows(
 
 @wt(
     parsers.re(
-        "using REST, (?P<user>.*) executes bagit-uploader workflow with "
-        '(?P<archive_types>.*) bagit archives? on space "(?P<space>.*)" '
-        "in (?P<host>.*)"
+        r"using REST, (?P<user>.*) executes bagit-uploader workflow with "
+        r"(?P<archive_types>.*) bagit archives? on space "
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def wt_execute_part_of_the_workflows(
@@ -827,15 +824,15 @@ def assert_successful_workflow_executions(
     hosts: Hosts,
     workflow_executions: WorkflowExecutions,
 ) -> None:
-    err_msgs = []
+    error_messages = []
     for wid in workflow_executions.keys():
         mes = get_workflow_execution_details(
             user, users, host, hosts, wid, details=["name", "status"]
         )
         if mes["status"] != "finished":
-            err_msgs.append((workflow_executions[wid], mes["status"]))
-    if any(err_msgs):
-        raise AssertionError(f"workflows: {err_msgs} did not finish successfully")
+            error_messages.append((workflow_executions[wid], mes["status"]))
+    if any(error_messages):
+        raise AssertionError(f"workflows: {error_messages} did not finish successfully")
 
 
 @wt(
@@ -920,8 +917,10 @@ def assert_workflow_execution_details(
         elif "$(resolve_inventory_id" in val:
             val = val.replace("$(resolve_inventory_id ", "").replace(")", "")
             val = inventories[val]
-        err_msg = f"Value of {key} is expected to be {val}, but got {details[key]}"
-        assert details[key] == val, err_msg
+        error_message = (
+            f"Value of {key} is expected to be {val}, but got {details[key]}"
+        )
+        assert details[key] == val, error_message
 
 
 @wt(
@@ -948,18 +947,17 @@ def compare_stores_id_after_retry_from_workflow_execution_details(
     exception_store_id = details["lanes"][0]["runs"][1]["exceptionStoreId"]
     # second run
     iterated_store_id = details["lanes"][0]["runs"][0]["iteratedStoreId"]
-    err_msg = (
+    error_message = (
         f"Exception store id from previous run {exception_store_id} "
         f"should be the same as iterated store id {iterated_store_id}"
     )
-    assert exception_store_id == iterated_store_id, err_msg
+    assert exception_store_id == iterated_store_id, error_message
 
 
 @wt(
     parsers.parse(
         "using REST, {user} sees the resource not found error when "
-        'trying to get "{workflow_name}" workflow execution '
-        "details in {host}"
+        'trying to get "{workflow_name}" workflow execution details in {host}'
     )
 )
 def fail_to_get_workflow_execution_details(

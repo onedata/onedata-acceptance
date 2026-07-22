@@ -68,10 +68,9 @@ def remove_storage_in_op_panel_using_gui(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.+?) adds "(?P<name>.*)" storage '
-        'in "(?P<provider_name>.+?)" Oneprovider panel service '
-        "with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r'user of (?P<browser_id>.+?) adds "(?P<name>.*)" storage '
+        r'in "(?P<provider_name>.+?)" Oneprovider panel service '
+        r"with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def add_storage_in_op_panel_using_gui(
@@ -107,7 +106,7 @@ def _go_to_storage_view_in_clusters(
         click_on_record_in_clusters_menu(selenium, browser_id, provider_name, hosts)
 
     wt_click_on_subitem_for_item(
-        selenium, browser_id, sidebar, sub_item, provider_name, hosts
+        selenium, [browser_id], sidebar, sub_item, provider_name, hosts
     )
 
 
@@ -124,7 +123,7 @@ def _add_storage_in_op_panel_using_gui(
     options = yaml.load(config, yaml.Loader)
 
     try:
-        wt_click_on_btn_in_content(selenium, browser_id, btn, content)
+        wt_click_on_btn_in_content(selenium, [browser_id], btn, content)
     except RuntimeError:
         pass
 

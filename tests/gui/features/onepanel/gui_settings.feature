@@ -17,10 +17,9 @@ Feature: Management of GUI settings in Onezone GUI
   Scenario: User sees terms of use page after setting terms of use
     When user of browser sets terms of use: "test terms of use" in GUI settings page of "onezone"
     And user of browser clicks on "Data" in the main menu
-    And user of browser goes to Terms of use page
+    And user of browser goes to "Terms of use" page
     Then user of browser sees "test terms of use" on terms of use page
     And user of browser clicks "Back to main page" button on terms of use page
-    And user of browser removes "test terms of use" text from terms of use in GUI settings page of "onezone"
 
 
   Scenario: User sees information about using cookies and link to privacy policy terms after setting cookies and privacy policy
@@ -32,8 +31,6 @@ Feature: Management of GUI settings in Onezone GUI
     Then user of browser sees "test privacy policy" on privacy policy page
     And user of browser clicks "I understand" button in cookies popup
     And user of browser clicks "Back to main page" button on privacy policy page
-    And user of browser removes "test privacy policy" text from privacy policy in GUI settings page of "onezone"
-    And user of browser removes "test cookie consent" text from cookie consent notification in GUI settings page of "onezone"
 
 
 

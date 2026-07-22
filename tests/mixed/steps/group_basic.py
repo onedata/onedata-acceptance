@@ -26,7 +26,7 @@ from tests.gui.meta_steps.onezone.groups import (
     see_groups_using_op_gui,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.mixed.steps.rest.onezone.group_management import (
     add_subgroups_using_rest,
     assert_subgroups_using_rest,
@@ -55,14 +55,17 @@ from tests.utils.user_utils import Users
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates groups? "
-        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" Onezone'
-        r" service"
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def create_groups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -80,8 +83,8 @@ def create_groups(
 @wt(
     parsers.re(
         r"(?P<user>\w+) creates group "
-        '"(?P<group_name>.*)" using REST using received token in '
-        '"(?P<host>.*)" Onezone service'
+        r'"(?P<group_name>.*)" using REST using received token in '
+        r'"(?P<host>.*)" Onezone service'
     )
 )
 def create_groups_with_token(
@@ -108,8 +111,7 @@ def create_groups_with_token(
 @wt(
     parsers.re(
         r'(?P<user>\w+) fails to create group "(?P<group_name>.*)" '
-        r'using REST using received token in "(?P<host>.*)" Onezone'
-        r" service"
+        r'using REST using received token in "(?P<host>.*)" Onezone service'
     )
 )
 def fail_to_create_group_with_token(
@@ -132,14 +134,16 @@ def fail_to_create_group_with_token(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees( that)?"
         rf" groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN})( ha(s|ve)"
-        r" appeared)? in"
-        ' "(?P<host>.*)" Onezone service'
-    )
+        r' appeared)? in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def assert_groups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -159,14 +163,18 @@ def assert_groups(
         r"using (?P<client>.*), (?P<user>\w+) renames groups? "
         rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
         rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) in "
-        '"(?P<host>.*)" Onezone service'
-    )
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+        "new_names": parse_elements_sequence,
+    },
 )
 def rename_groups(
     client: str,
     user: str,
-    group_list: str,
-    new_names: str,
+    group_list: list[str],
+    new_names: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -184,14 +192,17 @@ def rename_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) does not see "
-        rf'groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" '
-        "Onezone service"
-    )
+        rf"groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def fail_to_see_groups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -209,14 +220,17 @@ def fail_to_see_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes groups? "
-        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" Onezone'
-        r" service"
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def remove_groups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -234,14 +248,17 @@ def remove_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) leaves groups? "
-        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)" Onezone'
-        r" service"
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def leave_groups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -260,14 +277,16 @@ def leave_groups(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) adds groups? "
         rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
-        r' "(?P<parent>.*)" in'
-        ' "(?P<host>.*)" Onezone service'
-    )
+        r' "(?P<parent>.*)" in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def add_subgroups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -298,13 +317,16 @@ def add_subgroups(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes subgroups? "
         rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) from group "(?P<parent>.*)" in'
-        ' "(?P<host>.*)" Onezone service'
-    )
+        r' "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def remove_subgroups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -331,14 +353,16 @@ def remove_subgroups(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees groups? "
         rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
-        r' "(?P<parent>.*)" '
-        'in "(?P<host>.*)" Onezone service'
-    )
+        r' "(?P<parent>.*)" in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def assert_subgroups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -358,14 +382,16 @@ def assert_subgroups(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) does not see groups? "
         rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
-        r' "(?P<parent>.*)"'
-        r' in "(?P<host>.*)" Onezone service'
-    )
+        r' "(?P<parent>.*)" in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def fail_to_see_subgroups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -383,8 +409,7 @@ def fail_to_see_subgroups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user1>\w+) invites "
-        r'(?P<user2>\w+) to group "(?P<group>.*)" in "(?P<host>.*)" '
-        r"Onezone service"
+        r'(?P<user2>\w+) to group "(?P<group>.*)" in "(?P<host>.*)" Onezone service'
     )
 )
 def invite_to_group(
@@ -422,7 +447,7 @@ def invite_to_group(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) joins group he "
-        'was invited to in "(?P<host>.*)" Onezone service'
+        r'was invited to in "(?P<host>.*)" Onezone service'
     )
 )
 def join_group(
@@ -448,18 +473,22 @@ def join_group(
         r"using (?P<client>.*), (?P<user>\w+) fails to rename"
         rf" groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
         rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) in"
-        ' "(?P<host>.*)" Onezone service'
-    )
+        r' "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+        "new_names": parse_elements_sequence,
+    },
 )
 def fail_to_rename_groups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
     selenium: SeleniumDrivers,
-    new_names: str,
+    new_names: list[str],
 ) -> None:
 
     if client.lower() == "rest":
@@ -475,14 +504,17 @@ def fail_to_rename_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) fails to remove"
-        rf' groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "(?P<host>.*)"'
-        r" Onezone service"
-    )
+        rf" groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def fail_to_remove_groups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,
@@ -503,13 +535,16 @@ def fail_to_remove_groups(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) fails to join"
         rf" groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group "
-        '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'
-    )
+        r'"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def fail_to_add_subgroups(
     client: str,
     user: str,
-    group_list: str,
+    group_list: list[str],
     host: str,
     hosts: Hosts,
     users: Users,

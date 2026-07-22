@@ -221,7 +221,7 @@ def join_space_with_token(
         assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
     elif client_lower == "rest":
         join_space_in_oz_using_rest(
-            user,
+            [user],
             users,
             "onezone",
             hosts,

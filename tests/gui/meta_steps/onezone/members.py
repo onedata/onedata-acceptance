@@ -21,7 +21,10 @@ from tests.gui.steps.onezone.members import (
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+)
 from tests.gui.utils.onezone import OZLoggedIn
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.type_definitions import SeleniumDrivers
@@ -139,9 +142,11 @@ def _assert_message_and_bulk_edit_btn(
     message_users = members_page.lack_users_view_privileges.text
     bulk_edit_button = members_page.bulk_edit_button
 
-    err_msg = "The message about lack of privileges to view membership is not visible"
-    assert message_groups == expected_message, f"{err_msg} for groups"
-    assert message_users == expected_message, f"{err_msg} for users"
+    error_message = (
+        "The message about lack of privileges to view membership is not visible"
+    )
+    assert message_groups == expected_message, f"{error_message} for groups"
+    assert message_users == expected_message, f"{error_message} for users"
     assert (
         not bulk_edit_button.is_enabled()
     ), "Bulk edit button is supposed to be disabled"
@@ -150,13 +155,16 @@ def _assert_message_and_bulk_edit_btn(
 @wt(
     parsers.re(
         rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) cannot view "
-        'group "(?P<group>.*)" membership due to lack of privileges'
-    )
+        r'group "(?P<group>.*)" membership due to lack of privileges'
+    ),
+    converters={
+        "browser_ids": parse_elements_sequence,
+    },
 )
 def assert_cannot_view_group_membership(
-    selenium: SeleniumDrivers, browser_ids: str, group: str
+    selenium: SeleniumDrivers, browser_ids: list[str], group: str
 ) -> None:
-    for browser_id in parse_seq(browser_ids):
+    for browser_id in browser_ids:
         driver = selenium[browser_id]
         oz_page = OZLoggedIn(driver)
         go_to_group_subpage(selenium, browser_id, group, "members")
@@ -171,8 +179,7 @@ def assert_cannot_view_group_membership(
     parsers.re(
         r"user of (?P<browser_id>\w+) changes privileges for"
         r' (?P<member_type>user|group) "(?P<member_name>\w+)" in group'
-        r' "(?P<group_name>\w+)" members subpage into following:\n'
-        r"(?P<config>(.|\s)*)"
+        r' "(?P<group_name>\w+)" members subpage into following:\n(?P<config>(.|\s)*)'
     )
 )
 def choose_member_and_set_privileges_on_groups_subpage(
@@ -198,8 +205,7 @@ def choose_member_and_set_privileges_on_groups_subpage(
         r"user of (?P<browser_id>\w+) sees following "
         r"(?P<option>effective |)privileges for "
         r'(?P<member_type>user|group) "(?P<member_name>[^"]+)" in group '
-        r'"(?P<group_name>[^"]+)" members subpage:\n'
-        r"(?P<config>(.|\s)*)"
+        r'"(?P<group_name>[^"]+)" members subpage:\n(?P<config>(.|\s)*)'
     )
 )
 def choose_member_and_assert_privileges_on_groups_subpage(

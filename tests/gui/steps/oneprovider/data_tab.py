@@ -28,6 +28,7 @@ from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,
+    parse_elements_sequence,
     parse_seq,
     transform,
     upload_file_path,
@@ -61,8 +62,8 @@ def check_browser_to_load(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) sees "(?P<space_name>.*?)" '
-        "(?P<option>is|is not) in spaces list on Oneprovider page"
+        r'user of (?P<browser_id>.*?) sees "(?P<space_name>.*?)" '
+        r"(?P<option>is|is not) in spaces list on Oneprovider page"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -84,12 +85,12 @@ def assert_if_list_contains_space_in_data_tab_in_op(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks the button "
-        "from top menu bar with tooltip "
-        '"(?P<tooltip>Create directory|Create file|Share element|'
-        "Edit metadata|Rename element|Change element permissions|"
-        "Copy element|Cut element|Remove element|"
-        'Show data distribution)"'
+        r"user of (?P<browser_id>.*?) clicks the button "
+        r"from top menu bar with tooltip "
+        r'"(?P<tooltip>Create directory|Create file|Share element|'
+        r"Edit metadata|Rename element|Change element permissions|"
+        r"Copy element|Cut element|Remove element|"
+        r'Show data distribution)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -102,9 +103,9 @@ def click_tooltip_from_toolbar_in_data_tab_in_op(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks "
-        '"(?P<button>New directory|Upload files|Refresh|Paste)" button '
-        "from file browser menu bar"
+        r"user of (?P<browser_id>.*?) clicks "
+        r'"(?P<button>New directory|Upload files|Refresh|Paste)" button '
+        r"from file browser menu bar"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -214,8 +215,10 @@ def _is_space_viewed_space_in_data_tab_in_op(
 ) -> None:
     selector = OPLoggedIn(driver).data.sidebar.space_selector
     displayed_name = selector.selected_space_name
-    err_msg = 'current directory tree is displayed for "{}" instead of "{}"'
-    assert displayed_name == space_name, err_msg.format(displayed_name, space_name)
+    error_message = 'current directory tree is displayed for "{}" instead of "{}"'
+    assert displayed_name == space_name, error_message.format(
+        displayed_name, space_name
+    )
     if is_home:
         assert (
             selector.is_selected_space_home() is True
@@ -224,10 +227,9 @@ def _is_space_viewed_space_in_data_tab_in_op(
 
 @given(
     parsers.re(
-        "user of (?P<browser_id>.+?) seen that displayed directory "
-        "tree in sidebar panel belonged to (?P<is_home>(home "
-        ")?)space "
-        'named "(?P<space_name>.+?)'
+        r"user of (?P<browser_id>.+?) seen that displayed directory "
+        r"tree in sidebar panel belonged to (?P<is_home>(home )?)space "
+        r'named "(?P<space_name>.+?)'
     )
 )
 def g_is_space_tree_root(
@@ -239,9 +241,9 @@ def g_is_space_tree_root(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that displayed directory "
-        "tree in sidebar panel belongs to (?P<is_home>(home )?)space "
-        'named "(?P<space_name>.+?)"'
+        r"user of (?P<browser_id>.+?) sees that displayed directory "
+        r"tree in sidebar panel belongs to (?P<is_home>(home )?)space "
+        r'named "(?P<space_name>.+?)"'
     )
 )
 def wt_is_space_tree_root(
@@ -370,8 +372,7 @@ def assert_diff_in_len_of_dir_name_before_and_now(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.+?) expands data tab sidebar to the "
-        r"(?P<direction>right|left) of approximately "
-        r"(?P<offset>\d+)px"
+        r"(?P<direction>right|left) of approximately (?P<offset>\d+)px"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -384,7 +385,7 @@ def resize_data_tab_sidebar(
     sidebar.width += offset_px
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) waits for file uploads? to finish"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) waits for file uploads? to finish"))
 @repeat_failed(timeout=WAIT_NORMAL_UPLOAD)
 def wait_for_file_upload_to_finish(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
@@ -398,7 +399,7 @@ def wait_for_file_upload_to_finish(selenium: SeleniumDrivers, browser_id: str) -
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) waits extended time for file uploads? to finish"
+        r"user of (?P<browser_id>.*) waits extended time for file uploads? to finish"
     )
 )
 @repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
@@ -430,10 +431,10 @@ def upload_file_to_cwd_in_file_browser_no_waiting(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) uses upload button from file "
-        "browser menu bar to upload (?P<option>.*) "
-        '"automation/(?P<inner_dir>.*)/'
-        '(?P<file_name>.*)" to current dir'
+        r"user of (?P<browser_id>.*) uses upload button from file "
+        r"browser menu bar to upload (?P<option>.*) "
+        r'"automation/(?P<inner_dir>.*)/'
+        r'(?P<file_name>.*)" to current dir'
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
@@ -449,16 +450,16 @@ def upload_automation_file_to_cwd_in_file_browser(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload files from local directory "{dir_path}" '
+        'menu bar to upload files from local directory "{directory_path}" '
         "to remote current dir without waiting for upload to finish"
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab_no_waiting(
-    selenium: SeleniumDrivers, browser_id: str, dir_path: str, tmpdir: LocalPath
+    selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
 ) -> None:
     driver = selenium[browser_id]
-    directory = tmpdir.join(browser_id, *dir_path.split("/"))
+    directory = tmpdir.join(browser_id, *directory_path.split("/"))
     if directory.isdir():
         OPLoggedIn(driver).file_browser.upload_files(
             "\n".join(str(item) for item in directory.listdir() if item.isfile())
@@ -483,23 +484,23 @@ def upload_file_to_cwd_in_file_browser(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload files from local directory "{dir_path}" '
-        "to remote current dir and waits extended time for upload to "
-        "finish"
+        'menu bar to upload files from local directory "{directory_path}" '
+        "to remote current dir and waits extended time for upload to finish"
     )
 )
 def upload_files_to_cwd_in_data_tab_extended_wait(
-    selenium: SeleniumDrivers, browser_id: str, dir_path: str, tmpdir: LocalPath
+    selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
 ) -> None:
-    upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path, tmpdir)
+    upload_files_to_cwd_in_data_tab_no_waiting(
+        selenium, browser_id, directory_path, tmpdir
+    )
     wait_extended_time_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload local file "{file_path}" '
-        "to remote current dir"
+        'menu bar to upload local file "{file_path}" to remote current dir'
     )
 )
 def upload_file_to_cwd_in_data_tab(
@@ -512,22 +513,23 @@ def upload_file_to_cwd_in_data_tab(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload files from local directory "{dir_path}" '
-        "to remote current dir"
+        "menu bar to upload files from local directory "
+        '"{directory_path}" to remote current dir'
     )
 )
 def upload_files_to_cwd_in_data_tab(
-    selenium: SeleniumDrivers, browser_id: str, dir_path: str, tmpdir: LocalPath
+    selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
 ) -> None:
-    upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path, tmpdir)
+    upload_files_to_cwd_in_data_tab_no_waiting(
+        selenium, browser_id, directory_path, tmpdir
+    )
     wait_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload {number} local files "{file_path}" '
-        "to remote current dir"
+        'menu bar to upload {number} local files "{file_path}" to remote current dir'
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
@@ -979,8 +981,8 @@ def check_data_distribution_size_for_provider(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "Show statistics per provider" button'
-        " on Size stats modal"
+        'user of {browser_id} clicks "Show statistics per provider" '
+        "button on Size stats modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1015,7 +1017,11 @@ def toggle_include_virtual_size_in_size_statistics(
         r"(?P<elem_type>physical_size|logical_size|virtual_size)s? for "
         rf"(?P<providers>{ELEMENTS_SEQUENCE_PATTERN}) (?:is|are) "
         rf"(?P<expected_sizes>{ELEMENTS_SEQUENCE_PATTERN})"
-    )
+    ),
+    converters={
+        "expected_sizes": parse_elements_sequence,
+        "providers": parse_elements_sequence,
+    },
 )
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_size_stats_for_provider(
@@ -1023,11 +1029,11 @@ def check_size_stats_for_provider(
     hosts: Hosts,
     browser_id: str,
     elem_type: str,
-    providers: str,
-    expected_sizes: str,
+    providers: list[str],
+    expected_sizes: list[str],
 ) -> None:
     driver = selenium[browser_id]
-    for provider, expected_size in zip(parse_seq(providers), parse_seq(expected_sizes)):
+    for provider, expected_size in zip(providers, expected_sizes):
         provider_name = hosts[provider]["name"]
         size = getattr(
             Modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[
@@ -1070,8 +1076,8 @@ def check_error_cell_for_provider(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.+?) sees that content for "(?P<provider>.+?)" is'
-        r' "(?P<content>.+?)"'
+        r'user of (?P<browser_id>.+?) sees that content for "(?P<provider>.+?)"'
+        r' is "(?P<content>.+?)"'
     )
 )
 @repeat_failed(WAIT_FRONTEND)
@@ -1096,20 +1102,22 @@ def check_content_for_provider(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that contents for {providers} are {contents}"
-    )
+        "user of {browser_id} sees that contents for "
+        "{providers:ElementsSequence} are {contents}",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 def check_content_for_providers(
     selenium: SeleniumDrivers,
     hosts: Hosts,
     browser_id: str,
-    providers: str,
+    providers: list[str],
     contents: str,
 ) -> None:
     contents_list = [
         content.strip('"') for content in parse_seq(contents, pattern=r'"(.*?)"')
     ]  # removing extra quotes
-    for provider, content in zip(parse_seq(providers), contents_list):
+    for provider, content in zip(providers, contents_list):
         check_content_for_provider(selenium, hosts, browser_id, provider, content)
 
 
@@ -1152,9 +1160,9 @@ def assert_value_in_column_for_item(
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], transform(option))
-    err_msg = (
+    error_message = (
         f"displayed {option} {item_elem} for {item_name} does not "
         f"match expected {value}"
     )
 
-    assert value == item_elem, err_msg
+    assert value == item_elem, error_message

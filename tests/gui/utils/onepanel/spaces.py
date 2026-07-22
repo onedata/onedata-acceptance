@@ -92,7 +92,8 @@ class SpaceInfo(PageObject):
         items = elem.find_elements(By.CSS_SELECTOR, "strong, .one-label")
         items.pop(0)  # pop redundant "Storage import:" label
         return {
-            attr.text.strip(":"): val.text for attr, val in zip(items[::2], items[1::2])
+            attribute.text.strip(":"): val.text
+            for attribute, val in zip(items[::2], items[1::2])
         }
 
 

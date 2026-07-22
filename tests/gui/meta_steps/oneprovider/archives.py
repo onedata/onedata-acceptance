@@ -313,7 +313,7 @@ def assert_archive_in_op_gui(
         assert_items_presence_in_browser(
             selenium,
             browser_id,
-            item_name,
+            [item_name],
             tmp_memory,
             which_browser=ARCHIVE_FILE_BROWSER,
         )
@@ -490,11 +490,11 @@ def assert_base_archive_for_archive_in_op_gui(
     )
     browser = tmp_memory[browser_id]["archive_browser"]
     archive = get_archive_with_description(browser, description)
-    err_msg = (
+    error_message = (
         f"Base archive: {archive.base_archive} does not match expected "
         f"archive with description {base_description}"
     )
-    assert base_description in archive.base_archive_description, err_msg
+    assert base_description in archive.base_archive_description, error_message
 
 
 def assert_archive_callback_in_op_gui(
@@ -571,30 +571,30 @@ def recalled_archive_details_in_op_gui(
         else:
             value = re.sub(r"\s*", "", getattr(recall_modal, key))
             expected_value = re.sub(r"\s*", "", expected_value)
-            err_msg = (
+            error_message = (
                 f'{key} for archive recall "{item_name}" is {value} '
                 f"but expected value is {expected_value} "
             )
             if expected_value == "Cancelled":
-                assert expected_value in value, err_msg
+                assert expected_value in value, error_message
             elif "<=" in expected_value:
                 characters = "[\nMBGi ]"
-                err_msg = (
+                error_message = (
                     f'{key} for archive recall "{item_name}" is {value} '
                     "and is not lower or equal to expected value: "
                     f"{expected_value} "
                 )
                 value = re.sub(characters, "", value).split("/")[0]
                 expected_value = re.sub(characters, "", expected_value).split("<=")[-1]
-                assert int(value) <= int(expected_value), err_msg
+                assert int(value) <= int(expected_value), error_message
             else:
-                assert value == expected_value, err_msg
+                assert value == expected_value, error_message
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that current size statistics are "
-        "as follow:\n{config}"
+        "user of {browser_id} sees that current size statistics "
+        "are as follow:\n{config}"
     )
 )
 def check_size_stats_for_archive(
@@ -647,8 +647,8 @@ def check_size_stats_for_archive_per_provider(
                 hosts,
                 browser_id,
                 stat_type,
-                provider,
-                expected_value,
+                [provider],
+                [expected_value],
             )
         else:
             check_content_for_provider(

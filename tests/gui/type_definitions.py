@@ -15,7 +15,6 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from tests.type_definitions import JsonObject
 
-
 type TmpMemory = defaultdict[str, dict[str, Any]]
 
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]

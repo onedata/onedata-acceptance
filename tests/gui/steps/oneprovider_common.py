@@ -10,7 +10,10 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -46,13 +49,18 @@ def _click_on_tab_in_main_menu_sidebar(driver: WebDriver, tab: str) -> None:
 @given(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicked on the "
-        '"(?P<main_menu_tab>.*)" tab in main menu sidebar'
-    )
+        r'"(?P<main_menu_tab>.*)" tab in main menu sidebar'
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 def g_click_on_the_given_main_menu_tab(
-    selenium: SeleniumDrivers, browser_id_list: str, main_menu_tab: str
+    selenium: SeleniumDrivers,
+    browser_id_list: list[str],
+    main_menu_tab: str,
 ) -> None:
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         driver = selenium[browser_id]
         _click_on_tab_in_main_menu_sidebar(driver, main_menu_tab)
 
@@ -60,14 +68,19 @@ def g_click_on_the_given_main_menu_tab(
 @wt(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks on the "
-        '"(?P<main_menu_tab>.*)" tab in main menu sidebar'
-    )
+        r'"(?P<main_menu_tab>.*)" tab in main menu sidebar'
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_the_given_main_menu_tab(
-    selenium: SeleniumDrivers, browser_id_list: str, main_menu_tab: str
+    selenium: SeleniumDrivers,
+    browser_id_list: list[str],
+    main_menu_tab: str,
 ) -> None:
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         driver = selenium[browser_id]
         _click_on_tab_in_main_menu_sidebar(driver, main_menu_tab)
 

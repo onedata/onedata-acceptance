@@ -34,9 +34,9 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) fails to set following "
-        'privileges for "(?P<member_name>.*)" '
-        '(?P<member_type>user|group) in space "(?P<space_name>.*)" in '
+        r"using (?P<client>.*), (?P<user>.+?) fails to set following "
+        r'privileges for "(?P<member_name>.*)" '
+        r'(?P<member_type>user|group) in space "(?P<space_name>.*)" in '
         r'"(?P<host>.+?)" Onezone service:\n(?P<config>(.|\s)*)'
     )
 )
@@ -77,8 +77,8 @@ def fail_to_set_privileges_in_space_in_oz(
     parsers.re(
         r"using (?P<client>.*), (?P<user>.+?) sees following privileges"
         r' of "(?P<member_name>.*)" (?P<member_type>user|group) in space'
-        r' "(?P<space_name>.*)" in "(?P<host>.+?)" Onezone service:'
-        r"\n(?P<config>(.|\s)*)"
+        r' "(?P<space_name>.*)" in "(?P<host>.+?)" Onezone '
+        r"service:\n(?P<config>(.|\s)*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -115,9 +115,9 @@ def assert_privileges_in_space_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) fails to invite "
-        '"(?P<member_name>.*)" to "(?P<space_name>.*)" space members'
-        ' page in "(?P<host>.+?)" Onezone service'
+        r"using (?P<client>.*), (?P<user>.+?) fails to invite "
+        r'"(?P<member_name>.*)" to "(?P<space_name>.*)" space members'
+        r' page in "(?P<host>.+?)" Onezone service'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -145,9 +145,9 @@ def fail_to_create_invitation_in_space_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) does not see "
-        '"(?P<member_name>.*)" user on "(?P<space_name>.*)" space '
-        'members page in "(?P<host>.+?)" Onezone service'
+        r"using (?P<client>.*), (?P<user>.+?) does not see "
+        r'"(?P<member_name>.*)" user on "(?P<space_name>.*)" space '
+        r'members page in "(?P<host>.+?)" Onezone service'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -177,9 +177,8 @@ def assert_not_user_in_space_in_oz(
 
 @wt(
     parsers.re(
-        'using (?P<client>.*), (?P<user>.+?) adds "(?P<group_name>.*)" '
-        'to space named "(?P<space_name>.*)" in "(?P<host>.+?)" '
-        "Onezone service"
+        r'using (?P<client>.*), (?P<user>.+?) adds "(?P<group_name>.*)" '
+        r'to space named "(?P<space_name>.*)" in "(?P<host>.+?)" Onezone service'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -215,9 +214,9 @@ def add_group_to_space_in_oz(
 
 @wt(
     parsers.re(
-        'using (?P<client>.*), (?P<user>.+?) sees "(?P<group_name>.*)" '
-        'group on "(?P<space_name>.*)" space members page in '
-        '"(?P<host>.+?)" Onezone service'
+        r'using (?P<client>.*), (?P<user>.+?) sees "(?P<group_name>.*)" '
+        r'group on "(?P<space_name>.*)" space members page in '
+        r'"(?P<host>.+?)" Onezone service'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

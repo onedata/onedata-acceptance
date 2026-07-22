@@ -50,8 +50,7 @@ def create_s3_bucket_rest(bucket_name: str) -> None:
 @wt(
     parsers.parse(
         "using REST, user of {browser_id} copies item with "
-        'recently copied path from "{src_bucket}" bucket into '
-        '"{dst_bucket}" bucket'
+        'recently copied path from "{src_bucket}" bucket into "{dst_bucket}" bucket'
     )
 )
 def copy_item_s3_bucket(

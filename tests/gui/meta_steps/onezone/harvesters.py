@@ -53,6 +53,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -150,8 +151,7 @@ def create_harvester(
 @wt(
     parsers.parse(
         'user of {browser_id} adds "{space_name}" space to '
-        '"{harvester_name}" harvester using available spaces '
-        "dropdown"
+        '"{harvester_name}" harvester using available spaces dropdown'
     )
 )
 def join_space_to_harvester(
@@ -288,14 +288,14 @@ def send_invitation_token(
     copy_token_from_modal(selenium, browser_id1)
     close_modal(selenium, browser_id1, modal)
     send_copied_item_to_other_users(
-        browser_id1, item_type, browser_id2, tmp_memory, displays, clipboard
+        browser_id1, item_type, [browser_id2], tmp_memory, displays, clipboard
     )
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>sets|fails to set) "
-        'following privileges for "(?P<user_name>.*)" user in '
+        r"user of (?P<browser_id>.*) (?P<option>sets|fails to set) "
+        r'following privileges for "(?P<user_name>.*)" user in '
         r'"(?P<harvester_name>.*)" harvester:\n(?P<config>(.|\s)*)'
     )
 )
@@ -437,15 +437,16 @@ def check_harvesting_process_in_harvester(
 @wt(
     parsers.parse(
         'user of {browser_id} creates new index "{index_name}" that '
-        'includes {toggles_list} toggles for "{harvester_name}"'
-    )
+        'includes {toggles_list:ElementsSequence} toggles for "{harvester_name}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_with_toggles_list(
     browser_id: str,
     selenium: SeleniumDrivers,
     index_name: str,
-    toggles_list: str,
+    toggles_list: list[str],
     harvester_name: str,
 ) -> None:
     option = "Indices"

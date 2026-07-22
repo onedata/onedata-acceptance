@@ -46,8 +46,7 @@ def click_create_button_in_discovery_page(
     parsers.re(
         r'user of (?P<browser_id>.*) sees that "(?P<name>.*)" has'
         r" (?P<option>appeared|disappeared) on the"
-        r" (?P<list_type>harvesters|automation) "
-        r"list in the sidebar"
+        r" (?P<list_type>harvesters|automation) list in the sidebar"
     ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -61,12 +60,12 @@ def check_element_exists_on_sidebar_list(
     driver = selenium[browser_id]
 
     if list_type == "harvesters":
-        list_type, attr = "discovery", ListElement.HARVESTERS
+        list_type, attribute = "discovery", ListElement.HARVESTERS
     else:
-        attr = ListElement.AUTOMATIONS
+        attribute = ListElement.AUTOMATIONS
 
     elements_list = get_visible_items_list(
-        getattr(OZLoggedIn(driver), list_type), attr, main_field="name"
+        getattr(OZLoggedIn(driver), list_type), attribute, main_field="name"
     )
     elements_names = [elem.name for elem in elements_list]
 
@@ -78,10 +77,9 @@ def check_element_exists_on_sidebar_list(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on "
-        '"(?P<option>Rename|Leave|Remove)" '
-        'button in harvester "(?P<name>.*)" menu '
-        "in the sidebar"
+        r"user of (?P<browser_id>.*) clicks on "
+        r'"(?P<option>Rename|Leave|Remove)" '
+        r'button in harvester "(?P<name>.*)" menu in the sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -117,8 +115,8 @@ def confirm_harvester_rename_using_button(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks (?P<option>.*?) "
-        'of "(?P<harvester_name>.*?)" harvester in the sidebar'
+        r"user of (?P<browser_id>.*?) clicks (?P<option>.*?) "
+        r'of "(?P<harvester_name>.*?)" harvester in the sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -143,9 +141,9 @@ def click_option_in_discovery_page_menu(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees "
-        "(?P<alert_text>Insufficient privileges) alert "
-        "on (?P<where>Spaces|Indices) subpage"
+        r"user of (?P<browser_id>.*) sees "
+        r"(?P<alert_text>Insufficient privileges) alert "
+        r"on (?P<where>Spaces|Indices) subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -176,8 +174,7 @@ def type_text_to_input_field_in_discovery_page(
 @wt(
     parsers.parse(
         "user of {browser_id} types the endpoint of deployed "
-        "elasticsearch client to {input_name} input field "
-        "in discovery page"
+        "elasticsearch client to {input_name} input field in discovery page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -206,8 +203,8 @@ def click_button_in_harvester_spaces_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{element_name}" from dropdown '
-        "in add {element} modal"
+        'user of {browser_id} chooses "{element_name}" from dropdown'
+        " in add {element} modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

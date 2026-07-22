@@ -41,7 +41,7 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups import Popups
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.gui.utils.onezone import OZLoggedIn
 from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -87,9 +87,9 @@ def get_group_and_click_menu_button(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on "
-        '"(?P<option>Rename|Leave|Remove)" '
-        'button in group "(?P<group>.*)" menu in the sidebar'
+        r"user of (?P<browser_id>.*) clicks on "
+        r'"(?P<option>Rename|Leave|Remove)" '
+        r'button in group "(?P<group>.*)" menu in the sidebar'
     )
 )
 def wt_get_group_and_click_menu_button(
@@ -151,60 +151,75 @@ def leave_user_groups_in_onezone_using_rest(
         leave_user_group(zone_hostname, user, users, group_id)
 
 
-@wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
+@wt(
+    parsers.parse(
+        'user of {browser_id} removes group "{group_list:ElementsSequence}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    )
+)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_group(selenium: SeleniumDrivers, browser_id: str, group_list: str) -> None:
+def remove_group(
+    selenium: SeleniumDrivers, browser_id: str, group_list: list[str]
+) -> None:
     option = "Remove"
     modal = "REMOVE GROUP"
 
-    for group in parse_seq(group_list):
+    for group in group_list:
         _ = get_group_and_click_menu_button(selenium, browser_id, option, group)
         click_modal_button(selenium, browser_id, option, modal)
 
 
-@wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))
+@wt(
+    parsers.parse(
+        'user of {browser_id} creates group "{group_list:ElementsSequence}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    )
+)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_groups_using_op_gui(
-    selenium: SeleniumDrivers, browser_id: str, group_list: str
+    selenium: SeleniumDrivers, browser_id: str, group_list: list[str]
 ) -> None:
-    for group in parse_seq(group_list):
+    for group in group_list:
         click_create_group_button_in_panel(selenium, browser_id)
         input_name_into_input_box_on_main_groups_page(selenium, browser_id, group)
         confirm_name_input_on_main_groups_page(selenium, browser_id)
 
 
 def see_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str
+    selenium: SeleniumDrivers, user: str, group_list: list[str]
 ) -> None:
     option = "sees"
 
-    for group in parse_seq(group_list):
-        assert_group_exists(selenium, user, option, group)
+    for group in group_list:
+        assert_group_exists(selenium, [user], option, group)
 
 
 def rename_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str, new_names: str
+    selenium: SeleniumDrivers,
+    user: str,
+    group_list: list[str],
+    new_names: list[str],
 ) -> None:
     confirm_type = "enter"
 
-    for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
+    for group, new_name in zip(group_list, new_names):
         rename_group(selenium, user, group, new_name, confirm_type)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_see_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str
+    selenium: SeleniumDrivers, user: str, group_list: list[str]
 ) -> None:
     option = "does not see"
 
-    for group in parse_seq(group_list):
-        assert_group_exists(selenium, user, option, group)
+    for group in group_list:
+        assert_group_exists(selenium, [user], option, group)
 
 
 def leave_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str
+    selenium: SeleniumDrivers, user: str, group_list: list[str]
 ) -> None:
-    for group in parse_seq(group_list):
+    for group in group_list:
         leave_group(selenium, user, group)
 
 
@@ -218,24 +233,24 @@ def _open_member_from_list(selenium: SeleniumDrivers, user: str, parent: str) ->
 
 
 def assert_subgroups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str, parent: str
+    selenium: SeleniumDrivers, user: str, group_list: list[str], parent: str
 ) -> None:
     where = "group"
 
     _open_member_from_list(selenium, user, parent)
-    for group in parse_seq(group_list):
+    for group in group_list:
         assert_element_is_member_of_parent_in_memberships(
             selenium, user, group, parent, where, where, where
         )
 
 
 def fail_to_see_subgroups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str, parent: str
+    selenium: SeleniumDrivers, user: str, group_list: list[str], parent: str
 ) -> None:
     where = "group"
 
     _open_member_from_list(selenium, user, parent)
-    for group in parse_seq(group_list):
+    for group in group_list:
         assert_element_is_not_member_of_parent_in_memberships(
             selenium, user, group, where, parent, where, where
         )
@@ -264,14 +279,14 @@ def _create_group_token(
     copy_token_from_modal(selenium, user)
     close_modal(selenium, user, modal)
     send_copied_item_to_other_users(
-        user, item_type, user2, tmp_memory, displays, clipboard
+        user, item_type, [user2], tmp_memory, displays, clipboard
     )
 
 
 @wt(
     parsers.re(
         r"(?P<user>\w+) invites (?P<user2>\w+) to group "
-        '"(?P<name>.*)" using Oneprovider web GUI'
+        r'"(?P<name>.*)" using Oneprovider web GUI'
     )
 )
 def create_group_token_to_invite_user_using_op_gui(
@@ -320,7 +335,7 @@ def create_group_token_to_invite_group_using_op_gui(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) joins group he was invited to in Onezone service"
+        r"user of (?P<browser_id>.*) joins group he was invited to in Onezone service"
     )
 )
 def join_group_using_op_gui(
@@ -333,12 +348,12 @@ def add_subgroups_using_op_gui(
     selenium: SeleniumDrivers,
     user: str,
     parent: str,
-    group_list: str,
+    group_list: list[str],
     tmp_memory: TmpMemory,
     displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
-    for child in parse_seq(group_list):
+    for child in group_list:
         create_group_token_to_invite_group_using_op_gui(
             selenium,
             user,
@@ -354,13 +369,13 @@ def add_subgroups_using_op_gui(
 def remove_subgroups_using_op_gui(
     selenium: SeleniumDrivers,
     user: str,
-    group_list: str,
+    group_list: list[str],
     tmp_memory: TmpMemory,
     parent: str,
 ) -> None:
     member_type = "group"
 
-    for child in parse_seq(group_list):
+    for child in group_list:
         remove_member_from_parent(
             selenium,
             user,
@@ -373,12 +388,15 @@ def remove_subgroups_using_op_gui(
 
 
 def fail_to_rename_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str, new_names: str
+    selenium: SeleniumDrivers,
+    user: str,
+    group_list: list[str],
+    new_names: list[str],
 ) -> None:
     text = "failed"
 
-    for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
-        rename_groups_using_op_gui(selenium, user, group, new_name)
+    for group, new_name in zip(group_list, new_names):
+        rename_groups_using_op_gui(selenium, user, [group], [new_name])
         assert_error_modal_with_text_appeared(selenium, user, text)
 
 
@@ -386,7 +404,7 @@ def fail_to_add_subgroups_using_op_gui(
     selenium: SeleniumDrivers,
     user: str,
     parent: str,
-    group_list: str,
+    group_list: list[str],
     tmp_memory: TmpMemory,
     displays: dict[str, str],
     clipboard: Clipboard,
@@ -400,7 +418,7 @@ def fail_to_add_subgroups_using_op_gui(
         displays,
         clipboard,
     )
-    for child in parse_seq(group_list):
+    for child in group_list:
         error = "Consuming token failed"
         modal = "error"
 

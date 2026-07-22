@@ -17,7 +17,11 @@ import yaml
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -25,17 +29,21 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees non-empty "
-        "(?P<fields>( |.)*) field(s)? of first (?P<number>.*) files and "
-        "directories in archive audit log"
-    )
+        r"user of (?P<browser_id>.*) sees non-empty "
+        rf"(?P<fields>{ELEMENTS_SEQUENCE_PATTERN}) field(s)? of first "
+        r"(?P<number>.*) files and "
+        r"directories in archive audit log"
+    ),
+    converters={
+        "fields": parse_elements_sequence,
+    },
 )
 def assert_number_of_first_non_empty_column_content(
-    selenium: SeleniumDrivers, fields: str, browser_id: str, number: str
+    selenium: SeleniumDrivers, fields: list[str], browser_id: str, number: str
 ) -> None:
     expected_number = int(number)
     driver = selenium[browser_id]
-    columns_names = [transform(field) for field in parse_seq(fields)]
+    columns_names = [transform(field) for field in fields]
 
     # Because files names repeat, files names must be first loaded in order to
     # add annotations to them
@@ -59,8 +67,7 @@ def assert_number_of_first_non_empty_column_content(
 @wt(
     parsers.parse(
         "user of {browser_id} sees entries ordered from shortest to "
-        'longest times in column "{column_name}" in archive '
-        "audit log"
+        'longest times in column "{column_name}" in archive audit log'
     )
 )
 @wt(
@@ -94,13 +101,15 @@ def assert_decreasing_creation_times_in_archives_audit_log(
                 current_time = datetime.strptime(
                     current + "000", "%d %b %Y %H:%M:%S.%f"
                 )
-                err_msg = f"time {current_time} following {last} is not smaller"
-                assert current_time <= cast(datetime, last), err_msg
+                error_message = f"time {current_time} following {last} is not smaller"
+                assert current_time <= cast(datetime, last), error_message
                 last = current_time
             elif column_name == "time_taken":
                 current_duration = parse_time(current)
-                err_msg = f"time {current_duration} following {last} is not smaller"
-                assert current_duration <= cast(int | float, last), err_msg
+                error_message = (
+                    f"time {current_duration} following {last} is not smaller"
+                )
+                assert current_duration <= cast(int | float, last), error_message
                 last = cast(int, current_duration)
 
     _scroll_and_check_condition(browser_id, selenium, condition, start_value)
@@ -109,8 +118,8 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 @wt(
     parsers.parse(
         "user of {browser_id} sees logs about directories or files "
-        "ordered ascendingly by name index with prefix dir_ or file_ "
-        "in archive audit log"
+        "ordered ascendingly by name index with prefix dir_ or "
+        "file_ in archive audit log"
     )
 )
 def assert_ascending_file_or_dir_names(
@@ -125,8 +134,8 @@ def assert_ascending_file_or_dir_names(
         currents = modal.get_visible_rows_of_single_column("file")[index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
-            err_msg = f"index {current_} following {last} is not bigger"
-            assert current_ > last, err_msg
+            error_message = f"index {current_} following {last} is not bigger"
+            assert current_ > last, error_message
             last = current_
 
     _scroll_and_check_condition(browser_id, selenium, condition, start_value)
@@ -157,8 +166,8 @@ def assert_n_logs_about_archivisation_finished(
             index:
         ]
         for event in visible_events:
-            err_msg = f"visible event {event} is not expected"
-            assert event in expected_events, err_msg
+            error_message = f"visible event {event} is not expected"
+            assert event in expected_events, error_message
 
     checked_elems = _scroll_and_check_condition(browser_id, selenium, condition)
     assert (
@@ -227,8 +236,12 @@ def _check_entries_in_archive_audit_log(
     visible_logs = modal.data_row
     data = yaml.load(config, yaml.Loader)
     for item in data.keys():
-        err_msg = f"there is no visible log: {item}: {data[item]} in archive audit log"
-        assert item in visible_logs and data[item] == visible_logs[item].event, err_msg
+        error_message = (
+            f"there is no visible log: {item}: {data[item]} in archive audit log"
+        )
+        assert (
+            item in visible_logs and data[item] == visible_logs[item].event
+        ), error_message
 
 
 @wt(
@@ -247,8 +260,8 @@ def click_on_item_in_archive_audit_log(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on item "{file_name}" using scroll in archive'
-        " audit log"
+        'user of {browser_id} clicks on item "{file_name}" using '
+        "scroll in archive audit log"
     )
 )
 def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
@@ -407,11 +420,11 @@ def assert_pattern_at_field_in_archive_audit_log(
     if mes_type not in patterns:
         raise AssertionError("Empty pattern, unknown this message type")
     pattern = patterns[mes_type]
-    err_msg = (
+    error_message = (
         f"message at field is {visible_message}, which does not"
         f" correspond to the type {mes_type}"
     )
-    assert pattern.fullmatch(visible_message), err_msg
+    assert pattern.fullmatch(visible_message), error_message
 
 
 def parse_time(str_time: str) -> int | float:

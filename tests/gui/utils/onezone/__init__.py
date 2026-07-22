@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 from tests.gui.utils.generic import PageName
-from tests.gui.utils.onezone.generic_page import SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import GenericPage, SidebarPanelPage
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import element_has_class, repeat_failed
 
@@ -28,10 +28,12 @@ from .shares_page import SharesPage
 from .tokens_page import TokensPage
 from .uploads_page import UploadsPage
 
-PageT = TypeVar("PageT", bound=SidebarPanelPage)
+PageT = TypeVar("PageT", bound=GenericPage)
 
 
 class OZLoggedIn:
+    _current_page_by_session_id: ClassVar[dict[str, type[GenericPage]]] = {}
+
     _page_class_by_name: ClassVar[dict[PageName, type[SidebarPanelPage]]] = {
         "data": DataPage,
         "shares": SharesPage,
@@ -57,6 +59,48 @@ class OZLoggedIn:
 
     def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
+        self._current_page_by_session_id.setdefault(self._session_id, DataPage)
+
+    @property
+    def _session_id(self) -> str:
+        session_id = self.web_elem.session_id
+        if session_id is None:
+            raise RuntimeError("WebDriver has no active session")
+        return session_id
+
+    @property
+    def current_page_cls(self) -> type[GenericPage]:
+        return self._current_page_by_session_id[self._session_id]
+
+    def set_current_page(self, page_cls: type[GenericPage]) -> None:
+        self._current_page_by_session_id[self._session_id] = page_cls
+
+    def set_current_page_during_login_logout(
+        self, *, is_login: bool, emergency_interface: bool
+    ) -> None:
+        # Emergency interface sessions always start with `ClustersPage` as the
+        # current panel. The previously selected panel may persist after logout
+        # and can also carry over between emergency and regular Onezone sessions,
+        # so we explicitly reset it after a successful emergency login. Regular
+        # Onezone logout logic similarly resets the current panel to `DataPage`,
+        # which is the expected default unless the next login uses the emergency
+        # interface.
+        if is_login and not emergency_interface:
+            return
+
+        default_page = ClustersPage if emergency_interface else DataPage
+        self.set_current_page(default_page)
+
+    def get_current_page(self) -> type[GenericPage]:
+        return self._current_page_by_session_id[self._session_id]
+
+    def update_current_page(self) -> None:
+        self.expand_panel_if_needed()
+        for page_name, page_cls in self._page_class_by_name.items():
+            if self.is_panel_active(page_name):
+                self._current_page_by_session_id[self._session_id] = page_cls
+                return
+        raise RuntimeError("No page is selected")
 
     def __str__(self) -> str:
         return "Onezone page"
@@ -85,16 +129,15 @@ class OZLoggedIn:
             raise RuntimeError(
                 f'cannot get "{panel_name}" panel, because main panel is not expanded'
             )
-        expected_panel = panel_name
         for panel in self._panels:
             name = panel.text.lower()
-            if name == expected_panel:
+            if name == panel_name:
                 return panel
-            if name == "cluster" and expected_panel == "clusters":
+            if name == "cluster" and panel_name == "clusters":
                 return panel
-            if name == "clusters" and expected_panel == "cluster":
+            if name == "clusters" and panel_name == "cluster":
                 return panel
-        raise RuntimeError(f'no "{expected_panel}" on {self} found')
+        raise RuntimeError(f'no "{panel_name}" on {self} found')
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def click_on_sidebar_menu_panel(self, panel_name: PageName) -> None:
@@ -114,10 +157,20 @@ class OZLoggedIn:
         self._wait_for_panel_to_expand()
 
     def open_panel(self, page_cls: type[PageT]) -> None:
+        if page_cls is self.current_page_cls:
+            return
+
         self.expand_panel_if_needed()
-        panel_name = page_cls.panel_name
-        if not self.is_panel_selected(panel_name):
-            self.click_on_sidebar_menu_panel(panel_name)
+
+        if page_cls is UploadsPage:
+            self.uploads_web_elem.click()
+        elif issubclass(page_cls, SidebarPanelPage):
+            panel_name = page_cls.panel_name
+
+            if not self.is_panel_selected(panel_name):
+                self.click_on_sidebar_menu_panel(panel_name)
+
+        self.set_current_page(page_cls)
 
     @property
     def data(self) -> DataPage:

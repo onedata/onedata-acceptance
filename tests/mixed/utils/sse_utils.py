@@ -56,7 +56,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         self.observed_attrs = observed_attrs
         self.verify_ssl = verify_ssl
 
-        # fileId -> attrs
+        # fileId -> attributes
         self.files: dict[str, FileAttrs] = {}
         self.deleted_files: set[str] = set()
         self.last_event_id: Optional[str] = None
@@ -170,7 +170,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
     async def _handle_changed_or_created(self, data: ChangedOrCreatedEventData) -> None:
         file_id: str = data["fileId"]
         parent_file_id: str = data["parentFileId"]
-        attrs: FileAttrs = data.get("attributes", {})
+        attributes: FileAttrs = data.get("attributes", {})
 
         # If file is deleted ignore
         if file_id in self.deleted_files:
@@ -178,11 +178,11 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
 
         cached_attrs: FileAttrs = self.files.get(file_id, {}).copy()
 
-        await self.changed_or_created_events.put({file_id: attrs})
+        await self.changed_or_created_events.put({file_id: attributes})
 
         # First event about a file
         if not cached_attrs:
-            self.files[file_id] = attrs
+            self.files[file_id] = attributes
             await self.on_file_created(file_id=file_id, parent_file_id=parent_file_id)
             return
 
@@ -195,11 +195,11 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         # The first event received for a given attribute subset is treated as the
         # “file creation” event for that subset. Subsequent events for the same
         # subset are considered updates.
-        if set(attrs.keys()) - set(cached_attrs.keys()):
-            self.files[file_id].update(attrs)
+        if set(attributes.keys()) - set(cached_attrs.keys()):
+            self.files[file_id].update(attributes)
             return
 
-        updated_attrs: FileAttrs = get_updated_attrs(attrs, cached_attrs)
+        updated_attrs: FileAttrs = get_updated_attrs(attributes, cached_attrs)
         # Check if anything changed
         if not updated_attrs:
             return
@@ -210,7 +210,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         await self.on_file_updated(
             file_id=file_id,
             parent_file_id=parent_file_id,
-            attrs=attrs,
+            attributes=attributes,
             cached_attrs=cached_attrs,
         )
 
@@ -240,7 +240,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         self,
         file_id: str,
         parent_file_id: str,
-        attrs: FileAttrs,
+        attributes: FileAttrs,
         cached_attrs: FileAttrs,
     ) -> None:
         pass
@@ -288,11 +288,11 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
         self,
         file_id: str,
         parent_file_id: str,
-        attrs: FileAttrs,
+        attributes: FileAttrs,
         cached_attrs: FileAttrs,
     ) -> None:
         await self.updated_file_attrs.put(
-            {file_id: get_updated_attrs(attrs, cached_attrs)}
+            {file_id: get_updated_attrs(attributes, cached_attrs)}
         )
 
     async def on_file_deleted(self, file_id: str, parent_file_id: str) -> None:
@@ -305,5 +305,5 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
         self.deleted_file_ids = asyncio.Queue()
 
 
-def get_updated_attrs(attrs: FileAttrs, cached_attrs: FileAttrs) -> FileAttrs:
-    return {k: attrs[k] for k in attrs if attrs[k] != cached_attrs[k]}
+def get_updated_attrs(attributes: FileAttrs, cached_attrs: FileAttrs) -> FileAttrs:
+    return {k: attributes[k] for k in attributes if attributes[k] != cached_attrs[k]}

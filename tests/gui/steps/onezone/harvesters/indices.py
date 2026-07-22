@@ -19,7 +19,7 @@ from tests.gui.steps.onezone.harvesters.data_discovery import (
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -140,19 +140,19 @@ def assert_progress_in_harvesting(
 @wt(
     parsers.parse(
         "user of {browser_id} unchecks all toggles apart from "
-        "{stay_checked} in indices page"
-    )
+        "{stay_checked:ElementsSequence} in indices page",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def uncheck_toggles_on_create_index_page(
-    selenium: SeleniumDrivers, browser_id: str, stay_checked: str
+    selenium: SeleniumDrivers, browser_id: str, stay_checked: list[str]
 ) -> None:
     driver = selenium[browser_id]
-    toggles_to_keep = parse_seq(stay_checked)
     indices_page = OZLoggedIn(driver).discovery.indices_page
     for toggles_group, toggle_group_types in CREATE_INDEX_TOGGLES.items():
         for toggle in toggle_group_types:
-            if toggle not in toggles_to_keep:
+            if toggle not in stay_checked:
                 if toggles_group == "rejection_toggles":
                     getattr(indices_page, toggle).click()
                 else:
@@ -270,8 +270,7 @@ def assert_id_on_data_discovery_page(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that archives creation time in"
-        " results list on data discovery page is the same as on "
-        "the archives page"
+        " results list on data discovery page is the same as on the archives page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -284,10 +283,10 @@ def assert_creation_time_on_data_discovery_page(
     timestamp = float(
         DataDiscovery(driver).results_list[2].text.split(",")[0].split(": ")[2]
     )
-    err_msg = (
+    error_message = (
         "archive creation time is not compatible with creation time on archives page"
     )
-    assert (created_at - 60) < timestamp < (created_at + 60), err_msg
+    assert (created_at - 60) < timestamp < (created_at + 60), error_message
 
 
 @wt(

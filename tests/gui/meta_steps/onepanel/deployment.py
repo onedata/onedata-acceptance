@@ -37,7 +37,7 @@ from tests.utils.user_utils import Users
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sets options for {host_regexp} host in "
+        "user of {browser_id} sets options for {host_pattern} host in "
         "step 1 of deployment process with following "
         "configuration:\n{config}"
     )
@@ -45,7 +45,7 @@ from tests.utils.user_utils import Users
 def setup_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
-    host_regexp: str,
+    host_pattern: str,
     config: str,
     hosts: Hosts,
 ) -> None:
@@ -60,13 +60,13 @@ def setup_step1(
      - Cluster Manager
      - Primary Cluster Manager
     """
-    _setup_step1(selenium, browser_id, host_regexp, config, hosts)
+    _setup_step1(selenium, browser_id, host_pattern, config, hosts)
 
 
 def _setup_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
-    host_regexp: str,
+    host_pattern: str,
     configuration: str,
     hosts: Hosts,
 ) -> None:
@@ -76,9 +76,9 @@ def _setup_step1(
     btn = "Deploy"
 
     wt_check_host_options_list_in_deployment_step1(
-        selenium, browser_id, options, host_regexp
+        selenium, browser_id, options, host_pattern
     )
-    if "onezone" in host_regexp:
+    if "onezone" in host_pattern:
         zone_for_name, zone_for_domain = _parse_zone_data(
             config["zone name"], config["zone domain"]
         )
@@ -175,11 +175,11 @@ def enable_provider_cluster_registration_for_user(
     last_step = "last step"
     wt_click_on_btn_in_deployment_step(selenium, browser_id, last_step_btn, last_step)
     service = "Onezone"
-    login_using_basic_auth(selenium, browser_id, user_login, users, service)
+    login_using_basic_auth(selenium, [browser_id], [user_login], users, [service])
     send_copied_invite_token_in_oz_gui(
         selenium,
         browser_id,
-        browser_id2,
+        [browser_id2],
         tmp_memory,
         displays,
         clipboard,
@@ -189,8 +189,7 @@ def enable_provider_cluster_registration_for_user(
 @wt(
     parsers.parse(
         "user of {browser_id} registers provider in step 2 of "
-        "deployment process in Onepanel with following config:\n"
-        "{config}"
+        "deployment process in Onepanel with following config:\n{config}"
     )
 )
 def setup_step2(

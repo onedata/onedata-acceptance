@@ -54,9 +54,9 @@ def wt_type_password_of_user_to_curr_passwd(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-        "(?P<in_box>New|Retype new|Current) password in change "
-        "password form in account management page"
+        r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
+        r"(?P<in_box>New|Retype new|Current) password in change "
+        r"password form in account management page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -69,8 +69,8 @@ def wt_type_text_to_in_box_in_chpasswd_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on Confirm password change "
-        "button in change password form in account management page"
+        r"user of (?P<browser_id>.*?) clicks on Confirm password change "
+        r"button in change password form in account management page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

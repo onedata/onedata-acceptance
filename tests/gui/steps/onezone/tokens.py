@@ -164,7 +164,9 @@ def show_inactive_caveats(selenium: SeleniumDrivers, browser_id: str) -> None:
 def click_on_confirm_button_on_tokens_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    OZLoggedIn(selenium[browser_id]).tokens.confirm_button()
+    oz_page = OZLoggedIn(selenium[browser_id])
+    oz_page.tokens.confirm_button()
+    oz_page.update_current_page()
 
 
 @wt(
@@ -217,10 +219,10 @@ def choose_token_type_to_create(
     getattr(OZLoggedIn(driver).tokens.create_token_page, option).click()
     # ensure correct option is selected
     option_input = f"{token_type}_input"
-    err_msg = f"did not manage to select {option}"
+    error_message = f"did not manage to select {option}"
     assert getattr(
         OZLoggedIn(driver).tokens.create_token_page, option_input
-    ).is_selected(), err_msg
+    ).is_selected(), error_message
 
 
 @wt(parsers.parse("user of {browser_id} clicks on copy button in token view"))
@@ -339,9 +341,9 @@ def assert_all_tokens_are_type(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that "
-        'token named "(?P<token_name>.*?)" is marked as '
-        "(?P<status>active|revoked)"
+        r"user of (?P<browser_id>.*?) sees that "
+        r'token named "(?P<token_name>.*?)" is marked as '
+        r"(?P<status>active|revoked)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -606,11 +608,13 @@ def assert_token_on_token_page_sidebar(
     tokens_page = OZLoggedIn(driver).tokens.sidebar
 
     if ability_to_see == "sees":
-        err_msg = f"token list on sidebar should contain {token_name}"
-        assert token_name in {token.name for token in tokens_page.tokens}, err_msg
+        error_message = f"token list on sidebar should contain {token_name}"
+        assert token_name in {token.name for token in tokens_page.tokens}, error_message
     if ability_to_see == "does not see":
-        err_msg = f"token list on sidebar should not contain {token_name}"
-        assert token_name not in {token.name for token in tokens_page.tokens}, err_msg
+        error_message = f"token list on sidebar should not contain {token_name}"
+        assert token_name not in {
+            token.name for token in tokens_page.tokens
+        }, error_message
 
 
 def choose_token_template(

@@ -102,6 +102,49 @@ def parse_seq(
     ]
 
 
+# An empty sequence, e.g. []
+EMPTY_SEQUENCE = r"\[\]"
+
+# A quoted element, including spaces and special characters, e.g. "dev-oneprovider-0"
+QUOTED_ELEMENT = r'"[^"\n]+"'
+
+# A single unquoted element without separators or whitespace, e.g. new_space1
+UNQUOTED_ELEMENT = r'[^,\[\]"\s]+'
+
+# An element inside a sequence can be quoted or contain unquoted whitespace,
+# see BRACKETED_SEQUENCE
+SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
+
+# A comma-separated sequence of elements enclosed in square brackets.
+# Examples:
+#   [abc]                  -> element 1: abc
+#   [abc, def]             -> element 1: abc       | element 2: def
+#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
+#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
+#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
+BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}" rf"(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
+
+# An element sequence can be:
+#   abc                    -> element 1: abc
+#   abc-def                -> element 1: abc-def
+#   "abc def"              -> element 1: abc def
+#   "abc, def"             -> element 1: abc, def
+#   [abc]                  -> element 1: abc
+#   [abc, def]             -> element 1: abc       | element 2: def
+#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
+#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
+#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
+ELEMENTS_SEQUENCE_PATTERN = (
+    rf"(?:{QUOTED_ELEMENT}|{UNQUOTED_ELEMENT}|{BRACKETED_SEQUENCE}|{EMPTY_SEQUENCE})"
+)
+
+
+def parse_elements_sequence(value: str) -> list[str]:
+    if re.fullmatch(ELEMENTS_SEQUENCE_PATTERN, value) is None:
+        raise ValueError(f"Invalid elements sequence: {value!r}")
+    return parse_seq(value)
+
+
 def upload_file_path(file_name: str) -> str:
     """Resolve an absolute path for file with name file_name stored
     in upload_files dir
@@ -195,43 +238,43 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
 
 def find_web_elem(
     web_elem_root: WebElemRoot,
-    css_sel: str,
-    err_msg: str | Callable[[], str],
+    css_selector: str,
+    error_message: str | Callable[[], str],
     scroll: bool = True,
 ) -> WebElement:
     try:
         if scroll:
-            _scroll_to_css_sel(web_elem_root, css_sel)
-        item = web_elem_root.find_element(By.CSS_SELECTOR, css_sel)
+            _scroll_to_css_selector(web_elem_root, css_selector)
+        item = web_elem_root.find_element(By.CSS_SELECTOR, css_selector)
     except NoSuchElementException as exc:
-        if callable(err_msg):
-            err_msg = err_msg()
-        raise RuntimeError(err_msg) from exc
+        if callable(error_message):
+            error_message = error_message()
+        raise RuntimeError(error_message) from exc
     return item
 
 
 def find_web_elem_with_text(
     web_elem_root: WebElemRoot,
-    css_sel: str,
+    css_selector: str,
     text: str,
-    err_msg: str | Callable[[], str],
+    error_message: str | Callable[[], str],
     scroll: bool = True,
 ) -> WebElement:
-    items = web_elem_root.find_elements(By.CSS_SELECTOR, css_sel)
+    items = web_elem_root.find_elements(By.CSS_SELECTOR, css_selector)
     if scroll:
-        _scroll_to_css_sel(web_elem_root, css_sel)
+        _scroll_to_css_selector(web_elem_root, css_selector)
     for item in items:
         if item.text.lower() == text.lower():
             return item
-    if callable(err_msg):
-        err_msg = err_msg()
-    raise RuntimeError(f'Css element with "{text}" text not found. {err_msg}')
+    if callable(error_message):
+        error_message = error_message()
+    raise RuntimeError(f'Css element with "{text}" text not found. {error_message}')
 
 
 def click_on_web_elem(
     driver: WebDriver,
     web_elem: WebElement,
-    err_msg: str | Callable[[], str],
+    error_message: str | Callable[[], str],
     delay: bool | float = True,
 ) -> None:
     disabled = "disabled" in web_elem.get_attribute("class")
@@ -250,17 +293,17 @@ def click_on_web_elem(
         action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
         action.perform()
     else:
-        if callable(err_msg):
-            err_msg = err_msg()
-        raise RuntimeError(err_msg)
+        if callable(error_message):
+            error_message = error_message()
+        raise RuntimeError(error_message)
 
 
-def _scroll_to_css_sel(web_elem_root: WebElemRoot, css_sel: str) -> None:
+def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> None:
     driver = getattr(web_elem_root, "parent", web_elem_root)
     driver.execute_script(
         "var el = (typeof $ === 'function' ? "
-        f"$('{css_sel}')[0] : "
-        f"document.querySelector('{css_sel}')); "
+        f"$('{css_selector}')[0] : "
+        f"document.querySelector('{css_selector}')); "
         "el && el.scrollIntoView(true);"
     )
 
@@ -441,35 +484,10 @@ PageName = Literal[
 ]
 
 
-# A quoted element, including spaces and special characters, e.g. "dev-oneprovider-0"
-QUOTED_ELEMENT = r'"[^"\n]+"'
-
-# A single unquoted element without separators or whitespace, e.g. new_space1
-UNQUOTED_ELEMENT = r'[^,\[\]"\s]+'
-
-# An element inside a sequence can be quoted or contain unquoted whitespace,
-# see BRACKETED_SEQUENCE
-SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
-
-# A comma-separated sequence of elements enclosed in square brackets.
-# Examples:
-#   [abc]                  -> element 1: abc
-#   [abc, def]             -> element 1: abc       | element 2: def
-#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
-#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
-#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
-BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}" rf"(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
-
-# An element sequence can be:
-#   abc                    -> element 1: abc
-#   abc-def                -> element 1: abc-def
-#   "abc def"              -> element 1: abc def
-#   "abc, def"             -> element 1: abc, def
-#   [abc]                  -> element 1: abc
-#   [abc, def]             -> element 1: abc       | element 2: def
-#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
-#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
-#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
-ELEMENTS_SEQUENCE_PATTERN = (
-    rf"(?:{QUOTED_ELEMENT}|{UNQUOTED_ELEMENT}|{BRACKETED_SEQUENCE})"
-)
+class HostPattern(Enum):
+    PROVIDER_PANEL = r"oneprovider-[0-9]+ provider panel"
+    ZONE_PANEL = r"(?:onezone zone panel|[Oo]nezone panel)"
+    ZONE = r"[Oo]nezone"
+    ONEPANEL_EMERGENCY = r"emergency interface of Onepanel"
+    ONEZONE_EMERGENCY = r"emergency interface of Onezone"
+    PROVIDER_NODE = r"node[0-9]+ of oneprovider-[0-9]+ provider panel"

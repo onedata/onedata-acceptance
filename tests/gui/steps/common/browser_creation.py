@@ -23,7 +23,7 @@ from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    parse_seq,
+    parse_elements_sequence,
     redirect_display,
 )
 from tests.type_definitions import JsonObject, SeleniumDrivers, WebDriverFactory
@@ -34,12 +34,15 @@ from tests.utils.bdd_utils import parsers
     parsers.re(
         rf"users? opened (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) "
         r"(?:window|browsers' windows)"
-    )
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 def create_instances_of_webdriver(
     selenium: SeleniumDrivers,
     driver: WebDriverFactory,
-    browser_id_list: str,
+    browser_id_list: list[str],
     tmpdir: LocalPath,
     tmp_memory: TmpMemory,
     driver_type: str,
@@ -50,7 +53,7 @@ def create_instances_of_webdriver(
     capabilities: JsonObject,
 ) -> None:
 
-    for browser_id, display in zip(parse_seq(browser_id_list), cycle(xvfb)):
+    for browser_id, display in zip(browser_id_list, cycle(xvfb)):
         if browser_id in selenium:
             raise AttributeError(f"{browser_id:s} already in use")
         tmp_memory[browser_id] = {

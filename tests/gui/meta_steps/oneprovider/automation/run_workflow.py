@@ -35,7 +35,12 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     choose_time_resolution,
 )
 from tests.gui.utils import Modals, Popups
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    parse_seq,
+    transform,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -93,10 +98,12 @@ def select_initial_items_for_workflow_in_modal(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) chooses (?P<file_list>.*) file as "
-        'initial value of "(?P<store_name>.*)" store for workflow in '
-        '"Select files" modal'
-    )
+        r"user of (?P<browser_id>.*) chooses"
+        rf" (?P<file_list>{ELEMENTS_SEQUENCE_PATTERN}) file as "
+        r'initial value of "(?P<store_name>.*)" store for workflow '
+        r'in "Select files" modal'
+    ),
+    converters={"file_list": parse_elements_sequence},
 )
 def choose_file_as_initial_workflow_value_for_store(
     selenium: SeleniumDrivers,
@@ -154,40 +161,42 @@ def provide_text_to_string_initial_workflow_value_store(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees "(?P<expected_err_msg>.*)" '
-        'message while choosing "(?P<dir_name>.*)" directory as initial '
-        'value for workflow in "Select files" modal'
+        r'user of (?P<browser_id>.*) sees "(?P<expected_error_message>.*)" '
+        r'message while choosing "(?P<dir_name>.*)" directory as initial '
+        r'value for workflow in "Select files" modal'
     )
 )
 def fails_to_choose_directory_as_initial_workflow_value(
     selenium: SeleniumDrivers,
     browser_id: str,
     dir_name: str,
-    expected_err_msg: str,
+    expected_error_message: str,
 ) -> None:
     data_type = "directory"
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     open_initial_modal(data_type, driver)
     Modals(driver).select_files.files[dir_name].click()
-    actual_err_msg = Modals(driver).select_files.error_msg
-    assert actual_err_msg == expected_err_msg, (
-        f'User does not see expected error: "{expected_err_msg}" while trying'
+    actual_error_message = Modals(driver).select_files.error_msg
+    assert actual_error_message == expected_error_message, (
+        f'User does not see expected error: "{expected_error_message}" while trying'
         f' to set "{dir_name}" as initial value for workflow'
     )
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) chooses (?P<file_list>.*) "
-        "(?P<data_type>file|files|datasets) as initial value for "
-        'workflow in "Select files" modal'
-    )
+        r"user of (?P<browser_id>.*) chooses"
+        rf" (?P<file_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"(?P<data_type>file|files|datasets) as initial value for "
+        r'workflow in "Select files" modal'
+    ),
+    converters={"file_list": parse_elements_sequence},
 )
 def choose_file_as_initial_workflow_value(
     selenium: SeleniumDrivers,
     browser_id: str,
-    file_list: str,
+    file_list: str | list[str],
     data_type: str,
 ) -> None:
     switch_to_iframe(selenium, browser_id)
@@ -199,7 +208,8 @@ def choose_file_as_initial_workflow_value(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) waits for all workflows to (?P<option>start|finish)"
+        r"user of (?P<browser_id>.*) waits for all workflows to"
+        r" (?P<option>start|finish)"
     )
 )
 @repeat_failed(
@@ -214,8 +224,8 @@ def wait_for_workflows_in_automation_subpage(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) waits extended time for "
-        "all workflows to (?P<option>start|finish)"
+        r"user of (?P<browser_id>.*) waits extended time for "
+        r"all workflows to (?P<option>start|finish)"
     )
 )
 @repeat_failed(
@@ -256,15 +266,16 @@ def assert_no_suspended_workflows_in_atm_subpage(
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Suspended")
-    err_msg = "Workflow did not finished successfully and it is in suspended state."
-    assert len(page.workflow_executions_list) == 0, err_msg
+    error_message = (
+        "Workflow did not finished successfully and it is in suspended state."
+    )
+    assert len(page.workflow_executions_list) == 0, error_message
 
 
 @wt(
     parsers.parse(
         'user of {browser_id} awaits for status of task "{task}" in '
-        '{ordinal} parallel box in "{lane}" lane to be '
-        '"{expected_status}"'
+        '{ordinal} parallel box in "{lane}" lane to be "{expected_status}"'
     )
 )
 def await_for_task_status(

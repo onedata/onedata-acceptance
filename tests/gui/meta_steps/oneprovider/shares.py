@@ -70,7 +70,12 @@ from tests.gui.utils.common.xml_addons import (
     replace_xml_editor_data,
     resolve_xml_tag_for_et_search,
 )
-from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    WhichBrowser,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
@@ -217,7 +222,7 @@ def hand_share_url_to_another_user(
 
     copy_url_of_share(selenium, browser_id, share_name, item_name, tmp_memory)
     send_copied_item_to_other_users(
-        browser_id, item_type, browser2_id, tmp_memory, displays, clipboard
+        browser_id, item_type, [browser2_id], tmp_memory, displays, clipboard
     )
     click_modal_button(selenium, browser_id, button, modal_name)
 
@@ -245,8 +250,8 @@ def copy_url_of_share(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} renames current share to "{new_name}"'
-        " in single share view"
+        "user of {browser_id} renames current share to "
+        '"{new_name}" in single share view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -267,8 +272,8 @@ def rename_share_from_single_view(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) copies command for "(?P<command>.*?)" operation in'
-        " API section from (file|directory) details modal"
+        r'user of (?P<browser_id>.*?) copies command for "(?P<command>.*?)"'
+        r" operation in API section from (file|directory) details modal"
     )
 )
 def copy_command_from_api_in_file_details_modal(
@@ -327,8 +332,8 @@ def add_description_to_share_on_private_interface(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} fills the input fields of Dublin Core form"
-        " with:\n{config}"
+        "user of {browser_id} fills the input fields of Dublin "
+        "Core form with:\n{config}"
     )
 )
 def fill_inputs_in_dublin_core_metadata_form(
@@ -397,10 +402,9 @@ def assert_properties_in_dublin_core_metadata_form(
     parsed_config = yaml.load(config, yaml.Loader)
     for _, data in parsed_config.items():
         if not isinstance(data, list):
-            assert_data_in_dublin_core_metadata(browser_id, data, selenium)
+            assert_data_in_dublin_core_metadata(browser_id, [data], selenium)
         else:
-            for item in data:
-                assert_data_in_dublin_core_metadata(browser_id, item, selenium)
+            assert_data_in_dublin_core_metadata(browser_id, data, selenium)
 
 
 @wt(
@@ -438,14 +442,14 @@ def send_public_handle_link_to_user(
     copy_link_in_shares_interface(browser_id, selenium)
 
     send_copied_item_to_other_users(
-        browser_id, item_type, browser2_id, tmp_memory, displays, clipboard
+        browser_id, item_type, [browser2_id], tmp_memory, displays, clipboard
     )
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} fills text section fields of EDM metadata form"
-        " with:\n{config}"
+        "user of {browser_id} fills text section fields of EDM "
+        "metadata form with:\n{config}"
     )
 )
 def fill_inputs_in_edm_metadata_form(
@@ -599,17 +603,21 @@ def rename_share_on_private_interface(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that (?P<metadata_type>DataCite|OpenAIRE)"
         r" XML data contains nodes like:"
-        r" (?P<data>.*?) on share's (private|public) interface"
-    )
+        rf" (?P<data>{ELEMENTS_SEQUENCE_PATTERN}) on share's "
+        r"(private|public) interface"
+    ),
+    converters={
+        "data": parse_elements_sequence,
+    },
 )
 def assert_xml_data_in_edm_form_in_shares_interface(
-    selenium: SeleniumDrivers, browser_id: str, data: str, metadata_type: str
+    selenium: SeleniumDrivers, browser_id: str, data: list[str], metadata_type: str
 ) -> None:
     check_ace_editor_appeared(selenium, browser_id)
     xml_data = get_xml_editor_data(selenium[browser_id])
     root = ET.fromstring(xml_data)
 
-    for elem in parse_seq(data):
+    for elem in data:
         elem_for_search = resolve_xml_tag_for_et_search(elem, metadata_type)
         assert (
             root.find(f".//{elem_for_search}") is not None

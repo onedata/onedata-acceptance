@@ -22,7 +22,12 @@ from tests.gui.steps.common.url import wait_till_alert_info_popup_disappear
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
-from tests.gui.utils.generic import AlertPopup, implicit_wait, parse_seq, transform
+from tests.gui.utils.generic import (
+    AlertPopup,
+    implicit_wait,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -49,8 +54,7 @@ def wt_select_storage_in_support_space_form(
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on Support space button "
-        "in spaces page in Onepanel if there are some spaces "
-        "already supported"
+        "in spaces page in Onepanel if there are some spaces already supported"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -68,8 +72,8 @@ def wt_click_on_support_space_btn_on_condition(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) selects (?P<btn>MiB|GiB|TiB) "
-        "radio button in support space form in Onepanel"
+        r"user of (?P<browser_id>.+?) selects (?P<btn>MiB|GiB|TiB) "
+        r"radio button in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -81,8 +85,8 @@ def wt_select_unit_in_space_support_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) selects (?P<btn>auto|manual) "
-        "radio button in support space form in Onepanel"
+        r"user of (?P<browser_id>.+?) selects (?P<btn>auto|manual) "
+        r"radio button in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -95,8 +99,8 @@ def wt_select_mode_in_space_support_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) clicks on Support space "
-        "button in support space form in Onepanel"
+        r"user of (?P<browser_id>.+?) clicks on Support space "
+        r"button in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -215,8 +219,7 @@ def wt_select_strategy_in_conf_in_support_space_form(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" '
-        r"to (?P<input_box>.*) input field in support space form "
-        r"in Onepanel"
+        r"to (?P<input_box>.*) input field in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -339,10 +342,10 @@ def wt_assert_proper_space_configuration_in_panel(
     space.navigation.overview()
     displayed_conf = getattr(space.overview, sync_type.lower() + "_strategy")
 
-    for attr, val in yaml.load(conf, yaml.Loader).items():
-        displayed_val = displayed_conf[attr]
+    for attribute, val in yaml.load(conf, yaml.Loader).items():
+        displayed_val = displayed_conf[attribute]
         assert str(val).lower() == displayed_val.lower(), (
-            f"Displayed {displayed_val} as {attr} instead of expected {val} in"
+            f"Displayed {displayed_val} as {attribute} instead of expected {val} in"
             f' {sync_type} strategy of "{space_name}" configuration'
         )
 
@@ -416,7 +419,7 @@ def wt_clicks_on_btn_in_cease_support_modal(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\S+) removes space using "
-        "delete space modal invoked from provided link"
+        r"delete space modal invoked from provided link"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -431,8 +434,7 @@ def remove_space_instead_of_revoke(selenium: SeleniumDrivers, browser_id: str) -
 @wt(
     parsers.parse(
         'user of {browser_id} logs in as "{user}" to Onezone service '
-        "and removes space using delete space modal invoked from "
-        "provided link"
+        "and removes space using delete space modal invoked from provided link"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -447,7 +449,7 @@ def login_and_remove_space_instead_of_revoke(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(3)
-    login_using_basic_auth(selenium, browser_id, user, users, "Onezone")
+    login_using_basic_auth(selenium, [browser_id], [user], users, ["Onezone"])
     modal_name = "Remove space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(selenium[browser_id]).remove_modal.understand_notice()
@@ -531,16 +533,18 @@ def assert_correct_number_displayed_on_sync_charts(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees {tab_list} navigation tabs for space "{space_name}"'
-    )
+        "user of {browser_id} sees {tab_list:ElementsSequence} navigation tabs "
+        'for space "{space_name}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_space_displayed(
-    selenium: SeleniumDrivers, browser_id: str, tab_list: str, space_name: str
+    selenium: SeleniumDrivers, browser_id: str, tab_list: list[str], space_name: str
 ) -> None:
     nav = Onepanel(selenium[browser_id]).content.spaces.spaces[space_name].navigation
 
-    for tab in parse_seq(tab_list):
+    for tab in tab_list:
         assert (
             getattr(nav, transform(tab, strip_char='"')) is not None
         ), f"no navigation tab {tab} found"
@@ -645,8 +649,8 @@ def click_option_on_dropdown_rule(
         else:
             break
     else:
-        err_msg = f"Failed do set {rule} for {option}"
-        assert tab.selective_cleaning_form[rule].value_limit == option, err_msg
+        error_message = f"Failed do set {rule} for {option}"
+        assert tab.selective_cleaning_form[rule].value_limit == option, error_message
 
 
 @wt(
@@ -739,8 +743,8 @@ def see_released_size_in_cleaning_report(
 
         if released_size == size:
             return
-    err_msg = f"released size: {released_size}  is not expected size: {size}"
-    assert False, err_msg
+    error_message = f"released size: {released_size}  is not expected size: {size}"
+    assert False, error_message
 
 
 def toggle_in_storage_import_configuration_is_enabled(

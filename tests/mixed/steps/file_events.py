@@ -16,7 +16,7 @@ import yaml
 from tests import OP_REST_PORT
 from tests.gui.sse_fixtures import MonitorEntry
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.mixed.type_definitions import (
     EventResult,
     ExpectedAttrs,
@@ -54,14 +54,15 @@ class SpaceFilesMonitorFactory(Protocol):
 
 @wt(
     parsers.parse(
-        'user {user} starts observing file events on "{attrs}" on dir "{dir_path}" in'
-        ' space "{space}" in {host}'
-    )
+        'user {user} starts observing file events on "{attributes:ElementsSequence}" on'
+        ' dir "{directory_path}" in space "{space}" in {host}',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 def wt_start_observing_file_events(
     user: str,
-    attrs: str,
-    dir_path: str,
+    attributes: list[str],
+    directory_path: str,
     space: str,
     space_files_monitor_factory: SpaceFilesMonitorFactory,
     tmp_memory: TmpMemory,
@@ -72,11 +73,10 @@ def wt_start_observing_file_events(
 ) -> None:
     space_id = spaces[space]
     token = users[user].token
-    observed_attrs = parse_seq(attrs)
     provider_hostname = hosts[host]["hostname"]
     op_authority = f"{provider_hostname}:{OP_REST_PORT}"
-    dir_path = f"{space}/{dir_path}"
-    file_id = get_file_id_by_rest(dir_path, provider_hostname, users[user].token)
+    directory_path = f"{space}/{directory_path}"
+    file_id = get_file_id_by_rest(directory_path, provider_hostname, users[user].token)
 
     start_observing_file_events(
         space_files_monitor_factory,
@@ -85,7 +85,7 @@ def wt_start_observing_file_events(
         space_id,
         token,
         [file_id],
-        observed_attrs,
+        attributes,
     )
 
 
@@ -127,16 +127,15 @@ def wt_assert_new_file_event_in_observed_directory(
     file_id = get_file_id_cached(
         f"{space}/{path}", provider_hostname, users[user].token
     )
-    expected_result = file_id
     assert_file_action_in_observed_directory(
-        tmp_memory, async_loop_in_thread, ObservedFileAction.CREATION, expected_result
+        tmp_memory, async_loop_in_thread, ObservedFileAction.CREATION, file_id
     )
 
 
 @wt(
     parsers.parse(
-        'user {user} can see deleted file event about "{path}" in space "{space}" in'
-        " {host}"
+        'user {user} can see deleted file event about "{path}" in '
+        'space "{space}" in {host}'
     )
 )
 def wt_assert_deleted_file_event_in_observed_directory(
@@ -153,9 +152,8 @@ def wt_assert_deleted_file_event_in_observed_directory(
     file_id = get_file_id_cached(
         f"{space}/{path}", provider_hostname, users[user].token
     )
-    expected_result = file_id
     assert_file_action_in_observed_directory(
-        tmp_memory, async_loop_in_thread, ObservedFileAction.DELETION, expected_result
+        tmp_memory, async_loop_in_thread, ObservedFileAction.DELETION, file_id
     )
 
 
@@ -207,8 +205,8 @@ def wt_assert_updated_file_events_in_observed_directory(
     expected_attrs = {}
     for item in expected_data:
         if isinstance(item, dict):
-            for attr_name, attr_val in item.items():
-                expected_attrs[attr_name] = attr_val
+            for attr_name, attribute_value in item.items():
+                expected_attrs[attr_name] = attribute_value
         else:
             expected_attrs[item] = None
     provider_hostname = hosts[host]["hostname"]
@@ -243,14 +241,14 @@ def assert_file_actions_in_observed_directory(
             changed_files = cast(dict[str, FileAttrs], result)
             if file_id not in changed_files:
                 continue
-            attrs = changed_files[file_id]
-            for attr in attrs:
-                if attr in expected_attrs_keys:
-                    if expected_attrs[attr] is not None:
-                        if attrs[attr] == expected_attrs[attr]:
-                            found.add(attr)
+            attributes = changed_files[file_id]
+            for attribute in attributes:
+                if attribute in expected_attrs_keys:
+                    if expected_attrs[attribute] is not None:
+                        if attributes[attribute] == expected_attrs[attribute]:
+                            found.add(attribute)
                     else:
-                        found.add(attr)
+                        found.add(attribute)
             if found == expected_attrs_keys:
                 return
         except TimeoutError as e:

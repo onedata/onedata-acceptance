@@ -62,8 +62,7 @@ def wait_for_ongoing_pods_to_be_terminated(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that name of first pod in tab "
-        '"{tab}" in modal "Function pods activity" contains lambda '
-        'name "{lambda_name}"'
+        '"{tab}" in modal "Function pods activity" contains lambda name "{lambda_name}"'
     )
 )
 def assert_lambda_name_in_tab_name(
@@ -73,8 +72,10 @@ def assert_lambda_name_in_tab_name(
     modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, tab)
     pod_name = modal.pods_list[0].pod_name
-    err_msg = f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
-    assert lambda_name in pod_name, err_msg
+    error_message = (
+        f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
+    )
+    assert lambda_name in pod_name, error_message
 
 
 @wt(
@@ -119,8 +120,8 @@ def gather_events_list(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees events in modal "
-        '"Function pods activity" with following '
+        r"user of (?P<browser_id>.*) sees events in modal "
+        r'"Function pods activity" with following '
         r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
@@ -145,9 +146,9 @@ def assert_events_in_pods_monitor(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees events in modal "
-        '"Function pods activity" that contains lambda name '
-        '"(?P<lambda_name>.*)" and following '
+        r"user of (?P<browser_id>.*) sees events in modal "
+        r'"Function pods activity" that contains lambda name '
+        r'"(?P<lambda_name>.*)" and following '
         r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
@@ -178,8 +179,10 @@ def assert_events_containing_lambda_name(
                 matching.append(elem)
                 break
 
-        err_msg = f"{option}: {event} that contains {lambda_name} has not been found"
-        assert matching, err_msg
+        error_message = (
+            f"{option}: {event} that contains {lambda_name} has not been found"
+        )
+        assert matching, error_message
 
 
 def get_lambda_name(events: str) -> str:
@@ -197,10 +200,10 @@ def get_lambda_name(events: str) -> str:
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees following "(?P<link>.*)" '
-        '(?P<option>reason|message)s for task "(?P<task>.*)" in '
-        '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane '
-        "(?P<if_finished>after workflow execution is finished|during "
+        r'user of (?P<browser_id>.*) sees following "(?P<link>.*)" '
+        r'(?P<option>reason|message)s for task "(?P<task>.*)" in '
+        r'(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane '
+        r"(?P<if_finished>after workflow execution is finished|during "
         r"workflow execution):\n(?P<events>(.|\s)*)"
     )
 )
@@ -274,11 +277,11 @@ def check_number_of_events(
         Modals(driver).function_pods_activity.get_number_of_data_rows(driver)
     )
     expected_num = int(exp_num)
-    err_msg = (
+    error_message = (
         f'numer of events on "Pods activity" ({actual_num}) for task '
         f'"{task}" is not about {expected_num}'
     )
-    assert abs(actual_num - expected_num) <= 3, err_msg
+    assert abs(actual_num - expected_num) <= 3, error_message
 
 
 @wt(

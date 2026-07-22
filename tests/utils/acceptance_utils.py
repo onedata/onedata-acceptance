@@ -118,7 +118,7 @@ def execute_command(
 
 @wt(
     parsers.re(
-        "if (?P<client>.+?) is web GUI, (?P<user>.+?) is idle for "
+        r"if (?P<client>.+?) is web GUI, (?P<user>.+?) is idle for "
         r"(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?"
     )
 )
@@ -129,7 +129,7 @@ def wait_given_time_if_web_gui(client: str, seconds: str) -> None:
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) is idle for "
+        r"user of (?P<browser_id>.+?) is idle for "
         r"(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?"
     )
 )

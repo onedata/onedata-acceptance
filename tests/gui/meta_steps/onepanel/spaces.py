@@ -60,10 +60,9 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        'user of (?P<user>.+?) supports "(?P<space_name>.*)" space '
-        'in "(?P<provider_name>.+?)" Oneprovider panel service '
-        "with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r'user of (?P<user>.+?) supports "(?P<space_name>.*)" space '
+        r'in "(?P<provider_name>.+?)" Oneprovider panel service '
+        r"with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def support_space_in_op_panel_using_gui(
@@ -190,7 +189,7 @@ def _support_space_in_op_panel_using_gui(
     unit = options.get("unit", "MiB")
 
     wt_click_on_subitem_for_item(
-        selenium, user, sidebar, sub_item, provider_name, hosts
+        selenium, [user], sidebar, sub_item, provider_name, hosts
     )
     wt_click_on_support_space_btn_on_condition(selenium, user)
     wt_select_storage_in_support_space_form(selenium, user, options["storage"])
@@ -248,7 +247,7 @@ def revoke_space_support_in_op_panel_using_gui(
     option = "Revoke space support"
 
     wt_click_on_subitem_for_item(
-        selenium, user, sidebar, sub_item, provider_name, hosts
+        selenium, [user], sidebar, sub_item, provider_name, hosts
     )
     wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option)
@@ -292,7 +291,7 @@ def assert_proper_space_configuration_in_op_panel_gui(
     sidebar = "Clusters"
     sub_item = "Spaces"
     wt_click_on_subitem_for_item(
-        selenium, user, sidebar, sub_item, provider_name, hosts
+        selenium, [user], sidebar, sub_item, provider_name, hosts
     )
     wt_open_space_item_in_spaces_page_op_panel(selenium, user, space)
     wt_assert_proper_space_configuration_in_panel(
@@ -320,7 +319,9 @@ def revoke_all_space_supports(
     click_on_record_in_clusters_menu(selenium, browser_id, record, hosts)
     # wait for load cluster
     time.sleep(5)
-    wt_click_on_subitem_for_item(selenium, browser_id, sidebar, sub_item, record, hosts)
+    wt_click_on_subitem_for_item(
+        selenium, [browser_id], sidebar, sub_item, record, hosts
+    )
     # wait for load spaces list
     time.sleep(1)
     spaces_list = Onepanel(selenium[browser_id]).content.spaces.spaces
@@ -393,8 +394,8 @@ def set_quota_in_auto_cleaning(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} starts scan using "Start scan" button and waits till'
-        " finished in Onepanel"
+        'user of {browser_id} starts scan using "Start scan" button and waits '
+        "till finished in Onepanel"
     )
 )
 def run_scan_and_wait_till_finished(selenium: SeleniumDrivers, browser_id: str) -> None:

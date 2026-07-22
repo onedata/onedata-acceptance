@@ -216,24 +216,24 @@ def _parse_data(
         if isinstance(item, dict):
             if [*item][0] == "__onedata":
                 page.filter_properties_tree.tree_nodes["__onedata"].expander()
-                attrs = cast(list[JsonValue], item["__onedata"])
-                for attr in attrs:
-                    if isinstance(attr, dict):
-                        if [*attr][0] == "xattrs":
+                attributes = cast(list[JsonValue], item["__onedata"])
+                for attribute in attributes:
+                    if isinstance(attribute, dict):
+                        if [*attribute][0] == "xattrs":
                             node = page.filter_properties_tree.tree_nodes[
                                 "__onedata"
                             ].onedata_tree_nodes["xattrs"]
                             node.expander()
                             nodes = node.xattrs_tree_nodes
-                            for prop in cast(list[str], attr["xattrs"]):
-                                nodes[prop].checkbox.click()
+                            for property_name in cast(list[str], attribute["xattrs"]):
+                                nodes[property_name].checkbox.click()
                         else:
-                            raise RuntimeError(f"Do not support {attr}")
+                            raise RuntimeError(f"Do not support {attribute}")
                     else:
                         nodes = page.filter_properties_tree.tree_nodes[
                             "__onedata"
                         ].onedata_tree_nodes
-                        nodes[attr].checkbox.click()
+                        nodes[attribute].checkbox.click()
             else:
                 raise RuntimeError(f"Do not support {item}")
         else:
@@ -260,16 +260,19 @@ def compare_files_with_curl(
     assert len(expected_data) == len(curl_dict), msg
 
     for file_name in expected_data:
-        for prop in expected_data[file_name]:
-            if prop == "xattrs":
-                xattrs = expected_data[file_name][prop]
+        for property_name in expected_data[file_name]:
+            if property_name == "xattrs":
+                xattrs = expected_data[file_name][property_name]
                 for xattr in xattrs:
                     onedata = cast(JsonObject, curl_dict[file_name]["__onedata"])
                     file_xattrs = cast(dict[str, JsonObject], onedata["xattrs"])
                     assert file_xattrs[xattr]["__value"] == xattrs[xattr], msg
 
             else:
-                assert expected_data[file_name][prop] == curl_dict[file_name][prop], msg
+                assert (
+                    expected_data[file_name][property_name]
+                    == curl_dict[file_name][property_name]
+                ), msg
 
 
 def _curl_data_to_dict(

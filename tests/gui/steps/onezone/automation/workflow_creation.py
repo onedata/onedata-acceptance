@@ -25,9 +25,9 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) uses "
-        '"(?P<option>Add new lambda|Add new workflow)" button from '
-        "menu bar in (lambdas|workflows) subpage"
+        r"user of (?P<browser_id>.*) uses "
+        r'"(?P<option>Add new lambda|Add new workflow)" button from '
+        r"menu bar in (lambdas|workflows) subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -43,8 +43,8 @@ def click_add_new_button_in_menu_bar(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) writes "(?P<text>.*)" into ('
-        "?P<text_field>lambda name|docker image) text field"
+        r'user of (?P<browser_id>.*) writes "(?P<text>.*)" into ('
+        r"?P<text_field>lambda name|docker image) text field"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -58,8 +58,8 @@ def write_text_into_lambda_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>checks|unchecks) "
-        'lambdas "(?P<toggle>Mount space|Read only)" toggle'
+        r"user of (?P<browser_id>.*) (?P<option>checks|unchecks) "
+        r'lambdas "(?P<toggle>Mount space|Read only)" toggle'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -73,9 +73,9 @@ def switch_toggle_in_lambda_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms (creating new|edition of) "
-        "(?P<option>lambda|revision|task) using "
-        '"(Create|Modify)" button'
+        r"user of (?P<browser_id>.*) confirms (creating new|edition of) "
+        r"(?P<option>lambda|revision|task) using "
+        r'"(Create|Modify)" button'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -92,10 +92,10 @@ def confirm_lambda_creation_or_edition(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) chooses "(?P<option>.*)" in '
-        '(?P<dropdown_name>.*) in "(?P<object_name>.*)" '
-        "(?P<object_type>result|argument|configuration parameters) in "
-        "task creation page"
+        r'user of (?P<browser_id>.*) chooses "(?P<option>.*)" in '
+        r'(?P<dropdown_name>.*) in "(?P<object_name>.*)" '
+        r"(?P<object_type>result|argument|configuration parameters)"
+        r" in task creation page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -130,9 +130,9 @@ def clean_tab_textarea_in_json_argument_editor(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) writes "(?P<input_value>.*)" into'
-        ' json editor bracket in "(?P<object_name>.*)" '
-        "(?P<object_type>result|argument) in task creation page"
+        r'user of (?P<browser_id>.*) writes "(?P<input_value>.*)" into'
+        r' json editor bracket in "(?P<object_name>.*)" '
+        r"(?P<object_type>result|argument) in task creation page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -207,9 +207,9 @@ def assert_store_in_store_list(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on create lane button "
-        "(?P<option>in the middle|on the right side of latest created"
-        " lane) of workflow visualizer"
+        r"user of (?P<browser_id>.*?) clicks on create lane button "
+        r"(?P<option>in the middle|on the right side of latest created"
+        r" lane) of workflow visualizer"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -270,8 +270,8 @@ def add_task_to_empty_parallel_box(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) task "
-        'named "(?P<task_name>.*)" in "(?P<lane_name>.*)" lane'
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) task "
+        r'named "(?P<task_name>.*)" in "(?P<lane_name>.*)" lane'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -294,8 +294,8 @@ def assert_task_in_lane_in_workflow(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) writes "(?P<task_name>.*)" '
-        "into name text field in task (creation|edition) subpage"
+        r'user of (?P<browser_id>.*) writes "(?P<task_name>.*)" '
+        r"into name text field in task (creation|edition) subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -309,8 +309,7 @@ def write_task_name_in_task_edition_text_field(
 @wt(
     parsers.parse(
         'user of {browser_id} clicks on "{option}" button in task '
-        '"{task_name}" menu in "{lane_name}" lane '
-        "in workflow visualizer"
+        '"{task_name}" menu in "{lane_name}" lane in workflow visualizer'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -365,9 +364,9 @@ def click_button_in_workflow(selenium: SeleniumDrivers, browser_id: str) -> None
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) chooses "
-        "(?P<ordinal>1st|2nd|3rd|4th) revision of "
-        '"(?P<lambda_name>.*?)" lambda to add to workflow'
+        r"user of (?P<browser_id>.*?) chooses "
+        r"(?P<ordinal>1st|2nd|3rd|4th) revision of "
+        r'"(?P<lambda_name>.*?)" lambda to add to workflow'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -388,9 +387,9 @@ def add_lambda_revision_to_workflow(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks on "Add parallel box" button'
-        " (?P<position>below|above) Parallel box"
-        ' in "(?P<lane_name>.*?)" lane'
+        r'user of (?P<browser_id>.*?) clicks on "Add parallel box" button'
+        r" (?P<position>below|above) Parallel box"
+        r' in "(?P<lane_name>.*?)" lane'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

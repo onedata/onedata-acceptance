@@ -17,7 +17,11 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils import PublicShareView as public_share
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -39,9 +43,7 @@ def change_public_share_cwd_using_breadcrumbs(
 @wt(
     parsers.parse(
         "user of {browser_id} changes current working "
-        "directory to current share using breadcrumbs on "
-        "share's "
-        "public interface"
+        "directory to current share using breadcrumbs on share's public interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -79,8 +81,7 @@ def assert_public_share_named(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that current working directory "
-        "path visible in share's public interface file browser "
-        "is as follows: {cwd}"
+        "path visible in share's public interface file browser is as follows: {cwd}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -135,8 +136,8 @@ def assert_proper_description(
     _change_iframe_for_public_share_page(selenium, browser_id)
 
     description_on_page = public_share(driver).description
-    err_msg = f"found {description_on_page} instead of {description}"
-    assert description_on_page == description, err_msg
+    error_message = f"found {description_on_page} instead of {description}"
+    assert description_on_page == description, error_message
 
 
 @wt(
@@ -195,8 +196,8 @@ def copy_public_share_link(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) opens "(?P<tab>.*)" tab on share\'s'
-        " (public|private) interface"
+        r'user of (?P<browser_id>.*) opens "(?P<tab>.*)" tab on share\'s'
+        r" (public|private) interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -211,8 +212,8 @@ def open_tab_in_public_share(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees "(?P<tab_name>.*)" tab '
-        "on share's (public|private) interface"
+        r'user of (?P<browser_id>.*) sees "(?P<tab_name>.*)" tab '
+        r"on share's (public|private) interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -225,16 +226,16 @@ def assert_tab_in_public_share(
     tabs = driver.find_elements(By.CSS_SELECTOR, ".nav-tabs-share-mode li")
     for tab in tabs:
         if transform(tab.text) == tab_name:
-            err_msg = f"tab {tab_name} is not active"
-            assert "active" in tab.get_attribute("class"), err_msg
+            error_message = f"tab {tab_name} is not active"
+            assert "active" in tab.get_attribute("class"), error_message
             return
     raise AssertionError(f"did not manage to find tab {tab_name}")
 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks "(?P<button>.*)" button on '
-        "share's (?P<option>public|private) interface"
+        r'user of (?P<browser_id>.*) clicks "(?P<button>.*)" button on '
+        r"share's (?P<option>public|private) interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -260,21 +261,14 @@ def check_item_presence_in_dublin_core_metadata(
         raise RuntimeError(f'{item} was not found in "Dublin Core Metadata"')
 
 
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.*?) sees that (?P<which>.*?) (is|are) "
-        '(?P<data>.*?) in "Dublin Core Metadata" on share\'s '
-        "(public|private) interface"
-    )
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_data_in_dublin_core_metadata(
-    browser_id: str, data: str, selenium: SeleniumDrivers
+    browser_id: str, data: list[str], selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
     dublin_core = public_share(driver).dublin_core_metadata_data
 
-    for item in parse_seq(data):
+    for item in data:
         check_item_presence_in_dublin_core_metadata(
             selenium[browser_id], item, dublin_core
         )
@@ -282,8 +276,8 @@ def assert_data_in_dublin_core_metadata(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) copies "(?P<link>.*?)" from'
-        " share's (public|private) interface"
+        r'user of (?P<browser_id>.*?) copies "(?P<link>.*?)" from'
+        r" share's (public|private) interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -294,14 +288,17 @@ def copy_link_in_shares_interface(browser_id: str, selenium: SeleniumDrivers) ->
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that XML data contains "
-        "(?P<data>.*?) on share's (public|private) interface"
-    )
+        r"user of (?P<browser_id>.*?) sees that XML data contains "
+        rf"(?P<data>{ELEMENTS_SEQUENCE_PATTERN}) on share's (public|private) interface"
+    ),
+    converters={
+        "data": parse_elements_sequence,
+    },
 )
 def assert_xml_data_in_shares(
-    selenium: SeleniumDrivers, browser_id: str, data: str
+    selenium: SeleniumDrivers, browser_id: str, data: list[str]
 ) -> None:
     driver = selenium[browser_id]
     xml_data = public_share(driver).xml_data_dublin_core
-    for item in parse_seq(data):
+    for item in data:
         assert item in xml_data, f"{item} not in XML data on share's public interface"

@@ -75,27 +75,29 @@ def assert_recent_transfer_details_rest(
         user, users, host, hosts, spaces[space]
     )
     details = cast(Mapping[str, str], yaml.load(config, yaml.Loader))
-    err_msg = "expected {} to be {} but got {}"
+    error_message = "expected {} to be {} but got {}"
     for k, v in details.items():
         if k == "name":
             path = space + "/" + str(v)
             client = login_to_provider(user, users, hosts[host]["hostname"])
             expected_id = _lookup_file_id(path, client)
-            assert transfer_status["fileId"] == expected_id, err_msg.format(
+            assert transfer_status["fileId"] == expected_id, error_message.format(
                 "fileId", expected_id, transfer_status["fileId"]
             )
         if k == "replicated":
             # expecting value to be in MiB
             val = float(v.split(" ")[0]) * 1024 * 1024
-            assert transfer_status["bytesReplicated"] == val, err_msg.format(
+            assert transfer_status["bytesReplicated"] == val, error_message.format(
                 "bytesReplicated", val, transfer_status["bytesReplicated"]
             )
         if k == "status":
-            assert transfer_status["transferStatus"] == v, err_msg.format(
+            assert transfer_status["transferStatus"] == v, error_message.format(
                 k, v, transfer_status["transferStatus"]
             )
         if k == "type":
-            assert transfer_status[k] == v, err_msg.format(k, v, transfer_status[k])
+            assert transfer_status[k] == v, error_message.format(
+                k, v, transfer_status[k]
+            )
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)
@@ -111,8 +113,8 @@ def assert_recent_transfer_finished_rest(
         user, users, host, hosts, spaces[space]
     )
     finished_statutes = ["skipped", "completed", "cancelled", "failed"]
-    err_msg = (
+    error_message = (
         f"transfer status {transfer_status['transferStatus']} is not in one of finished"
         " states"
     )
-    assert transfer_status["transferStatus"] in finished_statutes, err_msg
+    assert transfer_status["transferStatus"] in finished_statutes, error_message

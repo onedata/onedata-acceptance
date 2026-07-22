@@ -35,7 +35,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
               Read files: False
 
     # Files in space1 tab is disabled when Read files privilege is not granted
-    And user of browser_user1 sees that Files tab of "space1" is disabled
+    And user of browser_user1 sees that "Files" tab of "space1" is disabled
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:

@@ -19,7 +19,7 @@ def write_text(user: str, text: str, file: str, users: Users) -> None:
 @when(
     parsers.re(
         r"(?P<user>\w+) writes (?P<megabytes>.*) MB of random "
-        "characters to (?P<file>.*) and saves MD5"
+        r"characters to (?P<file>.*) and saves MD5"
     )
 )
 def write_rand_text(
@@ -51,8 +51,7 @@ def append(user: str, text: str, file: str, users: Users) -> None:
 
 @when(
     parsers.re(
-        r'(?P<user>\w+) replaces "(?P<text1>.*)" with "(?P<text2>.*)" '
-        "in (?P<file>.*)"
+        r'(?P<user>\w+) replaces "(?P<text1>.*)" with "(?P<text2>.*)" in (?P<file>.*)'
     )
 )
 def replace(user: str, text1: str, text2: str, file: str, users: Users) -> None:

@@ -10,9 +10,18 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.url import assert_main_page_loaded
+from tests.gui.steps.common.url import (
+    HOSTS_SEQUENCE_PATTERN,
+    assert_main_page_loaded,
+    parse_hosts_sequence,
+)
 from tests.gui.utils import LoginPage, OnePage
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
+from tests.gui.utils.onezone import OZLoggedIn
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -36,8 +45,8 @@ def _login_using_passphrase(login_page: LoginPage, password: str) -> None:
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks Sign in to emergency "
-        "interface in Onepanel login page"
+        r"user of (?P<browser_id>.*) clicks Sign in to emergency "
+        r"interface in Onepanel login page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -49,15 +58,15 @@ def click_sign_in_to_emergency_interface(
 
 def _login_to_service(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
-    user_id_list: str,
-    service_list: str,
+    browser_id_list: list[str],
+    user_id_list: list[str],
+    service_list: list[str],
     users: Users,
 ) -> None:
     for browser_id, username, service in zip(
-        parse_seq(browser_id_list),
-        parse_seq(user_id_list),
-        parse_seq(service_list),
+        browser_id_list,
+        user_id_list,
+        service_list,
     ):
         driver = selenium[browser_id]
         password = users[username].password
@@ -72,25 +81,42 @@ def _login_to_service(
             _login_using_basic_auth(LoginPage(driver), username, password)
         assert_main_page_loaded(selenium, browser_id)
 
+        OZLoggedIn(driver).set_current_page_during_login_logout(
+            is_login=True,
+            emergency_interface="emergency" in service,
+        )
+
 
 @given(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) logged "
-        "as (?P<user_id_list>.*) to (?P<service_list>.*) service"
-    )
+        rf"as (?P<user_id_list>{ELEMENTS_SEQUENCE_PATTERN}) to"
+        rf" (?P<service_list>{HOSTS_SEQUENCE_PATTERN}) service"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "service_list": parse_hosts_sequence,
+        "user_id_list": parse_elements_sequence,
+    },
 )
 @wt(
     parsers.re(
         rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) logs? "
-        "as (?P<user_id_list>.*) to (?P<service_list>.*) service"
-    )
+        rf"as (?P<user_id_list>{ELEMENTS_SEQUENCE_PATTERN}) to"
+        rf" (?P<service_list>{HOSTS_SEQUENCE_PATTERN}) service"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+        "service_list": parse_hosts_sequence,
+        "user_id_list": parse_elements_sequence,
+    },
 )
 def login_using_basic_auth(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
-    user_id_list: str,
+    browser_id_list: list[str],
+    user_id_list: list[str],
     users: Users,
-    service_list: str,
+    service_list: list[str],
 ) -> None:
     _login_to_service(selenium, browser_id_list, user_id_list, service_list, users)
 
@@ -125,8 +151,8 @@ def wt_enter_password_of_user(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) presses Sign in button "
-        "in (Onepanel|Onezone) login page"
+        r"user of (?P<browser_id>.*) presses Sign in button "
+        r"in (Onepanel|Onezone) login page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -136,7 +162,7 @@ def wt_press_sign_in_btn_on_login_page(
     LoginPage(selenium[browser_id]).sign_in()
 
 
-@wt(parsers.re("user of (?P<browser_id>.*) successfully signed in (?P<service>.*)"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) successfully signed in (?P<service>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_successful_login(
     selenium: SeleniumDrivers, browser_id: str, service: str
@@ -149,10 +175,11 @@ def wt_assert_successful_login(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that he was logged out from (Onepanel|Onezone)"
+        r"user of (?P<browser_id>.*) sees that he was logged out "
+        r"from (Onepanel|Onezone)"
     )
 )
-@wt(parsers.re("user of (?P<browser_id>.*) sees (Onepanel|Onezone) login page"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) sees (Onepanel|Onezone) login page"))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def wt_assert_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     _ = LoginPage(selenium[browser_id]).header
@@ -160,18 +187,17 @@ def wt_assert_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees error message "
-        "about invalid credentials in (Onepanel|Onezone) "
-        "login page"
+        r"user of (?P<browser_id>.*) sees error message "
+        r"about invalid credentials in (Onepanel|Onezone) login page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_err_msg_about_credentials(
+def wt_assert_error_message_about_credentials(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     assert LoginPage(
         selenium[browser_id]
-    ).err_msg, "no err msg about invalid credentials found"
+    ).error_message, "no err msg about invalid credentials found"
 
 
 @wt(
@@ -184,7 +210,7 @@ def wt_assert_err_msg_about_credentials(
 def assert_sign_in_notification(
     text: str, selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    err_msg = "sign in notification message is not as expected"
+    error_message = "sign in notification message is not as expected"
     assert (
         LoginPage(selenium[browser_id]).login_notification_message.text == text
-    ), err_msg
+    ), error_message

@@ -38,12 +38,12 @@ def notify_visible_with_text(
     text_regexp: str,
 ) -> None:
     driver = selenium[browser_id]
-    css_sel = f".ember-notify-show[class*={notify_type}] .message"
+    css_selector = f".ember-notify-show[class*={notify_type}] .message"
     regexp = re.compile(text_regexp)
     with suppress(NoSuchElementException, StaleElementReferenceException):
         assert any(
             regexp.match(notify.text)
-            for notify in driver.find_elements(By.CSS_SELECTOR, css_sel)
+            for notify in driver.find_elements(By.CSS_SELECTOR, css_selector)
         ), f'no {notify_type} notify with "{text_regexp}" msg found'
 
 

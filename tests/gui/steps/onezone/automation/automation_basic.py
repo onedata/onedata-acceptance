@@ -18,7 +18,7 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    parse_seq,
+    parse_elements_sequence,
     transform,
     upload_file_path,
     upload_lambda_path,
@@ -75,10 +75,9 @@ def confirm_name_input_on_main_automation_page(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on "
-        '"(?P<option>Rename|Leave|Remove)" '
-        'button in inventory "(?P<inventory>.*)" menu in the '
-        "sidebar"
+        r"user of (?P<browser_id>.*) clicks on "
+        r'"(?P<option>Rename|Leave|Remove)" '
+        r'button in inventory "(?P<inventory>.*)" menu in the sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -109,7 +108,7 @@ def input_new_inventory_name_into_rename_inventory_input_box(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms inventory rename with confirmation button"
+        r"user of (?P<browser_id>.*) confirms inventory rename with confirmation button"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -121,14 +120,17 @@ def confirm_rename_the_inventory(selenium: SeleniumDrivers, browser_id: str) -> 
     parsers.re(
         rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) "
         r"(?P<option>does not see|sees) "
-        'inventory "(?P<inventory>.*)" on inventory list'
-    )
+        r'inventory "(?P<inventory>.*)" on inventory list'
+    ),
+    converters={
+        "browser_ids": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_inventory_exists(
-    selenium: SeleniumDrivers, browser_ids: str, option: str, inventory: str
+    selenium: SeleniumDrivers, browser_ids: list[str], option: str, inventory: str
 ) -> None:
-    for browser_id in parse_seq(browser_ids):
+    for browser_id in browser_ids:
         elem_list = OZLoggedIn(selenium[browser_id]).automation.automations_list
 
         if option == "does not see":
@@ -139,8 +141,8 @@ def assert_inventory_exists(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) opens inventory "(?P<inventory>.*)" '
-        "(?P<subpage>workflows|lambdas|members|main) subpage"
+        r'user of (?P<browser_id>.*) opens inventory "(?P<inventory>.*)" '
+        r"(?P<subpage>workflows|lambdas|members|main) subpage"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -165,17 +167,21 @@ def go_to_inventory_subpage(
 
 @wt(
     parsers.parse(
-        'user of {browser_ids} sees "{text}" label in "{inventory}" main page'
-    )
+        'user of {browser_ids:ElementsSequence} sees "{text}" label in '
+        '"{inventory}" main page',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_text_in_inventory_page(
-    selenium: SeleniumDrivers, browser_ids: str, text: str
+    selenium: SeleniumDrivers, browser_ids: list[str], text: str
 ) -> None:
-    for browser_id in parse_seq(browser_ids):
-        err_msg = OZLoggedIn(selenium[browser_id]).automation.privileges_err_msg
+    for browser_id in browser_ids:
+        error_message = OZLoggedIn(
+            selenium[browser_id]
+        ).automation.privileges_error_message
 
-        assert text in err_msg, f"Error message: {text} not found"
+        assert text in error_message, f"Error message: {text} not found"
 
 
 @wt(
@@ -218,9 +224,9 @@ def upload_lambda_from_repository(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        '"(?P<workflow>.*)" in workflows list '
-        "in inventory workflows subpage"
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
+        r'"(?P<workflow>.*)" in workflows list '
+        r"in inventory workflows subpage"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -268,8 +274,8 @@ def assert_number_of_lambdas(
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     lambdas_number = len(page.lambdas_page.lambdas_list)
-    err_msg = f"number of lambdas is {lambdas_number} instead of {number}"
-    assert lambdas_number == int(number), err_msg
+    error_message = f"number of lambdas is {lambdas_number} instead of {number}"
+    assert lambdas_number == int(number), error_message
 
 
 @wt(
@@ -307,10 +313,10 @@ def get_lambda_or_workflow_bracket(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) that "
-        "(?P<ordinal>1st|2nd|3rd|4th) revision of "
-        '"(?P<object_name>.*)" (?P<page>lambda|workflow) '
-        'is described "(?P<description>.*)"'
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) that "
+        r"(?P<ordinal>1st|2nd|3rd|4th) revision of "
+        r'"(?P<object_name>.*)" (?P<page>lambda|workflow) '
+        r'is described "(?P<description>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -335,9 +341,9 @@ def assert_revision_description_in_object_bracket(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>does not see|sees) "
-        "(?P<ordinal>1st|2nd|3rd|4th) revision of "
-        '"(?P<object_name>.*)" (?P<page>lambda|workflow)'
+        r"user of (?P<browser_id>.*) (?P<option>does not see|sees) "
+        r"(?P<ordinal>1st|2nd|3rd|4th) revision of "
+        r'"(?P<object_name>.*)" (?P<page>lambda|workflow)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -359,10 +365,10 @@ def assert_revision_of_object(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on "(?P<option>Redesign as '
+        r'user of (?P<browser_id>.*) clicks on "(?P<option>Redesign as '
         r'new revision|Duplicate to...|Download \(json\)|Remove)" button '
-        "from (?P<ordinal>1st|2nd|3rd|4th) revision of "
-        '"(?P<object_name>.*)" (?P<page>lambda|workflow) menu'
+        r"from (?P<ordinal>1st|2nd|3rd|4th) revision of "
+        r'"(?P<object_name>.*)" (?P<page>lambda|workflow) menu'
     )
 )
 def click_option_in_revision_menu_button_ordinal(
