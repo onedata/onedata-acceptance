@@ -39,8 +39,6 @@ from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
-from tests.gui.utils.onezone.clusters_page import ClustersPage
-from tests.gui.utils.onezone.data_page import DataPage
 from tests.gui.utils.onezone.manage_account_page import ManageAccountPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow
 from tests.gui.utils.onezone.providers_page import ProvidersPage
@@ -307,7 +305,10 @@ def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None
     oz_page.profile.profile.click()
     button = Popups(driver).user_account_menu.options["Logout"].web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
-    oz_page.set_current_page(DataPage)
+    oz_page.set_default_current_page(
+        is_login=False,
+        emergency_interface=False,
+    )
 
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone Emergency panel"))
@@ -321,7 +322,10 @@ def logout_from_onezone_emergency_panel(
     oz_page.expand_panel_if_needed()
     button = oz_page.profile.logout.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
-    oz_page.set_current_page(ClustersPage)
+    oz_page.set_default_current_page(
+        is_login=False,
+        emergency_interface=True,
+    )
 
 
 @wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))

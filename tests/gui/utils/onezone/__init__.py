@@ -75,6 +75,22 @@ class OZLoggedIn:
     def set_current_page(self, page_cls: type[GenericPage]) -> None:
         self._current_page_by_session_id[self._session_id] = page_cls
 
+    def set_default_current_page(
+        self, *, is_login: bool, emergency_interface: bool
+    ) -> None:
+        # Emergency interface sessions always start with `ClustersPage` as the
+        # current panel. The previously selected panel may persist after logout
+        # and can also carry over between emergency and regular Onezone sessions,
+        # so we explicitly reset it after a successful emergency login. Regular
+        # Onezone logout logic similarly resets the current panel to `DataPage`,
+        # which is the expected default unless the next login uses the emergency
+        # interface.
+        if is_login and not emergency_interface:
+            return
+
+        default_page = ClustersPage if emergency_interface else DataPage
+        self.set_current_page(default_page)
+
     def get_current_page(self) -> type[GenericPage]:
         return self._current_page_by_session_id[self._session_id]
 
