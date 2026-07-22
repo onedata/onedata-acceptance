@@ -377,7 +377,7 @@ def go_to_agreement_page(
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
 
-    # VFS-13725 user cannot go to terms of use while on Clusters Sidebar Panel page
+    # TODO: VFS-13725 user cannot go to terms of use while on Clusters Sidebar Panel page
     if oz_page.get_current_page() == ClustersPage:
         oz_page.open_panel(DataPage)
 

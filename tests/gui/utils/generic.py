@@ -482,3 +482,12 @@ PageName = Literal[
     "clusters",
     "cluster",
 ]
+
+
+class HostPattern(Enum):
+    PROVIDER_PANEL = r"oneprovider-[0-9]+ provider panel"
+    ZONE_PANEL = r"(?:onezone zone panel|[Oo]nezone panel)"
+    ZONE = r"[Oo]nezone"
+    ONEPANEL_EMERGENCY = r"emergency interface of Onepanel"
+    ONEZONE_EMERGENCY = r"emergency interface of Onezone"
+    PROVIDER_NODE = r"node[0-9]+ of oneprovider-[0-9]+ provider panel"

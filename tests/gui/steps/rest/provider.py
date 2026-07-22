@@ -21,6 +21,20 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.user_utils import User, Users
 
+type GuiContentType = Literal[
+    "cookie consent notification",
+    "privacy policy",
+    "terms of use",
+    "sign in notification",
+]
+
+GUI_CONTENT_REST_NAME_BY_TYPE: dict[GuiContentType, str] = {
+    "cookie consent notification": "cookie_consent_notification",
+    "privacy policy": "privacy_policy",
+    "terms of use": "terms_of_use",
+    "sign in notification": "signin_notification",
+}
+
 
 def get_provider_id(provider: str, hosts: Hosts, users: Users) -> str:
     user = "admin"
@@ -113,25 +127,10 @@ def start_stop_provider_service_node(
     return res
 
 
-type GuiMessageId = Literal[
-    "cookie consent notification",
-    "privacy policy",
-    "terms of use",
-    "sign in notification",
-]
-
-GUI_MESSAGE_REST_IDS: dict[GuiMessageId, str] = {
-    "cookie consent notification": "cookie_consent_notification",
-    "privacy policy": "privacy_policy",
-    "terms of use": "terms_of_use",
-    "sign in notification": "signin_notification",
-}
-
-
 def modify_gui_setting_message(
     hosts: Hosts,
     host: str,
-    message_id: GuiMessageId,
+    message_id: GuiContentType,
     onepanel_credentials: User,
     new_message: str,
 ) -> Response:
@@ -145,7 +144,7 @@ def modify_gui_setting_message(
         path=get_panel_rest_path(
             "zone",
             "gui_messages",
-            GUI_MESSAGE_REST_IDS[message_id],
+            GUI_CONTENT_REST_NAME_BY_TYPE[message_id],
         ),
         auth=(onepanel_username, onepanel_password),
         data=json.dumps(

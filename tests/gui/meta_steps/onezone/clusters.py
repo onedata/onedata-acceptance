@@ -39,7 +39,7 @@ from tests.gui.steps.onezone.members import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.rest.provider import GuiMessageId, modify_gui_setting_message
+from tests.gui.steps.rest.provider import GuiContentType, modify_gui_setting_message
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -246,12 +246,22 @@ def set_gui_settings(
     browser_id: str,
     record: str,
     hosts: Hosts,
-    kind_of_agreement: GuiMessageId,
+    kind_of_agreement: GuiContentType,
     text: str,
     operation: str,
     onepanel_credentials: User,
     request: pytest.FixtureRequest,
 ) -> None:
+    request.addfinalizer(
+        partial(
+            modify_gui_setting_message,
+            hosts,
+            host=record,
+            message_id=kind_of_agreement,
+            onepanel_credentials=onepanel_credentials,
+            new_message="",
+        )
+    )
     menu = "Clusters"
     option = "GUI settings"
     box = kind_of_agreement + " input"
@@ -270,18 +280,6 @@ def set_gui_settings(
 
     # wait for save button to be clicked
     time.sleep(0.1)
-
-    if operation == "sets":
-        request.addfinalizer(
-            partial(
-                modify_gui_setting_message,
-                hosts,
-                host=record,
-                message_id=kind_of_agreement,
-                onepanel_credentials=onepanel_credentials,
-                new_message="",
-            )
-        )
 
 
 @wt(

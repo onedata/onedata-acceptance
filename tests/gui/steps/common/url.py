@@ -20,6 +20,7 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     AlertPopup,
+    HostPattern,
     parse_elements_sequence,
     parse_seq,
     parse_url,
@@ -28,25 +29,16 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
-HOST_PATTERN = (
-    r"(?:"
-    r"oneprovider-[0-9]+ provider panel|"
-    r"onezone zone panel|"
-    r"onezone panel|"
-    r"Onezone panel|"
-    r"onezone|"
-    r"Onezone|"
-    r"emergency interface of Onepanel|"
-    r"emergency interface of Onezone|"
-    r"node[0-9]+ of oneprovider-[0-9]+ provider panel"
-    r")"
-)
-
+HOST_PATTERN = rf"(?:{'|'.join(pattern.value for pattern in HostPattern)})"
 HOST_ELEMENT_PATTERN = rf'(?:{HOST_PATTERN}|"{HOST_PATTERN}")'
+
 HOSTS_SEQUENCE_PATTERN = (
-    rf"(?:{HOST_ELEMENT_PATTERN}|"
-    rf"\[\s*{HOST_ELEMENT_PATTERN}(?:\s*,\s*{HOST_ELEMENT_PATTERN})*\s*\]|"
-    rf"\[\s*\])"
+    rf"(?:"
+    rf"{HOST_ELEMENT_PATTERN}|"
+    rf"\[\s*{HOST_ELEMENT_PATTERN}"
+    rf"(?:\s*,\s*{HOST_ELEMENT_PATTERN})*\s*\]|"
+    rf"\[\s*\]"
+    rf")"
 )
 
 
