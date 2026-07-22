@@ -94,6 +94,7 @@ class OZLoggedIn:
     def get_current_page(self) -> type[GenericPage]:
         return self._current_page_by_session_id[self._session_id]
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def update_current_page(self) -> None:
         self.expand_panel_if_needed()
         for page_name, page_cls in self._page_class_by_name.items():

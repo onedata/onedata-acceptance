@@ -22,6 +22,7 @@ from tests.gui.steps.common.common import (
     wait_till_popup_or_modal_disappear,
 )
 from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
@@ -122,6 +123,7 @@ def consume_token_using_confirm_button(
 
     if result == "succeeds":
         notify_visible_with_text(selenium, browser_id, "success", message)
+        wait_till_main_content_loaded(driver)
         OZLoggedIn(driver).update_current_page()
     else:
         assert_error_modal_with_text_appeared(selenium, browser_id, message)
