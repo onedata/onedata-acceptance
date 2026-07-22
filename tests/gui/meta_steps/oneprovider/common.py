@@ -9,7 +9,7 @@ from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_text_appeared,
+    assert_error_modal_with_subtext_appeared,
     click_modal_button,
     write_name_into_text_field_in_modal,
     wt_wait_for_modal_to_appear,
@@ -123,7 +123,7 @@ def replicate_files_to_providers(
                 continue
             replicate_item(selenium, browser_id, provider, hosts)
             if result == "fails to replicate":
-                assert_error_modal_with_text_appeared(
+                assert_error_modal_with_subtext_appeared(
                     selenium, browser_id, "Starting replication failed!"
                 )
                 click_modal_button(selenium, browser_id, "Close", "Error")

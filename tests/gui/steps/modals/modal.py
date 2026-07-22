@@ -712,7 +712,7 @@ def click_icon_in_share_directory_modal(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 6)
-def assert_error_modal_with_text_appeared(
+def assert_error_modal_with_subtext_appeared(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
     modal_text = Modals(selenium[browser_id]).error.content.lower()
@@ -730,40 +730,9 @@ def assert_titled_error_modal_appeared(
     assert title.lower() in modal_text, message
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees error modal with info about "
-        'invalid target with id of "{target_name}" {target_type}'
-    )
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_invalid_id_in_error_modal(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    target_name: str,
-    target_type: str,
-    groups: dict[str, str],
-    spaces: dict[str, str],
-    inventories: dict[str, str],
-    harvesters: dict[str, str],
-) -> None:
-    modal_text = Modals(selenium[browser_id]).error.content.lower()
-    assert (
-        "is invalid" in modal_text
-    ), "There is no info about invalid target in error modal"
-    error_message = (
-        f"There is no info about id of invalid target {target_name} in error modal"
-    )
-    if target_type == "group":
-        assert groups[target_name] in modal_text, error_message
-    elif target_type == "space":
-        assert spaces[target_name] in modal_text, error_message
-    elif target_type == "inventory":
-        assert inventories[target_name] in modal_text, error_message
-    elif target_type == "harvester":
-        assert harvesters[target_name] in modal_text, error_message
-    else:
-        raise ValueError(f"Unknown type {target_type}")
+def get_error_modal_text(selenium: SeleniumDrivers, browser_id: str) -> str:
+    return Modals(selenium[browser_id]).error.content.lower()
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*) closes "(?P<modal>.*)" (modal|panel)'))
