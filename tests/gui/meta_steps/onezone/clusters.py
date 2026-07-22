@@ -39,7 +39,7 @@ from tests.gui.steps.onezone.members import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.rest.provider import GuiContentType, modify_gui_setting_message
+from tests.gui.steps.rest.provider import GuiMessageType, modify_gui_setting_message
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -246,7 +246,7 @@ def set_gui_settings(
     browser_id: str,
     record: str,
     hosts: Hosts,
-    kind_of_agreement: GuiContentType,
+    kind_of_agreement: GuiMessageType,
     text: str,
     operation: str,
     onepanel_credentials: User,
