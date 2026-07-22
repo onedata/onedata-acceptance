@@ -69,7 +69,7 @@ Feature: Management of privileges in onezone GUI
   Scenario: User sees that user added to space has default privileges
     When user of browser2 copies invite token to "space1" space
     And user of browser2 sends copied token to user of browser1
-    And user of browser1 joins space using received token
+    And user of browser1 joins space using received token and sees following message: ".*joined.*"
     And user of browser2 clicks "admin" user in "space1" space members users list
     Then user of browser2 sees following privileges of "admin" user in space members subpage:
           Space management:
@@ -197,7 +197,7 @@ Feature: Management of privileges in onezone GUI
     And using REST, user admin creates "harvester2" harvester in "onezone" Onezone service
 
     When user of browser1 sends invitation token from "harvester2" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page
+    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
     And user of browser1 clicks "user1" user in "harvester2" harvester members users list
 
     Then user of browser1 sees following privileges of "user1" user in harvester members subpage:

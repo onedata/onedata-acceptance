@@ -33,7 +33,7 @@ Feature: Joining a group in Onezone GUI
     And user of space_owner_browser closes "Invite using token" modal
     And user of space_owner_browser sends copied token to user of browser1
 
-    And user of browser1 joins group using received token
+    And user of browser1 joins group using received token and sees following message: ".*joined.*"
 
     Then user of space_owner_browser sees "user1" user on "group1" group members list
     And user of browser1 sees group "group1" on groups list
@@ -50,8 +50,7 @@ Feature: Joining a group in Onezone GUI
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    And user of space_owner_browser fails to join group using copied token
-    Then user of space_owner_browser sees that error modal with text "Consuming token failed" appeared
+    Then user of space_owner_browser fails to join group using copied token and sees following message: "Consuming token failed"
 
 
   Scenario: User fails to join to the group because the group was deleted
@@ -64,7 +63,7 @@ Feature: Joining a group in Onezone GUI
 
     And user of space_owner_browser removes group "group1"
 
-    Then user of browser1 tries to join group using received token
+    Then user of browser1 tries to join group using received token and sees following message: "is invalid"
     And user of browser1 closes error modal with info about invalid target with id of "group1" group
 
 
@@ -86,7 +85,7 @@ Feature: Joining a group in Onezone GUI
     And user of space_owner_browser closes "Invite using token" modal
 
     And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 adds group "group2" as subgroup using copied token
+    And user of browser1 adds group "group2" as subgroup using copied token and sees following message: ".*joined.*"
 
     And user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks "Overview" of "space1" space in the sidebar

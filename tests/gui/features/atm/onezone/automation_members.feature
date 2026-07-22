@@ -49,7 +49,7 @@ Feature: Management of inventories members
 
     # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 adds group "group1" to inventory using copied token
+    And user of browser1 adds group "group1" to inventory using copied token and sees following message: ".*joined.*"
     Then user of browser1 sees inventory "inventory3" on inventory list
 
 
@@ -64,7 +64,7 @@ Feature: Management of inventories members
 
     # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 adds group "group1" to inventory using copied token
+    And user of browser1 adds group "group1" to inventory using copied token and sees following message: ".*joined.*"
 
     # Space-owner-user renames inventory
     And user of space_owner_browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar
@@ -221,7 +221,7 @@ Feature: Management of inventories members
     And user of space_owner_browser clicks on "Remove" button in inventory "inventory1" menu in the sidebar
     And user of space_owner_browser clicks on "Remove" button in modal "Remove inventory"
 
-    Then user of browser1 tries to join inventory using received token
+    Then user of browser1 tries to join inventory using received token and sees following message: "is invalid"
     And user of browser1 closes error modal with info about invalid target with id of "inventory1" inventory
 
 
@@ -352,4 +352,3 @@ Feature: Management of inventories members
     And user of browser1 confirms edition of selected workflow details using "Save" button
     Then user of browser1 sees "Workflow Renamed" in workflows list in inventory workflows subpage
     
-

@@ -292,7 +292,7 @@ def join_space_in_oz_using_gui(
     selenium: SeleniumDrivers, user_list: list[str], tmp_memory: TmpMemory
 ) -> None:
     for user in user_list:
-        consume_received_token(selenium, user, tmp_memory)
+        consume_received_token(selenium, user, ".*joined.*", tmp_memory)
 
 
 def assert_spaces_have_appeared_in_oz_gui(

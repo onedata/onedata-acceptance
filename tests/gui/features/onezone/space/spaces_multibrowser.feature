@@ -27,7 +27,7 @@ Feature: Multi Browser basic management of spaces
     And user of space_owner_browser sends invitation token to "browser1"
     And user of space_owner_browser closes "Invite using token" modal
 
-    And user of browser1 joins group using received token
+    And user of browser1 joins group using received token and sees following message: ".*joined.*"
     Then user of browser1 sees that "space1" has appeared on the spaces list in the sidebar
 
 
@@ -41,5 +41,5 @@ Feature: Multi Browser basic management of spaces
 
     And user of browser1 clicks join an existing space on Welcome page
     And user of browser1 pastes received token into token text field
-    And user of browser1 succeeds to consume token using Confirm button
+    And user of browser1 succeeds to consume token using Confirm button and sees following message: ".*joined.*" on a popup
     Then user of browser1 sees that "space1" has appeared on the spaces list in the sidebar

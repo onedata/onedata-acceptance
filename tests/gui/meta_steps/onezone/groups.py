@@ -341,7 +341,7 @@ def create_group_token_to_invite_group_using_op_gui(
 def join_group_using_op_gui(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
-    consume_received_token(selenium, browser_id, tmp_memory)
+    consume_received_token(selenium, browser_id, ".*joined.*", tmp_memory)
 
 
 def add_subgroups_using_op_gui(
@@ -363,7 +363,15 @@ def add_subgroups_using_op_gui(
             displays,
             clipboard,
         )
-        add_element_with_copied_token(selenium, user, child, clipboard, displays)
+        add_element_with_copied_token(
+            selenium,
+            user,
+            child,
+            clipboard,
+            displays,
+            result="adds",
+            message=".*joined.*",
+        )
 
 
 def remove_subgroups_using_op_gui(
@@ -419,11 +427,12 @@ def fail_to_add_subgroups_using_op_gui(
         clipboard,
     )
     for child in group_list:
-        error = "Consuming token failed"
-        modal = "error"
-
         add_element_with_copied_token(
-            selenium, user, child, clipboard, displays, result="fails"
+            selenium,
+            user,
+            child,
+            clipboard,
+            displays,
+            result="fails",
+            message="Consuming token failed",
         )
-        assert_error_modal_with_text_appeared(selenium, user, error)
-        close_modal(selenium, user, modal)

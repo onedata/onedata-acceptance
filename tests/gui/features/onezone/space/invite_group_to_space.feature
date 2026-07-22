@@ -31,7 +31,7 @@ Feature: Multi Browser invitation group to spaces
     And user of space_owner_browser closes "Invite using token" modal
     And user of space_owner_browser sends copied token to user of browser1
 
-    And user of browser1 adds group "group2" to space using copied token
+    And user of browser1 adds group "group2" to space using copied token and sees following message: ".*joined.*"
 
     Then user of browser1 sees that "space1" has appeared on the spaces list in the sidebar
 
@@ -46,7 +46,7 @@ Feature: Multi Browser invitation group to spaces
     And user of space_owner_browser closes "Invite using token" modal
     And user of space_owner_browser sends copied token to user of browser1
 
-    And user of browser1 adds group "group2" to space using copied token
+    And user of browser1 adds group "group2" to space using copied token and sees following message: ".*joined.*"
 
     # Space-owner-user renames space
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar

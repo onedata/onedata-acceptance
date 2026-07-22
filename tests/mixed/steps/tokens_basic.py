@@ -217,7 +217,7 @@ def join_space_with_token(
 ) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
-        consume_received_token(selenium, user, tmp_memory)
+        consume_received_token(selenium, user, ".*joined.*", tmp_memory)
         assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
     elif client_lower == "rest":
         join_space_in_oz_using_rest(

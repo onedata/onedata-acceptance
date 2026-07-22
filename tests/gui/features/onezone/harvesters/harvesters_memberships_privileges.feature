@@ -22,7 +22,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
     And user admin has "harvester11" harvester in "onezone" Onezone service
     When using REST, user admin adds space "space1" to "harvester11" harvester
     And user of browser1 sends invitation token from "harvester11" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page
+    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
     And user of browser2 sees that "harvester11" has appeared on the harvesters list in the sidebar
 
     # check view harvester privilege
@@ -48,7 +48,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
   Scenario: User successfully renames harvester with modify harvester privilege
     When user of browser1 creates "harvester12" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester12" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page
+    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
     And user of browser2 sees that "harvester12" has appeared on the harvesters list in the sidebar
 
     And user of browser2 renames "harvester12" harvester to "harvester123" in Onezone page
@@ -68,7 +68,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
   Scenario: User successfully removes harvester with remove harvester privilege
     When user of browser1 creates "harvester13" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester13" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page
+    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
     And user of browser2 sees that "harvester13" has appeared on the harvesters list in the sidebar
 
     And user of browser2 removes "harvester13" harvester in Onezone page
@@ -88,7 +88,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
   Scenario: User successfully views privileges with view privileges privilege
     When user of browser1 creates "harvester14" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester14" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page
+    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
     And user of browser2 sees that "harvester14" has appeared on the harvesters list in the sidebar
 
     # fail to view privileges
@@ -113,7 +113,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
     When user of browser1 creates "harvester15" harvester in Onezone page
     And user of browser1 sees that "harvester15" has appeared on the harvesters list in the sidebar
     And user of browser1 sends invitation token from "harvester15" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page
+    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
     And user of browser2 sees that "harvester15" has appeared on the harvesters list in the sidebar
 
     And user of browser2 fails to set following privileges for "user1" user in "harvester15" harvester:
@@ -136,7 +136,6 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
             granted: True
 
     And user of browser1 removes "harvester15" harvester in Onezone page
-
 
 
 

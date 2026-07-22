@@ -71,7 +71,7 @@ Feature: Harvesters effective privileges
 
   Scenario: User sees that user effective privileges are the sum of its direct parent direct privileges and its direct privileges
     When user of browser_admin sends invitation token from "harvester1" harvester to user of browser_user2
-    And user of browser_user2 joins to harvester in Onezone page
+    And user of browser_user2 joins to harvester in Onezone page and sees following message: ".*joined.*"
 
     And user of browser_admin clicks on "Discovery" in the main menu
     And user of browser_admin clicks "harvester1" on the harvesters list in the sidebar
