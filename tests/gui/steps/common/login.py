@@ -82,6 +82,11 @@ def _login_to_service(
             _login_using_basic_auth(LoginPage(driver), username, password)
         assert_main_page_loaded(selenium, browser_id)
 
+        # Emergency interface sessions always start with `ClustersPage` as the current panel.
+        # The previously selected panel may persist after logout and can also carry over between emergency
+        # and regular Onezone sessions, so we explicitly reset it after a successful emergency login.
+        # Regular Onezone logout logic similarly resets the current panel to `DataPage`, which is
+        # the expected default unless the next login uses the emergency interface.
         oz_page = OZLoggedIn(driver)
         if "emergency" in service:
             oz_page.set_current_page(ClustersPage)
