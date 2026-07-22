@@ -307,7 +307,7 @@ def try_click_without_throwing_error(
         perform(action)
 
 
-def wait_for_element_to_appear(driver: WebDriver, css_sel: str, timeout: float):
+def wait_for_element_to_appear(driver: WebDriver, css_sel: str, timeout: float) -> None:
     WebDriverWait(driver, timeout).until(
         visibility_of_element_located((By.CSS_SELECTOR, css_sel))
     )
