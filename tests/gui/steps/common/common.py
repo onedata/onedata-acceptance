@@ -307,15 +307,19 @@ def try_click_without_throwing_error(
         perform(action)
 
 
+def wait_for_element_to_appear(driver: WebDriver, css_sel: str, timeout: float):
+    WebDriverWait(driver, timeout).until(
+        visibility_of_element_located((By.CSS_SELECTOR, css_sel))
+    )
+
+
 def wait_till_popup_or_modal_disappear(
     driver: WebDriver,
     css_selector: str,
     btn_handler: Callable[[WebDriver], ButtonPageObject],
 ) -> None:
     try:
-        WebDriverWait(driver, WAIT_FRONTEND).until(
-            visibility_of_element_located((By.CSS_SELECTOR, css_selector))
-        )
+        wait_for_element_to_appear(driver, css_selector, timeout=WAIT_FRONTEND)
     except TimeoutException:
         return
 

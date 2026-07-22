@@ -10,12 +10,19 @@ import time
 from typing import Optional
 
 import yaml
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
-from tests.gui.steps.common.common import wait_till_alert_info_popup_disappear
+from tests.gui.steps.common.common import (
+    wait_for_element_to_appear,
+    wait_till_alert_info_popup_disappear,
+)
 from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
@@ -40,7 +47,6 @@ from tests.gui.steps.onezone.tokens import (
     click_create_token_button_in_create_token_page,
     click_menu_button_of_tokens_page,
     click_on_button_in_tokens_sidebar,
-    click_on_confirm_button_on_tokens_page,
     click_on_token_containing_name,
     click_on_token_on_tokens_list,
     click_option_for_token_row_menu,
@@ -63,6 +69,7 @@ from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
+from tests.utils.utils import repeat_failed
 
 
 def _paste_token_into_text_field(
@@ -91,6 +98,30 @@ def paste_received_token_into_text_field(
     _paste_token_into_text_field(selenium, browser_id, token)
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
+def _click_confirm_btn(driver: WebDriver) -> None:
+    OZLoggedIn(driver).tokens.confirm_button()
+
+
+@wt(
+    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
+)
+def click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    oz_page = OZLoggedIn(driver)
+    _click_confirm_btn(driver)
+
+    error_modal_css_sel = ".alert-global.modal.in .modal-dialog"
+    try:
+        wait_for_element_to_appear(driver, error_modal_css_sel, timeout=WAIT_FRONTEND)
+    except TimeoutException:
+        # if the error modal did not appear, it is needed to wait for the page refresh
+        wait_till_main_content_loaded(driver)
+        oz_page.update_current_page()
+
+
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) joins "
@@ -113,7 +144,9 @@ def consume_received_token(
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_received_token_into_text_field(selenium, browser_id, tmp_memory)
-    click_on_confirm_button_on_tokens_page(selenium, browser_id)
+    click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
+        selenium, browser_id
+    )
 
 
 @wt(parsers.parse("user of {browser_id} joins cluster using copied token"))
@@ -132,7 +165,9 @@ def consume_token_from_copied_token(
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays)
-    click_on_confirm_button_on_tokens_page(selenium, browser_id)
+    click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
+        selenium, browser_id
+    )
 
 
 @wt(
@@ -161,7 +196,9 @@ def add_element_with_copied_token(
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays)
     select_member_from_dropdown(selenium, browser_id, elem_name)
-    click_on_confirm_button_on_tokens_page(selenium, browser_id)
+    click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
+        selenium, browser_id
+    )
 
 
 @wt(
