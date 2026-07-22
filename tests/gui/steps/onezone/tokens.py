@@ -13,6 +13,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
+from tests.gui.steps.common.url import assert_main_page_loaded
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
@@ -92,13 +93,13 @@ def click_on_button_in_tokens_sidebar(
     selenium: SeleniumDrivers, browser_id: str, button: str
 ) -> None:
     driver = selenium[browser_id]
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(TokensPage)
 
     if button == "Create new token":
-        oz_page = OZLoggedIn(driver)
-        oz_page.open_panel(TokensPage)
         oz_page.tokens.sidebar.click_create_new_token(driver)
     elif button == "Clean up obsolete tokens":
-        sidebar = OZLoggedIn(driver).tokens.sidebar
+        sidebar = oz_page.tokens.sidebar
         button_clean = getattr(sidebar, transform(button))
         for _ in range(50):
             if "clickable" in button_clean.web_elem.get_attribute("class"):
@@ -107,7 +108,7 @@ def click_on_button_in_tokens_sidebar(
             time.sleep(0.1)
         raise RuntimeError(f"Did not manage to click {button} button")
     else:
-        sidebar = OZLoggedIn(driver).tokens.sidebar
+        sidebar = oz_page.tokens.sidebar
         getattr(sidebar, transform(button))()
 
 
@@ -166,6 +167,8 @@ def click_on_confirm_button_on_tokens_page(
 ) -> None:
     oz_page = OZLoggedIn(selenium[browser_id])
     oz_page.tokens.confirm_button()
+    # it is needed to wait for the page refresh
+    assert_main_page_loaded(selenium, browser_id)
     oz_page.update_current_page()
 
 
