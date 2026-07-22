@@ -20,6 +20,7 @@ from tests.gui.meta_steps.oneprovider.data import (
 from tests.gui.steps.common.common import (
     wait_for_element_to_appear,
     wait_till_alert_info_popup_disappear,
+    wait_till_popup_or_modal_disappear,
 )
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import wait_till_main_content_loaded
@@ -27,6 +28,7 @@ from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
     close_modal,
+    get_error_modal_text,
 )
 from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
@@ -62,7 +64,7 @@ from tests.gui.steps.onezone.tokens import (
     wt_click_on_btn_for_oz_token,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import AlertPopup
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.gui.utils.onezone.tokens_page import TokensPage
@@ -147,6 +149,47 @@ def consume_received_token(
     click_on_confirm_button_and_wait_for_error_modal_on_tokens_page(
         selenium, browser_id
     )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} closes error modal with info about "
+        'invalid target with id of "{target_name}" {target_type}'
+    )
+)
+def assert_invalid_id_in_error_modal_and_close_modal(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    target_name: str,
+    target_type: str,
+    groups: dict[str, str],
+    spaces: dict[str, str],
+    inventories: dict[str, str],
+    harvesters: dict[str, str],
+) -> None:
+    driver = selenium[browser_id]
+    error_modal = Modals(driver).error
+    modal_text = get_error_modal_text(selenium, browser_id)
+    assert (
+        "is invalid" in modal_text
+    ), "There is no info about invalid target in error modal"
+    error_message = (
+        f"There is no info about id of invalid target {target_name} in error modal"
+    )
+    wait_till_popup_or_modal_disappear(
+        driver, ".alert-global.modal.in .modal-dialog", lambda _: error_modal.close
+    )
+    if target_type == "group":
+        assert groups[target_name] in modal_text, error_message
+    elif target_type == "space":
+        assert spaces[target_name] in modal_text, error_message
+    elif target_type == "inventory":
+        assert inventories[target_name] in modal_text, error_message
+        OZLoggedIn(driver).update_current_page()
+    elif target_type == "harvester":
+        assert harvesters[target_name] in modal_text, error_message
+    else:
+        raise ValueError(f"Unknown type {target_type}")
 
 
 @wt(parsers.parse("user of {browser_id} joins cluster using copied token"))

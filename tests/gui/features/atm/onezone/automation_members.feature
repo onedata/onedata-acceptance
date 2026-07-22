@@ -222,7 +222,7 @@ Feature: Management of inventories members
     And user of space_owner_browser clicks on "Remove" button in modal "Remove inventory"
 
     Then user of browser1 tries to join inventory using received token
-    And user of browser1 sees error modal with info about invalid target with id of "inventory1" inventory
+    And user of browser1 closes error modal with info about invalid target with id of "inventory1" inventory
 
 
   Scenario: User successfully removes user from inventory with remove user privilege
@@ -351,5 +351,5 @@ Feature: Management of inventories members
     And user of browser1 writes "Workflow Renamed" in name textfield of selected workflow
     And user of browser1 confirms edition of selected workflow details using "Save" button
     Then user of browser1 sees "Workflow Renamed" in workflows list in inventory workflows subpage
-
+    
 

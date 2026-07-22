@@ -65,7 +65,7 @@ Feature: Joining a group in Onezone GUI
     And user of space_owner_browser removes group "group1"
 
     Then user of browser1 tries to join group using received token
-    And user of browser1 sees error modal with info about invalid target with id of "group1" group
+    And user of browser1 closes error modal with info about invalid target with id of "group1" group
 
 
   Scenario: User fails to view group they do not belong to
@@ -91,4 +91,4 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks "Overview" of "space1" space in the sidebar
     Then user of browser1 sees 1 direct, 2 effective groups and 1 direct, 2 effective users in space members tile
-
+    
