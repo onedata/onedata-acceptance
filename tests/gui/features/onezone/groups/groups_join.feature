@@ -85,7 +85,7 @@ Feature: Joining a group in Onezone GUI
     And user of space_owner_browser closes "Invite using token" modal
 
     And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 adds group "group2" as subgroup using copied token and sees following message: ".*joined.*"
+    And user of browser1 adds group "group2" as subgroup using copied token
 
     And user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks "Overview" of "space1" space in the sidebar

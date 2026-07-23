@@ -23,14 +23,14 @@ Feature: Basic management of harvester in Space
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser sends copied token to user of browser1
     And user of space_owner_browser clicks on "Close" button in modal "Invite using token"
-    And user of browser1 adds harvester "harvester2" to space using copied token and sees following message: ".*joined.*"
+    And user of browser1 adds harvester "harvester2" to space using copied token
 
     # Invite "harvester3" harvester to "space1" space
     And user of space_owner_browser clicks on "Invite harvester using token" button in space menu
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser sends copied token to user of browser1
     And user of space_owner_browser clicks on "Close" button in modal "Invite using token"
-    And user of browser1 adds harvester "harvester3" to space using copied token and sees following message: ".*joined.*"
+    And user of browser1 adds harvester "harvester3" to space using copied token
 
     # See that both harvesters are in "space1" space
     Then user of space_owner_browser sees "harvester2" in harvesters list on space harvesters subpage

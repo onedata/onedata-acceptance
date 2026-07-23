@@ -49,7 +49,7 @@ Feature: Management of inventories members
 
     # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 adds group "group1" to inventory using copied token and sees following message: ".*joined.*"
+    And user of browser1 adds group "group1" to inventory using copied token
     Then user of browser1 sees inventory "inventory3" on inventory list
 
 
@@ -64,7 +64,7 @@ Feature: Management of inventories members
 
     # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 adds group "group1" to inventory using copied token and sees following message: ".*joined.*"
+    And user of browser1 adds group "group1" to inventory using copied token
 
     # Space-owner-user renames inventory
     And user of space_owner_browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar

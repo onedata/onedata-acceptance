@@ -221,7 +221,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser2 closes "Invite using token" modal
     And user of browser2 sends copied token to user of browser1
 
-    And user of browser1 adds group "group6" to space using copied token and sees following message: ".*joined.*"
+    And user of browser1 adds group "group6" to space using copied token
     And user of browser1 clicks "new_space" on the spaces list in the sidebar
     And user of browser1 clicks "Members" of "new_space" space in the sidebar
 
@@ -255,7 +255,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser1 copies invitation token from modal
     And user of browser1 closes "Invite using token" modal
 
-    Then user of browser2 fails to add group "group7" as subgroup using copied token and sees following message: "insufficient privileges"
+    Then user of browser2 fails to add group "group7" as subgroup using copied token and sees error message: "insufficient privileges"
 
 
   Scenario: User successfully removes subgroup if he has remove child group privileges

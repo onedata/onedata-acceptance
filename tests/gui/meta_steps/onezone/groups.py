@@ -14,6 +14,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import (
     add_element_with_copied_token,
+    fail_to_add_element_with_copied_token,
     paste_and_consume_received_token,
 )
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -369,8 +370,6 @@ def add_subgroups_using_op_gui(
             child,
             clipboard,
             displays,
-            result="adds",
-            message=".*joined.*",
         )
 
 
@@ -427,12 +426,11 @@ def fail_to_add_subgroups_using_op_gui(
         clipboard,
     )
     for child in group_list:
-        add_element_with_copied_token(
+        fail_to_add_element_with_copied_token(
             selenium,
             user,
             child,
             clipboard,
             displays,
-            result="fails",
             message="Consuming token failed",
         )

@@ -60,7 +60,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser closes "Invite using token" modal
 
     # join to harvester
-    And user of browser adds space "space1" to harvester using copied token and sees following message: ".*joined.*"
+    And user of browser adds space "space1" to harvester using copied token
 
     Then user of browser clicks on "Discovery" in the main menu
     And user of browser clicks "harvester4" on the harvesters list in the sidebar

@@ -268,17 +268,15 @@ def _open_consume_view_and_paste_token(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) (?P<result>adds|fails to add) group "
-        r'"(?P<elem_name>.*)" as subgroup using copied token '
-        r'and sees following message: "(?P<message>.*)"'
+        r'user of (?P<browser_id>.*) adds group "(?P<elem_name>.*)" '
+        r"as subgroup using copied token"
     )
 )
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) (?P<result>adds|fails to add) "
+        r"user of (?P<browser_id>.*) adds "
         r'(space|harvester|group) "(?P<elem_name>.*)" '
-        r"to (harvester|space|inventory) using copied token "
-        r'and sees following message: "(?P<message>.*)"'
+        r"to (harvester|space|inventory) using copied token"
     )
 )
 def add_element_with_copied_token(
@@ -287,16 +285,40 @@ def add_element_with_copied_token(
     elem_name: str,
     clipboard: Clipboard,
     displays: dict[str, str],
-    result: str,
+) -> None:
+    _open_consume_view_for_member_and_paste_token(
+        selenium, browser_id, elem_name, clipboard, displays
+    )
+    succeed_to_consume_token_using_confirm_button(selenium, browser_id)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) fails to add group "
+        r'"(?P<elem_name>.*)" as subgroup using copied token '
+        r'and sees error message: "(?P<message>.*)"'
+    )
+)
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) fails to add "
+        r'(space|harvester|group) "(?P<elem_name>.*)" '
+        r"to (harvester|space|inventory) using copied token "
+        r'and sees error message: "(?P<message>.*)"'
+    )
+)
+def fail_to_add_element_with_copied_token(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    elem_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
     message: str,
 ) -> None:
     _open_consume_view_for_member_and_paste_token(
         selenium, browser_id, elem_name, clipboard, displays
     )
-    if result == "adds":
-        succeed_to_consume_token_using_confirm_button(selenium, browser_id)
-    else:
-        fail_to_consume_token_using_confirm_button(selenium, browser_id, message)
+    fail_to_consume_token_using_confirm_button(selenium, browser_id, message)
 
 
 def _open_consume_view_for_member_and_paste_token(
