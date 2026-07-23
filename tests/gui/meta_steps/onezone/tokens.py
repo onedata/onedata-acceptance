@@ -12,13 +12,14 @@ from typing import Optional
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
 from tests.gui.steps.common.common import (
+    wait_for_error_modal_to_appear,
+    wait_for_error_modal_to_disappear,
     wait_till_alert_info_popup_disappear,
-    wait_till_error_modal_stop_appearing,
     wait_till_popup_or_modal_disappear,
 )
 from tests.gui.steps.common.url import wait_till_main_content_loaded
@@ -113,7 +114,11 @@ def succeed_to_consume_token_using_confirm_button(
     driver = selenium[browser_id]
     _click_confirm_btn(driver)
     wait_till_main_content_loaded(driver)
-    wait_till_alert_info_popup_disappear(driver, AlertPopup.SUCCESSFULLY_JOINED)
+    alert_popup = AlertPopup.SUCCESSFULLY_JOINED
+    if not wait_till_alert_info_popup_disappear(driver, alert_popup):
+        assert not wait_for_error_modal_to_appear(
+            driver, WAIT_FRONTEND // 2
+        ), "Error modal appeared"
     OZLoggedIn(driver).update_current_page()
 
 
@@ -133,7 +138,7 @@ def fail_to_consume_token_using_confirm_button(
     _click_confirm_btn(driver)
     assert_error_modal_with_text_appeared(selenium, browser_id, message)
     if close_error_modal:
-        wait_till_error_modal_stop_appearing(driver)
+        wait_for_error_modal_to_disappear(driver)
 
 
 @wt(

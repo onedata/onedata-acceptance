@@ -20,7 +20,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     try_click_without_throwing_error,
-    wait_till_error_modal_stop_appearing,
+    wait_for_error_modal_to_disappear,
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
@@ -225,7 +225,7 @@ def _check_error_modal_appeared_or_registration_finished(
     if is_element_visible_on_page(
         driver, error_modal_css_selector
     ):  # error modal appeared
-        wait_till_error_modal_stop_appearing(driver)
+        wait_for_error_modal_to_disappear(driver)
         return False
 
     if is_element_visible_on_page(

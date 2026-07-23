@@ -12,13 +12,17 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
+from tests.gui.steps.common.common import (
+    wait_for_error_modal_to_appear,
+    wait_for_sliding_panel_to_stop_moving,
+    wait_till_alert_info_popup_disappear,
+)
 from tests.gui.steps.common.url import assert_main_page_loaded
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import AlertPopup, transform
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow, TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -650,7 +654,7 @@ def click_on_token_containing_name(
 def click_on_confirm_button_on_tokens_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    # click the button without checking if a popup appeared
+    # click the button without checking if a popup or error modal appeared
     # sometimes the popup appears and disappears too quickly to be catched
     oz_page = OZLoggedIn(selenium[browser_id])
     oz_page.tokens.confirm_button()
