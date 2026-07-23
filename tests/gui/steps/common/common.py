@@ -64,7 +64,9 @@ def get_alert_css_selector(alert_popup: AlertPopup) -> str:
             return ".ember-notify-show"
 
         case (
-            AlertPopup.AUTHENTICATION_SUCCEEDED | AlertPopup.STORAGE_IMPORT_SCAN_STARTED
+            AlertPopup.AUTHENTICATION_SUCCEEDED
+            | AlertPopup.STORAGE_IMPORT_SCAN_STARTED
+            | AlertPopup.SUCCESSFULLY_JOINED
         ):
             return ".alert-info"
 
