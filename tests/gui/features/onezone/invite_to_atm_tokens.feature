@@ -50,7 +50,7 @@ Feature: Management of invite to atm tokens in Onezone GUI
 
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
-    And user of browser2 joins inventory using copied token and sees following message: ".*joined.*"
+    And user of browser2 joins inventory using copied token
 
     Then user of browser2 sees that "inventory1" has appeared on the automation list in the sidebar
 
@@ -101,7 +101,7 @@ Feature: Management of invite to atm tokens in Onezone GUI
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 succeeds to consume token for "group1" group and sees following message: ".*joined.*"
+    And user of browser2 succeeds to prepare and consume token for "group1" group and sees following message: ".*joined.*"
 
     Then user of browser2 sees that "inventory1" has appeared on the automation list in the sidebar
 

@@ -40,7 +40,7 @@ Feature: Management of invite tokens in Onezone GUI, with admin user
     And user of browser2 clicks on copy button in token view
     And user of browser2 sends copied token to user of browser1
 
-    And user of browser1 succeeds to consume token for "group1" group and sees following message: ".*joined.*"
+    And user of browser1 succeeds to prepare and consume token for "group1" group and sees following message: ".*joined.*"
     And user of browser1 sees that "harvester1" has appeared on the harvesters list in the sidebar
 
     Then user of browser2 sees that harvester "harvester1" has following privilege configuration for group "group1":
@@ -86,7 +86,7 @@ Feature: Management of invite tokens in Onezone GUI, with admin user
     And user of browser2 clicks on copy button in token view
     And user of browser2 sends copied token to user of browser1
 
-    And user of browser1 joins cluster using copied token and sees following message: ".*joined.*"
+    And user of browser1 joins cluster using copied token
     Then user of browser1 sees "oneprovider-1" subpage in Clusters page
 
     And user of browser2 sees that cluster "oneprovider-1" has following privilege configuration for user "user1":

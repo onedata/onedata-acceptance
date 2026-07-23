@@ -14,7 +14,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import (
     add_element_with_copied_token,
-    consume_received_token,
+    prepare_and_consume_received_token,
 )
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
@@ -341,7 +341,7 @@ def create_group_token_to_invite_group_using_op_gui(
 def join_group_using_op_gui(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
-    consume_received_token(selenium, browser_id, ".*joined.*", tmp_memory)
+    prepare_and_consume_received_token(selenium, browser_id, tmp_memory)
 
 
 def add_subgroups_using_op_gui(

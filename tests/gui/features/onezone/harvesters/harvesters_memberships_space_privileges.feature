@@ -17,7 +17,7 @@ Feature: Basic management of harvester memberships privileges with spaces in One
 
     And user of browser1 creates "harvester20" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester20" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
+    And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester20" has appeared on the harvesters list in the sidebar
 
     # fail to add space
@@ -42,7 +42,7 @@ Feature: Basic management of harvester memberships privileges with spaces in One
     When user of browser1 creates "space2" space in Onezone
     And user of browser1 creates "harvester21" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester21" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
+    And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester21" has appeared on the harvesters list in the sidebar
     And user of browser1 adds "space2" space to "harvester21" harvester using available spaces dropdown
 

@@ -50,7 +50,7 @@ Feature: Basic management of harvester in Space
     # Create "harvester1" harvester and give user appropriate privileges
     And user of browser1 creates "harvester1" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester1" harvester to user of space_owner_browser
-    And user of space_owner_browser joins to harvester in Onezone page and sees following message: ".*joined.*"
+    And user of space_owner_browser joins to harvester in Onezone page
 
     And user of browser1 sets following privileges for "space-owner-user" user in "harvester1" harvester:
           Space management:

@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import re
+
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
@@ -152,9 +154,13 @@ class Popups:
         return "popups"
 
     def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
+        regexp = re.compile(alert_popup.value)
+        # check both types of popups
         for popups in (self.alert_info_popups, self.notify_popups):
-            if alert_popup.value in popups:
-                return popups[alert_popup.value]
+            for popup_val in popups:
+                message = popup_val.message
+                if regexp.match(message):
+                    return popups[message]
         raise RuntimeError(f'No alert popup with message "{alert_popup.value}"')
 
     def is_upload_presenter(self) -> bool:

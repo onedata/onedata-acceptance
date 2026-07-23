@@ -479,6 +479,7 @@ class AlertPopup(Enum):
     AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
     STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"
     TOKEN_CREATED = "Token has been created successfully."
+    SUCCESSFULLY_JOINED = r".*joined.*"
 
 
 PageName = Literal[

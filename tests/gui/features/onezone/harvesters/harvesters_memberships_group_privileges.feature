@@ -16,7 +16,7 @@ Feature: Basic management of harvester memberships privileges with groups in One
 
     And user of browser1 creates "harvester18" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester18" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
+    And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester18" has appeared on the harvesters list in the sidebar
 
     # fail to add group to harvester
@@ -43,7 +43,7 @@ Feature: Basic management of harvester memberships privileges with groups in One
 
     And user of browser1 creates "harvester19" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester19" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
+    And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester19" has appeared on the harvesters list in the sidebar
 
     # add group to harvester

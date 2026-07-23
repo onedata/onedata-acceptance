@@ -21,7 +21,6 @@ from tests.gui.steps.common.common import (
     wait_till_error_modal_stop_appearing,
     wait_till_popup_or_modal_disappear,
 )
-from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
@@ -105,61 +104,65 @@ def _click_confirm_btn(driver: WebDriver) -> None:
 
 
 @wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*?) (?P<result>succeeds|fails) to consume token "
-        r'using Confirm button and sees following message: "(?P<message>.*?)" '
-        r"on a (modal|popup)"
-    )
+    parsers.parse("user of {browser_id} succeeds to consume token using Confirm button")
 )
-def consume_token_using_confirm_button(
+def succeed_to_consume_token_using_confirm_button(
     selenium: SeleniumDrivers,
     browser_id: str,
-    result: str,
+) -> None:
+    driver = selenium[browser_id]
+    _click_confirm_btn(driver)
+    wait_till_main_content_loaded(driver)
+    wait_till_alert_info_popup_disappear(driver, AlertPopup.SUCCESSFULLY_JOINED)
+    OZLoggedIn(driver).update_current_page()
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*?) fails to consume token using Confirm button "
+        r'and sees following message: "(?P<message>.*?)" on a modal'
+    )
+)
+def fail_to_consume_token_using_confirm_button(
+    selenium: SeleniumDrivers,
+    browser_id: str,
     message: str,
     close_error_modal: bool = True,
 ) -> None:
     driver = selenium[browser_id]
     _click_confirm_btn(driver)
-
-    if result == "succeeds":
-        notify_visible_with_text(selenium, browser_id, "success", message)
-        wait_till_main_content_loaded(driver)
-        OZLoggedIn(driver).update_current_page()
-    else:
-        assert_error_modal_with_text_appeared(selenium, browser_id, message)
-        if close_error_modal:
-            wait_till_error_modal_stop_appearing(driver)
+    assert_error_modal_with_text_appeared(selenium, browser_id, message)
+    if close_error_modal:
+        wait_till_error_modal_stop_appearing(driver)
 
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) joins "
-        r"(?P<option>group|space|inventory|harvester) using received token "
-        r'and sees following message: "(?P<message>.*)"'
+        r"user of (?P<browser_id>.*) succeeds to join "
+        r"(?P<option>group|space|inventory|harvester) using received token"
     )
 )
-def consume_received_token(
-    selenium: SeleniumDrivers, browser_id: str, message: str, tmp_memory: TmpMemory
+def prepare_and_consume_received_token(
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
     _prepare_received_token_for_consumption(selenium, browser_id, tmp_memory)
-    consume_token_using_confirm_button(selenium, browser_id, "succeeds", message)
+    succeed_to_consume_token_using_confirm_button(selenium, browser_id)
 
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) tries to join "
+        r"user of (?P<browser_id>.*) fails to join "
         r"(?P<option>group|space|inventory|harvester) using received token "
-        r'and sees following message: "(?P<message>.*)"'
+        r'and sees error message on modal: "(?P<message>.*)"'
     )
 )
-def try_to_consume_received_token(
+def prepare_and_fail_to_consume_received_token(
     selenium: SeleniumDrivers, browser_id: str, message: str, tmp_memory: TmpMemory
 ) -> None:
     _prepare_received_token_for_consumption(selenium, browser_id, tmp_memory)
-    consume_token_using_confirm_button(
+    fail_to_consume_token_using_confirm_button(
         selenium,
         browser_id,
-        "fails",
         message,
         close_error_modal=False,
     )
@@ -217,24 +220,18 @@ def assert_invalid_id_in_error_modal_and_close_modal(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) joins (cluster|group|inventory) using copied "
-        r'token and sees following message: "(?P<message>.*)"'
+        r"token"
     )
 )
-@wt(
-    parsers.parse(
-        "user of {browser_id} joins to harvester in Onezone page "
-        'and sees following message: "{message}"'
-    )
-)
+@wt(parsers.parse("user of {browser_id} joins to harvester in Onezone page"))
 def consume_token_from_copied_token(
     selenium: SeleniumDrivers,
     browser_id: str,
-    message: str,
     clipboard: Clipboard,
     displays: dict[str, str],
 ) -> None:
     _prepare_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
-    consume_token_using_confirm_button(selenium, browser_id, "succeeds", message)
+    succeed_to_consume_token_using_confirm_button(selenium, browser_id)
 
 
 @wt(
@@ -251,12 +248,7 @@ def fail_to_consume_copied_token(
     displays: dict[str, str],
 ) -> None:
     _prepare_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
-    consume_token_using_confirm_button(
-        selenium,
-        browser_id,
-        "fails",
-        message,
-    )
+    fail_to_consume_token_using_confirm_button(selenium, browser_id, message)
 
 
 def _prepare_copied_token_for_consumption(
@@ -300,13 +292,10 @@ def add_element_with_copied_token(
     _prepare_element_token_for_consumption(
         selenium, browser_id, elem_name, clipboard, displays
     )
-    expected_result = "succeeds" if result == "adds" else "fails"
-    consume_token_using_confirm_button(
-        selenium,
-        browser_id,
-        expected_result,
-        message,
-    )
+    if result == "adds":
+        succeed_to_consume_token_using_confirm_button(selenium, browser_id)
+    else:
+        fail_to_consume_token_using_confirm_button(selenium, browser_id, message)
 
 
 def _prepare_element_token_for_consumption(
@@ -326,9 +315,10 @@ def _prepare_element_token_for_consumption(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} {result} to consume token for "{elem_name}" {elem} '
-        'and sees following message: "{message}"'
+    parsers.re(
+        r"user of (?P<browser_id>.*?) (?P<result>succeeds|fails) to prepare and "
+        r'consume token for "(?P<elem_name>.*?)" (?P<elem>.*?) and sees following '
+        r'message: "(?P<message>.*?)"'
     )
 )
 def result_to_consume_token_for_elem(
@@ -343,7 +333,10 @@ def result_to_consume_token_for_elem(
     _prepare_element_token_for_consumption(
         selenium, browser_id, elem_name, clipboard, displays
     )
-    consume_token_using_confirm_button(selenium, browser_id, result, message)
+    if result == "succeeds":
+        succeed_to_consume_token_using_confirm_button(selenium, browser_id)
+    else:
+        fail_to_consume_token_using_confirm_button(selenium, browser_id, message)
 
 
 @wt(
@@ -383,7 +376,10 @@ def result_to_consume_token(
     displays: dict[str, str],
 ) -> None:
     _prepare_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
-    consume_token_using_confirm_button(selenium, browser_id, result, message)
+    if result == "succeeds":
+        succeed_to_consume_token_using_confirm_button(selenium, browser_id)
+    else:
+        fail_to_consume_token_using_confirm_button(selenium, browser_id, message)
 
 
 def _create_token_of_type(

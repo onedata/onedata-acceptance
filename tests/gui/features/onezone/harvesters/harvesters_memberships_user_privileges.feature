@@ -24,7 +24,7 @@ Feature: Basic management of harvester memberships privileges with users in Onez
     And user of browser1 sends copied token to user of browser2
 
     # join to harvester
-    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
+    And user of browser2 joins to harvester in Onezone page
     Then user of browser2 sees that "harvester10" has appeared on the harvesters list in the sidebar
     And user of browser1 removes "harvester10" harvester in Onezone page
 
@@ -32,7 +32,7 @@ Feature: Basic management of harvester memberships privileges with users in Onez
   Scenario: User successfully generates invitation token for user with add user privilege
     When user of browser1 creates "harvester16" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester16" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
+    And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester16" has appeared on the harvesters list in the sidebar
 
     # fail to generate invitation token for user
@@ -59,7 +59,7 @@ Feature: Basic management of harvester memberships privileges with users in Onez
   Scenario: User successfully removes user from harvester with remove user privilege
     When user of browser1 creates "harvester17" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester17" harvester to user of browser2
-    And user of browser2 joins to harvester in Onezone page and sees following message: ".*joined.*"
+    And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester17" has appeared on the harvesters list in the sidebar
 
     # fail to remove user
@@ -91,6 +91,6 @@ Feature: Basic management of harvester memberships privileges with users in Onez
 
     And user of browser1 removes "harvester18" harvester in Onezone page
 
-    Then user of browser2 tries to join harvester using received token and sees following message: "is invalid"
+    Then user of browser2 fails to join harvester using received token and sees error message on modal: "is invalid"
     And user of browser2 closes error modal with info about invalid target with id of "harvester18" harvester
     

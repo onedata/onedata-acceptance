@@ -221,7 +221,7 @@ Feature: Management of inventories members
     And user of space_owner_browser clicks on "Remove" button in inventory "inventory1" menu in the sidebar
     And user of space_owner_browser clicks on "Remove" button in modal "Remove inventory"
 
-    Then user of browser1 tries to join inventory using received token and sees following message: "is invalid"
+    Then user of browser1 fails to join inventory using received token and sees error message on modal: "is invalid"
     And user of browser1 closes error modal with info about invalid target with id of "inventory1" inventory
 
 

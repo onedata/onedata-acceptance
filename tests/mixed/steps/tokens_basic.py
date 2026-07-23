@@ -9,8 +9,8 @@ from tests.gui.meta_steps.onezone.tokens import (
     assert_token_configuration_gui,
     choose_and_revoke_token_in_oz_gui,
     click_copy_button_in_token_view,
-    consume_received_token,
     create_token_with_config,
+    prepare_and_consume_received_token,
 )
 from tests.gui.steps.onezone.spaces import (
     assert_new_created_space_has_appeared_on_spaces,
@@ -217,7 +217,7 @@ def join_space_with_token(
 ) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
-        consume_received_token(selenium, user, ".*joined.*", tmp_memory)
+        prepare_and_consume_received_token(selenium, user, tmp_memory)
         assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
     elif client_lower == "rest":
         join_space_in_oz_using_rest(
