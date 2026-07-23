@@ -89,9 +89,7 @@ def join_to_cluster(
     displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
-    consume_token_from_copied_token(
-        selenium, browser_id, ".*joined.*", clipboard, displays
-    )
+    consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
 
 
 @wt(
