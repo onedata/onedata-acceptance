@@ -101,7 +101,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
                 consumer name: Any user
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
-    Then user of browser2 succeeds to prepare and consume token for "group1" group and sees following message: ".*joined.*"
+    Then user of browser2 opens consume view for "group1" group, pastes token and consumes it
 
     And user of browser1 removes all tokens
 
@@ -128,7 +128,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
 
-    Then user of browser2 succeeds to prepare and consume token for "group1" group and sees following message: ".*joined.*"
+    Then user of browser2 opens consume view for "group1" group, pastes token and consumes it
     And user of browser2 sees that space "space1" has following privilege configuration for group "group1":
           privileges:
             Space management:
@@ -172,7 +172,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
                 consumer name: Any group
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
-    Then user of browser2 succeeds to prepare and consume token for "group1" group and sees following message: ".*joined.*"
+    Then user of browser2 opens consume view for "group1" group, pastes token and consumes it
 
     And user of browser1 removes all tokens
 
