@@ -60,13 +60,10 @@ class VisibleItem(Protocol):
 
 def get_alert_css_selector(alert_popup: AlertPopup) -> str:
     match alert_popup:
-        case AlertPopup.TOKEN_CREATED:
-            return ".ember-notify-show"
-
+        case AlertPopup.TOKEN_CREATED | AlertPopup.SUCCESSFULLY_JOINED:
+            return ".ember-notify-cn"
         case (
-            AlertPopup.AUTHENTICATION_SUCCEEDED
-            | AlertPopup.STORAGE_IMPORT_SCAN_STARTED
-            | AlertPopup.SUCCESSFULLY_JOINED
+            AlertPopup.AUTHENTICATION_SUCCEEDED | AlertPopup.STORAGE_IMPORT_SCAN_STARTED
         ):
             return ".alert-info"
 
