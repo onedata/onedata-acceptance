@@ -369,7 +369,7 @@ def fail_to_consume_token_for_member(
         selenium, browser_id, elem_name, clipboard, displays
     )
     fail_to_consume_token_using_confirm_button(
-        selenium, browser_id, message="is invalid", close_error_modal=False
+        selenium, browser_id, message="Consuming token failed", close_error_modal=False
     )
 
 
