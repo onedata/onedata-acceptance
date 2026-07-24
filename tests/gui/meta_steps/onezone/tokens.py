@@ -521,7 +521,8 @@ def _create_token_with_config(
     hosts: Hosts,
     tmp_memory: TmpMemory,
 ) -> None:
-    open_consume_token_view(selenium, browser_id)
+    click_on_option_in_the_sidebar(selenium, browser_id, "Tokens")
+    click_on_button_in_tokens_sidebar(selenium, browser_id, "Create new token")
     click_create_custom_token(selenium, browser_id)
 
     data = yaml.load(config, yaml.Loader)
