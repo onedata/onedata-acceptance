@@ -50,7 +50,7 @@ Feature: Joining a group in Onezone GUI
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    Then user of space_owner_browser fails to join group using copied token and sees following message: "Consuming token failed"
+    Then user of space_owner_browser fails to join group using copied token and sees error modal
 
 
   Scenario: User fails to join to the group because the group was deleted
@@ -63,7 +63,7 @@ Feature: Joining a group in Onezone GUI
 
     And user of space_owner_browser removes group "group1"
 
-    Then user of browser1 fails to join group using received token and sees error message on modal: "is invalid"
+    Then user of browser1 fails to join group using received token and sees error modal
     And user of browser1 closes error modal with info about invalid target with id of "group1" group
 
 

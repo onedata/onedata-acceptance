@@ -91,6 +91,6 @@ Feature: Basic management of harvester memberships privileges with users in Onez
 
     And user of browser1 removes "harvester18" harvester in Onezone page
 
-    Then user of browser2 fails to join harvester using received token and sees error message on modal: "is invalid"
+    Then user of browser2 fails to join harvester using received token and sees error modal
     And user of browser2 closes error modal with info about invalid target with id of "harvester18" harvester
     

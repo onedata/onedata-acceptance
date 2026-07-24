@@ -12,12 +12,11 @@ from typing import Optional
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
 from tests.gui.steps.common.common import (
-    wait_for_error_modal_to_appear,
     wait_for_error_modal_to_disappear,
     wait_till_alert_info_popup_disappear,
     wait_till_popup_or_modal_disappear,
@@ -162,17 +161,17 @@ def paste_and_consume_received_token(
     parsers.re(
         r"user of (?P<browser_id>.*) fails to join "
         r"(?P<option>group|space|inventory|harvester) using received token "
-        r'and sees error message on modal: "(?P<message>.*)"'
+        r"and sees error modal"
     )
 )
 def paste_and_fail_to_consume_received_token(
-    selenium: SeleniumDrivers, browser_id: str, message: str, tmp_memory: TmpMemory
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
     _paste_received_token_for_consumption(selenium, browser_id, tmp_memory)
     fail_to_consume_token_using_confirm_button(
         selenium,
         browser_id,
-        message = "is invalid",
+        message="is invalid",
         close_error_modal=False,
     )
 
@@ -236,18 +235,19 @@ def consume_token_from_copied_token(
 @wt(
     parsers.parse(
         "user of {browser_id} fails to join group using copied token "
-        'and sees following message: "{message}"'
+        "and sees error modal"
     )
 )
 def fail_to_consume_copied_token(
     selenium: SeleniumDrivers,
     browser_id: str,
-    message: str,
     clipboard: Clipboard,
     displays: dict[str, str],
 ) -> None:
     _paste_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
-    fail_to_consume_token_using_confirm_button(selenium, browser_id)
+    fail_to_consume_token_using_confirm_button(
+        selenium, browser_id, message="is invalid"
+    )
 
 
 def open_consume_token_view(selenium: SeleniumDrivers, browser_id: str) -> None:
@@ -375,7 +375,7 @@ def fail_to_consume_token_for_member(
         selenium, browser_id, elem_name, clipboard, displays
     )
     fail_to_consume_token_using_confirm_button(
-        selenium, browser_id, close_error_modal=False
+        selenium, browser_id, message="is invalid", close_error_modal=False
     )
 
 
