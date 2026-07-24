@@ -46,7 +46,7 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser clicks on "Consume token" button in tokens sidebar
     And user of browser pastes copied token into token text field
     And user of browser chooses "group1" group from dropdown on tokens page
-    Then user of browser fails to consume token using Confirm button and sees following message: "Consuming token failed" on a modal
+    Then user of browser fails to consume token using "Confirm" button and sees following message: "Consuming token failed" on a modal
 
 
   Scenario: User generates group invitation token

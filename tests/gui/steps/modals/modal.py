@@ -712,7 +712,7 @@ def click_icon_in_share_directory_modal(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 6)
-def assert_error_modal_with_text_appeared(
+def assert_error_modal_with_subtext_appeared(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
     modal_text = Modals(selenium[browser_id]).error.content.lower()
