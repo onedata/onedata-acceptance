@@ -400,6 +400,7 @@ def consume_token_and_see_success_notify(
 ) -> None:
     _paste_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
+    # sometimes the popup appears and disappears too quickly to be catched
     assert wait_till_alert_info_popup_disappear(
         selenium[browser_id], AlertPopup.SUCCESSFULLY_JOINED
     ), "Success notify did not appear"

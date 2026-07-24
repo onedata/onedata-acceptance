@@ -653,7 +653,6 @@ def click_on_confirm_button_on_tokens_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     # click the button without checking if a popup or error modal appeared
-    # sometimes the popup appears and disappears too quickly to be catched
     oz_page = OZLoggedIn(selenium[browser_id])
     oz_page.tokens.confirm_button()
     # it is needed to wait for the page refresh
