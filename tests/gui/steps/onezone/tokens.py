@@ -15,7 +15,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     wait_for_sliding_panel_to_stop_moving,
 )
-from tests.gui.steps.common.url import assert_main_page_loaded
+from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
@@ -656,5 +656,5 @@ def click_on_confirm_button_on_tokens_page(
     oz_page = OZLoggedIn(selenium[browser_id])
     oz_page.tokens.confirm_button()
     # it is needed to wait for the page refresh
-    assert_main_page_loaded(selenium, browser_id)
+    wait_till_main_content_loaded(selenium[browser_id])
     oz_page.update_current_page()
