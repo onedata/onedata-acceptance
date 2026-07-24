@@ -240,7 +240,7 @@ def fail_to_consume_copied_token(
 ) -> None:
     _paste_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
     fail_to_consume_token_using_confirm_button(
-        selenium, browser_id, message="is invalid"
+        selenium, browser_id, message="Consuming token failed"
     )
 
 
