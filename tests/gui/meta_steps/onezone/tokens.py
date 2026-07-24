@@ -125,12 +125,6 @@ def succeed_to_consume_token_using_confirm_button(
     OZLoggedIn(driver).update_current_page()
 
 
-@wt(
-    parsers.re(
-        r'user of (?P<browser_id>.*?) fails to consume token using "Confirm" button '
-        r'and sees following message: "(?P<message>.*?)" on a modal'
-    )
-)
 def fail_to_consume_token_using_confirm_button(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -342,7 +336,7 @@ def _open_token_consume_view_for_member_and_paste_token(
 @wt(
     parsers.parse(
         'user of {browser_id} opens token consume view for "{elem_name}" {elem}, '
-        "pastes token and consumes it"
+        "pastes token and proceeds"
     )
 )
 def consume_token_for_member(
@@ -361,7 +355,7 @@ def consume_token_for_member(
 @wt(
     parsers.parse(
         'user of {browser_id} opens token consume view for "{elem_name}" {elem}, '
-        "pastes token, fails to consume it and sees error modal"
+        "pastes token, fails to proceed and sees error modal"
     )
 )
 def fail_to_consume_token_for_member(
@@ -392,11 +386,7 @@ def assert_alert_while_consuming_token(
     displays: dict[str, str],
     text: str,
 ) -> None:
-    option = "Tokens"
-    button = "Consume token"
-
-    click_on_option_in_the_sidebar(selenium, browser_id, option)
-    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
+    open_consume_token_view(selenium, browser_id)
     paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays)
     assert_alert_on_tokens_page(browser_id, text, selenium)
 
@@ -531,10 +521,7 @@ def _create_token_with_config(
     hosts: Hosts,
     tmp_memory: TmpMemory,
 ) -> None:
-    option = "Tokens"
-    button = "Create new token"
-    click_on_option_in_the_sidebar(selenium, browser_id, option)
-    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
+    open_consume_token_view(selenium, browser_id)
     click_create_custom_token(selenium, browser_id)
 
     data = yaml.load(config, yaml.Loader)

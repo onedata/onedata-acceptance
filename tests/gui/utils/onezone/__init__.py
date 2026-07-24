@@ -1,7 +1,7 @@
 """Utils and fixtures to facilitate operations on Onezone web GUI."""
 
 __author__ = "Bartosz Walkowicz Michal Stanisz Jakub Karczewski Mateusz Zajac"
-__copyright__ = "Copyright (C) 2017-2026 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from typing import ClassVar, TypeVar

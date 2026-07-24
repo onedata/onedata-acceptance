@@ -40,7 +40,7 @@ Feature: Management of invite tokens in Onezone GUI, with admin user
     And user of browser2 clicks on copy button in token view
     And user of browser2 sends copied token to user of browser1
 
-    And user of browser1 opens token consume view for "group1" group, pastes token and consumes it
+    And user of browser1 opens token consume view for "group1" group, pastes token and proceeds
     And user of browser1 sees that "harvester1" has appeared on the harvesters list in the sidebar
 
     Then user of browser2 sees that harvester "harvester1" has following privilege configuration for group "group1":

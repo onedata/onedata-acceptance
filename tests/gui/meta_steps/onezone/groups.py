@@ -2,14 +2,13 @@
 using web GUI
 """
 
-from typing import Any
-
-from selenium.webdriver.remote.webdriver import WebDriver
-
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import (
@@ -17,6 +16,7 @@ from tests.gui.meta_steps.onezone.tokens import (
     fail_to_add_element_with_copied_token,
     paste_and_consume_received_token,
 )
+from tests.gui.steps.common.common import wait_for_error_modal_to_disappear
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_subtext_appeared,
@@ -433,3 +433,4 @@ def fail_to_add_subgroups_using_op_gui(
             clipboard,
             displays,
         )
+        wait_for_error_modal_to_disappear(selenium[user])
