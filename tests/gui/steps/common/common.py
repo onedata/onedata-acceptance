@@ -310,7 +310,7 @@ def try_click_without_throwing_error(
 def wait_till_popup_or_modal_disappear(
     driver: WebDriver,
     css_selector: str,
-    btn_handler: Callable[[WebDriver], ButtonPageObject],
+    btn_handler: Callable[[WebDriver], WebElement],
 ) -> None:
     try:
         WebDriverWait(driver, WAIT_FRONTEND).until(
@@ -331,20 +331,34 @@ def wait_till_popup_or_modal_disappear(
 
 def wait_till_alert_info_popup_disappear(
     driver: WebDriver,
-    alert_popup: AlertPopup,
+    popup: AlertPopup | str,
 ) -> None:
-    # If popup doesn't appear, don't throw an error.
-    # If it appeared and was not closed, raise.
-    css_selector = get_alert_css_selector(alert_popup)
+    """Close an alert identified by its enum value or a CSS selector."""
 
-    def alert_popup_close_button_fun(
-        driver: WebDriver,
-        alert_popup: AlertPopup,
-    ) -> ButtonPageObject:
-        return Popups(driver).get_alert_popup(alert_popup).close
+    if isinstance(popup, AlertPopup):
+        css_sel = get_alert_css_selector(popup)
 
-    partial_close_alert = partial(alert_popup_close_button_fun, alert_popup=alert_popup)
-    wait_till_popup_or_modal_disappear(driver, css_selector, partial_close_alert)
+        def alert_popup_close_button_fun(
+            driver: WebDriver, alert_popup: AlertPopup
+        ) -> WebElement:
+            return Popups(driver).get_alert_popup(alert_popup).close
+
+        get_close_button = partial(alert_popup_close_button_fun, alert_popup=popup)
+
+    else:
+        css_sel = popup
+        if not css_sel:
+            raise ValueError("CSS selector cannot be empty")
+
+        def get_close_button(driver: WebDriver) -> WebElement:
+            popup_element = driver.find_element(By.CSS_SELECTOR, css_sel)
+            return popup_element.find_element(By.CSS_SELECTOR, ".close")
+
+    wait_till_popup_or_modal_disappear(
+        driver,
+        css_sel,
+        get_close_button,
+    )
 
 
 def parse_size(size: str) -> float:

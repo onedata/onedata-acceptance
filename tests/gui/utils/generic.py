@@ -469,6 +469,17 @@ class AlertPopup(Enum):
     AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
     STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"
     TOKEN_CREATED = "Token has been created successfully."
+    SUCCESSFULLY_JOINED = r".*joined.*"
+    PASSWORD_CHANGED = ".*[Pp]assword.*changed.*successfully.*"
+    PROVIDER_DATA_MODIFIED = ".*[Pp]rovider.*data.*modified.*"
+    PROVIDER_DEREGISTERED = ".*[Pp]rovider.*deregistered.*"
+    ADDED_SPACE_SUPPORT = ".*[Aa]dded.*support.*space.*"
+    CONFIGURATION_SPACE_SUPPORT_CHANGED = (
+        ".*[Cc]onfiguration.*space.*support.*changed.*"
+    )
+    CEASED_SUPPORT = "Ceased.*[Ss]upport.*"
+    STORAGE_ADDED = ".*[Ss]torage.*added.*"
+    SUCCESSFULLY_COPIED = ".*copied.*"
 
 
 PageName = Literal[

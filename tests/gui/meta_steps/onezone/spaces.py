@@ -64,6 +64,7 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
+    AlertPopup,
     ListElement,
     parse_elements_sequence,
 )
@@ -217,7 +218,7 @@ def remove_provider_support_for_space_in_oz_using_gui(
     option = "Revoke space support"
     confirmation_button = "Cease support"
     notify_type = "info"
-    text_regexp = "Ceased.*[Ss]upport.*"
+    text_regexp = AlertPopup.CEASED_SUPPORT.value
     provider_name = "oneprovider-1"
 
     wt_click_on_subitem_for_item(
@@ -282,7 +283,9 @@ def request_space_support_using_gui(
     click_copy_button_on_request_support_page(
         selenium, user, displays, clipboard, tmp_memory
     )
-    notify_visible_with_text(selenium, user, "info", ".*copied.*")
+    notify_visible_with_text(
+        selenium, user, "info", AlertPopup.SUCCESSFULLY_COPIED.value
+    )
     send_copied_item_to_other_users(
         user, "token", [receiver], tmp_memory, displays, clipboard
     )

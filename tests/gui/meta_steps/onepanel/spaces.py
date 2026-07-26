@@ -51,6 +51,7 @@ from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
+from tests.gui.utils.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
@@ -106,7 +107,7 @@ def result_to_support_space_in_op_panel_using_gui(
     hosts: Hosts,
 ) -> None:
     notify_type = "info"
-    notify_text_regexp = ".*[Aa]dded.*support.*space.*"
+    notify_text_regexp = AlertPopup.ADDED_SPACE_SUPPORT.value
 
     _support_space_in_op_panel_using_gui(
         selenium, user, config, tmp_memory, provider_name, hosts
@@ -224,7 +225,7 @@ def configure_auto_storage_import_in_storage_import_tab(
     _handle_configure_auto_storage_import(selenium, user, storage_import_configuration)
     button = "Save configuration"
     notify_type = "info"
-    text_regexp = ".*[Cc]onfiguration.*space.*support.*changed.*"
+    text_regexp = AlertPopup.CONFIGURATION_SPACE_SUPPORT_CHANGED.value
     wt_clicks_on_button_in_space_record(selenium, user, button)
     notify_visible_with_text(selenium, user, notify_type, text_regexp)
 
@@ -255,7 +256,7 @@ def revoke_space_support_in_op_panel_using_gui(
     # TODO: change after space support revoke fixes in 21.02 (VFS-6383)
     # button = "Cease support"
     # notify_type = "info"
-    # notify_text_regexp = "Ceased.*[Ss]upport.*"
+    # notify_text_regexp = AlertPopup.CEASED_SUPPORT.value
     # wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
     # wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)
     # notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)

@@ -224,7 +224,7 @@ def _result_to_consume_token(
 ) -> None:
     if result == "succeeds":
         notify_type = "success"
-        text_regexp = ".*joined.*"
+        text_regexp = AlertPopup.SUCCESSFULLY_JOINED.value
 
         notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
     else:

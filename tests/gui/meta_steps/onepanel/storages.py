@@ -45,6 +45,7 @@ from tests.gui.steps.onepanel.storages import (
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.utils import Onepanel
+from tests.gui.utils.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
@@ -119,7 +120,7 @@ def _add_storage_in_op_panel_using_gui(
     input_box = "Storage name"
     mount_point_option = "mount point"
     notify_type = "info"
-    text_regexp = ".*[Ss]torage.*added.*"
+    text_regexp = AlertPopup.STORAGE_ADDED.value
     options = yaml.load(config, yaml.Loader)
 
     try:

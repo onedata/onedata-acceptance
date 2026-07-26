@@ -355,7 +355,7 @@ def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     wait_till_main_content_loaded(driver)
     wait_till_alert_info_popup_disappear(
-        driver, alert_popup=AlertPopup.AUTHENTICATION_SUCCEEDED
+        driver, popup=AlertPopup.AUTHENTICATION_SUCCEEDED
     )
 
 

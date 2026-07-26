@@ -774,7 +774,7 @@ def click_start_scan_button_in_storage_import_tab(
 
     click_start_scan_button()
     wait_till_alert_info_popup_disappear(
-        driver, alert_popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED
+        driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED
     )
 
 

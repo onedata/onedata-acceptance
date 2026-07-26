@@ -40,7 +40,7 @@ from tests.gui.steps.rest.provider import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
-from tests.gui.utils.generic import OnedataService
+from tests.gui.utils.generic import AlertPopup, OnedataService
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
@@ -62,7 +62,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     prov_name_attr = "Provider name"
     red_point_attr = "Domain"
     notify_type = "info"
-    notify_text_regexp = ".*[Pp]rovider.*data.*modified.*"
+    notify_text_regexp = AlertPopup.PROVIDER_DATA_MODIFIED.value
 
     wt_click_on_subitem_for_item_with_name(
         selenium, [user], sidebar, sub_item, provider_name
@@ -107,7 +107,7 @@ def deregister_provider_in_op_panel_using_gui(
     wt_click_on_btn_in_content(selenium, [browser_id], "Deregister provider", content)
     wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup)
     notify_visible_with_text(
-        selenium, browser_id, "info", ".*[Pp]rovider.*deregistered.*"
+        selenium, browser_id, "info", AlertPopup.PROVIDER_DEREGISTERED.value
     )
 
 

@@ -27,6 +27,7 @@ from tests.gui.steps.onepanel.emergency_passphrase import (
     click_button_on_emergency_passphrase_page,
     type_text_to_input_on_emergency_passphrase_page,
 )
+from tests.gui.utils.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -39,7 +40,7 @@ def change_user_password_in_oz_panel_using_gui(
     option_name = "Manage account"
     button_name = "Change password"
     notify_type = "info"
-    notify_text_regexp = ".*[Pp]assword.*changed.*successfully.*"
+    notify_text_regexp = AlertPopup.PASSWORD_CHANGED.value
 
     wt_click_on_user_account_btn_panel(selenium, user)
     wt_click_option_in_user_account_popover(selenium, user, option_name)
