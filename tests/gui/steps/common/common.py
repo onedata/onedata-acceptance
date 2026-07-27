@@ -290,13 +290,9 @@ def wait_for_sliding_panel_to_stop_moving(
 def wait_for_error_modal_to_disappear(driver: SeleniumDrivers) -> bool:
     """Close the error modal and return whether it appeared."""
 
-def wait_for_error_modal_to_disappear(driver: SeleniumDrivers) -> bool:
-    """Close the error modal and return whether it appeared."""
-
     def error_modal_close_button_fun(driver: SeleniumDrivers) -> ButtonPageObject:
         return Modals(driver).error.close
 
-    return wait_till_popup_or_modal_disappear(
     return wait_till_popup_or_modal_disappear(
         driver, ".alert-global.modal.in .modal-dialog", error_modal_close_button_fun
     )
@@ -312,24 +308,6 @@ def try_click_without_throwing_error(
 
     with suppress(Exception):
         perform(action)
-
-
-def wait_for_element_to_appear(driver: WebDriver, css_sel: str, timeout: float) -> bool:
-    """Return whether the element appeared before the timeout."""
-    try:
-        WebDriverWait(driver, timeout).until(
-            visibility_of_element_located((By.CSS_SELECTOR, css_sel))
-        )
-    except TimeoutException:
-        return False
-    return True
-
-
-def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
-    """Return whether the error modal appeared before the timeout."""
-    return wait_for_element_to_appear(
-        driver, ".alert-global.modal.in .modal-dialog", timeout
-    )
 
 
 def wait_for_element_to_appear(driver: WebDriver, css_sel: str, timeout: float) -> bool:
@@ -366,7 +344,6 @@ def wait_till_popup_or_modal_disappear(
         invisibility_of_element_located((By.CSS_SELECTOR, css_selector)),
         message="Error modal is still visible",
     )
-    return True
     return True
 
 
@@ -419,3 +396,22 @@ def parse_size(size: str) -> float:
     value = float(match.group("value"))
     unit = match.group("unit")
     return value * 1024 ** (units.index(unit))
+
+
+# move it to new file with helper functions for devs
+def breakpoint_with_paused_website(driver: WebDriver) -> None:
+    """Pause both browser JavaScript and the Python test."""
+    driver.execute_cdp_cmd("Debugger.enable", {})
+
+    try:
+        driver.execute_script("""
+            setTimeout(() => {
+                debugger;
+            }, 0);
+            """)
+        breakpoint()  # pylint: disable=forgotten-debug-statement
+    finally:
+        try:
+            driver.execute_cdp_cmd("Debugger.resume", {})
+        finally:
+            driver.execute_cdp_cmd("Debugger.disable", {})

@@ -25,7 +25,7 @@ from tests.gui.steps.modals.details_modal import (
     click_on_navigation_tab_in_modal,
 )
 from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_subtext_appeared,
+    assert_error_modal_with_text_appeared,
     close_modal,
     write_name_into_text_field_in_modal,
     wt_wait_for_modal_to_appear,
@@ -146,7 +146,7 @@ def rename_item(
     write_name_into_text_field_in_modal(selenium, browser_id, new_name, modal_name)
     confirm_rename_directory(selenium, browser_id, confirmation_option)
     if res == "fails":
-        assert_error_modal_with_subtext_appeared(selenium, browser_id, text)
+        assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
         assert_items_presence_in_browser(selenium, browser_id, [new_name], tmp_memory)
 
@@ -183,7 +183,7 @@ def remove_item_in_op_gui(
     click_modal_button(selenium, browser_id, button, modal)
 
     if res == "fails":
-        assert_error_modal_with_subtext_appeared(selenium, browser_id, text)
+        assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
         assert_items_absence_in_browser(selenium, browser_id, [path], tmp_memory)
 
@@ -300,7 +300,7 @@ def create_item_in_op_gui(
     write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name)
     confirm_create_new_directory(selenium, browser_id, option)
     if res == "fails":
-        assert_error_modal_with_subtext_appeared(selenium, browser_id, text)
+        assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
         assert_items_presence_in_browser(selenium, browser_id, [name], tmp_memory)
 

@@ -10,18 +10,22 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 
 from selenium.common.exceptions import (
-    NoSuchElementException,
     StaleElementReferenceException,
 )
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import staleness_of
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import breakpoint_with_paused_website
 from tests.gui.utils import OnePage, PublicOnePage
-from tests.gui.utils.generic import suppress
+from tests.gui.utils.common.popups import Popups
+from tests.gui.utils.generic import (
+    is_web_element_visible_on_page,
+    suppress,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import element_has_class, repeat_failed
 
 
 @wt(
@@ -30,7 +34,7 @@ from tests.utils.utils import repeat_failed
         "with text matching to: {text_regexp}"
     )
 )
-@repeat_failed(timeout=2 * WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_FRONTEND)
 def notify_visible_with_text(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -38,13 +42,19 @@ def notify_visible_with_text(
     text_regexp: str,
 ) -> None:
     driver = selenium[browser_id]
-    css_selector = f".ember-notify-show[class*={notify_type}] .message"
+    # css_selector = f".ember-notify-show[class*={notify_type}] .message"
     regexp = re.compile(text_regexp)
-    with suppress(NoSuchElementException, StaleElementReferenceException):
-        assert any(
-            regexp.match(notify.text)
-            for notify in driver.find_elements(By.CSS_SELECTOR, css_selector)
-        ), f'no {notify_type} notify with "{text_regexp}" msg found'
+    popups = Popups(driver)
+
+    for notify in list(popups.alert_info_popups) + list(popups.notify_popups):
+        if is_web_element_visible_on_page(notify, notify.web_elem) and regexp.match(
+            notify.message
+        ):
+            print(element_has_class(notify.web_elem, f"alert-{notify_type}"))
+            breakpoint_with_paused_website(driver)
+            break
+    else:
+        raise AssertionError(f'no {notify_type} notify with "{text_regexp}" msg found')
 
 
 @wt(parsers.parse("user of {browser_id} closes all notifies"))

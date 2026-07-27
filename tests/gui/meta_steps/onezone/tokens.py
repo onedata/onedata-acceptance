@@ -23,7 +23,7 @@ from tests.gui.steps.common.common import (
 )
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_subtext_appeared,
+    assert_error_modal_with_text_appeared,
     click_modal_button,
     close_modal,
     get_error_modal_text,
@@ -64,7 +64,10 @@ from tests.gui.steps.onezone.tokens import (
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import AlertPopup, is_element_visible_on_page
+from tests.gui.utils.generic import (
+    AlertPopup,
+    is_element_with_selector_visible_on_page,
+)
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -119,7 +122,7 @@ def succeed_to_consume_token_using_confirm_button(
     alert_popup = AlertPopup.SUCCESSFULLY_JOINED
     # Case when popup did not appear or the test didn't catch it in time
     if not wait_till_alert_info_popup_disappear(driver, alert_popup):
-        assert not is_element_visible_on_page(
+        assert not is_element_with_selector_visible_on_page(
             driver, ".alert-global.modal.in .modal-dialog"
         ), "Error modal appeared"
     OZLoggedIn(driver).update_current_page()

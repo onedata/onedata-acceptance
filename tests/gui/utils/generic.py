@@ -20,8 +20,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.expected_conditions import visibility_of_element_located
-from selenium.webdriver.support.expected_conditions import visibility_of_element_located
+from selenium.webdriver.support.expected_conditions import (
+    visibility_of,
+    visibility_of_element_located,
+)
 
 from tests import gui
 from tests.gui.type_definitions import WebElemRoot
@@ -238,7 +240,9 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
         yield item, next_item
 
 
-def is_element_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
+def is_element_with_selector_visible_on_page(
+    driver: WebDriver, css_selector: str
+) -> bool:
     try:
         return bool(
             visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
@@ -247,11 +251,9 @@ def is_element_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
         return False
 
 
-def is_element_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
+def is_web_element_visible_on_page(driver: WebDriver, web_elem: WebElement) -> bool:
     try:
-        return bool(
-            visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
-        )
+        return bool(visibility_of(web_elem)(driver))
     except NoSuchElementException:
         return False
 
@@ -490,15 +492,16 @@ class AlertPopup(Enum):
     STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"
     TOKEN_CREATED = "Token has been created successfully."
     SUCCESSFULLY_JOINED = r".*joined.*"
-    PASSWORD_CHANGED = ".*[Pp]assword.*changed.*successfully.*"
-    PROVIDER_DATA_MODIFIED = ".*[Pp]rovider.*data.*modified.*"
-    PROVIDER_DEREGISTERED = ".*[Pp]rovider.*deregistered.*"
-    ADDED_SPACE_SUPPORT = ".*[Aa]dded.*support.*space.*"
+    SUCCESSFULLY_COPIED = r".*copied.*"
+    PASSWORD_CHANGED = r".*[Pp]assword.*changed.*successfully.*"
+    PROVIDER_DATA_MODIFIED = r".*[Pp]rovider.*data.*modified.*"
+    PROVIDER_DEREGISTERED = r".*[Pp]rovider.*deregistered.*"
+    ADDED_SPACE_SUPPORT = r".*[Aa]dded.*support.*space.*"
     CONFIGURATION_SPACE_SUPPORT_CHANGED = (
-        ".*[Cc]onfiguration.*space.*support.*changed.*"
+        r".*[Cc]onfiguration.*space.*support.*changed.*"
     )
-    CEASED_SUPPORT = "Ceased.*[Ss]upport.*"
-    STORAGE_ADDED = ".*[Ss]torage.*added.*"
+    CEASED_SUPPORT = r"Ceased.*[Ss]upport.*"
+    STORAGE_ADDED = r".*[Ss]torage.*added.*"
 
 
 PageName = Literal[
