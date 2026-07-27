@@ -8,36 +8,25 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
-from collections.abc import Callable
-from typing import TypeVar
+from typing import Optional
 
 from selenium.common.exceptions import (
+    NoSuchElementException,
     StaleElementReferenceException,
+    TimeoutException,
 )
-from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.expected_conditions import staleness_of
+from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.common import click_close_button_and_wait_to_disappear
 from tests.gui.utils import OnePage, PublicOnePage
 from tests.gui.utils.common.popups import Popups
-from tests.gui.utils.generic import (
-    is_web_element_visible_on_page,
-    suppress,
-)
+from tests.gui.utils.common.popups.alert_info_popup import AlertInfoPopup
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import element_has_class, repeat_failed
-
-T = TypeVar("T")
-
-
-def _handler_for(value: T) -> Callable[[WebDriver], T]:
-    def handler(_driver: WebDriver) -> T:
-        return value
-
-    return handler
+from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -46,7 +35,6 @@ def _handler_for(value: T) -> Callable[[WebDriver], T]:
         "with text matching to: {text_regexp}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def notify_visible_with_text(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -54,38 +42,47 @@ def notify_visible_with_text(
     text_regexp: str,
 ) -> None:
     driver = selenium[browser_id]
-    # css_selector = f".ember-notify-show[class*={notify_type}] .message"
     regexp = re.compile(text_regexp)
-    popups = Popups(driver)
+    seen_popups: dict[str, WebElement] = {}
 
-    for notify in list(popups.alert_info_popups) + list(popups.notify_popups):
-        get_notify_web_elem = _handler_for(notify.web_elem)
-        if is_web_element_visible_on_page(driver, get_notify_web_elem) and regexp.match(
-            notify.message
-        ):
-            print(element_has_class(notify.web_elem, f"alert-{notify_type}"))
-            click_close_button_and_wait_to_disappear(
-                driver,
-                get_notify_web_elem,
-                _handler_for(notify.close),
-            )
-            break
-    else:
-        raise AssertionError(f'no {notify_type} notify with "{text_regexp}" msg found')
+    def capture_matching_popup(
+        driver: WebDriver,
+    ) -> Optional[WebElement]:
+        popups = Popups(driver)
+        detected_popups = [
+            *popups.alert_info_popups,
+            *popups.notify_popups,
+        ]
 
+        for popup in detected_popups:
+            try:
+                web_elem = popup.web_elem
+                if web_elem.is_displayed():
+                    seen_popups[popup.message] = web_elem
+            except (NoSuchElementException, StaleElementReferenceException):
+                continue
 
-@wt(parsers.parse("user of {browser_id} closes all notifies"))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def close_visible_notifies(selenium: SeleniumDrivers, browser_id: str) -> None:
-    driver = selenium[browser_id]
-    notifies = driver.find_elements(By.CSS_SELECTOR, ".ember-notify a.close-button")
+        for message, web_elem in seen_popups.items():
+            if regexp.match(message):
+                return web_elem
 
-    with suppress(StaleElementReferenceException):
-        map(lambda btn: btn.click(), notifies)
+        # evaluated to False for until in WebDriverWait
+        return None
 
-    assert all(
-        staleness_of(notify) for notify in notifies
-    ), "not all notifies were closed"
+    try:
+        web_elem = WebDriverWait(
+            driver,
+            WAIT_BACKEND,
+        ).until(capture_matching_popup)
+    except TimeoutException as exc:
+        raise AssertionError(
+            f'no {notify_type} notify with "{text_regexp}" msg found; '
+            f"observed messages: {list(seen_popups)}"
+        ) from exc
+
+    click_close_button_and_wait_to_disappear(
+        driver, web_elem, AlertInfoPopup(driver, web_elem).close
+    )
 
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on Onedata page'))

@@ -17,14 +17,12 @@ from typing import Literal, Optional, TypeVar, cast, overload
 
 from selenium.common.exceptions import (
     NoSuchElementException,
-    StaleElementReferenceException,
 )
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import (
-    visibility_of,
     visibility_of_element_located,
 )
 
@@ -252,22 +250,6 @@ def is_element_with_selector_visible_on_page(
         )
     except NoSuchElementException:
         return False
-
-
-def is_web_element_visible_on_page(
-    driver: WebDriver, handler_to_web_elem: Callable[[WebDriver], WebElement]
-) -> bool:
-    try:
-        web_elem = handler_to_web_elem(driver)
-        return bool(visibility_of(web_elem)(driver))
-    except (NoSuchElementException, StaleElementReferenceException):
-        return False
-
-
-def is_web_element_invisible_on_page(
-    driver: WebDriver, handler_to_web_elem: Callable[[WebDriver], WebElement]
-) -> bool:
-    return not is_web_element_visible_on_page(driver, handler_to_web_elem)
 
 
 def find_web_elem(
