@@ -11,7 +11,7 @@ from contextlib import suppress
 from functools import partial
 from typing import Any, Protocol, cast
 
-from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -371,7 +371,6 @@ def wait_till_popup_or_modal_disappear(
         WebDriverWait(
             driver,
             WAIT_FRONTEND,
-            ignored_exceptions=(StaleElementReferenceException,),
         ).until(visibility_condition)
     except TimeoutException:
         return False

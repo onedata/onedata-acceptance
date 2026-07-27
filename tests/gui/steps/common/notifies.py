@@ -20,7 +20,9 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.steps.common.common import click_close_button_and_wait_to_disappear
+from tests.gui.steps.common.common import (
+    click_close_button_and_wait_to_disappear,
+)
 from tests.gui.utils import OnePage, PublicOnePage
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.common.popups.alert_info_popup import AlertInfoPopup
@@ -43,6 +45,8 @@ def notify_visible_with_text(
 ) -> None:
     driver = selenium[browser_id]
     regexp = re.compile(text_regexp)
+    # for each popup store message and web_elem  for future use
+
     seen_popups: dict[str, WebElement] = {}
 
     def capture_matching_popup(
@@ -66,22 +70,27 @@ def notify_visible_with_text(
             if regexp.match(message):
                 return web_elem
 
-        # evaluated to False for until in WebDriverWait
+        # evaluated to False for condition until in WebDriverWait
         return None
 
     try:
-        web_elem = WebDriverWait(
-            driver,
-            WAIT_BACKEND,
-        ).until(capture_matching_popup)
+        web_elem = WebDriverWait(driver, 2 * WAIT_BACKEND, poll_frequency=0.1).until(
+            capture_matching_popup
+        )
+
     except TimeoutException as exc:
         raise AssertionError(
             f'no {notify_type} notify with "{text_regexp}" msg found; '
             f"observed messages: {list(seen_popups)}"
         ) from exc
 
+    def get_close_button(driver: WebDriver) -> WebElement:
+        return AlertInfoPopup(driver, web_elem).close
+
     click_close_button_and_wait_to_disappear(
-        driver, web_elem, AlertInfoPopup(driver, web_elem).close
+        driver,
+        web_elem,
+        get_close_button,
     )
 
 

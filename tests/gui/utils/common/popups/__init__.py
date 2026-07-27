@@ -156,11 +156,11 @@ class Popups:
     def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
         regexp = re.compile(alert_popup.value)
         # check both types of popups
-        for popups in (self.alert_info_popups, self.notify_popups):
-            for popup_val in popups:
+        for notifies in (self.alert_info_popups, self.notify_popups):
+            for popup_val in notifies:
                 message = popup_val.message
                 if regexp.match(message):
-                    return popups[message]
+                    return notifies[message]
         raise RuntimeError(f'No alert popup with message "{alert_popup.value}"')
 
     def is_upload_presenter(self) -> bool:

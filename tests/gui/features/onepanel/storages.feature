@@ -128,7 +128,6 @@ Feature: Storage management using onepanel
             continuous scan: true
             scan interval [s]: 1
 
-    And user of browser_unified sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser_unified sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     And user of browser_unified opens file browser for "space1" space

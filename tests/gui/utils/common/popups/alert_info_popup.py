@@ -4,11 +4,33 @@ __author__ = "Jakub Karczewski"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label
+from tests.gui.utils.generic import AlertPopupType
+from tests.utils.utils import element_has_class
 
 
 class AlertInfoPopup(PageObject):
+    popup_type: AlertPopupType
+
+    def _get_popup_type(self) -> AlertPopupType:
+        for popup_type in AlertPopupType:
+            if element_has_class(self.web_elem, popup_type.value):
+                return popup_type
+        raise RuntimeError(f"Unknown alert popup type in {self}")
+
+    def __init__(
+        self,
+        driver: WebDriver,
+        web_elem: WebElement,
+        parent: object | None = None,
+    ) -> None:
+        super().__init__(driver, web_elem, parent)
+        self.popup_type = self._get_popup_type()
+
     message = id = Label(".message-body")
     close = Button(".close")
 

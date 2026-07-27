@@ -518,3 +518,22 @@ class HostPattern(Enum):
     ONEPANEL_EMERGENCY = r"emergency interface of Onepanel"
     ONEZONE_EMERGENCY = r"emergency interface of Onezone"
     PROVIDER_NODE = r"node[0-9]+ of oneprovider-[0-9]+ provider panel"
+
+
+ALERT_INFO_POPUPS: list[AlertPopup] = [
+    AlertPopup.AUTHENTICATION_SUCCEEDED,
+    AlertPopup.STORAGE_IMPORT_SCAN_STARTED,
+    AlertPopup.PROVIDER_DEREGISTERED,
+]
+
+
+SUCCESS_POPUPS: list[AlertPopup] = [
+    AlertPopup.SUCCESSFULLY_JOINED,
+    AlertPopup.TOKEN_CREATED,
+]
+
+
+class AlertPopupType(Enum):
+    SUCCESS = "success"
+    ALERT_INFO = "alert-info"
+    DEFAULT = "ember-notify-default"
