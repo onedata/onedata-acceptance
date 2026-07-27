@@ -8,15 +8,18 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+from collections.abc import Callable
+from typing import TypeVar
 
 from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import staleness_of
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import breakpoint_with_paused_website
+from tests.gui.steps.common.common import click_close_button_and_wait_to_disappear
 from tests.gui.utils import OnePage, PublicOnePage
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.generic import (
@@ -26,6 +29,15 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import element_has_class, repeat_failed
+
+T = TypeVar("T")
+
+
+def _handler_for(value: T) -> Callable[[WebDriver], T]:
+    def handler(_driver: WebDriver) -> T:
+        return value
+
+    return handler
 
 
 @wt(
@@ -47,11 +59,16 @@ def notify_visible_with_text(
     popups = Popups(driver)
 
     for notify in list(popups.alert_info_popups) + list(popups.notify_popups):
-        if is_web_element_visible_on_page(notify, notify.web_elem) and regexp.match(
+        get_notify_web_elem = _handler_for(notify.web_elem)
+        if is_web_element_visible_on_page(driver, get_notify_web_elem) and regexp.match(
             notify.message
         ):
             print(element_has_class(notify.web_elem, f"alert-{notify_type}"))
-            breakpoint_with_paused_website(driver)
+            click_close_button_and_wait_to_disappear(
+                driver,
+                get_notify_web_elem,
+                _handler_for(notify.close),
+            )
             break
     else:
         raise AssertionError(f'no {notify_type} notify with "{text_regexp}" msg found')

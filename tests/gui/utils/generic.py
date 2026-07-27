@@ -15,7 +15,10 @@ from itertools import islice
 from time import sleep
 from typing import Literal, Optional, TypeVar, cast, overload
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -251,11 +254,20 @@ def is_element_with_selector_visible_on_page(
         return False
 
 
-def is_web_element_visible_on_page(driver: WebDriver, web_elem: WebElement) -> bool:
+def is_web_element_visible_on_page(
+    driver: WebDriver, handler_to_web_elem: Callable[[WebDriver], WebElement]
+) -> bool:
     try:
+        web_elem = handler_to_web_elem(driver)
         return bool(visibility_of(web_elem)(driver))
-    except NoSuchElementException:
+    except (NoSuchElementException, StaleElementReferenceException):
         return False
+
+
+def is_web_element_invisible_on_page(
+    driver: WebDriver, handler_to_web_elem: Callable[[WebDriver], WebElement]
+) -> bool:
+    return not is_web_element_visible_on_page(driver, handler_to_web_elem)
 
 
 def find_web_elem(

@@ -16,7 +16,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import (
-    invisibility_of_element_located,
     visibility_of_element_located,
 )
 from selenium.webdriver.support.ui import WebDriverWait
@@ -31,7 +30,13 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
     ArchiveRecallInformation,
 )
 from tests.gui.utils.core.web_objects import ButtonPageObject
-from tests.gui.utils.generic import AlertPopup, ListElement, transform
+from tests.gui.utils.generic import (
+    AlertPopup,
+    ListElement,
+    is_web_element_invisible_on_page,
+    is_web_element_visible_on_page,
+    transform,
+)
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.type_definitions import SeleniumDrivers
@@ -328,53 +333,66 @@ def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
     )
 
 
-def wait_till_popup_or_modal_disappear(
+def click_close_button_and_wait_to_disappear(
     driver: WebDriver,
-    css_selector: str,
+    handler_to_web_elem: Callable[[WebDriver], WebElement],
     btn_handler: Callable[[WebDriver], WebElement],
 ) -> bool:
-    if not wait_for_element_to_appear(driver, css_selector, timeout=WAIT_FRONTEND):
-        return False
-
+    # it is required that the web_elem exists on the page
     try_click_without_throwing_error(
         lambda: btn_handler(driver).click()  # pylint: disable=unnecessary-lambda
     )
 
     WebDriverWait(driver, WAIT_FRONTEND).until(
-        invisibility_of_element_located((By.CSS_SELECTOR, css_selector)),
+        partial(
+            is_web_element_invisible_on_page, handler_to_web_elem=handler_to_web_elem
+        ),
         message="Error modal is still visible",
     )
     return True
 
 
+def wait_till_popup_or_modal_disappear(
+    driver: WebDriver,
+    web_elem_or_selector: WebElement | str,
+    btn_handler: Callable[[WebDriver], WebElement],
+) -> bool:
+    def get_web_elem(current_driver: WebDriver) -> WebElement:
+        if isinstance(web_elem_or_selector, str):
+            return current_driver.find_element(By.CSS_SELECTOR, web_elem_or_selector)
+        return web_elem_or_selector
+
+    try:
+        WebDriverWait(driver, WAIT_FRONTEND).until(
+            partial(
+                is_web_element_visible_on_page,
+                handler_to_web_elem=get_web_elem,
+            )
+        )
+    except TimeoutException:
+        return False
+
+    click_close_button_and_wait_to_disappear(driver, get_web_elem, btn_handler)
+    return True
+
+
 def wait_till_alert_info_popup_disappear(
     driver: WebDriver,
-    popup: AlertPopup | str,
-) -> None:
-    # Close an alert identified by its enum value or a CSS selector.
+    popup: AlertPopup,
+) -> bool:
+    # Close an alert identified by its enum value.
     # If popup doesn't appear, don't throw an error.
     # If it appeared and was not closed, raise.
+    css_sel = get_alert_css_selector(popup)
 
-    if isinstance(popup, AlertPopup):
-        css_sel = get_alert_css_selector(popup)
+    def alert_popup_close_button_fun(
+        driver: WebDriver, alert_popup: AlertPopup
+    ) -> WebElement:
+        return Popups(driver).get_alert_popup(alert_popup).close
 
-        def alert_popup_close_button_fun(
-            driver: WebDriver, alert_popup: AlertPopup
-        ) -> WebElement:
-            return Popups(driver).get_alert_popup(alert_popup).close
+    get_close_button = partial(alert_popup_close_button_fun, alert_popup=popup)
 
-        get_close_button = partial(alert_popup_close_button_fun, alert_popup=popup)
-
-    else:
-        css_sel = popup
-        if not css_sel:
-            raise ValueError("CSS selector cannot be empty")
-
-        def get_close_button(driver: WebDriver) -> WebElement:
-            popup_element = driver.find_element(By.CSS_SELECTOR, css_sel)
-            return popup_element.find_element(By.CSS_SELECTOR, ".close")
-
-    wait_till_popup_or_modal_disappear(
+    return wait_till_popup_or_modal_disappear(
         driver,
         css_sel,
         get_close_button,
