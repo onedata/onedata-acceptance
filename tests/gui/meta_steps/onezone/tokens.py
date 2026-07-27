@@ -133,7 +133,7 @@ def fail_to_consume_token_using_confirm_button(
 ) -> None:
     driver = selenium[browser_id]
     _click_confirm_btn(driver)
-    assert_error_modal_with_subtext_appeared(selenium, browser_id, text=message)
+    assert_error_modal_with_text_appeared(selenium, browser_id, text=message)
     if close_error_modal:
         wait_for_error_modal_to_disappear(driver)
 
