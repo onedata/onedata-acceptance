@@ -11,7 +11,7 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.meta_steps.onezone.tokens import consume_received_token
+from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
 from tests.gui.steps.common.common import VisibleItem, get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -292,7 +292,7 @@ def join_space_in_oz_using_gui(
     selenium: SeleniumDrivers, user_list: list[str], tmp_memory: TmpMemory
 ) -> None:
     for user in user_list:
-        consume_received_token(selenium, user, tmp_memory)
+        paste_and_consume_received_token(selenium, user, tmp_memory)
 
 
 def assert_spaces_have_appeared_in_oz_gui(

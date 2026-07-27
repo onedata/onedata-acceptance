@@ -20,6 +20,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.expected_conditions import visibility_of_element_located
 
 from tests import gui
 from tests.gui.type_definitions import WebElemRoot
@@ -234,6 +235,15 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
     next(read_ahead, None)
     for item, next_item in zip(iterable, read_ahead):
         yield item, next_item
+
+
+def is_element_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
+    try:
+        return bool(
+            visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
+        )
+    except NoSuchElementException:
+        return False
 
 
 def find_web_elem(
@@ -469,6 +479,7 @@ class AlertPopup(Enum):
     AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
     STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"
     TOKEN_CREATED = "Token has been created successfully."
+    SUCCESSFULLY_JOINED = r".*joined.*"
 
 
 PageName = Literal[

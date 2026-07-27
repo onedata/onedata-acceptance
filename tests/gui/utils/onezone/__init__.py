@@ -1,7 +1,7 @@
 """Utils and fixtures to facilitate operations on Onezone web GUI."""
 
 __author__ = "Bartosz Walkowicz Michal Stanisz Jakub Karczewski Mateusz Zajac"
-__copyright__ = "Copyright (C) 2017-2026 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from typing import ClassVar, TypeVar
@@ -94,6 +94,7 @@ class OZLoggedIn:
     def get_current_page(self) -> type[GenericPage]:
         return self._current_page_by_session_id[self._session_id]
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def update_current_page(self) -> None:
         self.expand_panel_if_needed()
         for page_name, page_cls in self._page_class_by_name.items():
