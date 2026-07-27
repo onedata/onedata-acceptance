@@ -16,7 +16,7 @@ from tests.gui.steps.common.miscellaneous import (
     wait_until_scanning_is_finished_in_storage_import_tab,
 )
 from tests.gui.steps.common.notifies import notify_visible_with_text
-from tests.gui.steps.modals.modal import assert_error_modal_with_subtext_appeared
+from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import (
     click_change_quota_button,
@@ -116,7 +116,7 @@ def result_to_support_space_in_op_panel_using_gui(
         wt_assert_correct_supported_space_opened(selenium, user, space_name)
     else:
         text = "Space supporting failed"
-        assert_error_modal_with_subtext_appeared(selenium, user, text)
+        assert_error_modal_with_text_appeared(selenium, user, text)
 
 
 def _set_toggle_state(

@@ -19,7 +19,7 @@ from tests.gui.meta_steps.onezone.tokens import (
 from tests.gui.steps.common.common import wait_for_error_modal_to_disappear
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_subtext_appeared,
+    assert_error_modal_with_text_appeared,
     click_modal_button,
     close_modal,
 )
@@ -404,7 +404,7 @@ def fail_to_rename_groups_using_op_gui(
 
     for group, new_name in zip(group_list, new_names):
         rename_groups_using_op_gui(selenium, user, [group], [new_name])
-        assert_error_modal_with_subtext_appeared(selenium, user, text)
+        assert_error_modal_with_text_appeared(selenium, user, text)
 
 
 def fail_to_add_subgroups_using_op_gui(

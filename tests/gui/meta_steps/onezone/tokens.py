@@ -23,7 +23,7 @@ from tests.gui.steps.common.common import (
 )
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_subtext_appeared,
+    assert_error_modal_with_text_appeared,
     click_modal_button,
     close_modal,
     get_error_modal_text,
@@ -133,7 +133,7 @@ def fail_to_consume_token_using_confirm_button(
 ) -> None:
     driver = selenium[browser_id]
     _click_confirm_btn(driver)
-    assert_error_modal_with_subtext_appeared(selenium, browser_id, text=message)
+    assert_error_modal_with_text_appeared(selenium, browser_id, text=message)
     if close_error_modal:
         wait_for_error_modal_to_disappear(driver)
 

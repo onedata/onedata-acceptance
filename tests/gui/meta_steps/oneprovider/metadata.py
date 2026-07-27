@@ -17,7 +17,7 @@ from tests.gui.steps.modals.details_modal import (
     click_on_navigation_tab_in_panel,
 )
 from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_subtext_appeared,
+    assert_error_modal_with_text_appeared,
     click_modal_button,
     click_panel_button,
 )
@@ -161,7 +161,7 @@ def set_metadata_in_op_gui(
     click_panel_button(selenium, browser_id, button, option)
 
     if res == "fails":
-        assert_error_modal_with_subtext_appeared(selenium, browser_id, text)
+        assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
         assert_status_tag_for_file_in_browser(browser_id, status_type, path, tmp_memory)
 
