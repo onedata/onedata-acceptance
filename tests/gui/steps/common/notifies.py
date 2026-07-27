@@ -61,6 +61,7 @@ def notify_visible_with_text(
 
         for popup in detected_popups:
             try:
+                web_elem = popup.web_elem
                 if web_elem.is_displayed():
                     seen_popups[popup.message] = web_elem
             except (NoSuchElementException, StaleElementReferenceException):
