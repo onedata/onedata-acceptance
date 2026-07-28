@@ -12,6 +12,8 @@ import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.expected_conditions import invisibility_of_element
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.type_definitions import FilePath, TmpMemory
@@ -148,13 +150,12 @@ def wait_for_item_to_appear(item: WebElement) -> None:
     raise RuntimeError(f"item {item} did not appear")
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_item_to_disappear(item: WebElement) -> None:
-    try:
-        item.is_displayed()
-        raise AssertionError("Element is visible")
-    except StaleElementReferenceException:
-        pass
+def wait_for_item_to_disappear(
+    item: WebElement, driver: WebDriver, timeout: float = WAIT_FRONTEND
+) -> None:
+    WebDriverWait(driver, timeout=timeout).until(
+        invisibility_of_element(item), message="Element is visible"
+    )
 
 
 @repeat_failed(timeout=WAIT_NORMAL_DOWNLOAD)

@@ -12,7 +12,7 @@ from typing import Optional
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
@@ -29,6 +29,7 @@ from tests.gui.steps.modals.modal import (
     get_error_modal_text,
 )
 from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
+from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.tokens import (
     assert_alert_on_tokens_page,
@@ -42,9 +43,9 @@ from tests.gui.steps.onezone.tokens import (
     choose_invite_type_in_oz_token_page,
     choose_token_template,
     choose_token_type_to_create,
+    click_and_get_create_token_button,
     click_copy_button_in_token_view,
     click_create_custom_token,
-    click_create_token_button_in_create_token_page,
     click_menu_button_of_tokens_page,
     click_on_button_in_tokens_sidebar,
     click_on_confirm_button_on_tokens_page,
@@ -105,6 +106,23 @@ def paste_received_token_into_text_field(
 @repeat_failed(timeout=WAIT_BACKEND)
 def _click_confirm_btn(driver: WebDriver) -> None:
     OZLoggedIn(driver).tokens.confirm_button()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "Create token" button '
+        'in "Create new token" view'
+    )
+)
+def click_create_token_button_in_create_token_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    # prevent clicking when there is ongoing animation, because the click can have no result
+    time.sleep(0.2)
+    create_token_button = click_and_get_create_token_button(selenium, browser_id)
+    # ensure clicking at create token succeeded
+    wait_for_item_to_disappear(create_token_button, driver, timeout=2 * WAIT_FRONTEND)
 
 
 @wt(
