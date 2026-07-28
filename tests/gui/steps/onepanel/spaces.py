@@ -97,14 +97,8 @@ def wt_select_mode_in_space_support_form(
     form.storage_import_configuration.modes[btn].click()
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) clicks on Support space "
-        r"button in support space form in Onepanel"
-    )
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_space_support_form(
+def click_on_btn_in_space_support_form(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     Onepanel(selenium[browser_id]).content.spaces.form.support_space()

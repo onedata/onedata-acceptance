@@ -74,6 +74,25 @@ from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
+@wt(parsers.parse("user of {browser_id} clicks Copy button on Add support page"))
+def copy_support_token_from_add_support_page(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+    tmp_memory: TmpMemory,
+) -> None:
+    click_copy_button_on_request_support_page(
+        selenium, browser_id, displays, clipboard, tmp_memory
+    )
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        "info",
+        AlertPopup.SUCCESSFULLY_COPIED.value,
+    )
+
+
 @wt(
     parsers.parse(
         'user of {user} creates "{space_list:ElementsSequence}" space in Onezone',

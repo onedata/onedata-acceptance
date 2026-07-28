@@ -61,5 +61,3 @@ Feature: Basic management of support privileges for spaces in Onezone GUI
     And user of browser_user1 clicks "Providers" of "space1" space in the sidebar
     And user of browser_user1 clicks Add support button on providers page
     And user of browser_user1 clicks Copy button on Add support page
-    Then user of browser_user1 sees an info notify with text matching to: .*copied.*
-
