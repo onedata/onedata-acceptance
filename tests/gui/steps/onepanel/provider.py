@@ -117,19 +117,6 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} saves changes in provider details form in Provider panel"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_save_changes_in_modify_provider_detail_form(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    driver = selenium[browser_id]
-    Onepanel(driver).content.provider.form.save()
-
-
-@wt(
-    parsers.parse(
         "user of {browser_id} clicks Discard button on modal in Provider panel"
     )
 )
