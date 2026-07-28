@@ -69,7 +69,7 @@ Feature: Basic management of emergency Onezone panel
 
     Then user of browser clicks Sign in to emergency interface in Onepanel login page
     And user of browser types "new_password" to Passphrase input in Onepanel login form
-    And user of browser succesfully signs in Onepanel
+    And user of browser successfully signs in Onezone panel
 
     # set previous password back
     And user of browser clicks on "Clusters" in the main menu

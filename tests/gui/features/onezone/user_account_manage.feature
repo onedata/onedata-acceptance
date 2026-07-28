@@ -17,7 +17,7 @@ Feature: Onezone account manage page
     # fail to log in with old username
     And user of browser types "user1" to Username input in Onezone login form
     And user of browser types password of "user1" to Password input in Onezone login form
-    And usef of browser fails to sign in Onezone due to invalid credentials
+    And user of browser fails to sign in Onezone due to invalid credentials
 
     # successfully log in with new username
     And user of browser types "new_username" to Username input in Onezone login form
