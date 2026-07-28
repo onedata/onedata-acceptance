@@ -165,7 +165,7 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser_standard is idle for 60 seconds
     And user of browser_standard clicks on Edit settings button in clusters page
     And user of browser_standard types "pro1" to Provider name input box in modify provider details form in Provider panel
-    And user of browser_standard saves changes in provider details form in Provider panel
+    And user of browser_standard fails to save changes in provider details form in Provider panel
     Then user of browser_standard sees that error modal with text "Provider data modification failed" appeared
 
 
