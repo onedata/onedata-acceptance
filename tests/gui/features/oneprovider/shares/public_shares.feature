@@ -169,24 +169,16 @@ Feature: Basic operations on public shares in file browser
     And user of browser1 clicks and presses enter on item named "file1" in share's file browser
     Then user of browser1 sees that error modal with text "Starting file download failed" appeared
 
-    Scenario: User opens directory in share and sees that it's remembered after using URL in the second window
+    Scenario: User opens directory in share and sees that it's remembered after opening copied URL in second window of the same browser
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
-
-
-    # opening share by user of browser1
     And user of browser1 opens received URL
     And user of browser1 sees that public share is named "share_dir1"
     And user of browser1 sees share's file browser on share's public interface
-    And user of browser1 clicks and presses enter on item named "dir1" in share's file browser
-    And user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: /dir1
-    And user of browser1 clicks and presses enter on item named "dir2" in share's file browser
-    And user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: /dir1/dir2
+    And user of browser1 goes to "/dir1/dir2" in share's file browser
     And user of browser1 copies url from browser's location bar
     And user of browser1 opens a new tab
-    And user of browser1 is redirected to newly opened tab
     And user of browser1 opens copied URL in browser's location bar
     Then user of browser1 sees that public share is named "share_dir1"
     And user of browser1 sees share's file browser on share's public interface
     And user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: /dir1/dir2
-
