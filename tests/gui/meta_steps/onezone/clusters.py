@@ -12,7 +12,6 @@ from functools import partial
 import pytest
 from selenium.common.exceptions import TimeoutException
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
@@ -44,7 +43,6 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -52,7 +50,6 @@ from tests.utils.utils import repeat_failed
         'user of {browser_id} invites user of {browser} to "{cluster}" cluster'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def invite_user_to_cluster(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -86,7 +83,6 @@ def invite_user_to_cluster(
 
 
 @wt(parsers.parse("user of {browser_id} joins to cluster"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def join_to_cluster(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -136,7 +132,6 @@ def change_privilege_config_in_cluster(
         'user of {browser_id} adds "{group_name}" group to "{cluster_name}" cluster'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_cluster(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -208,7 +203,6 @@ def no_member_in_parent(
 
 
 @wt(parsers.parse('user of {browser_id} remembers "{provider}" cluster id'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remember_cluster_id(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -240,7 +234,6 @@ def remember_cluster_id(
         r'page of "(?P<record>.*)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def set_gui_settings(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -288,7 +281,6 @@ def set_gui_settings(
         'cookie consent notification in GUI settings page of "{record}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def insert_setting_link(
     selenium: SeleniumDrivers, browser_id: str, kind_of_agreement: str
 ) -> None:

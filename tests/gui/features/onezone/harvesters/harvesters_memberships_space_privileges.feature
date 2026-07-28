@@ -48,7 +48,6 @@ Feature: Basic management of harvester memberships privileges with spaces in One
 
     # fail to remove space from harvester
     And user of browser2 clicks Spaces of "harvester21" harvester in the sidebar
-    And user of browser2 refreshes site
     And user of browser2 sees that "space2" has appeared on the spaces list in discovery page
     And user of browser2 removes "space2" space from harvester
     And user of browser2 sees that error popup has appeared

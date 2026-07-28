@@ -60,9 +60,8 @@ class VisibleItem(Protocol):
 
 def get_alert_css_selector(alert_popup: AlertPopup) -> str:
     match alert_popup:
-        case AlertPopup.TOKEN_CREATED:
-            return ".ember-notify-show"
-
+        case AlertPopup.TOKEN_CREATED | AlertPopup.SUCCESSFULLY_JOINED:
+            return ".ember-notify-cn"
         case (
             AlertPopup.AUTHENTICATION_SUCCEEDED | AlertPopup.STORAGE_IMPORT_SCAN_STARTED
         ):
@@ -286,11 +285,13 @@ def wait_for_sliding_panel_to_stop_moving(
     )
 
 
-def wait_till_error_modal_stop_appearing(driver: SeleniumDrivers) -> None:
+def wait_for_error_modal_to_disappear(driver: SeleniumDrivers) -> bool:
+    """Close the error modal and return whether it appeared."""
+
     def error_modal_close_button_fun(driver: SeleniumDrivers) -> ButtonPageObject:
         return Modals(driver).error.close
 
-    wait_till_popup_or_modal_disappear(
+    return wait_till_popup_or_modal_disappear(
         driver, ".alert-global.modal.in .modal-dialog", error_modal_close_button_fun
     )
 
@@ -307,17 +308,31 @@ def try_click_without_throwing_error(
         perform(action)
 
 
+def wait_for_element_to_appear(driver: WebDriver, css_sel: str, timeout: float) -> bool:
+    """Return whether the element appeared before the timeout."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            visibility_of_element_located((By.CSS_SELECTOR, css_sel))
+        )
+    except TimeoutException:
+        return False
+    return True
+
+
+def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
+    """Return whether the error modal appeared before the timeout."""
+    return wait_for_element_to_appear(
+        driver, ".alert-global.modal.in .modal-dialog", timeout
+    )
+
+
 def wait_till_popup_or_modal_disappear(
     driver: WebDriver,
     css_selector: str,
     btn_handler: Callable[[WebDriver], ButtonPageObject],
-) -> None:
-    try:
-        WebDriverWait(driver, WAIT_FRONTEND).until(
-            visibility_of_element_located((By.CSS_SELECTOR, css_selector))
-        )
-    except TimeoutException:
-        return
+) -> bool:
+    if not wait_for_element_to_appear(driver, css_selector, timeout=WAIT_FRONTEND):
+        return False
 
     try_click_without_throwing_error(
         lambda: btn_handler(driver).click()  # pylint: disable=unnecessary-lambda
@@ -327,12 +342,13 @@ def wait_till_popup_or_modal_disappear(
         invisibility_of_element_located((By.CSS_SELECTOR, css_selector)),
         message="Error modal is still visible",
     )
+    return True
 
 
 def wait_till_alert_info_popup_disappear(
     driver: WebDriver,
     alert_popup: AlertPopup,
-) -> None:
+) -> bool:
     # If popup doesn't appear, don't throw an error.
     # If it appeared and was not closed, raise.
     css_selector = get_alert_css_selector(alert_popup)
@@ -344,7 +360,7 @@ def wait_till_alert_info_popup_disappear(
         return Popups(driver).get_alert_popup(alert_popup).close
 
     partial_close_alert = partial(alert_popup_close_button_fun, alert_popup=alert_popup)
-    wait_till_popup_or_modal_disappear(driver, css_selector, partial_close_alert)
+    return wait_till_popup_or_modal_disappear(driver, css_selector, partial_close_alert)
 
 
 def parse_size(size: str) -> float:
