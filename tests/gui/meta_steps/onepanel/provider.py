@@ -12,6 +12,7 @@ import time
 import yaml
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.onepanel.common import (
@@ -52,7 +53,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        "user of {browser_id} saves changes in provider details form in Provider panel"
+        "user of {browser_id} succeeds to save changes in provider details form in Provider panel"
     )
 )
 def wt_save_changes_in_modify_provider_detail_form(
@@ -66,6 +67,21 @@ def wt_save_changes_in_modify_provider_detail_form(
     notify_visible_with_text(
         selenium, browser_id, "info", AlertPopup.PROVIDER_DATA_MODIFIED.value
     )
+    
+    
+@wt(
+    parsers.parse(
+        "user of {browser_id} fails to save changes in provider details form in Provider panel"
+    )
+)
+def wt_save_changes_in_modify_provider_detail_form(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    save_btn = Onepanel(driver).content.provider.form.save
+    wait_for_item_to_appear(save_btn.web_elem)
+    save_btn.click()
+    wait_for_error_modal_to_appear(driver, timeout=WAIT_FRONTEND)
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(

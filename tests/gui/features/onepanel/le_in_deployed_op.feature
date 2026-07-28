@@ -19,7 +19,7 @@ Feature: Enabling Let`s Encrypt and subdomain delegation in deployed zone and pr
     And user of browser1 checks "Request a subdomain" toggle in modify provider details form in Provider panel
     And user of browser1 types name of "oneprovider-1" provider to Subdomain input box in modify provider details form in Provider panel
     And provider "oneprovider-1" with onezone domain host entry is added to /etc/hosts
-    And user of browser1 saves changes in provider details form in Provider panel
+    And user of browser1 succeeds to save changes in provider details form in Provider panel
 
     And user of browser1 closes by pressing "Discard" "Important notice" warning
 
