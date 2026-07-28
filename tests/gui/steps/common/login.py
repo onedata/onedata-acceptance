@@ -15,11 +15,13 @@ from tests.gui.steps.common.url import (
     assert_main_page_loaded,
     parse_hosts_sequence,
 )
+from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.utils import LoginPage, OnePage
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
     transform,
+    wait_for_web_elem_by_handler,
 )
 from tests.gui.utils.onezone import OZLoggedIn
 from tests.type_definitions import SeleniumDrivers
@@ -149,28 +151,51 @@ def wt_enter_password_of_user(
     setattr(LoginPage(selenium[browser_id]), "password", password)
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) presses Sign in button "
-        r"in (Onepanel|Onezone) login page"
-    )
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_press_sign_in_btn_on_login_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def press_sign_in_btn_on_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     LoginPage(selenium[browser_id]).sign_in()
 
 
-@wt(parsers.re(r"user of (?P<browser_id>.*) successfully signed in (?P<service>.*)"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) is logged in (?P<service>.*) service"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_successful_login(
+def assert_logged_in_service(
     selenium: SeleniumDrivers, browser_id: str, service: str
 ) -> None:
     logged_in_service = OnePage(selenium[browser_id]).service
     assert (
         service.lower() in logged_in_service.lower()
     ), f"logged in {logged_in_service} instead of {service}"
+
+
+@wt(parsers.re(r"user of (?P<browser_id>.*) successfully signs in (?P<service>.*)"))
+def wt_assert_successful_login(
+    selenium: SeleniumDrivers, browser_id: str, service: str
+) -> None:
+    driver = selenium[browser_id]
+    sign_in_handler = lambda driver: LoginPage(driver).sign_in
+    wait_for_web_elem_by_handler(driver, sign_in_handler)
+    sign_in = sign_in_handler(driver)
+    sign_in.click()
+    wait_for_item_to_disappear(sign_in.web_elem, driver)
+    assert_main_page_loaded(selenium, browser_id)
+    assert_logged_in_service(service, browser_id, service)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) fails to sign in (Onepanel|Onezone) due to invalid"
+        r" credentials"
+    )
+)
+def wt_assert_failed_login_credentials(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    sign_in_handler = lambda driver: LoginPage(driver).sign_in
+    wait_for_web_elem_by_handler(driver, sign_in_handler)
+    sign_in = sign_in_handler(driver)
+    sign_in.click()
+    _assert_error_message_about_credentials(selenium, browser_id)
 
 
 @wt(
@@ -185,14 +210,8 @@ def wt_assert_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     _ = LoginPage(selenium[browser_id]).header
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees error message "
-        r"about invalid credentials in (Onepanel|Onezone) login page"
-    )
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_error_message_about_credentials(
+def _assert_error_message_about_credentials(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     assert LoginPage(

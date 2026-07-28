@@ -17,14 +17,12 @@ Feature: Onezone account manage page
     # fail to log in with old username
     And user of browser types "user1" to Username input in Onezone login form
     And user of browser types password of "user1" to Password input in Onezone login form
-    And user of browser presses Sign in button in Onezone login page
-    And user of browser sees error message about invalid credentials in Onezone login page
+    And usef of browser fails to sign in Onezone due to invalid credentials
 
     # successfully log in with new username
     And user of browser types "new_username" to Username input in Onezone login form
     And user of browser types password of "user1" to Password input in Onezone login form
-    And user of browser presses Sign in button in Onezone login page
-    And user of browser successfully signed in Onezone
+    And user of browser successfully signs in Onezone
 
 
  Scenario: User successfully changes password in Profile page
@@ -34,14 +32,12 @@ Feature: Onezone account manage page
     # fail to log in with old password
     And user of browser types "user1" to Username input in Onezone login form
     And user of browser types "password" to Password input in Onezone login form
-    And user of browser presses Sign in button in Onezone login page
-    Then user of browser sees error message about invalid credentials in Onezone login page
+    Then user of browser fails to sign in Onezone due to invalid credentials
 
     # successfully log in with new password
     And user of browser types "user1" to Username input in Onezone login form
     And user of browser types "new_password" to Password input in Onezone login form
-    And user of browser presses Sign in button in Onezone login page
-    And user of browser successfully signed in Onezone
+    And user of browser successfully signs in Onezone
 
 
  Scenario: User successfully logs in using new username and new password
@@ -57,8 +53,7 @@ Feature: Onezone account manage page
     # successfully log in with new login and new password
     And user of browser types "new_username" to Username input in Onezone login form
     And user of browser types "new_password" to Password input in Onezone login form
-    And user of browser presses Sign in button in Onezone login page
-    Then user of browser successfully signed in Onezone
+    Then user of browser successfully signs in Onezone
 
 
  Scenario: User sees that alias displayed in MANAGE ACCOUNT is tha same as in the USER ALIAS sidebar panel

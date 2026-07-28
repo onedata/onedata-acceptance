@@ -16,9 +16,7 @@ Feature: Scenarios featuring emergency passphrase to Onepanel GUI
     Then user of browser_emergency clicks on logout button in main menu
     And user of browser_emergency clicks Sign in to emergency interface in Onepanel login page
     And user of browser_emergency types "new_password" to Passphrase input in Onepanel login form
-    And user of browser_emergency presses Sign in button in Onepanel login page
-    And user of browser_emergency sees an info notify with text matching to: Authentication succeeded!
-    And user of browser_emergency successfully signed in Oneprovider panel
+    And user of browser_emergency successfully signs in Oneprovider panel
 
     And user of browser_emergency changes passphrase from "new_password" to "password" on emergency passphrase page
     And user of browser_emergency clicks on logout button in main menu

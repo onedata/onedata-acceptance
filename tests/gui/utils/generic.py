@@ -11,6 +11,7 @@ import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from enum import Enum
+from functools import partial
 from itertools import islice
 from time import sleep
 from typing import Literal, Optional, TypeVar, cast, overload
@@ -23,10 +24,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import (
+    visibility_of,
     visibility_of_element_located,
 )
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.type_definitions import WebElemRoot
 from tests.type_definitions import JsonValue
 
@@ -250,6 +254,25 @@ def is_element_with_selector_visible_on_page(
         )
     except NoSuchElementException:
         return False
+
+
+def wait_for_web_elem_by_handler(
+    driver: WebDriver,
+    web_elem_handler: Callable[[WebDriver], WebElement],
+    timeout: float = WAIT_FRONTEND,
+) -> None:
+
+    def is_element_visible_by_handler(
+        driver: WebDriver, web_elem_handler: Callable[[WebDriver], WebElement]
+    ) -> bool:
+        try:
+            return visibility_of(web_elem_handler(driver))
+        except RuntimeError:
+            return False
+
+    WebDriverWait(driver, timeout=timeout).until(
+        partial(is_element_visible_by_handler, web_elem_handler=web_elem_handler)
+    )
 
 
 def find_web_elem(
