@@ -21,7 +21,7 @@ from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
     transform,
-    wait_for_web_elem_by_handler,
+    wait_for_web_elem_by_handler_and_return_it,
 )
 from tests.gui.utils.onezone import OZLoggedIn
 from tests.type_definitions import SeleniumDrivers
@@ -172,13 +172,13 @@ def wt_assert_successful_login(
     selenium: SeleniumDrivers, browser_id: str, service: str
 ) -> None:
     driver = selenium[browser_id]
-    sign_in_handler = lambda driver: LoginPage(driver).sign_in
-    wait_for_web_elem_by_handler(driver, sign_in_handler)
-    sign_in = sign_in_handler(driver)
+    sign_in = wait_for_web_elem_by_handler_and_return_it(
+        driver, lambda driver: LoginPage(driver).sign_in
+    )
     sign_in.click()
     wait_for_item_to_disappear(sign_in.web_elem, driver)
     assert_main_page_loaded(selenium, browser_id)
-    assert_logged_in_service(service, browser_id, service)
+    assert_logged_in_service(selenium, browser_id, service)
 
 
 @wt(
@@ -191,9 +191,9 @@ def wt_assert_failed_login_credentials(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    sign_in_handler = lambda driver: LoginPage(driver).sign_in
-    wait_for_web_elem_by_handler(driver, sign_in_handler)
-    sign_in = sign_in_handler(driver)
+    sign_in = wait_for_web_elem_by_handler_and_return_it(
+        driver, lambda driver: LoginPage(driver).sign_in
+    )
     sign_in.click()
     _assert_error_message_about_credentials(selenium, browser_id)
 

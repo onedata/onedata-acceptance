@@ -256,21 +256,22 @@ def is_element_with_selector_visible_on_page(
         return False
 
 
-def wait_for_web_elem_by_handler(
+def wait_for_web_elem_by_handler_and_return_it(
     driver: WebDriver,
     web_elem_handler: Callable[[WebDriver], WebElement],
     timeout: float = WAIT_FRONTEND,
-) -> None:
+) -> WebElement:
 
     def is_element_visible_by_handler(
         driver: WebDriver, web_elem_handler: Callable[[WebDriver], WebElement]
-    ) -> bool:
+    ) -> Optional[WebElement]:
         try:
-            return visibility_of(web_elem_handler(driver))
+            web_elem = web_elem_handler(driver)
+            return web_elem if visibility_of(web_elem) else None
         except RuntimeError:
-            return False
+            return None
 
-    WebDriverWait(driver, timeout=timeout).until(
+    return WebDriverWait(driver, timeout=timeout).until(
         partial(is_element_visible_by_handler, web_elem_handler=web_elem_handler)
     )
 

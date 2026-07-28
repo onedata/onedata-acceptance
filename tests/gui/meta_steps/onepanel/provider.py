@@ -44,7 +44,11 @@ from tests.gui.steps.rest.provider import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
-from tests.gui.utils.generic import AlertPopup, OnedataService
+from tests.gui.utils.generic import (
+    AlertPopup,
+    OnedataService,
+    wait_for_web_elem_by_handler_and_return_it,
+)
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
@@ -53,28 +57,31 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        "user of {browser_id} succeeds to save changes in provider details form in Provider panel"
+        "user of {browser_id} succeeds to save changes in provider details form in"
+        " Provider panel"
     )
 )
-def wt_save_changes_in_modify_provider_detail_form(
+def succeed_to_save_changes_in_modify_provider_detail_form(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    save_btn = Onepanel(driver).content.provider.form.save
-    wait_for_item_to_appear(save_btn.web_elem)
+    save_btn = wait_for_web_elem_by_handler_and_return_it(
+        driver, lambda driver: Onepanel(driver).content.provider.form.save
+    )
     save_btn.click()
     wait_for_item_to_disappear(save_btn.web_elem, driver)
     notify_visible_with_text(
         selenium, browser_id, "info", AlertPopup.PROVIDER_DATA_MODIFIED.value
     )
-    
-    
+
+
 @wt(
     parsers.parse(
-        "user of {browser_id} fails to save changes in provider details form in Provider panel"
+        "user of {browser_id} fails to save changes in provider details form in"
+        " Provider panel"
     )
 )
-def wt_save_changes_in_modify_provider_detail_form(
+def fail_to_save_changes_in_modify_provider_detail_form(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
@@ -98,8 +105,6 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     content = "provider"
     prov_name_attr = "Provider name"
     red_point_attr = "Domain"
-    notify_type = "info"
-    notify_text_regexp = AlertPopup.PROVIDER_DATA_MODIFIED.value
 
     wt_click_on_subitem_for_item_with_name(
         selenium, [user], sidebar, sub_item, provider_name
@@ -112,8 +117,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     wt_type_val_to_in_box_in_provider_details_form(
         selenium, user, new_domain, red_point_attr
     )
-    wt_save_changes_in_modify_provider_detail_form(selenium, user)
-    notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+    succeed_to_save_changes_in_modify_provider_detail_form(selenium, user)
     wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id)
     wt_assert_value_of_provider_attribute(
         selenium, user, prov_name_attr, new_provider_name
