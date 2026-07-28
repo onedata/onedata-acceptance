@@ -421,22 +421,3 @@ def parse_size(size: str) -> float:
     value = float(match.group("value"))
     unit = match.group("unit")
     return value * 1024 ** (units.index(unit))
-
-
-# move it to new file with helper functions for devs
-def breakpoint_with_paused_website(driver: WebDriver) -> None:
-    """Pause both browser JavaScript and the Python test."""
-    driver.execute_cdp_cmd("Debugger.enable", {})
-
-    try:
-        driver.execute_script("""
-            setTimeout(() => {
-                debugger;
-            }, 0);
-            """)
-        breakpoint()  # pylint: disable=forgotten-debug-statement
-    finally:
-        try:
-            driver.execute_cdp_cmd("Debugger.resume", {})
-        finally:
-            driver.execute_cdp_cmd("Debugger.disable", {})

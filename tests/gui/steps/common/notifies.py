@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
-from typing import Optional
+from functools import partial
 
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -17,6 +17,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND
@@ -51,7 +52,7 @@ def notify_visible_with_text(
 
     def capture_matching_popup(
         driver: WebDriver,
-    ) -> Optional[WebElement]:
+    ) -> bool:
         popups = Popups(driver)
         detected_popups = [
             *popups.alert_info_popups,
@@ -66,15 +67,14 @@ def notify_visible_with_text(
             except (NoSuchElementException, StaleElementReferenceException):
                 continue
 
-        for message, web_elem in seen_popups.items():
+        for message in seen_popups:
             if regexp.match(message):
-                return web_elem
+                return True
 
-        # evaluated to False for condition until in WebDriverWait
-        return None
+        return False
 
     try:
-        web_elem = WebDriverWait(driver, 2 * WAIT_BACKEND, poll_frequency=0.1).until(
+        WebDriverWait(driver, 2 * WAIT_BACKEND, poll_frequency=0.1).until(
             capture_matching_popup
         )
 
@@ -84,14 +84,22 @@ def notify_visible_with_text(
             f"observed messages: {list(seen_popups)}"
         ) from exc
 
-    def get_close_button(driver: WebDriver) -> WebElement:
-        return AlertInfoPopup(driver, web_elem).close
+    for web_elem in seen_popups.values():
 
-    click_close_button_and_wait_to_disappear(
-        driver,
-        web_elem,
-        get_close_button,
-    )
+        def get_close_button(
+            driver: WebDriver,
+            popup_elem: WebElement = web_elem,
+        ) -> WebElement:
+            return AlertInfoPopup(driver, popup_elem).close
+
+        if invisibility_of_element(web_elem)(driver):
+            continue
+
+        click_close_button_and_wait_to_disappear(
+            driver,
+            web_elem,
+            partial(get_close_button, popup_elem=web_elem),
+        )
 
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on Onedata page'))
