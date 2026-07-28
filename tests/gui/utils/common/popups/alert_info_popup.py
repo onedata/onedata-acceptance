@@ -6,6 +6,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.expected_conditions import visibility_of
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label
@@ -17,6 +19,10 @@ class AlertInfoPopup(PageObject):
     popup_type: AlertPopupType
 
     def _get_popup_type(self) -> AlertPopupType:
+        WebDriverWait(self.driver, timeout=1, poll_frequency=0.05).until(
+            visibility_of(self.web_elem)
+        )
+        print(self.web_elem.get_attribute("class").split())
         for popup_type in AlertPopupType:
             if element_has_class(self.web_elem, popup_type.value):
                 return popup_type

@@ -533,6 +533,9 @@ SUCCESS_POPUPS: list[AlertPopup] = [
 ]
 
 
+DEFAULT_POPUPS: list[AlertPopup] = [AlertPopup.ADDED_SPACE_SUPPORT]
+
+
 class AlertPopupType(Enum):
     SUCCESS = "success"
     ALERT_INFO = "alert-info"
