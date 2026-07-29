@@ -167,7 +167,7 @@ def assert_logged_in_service(
     ), f"logged in {logged_in_service} instead of {service}"
 
 
-@wt(parsers.re(r"user of (?P<browser_id>.*) successfully signs in (?P<service>.*)"))
+@wt(parsers.re(r"user of (?P<browser_id>.*) successfully signs in to (?P<service>.*)"))
 def wt_assert_successful_login(
     selenium: SeleniumDrivers, browser_id: str, service: str
 ) -> None:

@@ -22,7 +22,7 @@ Feature: Onezone account manage page
     # successfully log in with new username
     And user of browser types "new_username" to Username input in Onezone login form
     And user of browser types password of "user1" to Password input in Onezone login form
-    And user of browser successfully signs in Onezone
+    And user of browser successfully signs in to Onezone
 
 
  Scenario: User successfully changes password in Profile page
@@ -37,7 +37,7 @@ Feature: Onezone account manage page
     # successfully log in with new password
     And user of browser types "user1" to Username input in Onezone login form
     And user of browser types "new_password" to Password input in Onezone login form
-    And user of browser successfully signs in Onezone
+    And user of browser successfully signs in to Onezone
 
 
  Scenario: User successfully logs in using new username and new password
@@ -53,7 +53,7 @@ Feature: Onezone account manage page
     # successfully log in with new login and new password
     And user of browser types "new_username" to Username input in Onezone login form
     And user of browser types "new_password" to Password input in Onezone login form
-    Then user of browser successfully signs in Onezone
+    Then user of browser successfully signs in to Onezone
 
 
  Scenario: User sees that alias displayed in MANAGE ACCOUNT is tha same as in the USER ALIAS sidebar panel
