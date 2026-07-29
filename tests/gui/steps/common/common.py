@@ -25,7 +25,13 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.type_definitions import Clickable, VisibleItem, WebElemOrLocator
+from tests.gui.type_definitions import (
+    Clickable,
+    VisibilityCondition,
+    VisibleItem,
+    WebElementOrLocator,
+    WebElementOrSelector,
+)
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
@@ -320,7 +326,7 @@ def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
 
 def click_close_button_and_wait_to_disappear(
     driver: WebDriver,
-    web_elem_or_locator: WebElemOrLocator,
+    web_elem_or_locator: WebElementOrLocator,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
     try_click_without_throwing_error(
@@ -336,13 +342,17 @@ def click_close_button_and_wait_to_disappear(
 
 def wait_till_alert_popup_or_error_modal_disappear(
     driver: WebDriver,
-    web_elem_or_selector: WebElement | str,
+    web_elem_or_selector: WebElementOrSelector,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    web_elem_or_locator = get_web_elem_or_locator(web_elem_or_selector)
-    visibility_condition = get_visibility_condition(web_elem_or_locator)
-
+    web_elem_or_locator: WebElementOrLocator = get_web_elem_or_locator(
+        web_elem_or_selector
+    )
+    visibility_condition: VisibilityCondition = get_visibility_condition(
+        web_elem_or_locator
+    )
     try:
+        # selenium function visibility_of does not ignore StaleElementReferenceException
         WebDriverWait(
             driver, WAIT_FRONTEND, ignored_exceptions=[StaleElementReferenceException]
         ).until(visibility_condition)

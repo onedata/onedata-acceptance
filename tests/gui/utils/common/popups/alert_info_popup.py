@@ -24,18 +24,21 @@ class AlertInfoPopup(PageObject):
         parent: object | None = None,
     ) -> None:
         super().__init__(driver, web_elem, parent)
-        self.popup_type = self._get_popup_type()
-
-    def _get_popup_type(self) -> AlertPopupCssClass:
-        css_classes = get_element_css_classes_when_visible(self.driver, self.web_elem)
-        for popup_type in AlertPopupCssClass:
-            if popup_type.value in css_classes:
-                return popup_type
-
-        raise RuntimeError(f"Unknown alert popup type in {self}")
+        self.popup_type = get_popup_type(self)
 
     message = id = Label(".message-body")
     close = Button(".close")
 
     def __str__(self) -> str:
         return "alert info popup"
+
+
+def get_popup_type(alert_popup: AlertInfoPopup) -> AlertPopupCssClass:
+    css_classes: list[str] = get_element_css_classes_when_visible(
+        alert_popup.driver, alert_popup.web_elem
+    )
+    for popup_type in AlertPopupCssClass:
+        if popup_type.value in css_classes:
+            return popup_type
+
+    raise RuntimeError(f"Unknown alert popup type in {alert_popup}")

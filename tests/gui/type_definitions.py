@@ -9,11 +9,10 @@ from collections import defaultdict, namedtuple
 from collections.abc import Callable
 from os import PathLike
 from typing import Any, Literal, Protocol, TypedDict
+from selenium.webdriver.common.by import By
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-
-from tests.type_definitions import JsonObject
 
 
 class Checkable(Protocol):
@@ -35,12 +34,12 @@ type TmpMemory = defaultdict[str, dict[str, Any]]
 
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 type WebElemRoot = WebDriver | WebElement
-type WebElemOrLocator = WebElement | tuple[str, str]
+type Locator = tuple[By, str]
+type WebElementOrLocator = WebElement | Locator
+type WebElementOrSelector = WebElement | str
 type VisibilityCondition = Callable[[WebElemRoot], WebElement | Literal[False]]
 
-type LocalDirectoryContent = int | dict[
-    str, "LocalDirectoryContent | dict[str, str]"
-]
+type LocalDirectoryContent = int | dict[str, "LocalDirectoryContent | dict[str, str]"]
 type DataDirectoryContent = list[str | dict[str, "DataDirectoryContent"]]
 
 type TarTree = list[str | dict[str, "TarTree | str | int"]]
