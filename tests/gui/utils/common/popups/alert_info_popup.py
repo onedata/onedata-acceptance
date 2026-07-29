@@ -9,8 +9,9 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label
+from tests.gui.utils.generic import get_element_css_classes_when_visible
 
-from .generic import AlertPopupCssClass, get_popup_type
+from .generic import AlertPopupCssClass
 
 
 class AlertInfoPopup(PageObject):
@@ -23,7 +24,15 @@ class AlertInfoPopup(PageObject):
         parent: object | None = None,
     ) -> None:
         super().__init__(driver, web_elem, parent)
-        self.popup_type = get_popup_type(self)
+        self.popup_type = self._get_popup_type()
+
+    def _get_popup_type(self) -> AlertPopupCssClass:
+        css_classes = get_element_css_classes_when_visible(self.driver, self.web_elem)
+        for popup_type in AlertPopupCssClass:
+            if popup_type.value in css_classes:
+                return popup_type
+
+        raise RuntimeError(f"Unknown alert popup type in {self}")
 
     message = id = Label(".message-body")
     close = Button(".close")

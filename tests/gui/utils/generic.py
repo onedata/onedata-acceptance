@@ -33,7 +33,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.type_definitions import WebElemRoot
+from tests.gui.type_definitions import (
+    VisibilityCondition,
+    WebElemOrLocator,
+    WebElemRoot,
+)
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
@@ -258,6 +262,29 @@ def is_element_with_selector_visible_on_page(
         return False
 
 
+def get_web_elem_or_locator(
+    web_elem_or_selector: WebElement | str,
+) -> WebElemOrLocator:
+    match web_elem_or_selector:
+        case WebElement():
+            return web_elem_or_selector
+        case str():
+            return By.CSS_SELECTOR, web_elem_or_selector
+    raise TypeError(f"Unsupported element or selector: {web_elem_or_selector!r}")
+
+
+def get_visibility_condition(
+    web_elem_or_locator: WebElemOrLocator,
+) -> VisibilityCondition:
+    match web_elem_or_locator:
+        case WebElement():
+            # selenium function visibility_of does not ignore StaleElementReferenceException
+            return visibility_of(web_elem_or_locator)
+        case tuple():
+            return visibility_of_element_located(web_elem_or_locator)
+    raise TypeError(f"Unsupported element or locator: {web_elem_or_locator!r}")
+
+
 def wait_for_visible_element_using_getter(
     driver: WebDriver,
     web_elem_getter: Callable[[WebDriver], WebElement],
@@ -276,7 +303,7 @@ def wait_for_visible_element_using_getter(
             return None
 
     return WebDriverWait(driver, timeout=timeout).until(
-        partial(is_element_visible_by_getter, web_elem_getterr=web_elem_getter)
+        partial(is_element_visible_by_getter, web_elem_getter=web_elem_getter)
     )
 
 
@@ -298,7 +325,7 @@ def get_element_css_classes_when_visible(
             ElementNotInteractableException,
             StaleElementReferenceException,
         ],
-    ).until(lambda driver: get_element_classes(driver))
+    ).until(get_element_classes)
 
 
 def find_web_elem(

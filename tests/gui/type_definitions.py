@@ -35,6 +35,8 @@ type TmpMemory = defaultdict[str, dict[str, Any]]
 
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 type WebElemRoot = WebDriver | WebElement
+type WebElemOrLocator = WebElement | tuple[str, str]
+type VisibilityCondition = Callable[[WebElemRoot], WebElement | Literal[False]]
 
 type LocalDirectoryContent = int | dict[
     str, "LocalDirectoryContent | dict[str, str]"

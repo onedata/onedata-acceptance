@@ -20,13 +20,12 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import (
     invisibility_of_element,
-    visibility_of,
     visibility_of_element_located,
 )
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.type_definitions import Clickable, VisibleItem
+from tests.gui.type_definitions import Clickable, VisibleItem, WebElemOrLocator
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
@@ -43,6 +42,8 @@ from tests.gui.utils.common.popups.generic import (
 )
 from tests.gui.utils.generic import (
     ListElement,
+    get_visibility_condition,
+    get_web_elem_or_locator,
     transform,
 )
 from tests.gui.utils.oneprovider.browser import Browser
@@ -319,7 +320,7 @@ def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
 
 def click_close_button_and_wait_to_disappear(
     driver: WebDriver,
-    web_elem_or_locator: WebElement | tuple[str, str],
+    web_elem_or_locator: WebElemOrLocator,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
     try_click_without_throwing_error(
@@ -338,17 +339,8 @@ def wait_till_alert_popup_or_error_modal_disappear(
     web_elem_or_selector: WebElement | str,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    if isinstance(web_elem_or_selector, str):
-        locator = (
-            By.CSS_SELECTOR,
-            web_elem_or_selector,
-        )
-        web_elem_or_locator: tuple[str, str] = locator
-        visibility_condition = visibility_of_element_located(locator)
-    else:
-        web_elem_or_locator = web_elem_or_selector
-        # selenium function visibility_of does not ignore StaleElementReferenceException
-        visibility_condition = visibility_of(web_elem_or_selector)
+    web_elem_or_locator = get_web_elem_or_locator(web_elem_or_selector)
+    visibility_condition = get_visibility_condition(web_elem_or_locator)
 
     try:
         WebDriverWait(

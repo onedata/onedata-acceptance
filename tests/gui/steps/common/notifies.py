@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+from dataclasses import dataclass
 from functools import partial
 
 from selenium.common.exceptions import (
@@ -38,10 +39,17 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+@dataclass(frozen=True)
+class CapturedPopup:
+    message: str
+    web_elem: WebElement
+    css_class: AlertPopupCssClass
+
+
 def capture_matching_popup(
     driver: WebDriver,
-    seen_popups: set[tuple[str, WebElement, AlertPopupCssClass]],
-    regexp: str,
+    seen_popups: set[CapturedPopup],
+    regexp: re.Pattern[str],
     notify_type: AlertPopupCssClass,
 ) -> bool:
     detected_popups: list[AlertInfoPopup] = Popups(driver).get_all_alert_popups()
@@ -49,12 +57,17 @@ def capture_matching_popup(
         try:
             web_elem = popup.web_elem
             if web_elem.is_displayed():
-                seen_popups.add((popup.message, web_elem, popup.popup_type))
+                seen_popups.add(
+                    CapturedPopup(popup.message, web_elem, popup.popup_type)
+                )
         except (NoSuchElementException, StaleElementReferenceException):
             continue
 
-    for message, _, popup_type in seen_popups:
-        if regexp.match(message) and notify_type == popup_type:
+    for captured_popup in seen_popups:
+        if (
+            regexp.match(captured_popup.message)
+            and notify_type == captured_popup.css_class
+        ):
             return True
 
     return False
@@ -80,7 +93,7 @@ def notify_visible_with_text(
     text_regexp = alert_popup.value
 
     # for each popup store message, web_elem and classified popup type for future use
-    seen_popups: set[tuple[str, WebElement, AlertPopupCssClass]] = set()
+    seen_popups: set[CapturedPopup] = set()
 
     try:
         WebDriverWait(driver, 2 * WAIT_BACKEND, poll_frequency=0.1).until(
@@ -102,9 +115,10 @@ def notify_visible_with_text(
 
 
 def _close_all_detected_popups(
-    driver: WebDriver, seen_popups: set[tuple[str, WebElement, AlertPopupCssClass]]
+    driver: WebDriver, seen_popups: set[CapturedPopup]
 ) -> None:
-    for _, web_elem, _ in seen_popups:
+    for popup in seen_popups:
+        web_elem = popup.web_elem
 
         def get_close_button(
             driver: WebDriver,

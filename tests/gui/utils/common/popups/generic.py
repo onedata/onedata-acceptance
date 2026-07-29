@@ -7,9 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from enum import Enum
 
-from tests.gui.utils.common.popups.alert_info_popup import AlertInfoPopup
-from tests.gui.utils.generic import get_element_css_classes_when_visible
-
 
 class AlertPopup(Enum):
     AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
@@ -72,14 +69,3 @@ def parse_alert_popup(value: str) -> AlertPopup:
 
 def parse_alert_popup_type(value: str) -> AlertPopupCssClass:
     return ALERT_POPUP_TYPE_ALIASES[value.strip().lower()]
-
-
-def get_popup_type(alert_popup: AlertInfoPopup) -> AlertPopupCssClass:
-    css_classes: list[str] = get_element_css_classes_when_visible(
-        alert_popup.driver, alert_popup.web_elem
-    )
-    for popup_type in AlertPopupCssClass:
-        if popup_type.value in css_classes:
-            return popup_type
-
-    raise RuntimeError(f"Unknown alert popup type in {alert_popup}")
