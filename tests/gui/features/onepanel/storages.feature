@@ -203,3 +203,4 @@ Feature: Storage management using onepanel
     And user of browser_unified clicks on Add button in add storage form in storages page in Onepanel
 
     Then user of browser_unified sees 2 storages named "storage" with different IDs on the storages list
+

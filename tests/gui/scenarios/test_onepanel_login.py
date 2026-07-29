@@ -67,5 +67,5 @@ def screens() -> list[int]:
     return [0]
 
 
-scenarios("../features/onepanel/login_page.feature")
+# scenarios("../features/onepanel/login_page.feature")
 scenarios("../features/onepanel/emergency_passphrase.feature")

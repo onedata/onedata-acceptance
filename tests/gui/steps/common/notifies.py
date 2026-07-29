@@ -27,48 +27,62 @@ from tests.gui.steps.common.common import (
 from tests.gui.utils import OnePage, PublicOnePage
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.common.popups.alert_info_popup import AlertInfoPopup
+from tests.gui.utils.generic import (
+    ALERT_POPUP_ALIASES,
+    ALERT_POPUP_TYPE_ALIASES,
+    AlertPopup,
+    AlertPopupType,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+def _parse_alert_popup(value: str) -> AlertPopup:
+    return ALERT_POPUP_ALIASES[value.strip().lower()]
+
+
+def _parse_alert_popup_type(value: str) -> AlertPopupType:
+    return ALERT_POPUP_TYPE_ALIASES[value.strip().lower()]
+
+
 @wt(
     parsers.parse(
-        "user of {browser_id} sees an {notify_type} notify "
-        "with text matching to: {text_regexp}"
+        'user of {browser_id} sees the "{alert_popup:AlertPopup}" '
+        "{notify_type:AlertPopupType} notify",
+        extra_types={
+            "AlertPopup": _parse_alert_popup,
+            "AlertPopupType": _parse_alert_popup_type,
+        },
     )
 )
 def notify_visible_with_text(
     selenium: SeleniumDrivers,
     browser_id: str,
-    notify_type: str,
-    text_regexp: str,
+    notify_type: AlertPopupType,
+    alert_popup: AlertPopup,
 ) -> None:
     driver = selenium[browser_id]
+    text_regexp = alert_popup.value
     regexp = re.compile(text_regexp)
-    # for each popup store message and web_elem  for future use
 
-    seen_popups: dict[str, WebElement] = {}
+    # for each popup store message, web_elem and classified popup type for future use
+    seen_popups: set[tuple[str, WebElement, AlertPopupType]] = set()
 
     def capture_matching_popup(
         driver: WebDriver,
     ) -> bool:
-        popups = Popups(driver)
-        detected_popups = [
-            *popups.alert_info_popups,
-            *popups.notify_popups,
-        ]
-
+        detected_popups: list[AlertInfoPopup] = Popups(driver).get_all_alert_popups()
         for popup in detected_popups:
             try:
                 web_elem = popup.web_elem
                 if web_elem.is_displayed():
-                    seen_popups[popup.message] = web_elem
+                    seen_popups.add((popup.message, web_elem, popup.popup_type))
             except (NoSuchElementException, StaleElementReferenceException):
                 continue
 
-        for message in seen_popups:
-            if regexp.match(message):
+        for message, _, popup_type in seen_popups:
+            if regexp.match(message) and notify_type == popup_type:
                 return True
 
         return False
@@ -84,11 +98,17 @@ def notify_visible_with_text(
             f"observed messages: {list(seen_popups)}"
         ) from exc
 
-    for web_elem in seen_popups.values():
+    _close_all_detected_popups(driver, seen_popups)
+
+
+def _close_all_detected_popups(
+    driver: WebDriver, seen_popups: set[tuple[str, WebElement, AlertPopupType]]
+) -> None:
+    for _, web_elem, _ in seen_popups:
 
         def get_close_button(
             driver: WebDriver,
-            popup_elem: WebElement = web_elem,
+            popup_elem: WebElement,
         ) -> WebElement:
             return AlertInfoPopup(driver, popup_elem).close
 

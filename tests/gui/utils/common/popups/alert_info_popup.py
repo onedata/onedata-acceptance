@@ -4,8 +4,6 @@ __author__ = "Jakub Karczewski"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Optional
-
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     StaleElementReferenceException,
@@ -24,7 +22,7 @@ class AlertInfoPopup(PageObject):
     popup_type: AlertPopupType
 
     def _get_popup_type(self) -> AlertPopupType:
-        def get_element_classes_when_visible() -> Optional[list[str]]:
+        def get_element_classes_when_visible() -> list[str] | None:
             return (
                 self.web_elem.get_attribute("class").split()
                 if visibility_of(self.web_elem)
@@ -40,6 +38,7 @@ class AlertInfoPopup(PageObject):
                 StaleElementReferenceException,
             ],
         ).until(lambda _: get_element_classes_when_visible())
+
         for popup_type in AlertPopupType:
             if popup_type.value in css_classes:
                 return popup_type

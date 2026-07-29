@@ -11,7 +11,7 @@ from contextlib import suppress
 from functools import partial
 from typing import Any, Protocol, cast
 
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -32,6 +32,9 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
     ArchiveRecallInformation,
 )
 from tests.gui.utils.generic import (
+    ALERT_INFO_POPUPS,
+    DEFAULT_POPUPS,
+    SUCCESS_POPUPS,
     AlertPopup,
     ListElement,
     transform,
@@ -66,16 +69,12 @@ class VisibleItem(Protocol):
 
 
 def get_alert_css_selector(alert_popup: AlertPopup) -> str:
-    match alert_popup:
-        case AlertPopup.TOKEN_CREATED | AlertPopup.SUCCESSFULLY_JOINED:
-            return ".ember-notify-cn"
-        case (
-            AlertPopup.AUTHENTICATION_SUCCEEDED | AlertPopup.STORAGE_IMPORT_SCAN_STARTED
-        ):
-            return ".alert-info"
+    if alert_popup in ALERT_INFO_POPUPS:
+        return ".alert-info"
+    if alert_popup in SUCCESS_POPUPS or alert_popup in DEFAULT_POPUPS:
+        return ".ember-notify-cn"
 
-        case _:
-            raise ValueError(f"Unsupported alert popup: {alert_popup}")
+    raise ValueError(f"Unsupported alert popup: {alert_popup}")
 
 
 def assert_n_items_in_items_list(
@@ -365,12 +364,12 @@ def wait_till_popup_or_modal_disappear(
         visibility_condition = visibility_of_element_located(locator)
     else:
         web_elem_or_locator = web_elem_or_selector
+        # selenium function visibility_of does not ignore StaleElementReferenceException
         visibility_condition = visibility_of(web_elem_or_selector)
 
     try:
         WebDriverWait(
-            driver,
-            WAIT_FRONTEND,
+            driver, WAIT_FRONTEND, ignored_exceptions=[StaleElementReferenceException]
         ).until(visibility_condition)
     except TimeoutException:
         return False

@@ -46,6 +46,7 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import (
     AlertPopup,
+    AlertPopupType,
     OnedataService,
     wait_for_web_elem_by_handler_and_return_it,
 )
@@ -71,7 +72,10 @@ def succeed_to_save_changes_in_modify_provider_detail_form(
     save_btn.click()
     wait_for_item_to_disappear(save_btn.web_elem, driver)
     notify_visible_with_text(
-        selenium, browser_id, "info", AlertPopup.PROVIDER_DATA_MODIFIED.value
+        selenium,
+        browser_id,
+        AlertPopupType.ALERT_INFO,
+        AlertPopup.PROVIDER_DATA_MODIFIED,
     )
 
 
@@ -148,7 +152,10 @@ def deregister_provider_in_op_panel_using_gui(
     wt_click_on_btn_in_content(selenium, [browser_id], "Deregister provider", content)
     wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup)
     notify_visible_with_text(
-        selenium, browser_id, "info", AlertPopup.PROVIDER_DEREGISTERED.value
+        selenium,
+        browser_id,
+        AlertPopupType.ALERT_INFO,
+        AlertPopup.PROVIDER_DEREGISTERED,
     )
 
 

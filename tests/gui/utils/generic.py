@@ -264,7 +264,7 @@ def wait_for_web_elem_by_handler_and_return_it(
 
     def is_element_visible_by_handler(
         driver: WebDriver, web_elem_handler: Callable[[WebDriver], WebElement]
-    ) -> Optional[WebElement]:
+    ) -> WebElement | None:
         try:
             web_elem = web_elem_handler(driver)
             return web_elem if visibility_of(web_elem) else None
@@ -522,6 +522,11 @@ class AlertPopup(Enum):
     STORAGE_ADDED = r".*[Ss]torage.*added.*"
 
 
+ALERT_POPUP_ALIASES: dict[str, AlertPopup] = {
+    popup.name.lower().replace("_", " "): popup for popup in AlertPopup
+}
+
+
 PageName = Literal[
     "data",
     "shares",
@@ -547,15 +552,19 @@ class HostPattern(Enum):
 ALERT_INFO_POPUPS: list[AlertPopup] = [
     AlertPopup.AUTHENTICATION_SUCCEEDED,
     AlertPopup.STORAGE_IMPORT_SCAN_STARTED,
+    AlertPopup.SUCCESSFULLY_COPIED,
+    AlertPopup.PASSWORD_CHANGED,
+    AlertPopup.PROVIDER_DATA_MODIFIED,
     AlertPopup.PROVIDER_DEREGISTERED,
+    AlertPopup.CONFIGURATION_SPACE_SUPPORT_CHANGED,
+    AlertPopup.CEASED_SUPPORT,
+    AlertPopup.STORAGE_ADDED,
 ]
-
 
 SUCCESS_POPUPS: list[AlertPopup] = [
     AlertPopup.SUCCESSFULLY_JOINED,
     AlertPopup.TOKEN_CREATED,
 ]
-
 
 DEFAULT_POPUPS: list[AlertPopup] = [AlertPopup.ADDED_SPACE_SUPPORT]
 
@@ -564,3 +573,10 @@ class AlertPopupType(Enum):
     SUCCESS = "success"
     ALERT_INFO = "alert-info"
     DEFAULT = "ember-notify-default"
+
+
+ALERT_POPUP_TYPE_ALIASES: dict[str, AlertPopupType] = {
+    "success": AlertPopupType.SUCCESS,
+    "info": AlertPopupType.ALERT_INFO,
+    "default": AlertPopupType.DEFAULT,
+}

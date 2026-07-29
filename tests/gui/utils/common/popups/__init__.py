@@ -147,6 +147,12 @@ class Popups:
     alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
     notify_popups = WebItemsSequence(".ember-notify-cn", cls=AlertInfoPopup)
 
+    def get_all_alert_popups(self) -> list[AlertInfoPopup]:
+        return [
+            *self.alert_info_popups,
+            *self.notify_popups,
+        ]
+
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 

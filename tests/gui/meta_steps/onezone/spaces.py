@@ -65,6 +65,7 @@ from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     AlertPopup,
+    AlertPopupType,
     ListElement,
     parse_elements_sequence,
 )
@@ -88,8 +89,8 @@ def copy_support_token_from_add_support_page(
     notify_visible_with_text(
         selenium,
         browser_id,
-        "info",
-        AlertPopup.SUCCESSFULLY_COPIED.value,
+        AlertPopupType.ALERT_INFO,
+        AlertPopup.SUCCESSFULLY_COPIED,
     )
 
 
@@ -236,8 +237,6 @@ def remove_provider_support_for_space_in_oz_using_gui(
     record = "Spaces"
     option = "Revoke space support"
     confirmation_button = "Cease support"
-    notify_type = "info"
-    text_regexp = AlertPopup.CEASED_SUPPORT.value
     provider_name = "oneprovider-1"
 
     wt_click_on_subitem_for_item(
@@ -247,7 +246,9 @@ def remove_provider_support_for_space_in_oz_using_gui(
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user)
     wt_clicks_on_btn_in_cease_support_modal(selenium, user, confirmation_button)
-    notify_visible_with_text(selenium, user, notify_type, text_regexp)
+    notify_visible_with_text(
+        selenium, user, AlertPopupType.ALERT_INFO, AlertPopup.CEASED_SUPPORT
+    )
 
 
 def invite_other_users_to_space_using_gui(
@@ -303,7 +304,10 @@ def request_space_support_using_gui(
         selenium, user, displays, clipboard, tmp_memory
     )
     notify_visible_with_text(
-        selenium, user, "info", AlertPopup.SUCCESSFULLY_COPIED.value
+        selenium,
+        user,
+        AlertPopupType.ALERT_INFO,
+        AlertPopup.SUCCESSFULLY_COPIED,
     )
     send_copied_item_to_other_users(
         user, "token", [receiver], tmp_memory, displays, clipboard

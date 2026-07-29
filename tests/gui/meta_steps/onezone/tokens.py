@@ -137,9 +137,8 @@ def succeed_to_consume_token_using_confirm_button(
     driver = selenium[browser_id]
     _click_confirm_btn(driver)
     wait_till_main_content_loaded(driver)
-    alert_popup = AlertPopup.SUCCESSFULLY_JOINED
     # Case when popup did not appear or the test didn't catch it in time
-    if not wait_till_alert_info_popup_disappear(driver, alert_popup):
+    if not wait_till_alert_info_popup_disappear(driver, AlertPopup.SUCCESSFULLY_JOINED):
         assert not is_element_with_selector_visible_on_page(
             driver, ".alert-global.modal.in .modal-dialog"
         ), "Error modal appeared"
@@ -582,7 +581,11 @@ def _create_token_with_config(
             tmp_memory,
         )
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    wait_till_alert_info_popup_disappear(selenium[browser_id], AlertPopup.TOKEN_CREATED)
+    print(
+        wait_till_alert_info_popup_disappear(
+            selenium[browser_id], AlertPopup.TOKEN_CREATED
+        )
+    )
 
 
 def _set_tokens_caveats(

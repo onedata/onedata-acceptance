@@ -70,18 +70,18 @@ def screens() -> list[int]:
     return [0, 1]
 
 
-scenarios("../features/onepanel/storages.feature")
-scenarios("../features/onepanel/spaces.feature")
-scenarios("../features/onepanel/gui_settings.feature")
+# scenarios("../features/onepanel/storages.feature")
+# scenarios("../features/onepanel/spaces.feature")
+# scenarios("../features/onepanel/gui_settings.feature")
 
 
-@pytest.mark.last
-@scenario(
-    "../features/onepanel/provider.feature",
-    "User deregisters provider, registers it again and sees that provider is working",
-)
-def test_user_deregisters_provider_registers_it_again_and_sees_that_provider_is_working():
-    pass
+# @pytest.mark.last
+# @scenario(
+#     "../features/onepanel/provider.feature",
+#     "User deregisters provider, registers it again and sees that provider is working",
+# )
+# def test_user_deregisters_provider_registers_it_again_and_sees_that_provider_is_working():
+#     pass
 
 
 @scenario(

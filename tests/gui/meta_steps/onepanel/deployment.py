@@ -30,7 +30,7 @@ from tests.gui.steps.onepanel.deployment import (
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.generic import AlertPopup
+from tests.gui.utils.generic import AlertPopup, AlertPopupType
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -292,12 +292,12 @@ def _add_storage_in_step5(
     storage_type = config["storage type"]
     name = config["name"]
     name_box = "Storage name"
-    notify_type = "info"
-    text_regexp = AlertPopup.STORAGE_ADDED.value
 
     wt_select_storage_type_in_deployment_step5(selenium, browser_id, storage_type)
     wt_type_text_to_in_box_in_deployment_step5(
         selenium, browser_id, name, storage_type, name_box
     )
     wt_click_on_add_btn_in_storage_add_form(selenium, browser_id)
-    notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
+    notify_visible_with_text(
+        selenium, browser_id, AlertPopupType.ALERT_INFO, AlertPopup.STORAGE_ADDED
+    )
