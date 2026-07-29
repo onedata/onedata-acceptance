@@ -56,7 +56,7 @@ class AlertPopupCssClass(Enum):
     DEFAULT = "ember-notify-default"
 
 
-ALERT_POPUP_TYPE_ALIASES: dict[str, AlertPopupCssClass] = {
+ALERT_POPUP_CSS_CLASS_ALIASES: dict[str, AlertPopupCssClass] = {
     "success": AlertPopupCssClass.SUCCESS,
     "info": AlertPopupCssClass.ALERT_INFO,
     "default": AlertPopupCssClass.DEFAULT,
@@ -68,4 +68,4 @@ def parse_alert_popup(value: str) -> AlertPopup:
 
 
 def parse_alert_popup_type(value: str) -> AlertPopupCssClass:
-    return ALERT_POPUP_TYPE_ALIASES[value.strip().lower()]
+    return ALERT_POPUP_CSS_CLASS_ALIASES[value.strip().lower()]

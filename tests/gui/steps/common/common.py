@@ -29,7 +29,7 @@ from tests.gui.type_definitions import (
     Clickable,
     VisibilityCondition,
     VisibleItem,
-    WebElementOrLocator,
+    WebElementOrCssLocator,
     WebElementOrSelector,
 )
 from tests.gui.utils import OZLoggedIn, Popups
@@ -326,7 +326,7 @@ def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
 
 def click_close_button_and_wait_to_disappear(
     driver: WebDriver,
-    web_elem_or_locator: WebElementOrLocator,
+    web_elem_or_locator: WebElementOrCssLocator,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
     try_click_without_throwing_error(
@@ -345,7 +345,7 @@ def wait_till_alert_popup_or_error_modal_disappear(
     web_elem_or_selector: WebElementOrSelector,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    web_elem_or_locator: WebElementOrLocator = get_web_elem_or_locator(
+    web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(
         web_elem_or_selector
     )
     visibility_condition: VisibilityCondition = get_visibility_condition(

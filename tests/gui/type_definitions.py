@@ -9,7 +9,6 @@ from collections import defaultdict, namedtuple
 from collections.abc import Callable
 from os import PathLike
 from typing import Any, Literal, Protocol, TypedDict
-from selenium.webdriver.common.by import By
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -34,8 +33,8 @@ type TmpMemory = defaultdict[str, dict[str, Any]]
 
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 type WebElemRoot = WebDriver | WebElement
-type Locator = tuple[By, str]
-type WebElementOrLocator = WebElement | Locator
+type CssLocator = tuple[Literal["css selector"], str]
+type WebElementOrCssLocator = WebElement | CssLocator
 type WebElementOrSelector = WebElement | str
 type VisibilityCondition = Callable[[WebElemRoot], WebElement | Literal[False]]
 

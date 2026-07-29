@@ -34,11 +34,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests import gui
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.type_definitions import (
-    Locator,
     VisibilityCondition,
-    WebElementOrLocator,
-    WebElemRoot,
+    WebElementOrCssLocator,
     WebElementOrSelector,
+    WebElemRoot,
 )
 from tests.type_definitions import JsonValue
 
@@ -265,8 +264,8 @@ def is_element_with_selector_visible_on_page(
 
 
 def get_web_elem_or_locator(
-    web_elem_or_selector: WebElementOrSelector
-) -> WebElementOrLocator:
+    web_elem_or_selector: WebElementOrSelector,
+) -> WebElementOrCssLocator:
     match web_elem_or_selector:
         case WebElement():
             return web_elem_or_selector
@@ -276,13 +275,15 @@ def get_web_elem_or_locator(
 
 
 def get_visibility_condition(
-    web_elem_or_locator: WebElementOrLocator,
+    web_elem_or_locator: WebElementOrCssLocator,
 ) -> VisibilityCondition:
     match web_elem_or_locator:
         case WebElement():
             return visibility_of(web_elem_or_locator)
-        case Locator():
-            return visibility_of_element_located(web_elem_or_locator)
+        case tuple() as locator:
+            match locator:
+                case (By.CSS_SELECTOR, str()):
+                    return visibility_of_element_located(locator)
     raise TypeError(f"Unsupported element or locator: {web_elem_or_locator!r}")
 
 
