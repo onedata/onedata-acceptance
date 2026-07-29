@@ -27,39 +27,31 @@ from tests.gui.steps.common.common import (
 from tests.gui.utils import OnePage, PublicOnePage
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.common.popups.alert_info_popup import AlertInfoPopup
-from tests.gui.utils.generic import (
-    ALERT_POPUP_ALIASES,
-    ALERT_POPUP_TYPE_ALIASES,
+from tests.gui.utils.common.popups.generic import (
     AlertPopup,
-    AlertPopupType,
+    AlertPopupCssClass,
+    parse_alert_popup,
+    parse_alert_popup_type,
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _parse_alert_popup(value: str) -> AlertPopup:
-    return ALERT_POPUP_ALIASES[value.strip().lower()]
-
-
-def _parse_alert_popup_type(value: str) -> AlertPopupType:
-    return ALERT_POPUP_TYPE_ALIASES[value.strip().lower()]
-
-
 @wt(
     parsers.parse(
         'user of {browser_id} sees the "{alert_popup:AlertPopup}" '
-        "{notify_type:AlertPopupType} notify",
+        "{notify_type:AlertPopupCssClass} notify",
         extra_types={
-            "AlertPopup": _parse_alert_popup,
-            "AlertPopupType": _parse_alert_popup_type,
+            "AlertPopup": parse_alert_popup,
+            "AlertPopupCssClass": parse_alert_popup_type,
         },
     )
 )
 def notify_visible_with_text(
     selenium: SeleniumDrivers,
     browser_id: str,
-    notify_type: AlertPopupType,
+    notify_type: AlertPopupCssClass,
     alert_popup: AlertPopup,
 ) -> None:
     driver = selenium[browser_id]
@@ -67,7 +59,7 @@ def notify_visible_with_text(
     regexp = re.compile(text_regexp)
 
     # for each popup store message, web_elem and classified popup type for future use
-    seen_popups: set[tuple[str, WebElement, AlertPopupType]] = set()
+    seen_popups: set[tuple[str, WebElement, AlertPopupCssClass]] = set()
 
     def capture_matching_popup(
         driver: WebDriver,
@@ -102,7 +94,7 @@ def notify_visible_with_text(
 
 
 def _close_all_detected_popups(
-    driver: WebDriver, seen_popups: set[tuple[str, WebElement, AlertPopupType]]
+    driver: WebDriver, seen_popups: set[tuple[str, WebElement, AlertPopupCssClass]]
 ) -> None:
     for _, web_elem, _ in seen_popups:
 

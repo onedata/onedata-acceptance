@@ -16,7 +16,6 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.generic import AlertPopup
 from tests.utils.utils import repeat_failed
 
 from .alert_info_popup import AlertInfoPopup
@@ -30,6 +29,7 @@ from .data_distribution_popup import DataDistributionPopup
 from .data_row_menu import DataRowMenu
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .deregister_provider import DeregisterProvider
+from .generic import AlertPopup
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .handle_service import HandleService
 from .info import Info

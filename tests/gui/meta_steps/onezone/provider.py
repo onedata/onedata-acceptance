@@ -29,7 +29,7 @@ from tests.gui.steps.onezone.providers import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.generic import AlertPopup, AlertPopupType
+from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -112,7 +112,7 @@ def revoke_support_of_provider_in_list(
 ) -> None:
     driver = selenium[browser_id]
     button = "Cease support"
-    notify_type = AlertPopupType.ALERT_INFO
+    notify_type = AlertPopupCssClass.ALERT_INFO
     alert_popup = AlertPopup.CEASED_SUPPORT
 
     click_on_menu_button_of_provider_on_providers_list(

@@ -27,7 +27,7 @@ from tests.gui.steps.onepanel.emergency_passphrase import (
     click_button_on_emergency_passphrase_page,
     type_text_to_input_on_emergency_passphrase_page,
 )
-from tests.gui.utils.generic import AlertPopup, AlertPopupType
+from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -48,14 +48,14 @@ def change_user_password_in_oz_panel_using_gui(
     wt_type_text_to_in_box_in_chpasswd_form(selenium, user, "Retype new", new_password)
     wt_click_confirm_btn_in_chpasswd_form(selenium, user)
     notify_visible_with_text(
-        selenium, user, AlertPopupType.ALERT_INFO, AlertPopup.PASSWORD_CHANGED
+        selenium, user, AlertPopupCssClass.ALERT_INFO, AlertPopup.PASSWORD_CHANGED
     )
 
 
 def login_to_oz_panel_using_new_password_gui(
     selenium: SeleniumDrivers, user: str, password: str
 ) -> None:
-    notify_type = AlertPopupType.ALERT_INFO
+    notify_type = AlertPopupCssClass.ALERT_INFO
     alert_popup = AlertPopup.AUTHENTICATION_SUCCEEDED
 
     wt_enter_text_to_field_in_login_form(selenium, user, "Username", user)

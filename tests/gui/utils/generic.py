@@ -505,28 +505,6 @@ class ListElement(Enum):
     WORKFLOWS = "workflows"
 
 
-class AlertPopup(Enum):
-    AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
-    STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"
-    TOKEN_CREATED = "Token has been created successfully."
-    SUCCESSFULLY_JOINED = r".*joined.*"
-    SUCCESSFULLY_COPIED = r".*copied.*"
-    PASSWORD_CHANGED = r".*[Pp]assword.*changed.*successfully.*"
-    PROVIDER_DATA_MODIFIED = r".*[Pp]rovider.*data.*modified.*"
-    PROVIDER_DEREGISTERED = r".*[Pp]rovider.*deregistered.*"
-    ADDED_SPACE_SUPPORT = r".*[Aa]dded.*support.*space.*"
-    CONFIGURATION_SPACE_SUPPORT_CHANGED = (
-        r".*[Cc]onfiguration.*space.*support.*changed.*"
-    )
-    CEASED_SUPPORT = r"Ceased.*[Ss]upport.*"
-    STORAGE_ADDED = r".*[Ss]torage.*added.*"
-
-
-ALERT_POPUP_ALIASES: dict[str, AlertPopup] = {
-    popup.name.lower().replace("_", " "): popup for popup in AlertPopup
-}
-
-
 PageName = Literal[
     "data",
     "shares",
@@ -547,36 +525,3 @@ class HostPattern(Enum):
     ONEPANEL_EMERGENCY = r"emergency interface of Onepanel"
     ONEZONE_EMERGENCY = r"emergency interface of Onezone"
     PROVIDER_NODE = r"node[0-9]+ of oneprovider-[0-9]+ provider panel"
-
-
-ALERT_INFO_POPUPS: list[AlertPopup] = [
-    AlertPopup.AUTHENTICATION_SUCCEEDED,
-    AlertPopup.STORAGE_IMPORT_SCAN_STARTED,
-    AlertPopup.SUCCESSFULLY_COPIED,
-    AlertPopup.PASSWORD_CHANGED,
-    AlertPopup.PROVIDER_DATA_MODIFIED,
-    AlertPopup.PROVIDER_DEREGISTERED,
-    AlertPopup.CONFIGURATION_SPACE_SUPPORT_CHANGED,
-    AlertPopup.CEASED_SUPPORT,
-    AlertPopup.STORAGE_ADDED,
-]
-
-SUCCESS_POPUPS: list[AlertPopup] = [
-    AlertPopup.SUCCESSFULLY_JOINED,
-    AlertPopup.TOKEN_CREATED,
-]
-
-DEFAULT_POPUPS: list[AlertPopup] = [AlertPopup.ADDED_SPACE_SUPPORT]
-
-
-class AlertPopupType(Enum):
-    SUCCESS = "success"
-    ALERT_INFO = "alert-info"
-    DEFAULT = "ember-notify-default"
-
-
-ALERT_POPUP_TYPE_ALIASES: dict[str, AlertPopupType] = {
-    "success": AlertPopupType.SUCCESS,
-    "info": AlertPopupType.ALERT_INFO,
-    "default": AlertPopupType.DEFAULT,
-}

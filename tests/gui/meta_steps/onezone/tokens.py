@@ -17,9 +17,10 @@ from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
 from tests.gui.steps.common.common import (
+    close_alert_popup_if_present,
     wait_for_error_modal_to_disappear,
-    wait_till_alert_info_popup_disappear,
-    wait_till_popup_or_modal_disappear,
+    wait_for_sliding_panel_to_stop_moving,
+    wait_till_alert_popup_or_error_modal_disappear,
 )
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
@@ -65,10 +66,8 @@ from tests.gui.steps.onezone.tokens import (
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import (
-    AlertPopup,
-    is_element_with_selector_visible_on_page,
-)
+from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.generic import is_element_with_selector_visible_on_page
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -119,7 +118,9 @@ def click_create_token_button_in_create_token_page(
 ) -> None:
     driver = selenium[browser_id]
     # prevent clicking when there is ongoing animation, because the click can have no result
-    time.sleep(0.2)
+    wait_for_sliding_panel_to_stop_moving(
+        driver, WAIT_FRONTEND, '[data-one-carousel-slide-id="form"]'
+    )
     create_token_button = click_and_get_create_token_button(selenium, browser_id)
     # ensure clicking at create token succeeded
     wait_for_item_to_disappear(create_token_button, driver, timeout=2 * WAIT_FRONTEND)
@@ -138,7 +139,7 @@ def succeed_to_consume_token_using_confirm_button(
     _click_confirm_btn(driver)
     wait_till_main_content_loaded(driver)
     # Case when popup did not appear or the test didn't catch it in time
-    if not wait_till_alert_info_popup_disappear(driver, AlertPopup.SUCCESSFULLY_JOINED):
+    if not close_alert_popup_if_present(driver, AlertPopup.SUCCESSFULLY_JOINED):
         assert not is_element_with_selector_visible_on_page(
             driver, ".alert-global.modal.in .modal-dialog"
         ), "Error modal appeared"
@@ -212,7 +213,7 @@ def assert_invalid_id_in_error_modal_and_close_modal(
     error_message = (
         f"There is no info about id of invalid target {target_name} in error modal"
     )
-    wait_till_popup_or_modal_disappear(
+    wait_till_alert_popup_or_error_modal_disappear(
         driver, ".alert-global.modal.in .modal-dialog", lambda _: error_modal.close
     )
     match target_type:
@@ -421,7 +422,7 @@ def consume_token_and_see_success_notify(
     _paste_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
     # sometimes the popup appears and disappears too quickly to be catched
-    assert wait_till_alert_info_popup_disappear(
+    assert close_alert_popup_if_present(
         selenium[browser_id], AlertPopup.SUCCESSFULLY_JOINED
     ), "Success notify did not appear"
 
@@ -446,7 +447,7 @@ def _create_token_of_type(
             selenium, browser_id, "Register Oneprovider"
         )
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    wait_till_alert_info_popup_disappear(selenium[browser_id], AlertPopup.TOKEN_CREATED)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.TOKEN_CREATED)
 
 
 @wt(
@@ -581,11 +582,7 @@ def _create_token_with_config(
             tmp_memory,
         )
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    print(
-        wait_till_alert_info_popup_disappear(
-            selenium[browser_id], AlertPopup.TOKEN_CREATED
-        )
-    )
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.TOKEN_CREATED)
 
 
 def _set_tokens_caveats(
@@ -963,7 +960,7 @@ def create_token_with_basic_template(
     choose_token_template(selenium, browser_id, template)
     type_new_token_name(selenium, browser_id, name)
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    wait_till_alert_info_popup_disappear(selenium[browser_id], AlertPopup.TOKEN_CREATED)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.TOKEN_CREATED)
 
 
 @wt(

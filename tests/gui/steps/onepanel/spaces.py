@@ -14,16 +14,18 @@ import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import wait_for_checking_toggle
+from tests.gui.steps.common.common import (
+    close_alert_popup_if_present,
+    wait_for_checking_toggle,
+)
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
-from tests.gui.steps.common.url import wait_till_alert_info_popup_disappear
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
-    AlertPopup,
     implicit_wait,
     parse_elements_sequence,
     transform,
@@ -767,9 +769,7 @@ def click_start_scan_button_in_storage_import_tab(
         sync_chart.start_scan.click()
 
     click_start_scan_button()
-    wait_till_alert_info_popup_disappear(
-        driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED
-    )
+    close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
 
 
 @wt(

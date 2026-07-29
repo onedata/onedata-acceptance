@@ -52,11 +52,8 @@ from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
-from tests.gui.utils.generic import (
-    AlertPopup,
-    AlertPopupType,
-    wait_for_web_elem_by_handler_and_return_it,
-)
+from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
+from tests.gui.utils.generic import wait_for_web_elem_by_handler_and_return_it
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
@@ -66,7 +63,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.+?) clicks on Support space "
+        r'user of (?P<browser_id>.+?) clicks on "Support space" '
         r"button in support space form in Onepanel"
     )
 )
@@ -80,7 +77,7 @@ def support_space_using_form(selenium: SeleniumDrivers, browser_id: str) -> None
     notify_visible_with_text(
         selenium,
         browser_id,
-        AlertPopupType.DEFAULT,
+        AlertPopupCssClass.DEFAULT,
         AlertPopup.ADDED_SPACE_SUPPORT,
     )
 
@@ -137,7 +134,7 @@ def result_to_support_space_in_op_panel_using_gui(
     )
     if result == "succeeds":
         notify_visible_with_text(
-            selenium, user, AlertPopupType.DEFAULT, AlertPopup.ADDED_SPACE_SUPPORT
+            selenium, user, AlertPopupCssClass.DEFAULT, AlertPopup.ADDED_SPACE_SUPPORT
         )
         wt_assert_correct_supported_space_opened(selenium, user, space_name)
     else:
@@ -249,7 +246,7 @@ def configure_auto_storage_import_in_storage_import_tab(
     storage_import_configuration = yaml.load(config, yaml.Loader)
     _handle_configure_auto_storage_import(selenium, user, storage_import_configuration)
     button = "Save configuration"
-    notify_type = AlertPopupType.ALERT_INFO
+    notify_type = AlertPopupCssClass.ALERT_INFO
     alert_popup = AlertPopup.CONFIGURATION_SPACE_SUPPORT_CHANGED
     wt_clicks_on_button_in_space_record(selenium, user, button)
     notify_visible_with_text(selenium, user, notify_type, alert_popup)
@@ -280,7 +277,7 @@ def revoke_space_support_in_op_panel_using_gui(
 
     # TODO: change after space support revoke fixes in 21.02 (VFS-6383)
     # button = "Cease support"
-    # notify_type = AlertPopupType.ALERT_INFO
+    # notify_type = AlertPopupCssClass.ALERT_INFO
     # alert_popup = AlertPopup.CEASED_SUPPORT
     # wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
     # wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)

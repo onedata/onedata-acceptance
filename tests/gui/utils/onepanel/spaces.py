@@ -6,13 +6,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
-from typing import Protocol, cast
+from typing import cast
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
+from tests.gui.type_definitions import Checkable
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import (
@@ -36,10 +37,6 @@ DEFAULT_IMPORT_STRATEGY_CONFIG = {
     "Continuous scan": "true",
     "Scan interval [s]": "60",
 }
-
-
-class Checkable(Protocol):
-    def is_checked(self) -> bool: ...
 
 
 class StorageImportConfiguration(PageObject):

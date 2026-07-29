@@ -15,13 +15,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label
-from tests.gui.utils.generic import AlertPopupType
+
+from .generic import AlertPopupCssClass
 
 
 class AlertInfoPopup(PageObject):
-    popup_type: AlertPopupType
+    popup_type: AlertPopupCssClass
 
-    def _get_popup_type(self) -> AlertPopupType:
+    def _get_popup_type(self) -> AlertPopupCssClass:
         def get_element_classes_when_visible() -> list[str] | None:
             return (
                 self.web_elem.get_attribute("class").split()
@@ -39,7 +40,7 @@ class AlertInfoPopup(PageObject):
             ],
         ).until(lambda _: get_element_classes_when_visible())
 
-        for popup_type in AlertPopupType:
+        for popup_type in AlertPopupCssClass:
             if popup_type.value in css_classes:
                 return popup_type
         raise RuntimeError(f"Unknown alert popup type in {self}")

@@ -15,7 +15,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks "Providers" of "space1" space in the sidebar
     And user of browser1 clicks Add support button on providers page
-    And user of browser1 clicks Copy button on Add support page
+    And user of browser1 clicks "Copy" button on Add support page
     And user of browser1 sends copied token to user of <client>
 
     # support space
@@ -28,7 +28,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of <client> types received token to Support token field in support space form in Onepanel
     And user of <client> types "1" to Size input field in support space form in Onepanel
     And user of <client> selects GiB radio button in support space form in Onepanel
-    And user of <client> clicks on Support space button in support space form in Onepanel
+    And user of <client> clicks on "Support space" button in support space form in Onepanel
     And user of <client> sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     # confirm support of space

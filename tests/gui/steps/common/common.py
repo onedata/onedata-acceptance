@@ -9,7 +9,7 @@ import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
 from functools import partial
-from typing import Any, Protocol, cast
+from typing import Any, cast
 
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
@@ -23,6 +23,7 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.type_definitions import Clickable, VisibleItem
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
@@ -31,11 +32,13 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
-from tests.gui.utils.generic import (
-    ALERT_INFO_POPUPS,
-    DEFAULT_POPUPS,
-    SUCCESS_POPUPS,
+from tests.gui.utils.common.popups.generic import (
+    ALERT_INFO_CSS_POPUPS,
+    DEFAULT_CSS_POPUPS,
+    SUCCESS_CSS_POPUPS,
     AlertPopup,
+)
+from tests.gui.utils.generic import (
     ListElement,
     transform,
 )
@@ -45,33 +48,10 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-class Checkable(Protocol):
-    def is_checked(self) -> bool: ...
-
-
-class Clickable(Protocol):
-    def click(self) -> None: ...
-
-
-class ScrollableColumns(Protocol):
-    def get_visible_rows_of_columns(
-        self, column_names: list[str]
-    ) -> dict[str, list[str]]: ...
-
-    def scroll_by_press_space(self) -> None: ...
-
-
-class VisibleItem(Protocol):
-    name: str
-    web_elem: WebElement
-
-    def __getattr__(self, name: str) -> Any: ...
-
-
 def get_alert_css_selector(alert_popup: AlertPopup) -> str:
-    if alert_popup in ALERT_INFO_POPUPS:
+    if alert_popup in ALERT_INFO_CSS_POPUPS:
         return ".alert-info"
-    if alert_popup in SUCCESS_POPUPS or alert_popup in DEFAULT_POPUPS:
+    if alert_popup in SUCCESS_CSS_POPUPS or alert_popup in DEFAULT_CSS_POPUPS:
         return ".ember-notify-cn"
 
     raise ValueError(f"Unsupported alert popup: {alert_popup}")
@@ -297,7 +277,7 @@ def wait_for_error_modal_to_disappear(driver: WebDriver) -> bool:
     def get_error_modal_close_button(current_driver: WebDriver) -> Clickable:
         return Modals(current_driver).error.close
 
-    return wait_till_popup_or_modal_disappear(
+    return wait_till_alert_popup_or_error_modal_disappear(
         driver,
         ".alert-global.modal.in .modal-dialog",
         get_error_modal_close_button,
@@ -350,7 +330,7 @@ def click_close_button_and_wait_to_disappear(
     return True
 
 
-def wait_till_popup_or_modal_disappear(
+def wait_till_alert_popup_or_error_modal_disappear(
     driver: WebDriver,
     web_elem_or_selector: WebElement | str,
     get_close_button: Callable[[WebDriver], Clickable],
@@ -382,7 +362,7 @@ def wait_till_popup_or_modal_disappear(
     return True
 
 
-def wait_till_alert_info_popup_disappear(
+def close_alert_popup_if_present(
     driver: WebDriver,
     popup: AlertPopup,
 ) -> bool:
@@ -398,7 +378,7 @@ def wait_till_alert_info_popup_disappear(
 
     get_close_button = partial(get_alert_popup_close_button_fun, alert_popup=popup)
 
-    return wait_till_popup_or_modal_disappear(
+    return wait_till_alert_popup_or_error_modal_disappear(
         driver,
         css_sel,
         get_close_button,

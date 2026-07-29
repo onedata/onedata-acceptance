@@ -1,4 +1,7 @@
-"""Developer utilities for debugging GUI tests."""
+"""Development-only utilities for debugging GUI tests.
+
+This module must not be imported or used in production code.
+"""
 
 __author__ = "Mateusz Zajac Jakub Karczewski"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"

@@ -12,7 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
-from tests.gui.steps.common.common import VisibleItem, get_visible_items_list
+from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -60,12 +60,11 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
-from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory, VisibleItem
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    AlertPopup,
-    AlertPopupType,
     ListElement,
     parse_elements_sequence,
 )
@@ -75,7 +74,7 @@ from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
-@wt(parsers.parse("user of {browser_id} clicks Copy button on Add support page"))
+@wt(parsers.parse('user of {browser_id} clicks "Copy" button on Add support page'))
 def copy_support_token_from_add_support_page(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -89,7 +88,7 @@ def copy_support_token_from_add_support_page(
     notify_visible_with_text(
         selenium,
         browser_id,
-        AlertPopupType.ALERT_INFO,
+        AlertPopupCssClass.ALERT_INFO,
         AlertPopup.SUCCESSFULLY_COPIED,
     )
 
@@ -247,7 +246,7 @@ def remove_provider_support_for_space_in_oz_using_gui(
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user)
     wt_clicks_on_btn_in_cease_support_modal(selenium, user, confirmation_button)
     notify_visible_with_text(
-        selenium, user, AlertPopupType.ALERT_INFO, AlertPopup.CEASED_SUPPORT
+        selenium, user, AlertPopupCssClass.ALERT_INFO, AlertPopup.CEASED_SUPPORT
     )
 
 
@@ -306,7 +305,7 @@ def request_space_support_using_gui(
     notify_visible_with_text(
         selenium,
         user,
-        AlertPopupType.ALERT_INFO,
+        AlertPopupCssClass.ALERT_INFO,
         AlertPopup.SUCCESSFULLY_COPIED,
     )
     send_copied_item_to_other_users(
