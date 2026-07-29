@@ -53,7 +53,7 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
-from tests.gui.utils.generic import wait_for_web_elem_by_handler_and_return_it
+from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
@@ -69,7 +69,7 @@ from tests.utils.utils import repeat_failed
 )
 def support_space_using_form(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    support_space_btn = wait_for_web_elem_by_handler_and_return_it(
+    support_space_btn = wait_for_visible_element_using_getter(
         driver, lambda driver: Onepanel(driver).content.spaces.form.support_space
     )
     click_on_btn_in_space_support_form(selenium, browser_id)

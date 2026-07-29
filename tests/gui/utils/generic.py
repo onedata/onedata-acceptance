@@ -17,7 +17,9 @@ from time import sleep
 from typing import Literal, Optional, TypeVar, cast, overload
 
 from selenium.common.exceptions import (
+    ElementNotInteractableException,
     NoSuchElementException,
+    StaleElementReferenceException,
 )
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -256,24 +258,47 @@ def is_element_with_selector_visible_on_page(
         return False
 
 
-def wait_for_web_elem_by_handler_and_return_it(
+def wait_for_visible_element_using_getter(
     driver: WebDriver,
-    web_elem_handler: Callable[[WebDriver], WebElement],
+    web_elem_getter: Callable[[WebDriver], WebElement],
     timeout: float = WAIT_FRONTEND,
 ) -> WebElement:
+    # Wait until the getter returns a visible element.
+    # RuntimeError raised by the getter is treated as a transient lookup failure.
 
-    def is_element_visible_by_handler(
-        driver: WebDriver, web_elem_handler: Callable[[WebDriver], WebElement]
+    def is_element_visible_by_getter(
+        driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
     ) -> WebElement | None:
         try:
-            web_elem = web_elem_handler(driver)
-            return web_elem if visibility_of(web_elem) else None
+            web_elem = web_elem_getter(driver)
+            return web_elem if visibility_of(web_elem)(driver) else None
         except RuntimeError:
             return None
 
     return WebDriverWait(driver, timeout=timeout).until(
-        partial(is_element_visible_by_handler, web_elem_handler=web_elem_handler)
+        partial(is_element_visible_by_getter, web_elem_getterr=web_elem_getter)
     )
+
+
+def get_element_css_classes_when_visible(
+    driver: WebDriver, web_elem: WebElement, timeout: float = WAIT_FRONTEND // 4
+) -> list[str]:
+    def get_element_classes(driver: WebDriver) -> list[str] | None:
+        return (
+            web_elem.get_attribute("class").split()
+            if visibility_of(web_elem)(driver)
+            else None
+        )
+
+    return WebDriverWait(
+        driver,
+        timeout=timeout,
+        poll_frequency=0.05,
+        ignored_exceptions=[
+            ElementNotInteractableException,
+            StaleElementReferenceException,
+        ],
+    ).until(lambda driver: get_element_classes(driver))
 
 
 def find_web_elem(

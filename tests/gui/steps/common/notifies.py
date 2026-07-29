@@ -38,6 +38,28 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+def capture_matching_popup(
+    driver: WebDriver,
+    seen_popups: set[tuple[str, WebElement, AlertPopupCssClass]],
+    regexp: str,
+    notify_type: AlertPopupCssClass,
+) -> bool:
+    detected_popups: list[AlertInfoPopup] = Popups(driver).get_all_alert_popups()
+    for popup in detected_popups:
+        try:
+            web_elem = popup.web_elem
+            if web_elem.is_displayed():
+                seen_popups.add((popup.message, web_elem, popup.popup_type))
+        except (NoSuchElementException, StaleElementReferenceException):
+            continue
+
+    for message, _, popup_type in seen_popups:
+        if regexp.match(message) and notify_type == popup_type:
+            return True
+
+    return False
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} sees the "{alert_popup:AlertPopup}" '
@@ -56,32 +78,18 @@ def notify_visible_with_text(
 ) -> None:
     driver = selenium[browser_id]
     text_regexp = alert_popup.value
-    regexp = re.compile(text_regexp)
 
     # for each popup store message, web_elem and classified popup type for future use
     seen_popups: set[tuple[str, WebElement, AlertPopupCssClass]] = set()
 
-    def capture_matching_popup(
-        driver: WebDriver,
-    ) -> bool:
-        detected_popups: list[AlertInfoPopup] = Popups(driver).get_all_alert_popups()
-        for popup in detected_popups:
-            try:
-                web_elem = popup.web_elem
-                if web_elem.is_displayed():
-                    seen_popups.add((popup.message, web_elem, popup.popup_type))
-            except (NoSuchElementException, StaleElementReferenceException):
-                continue
-
-        for message, _, popup_type in seen_popups:
-            if regexp.match(message) and notify_type == popup_type:
-                return True
-
-        return False
-
     try:
         WebDriverWait(driver, 2 * WAIT_BACKEND, poll_frequency=0.1).until(
-            capture_matching_popup
+            partial(
+                capture_matching_popup,
+                seen_popups=seen_popups,
+                regexp=re.compile(text_regexp),
+                notify_type=notify_type,
+            )
         )
 
     except TimeoutException as exc:

@@ -47,7 +47,7 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
 from tests.gui.utils.generic import (
     OnedataService,
-    wait_for_web_elem_by_handler_and_return_it,
+    wait_for_visible_element_using_getter,
 )
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -65,7 +65,7 @@ def succeed_to_save_changes_in_modify_provider_detail_form(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    save_btn = wait_for_web_elem_by_handler_and_return_it(
+    save_btn = wait_for_visible_element_using_getter(
         driver, lambda driver: Onepanel(driver).content.provider.form.save
     )
     save_btn.click()

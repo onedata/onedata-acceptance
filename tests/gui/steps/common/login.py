@@ -21,7 +21,7 @@ from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
     transform,
-    wait_for_web_elem_by_handler_and_return_it,
+    wait_for_visible_element_using_getter,
 )
 from tests.gui.utils.onezone import OZLoggedIn
 from tests.type_definitions import SeleniumDrivers
@@ -172,7 +172,7 @@ def wt_assert_successful_login(
     selenium: SeleniumDrivers, browser_id: str, service: str
 ) -> None:
     driver = selenium[browser_id]
-    sign_in = wait_for_web_elem_by_handler_and_return_it(
+    sign_in = wait_for_visible_element_using_getter(
         driver, lambda driver: LoginPage(driver).sign_in
     )
     sign_in.click()
@@ -191,7 +191,7 @@ def wt_assert_failed_login_credentials(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    sign_in = wait_for_web_elem_by_handler_and_return_it(
+    sign_in = wait_for_visible_element_using_getter(
         driver, lambda driver: LoginPage(driver).sign_in
     )
     sign_in.click()
