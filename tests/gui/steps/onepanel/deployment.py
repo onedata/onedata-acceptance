@@ -26,7 +26,7 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    is_element_visible_on_page,
+    is_element_with_selector_visible_on_page,
     parse_elements_sequence,
     transform,
 )
@@ -222,13 +222,13 @@ def _check_error_modal_appeared_or_registration_finished(
     error_modal_css_selector = ".alert-global.modal.in .modal-dialog"
     sidebar_css_selector = ".one-sidebar.sidebar-clusters"
 
-    if is_element_visible_on_page(
+    if is_element_with_selector_visible_on_page(
         driver, error_modal_css_selector
     ):  # error modal appeared
         wait_for_error_modal_to_disappear(driver)
         return False
 
-    if is_element_visible_on_page(
+    if is_element_with_selector_visible_on_page(
         driver, sidebar_css_selector
     ):  # sidebar is visible, it means we closed deployment page
         return True

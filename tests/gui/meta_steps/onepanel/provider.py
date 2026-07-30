@@ -12,6 +12,7 @@ import time
 import yaml
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.onepanel.common import (
@@ -30,8 +31,11 @@ from tests.gui.steps.onepanel.provider import (
     deactivate_request_subdomain_toggle,
     wt_assert_value_of_provider_attribute,
     wt_click_on_discard_btn_in_domain_change_modal,
-    wt_save_changes_in_modify_provider_detail_form,
     wt_type_val_to_in_box_in_provider_details_form,
+)
+from tests.gui.steps.oneprovider.common import (
+    wait_for_item_to_appear,
+    wait_for_item_to_disappear,
 )
 from tests.gui.steps.rest.provider import (
     add_provider_service_node,
@@ -40,11 +44,53 @@ from tests.gui.steps.rest.provider import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
-from tests.gui.utils.generic import OnedataService
+from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.generic import (
+    OnedataService,
+    wait_for_visible_element_using_getter,
+)
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} succeeds to save changes in provider details form in"
+        " Provider panel"
+    )
+)
+def succeed_to_save_changes_in_modify_provider_detail_form(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    save_btn = wait_for_visible_element_using_getter(
+        driver, lambda driver: Onepanel(driver).content.provider.form.save
+    )
+    save_btn.click()
+    wait_for_item_to_disappear(save_btn.web_elem, driver)
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.PROVIDER_DATA_MODIFIED,
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} fails to save changes in provider details form in"
+        " Provider panel"
+    )
+)
+def fail_to_save_changes_in_modify_provider_detail_form(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    save_btn = Onepanel(driver).content.provider.form.save
+    wait_for_item_to_appear(save_btn.web_elem)
+    save_btn.click()
+    wait_for_error_modal_to_appear(driver, timeout=WAIT_FRONTEND)
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(
@@ -61,8 +107,6 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     content = "provider"
     prov_name_attr = "Provider name"
     red_point_attr = "Domain"
-    notify_type = "info"
-    notify_text_regexp = ".*[Pp]rovider.*data.*modified.*"
 
     wt_click_on_subitem_for_item_with_name(
         selenium, [user], sidebar, sub_item, provider_name
@@ -75,8 +119,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     wt_type_val_to_in_box_in_provider_details_form(
         selenium, user, new_domain, red_point_attr
     )
-    wt_save_changes_in_modify_provider_detail_form(selenium, user)
-    notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+    succeed_to_save_changes_in_modify_provider_detail_form(selenium, user)
     wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id)
     wt_assert_value_of_provider_attribute(
         selenium, user, prov_name_attr, new_provider_name
@@ -107,7 +150,9 @@ def deregister_provider_in_op_panel_using_gui(
     wt_click_on_btn_in_content(selenium, [browser_id], "Deregister provider", content)
     wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup)
     notify_visible_with_text(
-        selenium, browser_id, "info", ".*[Pp]rovider.*deregistered.*"
+        selenium,
+        browser_id,
+        AlertPopup.PROVIDER_DEREGISTERED,
     )
 
 

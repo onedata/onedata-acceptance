@@ -9,19 +9,29 @@ import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
 from functools import partial
-from typing import Any, Protocol, cast
+from typing import Any, cast
 
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import (
+    StaleElementReferenceException,
+    TimeoutException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import (
-    invisibility_of_element_located,
+    invisibility_of_element,
     visibility_of_element_located,
 )
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.type_definitions import (
+    Clickable,
+    NamedElement,
+    VisibilityCondition,
+    WebElementOrCssLocator,
+    WebElementOrSelector,
+)
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
@@ -30,45 +40,17 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
-from tests.gui.utils.core.web_objects import ButtonPageObject
-from tests.gui.utils.generic import AlertPopup, ListElement, transform
+from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.generic import (
+    ListElement,
+    get_visibility_condition,
+    get_web_elem_or_locator,
+    transform,
+)
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.generic_page import GenericPage
-from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-
-
-class Checkable(Protocol):
-    def is_checked(self) -> bool: ...
-
-
-class ScrollableColumns(Protocol):
-    def get_visible_rows_of_columns(
-        self, column_names: list[str]
-    ) -> dict[str, list[str]]: ...
-
-    def scroll_by_press_space(self) -> None: ...
-
-
-class VisibleItem(Protocol):
-    name: str
-    web_elem: WebElement
-
-    def __getattr__(self, name: str) -> Any: ...
-
-
-def get_alert_css_selector(alert_popup: AlertPopup) -> str:
-    match alert_popup:
-        case AlertPopup.TOKEN_CREATED | AlertPopup.SUCCESSFULLY_JOINED:
-            return ".ember-notify-cn"
-        case (
-            AlertPopup.AUTHENTICATION_SUCCEEDED | AlertPopup.STORAGE_IMPORT_SCAN_STARTED
-        ):
-            return ".alert-info"
-
-        case _:
-            raise ValueError(f"Unsupported alert popup: {alert_popup}")
 
 
 def assert_n_items_in_items_list(
@@ -107,16 +89,16 @@ def assert_n_items_in_items_list(
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_visible_items_list(
     page: GenericPage | Browser, items_type: ListElement, main_field: str = "name"
-) -> Sequence[VisibleItem]:
+) -> Sequence[NamedElement]:
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
     if isinstance(page, Browser):
         return cast(
-            Sequence[VisibleItem],
+            Sequence[NamedElement],
             page.get_visible_file_rows(elements_list, main_field),
         )
     return cast(
-        Sequence[VisibleItem],
+        Sequence[NamedElement],
         page.get_visible_elements_list(elements_list, main_field),
     )
 
@@ -285,14 +267,16 @@ def wait_for_sliding_panel_to_stop_moving(
     )
 
 
-def wait_for_error_modal_to_disappear(driver: SeleniumDrivers) -> bool:
+def wait_for_error_modal_to_disappear(driver: WebDriver) -> bool:
     """Close the error modal and return whether it appeared."""
 
-    def error_modal_close_button_fun(driver: SeleniumDrivers) -> ButtonPageObject:
-        return Modals(driver).error.close
+    def get_error_modal_close_button(current_driver: WebDriver) -> Clickable:
+        return Modals(current_driver).error.close
 
-    return wait_till_popup_or_modal_disappear(
-        driver, ".alert-global.modal.in .modal-dialog", error_modal_close_button_fun
+    return wait_till_alert_popup_or_error_modal_disappear(
+        driver,
+        ".alert-global.modal.in .modal-dialog",
+        get_error_modal_close_button,
     )
 
 
@@ -326,41 +310,68 @@ def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
     )
 
 
-def wait_till_popup_or_modal_disappear(
+def click_close_button_and_wait_to_disappear(
     driver: WebDriver,
-    css_selector: str,
-    btn_handler: Callable[[WebDriver], ButtonPageObject],
+    web_elem_or_locator: WebElementOrCssLocator,
+    get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    if not wait_for_element_to_appear(driver, css_selector, timeout=WAIT_FRONTEND):
-        return False
-
     try_click_without_throwing_error(
-        lambda: btn_handler(driver).click()  # pylint: disable=unnecessary-lambda
+        lambda: get_close_button(driver).click()  # pylint: disable=unnecessary-lambda
     )
 
     WebDriverWait(driver, WAIT_FRONTEND).until(
-        invisibility_of_element_located((By.CSS_SELECTOR, css_selector)),
-        message="Error modal is still visible",
+        invisibility_of_element(web_elem_or_locator),
+        message="Popup or modal is still visible",
     )
     return True
 
 
-def wait_till_alert_info_popup_disappear(
+def wait_till_alert_popup_or_error_modal_disappear(
     driver: WebDriver,
-    alert_popup: AlertPopup,
+    web_elem_or_selector: WebElementOrSelector,
+    get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
+    web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(
+        web_elem_or_selector
+    )
+    visibility_condition: VisibilityCondition = get_visibility_condition(
+        web_elem_or_locator
+    )
+    try:
+        # selenium function visibility_of does not ignore StaleElementReferenceException
+        WebDriverWait(
+            driver, WAIT_FRONTEND, ignored_exceptions=[StaleElementReferenceException]
+        ).until(visibility_condition)
+    except TimeoutException:
+        return False
+
+    click_close_button_and_wait_to_disappear(
+        driver,
+        web_elem_or_locator,
+        get_close_button,
+    )
+    return True
+
+
+def close_alert_popup_if_present(
+    driver: WebDriver,
+    popup: AlertPopup,
+) -> bool:
+    # Close an alert identified by its enum value.
     # If popup doesn't appear, don't throw an error.
     # If it appeared and was not closed, raise.
-    css_selector = get_alert_css_selector(alert_popup)
-
-    def alert_popup_close_button_fun(
-        driver: WebDriver,
-        alert_popup: AlertPopup,
-    ) -> ButtonPageObject:
+    def get_alert_popup_close_button_fun(
+        driver: WebDriver, alert_popup: AlertPopup
+    ) -> Clickable:
         return Popups(driver).get_alert_popup(alert_popup).close
 
-    partial_close_alert = partial(alert_popup_close_button_fun, alert_popup=alert_popup)
-    return wait_till_popup_or_modal_disappear(driver, css_selector, partial_close_alert)
+    get_close_button = partial(get_alert_popup_close_button_fun, alert_popup=popup)
+
+    return wait_till_alert_popup_or_error_modal_disappear(
+        driver,
+        popup.css_sel,
+        get_close_button,
+    )
 
 
 def parse_size(size: str) -> float:

@@ -15,8 +15,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks "Providers" of "space1" space in the sidebar
     And user of browser1 clicks Add support button on providers page
-    And user of browser1 clicks Copy button on Add support page
-    And user of browser1 sees an info notify with text matching to: .*copied.*
+    And user of browser1 clicks "Copy" button on Add support page
     And user of browser1 sends copied token to user of <client>
 
     # support space
@@ -29,8 +28,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of <client> types received token to Support token field in support space form in Onepanel
     And user of <client> types "1" to Size input field in support space form in Onepanel
     And user of <client> selects GiB radio button in support space form in Onepanel
-    And user of <client> clicks on Support space button in support space form in Onepanel
-    And user of <client> sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+    And user of <client> clicks on "Support space" button in support space form in Onepanel
     And user of <client> sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     # confirm support of space
@@ -67,7 +65,7 @@ Feature: Basic spaces management utilities using onepanel
 #    And user of <client> clicks on Revoke space support option in space's toolbar in Onepanel
 #    And user of <client> checks the understand notice in cease oneprovider support for space modal in Onepanel
 #    And user of <client> clicks on Cease support button in cease oneprovider support for space modal in Onepanel
-#    And user of <client> sees an info notify with text matching to: Ceased.*[Ss]upport.*
+#    And user of <client> sees the "ceased support" notify
 #
 #    # confirm lack of support for space
 #    Then user of browser1 clicks "space1" on the spaces list in the sidebar
@@ -105,4 +103,3 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
     And user of browser1 removes space using delete space modal invoked from provided link
     Then user of browser1 sees that "space1" has disappeared on the spaces list in the sidebar
-

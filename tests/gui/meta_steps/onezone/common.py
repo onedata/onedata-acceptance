@@ -16,9 +16,9 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
 from tests.gui.steps.common.login import (
     login_using_basic_auth,
+    press_sign_in_btn_on_login_page,
     wt_enter_password_of_user,
     wt_enter_text_to_field_in_login_form,
-    wt_press_sign_in_btn_on_login_page,
 )
 from tests.gui.steps.common.url import (
     HOSTS_SEQUENCE_PATTERN,
@@ -389,4 +389,4 @@ def wt_sign_in_to_onezone_without_closing_auth_info_alert(
 ) -> None:
     wt_enter_text_to_field_in_login_form(selenium, browser_id, "Username", username)
     wt_enter_password_of_user(selenium, browser_id, username, users)
-    wt_press_sign_in_btn_on_login_page(selenium, browser_id)
+    press_sign_in_btn_on_login_page(selenium, browser_id)

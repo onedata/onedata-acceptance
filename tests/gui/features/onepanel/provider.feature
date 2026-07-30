@@ -33,8 +33,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency clicks on Edit settings button in provider page in Onepanel
     And user of browser_emergency types "pro1" to Provider name input box in modify provider details form in Provider panel
     And user of browser_emergency types test hostname of "oneprovider-1" to Domain input box in modify provider details form in Provider panel
-    And user of browser_emergency saves changes in provider details form in Provider panel
-    And user of browser_emergency sees an info notify with text matching to: .*[Pp]rovider.*data.*modified.*
+    And user of browser_emergency succeeds to save changes in provider details form in Provider panel
     And user of browser_emergency clicks on Discard button in the configure web cert modal
     And user of browser_emergency sees that Provider name attribute is equal to "pro1" in Provider panel
     And user of browser_emergency sees that Domain attribute is equal to test hostname of "oneprovider-1" in Provider panel
@@ -53,8 +52,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency clicks on Edit settings button in provider page in Onepanel
     And user of browser_emergency types name of "oneprovider-1" provider to Provider name input box in modify provider details form in Provider panel
     And user of browser_emergency types hostname of "oneprovider-1" provider to Domain input box in modify provider details form in Provider panel
-    And user of browser_emergency saves changes in provider details form in Provider panel
-    And user of browser_emergency sees an info notify with text matching to: .*[Pp]rovider.*data.*modified.*
+    And user of browser_emergency succeeds to save changes in provider details form in Provider panel
     And user of browser_emergency is idle for 2 seconds
 
 

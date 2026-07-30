@@ -16,7 +16,6 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.generic import AlertPopup
 from tests.utils.utils import repeat_failed
 
 from .alert_info_popup import AlertInfoPopup
@@ -30,6 +29,7 @@ from .data_distribution_popup import DataDistributionPopup
 from .data_row_menu import DataRowMenu
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .deregister_provider import DeregisterProvider
+from .generic import AlertPopup
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .handle_service import HandleService
 from .info import Info
@@ -147,6 +147,12 @@ class Popups:
     alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
     notify_popups = WebItemsSequence(".ember-notify-cn", cls=AlertInfoPopup)
 
+    def get_all_alert_popups(self) -> list[AlertInfoPopup]:
+        return [
+            *self.alert_info_popups,
+            *self.notify_popups,
+        ]
+
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
@@ -154,14 +160,14 @@ class Popups:
         return "popups"
 
     def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
-        regexp = re.compile(alert_popup.value)
+        regexp = re.compile(alert_popup.message)
         # check both types of popups
-        for popups in (self.alert_info_popups, self.notify_popups):
-            for popup_val in popups:
+        for notifies in (self.alert_info_popups, self.notify_popups):
+            for popup_val in notifies:
                 message = popup_val.message
                 if regexp.match(message):
-                    return popups[message]
-        raise RuntimeError(f'No alert popup with message "{alert_popup.value}"')
+                    return notifies[message]
+        raise RuntimeError(f'No alert popup with message "{alert_popup.message}"')
 
     def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0

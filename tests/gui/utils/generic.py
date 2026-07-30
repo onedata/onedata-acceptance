@@ -11,19 +11,34 @@ import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from enum import Enum
+from functools import partial
 from itertools import islice
 from time import sleep
 from typing import Literal, Optional, TypeVar, cast, overload
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.expected_conditions import visibility_of_element_located
+from selenium.webdriver.support.expected_conditions import (
+    visibility_of,
+    visibility_of_element_located,
+)
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
-from tests.gui.type_definitions import WebElemRoot
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.type_definitions import (
+    VisibilityCondition,
+    WebElementOrCssLocator,
+    WebElementOrSelector,
+    WebElemRoot,
+)
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
@@ -237,13 +252,83 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
         yield item, next_item
 
 
-def is_element_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
+def is_element_with_selector_visible_on_page(
+    driver: WebDriver, css_selector: str
+) -> bool:
     try:
         return bool(
             visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
         )
     except NoSuchElementException:
         return False
+
+
+def get_web_elem_or_locator(
+    web_elem_or_selector: WebElementOrSelector,
+) -> WebElementOrCssLocator:
+    match web_elem_or_selector:
+        case WebElement():
+            return web_elem_or_selector
+        case str():
+            return By.CSS_SELECTOR, web_elem_or_selector
+    raise TypeError(f"Unsupported element or selector: {web_elem_or_selector!r}")
+
+
+def get_visibility_condition(
+    web_elem_or_locator: WebElementOrCssLocator,
+) -> VisibilityCondition:
+    match web_elem_or_locator:
+        case WebElement() as element:
+            return visibility_of(element)
+
+        case (By.CSS_SELECTOR, str()) as locator:
+            return visibility_of_element_located(locator)
+
+        case unsupported:
+            raise TypeError(f"Unsupported element or locator: {unsupported!r}")
+
+
+def wait_for_visible_element_using_getter(
+    driver: WebDriver,
+    web_elem_getter: Callable[[WebDriver], WebElement],
+    timeout: float = WAIT_FRONTEND,
+) -> WebElement:
+    # Wait until the getter returns a visible element.
+    # RuntimeError raised by the getter is treated as a transient lookup failure.
+
+    def is_element_visible_using_getter(
+        driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
+    ) -> WebElement | None:
+        try:
+            web_elem = web_elem_getter(driver)
+            return web_elem if visibility_of(web_elem)(driver) else None
+        except RuntimeError:
+            return None
+
+    return WebDriverWait(driver, timeout=timeout).until(
+        partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
+    )
+
+
+def get_element_css_classes_when_visible(
+    driver: WebDriver, web_elem: WebElement, timeout: float = WAIT_FRONTEND // 4
+) -> list[str]:
+    def get_element_classes(driver: WebDriver) -> list[str] | None:
+        return (
+            web_elem.get_attribute("class").split()
+            if visibility_of(web_elem)(driver)
+            else None
+        )
+
+    return WebDriverWait(
+        driver,
+        timeout=timeout,
+        poll_frequency=0.05,
+        ignored_exceptions=[
+            ElementNotInteractableException,
+            StaleElementReferenceException,
+        ],
+    ).until(get_element_classes)
 
 
 def find_web_elem(
@@ -473,13 +558,6 @@ class ListElement(Enum):
     AUTOMATIONS = "automations"
     LAMBDAS = "lambdas"
     WORKFLOWS = "workflows"
-
-
-class AlertPopup(Enum):
-    AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
-    STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"
-    TOKEN_CREATED = "Token has been created successfully."
-    SUCCESSFULLY_JOINED = r".*joined.*"
 
 
 PageName = Literal[

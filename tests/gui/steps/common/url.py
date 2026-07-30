@@ -15,11 +15,11 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import wait_till_alert_info_popup_disappear
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    AlertPopup,
     HostPattern,
     parse_elements_sequence,
     parse_seq,
@@ -354,9 +354,7 @@ def refresh_site_and_wait(
 def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     wait_till_main_content_loaded(driver)
-    wait_till_alert_info_popup_disappear(
-        driver, alert_popup=AlertPopup.AUTHENTICATION_SUCCEEDED
-    )
+    close_alert_popup_if_present(driver, popup=AlertPopup.AUTHENTICATION_SUCCEEDED)
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)

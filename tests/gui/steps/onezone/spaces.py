@@ -812,7 +812,6 @@ def remove_harvester_from_harvesters_list(
     Modals(driver).remove_modal.remove()
 
 
-@wt(parsers.parse("user of {browser_id} clicks Copy button on Add support page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_button_on_request_support_page(
     selenium: SeleniumDrivers,

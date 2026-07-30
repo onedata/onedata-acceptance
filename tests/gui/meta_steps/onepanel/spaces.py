@@ -16,10 +16,12 @@ from tests.gui.steps.common.miscellaneous import (
     wait_until_scanning_is_finished_in_storage_import_tab,
 )
 from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import (
     click_change_quota_button,
+    click_on_btn_in_space_support_form,
     click_on_navigation_tab_in_space,
     click_start_scan_button_in_storage_import_tab,
     confirm_quota_value_change,
@@ -28,7 +30,6 @@ from tests.gui.steps.onepanel.spaces import (
     type_value_to_quota_input,
     wt_assert_correct_supported_space_opened,
     wt_assert_proper_space_configuration_in_panel,
-    wt_click_on_btn_in_space_support_form,
     wt_click_on_support_space_btn_on_condition,
     wt_clicks_on_btn_in_cease_support_modal,
     wt_clicks_on_btn_in_space_toolbar_in_panel,
@@ -47,15 +48,38 @@ from tests.gui.steps.onepanel.spaces import (
     wt_type_text_to_input_box_in_space_support_form,
     wt_type_text_to_input_box_in_storage_import_configuration,
 )
+from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
+from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.+?) clicks on "Support space" '
+        r"button in support space form in Onepanel"
+    )
+)
+def support_space_using_form(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    support_space_btn = wait_for_visible_element_using_getter(
+        driver, lambda driver: Onepanel(driver).content.spaces.form.support_space
+    )
+    click_on_btn_in_space_support_form(selenium, browser_id)
+    wait_for_item_to_disappear(support_space_btn.web_elem, driver)
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.ADDED_SPACE_SUPPORT,
+    )
 
 
 @wt(
@@ -105,14 +129,12 @@ def result_to_support_space_in_op_panel_using_gui(
     provider_name: str,
     hosts: Hosts,
 ) -> None:
-    notify_type = "info"
-    notify_text_regexp = ".*[Aa]dded.*support.*space.*"
-
     _support_space_in_op_panel_using_gui(
         selenium, user, config, tmp_memory, provider_name, hosts
     )
     if result == "succeeds":
-        notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+        wait_till_main_content_loaded(selenium[user])
+        notify_visible_with_text(selenium, user, AlertPopup.ADDED_SPACE_SUPPORT)
         wt_assert_correct_supported_space_opened(selenium, user, space_name)
     else:
         text = "Space supporting failed"
@@ -208,7 +230,7 @@ def _support_space_in_op_panel_using_gui(
                 selenium, user, storage_import_configuration
             )
 
-    wt_click_on_btn_in_space_support_form(selenium, user)
+    click_on_btn_in_space_support_form(selenium, user)
 
 
 @wt(
@@ -223,10 +245,9 @@ def configure_auto_storage_import_in_storage_import_tab(
     storage_import_configuration = yaml.load(config, yaml.Loader)
     _handle_configure_auto_storage_import(selenium, user, storage_import_configuration)
     button = "Save configuration"
-    notify_type = "info"
-    text_regexp = ".*[Cc]onfiguration.*space.*support.*changed.*"
+    alert_popup = AlertPopup.CONFIGURATION_SPACE_SUPPORT_CHANGED
     wt_clicks_on_button_in_space_record(selenium, user, button)
-    notify_visible_with_text(selenium, user, notify_type, text_regexp)
+    notify_visible_with_text(selenium, user, alert_popup)
 
 
 @wt(
@@ -254,11 +275,10 @@ def revoke_space_support_in_op_panel_using_gui(
 
     # TODO: change after space support revoke fixes in 21.02 (VFS-6383)
     # button = "Cease support"
-    # notify_type = "info"
-    # notify_text_regexp = "Ceased.*[Ss]upport.*"
+    # alert_popup = AlertPopup.CEASED_SUPPORT
     # wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
     # wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)
-    # notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+    # notify_visible_with_text(selenium, user, alert_popup)
     remove_space_instead_of_revoke(selenium, user)
 
 

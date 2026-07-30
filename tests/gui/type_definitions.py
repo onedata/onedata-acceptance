@@ -8,21 +8,37 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections import defaultdict, namedtuple
 from collections.abc import Callable
 from os import PathLike
-from typing import Any, Literal, TypedDict
+from typing import Any, Literal, Protocol, TypedDict
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.type_definitions import JsonObject
+
+class Checkable(Protocol):
+    def is_checked(self) -> bool: ...
+
+
+class Clickable(Protocol):
+    def click(self) -> None: ...
+
+
+class NamedElement(Protocol):
+    name: str
+    web_elem: WebElement
+
+    def __getattr__(self, name: str) -> Any: ...
+
 
 type TmpMemory = defaultdict[str, dict[str, Any]]
 
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 type WebElemRoot = WebDriver | WebElement
+type CssLocator = tuple[Literal["css selector"], str]
+type WebElementOrCssLocator = WebElement | CssLocator
+type WebElementOrSelector = WebElement | str
+type VisibilityCondition = Callable[[WebElemRoot], WebElement | Literal[False]]
 
-type LocalDirectoryContent = int | dict[
-    str, "LocalDirectoryContent | dict[str, str]"
-]
+type LocalDirectoryContent = int | dict[str, "LocalDirectoryContent | dict[str, str]"]
 type DataDirectoryContent = list[str | dict[str, "DataDirectoryContent"]]
 
 type TarTree = list[str | dict[str, "TarTree | str | int"]]

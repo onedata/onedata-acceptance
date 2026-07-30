@@ -10,13 +10,13 @@ import time
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     wait_for_sliding_panel_to_stop_moving,
 )
 from tests.gui.steps.common.url import wait_till_main_content_loaded
-from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
@@ -176,23 +176,14 @@ def select_member_from_dropdown(
     Popups(driver).dropdown.options[member_name].click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Create token" button '
-        'in "Create new token" view'
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND * 2)
-def click_create_token_button_in_create_token_page(
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_and_get_create_token_button(
     selenium: SeleniumDrivers, browser_id: str
-) -> None:
+) -> WebElement:
     driver = selenium[browser_id]
-    # prevent clicking when there is ongoing animation
-    time.sleep(0.2)
     create_token_button = OZLoggedIn(driver).tokens.create_token_page.create_token
     create_token_button.click()
-    # ensure clicking at create token succeeded
-    wait_for_item_to_disappear(create_token_button)
+    return create_token_button.web_elem
 
 
 @wt(

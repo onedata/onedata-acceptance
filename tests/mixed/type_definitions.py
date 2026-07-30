@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from collections.abc import Callable, Iterable, Mapping, MutableMapping, Sequence
-from typing import Any, Literal, NotRequired, Optional, Protocol, TypedDict
+from typing import Any, Literal, NotRequired, Optional, TypedDict
 
 from tests.type_definitions import JsonObject, JsonValue
 

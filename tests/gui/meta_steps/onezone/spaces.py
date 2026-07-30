@@ -12,7 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
-from tests.gui.steps.common.common import VisibleItem, get_visible_items_list
+from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -60,8 +60,9 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
-from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, NamedElement, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -71,6 +72,24 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
+
+
+@wt(parsers.parse('user of {browser_id} clicks "Copy" button on Add support page'))
+def copy_support_token_from_add_support_page(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+    tmp_memory: TmpMemory,
+) -> None:
+    click_copy_button_on_request_support_page(
+        selenium, browser_id, displays, clipboard, tmp_memory
+    )
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.SUCCESSFULLY_COPIED,
+    )
 
 
 @wt(
@@ -216,8 +235,6 @@ def remove_provider_support_for_space_in_oz_using_gui(
     record = "Spaces"
     option = "Revoke space support"
     confirmation_button = "Cease support"
-    notify_type = "info"
-    text_regexp = "Ceased.*[Ss]upport.*"
     provider_name = "oneprovider-1"
 
     wt_click_on_subitem_for_item(
@@ -227,7 +244,7 @@ def remove_provider_support_for_space_in_oz_using_gui(
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user)
     wt_clicks_on_btn_in_cease_support_modal(selenium, user, confirmation_button)
-    notify_visible_with_text(selenium, user, notify_type, text_regexp)
+    notify_visible_with_text(selenium, user, AlertPopup.CEASED_SUPPORT)
 
 
 def invite_other_users_to_space_using_gui(
@@ -282,7 +299,11 @@ def request_space_support_using_gui(
     click_copy_button_on_request_support_page(
         selenium, user, displays, clipboard, tmp_memory
     )
-    notify_visible_with_text(selenium, user, "info", ".*copied.*")
+    notify_visible_with_text(
+        selenium,
+        user,
+        AlertPopup.SUCCESSFULLY_COPIED,
+    )
     send_copied_item_to_other_users(
         user, "token", [receiver], tmp_memory, displays, clipboard
     )
@@ -590,7 +611,7 @@ def assert_opened_space(
         page, items_type=ListElement.SPACES, main_field="name"
     )
 
-    def get_opened_spaces_with_name(space_name: str) -> list[VisibleItem]:
+    def get_opened_spaces_with_name(space_name: str) -> list[NamedElement]:
         return [space for space in vis_spaces if space.name == space_name]
 
     WebDriverWait(driver, WAIT_FRONTEND).until(

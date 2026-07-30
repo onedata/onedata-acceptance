@@ -45,8 +45,7 @@ Feature: Storage management using onepanel
     And user of <browser> types received token to Support token field in support space form in Onepanel
     And user of <browser> types "1" to Size input field in support space form in Onepanel
     And user of <browser> selects GiB radio button in support space form in Onepanel
-    And user of <browser> clicks on Support space button in support space form in Onepanel
-    And user of <browser> sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+    And user of <browser> clicks on "Support space" button in support space form in Onepanel
     And user of <browser> sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     # go to provider
@@ -128,7 +127,6 @@ Feature: Storage management using onepanel
             continuous scan: true
             scan interval [s]: 1
 
-    And user of browser_unified sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser_unified sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     And user of browser_unified opens file browser for "space1" space
@@ -180,7 +178,7 @@ Feature: Storage management using onepanel
     And user of browser_unified types received token to Support token field in support space form in Onepanel
     And user of browser_unified types "1" to Size input field in support space form in Onepanel
     And user of browser_unified selects GiB radio button in support space form in Onepanel
-    And user of browser_unified clicks on Support space button in support space form in Onepanel
+    And user of browser_unified clicks on "Support space" button in support space form in Onepanel
     Then user of browser_unified cannot click on Storage import navigation tab in space "space1"
 
 
@@ -205,3 +203,4 @@ Feature: Storage management using onepanel
     And user of browser_unified clicks on Add button in add storage form in storages page in Onepanel
 
     Then user of browser_unified sees 2 storages named "storage" with different IDs on the storages list
+
