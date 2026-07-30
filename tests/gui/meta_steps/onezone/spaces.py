@@ -60,7 +60,7 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
-from tests.gui.type_definitions import Clipboard, TmpMemory, VisibleItem
+from tests.gui.type_definitions import Clipboard, NamedElement, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
 from tests.gui.utils.generic import (
@@ -615,7 +615,7 @@ def assert_opened_space(
         page, items_type=ListElement.SPACES, main_field="name"
     )
 
-    def get_opened_spaces_with_name(space_name: str) -> list[VisibleItem]:
+    def get_opened_spaces_with_name(space_name: str) -> list[NamedElement]:
         return [space for space in vis_spaces if space.name == space_name]
 
     WebDriverWait(driver, WAIT_FRONTEND).until(

@@ -278,13 +278,14 @@ def get_visibility_condition(
     web_elem_or_locator: WebElementOrCssLocator,
 ) -> VisibilityCondition:
     match web_elem_or_locator:
-        case WebElement():
-            return visibility_of(web_elem_or_locator)
-        case tuple() as locator:
-            match locator:
-                case (By.CSS_SELECTOR, str()):
-                    return visibility_of_element_located(locator)
-    raise TypeError(f"Unsupported element or locator: {web_elem_or_locator!r}")
+        case WebElement() as element:
+            return visibility_of(element)
+
+        case (By.CSS_SELECTOR, str()) as locator:
+            return visibility_of_element_located(locator)
+
+        case unsupported:
+            raise TypeError(f"Unsupported element or locator: {unsupported!r}")
 
 
 def wait_for_visible_element_using_getter(
@@ -295,7 +296,7 @@ def wait_for_visible_element_using_getter(
     # Wait until the getter returns a visible element.
     # RuntimeError raised by the getter is treated as a transient lookup failure.
 
-    def is_element_visible_by_getter(
+    def is_element_visible_using_getter(
         driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
     ) -> WebElement | None:
         try:
@@ -305,7 +306,7 @@ def wait_for_visible_element_using_getter(
             return None
 
     return WebDriverWait(driver, timeout=timeout).until(
-        partial(is_element_visible_by_getter, web_elem_getter=web_elem_getter)
+        partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
     )
 
 

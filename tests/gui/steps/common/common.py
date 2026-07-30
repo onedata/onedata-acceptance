@@ -27,8 +27,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import (
     Clickable,
+    NamedElement,
     VisibilityCondition,
-    VisibleItem,
     WebElementOrCssLocator,
     WebElementOrSelector,
 )
@@ -41,9 +41,9 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
     ArchiveRecallInformation,
 )
 from tests.gui.utils.common.popups.generic import (
-    ALERT_INFO_CSS_POPUPS,
-    DEFAULT_CSS_POPUPS,
-    SUCCESS_CSS_POPUPS,
+    ALERT_POPUPS_WITH_CSS_CLASS_DEFAULT,
+    ALERT_POPUPS_WITH_CSS_CLASS_INFO,
+    ALERT_POPUPS_WITH_CSS_CLASS_SUCCESS,
     AlertPopup,
 )
 from tests.gui.utils.generic import (
@@ -59,9 +59,12 @@ from tests.utils.utils import repeat_failed
 
 
 def get_alert_css_selector(alert_popup: AlertPopup) -> str:
-    if alert_popup in ALERT_INFO_CSS_POPUPS:
+    if alert_popup in ALERT_POPUPS_WITH_CSS_CLASS_INFO:
         return ".alert-info"
-    if alert_popup in SUCCESS_CSS_POPUPS or alert_popup in DEFAULT_CSS_POPUPS:
+    if (
+        alert_popup in ALERT_POPUPS_WITH_CSS_CLASS_SUCCESS
+        or alert_popup in ALERT_POPUPS_WITH_CSS_CLASS_DEFAULT
+    ):
         return ".ember-notify-cn"
 
     raise ValueError(f"Unsupported alert popup: {alert_popup}")
@@ -103,16 +106,16 @@ def assert_n_items_in_items_list(
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_visible_items_list(
     page: GenericPage | Browser, items_type: ListElement, main_field: str = "name"
-) -> Sequence[VisibleItem]:
+) -> Sequence[NamedElement]:
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
     if isinstance(page, Browser):
         return cast(
-            Sequence[VisibleItem],
+            Sequence[NamedElement],
             page.get_visible_file_rows(elements_list, main_field),
         )
     return cast(
-        Sequence[VisibleItem],
+        Sequence[NamedElement],
         page.get_visible_elements_list(elements_list, main_field),
     )
 

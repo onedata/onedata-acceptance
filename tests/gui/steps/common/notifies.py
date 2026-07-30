@@ -32,7 +32,7 @@ from tests.gui.utils.common.popups.generic import (
     AlertPopup,
     AlertPopupCssClass,
     parse_alert_popup,
-    parse_alert_popup_type,
+    parse_alert_popup_css_class,
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -58,7 +58,7 @@ def capture_matching_popup(
             web_elem = popup.web_elem
             if web_elem.is_displayed():
                 seen_popups.add(
-                    CapturedPopup(popup.message, web_elem, popup.popup_type)
+                    CapturedPopup(popup.message, web_elem, popup.popup_css_class)
                 )
         except (NoSuchElementException, StaleElementReferenceException):
             continue
@@ -79,7 +79,7 @@ def capture_matching_popup(
         "{notify_type:AlertPopupCssClass} notify",
         extra_types={
             "AlertPopup": parse_alert_popup,
-            "AlertPopupCssClass": parse_alert_popup_type,
+            "AlertPopupCssClass": parse_alert_popup_css_class,
         },
     )
 )

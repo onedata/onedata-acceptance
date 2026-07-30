@@ -22,7 +22,7 @@ class Clickable(Protocol):
     def click(self) -> None: ...
 
 
-class VisibleItem(Protocol):
+class NamedElement(Protocol):
     name: str
     web_elem: WebElement
 

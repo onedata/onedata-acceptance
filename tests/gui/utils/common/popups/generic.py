@@ -30,7 +30,7 @@ ALERT_POPUP_ALIASES: dict[str, AlertPopup] = {
 }
 
 
-ALERT_INFO_CSS_POPUPS: list[AlertPopup] = [
+ALERT_POPUPS_WITH_CSS_CLASS_INFO: list[AlertPopup] = [
     AlertPopup.AUTHENTICATION_SUCCEEDED,
     AlertPopup.STORAGE_IMPORT_SCAN_STARTED,
     AlertPopup.SUCCESSFULLY_COPIED,
@@ -42,12 +42,12 @@ ALERT_INFO_CSS_POPUPS: list[AlertPopup] = [
     AlertPopup.STORAGE_ADDED,
 ]
 
-SUCCESS_CSS_POPUPS: list[AlertPopup] = [
+ALERT_POPUPS_WITH_CSS_CLASS_SUCCESS: list[AlertPopup] = [
     AlertPopup.SUCCESSFULLY_JOINED,
     AlertPopup.TOKEN_CREATED,
 ]
 
-DEFAULT_CSS_POPUPS: list[AlertPopup] = [AlertPopup.ADDED_SPACE_SUPPORT]
+ALERT_POPUPS_WITH_CSS_CLASS_DEFAULT: list[AlertPopup] = [AlertPopup.ADDED_SPACE_SUPPORT]
 
 
 class AlertPopupCssClass(Enum):
@@ -64,8 +64,16 @@ ALERT_POPUP_CSS_CLASS_ALIASES: dict[str, AlertPopupCssClass] = {
 
 
 def parse_alert_popup(value: str) -> AlertPopup:
-    return ALERT_POPUP_ALIASES[value.strip().lower()]
+    value = value.strip().lower()
+    try:
+        return ALERT_POPUP_ALIASES[value]
+    except KeyError as exc:
+        raise ValueError(f"Unknown alert popup: {value!r}") from exc
 
 
-def parse_alert_popup_type(value: str) -> AlertPopupCssClass:
-    return ALERT_POPUP_CSS_CLASS_ALIASES[value.strip().lower()]
+def parse_alert_popup_css_class(value: str) -> AlertPopupCssClass:
+    value = value.strip().lower()
+    try:
+        return ALERT_POPUP_CSS_CLASS_ALIASES[value]
+    except KeyError as exc:
+        raise ValueError(f"Unknown alert popup CSS class: {value!r}") from exc

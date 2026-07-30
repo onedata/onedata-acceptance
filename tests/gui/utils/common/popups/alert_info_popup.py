@@ -15,7 +15,7 @@ from .generic import AlertPopupCssClass
 
 
 class AlertInfoPopup(PageObject):
-    popup_type: AlertPopupCssClass
+    popup_css_class: AlertPopupCssClass
 
     def __init__(
         self,
@@ -24,7 +24,7 @@ class AlertInfoPopup(PageObject):
         parent: object | None = None,
     ) -> None:
         super().__init__(driver, web_elem, parent)
-        self.popup_type = get_popup_type(self)
+        self.popup_css_class = get_popup_css_class(self)
 
     message = id = Label(".message-body")
     close = Button(".close")
@@ -33,7 +33,7 @@ class AlertInfoPopup(PageObject):
         return "alert info popup"
 
 
-def get_popup_type(alert_popup: AlertInfoPopup) -> AlertPopupCssClass:
+def get_popup_css_class(alert_popup: AlertInfoPopup) -> AlertPopupCssClass:
     css_classes: list[str] = get_element_css_classes_when_visible(
         alert_popup.driver, alert_popup.web_elem
     )
