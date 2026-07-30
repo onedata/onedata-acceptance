@@ -406,7 +406,7 @@ def assert_image_in_browser(
     assert image_name in url, err_msg
 
 
-@wt(parsers.parse("user of {browser_id} opens a new tab"))
+@wt(parsers.parse("user of {browser_id} opens a new tab and enters it"))
 def open_new_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.new_window("tab")
