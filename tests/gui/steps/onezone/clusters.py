@@ -323,7 +323,6 @@ def click_on_link_in_cookies_popup(
 ) -> None:
     driver = selenium[browser_id]
     kind_of_agreement = transform(kind_of_agreement) + "_link"
-    OZLoggedIn(driver).set_current_page(ClustersPage)
     getattr(Popups(driver).cookies, kind_of_agreement).click()
 
 
@@ -366,7 +365,6 @@ def click_button_on_agreement_page(
         getattr(PrivacyPolicy(driver), transform(button))()
     else:
         getattr(TermsOfUse(driver), transform(button))()
-    OZLoggedIn(driver).set_current_page(DataPage)
 
 
 @wt(parsers.parse('user of {browser_id} goes to "{kind_of_agreement}" page'))
@@ -378,10 +376,9 @@ def go_to_agreement_page(
     oz_page = OZLoggedIn(driver)
 
     # TODO: VFS-13725 user cannot go to terms of use while on Clusters Sidebar Panel page
-    if oz_page.get_current_page() == ClustersPage:
+    if oz_page.is_panel_active(ClustersPage.panel_name):
         oz_page.open_panel(DataPage)
 
     oz_page.expand_panel_if_needed()
     oz_page.profile.profile.click()
     Popups(driver).user_account_menu.options[kind_of_agreement].click()
-    oz_page.set_current_page(ClustersPage)

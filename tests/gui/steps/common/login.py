@@ -23,7 +23,6 @@ from tests.gui.utils.generic import (
     transform,
     wait_for_visible_element_using_getter,
 )
-from tests.gui.utils.onezone import OZLoggedIn
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -82,11 +81,6 @@ def _login_to_service(
         else:
             _login_using_basic_auth(LoginPage(driver), username, password)
         assert_main_page_loaded(selenium, browser_id)
-
-        OZLoggedIn(driver).set_current_page_during_login_logout(
-            is_login=True,
-            emergency_interface="emergency" in service,
-        )
 
 
 @given(

@@ -648,4 +648,3 @@ def click_on_confirm_button_on_tokens_page(
     oz_page.tokens.confirm_button()
     # it is needed to wait for the page refresh
     wait_till_main_content_loaded(selenium[browser_id])
-    oz_page.update_current_page()
