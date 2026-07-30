@@ -40,12 +40,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
-from tests.gui.utils.common.popups.generic import (
-    ALERT_POPUPS_WITH_CSS_CLASS_DEFAULT,
-    ALERT_POPUPS_WITH_CSS_CLASS_INFO,
-    ALERT_POPUPS_WITH_CSS_CLASS_SUCCESS,
-    AlertPopup,
-)
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     ListElement,
     get_visibility_condition,
@@ -56,18 +51,6 @@ from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-
-
-def get_alert_css_selector(alert_popup: AlertPopup) -> str:
-    if alert_popup in ALERT_POPUPS_WITH_CSS_CLASS_INFO:
-        return ".alert-info"
-    if (
-        alert_popup in ALERT_POPUPS_WITH_CSS_CLASS_SUCCESS
-        or alert_popup in ALERT_POPUPS_WITH_CSS_CLASS_DEFAULT
-    ):
-        return ".ember-notify-cn"
-
-    raise ValueError(f"Unsupported alert popup: {alert_popup}")
 
 
 def assert_n_items_in_items_list(
@@ -377,8 +360,6 @@ def close_alert_popup_if_present(
     # Close an alert identified by its enum value.
     # If popup doesn't appear, don't throw an error.
     # If it appeared and was not closed, raise.
-    css_sel = get_alert_css_selector(popup)
-
     def get_alert_popup_close_button_fun(
         driver: WebDriver, alert_popup: AlertPopup
     ) -> Clickable:
@@ -388,7 +369,7 @@ def close_alert_popup_if_present(
 
     return wait_till_alert_popup_or_error_modal_disappear(
         driver,
-        css_sel,
+        popup.css_sel,
         get_close_button,
     )
 

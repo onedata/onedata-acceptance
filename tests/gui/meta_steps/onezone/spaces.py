@@ -62,7 +62,7 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
 from tests.gui.type_definitions import Clipboard, NamedElement, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -88,7 +88,6 @@ def copy_support_token_from_add_support_page(
     notify_visible_with_text(
         selenium,
         browser_id,
-        AlertPopupCssClass.ALERT_INFO,
         AlertPopup.SUCCESSFULLY_COPIED,
     )
 
@@ -245,9 +244,7 @@ def remove_provider_support_for_space_in_oz_using_gui(
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user)
     wt_clicks_on_btn_in_cease_support_modal(selenium, user, confirmation_button)
-    notify_visible_with_text(
-        selenium, user, AlertPopupCssClass.ALERT_INFO, AlertPopup.CEASED_SUPPORT
-    )
+    notify_visible_with_text(selenium, user, AlertPopup.CEASED_SUPPORT)
 
 
 def invite_other_users_to_space_using_gui(
@@ -305,7 +302,6 @@ def request_space_support_using_gui(
     notify_visible_with_text(
         selenium,
         user,
-        AlertPopupCssClass.ALERT_INFO,
         AlertPopup.SUCCESSFULLY_COPIED,
     )
     send_copied_item_to_other_users(

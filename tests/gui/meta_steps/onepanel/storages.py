@@ -45,7 +45,7 @@ from tests.gui.steps.onepanel.storages import (
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.utils import Onepanel
-from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
@@ -138,9 +138,7 @@ def _add_storage_in_op_panel_using_gui(
     if options.get("imported storage", False):
         enable_import_in_add_storage_form(selenium, browser_id)
     wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium, browser_id)
-    notify_visible_with_text(
-        selenium, browser_id, AlertPopupCssClass.ALERT_INFO, AlertPopup.STORAGE_ADDED
-    )
+    notify_visible_with_text(selenium, browser_id, AlertPopup.STORAGE_ADDED)
 
 
 @given(

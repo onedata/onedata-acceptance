@@ -65,7 +65,7 @@ Feature: Basic spaces management utilities using onepanel
 #    And user of <client> clicks on Revoke space support option in space's toolbar in Onepanel
 #    And user of <client> checks the understand notice in cease oneprovider support for space modal in Onepanel
 #    And user of <client> clicks on Cease support button in cease oneprovider support for space modal in Onepanel
-#    And user of <client> sees the "ceased support" info notify
+#    And user of <client> sees the "ceased support" notify
 #
 #    # confirm lack of support for space
 #    Then user of browser1 clicks "space1" on the spaces list in the sidebar

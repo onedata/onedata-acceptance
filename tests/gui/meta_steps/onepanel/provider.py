@@ -44,7 +44,7 @@ from tests.gui.steps.rest.provider import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
-from tests.gui.utils.common.popups.generic import AlertPopup, AlertPopupCssClass
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     OnedataService,
     wait_for_visible_element_using_getter,
@@ -73,7 +73,6 @@ def succeed_to_save_changes_in_modify_provider_detail_form(
     notify_visible_with_text(
         selenium,
         browser_id,
-        AlertPopupCssClass.ALERT_INFO,
         AlertPopup.PROVIDER_DATA_MODIFIED,
     )
 
@@ -153,7 +152,6 @@ def deregister_provider_in_op_panel_using_gui(
     notify_visible_with_text(
         selenium,
         browser_id,
-        AlertPopupCssClass.ALERT_INFO,
         AlertPopup.PROVIDER_DEREGISTERED,
     )
 

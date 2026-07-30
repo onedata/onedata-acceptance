@@ -30,9 +30,7 @@ from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.common.popups.alert_info_popup import AlertInfoPopup
 from tests.gui.utils.common.popups.generic import (
     AlertPopup,
-    AlertPopupCssClass,
     parse_alert_popup,
-    parse_alert_popup_css_class,
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -43,31 +41,24 @@ from tests.utils.utils import repeat_failed
 class CapturedPopup:
     message: str
     web_elem: WebElement
-    css_class: AlertPopupCssClass
 
 
 def capture_matching_popup(
     driver: WebDriver,
     seen_popups: set[CapturedPopup],
     regexp: re.Pattern[str],
-    notify_type: AlertPopupCssClass,
 ) -> bool:
     detected_popups: list[AlertInfoPopup] = Popups(driver).get_all_alert_popups()
     for popup in detected_popups:
         try:
             web_elem = popup.web_elem
             if web_elem.is_displayed():
-                seen_popups.add(
-                    CapturedPopup(popup.message, web_elem, popup.popup_css_class)
-                )
+                seen_popups.add(CapturedPopup(popup.message, web_elem))
         except (NoSuchElementException, StaleElementReferenceException):
             continue
 
     for captured_popup in seen_popups:
-        if (
-            regexp.match(captured_popup.message)
-            and notify_type == captured_popup.css_class
-        ):
+        if regexp.match(captured_popup.message):
             return True
 
     return False
@@ -75,22 +66,19 @@ def capture_matching_popup(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees the "{alert_popup:AlertPopup}" '
-        "{notify_type:AlertPopupCssClass} notify",
+        'user of {browser_id} sees the "{alert_popup:AlertPopup}" notify',
         extra_types={
             "AlertPopup": parse_alert_popup,
-            "AlertPopupCssClass": parse_alert_popup_css_class,
         },
     )
 )
 def notify_visible_with_text(
     selenium: SeleniumDrivers,
     browser_id: str,
-    notify_type: AlertPopupCssClass,
     alert_popup: AlertPopup,
 ) -> None:
     driver = selenium[browser_id]
-    text_regexp = alert_popup.value
+    text_regexp = alert_popup.message
 
     # for each popup store message, web_elem and classified popup type for future use
     seen_popups: set[CapturedPopup] = set()
@@ -101,13 +89,12 @@ def notify_visible_with_text(
                 capture_matching_popup,
                 seen_popups=seen_popups,
                 regexp=re.compile(text_regexp),
-                notify_type=notify_type,
             )
         )
 
     except TimeoutException as exc:
         raise AssertionError(
-            f'no {notify_type} notify with "{text_regexp}" msg found; '
+            f'no {alert_popup.category} notify with "{text_regexp}" msg found; '
             f"observed messages: {list(seen_popups)}"
         ) from exc
 
