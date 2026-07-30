@@ -16,6 +16,7 @@ from tests.gui.steps.common.miscellaneous import (
     wait_until_scanning_is_finished_in_storage_import_tab,
 )
 from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import (
@@ -133,6 +134,7 @@ def result_to_support_space_in_op_panel_using_gui(
         selenium, user, config, tmp_memory, provider_name, hosts
     )
     if result == "succeeds":
+        wait_till_main_content_loaded(selenium[user])
         notify_visible_with_text(
             selenium, user, AlertPopupCssClass.DEFAULT, AlertPopup.ADDED_SPACE_SUPPORT
         )
