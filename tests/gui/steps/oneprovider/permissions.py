@@ -294,7 +294,7 @@ def assert_acl_record_editable(
     try:
         _ = getattr(perm, f"_{name}_select")
     except RuntimeError as exc:
-        raise RuntimeError(
+        raise AssertionError(
             f"Subject {name} is not editable in {num} ACL record"
         ) from exc
 

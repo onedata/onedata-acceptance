@@ -773,7 +773,7 @@ def assert_empty_workflow_phase(
         user, users, host, hosts, space, spaces, phase=phase
     )
     if any(executions):
-        raise RuntimeError(
+        raise AssertionError(
             f"workflows {[workflow_executions[wid] for wid in executions]} "
             f"are in {phase} state"
         )

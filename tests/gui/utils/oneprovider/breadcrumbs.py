@@ -78,7 +78,7 @@ class _Breadcrumbs(PageObject):
     def go_one_back(self) -> None:
         breadcrumbs = self._breadcrumbs
         if len(breadcrumbs) - 2 < 0:
-            raise RuntimeError(f"Cannot go back in breadcrumbs {breadcrumbs}")
+            raise IndexError(f"Cannot go back in breadcrumbs {breadcrumbs}")
         breadcrumbs[len(breadcrumbs) - 2].click()
 
     @property

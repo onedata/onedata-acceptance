@@ -147,7 +147,7 @@ def assert_no_provider_popup_on_world_map(
     except RuntimeError:
         pass
     else:
-        raise RuntimeError("found provider popover on world map")
+        raise AssertionError("found provider popover on world map")
 
 
 @wt(parsers.parse("user of {browser_id} clicks on Onezone world map"))
@@ -414,7 +414,7 @@ def wait_until_provider_goes_offline_by_gui(
     while page.is_working():
         time.sleep(0.5)
         if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_OFFLINE:
-            raise RuntimeError(
+            raise TimeoutError(
                 "Provider did not go offline within "
                 f"{TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s."
             )
@@ -440,7 +440,7 @@ def wait_until_provider_goes_online_by_rest(
                 return
         except requests.exceptions.ConnectionError as e:
             exception_message = str(e)
-    raise RuntimeError(
+    raise TimeoutError(
         "Provider is still not working after "
         f"{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s. "
         f"Last response from health check request: {res} "

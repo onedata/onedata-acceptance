@@ -22,6 +22,7 @@ from tests.gui.utils.core.web_elements import (
     WebElementsSequence,
     WebItem,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceSelector
 
 
@@ -72,7 +73,7 @@ class DataTabSidebar(PageObject):
             cwd = self._cwd(directory)
             if cwd:
                 return cwd
-        raise RuntimeError("no working directory found")
+        raise PageObjectNotFoundError("no working directory found")
 
 
 class DirectoryTree(PageObject, ExpandableMixin):
@@ -109,7 +110,7 @@ class DirectoryTree(PageObject, ExpandableMixin):
         for directory in self:
             if directory.name == name:
                 return directory
-        raise RuntimeError(f'no subdirectory named "{name}" found in {self}')
+        raise PageObjectNotFoundError(f'no subdirectory named "{name}" found in {self}')
 
     def is_expanded(self) -> bool:
         return "open" in self._toggle.get_attribute("class")

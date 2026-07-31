@@ -99,7 +99,7 @@ def choose_time_resolution(
             option.click()
             break
     else:
-        raise RuntimeError(
+        raise ValueError(
             f'There is no {resolution} in time resolution list in modal "{modal}".'
         )
 
@@ -155,7 +155,7 @@ def assert_number_of_proceeded_files(
                 assert value[0] == float(number), error_message
             break
     else:
-        raise RuntimeError(
+        raise AssertionError(
             f"There is no {option} processing speed on chart with processing stat."
         )
 
@@ -279,7 +279,7 @@ def open_raw_view_for_elem(
             if modal.single_file_container.name != "":
                 break
     else:
-        raise RuntimeError(
+        raise TimeoutError(
             f"Did not manage to open raw view for {index} element in store content list"
         )
 
@@ -297,7 +297,7 @@ def get_store_content(
     store_content_list = getattr(modal, store_content_type)
     try:
         open_raw_view_for_elem(store_content_list, index, modal)
-    except RuntimeError:
+    except TimeoutError:
         # this closes the successful copy alert
         modal.name_header.click()
         open_raw_view_for_elem(store_content_list, index, modal)

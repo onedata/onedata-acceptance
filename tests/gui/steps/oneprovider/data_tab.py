@@ -465,7 +465,7 @@ def upload_files_to_cwd_in_data_tab_no_waiting(
             "\n".join(str(item) for item in directory.listdir() if item.isfile())
         )
     else:
-        raise RuntimeError(f"directory {directory} does not exist")
+        raise FileNotFoundError(f"directory {directory} does not exist")
 
 
 @wt(
@@ -563,7 +563,7 @@ def upload_file_to_cwd_in_data_tab_no_waiting(
     if file.isfile():
         OPLoggedIn(driver).file_browser.upload_files(upload_file_path(file))
     else:
-        raise RuntimeError(f"file {file} does not exist")
+        raise FileNotFoundError(f"file {file} does not exist")
 
 
 @wt(parsers.parse("user of {browser_id} sets slow upload network conditions"))
@@ -601,7 +601,7 @@ def upload_file_to_cwd_in_data_tab_with_network_throttling(
     if file.isfile():
         OPLoggedIn(driver).file_browser.upload_files(upload_file_path(file))
     else:
-        raise RuntimeError(f"file {str(file)} does not exist")
+        raise FileNotFoundError(f"file {str(file)} does not exist")
 
     wait_extended_time_for_file_upload_to_finish(selenium, browser_id)
 
@@ -730,7 +730,7 @@ def has_downloaded_file_content(
                 content == file_content
             ), f"expected {content} as {file_name} content, instead got {file_content}"
     else:
-        raise RuntimeError(f"file {file_name} has not been downloaded")
+        raise AssertionError(f"file {file_name} has not been downloaded")
 
 
 @wt(

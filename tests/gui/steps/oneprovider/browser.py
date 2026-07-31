@@ -62,7 +62,7 @@ def click_and_press_enter_on_item_in_browser(
     while item_name not in browser.data:
         time.sleep(1)
         if time.time() > start + WAIT_BACKEND:
-            raise RuntimeError("waited too long")
+            raise TimeoutError("waited too long")
 
     click_and_enter_with_check(driver, browser, which_browser, item_name)
 
@@ -102,7 +102,7 @@ def click_and_enter_with_check(
             if breadcrumbs.split("/")[-1] == item_name:
                 return
             time.sleep(1)
-        raise RuntimeError("Click and enter has not entered the directory")
+        raise TimeoutError("Click and enter has not entered the directory")
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

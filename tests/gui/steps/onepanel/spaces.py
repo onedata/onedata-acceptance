@@ -229,7 +229,7 @@ def wt_type_text_to_input_box_in_storage_import_configuration(
     elif hasattr(form.storage_import_configuration, input_name):
         setattr(form.storage_import_configuration, input_name, text)
     else:
-        raise RuntimeError(
+        raise ValueError(
             f"failed typing text into {input_box} input field in support space form "
         )
 
@@ -390,7 +390,7 @@ def wt_clicks_on_btn_in_space_toolbar_in_panel(
     if toolbar.is_displayed():
         toolbar.options[option].click()
     else:
-        raise RuntimeError("no space toolbar found in Onepanel")
+        raise AssertionError("no space toolbar found in Onepanel")
 
 
 @wt(
@@ -588,7 +588,7 @@ def cannot_click_on_navigation_tab_in_space(
         getattr(nav, tab).click()
     except RuntimeError:
         return
-    raise RuntimeError(f"can click on {tab_name}")
+    raise AssertionError(f"can click on {tab_name}")
 
 
 @wt(

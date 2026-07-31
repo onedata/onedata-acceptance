@@ -363,7 +363,9 @@ def find_web_elem_with_text(
             return item
     if callable(error_message):
         error_message = error_message()
-    raise RuntimeError(f'Css element with "{text}" text not found. {error_message}')
+    raise NoSuchElementException(
+        f'Css element with "{text}" text not found. {error_message}'
+    )
 
 
 def click_on_web_elem(

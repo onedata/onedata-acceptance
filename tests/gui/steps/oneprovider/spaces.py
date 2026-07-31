@@ -76,6 +76,6 @@ def assert_item_appeared_in_spaces_perm_table(
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()
-        raise RuntimeError(
+        raise AssertionError(
             f'no {caption} named "{name}" found in spaces permission table'
         )

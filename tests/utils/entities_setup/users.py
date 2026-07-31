@@ -221,7 +221,7 @@ def _create_user(
                 user_conf_details,
             )
         skip(f'"{username}" user already exist')
-    raise RuntimeError(f'Creation of user "{username}" was skipped')
+    raise AssertionError(f'Creation of user "{username}" was skipped')
 
 
 def _configure_user(

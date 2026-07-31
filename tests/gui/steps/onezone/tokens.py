@@ -108,7 +108,7 @@ def click_on_button_in_tokens_sidebar(
                 button_clean.click()
                 return
             time.sleep(0.1)
-        raise RuntimeError(f"Did not manage to click {button} button")
+        raise TimeoutError(f"Did not manage to click {button} button")
     else:
         sidebar = oz_page.tokens.sidebar
         getattr(sidebar, transform(button))()

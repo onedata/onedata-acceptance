@@ -536,7 +536,7 @@ def _get_storage_id(
         if storage_details.json()["name"] == storage_name:
             return storage_id
 
-    raise RuntimeError(
+    raise ValueError(
         f"Storage with name '{storage_name}' was not found in Oneprovider "
         f"at {provider_hostname}. Make sure you have provided the right environment "
         "(env file) for the test."

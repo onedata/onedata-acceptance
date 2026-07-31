@@ -350,7 +350,7 @@ class PrivilegeTree(PageObject):
                 time.sleep(1)
 
         if privilege_row is None:
-            raise RuntimeError(f"Privilege group '{name}' not found after retries")
+            raise TimeoutError(f"Privilege group '{name}' not found after retries")
 
         granted = group["granted"]
         result = True
@@ -384,4 +384,4 @@ class PrivilegeTree(PageObject):
                 time.sleep(0.1)
             except RuntimeError:
                 return
-        raise RuntimeError("Did not manage to set privileges, exceeded loading time")
+        raise TimeoutError("Did not manage to set privileges, exceeded loading time")

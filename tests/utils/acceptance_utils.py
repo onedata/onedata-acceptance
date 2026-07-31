@@ -99,19 +99,16 @@ def execute_command(
         err_str = err.decode() if isinstance(err, bytes) else err
         out_str = output.decode() if isinstance(output, bytes) else output
 
-    if (proc_returncode != 0) ^ should_fail:
-        raise RuntimeError(
+    if proc_returncode != 0 and not should_fail:
+        message = (
             f"{error}: {err_str}; {out_str}"
             if error
-            else (
-                f"Command did not fail: {' '.join(cmd)}, Err: {err_str}, Output:"
-                f" {out_str}"
-                if should_fail
-                else (
-                    f'Error when executing command "{" ".join(cmd)}": {err_str};'
-                    f" {out_str}"
-                )
-            )
+            else f'Error when executing command "{" ".join(cmd)}": {err_str}; {out_str}'
+        )
+        raise ChildProcessError(message)
+    if proc_returncode == 0 and should_fail:
+        raise AssertionError(
+            f"Command did not fail: {' '.join(cmd)}, Err: {err_str}, Output: {out_str}"
         )
     return output
 

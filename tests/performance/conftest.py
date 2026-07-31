@@ -108,5 +108,5 @@ def mount_performance_client(
         CORRECT_TOKEN,
     )
     if client is None:
-        raise RuntimeError(f"Failed to mount {client_id} for {username}")
+        raise OSError(f"Failed to mount {client_id} for {username}")
     return client

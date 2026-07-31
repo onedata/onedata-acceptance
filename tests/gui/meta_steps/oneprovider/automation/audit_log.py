@@ -1234,7 +1234,7 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
                 assert file_log == visible_log, error_message
                 modal.close_details.click()
     else:
-        raise RuntimeError(f"file {file_name} has not been downloaded")
+        raise AssertionError(f"file {file_name} has not been downloaded")
 
 
 @wt(
@@ -1273,7 +1273,7 @@ def _assert_workflow_audit_log_contains_entries(
         if assert_expected_in_entries(expected_entry, data_file):
             continue
         error_message = f"there is no entry {expected_entry} in workflow audit log"
-        raise RuntimeError(error_message)
+        raise AssertionError(error_message)
     modal.x()
 
 
@@ -1323,7 +1323,7 @@ def assert_workflow_audit_log_contains_entry(
     error_message = (
         f"there is no entry containing data about {item_list} in workflow audit log"
     )
-    raise RuntimeError(error_message)
+    raise AssertionError(error_message)
 
 
 def _assert_all_items_in_json(item_list: list[str], data: AuditLogContent) -> bool:

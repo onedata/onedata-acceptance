@@ -228,14 +228,14 @@ def _parse_data(
                             for property_name in cast(list[str], attribute["xattrs"]):
                                 nodes[property_name].checkbox.click()
                         else:
-                            raise RuntimeError(f"Do not support {attribute}")
+                            raise ValueError(f"Do not support {attribute}")
                     else:
                         nodes = page.filter_properties_tree.tree_nodes[
                             "__onedata"
                         ].onedata_tree_nodes
                         nodes[attribute].checkbox.click()
             else:
-                raise RuntimeError(f"Do not support {item}")
+                raise ValueError(f"Do not support {item}")
         else:
             page.filter_properties_tree.tree_nodes[item].checkbox.click()
 

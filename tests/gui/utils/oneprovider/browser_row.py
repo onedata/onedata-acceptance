@@ -42,7 +42,7 @@ class BrowserRow(PageObject):
             if self.is_selected():
                 return
 
-        raise RuntimeError("Waited too long for being selected")
+        raise TimeoutError("Waited too long for being selected")
 
     def click_and_enter(self) -> None:
         time.sleep(0.1)

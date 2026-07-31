@@ -13,6 +13,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.gui.utils.oneprovider.archive_browser import _ArchiveBrowser
 from tests.gui.utils.oneprovider.archive_browser.data_row import DataRow
@@ -57,7 +58,7 @@ def get_archive_with_description(browser: _ArchiveBrowser, description: str) -> 
     for archive in browser.data:
         if description == archive.description:
             return archive
-    raise RuntimeError("failed to load archive from description")
+    raise PageObjectNotFoundError("failed to load archive from description")
 
 
 @wt(
@@ -288,7 +289,7 @@ def click_menu_for_archive(
     archive = get_archive_with_description(browser, description)
     archive.menu_button()
     if Popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
-        raise RuntimeError(f"Archive with description {description} did not open")
+        raise AssertionError(f"Archive with description {description} did not open")
 
 
 @wt(
@@ -362,7 +363,7 @@ def assert_not_archive_with_description(
     archives = browser.data
     for item in archives:
         if description in item.name:
-            raise RuntimeError(f'Archive with description: "{description}" found')
+            raise AssertionError(f'Archive with description: "{description}" found')
 
 
 @wt(
@@ -402,7 +403,7 @@ def waits_for_preserved_state(
             break
         time.sleep(2)
     else:
-        raise RuntimeError(
+        raise TimeoutError(
             f'failed to see "{status}" state for archive with '
             f'description "{description}"'
         )

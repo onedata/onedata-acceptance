@@ -172,7 +172,7 @@ class UpgradeTestsController:
         )
         if client:
             return cast(OneClientLike, client)
-        raise RuntimeError("Error when mounting oneclient")
+        raise OSError("Error when mounting oneclient")
 
     def get_client(
         self, username: str, client_host_alias: str, client_instance: str

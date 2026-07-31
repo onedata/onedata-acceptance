@@ -129,7 +129,7 @@ def assert_element_is_member_of_parent_in_memberships(
         return False
 
     if not search_for_members(driver, records, member_name, parent_name, fun):
-        raise RuntimeError(
+        raise AssertionError(
             f'not found "{member_name}" {member_type} as a member of'
             f' "{parent_name}" {parent_type}'
         )
@@ -160,12 +160,12 @@ def assert_element_is_not_member_of_parent_in_memberships(
 
     def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
-            raise RuntimeError(
+            raise AssertionError(
                 f'found "{member_name}" {member_type} as a member of'
                 f' "{parent_name}" {parent_type}'
             )
         if member_index == 0:
-            raise RuntimeError(
+            raise AssertionError(
                 f'found "{member_name}" {member_type} as a member of'
                 f' "{parent_name}" {parent_type}'
             )
@@ -410,7 +410,7 @@ def assert_generated_token_is_present(
         text = Modals(selenium[browser_id]).invite_using_token.token
         assert len(text) > 0, "Token is empty, while it should be non-empty"
     except RuntimeError as exc:
-        raise RuntimeError("No token area found on page") from exc
+        raise AssertionError("No token area found on page") from exc
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) copies invitation token from modal"))

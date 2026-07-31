@@ -11,7 +11,6 @@ import re
 from typing import Optional
 
 import yaml
-from selenium.common.exceptions import NoSuchElementException
 
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND

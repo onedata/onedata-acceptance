@@ -111,7 +111,7 @@ def support_space_in_op_panel_using_rest(
             spaces_api.support_space(space_support_rq)
             break
     else:
-        raise RuntimeError(f'No storage named "{storage_name}"')
+        raise ValueError(f'No storage named "{storage_name}"')
 
 
 def configure_sync_parameters_for_space_in_op_panel_rest(

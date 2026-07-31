@@ -281,7 +281,7 @@ def wt_await_finish_of_cluster_deployment(
             time.sleep(1)
             continue
     else:
-        raise RuntimeError(f"cluster deployment exceeded time limit: {timeout}")
+        raise TimeoutError(f"cluster deployment exceeded time limit: {timeout}")
 
 
 @wt(

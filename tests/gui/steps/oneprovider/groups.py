@@ -34,7 +34,7 @@ def is_present_on_groups_list(
     driver = selenium[browser_id]
     if not _is_group_present_in_sidebar(driver, name):
         driver.refresh()
-        raise RuntimeError(f'no group named "{name}" found in groups sidebar')
+        raise AssertionError(f'no group named "{name}" found in groups sidebar')
 
 
 @wt(
@@ -88,6 +88,6 @@ def assert_item_appeared_in_groups_perm_table(
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()
-        raise RuntimeError(
+        raise AssertionError(
             f'no {caption} named "{name}" found in groups permission table'
         )

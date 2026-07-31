@@ -19,7 +19,10 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.core.web_objects import (
+    PageObjectNotFoundError,
+    PageObjectsSequence,
+)
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 
 TRANSFER_STATUS_LIST = [
@@ -71,7 +74,7 @@ class TransferRecord(PageObject):
             if icon_class in expected_tokens:
                 return icon_class
 
-        raise RuntimeError(
+        raise ValueError(
             f"no transfer state matching {expected_tokens} found in {self}"
         )
 
@@ -179,7 +182,7 @@ class _TransfersTab(PageObject):
         for tab in self.tabs:
             if name in tab.name.lower():
                 return tab
-        raise RuntimeError(f"no tab named {name} in transfer tab")
+        raise PageObjectNotFoundError(f"no tab named {name} in transfer tab")
 
 
 TransfersTab = partial(WebItem, cls=_TransfersTab)
