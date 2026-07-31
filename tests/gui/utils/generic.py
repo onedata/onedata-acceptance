@@ -344,7 +344,7 @@ def find_web_elem(
     except NoSuchElementException as exc:
         if callable(error_message):
             error_message = error_message()
-        raise RuntimeError(error_message) from exc
+        raise NoSuchElementException(error_message) from exc
     return item
 
 

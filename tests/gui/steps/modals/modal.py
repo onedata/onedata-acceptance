@@ -222,7 +222,7 @@ def wait_for_named_modal_to_disappear(
     modal_name = check_modal_name(modal_name)
     try:
         modal = getattr(Modals(driver), transform(modal_name))
-    except RuntimeError:
+    except NoSuchElementException:
         return
     WebDriverWait(
         driver,
