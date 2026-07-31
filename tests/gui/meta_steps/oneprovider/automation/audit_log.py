@@ -16,7 +16,11 @@ from typing import TypedDict, cast
 
 import yaml
 from _pytest._py.path import LocalPath
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import GUI_LOGDIR
@@ -847,7 +851,11 @@ def assert_content_of_store(
             )
     try:
         modal.close()
-    except (StaleElementReferenceException, RuntimeError):
+    except (
+        StaleElementReferenceException,
+        NoSuchElementException,
+        ElementNotInteractableException,
+    ):
         pass
 
 

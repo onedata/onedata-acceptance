@@ -392,7 +392,7 @@ def click_on_web_elem(
     else:
         if callable(error_message):
             error_message = error_message()
-        raise RuntimeError(error_message)
+        raise ElementNotInteractableException(error_message)
 
 
 def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> None:
