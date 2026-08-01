@@ -4,7 +4,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
+from selenium.common.exceptions import MoveTargetOutOfBoundsException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -43,7 +43,7 @@ class ArchiveRowMenu(PageObject):
         element = getattr(self, option + "_elem")
         try:
             ActionChains(driver).move_to_element(element).perform()
-        except RuntimeError:
+        except MoveTargetOutOfBoundsException:
             self.scroll_to_bottom()
             ActionChains(driver).move_to_element(element).perform()
 

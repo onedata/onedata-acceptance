@@ -69,7 +69,7 @@ class MembersItemRow(PageObject):
     def are_privileges_visible(self) -> PageObject | bool:
         try:
             return self.privilege_tree
-        except RuntimeError:
+        except NoSuchElementException:
             return False
 
     def has_status_label(self, name: str) -> bool:

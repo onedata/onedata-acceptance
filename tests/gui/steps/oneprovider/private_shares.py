@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.common.exceptions import (
     ElementClickInterceptedException,
     ElementNotInteractableException,
+    NoSuchElementException,
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -375,7 +376,7 @@ def assert_no_warning_message_in_shares_page(
     try:
         warning = private_share(driver).alert_warning
         raise AssertionError(f"There is visible warning alert: {warning.text}")
-    except RuntimeError:
+    except NoSuchElementException:
         pass
 
 

@@ -9,6 +9,10 @@ import os
 from typing import Optional
 
 from _pytest._py.path import LocalPath
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -305,7 +309,11 @@ def get_lambda_or_workflow_bracket(
 
     try:
         collapse_revision_list(bracket)
-    except (RuntimeError, AttributeError):
+    except (
+        AttributeError,
+        ElementNotInteractableException,
+        NoSuchElementException,
+    ):
         pass
 
     return bracket

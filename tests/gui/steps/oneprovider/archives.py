@@ -9,6 +9,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 import time
 
+from selenium.common.exceptions import NoSuchElementException
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import TmpMemory
@@ -435,7 +437,7 @@ def assert_archive_info_in_properties_modal(
         try:
             text = getattr(Modals(driver).archive_details, transform(info))
             raise AssertionError(f"{info} is {text} but should be None")
-        except RuntimeError:
+        except NoSuchElementException:
             pass
     else:
         text = getattr(Modals(driver).archive_details, transform(info))
@@ -587,7 +589,7 @@ def assert_archive_creation_link(
         try:
             visible_link = getattr(browser, transform(link))
             raise AssertionError(f"link {visible_link} is visible in archive browser")
-        except RuntimeError:
+        except NoSuchElementException:
             pass
     elif res == "sees":
         visible_link = getattr(browser, transform(link))

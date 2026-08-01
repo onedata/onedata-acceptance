@@ -8,6 +8,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.common.miscellaneous import press_backspace_on_active_element
@@ -379,7 +384,11 @@ def add_lambda_revision_to_workflow(
 
     try:
         collapse_revision_list(lambda_object)
-    except (RuntimeError, AttributeError):
+    except (
+        AttributeError,
+        ElementNotInteractableException,
+        NoSuchElementException,
+    ):
         pass
 
     revision.add_to_workflow.click()

@@ -524,7 +524,7 @@ def assert_there_is_no_button_in_panel(
             f'There is a "{button}" button visible in {panel_name}'
             " panel when it shouldn't be"
         )
-    except RuntimeError:
+    except NoSuchElementException:
         pass
 
 
@@ -746,7 +746,7 @@ def close_modal(selenium: SeleniumDrivers, browser_id: str, modal: str) -> None:
             getattr(Modals(selenium[browser_id]), modal).cancel()
         except AttributeError:
             getattr(Modals(selenium[browser_id]), modal).x()
-    except RuntimeError:
+    except NoSuchElementException:
         return
 
     wait_for_named_modal_to_disappear(selenium, browser_id, modal)

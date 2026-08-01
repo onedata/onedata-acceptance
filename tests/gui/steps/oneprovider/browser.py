@@ -11,12 +11,14 @@ from collections.abc import Callable, Collection, Sequence
 from datetime import datetime
 from typing import Optional, Protocol
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import network_throttling_download
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,
@@ -109,7 +111,7 @@ def click_and_enter_with_check(
 def check_if_breadcrumbs_on_share_page(driver: WebDriver, which_browser: str) -> str:
     try:
         breadcrumbs = OPLoggedIn(driver).shares_page.breadcrumbs.pwd()
-    except RuntimeError:
+    except NoSuchElementException:
         which_browser = transform(which_browser)
         if which_browser == "shares_file_browser":
             which_browser = "file_browser"
@@ -299,7 +301,7 @@ def check_if_item_is_dir_in_browser(
 
     try:
         item = browser.data[item_name]
-    except RuntimeError:
+    except PageObjectNotFoundError:
         browser.scroll_to_number_file(driver, data.index(item_name), browser)
         item = browser.data[item_name]
 
@@ -741,11 +743,12 @@ def assert_no_column_for_item(
     try:  # this try except block covers cases when xattr value doesn't exist
         _ = getattr(browser.data[item_name], option)
 
-    except RuntimeError as e:
+    except NoSuchElementException as e:
         if "item found in" not in str(e):
             raise AssertionError from e  # if the error does not match expected error
             # The expected error:
-            # RuntimeError: no {} item found in {} in file browser in Oneprovider page
+            # NoSuchElementException: no {} item found in {} in file browser in
+            # Oneprovider page
 
 
 @wt(
@@ -838,7 +841,7 @@ def assert_button_not_visible_in_browser(
     try:
         getattr(browser, transform(button) + "_button")
         raise AssertionError(f"button {button} is visible in {which_browser} browser")
-    except RuntimeError:
+    except NoSuchElementException:
         pass
 
 

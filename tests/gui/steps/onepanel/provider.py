@@ -9,6 +9,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 from typing import cast
 
+from selenium.common.exceptions import NoSuchElementException
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.generic import transform
@@ -138,7 +140,7 @@ def wt_click_on_discard_btn_in_domain_change_modal(
 ) -> None:
     try:
         Modals(selenium[browser_id]).configure_web_cert.discard()
-    except RuntimeError as e:
+    except NoSuchElementException as e:
         if re.match(r"no.*item found in modals", str(e)):
             pass
         else:

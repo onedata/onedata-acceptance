@@ -4,6 +4,7 @@ using web GUI
 
 import pytest
 import yaml
+from selenium.common.exceptions import ElementNotInteractableException
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
@@ -80,7 +81,9 @@ def navigate_to_tab_in_op_using_gui(
 def assert_cannot_click_replicate_button(
     selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
 ) -> None:
-    with pytest.raises(RuntimeError, match="Replicate button is not clickable"):
+    with pytest.raises(
+        ElementNotInteractableException, match="Replicate button is not clickable"
+    ):
         replicate_item(selenium, browser_id, provider, hosts)
 
 

@@ -10,6 +10,10 @@ import time
 
 import pytest
 from _pytest._py.path import LocalPath
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import (
@@ -25,6 +29,7 @@ from tests.gui.steps.common.miscellaneous import (
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,
@@ -174,7 +179,7 @@ def _get_breadcrumbs(
         breadcrumbs = getattr(
             OPLoggedIn(selenium[browser_id]), transform(which_browser)
         ).breadcrumbs
-    except RuntimeError:
+    except NoSuchElementException:
         which_browser = "archive browser"
         breadcrumbs = getattr(
             OPLoggedIn(selenium[browser_id]), transform(which_browser)
@@ -204,7 +209,7 @@ def assert_absence_of_path_in_dir_tree(
 ) -> None:
     driver = selenium[browser_id]
     curr_dir = OPLoggedIn(driver).data.sidebar.root_dir
-    with pytest.raises(RuntimeError):
+    with pytest.raises(PageObjectNotFoundError):
         for directory in (dir for dir in path.split("/") if dir != ""):
             curr_dir = curr_dir[directory]
 
@@ -912,7 +917,7 @@ def fail_to_click_file_browser_button(
     browser_button = getattr(file_browser, f"{transform(button)}_button")
     try:
         browser_button.click()
-    except RuntimeError:
+    except ElementNotInteractableException:
         return
     raise AssertionError(f"{transform(button)}_button is not supposed to be clickable")
 

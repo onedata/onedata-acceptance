@@ -11,6 +11,7 @@ from typing import Optional
 import yaml
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
+    ElementNotInteractableException,
     NoSuchElementException,
     StaleElementReferenceException,
 )
@@ -298,7 +299,7 @@ def create_item_in_op_gui(
 
     try:
         _open_menu_for_item_in_file_browser()
-    except (RuntimeError, KeyError):
+    except (ElementNotInteractableException, KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, browser_id, tmp_memory, space)
         _open_menu_for_item_in_file_browser()
 

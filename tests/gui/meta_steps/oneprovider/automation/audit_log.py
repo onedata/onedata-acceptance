@@ -1020,7 +1020,7 @@ def assert_content_of_user_task_audit_log(
             f'Audit log in task "{task_name}" in lane'
             f' "{lane_name}" contains user\'s entry'
         )
-    except RuntimeError:
+    except NoSuchElementException:
         pass
     modal.x()
     click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, close)

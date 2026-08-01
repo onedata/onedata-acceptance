@@ -11,7 +11,11 @@ import time
 from subprocess import CalledProcessError
 
 import yaml
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
@@ -586,7 +590,7 @@ def cannot_click_on_navigation_tab_in_space(
     tab = transform(tab_name, strip_char='"')
     try:
         getattr(nav, tab).click()
-    except RuntimeError:
+    except (ElementNotInteractableException, NoSuchElementException):
         return
     raise AssertionError(f"can click on {tab_name}")
 

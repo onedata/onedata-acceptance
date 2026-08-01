@@ -6,6 +6,10 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button
@@ -121,7 +125,7 @@ def can_not_click_protection_toggle(
             f"{toggle_type}_protection_toggle",
         ).check()
         raise AssertionError(f"{toggle_type}_protection_toggle is clickable")
-    except RuntimeError:
+    except (ElementNotInteractableException, NoSuchElementException):
         pass
 
 
@@ -186,7 +190,7 @@ def assert_one_of_two_dataset_has_deleted_root(
             try:
                 if dataset.deleted_root_file_icon.is_displayed():
                     number_of_deleted_icon += 1
-            except RuntimeError:
+            except NoSuchElementException:
                 pass
     error_message = (
         "Number of deleted icon in detached dataset list "
@@ -230,7 +234,7 @@ def fail_to_click_button_in_modal(
     try:
         click_modal_button(selenium, browser_id, button, modal)
         raise AssertionError(f'User can click on "{button}" in modal "{modal}"')
-    except RuntimeError:
+    except (ElementNotInteractableException, NoSuchElementException):
         pass
 
 

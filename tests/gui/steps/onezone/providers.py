@@ -11,12 +11,17 @@ from collections.abc import Iterator
 from itertools import zip_longest
 
 import requests
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -71,7 +76,7 @@ def assert_popup_for_provider_has_appeared_on_map(
     error_message = 'Popup displayed for provider named "{}" instead of "{}"'
     try:
         expected_provider_name = Popups(driver).provider_map_popover.provider_name
-    except RuntimeError:
+    except NoSuchElementException:
         Popups(driver).provider_details.values[0].copy_to_clipboard()
         expected_provider_name = clipboard.paste(display=displays[browser_id])
     provider_name = hosts[provider]["name"]
@@ -144,7 +149,7 @@ def assert_no_provider_popup_on_world_map(
     driver = selenium[browser_id]
     try:
         Popups(driver).provider_map_popover
-    except RuntimeError:
+    except NoSuchElementException:
         pass
     else:
         raise AssertionError("found provider popover on world map")
@@ -240,7 +245,11 @@ def assert_provider_working_in_oz_panel(
     try:
         provider_record = page.providers_list[provider]
         provider_record.click()
-    except RuntimeError:
+    except (
+        ElementNotInteractableException,
+        NoSuchElementException,
+        PageObjectNotFoundError,
+    ):
         assert False, f'no provider "{provider}" found on providers list'
     else:
         assert (

@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -68,6 +69,6 @@ class BrowserRow(PageObject):
     def is_tag_visible(self, name: str) -> bool:
         try:
             getattr(self, f"{transform(name)}_tag")
-        except RuntimeError:
+        except NoSuchElementException:
             return False
         return True

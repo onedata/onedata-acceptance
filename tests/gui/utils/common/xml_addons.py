@@ -117,7 +117,7 @@ def check_ace_editor_appeared(selenium: SeleniumDrivers, browser_id: str) -> Non
     driver = selenium[browser_id]
     try:
         _ = get_xml_data_openaire(driver)
-    except RuntimeError:
+    except AttributeError:
         switch_to_iframe(selenium, browser_id)
         _ = get_xml_data_openaire(driver)
 

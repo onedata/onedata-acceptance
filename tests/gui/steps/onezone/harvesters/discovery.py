@@ -8,11 +8,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
+
 from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import ListElement, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -218,7 +224,11 @@ def choose_element_from_dropdown_in_add_element_modal(
             add_one_of_elements_modal = getattr(Modals(driver), modal_name)
             add_one_of_elements_modal.expand_dropdown()
             Popups(driver).dropdown.options[element_name].click()
-        except RuntimeError:
+        except (
+            ElementNotInteractableException,
+            NoSuchElementException,
+            PageObjectNotFoundError,
+        ):
             time.sleep(0.5)
             continue
         break

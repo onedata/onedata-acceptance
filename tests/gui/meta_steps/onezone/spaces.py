@@ -8,6 +8,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -63,6 +67,7 @@ from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
 from tests.gui.type_definitions import Clipboard, NamedElement, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -416,7 +421,11 @@ def leave_space_in_onezone(
     time.sleep(2)
     try:
         leave_spaces_in_oz_using_gui(selenium, browser_id, [space_name])
-    except RuntimeError:
+    except (
+        ElementNotInteractableException,
+        NoSuchElementException,
+        PageObjectNotFoundError,
+    ):
         pass
 
 

@@ -294,7 +294,8 @@ def wait_for_visible_element_using_getter(
     timeout: float = WAIT_FRONTEND,
 ) -> WebElement:
     # Wait until the getter returns a visible element.
-    # RuntimeError raised by the getter is treated as a transient lookup failure.
+    # A missing element returned by the getter is treated as a transient lookup
+    # failure.
 
     def is_element_visible_using_getter(
         driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
@@ -302,7 +303,7 @@ def wait_for_visible_element_using_getter(
         try:
             web_elem = web_elem_getter(driver)
             return web_elem if visibility_of(web_elem)(driver) else None
-        except RuntimeError:
+        except NoSuchElementException:
             return None
 
     return WebDriverWait(driver, timeout=timeout).until(
