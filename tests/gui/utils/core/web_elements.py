@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from functools import partial
 from typing import Any
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
@@ -105,7 +106,12 @@ class AceEditor(WebElement):
         selector = self.css_selector + " .ace_content"
         script = f"var textarea = document.querySelector('{selector}');return textarea"
         driver = instance.web_elem.parent
-        return driver.execute_script(script).text
+        item = driver.execute_script(script)
+        if item is None:
+            raise NoSuchElementException(
+                self._format_msg("no {item} item found in {parent}", instance)
+            )
+        return item.text
 
     def __set__(self, instance: Any, val: Any) -> None:
         driver = instance.web_elem.parent
