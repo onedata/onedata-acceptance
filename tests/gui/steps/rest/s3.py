@@ -6,45 +6,30 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import hashlib
 import hmac
+import json
 import subprocess as sp
-from datetime import datetime
+from datetime import datetime, timezone
 
 import requests
 from requests.exceptions import HTTPError
 
 from tests.conftest import REQUEST_TIMEOUT
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.type_definitions import Clipboard
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.utils import repeat_failed
 
 HOST_URL = "dev-volume-s3-krakow.default:9000"
+S3_APP_LABEL = "dev-volume-s3-krakow"
 
 ACCESS_KEY = "accessKey"
 SECRET_KEY = "verySecretKey"
 
 
-@given(parsers.parse("S3 host entry is added to /etc/hosts"))
-def add_s3_host_entry() -> None:
-    # temporary solution when s3 host entry will be added by onenv remove this function
-    ip = sp.check_output(
-        "kubectl get pods -o wide | grep dev-volume-s3-krakow |"
-        " grep -v dev-volume-s3-krakow-init | awk '{print $6}'",
-        shell=True,
-        text=True,
-    )
-    ip = ip.replace("\n", "")
-    add_etc_hosts_entries(ip, "dev-volume-s3-krakow.default")
-
-
+@given(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
 @wt(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
 def create_s3_bucket_rest(bucket_name: str) -> None:
-    try:
-        create_bucket(bucket_name)
-    except HTTPError as e:
-        # if bucket already exists do not throw exception
-        if e.response.status_code == 409:
-            pass
-        else:
-            raise e
+    ensure_bucket_exists(bucket_name)
 
 
 @wt(
@@ -123,6 +108,7 @@ def create_authorization_header(
 
 
 def s3_authorization(
+    method: str,
     headers: dict[str, str],
     canonical_uri: str,
     canonical_querystring: str,
@@ -132,7 +118,7 @@ def s3_authorization(
 ) -> str:
     signed_headers = ";".join(headers.keys())
     canonical_request = create_canonical_request(
-        "PUT",
+        method,
         canonical_uri,
         canonical_querystring,
         headers,
@@ -158,8 +144,9 @@ def s3_authorization(
 
 
 def create_bucket(bucket_name: str) -> None:
-    amz_date = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-    date_stamp = datetime.utcnow().strftime("%Y%m%d")
+    now = datetime.now(timezone.utc)
+    amz_date = now.strftime("%Y%m%dT%H%M%SZ")
+    date_stamp = now.strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"
     canonical_uri = f"/{bucket_name}"
     canonical_querystring = ""
@@ -170,6 +157,7 @@ def create_bucket(bucket_name: str) -> None:
     }
 
     authorization_header = s3_authorization(
+        "PUT",
         headers,
         canonical_uri,
         canonical_querystring,
@@ -180,15 +168,60 @@ def create_bucket(bucket_name: str) -> None:
 
     headers["Authorization"] = authorization_header
 
-    url = f"http://{HOST_URL}{canonical_uri}"
+    url = f"{get_s3_endpoint_url()}{canonical_uri}"
     response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
 
     response.raise_for_status()
 
 
+def assert_bucket_exists(bucket_name: str) -> None:
+    now = datetime.now(timezone.utc)
+    amz_date = now.strftime("%Y%m%dT%H%M%SZ")
+    date_stamp = now.strftime("%Y%m%d")
+    payload_hash = "UNSIGNED-PAYLOAD"
+    canonical_uri = f"/{bucket_name}"
+    headers = {
+        "host": HOST_URL,
+        "x-amz-content-sha256": payload_hash,
+        "x-amz-date": amz_date,
+    }
+
+    headers["Authorization"] = s3_authorization(
+        "HEAD",
+        headers,
+        canonical_uri,
+        "",
+        payload_hash,
+        date_stamp,
+        amz_date,
+    )
+
+    response = requests.head(
+        f"{get_s3_endpoint_url()}{canonical_uri}",
+        headers=headers,
+        timeout=REQUEST_TIMEOUT,
+    )
+    response.raise_for_status()
+
+
+@repeat_failed(timeout=WAIT_BACKEND, exceptions=(requests.RequestException,))
+def ensure_bucket_exists(bucket_name: str) -> None:
+    try:
+        create_bucket(bucket_name)
+    except HTTPError as ex:
+        # Creating an existing bucket is an idempotent success.
+        if ex.response.status_code != 409:
+            raise
+
+    # Do not trust the bucket initializer's exit status. It can succeed after
+    # contacting an old MinIO pod during a rolling update.
+    assert_bucket_exists(bucket_name)
+
+
 def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
-    amz_date = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-    date_stamp = datetime.utcnow().strftime("%Y%m%d")
+    now = datetime.now(timezone.utc)
+    amz_date = now.strftime("%Y%m%dT%H%M%SZ")
+    date_stamp = now.strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"
     canonical_uri = f"/{dst_bucket}/{dst}"
     canonical_querystring = ""
@@ -200,6 +233,7 @@ def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
         "x-amz-date": amz_date,
     }
     authorization_header = s3_authorization(
+        "PUT",
         headers,
         canonical_uri,
         canonical_querystring,
@@ -210,16 +244,44 @@ def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
 
     headers["Authorization"] = authorization_header
 
-    url = f"http://{HOST_URL}{canonical_uri}"
+    url = f"{get_s3_endpoint_url()}{canonical_uri}"
     response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
 
     response.raise_for_status()
 
 
-def add_etc_hosts_entries(service_ip: str, service_host: str) -> None:
-    sp.run(
-        f'sudo bash -c "echo {service_ip} {service_host} >> /etc/hosts"',
-        shell=True,
+@repeat_failed(timeout=WAIT_BACKEND)
+def get_current_s3_pod_ip() -> str:
+    output = sp.check_output(
+        [
+            "kubectl",
+            "get",
+            "pods",
+            "-l",
+            f"app={S3_APP_LABEL}",
+            "-o",
+            "json",
+        ],
         text=True,
-        check=True,
     )
+    pods = json.loads(output)["items"]
+    ready_pods = [
+        pod
+        for pod in pods
+        if pod["metadata"].get("deletionTimestamp") is None
+        and pod["status"].get("phase") == "Running"
+        and any(
+            status.get("ready", False)
+            for status in pod["status"].get("containerStatuses", [])
+        )
+        and pod["status"].get("podIP")
+    ]
+    if not ready_pods:
+        raise RuntimeError(f'No ready pod found for app "{S3_APP_LABEL}"')
+
+    newest_pod = max(ready_pods, key=lambda pod: pod["metadata"]["creationTimestamp"])
+    return newest_pod["status"]["podIP"]
+
+
+def get_s3_endpoint_url() -> str:
+    return f"http://{get_current_s3_pod_ip()}:9000"

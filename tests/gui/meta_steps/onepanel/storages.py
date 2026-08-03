@@ -10,6 +10,7 @@ import json
 import re
 from typing import Optional
 
+import pytest
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 
@@ -48,7 +49,13 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
+from tests.utils.rest_utils import (
+    get_panel_rest_path,
+    http_delete,
+    http_get,
+    http_patch,
+    http_post,
+)
 from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
@@ -154,6 +161,7 @@ def safely_create_storage_rest(
     config: str,
     hosts: Hosts,
     onepanel_credentials: User,
+    request: pytest.FixtureRequest,
 ) -> None:
     """Create storage according to given config.
 
@@ -168,8 +176,22 @@ def safely_create_storage_rest(
     _remove_storage_in_op_panel_using_rest(
         storage_name, provider, hosts, onepanel_credentials
     )
-    _add_storage_in_op_panel_using_rest(
+    storage_id = _add_storage_in_op_panel_using_rest(
         config, storage_name, provider, hosts, onepanel_credentials
+    )
+
+    provider_hostname = hosts[provider]["hostname"]
+    username = onepanel_credentials.username
+    password = onepanel_credentials.password
+    request.addfinalizer(
+        lambda: _restore_and_remove_storage(
+            provider_hostname,
+            username,
+            password,
+            storage_id,
+            storage_name,
+            config,
+        )
     )
 
 
@@ -215,6 +237,65 @@ def _remove_storage_by_id(
         path=get_panel_rest_path("provider", "storages", storage_id),
         auth=(onepanel_username, onepanel_password),
     )
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def _remove_storage_by_id_and_wait_until_absent(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: Optional[str],
+    storage_id: str,
+) -> None:
+    storage_ids = _get_storages_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    )
+    if storage_id not in storage_ids:
+        return
+
+    _remove_storage_by_id(
+        provider_hostname, onepanel_username, onepanel_password, storage_id
+    )
+    assert storage_id not in _get_storages_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    )
+
+
+def _restore_and_remove_storage(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: Optional[str],
+    storage_id: str,
+    storage_name: str,
+    config: str,
+) -> None:
+    """Restore mutable storage parameters before removing the storage.
+
+    Oneprovider caches storage helper parameters after the storage record is
+    removed. Restoring the original parameters prevents a modified backend
+    configuration from leaking into a consecutive test run.
+    """
+    if storage_id not in _get_storages_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    ):
+        return
+
+    storage_data = _storage_data_from_config(config, storage_name)
+    storage_config = storage_data[storage_name]
+    if isinstance(storage_config, dict):
+        storage_config.pop("importedStorage", None)
+
+    try:
+        http_patch(
+            ip=provider_hostname,
+            port=PANEL_REST_PORT,
+            path=get_panel_rest_path("provider", "storages", storage_id),
+            auth=(onepanel_username, onepanel_password),
+            data=json.dumps(storage_data),
+        )
+    finally:
+        _remove_storage_by_id_and_wait_until_absent(
+            provider_hostname, onepanel_username, onepanel_password, storage_id
+        )
 
 
 @given(parsers.parse('there is no "{name}" storage in "{provider}" Oneprovider panel'))
@@ -275,8 +356,30 @@ def _add_storage_in_op_panel_using_rest(
     provider: str,
     hosts: Hosts,
     onepanel_credentials: User,
-) -> None:
-    storage_config = {}
+) -> str:
+    storage_data = _storage_data_from_config(config, storage_name)
+
+    provider_hostname = hosts[provider]["hostname"]
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    response = http_post(
+        ip=provider_hostname,
+        port=PANEL_REST_PORT,
+        path=get_panel_rest_path("provider", "storages"),
+        auth=(onepanel_username, onepanel_password),
+        data=json.dumps(storage_data),
+    )
+
+    storage_id = response.json()[storage_name]["id"]
+
+    if not isinstance(storage_id, str):
+        raise TypeError("Storage creation response contains an invalid storage ID")
+    return storage_id
+
+
+def _storage_data_from_config(config: str, storage_name: str) -> dict[str, object]:
+    storage_config: dict[str, object] = {}
     options = yaml.load(config, yaml.Loader)
 
     for key, val in options.items():
@@ -287,19 +390,7 @@ def _add_storage_in_op_panel_using_rest(
         else:
             storage_config[_camel_transform(key)] = val
 
-    provider_hostname = hosts[provider]["hostname"]
-    onepanel_username = onepanel_credentials.username
-    onepanel_password = onepanel_credentials.password
-
-    storage_data = {storage_name: storage_config}
-
-    http_post(
-        ip=provider_hostname,
-        port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "storages"),
-        auth=(onepanel_username, onepanel_password),
-        data=json.dumps(storage_data),
-    )
+    return {storage_name: storage_config}
 
 
 @wt(

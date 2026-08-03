@@ -8,6 +8,7 @@ import json
 from collections.abc import Mapping, MutableMapping
 from typing import NotRequired, Optional, Protocol, TypedDict, cast
 
+import pytest
 import yaml
 
 from tests import OZ_REST_PORT
@@ -21,7 +22,7 @@ from tests.utils.rest_utils import (
     http_put,
 )
 from tests.utils.user_utils import Users
-
+from tests.gui.steps.rest.groups import delete_group_with_rest
 HostsConfig = Mapping[str, Mapping[str, str]]
 
 
@@ -58,6 +59,7 @@ def groups_creation_step(
     users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
+    request: pytest.FixtureRequest
 ) -> None:
     groups_creation(
         cast(GroupsConfig, yaml.load(config, yaml.Loader)),
@@ -76,6 +78,7 @@ def groups_creation(
     users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
+    request: pytest.FixtureRequest
 ) -> None:
     """Create and configure groups according to given config.
 
@@ -129,6 +132,7 @@ def _groups_creation(
     users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
+    request: pytest.FixtureRequest
 ) -> None:
     zone_hostname = hosts[service]["hostname"]
 
@@ -136,7 +140,7 @@ def _groups_creation(
         owner = users[description["owner"]]
 
         group_id = _create_group(
-            zone_hostname, owner.username, owner.password, group_name
+            zone_hostname, owner.username, owner.password, group_name, request=request
         )
         groups[group_name] = group_id
 
@@ -173,8 +177,9 @@ def _unpack_member_entry(entry: MemberEntry) -> tuple[str, Optional[list[str]]]:
 def _create_group(
     zone_hostname: str,
     owner_username: str,
-    owner_password: Optional[str],
+    owner_password: str | None,
     group_name: str,
+    request: pytest.FixtureRequest,
     group_type: str = "team",
 ) -> str:
     group_properties = {"name": group_name, "type": group_type}
@@ -185,7 +190,14 @@ def _create_group(
         auth=(owner_username, owner_password),
         data=json.dumps(group_properties),
     )
-    return response.headers["location"].split("/")[-1]
+    group_id = response.headers["location"].split("/")[-1]
+    
+    request.addfinalizer(
+        lambda: delete_group_with_rest(
+            zone_hostname, owner_username, owner_password, group_id
+        )
+    )
+    return group_id
 
 
 def _add_user_to_group(

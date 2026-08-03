@@ -10,6 +10,7 @@ from collections.abc import Mapping, MutableMapping, Sequence
 from functools import cache
 from typing import Optional, Protocol, TypedDict, cast
 
+import pytest
 import requests
 import yaml
 
@@ -35,6 +36,7 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
+from tests.gui.steps.rest.spaces import delete_space_with_rest
 
 type Hosts = Mapping[str, HostDescription]
 type Groups = Mapping[str, str]
@@ -117,6 +119,7 @@ def create_and_configure_spaces_step(
     groups: Groups,
     storages: Storages,
     spaces: Spaces,
+    request: pytest.FixtureRequest
 ) -> None:
     create_and_configure_spaces(
         cast(SpacesConfig, yaml.load(config, yaml.Loader)),
@@ -128,6 +131,7 @@ def create_and_configure_spaces_step(
         groups,
         storages,
         spaces,
+        request
     )
 
 
@@ -141,6 +145,7 @@ def create_and_configure_spaces(
     groups: Groups,
     storages: Storages,
     spaces: Spaces,
+    request: pytest.FixtureRequest
 ) -> None:
     """Create and configure spaces according to given config.
 
@@ -224,6 +229,7 @@ def create_and_configure_spaces(
         groups,
         storages,
         spaces,
+        request
     )
 
 
@@ -242,6 +248,7 @@ def add_spaces_configuration(
     groups: Groups,
     storages: Storages,
     spaces: Spaces,
+    request: pytest.FixtureRequest,
 ) -> None:
     _create_and_configure_spaces(
         cast(SpacesConfig, yaml.load(config, yaml.Loader)),
@@ -253,6 +260,7 @@ def add_spaces_configuration(
         groups,
         storages,
         spaces,
+        request
     )
 
 
@@ -266,6 +274,7 @@ def _create_and_configure_spaces(
     groups_db: Groups,
     storages_db: Storages,
     spaces_db: Spaces,
+    request: pytest.FixtureRequest
 ) -> None:
     zone = cast(Mapping[str, str], hosts[zone_name])
     zone_hostname = zone["hostname"]
@@ -274,7 +283,7 @@ def _create_and_configure_spaces(
         owner = users_db[description["owner"]]
         users_to_add = description.get("users", [])
         spaces_db[space_name] = space_id = _create_space(
-            zone_hostname, owner.username, owner.password, space_name
+            zone_hostname, owner.username, owner.password, space_name, request
         )
         _add_users_to_space(
             zone_hostname, admin_credentials, space_id, users_db, users_to_add
@@ -305,8 +314,9 @@ def _create_and_configure_spaces(
 def _create_space(
     zone_hostname: str,
     owner_username: str,
-    owner_password: Optional[str],
+    owner_password: str | None,
     space_name: str,
+    request: pytest.FixtureRequest
 ) -> str:
     space_properties = {"name": space_name}
     response = http_post(
@@ -316,7 +326,13 @@ def _create_space(
         auth=(owner_username, owner_password),
         data=json.dumps(space_properties),
     )
-    return response.headers["location"].split("/")[-1]
+    space_id = response.headers["location"].split("/")[-1]
+    request.addfinalizer(
+        lambda: delete_space_with_rest(
+            zone_hostname, owner_username, owner_password, space_id
+        )
+    )
+    return space_id
 
 
 def _add_users_to_space(

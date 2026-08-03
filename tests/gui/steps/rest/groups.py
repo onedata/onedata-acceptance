@@ -29,3 +29,13 @@ def leave_user_group(
         path=get_zone_rest_path("user", "groups", group_id),
         auth=(user, users[user].password),
     )
+    
+
+def delete_group_with_rest(zone_hostname: str, owner_username: str, owner_password: str, group_id: str) -> None:
+    res = http_delete(
+        ip=zone_hostname,
+        port=OZ_REST_PORT,
+        path=get_zone_rest_path("groups", group_id),
+        auth=(owner_username, owner_password),
+    )
+    print(res.status_code, res.text)
