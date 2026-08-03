@@ -381,11 +381,14 @@ def _try_confirm_changes_in_modify_storage_modal(
     checkbox = "Understand checkbox"
     modal = "Modify Storage"
     # if modal will not appear
-    click_modal_button(selenium, browser_id, checkbox, modal)
-    click_modal_button(selenium, browser_id, button, modal)
-    wait_for_named_modal_to_disappear(
-        selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5
-    )
+    try:
+        click_modal_button(selenium, browser_id, checkbox, modal)
+        click_modal_button(selenium, browser_id, button, modal)
+        wait_for_named_modal_to_disappear(
+            selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5
+        )
+    except NoSuchElementException:
+        pass
 
 
 @wt(
