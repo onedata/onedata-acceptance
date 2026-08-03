@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from pytest import FixtureRequest
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
@@ -18,6 +20,7 @@ from tests.gui.steps.onezone.harvesters.configuration import (
 )
 from tests.gui.steps.onezone.harvesters.discovery import (
     assert_space_has_appeared_in_discovery_page,
+    check_element_exists_on_sidebar_list,
     choose_element_from_dropdown_in_add_element_modal,
     click_button_in_harvester_spaces_page,
     click_button_on_discovery_on_left_sidebar_menu,
@@ -49,6 +52,7 @@ from tests.gui.steps.onezone.members import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.onezone.spaces import (
+    assert_error_popup_has_appeared,
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
@@ -56,7 +60,86 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup.harvesters import (
+    _remove_harvester,
+    get_user_harvester_ids,
+)
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
+
+
+def _remove_harvesters_created_after(
+    initial_harvester_ids: set[str],
+    zone_hostname: str,
+    username: str,
+    password: str | None,
+) -> None:
+    current_harvester_ids = get_user_harvester_ids(zone_hostname, username, password)
+    for harvester_id in current_harvester_ids - initial_harvester_ids:
+        _remove_harvester(harvester_id, zone_hostname, username, password)
+
+
+def _register_new_harvesters_finalizer(
+    request: FixtureRequest,
+    hosts: Hosts,
+    admin_credentials: User,
+) -> None:
+    zone_hostname = hosts["onezone"]["hostname"]
+    username = admin_credentials.username
+    password = admin_credentials.password
+    initial_harvester_ids = get_user_harvester_ids(zone_hostname, username, password)
+
+    request.addfinalizer(
+        lambda: _remove_harvesters_created_after(
+            initial_harvester_ids,
+            zone_hostname,
+            username,
+            password,
+        )
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks on Create button in discovery page "
+        'and succeeds to create "{harvester_name}" harvester'
+    )
+)
+def click_create_button_and_succeed_to_create_harvester(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    harvester_name: str,
+    hosts: Hosts,
+    request: FixtureRequest,
+    admin_credentials: User,
+) -> None:
+    _register_new_harvesters_finalizer(request, hosts, admin_credentials)
+    click_create_button_in_discovery_page(selenium, browser_id)
+    check_element_exists_on_sidebar_list(
+        selenium, browser_id, harvester_name, "appeared", "harvesters"
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks on Create button in discovery page "
+        'and fails to create "{harvester_name}" harvester'
+    )
+)
+def click_create_button_and_fail_to_create_harvester(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    harvester_name: str,
+    hosts: Hosts,
+    request: FixtureRequest,
+    admin_credentials: User,
+) -> None:
+    _register_new_harvesters_finalizer(request, hosts, admin_credentials)
+    click_create_button_in_discovery_page(selenium, browser_id)
+    assert_error_popup_has_appeared(selenium, browser_id)
+    check_element_exists_on_sidebar_list(
+        selenium, browser_id, harvester_name, "disappeared", "harvesters"
+    )
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
@@ -128,6 +211,8 @@ def create_harvester(
     harvesters: dict[str, str],
     clipboard: Clipboard,
     displays: dict[str, str],
+    request: FixtureRequest,
+    admin_credentials: User,
 ) -> None:
     where = "Discovery"
     input_name = "name"
@@ -145,7 +230,17 @@ def create_harvester(
     )
     click_create_button_in_discovery_page(selenium, browser_id)
     click_on_option_in_harvester_menu(selenium, browser_id, option, harvester_name)
-    harvesters[harvester_name] = clipboard.paste(display=displays[browser_id])
+    harvester_id = clipboard.paste(display=displays[browser_id])
+    harvesters[harvester_name] = harvester_id
+
+    request.addfinalizer(
+        lambda: _remove_harvester(
+            harvester_id,
+            hosts["onezone"]["hostname"],
+            admin_credentials.username,
+            admin_credentials.password,
+        )
+    )
 
 
 @wt(

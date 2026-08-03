@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests import OZ_REST_PORT
-from tests.utils.environment_utils import Optional
 from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
 from tests.utils.user_utils import Users
 
@@ -31,7 +30,9 @@ def leave_user_space(
     )
 
 
-def delete_space_with_rest(zone_hostname: str, owner_username: str, owner_password: str | None, space_id: str) -> None:
+def delete_space_with_rest(
+    zone_hostname: str, owner_username: str, owner_password: str | None, space_id: str
+) -> None:
     res = http_delete(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -39,4 +40,3 @@ def delete_space_with_rest(zone_hostname: str, owner_username: str, owner_passwo
         auth=(owner_username, owner_password),
     )
     print(res.status_code, res.text)
-    

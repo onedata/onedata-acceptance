@@ -6,11 +6,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping, MutableMapping
-from typing import Optional
+
+from pytest import FixtureRequest
 
 from tests import ELASTICSEARCH_PORT, OZ_REST_PORT
 from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import (
     get_zone_rest_path,
     http_delete,
@@ -51,6 +53,7 @@ def create_harvesters_rest(
     hosts: HostsConfig,
     users: Users,
     harvesters: MutableIdMap,
+    request: FixtureRequest,
 ) -> None:
     zone_hostname = hosts[service]["hostname"]
     owner = users[user]
@@ -66,17 +69,19 @@ def create_harvesters_rest(
             endpoint,
             plugin,
             harvesters,
+            request,
         )
 
 
 def _create_harvester(
     zone_hostname: str,
     owner_username: str,
-    owner_password: Optional[str],
+    owner_password: str | None,
     harvester_name: str,
     endpoint: str,
     plugin: str,
     harvesters: MutableIdMap,
+    request: FixtureRequest,
 ) -> None:
     harvester_details = {
         "name": harvester_name,
@@ -93,17 +98,24 @@ def _create_harvester(
     )
 
     # set harvester id
-    harvesters[harvester_name] = response.headers["Location"].split("/")[-1]
+    harvester_id = response.headers["Location"].split("/")[-1]
+    harvesters[harvester_name] = harvester_id
+
+    request.addfinalizer(
+        lambda: _remove_harvester(
+            harvester_id, zone_hostname, owner_username, owner_password
+        )
+    )
 
     _create_harvester_gui_index(
-        zone_hostname, owner_username, owner_password, harvesters[harvester_name]
+        zone_hostname, owner_username, owner_password, harvester_id
     )
 
 
 def _create_harvester_gui_index(
     zone_hostname: str,
     owner_username: str,
-    owner_password: Optional[str],
+    owner_password: str | None,
     harvester_id: str,
 ) -> None:
     index_details = {
@@ -127,28 +139,43 @@ def _create_harvester_gui_index(
 @given(parsers.parse("user {user} has no harvesters other than defined in next steps"))
 def remove_all_harvesters_rest(user: str, hosts: HostsConfig, users: Users) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
+    password = users[user].password
 
-    dict_harvesters = http_get(
+    for harvester_id in get_user_harvester_ids(zone_hostname, user, password):
+        _remove_harvester(harvester_id, zone_hostname, user, password)
+
+
+def get_user_harvester_ids(
+    zone_hostname: str,
+    username: str,
+    password: str | None,
+) -> set[str]:
+    response = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("user", "harvesters"),
-        auth=(user, users[user].password),
-    ).json()
-    list_harvesters = dict_harvesters["harvesters"]
+        auth=(username, password),
+    )
 
-    for harvester in list_harvesters:
-        _remove_harvester(harvester, zone_hostname, user, users)
+    return set(response.json()["harvesters"])
 
 
 def _remove_harvester(
-    harvester_id: str, zone_hostname: str, user: str, users: Users
+    harvester_id: str,
+    zone_hostname: str,
+    owner_username: str,
+    owner_password: str | None,
 ) -> None:
-    http_delete(
-        ip=zone_hostname,
-        port=OZ_REST_PORT,
-        path=get_zone_rest_path("harvesters", harvester_id),
-        auth=(user, users[user].password),
-    )
+    try:
+        http_delete(
+            ip=zone_hostname,
+            port=OZ_REST_PORT,
+            path=get_zone_rest_path("harvesters", harvester_id),
+            auth=(owner_username, owner_password),
+        )
+    except HTTPNotFound:
+        # A scenario may explicitly remove the harvester before its finalizer runs.
+        pass
 
 
 @given(

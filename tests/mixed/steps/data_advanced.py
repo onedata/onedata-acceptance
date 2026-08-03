@@ -47,6 +47,7 @@ def create_space_with_alias_in_oz(
     users: Users,
     spaces: Spaces,
     space_aliases: SpaceAliases,
+    request: pytest.FixtureRequest,
 ) -> None:
     if client.lower() == "rest":
         create_spaces_in_oz_using_rest(
@@ -56,6 +57,7 @@ def create_space_with_alias_in_oz(
             host,
             [space_name],
             spaces,
+            request,
         )
         space_aliases[alias] = {"name": space_name, "sid": spaces[space_name]}
     else:

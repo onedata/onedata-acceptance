@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import Protocol, cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
+from pytest import FixtureRequest
 
 from tests.mixed.steps.rest.onezone.common import (
     get_provider_with_name,
@@ -38,10 +39,15 @@ def create_spaces_in_oz_using_rest(
     zone_name: str,
     space_list: list[str],
     spaces: SpaceMap,
+    request: FixtureRequest,
 ) -> None:
     for space_name in space_list:
         space_id = _create_space(
-            hosts[zone_name]["hostname"], user, users[user].password, space_name
+            hosts[zone_name]["hostname"],
+            user,
+            users[user].password,
+            space_name,
+            request,
         )
         spaces[space_name] = space_id
 

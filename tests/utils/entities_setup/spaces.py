@@ -8,7 +8,7 @@ import json
 import time
 from collections.abc import Mapping, MutableMapping, Sequence
 from functools import cache
-from typing import Optional, Protocol, TypedDict, cast
+from typing import Protocol, TypedDict, cast
 
 import pytest
 import requests
@@ -16,6 +16,7 @@ import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.rest.spaces import delete_space_with_rest
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import HostDescription, JsonObject, JsonValue
 from tests.utils.bdd_utils import given, parsers, wt
@@ -36,7 +37,6 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.rest.spaces import delete_space_with_rest
 
 type Hosts = Mapping[str, HostDescription]
 type Groups = Mapping[str, str]
@@ -54,7 +54,7 @@ class CredentialsLike(Protocol):
     def username(self) -> str: ...
 
     @property
-    def password(self) -> Optional[str]: ...
+    def password(self) -> str | None: ...
 
 
 class MemberOptions(TypedDict):
@@ -76,12 +76,12 @@ class CdmiCreator(Protocol):
     def __call__(
         self,
         path: str,
-        data: Optional[str] = None,
+        data: str | None = None,
         repeats: int = 10,
-        auth: Optional[tuple[str, Optional[str]]] = None,
-        headers: Optional[Mapping[str, str]] = None,
+        auth: tuple[str, str | None] | None = None,
+        headers: Mapping[str, str] | None = None,
         **extra: str,
-    ) -> Optional[requests.Response]: ...
+    ) -> requests.Response | None: ...
 
 
 StorageConfig = TypedDict(
@@ -119,7 +119,7 @@ def create_and_configure_spaces_step(
     groups: Groups,
     storages: Storages,
     spaces: Spaces,
-    request: pytest.FixtureRequest
+    request: pytest.FixtureRequest,
 ) -> None:
     create_and_configure_spaces(
         cast(SpacesConfig, yaml.load(config, yaml.Loader)),
@@ -131,7 +131,7 @@ def create_and_configure_spaces_step(
         groups,
         storages,
         spaces,
-        request
+        request,
     )
 
 
@@ -145,7 +145,7 @@ def create_and_configure_spaces(
     groups: Groups,
     storages: Storages,
     spaces: Spaces,
-    request: pytest.FixtureRequest
+    request: pytest.FixtureRequest,
 ) -> None:
     """Create and configure spaces according to given config.
 
@@ -229,7 +229,7 @@ def create_and_configure_spaces(
         groups,
         storages,
         spaces,
-        request
+        request,
     )
 
 
@@ -260,7 +260,7 @@ def add_spaces_configuration(
         groups,
         storages,
         spaces,
-        request
+        request,
     )
 
 
@@ -274,7 +274,7 @@ def _create_and_configure_spaces(
     groups_db: Groups,
     storages_db: Storages,
     spaces_db: Spaces,
-    request: pytest.FixtureRequest
+    request: pytest.FixtureRequest,
 ) -> None:
     zone = cast(Mapping[str, str], hosts[zone_name])
     zone_hostname = zone["hostname"]
@@ -316,7 +316,7 @@ def _create_space(
     owner_username: str,
     owner_password: str | None,
     space_name: str,
-    request: pytest.FixtureRequest
+    request: pytest.FixtureRequest,
 ) -> str:
     space_properties = {"name": space_name}
     response = http_post(
@@ -362,10 +362,10 @@ def _add_users_to_space(
 def _add_user_to_space(
     zone_hostname: str,
     admin_username: str,
-    admin_password: Optional[str],
+    admin_password: str | None,
     space_id: str,
     user_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
     if privileges:
         data = json.dumps({"operation": "set", "privileges": privileges})
@@ -408,10 +408,10 @@ def _add_groups_to_space(
 def _add_group_to_space(
     zone_hostname: str,
     admin_username: str,
-    admin_password: Optional[str],
+    admin_password: str | None,
     space_id: str,
     group_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
     if privileges:
         data = json.dumps({"operation": "set", "privileges": privileges})
@@ -508,7 +508,7 @@ def wait_for_storage_details(
     provider_hostname: str,
     storage_id: str,
     onepanel_username: str,
-    onepanel_password: Optional[str],
+    onepanel_password: str | None,
 ) -> requests.Response:
     storage_details = http_get(
         ip=provider_hostname,
@@ -523,7 +523,7 @@ def wait_for_storage_details(
 def wait_for_storages_id(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: Optional[str],
+    onepanel_password: str | None,
 ) -> requests.Response:
     storages_id = http_get(
         ip=provider_hostname,
@@ -537,7 +537,7 @@ def wait_for_storages_id(
 def _get_storage_id(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: Optional[str],
+    onepanel_password: str | None,
     storage_name: str,
 ) -> str:
     storages_id = wait_for_storages_id(
@@ -564,7 +564,7 @@ def _init_storage_from_config(
     space_name: str,
     hosts: Hosts,
     users: Users,
-    storage_conf: Optional[StorageConfig],
+    storage_conf: StorageConfig | None,
 ) -> None:
     if not storage_conf:
         return
@@ -595,12 +595,12 @@ def init_storage(
 
     def create_cdmi_object(
         path: str,
-        data: Optional[str] = None,
+        data: str | None = None,
         repeats: int = 10,
-        auth: Optional[tuple[str, Optional[str]]] = None,
-        headers: Optional[Mapping[str, str]] = None,
+        auth: tuple[str, str | None] | None = None,
+        headers: Mapping[str, str] | None = None,
         **_extra: str,
-    ) -> Optional[requests.Response]:
+    ) -> requests.Response | None:
         if headers is None:
             headers = {"X-Auth-Token": owner_credentials.token}
         response = None
@@ -640,7 +640,7 @@ def _mkdirs(
     owner_credentials: User,
     provider_hostname: str,
     users: Users,
-    dir_content: Optional[DirectoryTree] = None,
+    dir_content: DirectoryTree | None = None,
 ) -> None:
     if not dir_content:
         return
@@ -648,7 +648,7 @@ def _mkdirs(
     for item in dir_content:
         if isinstance(item, dict):
             [(name, content)] = item.items()
-            nested_content = cast(Optional[DirectoryTree], content)
+            nested_content = cast(DirectoryTree | None, content)
         else:
             name, nested_content = item, None
 
@@ -681,7 +681,7 @@ def set_file_metadata(
     owner_credentials: User,
     provider_hostname: str,
     users: Users,
-    metadata: Optional[JsonObject] = None,
+    metadata: JsonObject | None = None,
 ) -> None:
     if metadata is None:
         return
@@ -705,7 +705,7 @@ def _mkfile(
     owner_credentials: User,
     provider_hostname: str,
     users: Users,
-    file_content: Optional[TreeValue] = None,
+    file_content: TreeValue | None = None,
 ) -> None:
     if file_content:
         if not isinstance(file_content, dict):
@@ -877,7 +877,7 @@ def create_files_names_alphabetically_with_dir_list(
 
 
 def _get_users_space_id_list(
-    zone_hostname: str, owner_username: str, owner_password: Optional[str]
+    zone_hostname: str, owner_username: str, owner_password: str | None
 ) -> list[str]:
 
     resp = http_get(
@@ -891,7 +891,7 @@ def _get_users_space_id_list(
 
 
 def _rm_all_spaces_for_user(
-    zone_hostname: str, owner_username: str, owner_password: Optional[str]
+    zone_hostname: str, owner_username: str, owner_password: str | None
 ) -> None:
     spaces_id_list = _get_users_space_id_list(
         zone_hostname, owner_username, owner_password

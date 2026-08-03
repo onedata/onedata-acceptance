@@ -10,6 +10,7 @@ from collections.abc import Mapping
 from typing import cast
 
 from onezone_client import UserApi
+from pytest import FixtureRequest
 
 from tests.gui.meta_steps.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_gui,
@@ -104,11 +105,18 @@ def create_spaces_in_oz(
     spaces: Spaces,
     clipboard: Clipboard,
     displays: dict[str, str],
+    request: FixtureRequest,
 ) -> None:
 
     if client.lower() == "rest":
         create_spaces_in_oz_using_rest(
-            user, _as_space_users(users), hosts, host, space_list, spaces
+            user,
+            _as_space_users(users),
+            hosts,
+            host,
+            space_list,
+            spaces,
+            request,
         )
     elif client.lower() == "web gui":
 

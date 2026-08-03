@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from pytest import FixtureRequest
+
 from tests.gui.steps.rest.shares import create_share_using_rest
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
@@ -25,7 +27,12 @@ from tests.utils.user_utils import User, Users
     )
 )
 def create_n_spaces_without_support(
-    zone_host: str, users: Users, user: str, hosts: Hosts, number: str
+    zone_host: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    number: str,
+    request: FixtureRequest,
 ) -> None:
     name_prefix = "space"
     zone_hostname = hosts[zone_host]["hostname"]
@@ -33,7 +40,9 @@ def create_n_spaces_without_support(
     owner = users[user]
     for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
-        _create_space(zone_hostname, owner.username, owner.password, space_name)
+        _create_space(
+            zone_hostname, owner.username, owner.password, space_name, request
+        )
 
 
 @wt(
@@ -51,6 +60,7 @@ def create_n_spaces_with_shares(
     onepanel_credentials: User,
     storages: dict,
     shares: dict[str, str],
+    request: FixtureRequest,
 ) -> None:
     name_prefix = "space"
     host = "oneprovider-1"
@@ -64,7 +74,7 @@ def create_n_spaces_with_shares(
     for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
         space_id = _create_space(
-            zone_hostname, owner.username, owner.password, space_name
+            zone_hostname, owner.username, owner.password, space_name, request
         )
         _get_support(
             zone_hostname,

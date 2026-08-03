@@ -15,8 +15,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser clicks on Create new harvester button in discovery sidebar
     And user of browser types "harvester1" to name input field in discovery page
     And user of browser types the endpoint of deployed elasticsearch client to endpoint input field in discovery page
-    And user of browser clicks on Create button in discovery page
-    Then user of browser sees that "harvester1" has appeared on the harvesters list in the sidebar
+    Then user of browser clicks on Create button in discovery page and succeeds to create "harvester1" harvester
 
 
   Scenario: User fails to create new harvester with invalid endpoint
@@ -24,8 +23,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser clicks on Create new harvester button in discovery sidebar
     And user of browser types "harvester2" to name input field in discovery page
     And user of browser types "incorrect_endpoint" to endpoint input field in discovery page
-    And user of browser clicks on Create button in discovery page
-    Then user of browser sees that error popup has appeared
+    Then user of browser clicks on Create button in discovery page and fails to create "harvester2" harvester
 
 
   Scenario: User successfully adds space to harvester using available spaces dropdown

@@ -6,12 +6,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping, MutableMapping
-from typing import NotRequired, Optional, Protocol, TypedDict, cast
+from typing import NotRequired, Protocol, TypedDict, cast
 
 import pytest
 import yaml
 
 from tests import OZ_REST_PORT
+from tests.gui.steps.rest.groups import delete_group_with_rest
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPForbidden
 from tests.utils.rest_utils import (
@@ -22,13 +23,13 @@ from tests.utils.rest_utils import (
     http_put,
 )
 from tests.utils.user_utils import Users
-from tests.gui.steps.rest.groups import delete_group_with_rest
+
 HostsConfig = Mapping[str, Mapping[str, str]]
 
 
 class CredentialsLike(Protocol):
     username: str
-    password: Optional[str]
+    password: str | None
 
 
 class MemberOptions(TypedDict):
@@ -59,7 +60,7 @@ def groups_creation_step(
     users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
-    request: pytest.FixtureRequest
+    request: pytest.FixtureRequest,
 ) -> None:
     groups_creation(
         cast(GroupsConfig, yaml.load(config, yaml.Loader)),
@@ -68,6 +69,7 @@ def groups_creation_step(
         users,
         hosts,
         groups,
+        request,
     )
 
 
@@ -78,7 +80,7 @@ def groups_creation(
     users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
-    request: pytest.FixtureRequest
+    request: pytest.FixtureRequest,
 ) -> None:
     """Create and configure groups according to given config.
 
@@ -122,7 +124,7 @@ def groups_creation(
         group3:
             owner: user2
     """
-    _groups_creation(config, service, admin_credentials, users, hosts, groups)
+    _groups_creation(config, service, admin_credentials, users, hosts, groups, request)
 
 
 def _groups_creation(
@@ -132,7 +134,7 @@ def _groups_creation(
     users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
-    request: pytest.FixtureRequest
+    request: pytest.FixtureRequest,
 ) -> None:
     zone_hostname = hosts[service]["hostname"]
 
@@ -167,7 +169,7 @@ def _groups_creation(
             )
 
 
-def _unpack_member_entry(entry: MemberEntry) -> tuple[str, Optional[list[str]]]:
+def _unpack_member_entry(entry: MemberEntry) -> tuple[str, list[str] | None]:
     if isinstance(entry, str):
         return entry, None
     [(name, options)] = entry.items()
@@ -191,7 +193,7 @@ def _create_group(
         data=json.dumps(group_properties),
     )
     group_id = response.headers["location"].split("/")[-1]
-    
+
     request.addfinalizer(
         lambda: delete_group_with_rest(
             zone_hostname, owner_username, owner_password, group_id
@@ -205,7 +207,7 @@ def _add_user_to_group(
     admin_credentials: CredentialsLike,
     group_id: str,
     user_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})
@@ -226,7 +228,7 @@ def _add_child_group(
     admin_credentials: CredentialsLike,
     parent_id: str,
     child_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})
@@ -244,7 +246,7 @@ def _add_child_group(
 
 def _get_group_id(
     hosts: HostsConfig, users: Users, user: str, group_name: str
-) -> Optional[str]:
+) -> str | None:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     groups_id_list = get_group_id_list(user, users, zone_hostname)
@@ -326,11 +328,16 @@ def create_n_groups_using_rest(
     users: Users,
     hosts: HostsConfig,
     number: str,
+    request: pytest.FixtureRequest,
     host: str = "onezone",
 ) -> None:
     zone_hostname = hosts[host]["hostname"]
     for i in range(int(number)):
         group_name = f"group{i}"
         _ = _create_group(
-            zone_hostname, users[user].username, users[user].password, group_name
+            zone_hostname,
+            users[user].username,
+            users[user].password,
+            group_name,
+            request,
         )

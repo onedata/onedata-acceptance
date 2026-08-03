@@ -71,6 +71,7 @@ def run_around_testcase(
     storages: Storages,
     spaces: dict[str, str],
     rm_users: bool,
+    request: pytest.FixtureRequest,
 ) -> Generator[None, None, None]:
     unmount_all_clients_and_purge_spaces(users)
     setup_entities(
@@ -83,6 +84,7 @@ def run_around_testcase(
         storages,
         spaces,
         rm_users,
+        request,
     )
     yield
     unmount_all_clients_and_purge_spaces(users)
@@ -98,6 +100,7 @@ def setup_entities(
     storages: Storages,
     spaces: dict[str, str],
     rm_users: bool,
+    request: pytest.FixtureRequest,
 ) -> None:
     setup_users(
         "onezone",
@@ -115,6 +118,7 @@ def setup_entities(
         users,
         cast(Mapping[str, Mapping[str, str]], hosts),
         groups,
+        request,
     )
     setup_spaces(
         cast(SpacesConfig, config.get("spaces")),
@@ -126,6 +130,7 @@ def setup_entities(
         groups,
         storages,
         spaces,
+        request,
     )
     setup_luma(
         cast(list[UserConfigEntry], config.get("users")),
