@@ -445,7 +445,7 @@ def assert_element_is_groups_child(
 
     try:
         page.members_page.groups.items[child]
-    except PageObjectNotFoundError:
+    except (PageObjectNotFoundError, NoSuchElementException):
         assert option == "does not see", f'"{child}" is not "{parent}" child'
     else:
         assert option == "sees", f'"{child}" is "{parent}" child'
