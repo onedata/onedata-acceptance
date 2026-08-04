@@ -10,7 +10,7 @@ from collections.abc import Mapping
 from typing import cast
 
 from onezone_client import UserApi
-from pytest import FixtureRequest
+from pytest import FixtureRequest  # pylint: disable=wrong-import-order
 
 from tests.gui.meta_steps.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_gui,
