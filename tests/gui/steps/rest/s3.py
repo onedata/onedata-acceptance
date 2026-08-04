@@ -9,6 +9,7 @@ import hmac
 import json
 import subprocess as sp
 from datetime import datetime, timezone
+from typing import Any
 
 import requests
 from requests.exceptions import HTTPError
@@ -19,7 +20,8 @@ from tests.gui.type_definitions import Clipboard
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
-HOST_URL = "dev-volume-s3-krakow.default:9000"
+S3_SERVICE_PORT = 9000
+HOST_URL = f"dev-volume-s3-krakow.default:{S3_SERVICE_PORT}"
 S3_APP_LABEL = "dev-volume-s3-krakow"
 
 ACCESS_KEY = "accessKey"
@@ -271,17 +273,22 @@ def get_current_s3_pod_ip() -> str:
         if pod["metadata"].get("deletionTimestamp") is None
         and pod["status"].get("phase") == "Running"
         and any(
-            status.get("ready", False)
-            for status in pod["status"].get("containerStatuses", [])
+            condition.get("type") == "Ready" and condition.get("status") == "True"
+            for condition in pod["status"].get("conditions", [])
         )
         and pod["status"].get("podIP")
     ]
     if not ready_pods:
         raise RuntimeError(f'No ready pod found for app "{S3_APP_LABEL}"')
 
-    newest_pod = max(ready_pods, key=lambda pod: pod["metadata"]["creationTimestamp"])
+    newest_pod = max(ready_pods, key=get_pod_creation_time)
     return newest_pod["status"]["podIP"]
 
 
+def get_pod_creation_time(pod: dict[str, dict[str, Any]]) -> datetime:
+    timestamp = pod["metadata"]["creationTimestamp"]
+    return datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+
+
 def get_s3_endpoint_url() -> str:
-    return f"http://{get_current_s3_pod_ip()}:9000"
+    return f"http://{get_current_s3_pod_ip()}:{S3_SERVICE_PORT}"

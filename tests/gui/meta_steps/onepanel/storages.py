@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import re
-from typing import Optional
+from typing import Any, Optional
 
 import pytest
 import yaml
@@ -184,7 +184,7 @@ def safely_create_storage_rest(
     username = onepanel_credentials.username
     password = onepanel_credentials.password
     request.addfinalizer(
-        lambda: _restore_and_remove_storage(
+        lambda: _restore_config_and_remove_storage(
             provider_hostname,
             username,
             password,
@@ -260,7 +260,7 @@ def _remove_storage_by_id_and_wait_until_absent(
     )
 
 
-def _restore_and_remove_storage(
+def _restore_config_and_remove_storage(
     provider_hostname: str,
     onepanel_username: str,
     onepanel_password: Optional[str],
@@ -280,9 +280,8 @@ def _restore_and_remove_storage(
         return
 
     storage_data = _storage_data_from_config(config, storage_name)
-    storage_config = storage_data[storage_name]
-    if isinstance(storage_config, dict):
-        storage_config.pop("importedStorage", None)
+    storage_config: dict[str, Any] = storage_data[storage_name]
+    storage_config.pop("importedStorage", None)
 
     try:
         http_patch(
@@ -378,7 +377,9 @@ def _add_storage_in_op_panel_using_rest(
     return storage_id
 
 
-def _storage_data_from_config(config: str, storage_name: str) -> dict[str, object]:
+def _storage_data_from_config(
+    config: str, storage_name: str
+) -> dict[str, dict[str, Any]]:
     storage_config: dict[str, object] = {}
     options = yaml.load(config, yaml.Loader)
 
