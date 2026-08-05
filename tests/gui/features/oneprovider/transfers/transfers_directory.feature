@@ -48,11 +48,12 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
-    And user of browser sees directory in ended transfers:
-            name: dir1
-            replicated: 50 MiB
-            type: replication
-            status: completed
+    And user of browser sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 50 MiB
+                type: replication
+                status: completed
 
     # Check transfer chart
     And user of browser expands first transfer record
@@ -80,11 +81,12 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "smallSpace" space
-    And user of browser sees directory in ended transfers:
-            name: dir1
-            replicated: 0 B
-            type: migration
-            status: failed
+    And user of browser sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 0 B
+                type: migration
+                status: failed
 
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -108,11 +110,12 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "smallSpace" space
-    And user of browser sees directory in ended transfers:
-            name: dir1
-            replicated: 0 B
-            type: replication
-            status: failed
+    And user of browser sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 0 B
+                type: replication
+                status: failed
 
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -160,11 +163,12 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
-    And user of browser sees directory in ended transfers:
-            name: dir1
-            replicated: 0 B
-            type: replication
-            status: completed
+    And user of browser sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 0 B
+                type: replication
+                status: completed
 
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -191,11 +195,12 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
-    And user of browser sees directory in ended transfers:
-            name: dir1
-            replicated: 50 MiB
-            type: migration
-            status: completed
+    And user of browser sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 50 MiB
+                type: migration
+                status: completed
 
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -203,4 +208,3 @@ Feature: Oneprovider transfers directories functionality
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
-

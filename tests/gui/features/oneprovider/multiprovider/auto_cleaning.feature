@@ -46,11 +46,12 @@ Feature: Onepanel features auto-cleaning
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
     And user of space_owner_browser waits until "oneprovider-1" transfers complete for "space2" space
-    And user of space_owner_browser sees directory in ended transfers:
-            name: dir1
-            replicated: 100 MiB
-            type: replication
-            status: completed
+    And user of space_owner_browser sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 100 MiB
+                type: replication
+                status: completed
 
     # check data distribution
     And user of space_owner_browser clicks "Files" of "space2" space in the sidebar
@@ -118,11 +119,12 @@ Feature: Onepanel features auto-cleaning
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
     And user of space_owner_browser waits until "oneprovider-1" transfers complete for "space2" space
-    And user of space_owner_browser sees directory in ended transfers:
-            name: dir1
-            replicated: 100 MiB
-            type: replication
-            status: completed
+    And user of space_owner_browser sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 100 MiB
+                type: replication
+                status: completed
 
     # check data distribution
     And user of space_owner_browser clicks "Files" of "space2" space in the sidebar
@@ -188,11 +190,12 @@ Feature: Onepanel features auto-cleaning
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
     And user of space_owner_browser waits until "oneprovider-1" transfers complete for "space2" space
-    And user of space_owner_browser sees directory in ended transfers:
-            name: dir1
-            replicated: 100 MiB
-            type: replication
-            status: completed
+    And user of space_owner_browser sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 100 MiB
+                type: replication
+                status: completed
 
     # check data distribution
     And user of space_owner_browser clicks "Files" of "space2" space in the sidebar
@@ -237,4 +240,3 @@ Feature: Onepanel features auto-cleaning
 
     # revoke space support
     And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
-

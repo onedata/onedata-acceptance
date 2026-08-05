@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import cast
+from typing import Any, cast
 
 import yaml
 from selenium.common.exceptions import (
@@ -39,19 +39,20 @@ from tests.utils.utils import repeat_failed
 
 def _assert_transfer(
     transfer: TransferRecord,
-    item_type: str,
-    desc: str,
+    desc: dict[str, Any],
     sufix: str,
     hosts: Hosts,
     selenium: SeleniumDrivers,
     browser_id: str,
 ) -> None:
+    item_type = desc["item_type"]
     assert getattr(
         transfer, f"is_{item_type}"
     )(), f"Transferred item is not {item_type} in {sufix}"
 
-    parsed_desc = yaml.load(desc, yaml.Loader)
-    for key, val in parsed_desc.items():
+    for key, val in desc.items():
+        if key == "item_type":
+            continue
         if key == "destination":
             val = hosts[val]["name"]
         transfer_val = None
@@ -90,26 +91,61 @@ def _assert_transfer(
                 raise e
 
 
+def _convert_transfer_description(
+    description: dict[str, Any], item_type: str
+) -> dict[str, dict[str, Any]]:
+    name = description["name"]
+    converted_desc = {
+        name: {key: val for key, val in description.items() if key != "name"}
+    }
+    converted_desc[name]["item_type"] = item_type
+    return converted_desc
+
+
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
-        r" in ended transfers:\n(?P<desc>(.|\s)*)"
+        r"user of (?P<browser_id>.*) sees (?:files|directories)"
+        r" in ended transfers:\n(?P<descriptions>(.|\s)*)"
     )
 )
 @repeat_failed(interval=0.5, timeout=30)
-def assert_ended_transfer(
+def assert_ended_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item_type: str,
-    desc: str,
+    descriptions: str,
     hosts: Hosts,
 ) -> None:
+    parsed_desc = yaml.load(descriptions, yaml.Loader)
+    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
+    for name, description in parsed_desc.items():
+        transfer = cast(TransferRecordHistory, transfers.ended[name])
+        _assert_transfer(
+            transfer,
+            description,
+            "ended",
+            hosts,
+            selenium,
+            browser_id,
+        )
+
+
+def assert_ended_first_transfer(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    description: str,
+    hosts: Hosts,
+    item_type: str,
+) -> None:
+    parsed_desc = yaml.load(description, yaml.Loader)
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
     transfer = cast(TransferRecordHistory, transfers.ended[0])
+    assert (
+        transfers.ended[0].name == parsed_desc["name"]
+    ), "First transfer is not the expected one"
+    converted_desc = _convert_transfer_description(parsed_desc, item_type)
     _assert_transfer(
         transfer,
-        item_type,
-        desc,
+        converted_desc[parsed_desc["name"]],
         "ended",
         hosts,
         selenium,
@@ -119,24 +155,48 @@ def assert_ended_transfer(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
-        r" in waiting transfers:\n(?P<desc>(.|\s)*)"
+        r"user of (?P<browser_id>.*) sees (?:files|directories)"
+        r" in waiting transfers:\n(?P<descriptions>(.|\s)*)"
     )
 )
 @repeat_failed(interval=0.5, timeout=40)
-def assert_waiting_transfer(
+def assert_waiting_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item_type: str,
-    desc: str,
+    descriptions: str,
     hosts: Hosts,
 ) -> None:
+    parsed_desc = yaml.load(descriptions, yaml.Loader)
+    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
+    assert (
+        transfers.waiting[0].name == parsed_desc["name"]
+    ), "First transfer is not the expected one"
+    for name, description in parsed_desc.items():
+        transfer = cast(TransferRecordHistory, transfers.waiting[name])
+        _assert_transfer(
+            transfer,
+            description,
+            "waiting",
+            hosts,
+            selenium,
+            browser_id,
+        )
+
+
+def assert_waiting_first_transfer(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    description: str,
+    hosts: Hosts,
+    item_type: str,
+) -> None:
+    parsed_desc = yaml.load(description, yaml.Loader)
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
     transfer = cast(TransferRecordHistory, transfers.waiting[0])
+    converted_desc = _convert_transfer_description(parsed_desc, item_type)
     _assert_transfer(
         transfer,
-        item_type,
-        desc,
+        converted_desc[parsed_desc["name"]],
         "waiting",
         hosts,
         selenium,

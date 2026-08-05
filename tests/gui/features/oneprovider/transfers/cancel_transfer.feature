@@ -33,16 +33,18 @@ Feature: Cancel transfer test
     And user of browser cancels transfer in transfers tab for certain file
     And user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
-    And user of browser sees file in ended transfers:
-            name: "0"
-            replicated: < 9.3 GB
-            type: replication
-            status: cancelled
+    And user of browser sees files in ended transfers:
+            "0":
+                item_type: file
+                replicated: < 9.3 GB
+                type: replication
+                status: cancelled
     Then user of browser reruns transfer in ended transfers
     And user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
-    And user of browser sees file in ended transfers:
-            name: "0"
-            replicated: <= 9.3 GB
-            type: replication
-            status: completed
+    And user of browser sees files in ended transfers:
+            "0":
+                item_type: file
+                replicated: <= 9.3 GB
+                type: replication
+                status: completed

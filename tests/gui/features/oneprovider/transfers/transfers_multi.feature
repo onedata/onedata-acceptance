@@ -41,11 +41,12 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
 
     # Check that transfer appeared in transfer tab
     And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
-    Then user of browser1 sees file in ended transfers:
-            name: large_file.txt
-            replicated: 50 MiB
-            type: replication
-            status: completed
+    Then user of browser1 sees files in ended transfers:
+            large_file.txt:
+                item_type: file
+                replicated: 50 MiB
+                type: replication
+                status: completed
 
     # Check transfer chart
     And user of browser1 expands first transfer record
@@ -80,11 +81,12 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
 
     # Check that transfer appeared in transfer tab
     And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
-    Then user of browser1 sees directory in ended transfers:
-            name: dir1
-            replicated: 50 MiB
-            type: replication
-            status: completed
+    Then user of browser1 sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 50 MiB
+                type: replication
+                status: completed
 
     # Check transfer chart
     And user of browser1 expands first transfer record
@@ -116,11 +118,12 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
 
     # Check that transfer appeared in transfer tab
     And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
-    Then user of browser1 sees file in ended transfers:
-            name: large_file.txt
-            replicated: 50 MiB
-            type: migration
-            status: completed
+    Then user of browser1 sees files in ended transfers:
+            large_file.txt:
+                item_type: file
+                replicated: 50 MiB
+                type: migration
+                status: completed
 
     # Check transfer chart
     And user of browser1 expands first transfer record
@@ -156,11 +159,12 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
 
     # Check that transfer appeared in transfer tab
     And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
-    Then user of browser1 sees directory in ended transfers:
-            name: dir1
-            replicated: 50 MiB
-            type: migration
-            status: completed
+    Then user of browser1 sees directories in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 50 MiB
+                type: migration
+                status: completed
 
     # Check transfer chart
     And user of browser1 expands first transfer record

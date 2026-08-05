@@ -41,7 +41,7 @@ class TypeAndDestination(PageObject):
 
 
 class TransferRecord(PageObject):
-    name = Label(".cell-data-name .transfer-file-name")
+    id = name = Label(".cell-data-name .transfer-file-name")
     file_icon = Icon(".cell-data-name .transfer-file-icon")
     username = Label("td:nth-of-type(2)")
     status_icon = Icon(".cell-status")

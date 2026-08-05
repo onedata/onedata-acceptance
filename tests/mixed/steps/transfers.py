@@ -20,7 +20,7 @@ from tests.gui.meta_steps.oneprovider.transfers import (
 )
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
 from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
-from tests.gui.steps.oneprovider.transfers import assert_ended_transfer
+from tests.gui.steps.oneprovider.transfers import assert_ended_first_transfer
 from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,
@@ -180,7 +180,7 @@ def assert_details_of_recent_transfer_op(
         )
     elif client.lower() == "web gui":
         open_transfers_page(selenium, user, host, space, hosts)
-        assert_ended_transfer(selenium, user, item_type, config, hosts)
+        assert_ended_first_transfer(selenium, user, config, hosts, item_type)
     else:
         raise NoSuchClientException(f"Client {client} not found")
 
