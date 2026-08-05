@@ -10,13 +10,14 @@ from collections.abc import Mapping, MutableMapping
 from pytest import FixtureRequest
 
 from tests import ELASTICSEARCH_PORT, OZ_REST_PORT
+from tests.gui.steps.rest.harvesters import (
+    get_user_harvester_ids,
+    remove_harvester_using_rest,
+)
 from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import (
     get_zone_rest_path,
-    http_delete,
-    http_get,
     http_post,
     http_put,
 )
@@ -102,7 +103,7 @@ def _create_harvester(
     harvesters[harvester_name] = harvester_id
 
     request.addfinalizer(
-        lambda: _remove_harvester(
+        lambda: remove_harvester_using_rest(
             harvester_id, zone_hostname, owner_username, owner_password
         )
     )
@@ -142,40 +143,7 @@ def remove_all_harvesters_rest(user: str, hosts: HostsConfig, users: Users) -> N
     password = users[user].password
 
     for harvester_id in get_user_harvester_ids(zone_hostname, user, password):
-        _remove_harvester(harvester_id, zone_hostname, user, password)
-
-
-def get_user_harvester_ids(
-    zone_hostname: str,
-    username: str,
-    password: str | None,
-) -> set[str]:
-    response = http_get(
-        ip=zone_hostname,
-        port=OZ_REST_PORT,
-        path=get_zone_rest_path("user", "harvesters"),
-        auth=(username, password),
-    )
-
-    return set(response.json()["harvesters"])
-
-
-def _remove_harvester(
-    harvester_id: str,
-    zone_hostname: str,
-    owner_username: str,
-    owner_password: str | None,
-) -> None:
-    try:
-        http_delete(
-            ip=zone_hostname,
-            port=OZ_REST_PORT,
-            path=get_zone_rest_path("harvesters", harvester_id),
-            auth=(owner_username, owner_password),
-        )
-    except HTTPNotFound:
-        # A scenario may explicitly remove the harvester before its finalizer runs.
-        pass
+        remove_harvester_using_rest(harvester_id, zone_hostname, user, password)
 
 
 @given(

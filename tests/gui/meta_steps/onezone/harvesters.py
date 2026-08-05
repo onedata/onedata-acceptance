@@ -56,14 +56,14 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
+from tests.gui.steps.rest.harvesters import (
+    get_user_harvester_ids,
+    remove_harvester_using_rest,
+)
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.entities_setup.harvesters import (
-    _remove_harvester,
-    get_user_harvester_ids,
-)
 from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
@@ -76,7 +76,7 @@ def _remove_harvesters_created_after(
 ) -> None:
     current_harvester_ids = get_user_harvester_ids(zone_hostname, username, password)
     for harvester_id in current_harvester_ids - initial_harvester_ids:
-        _remove_harvester(harvester_id, zone_hostname, username, password)
+        remove_harvester_using_rest(harvester_id, zone_hostname, username, password)
 
 
 def _register_new_harvesters_finalizer(
@@ -234,7 +234,7 @@ def create_harvester(
     harvesters[harvester_name] = harvester_id
 
     request.addfinalizer(
-        lambda: _remove_harvester(
+        lambda: remove_harvester_using_rest(
             harvester_id,
             hosts["onezone"]["hostname"],
             admin_credentials.username,

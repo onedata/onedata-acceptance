@@ -12,7 +12,7 @@ import pytest
 import yaml
 
 from tests import OZ_REST_PORT
-from tests.gui.steps.rest.groups import delete_group_with_rest
+from tests.gui.steps.rest.groups import ensure_absence_of_group_using_rest
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPForbidden
 from tests.utils.rest_utils import (
@@ -195,7 +195,7 @@ def _create_group(
     group_id = response.headers["location"].split("/")[-1]
 
     request.addfinalizer(
-        lambda: delete_group_with_rest(
+        lambda: ensure_absence_of_group_using_rest(
             zone_hostname, owner_username, owner_password, group_id
         )
     )

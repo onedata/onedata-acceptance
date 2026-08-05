@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests import OZ_REST_PORT
+from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
 from tests.utils.user_utils import Users
 
@@ -29,16 +30,18 @@ def leave_user_group(
     )
 
 
-def delete_group_with_rest(
+def ensure_absence_of_group_using_rest(
     zone_hostname: str,
     owner_username: str,
     owner_password: str | None,
     group_id: str,
 ) -> None:
-    res = http_delete(
-        ip=zone_hostname,
-        port=OZ_REST_PORT,
-        path=get_zone_rest_path("groups", group_id),
-        auth=(owner_username, owner_password),
-    )
-    print(res.status_code, res.text)
+    try:
+        http_delete(
+            ip=zone_hostname,
+            port=OZ_REST_PORT,
+            path=get_zone_rest_path("groups", group_id),
+            auth=(owner_username, owner_password),
+        )
+    except HTTPNotFound:
+        pass

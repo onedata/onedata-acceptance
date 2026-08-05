@@ -16,7 +16,7 @@ import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.rest.spaces import delete_space_with_rest
+from tests.gui.steps.rest.spaces import ensure_absence_of_space_using_rest
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import HostDescription, JsonObject, JsonValue
 from tests.utils.bdd_utils import given, parsers, wt
@@ -328,7 +328,7 @@ def _create_space(
     )
     space_id = response.headers["location"].split("/")[-1]
     request.addfinalizer(
-        lambda: delete_space_with_rest(
+        lambda: ensure_absence_of_space_using_rest(
             zone_hostname, owner_username, owner_password, space_id
         )
     )

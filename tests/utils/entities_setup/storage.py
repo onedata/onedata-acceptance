@@ -11,8 +11,8 @@ from typing import Protocol, cast
 import yaml
 
 from tests import PANEL_REST_PORT
-from tests.gui.meta_steps.onepanel.storages import (
-    _remove_storage_in_op_panel_using_rest,
+from tests.gui.steps.rest.storages import (
+    remove_multiple_storages_in_op_panel_using_rest,
 )
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.rest_utils import get_panel_rest_path, http_post
@@ -77,7 +77,7 @@ def _create_storage(
 ) -> None:
     options = yaml.load(config, yaml.Loader)
 
-    _remove_storage_in_op_panel_using_rest(
+    remove_multiple_storages_in_op_panel_using_rest(
         name,
         host,
         hosts,

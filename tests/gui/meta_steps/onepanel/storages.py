@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import re
-from typing import Any, Optional
 
 import pytest
 import yaml
@@ -16,10 +15,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.steps.common.miscellaneous import (
-    _camel_transform,
-    type_string_into_active_element,
-)
+from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import (
     click_modal_button,
@@ -45,17 +41,17 @@ from tests.gui.steps.onepanel.storages import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.rest.storages import (
+    get_storage_ids_by_name,
+    remove_multiple_storages_in_op_panel_using_rest,
+    restore_config_and_remove_storage,
+    storage_data_from_config,
+)
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.rest_utils import (
-    get_panel_rest_path,
-    http_delete,
-    http_get,
-    http_patch,
-    http_post,
-)
+from tests.utils.rest_utils import get_panel_rest_path, http_post
 from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
@@ -173,25 +169,20 @@ def safely_create_storage_rest(
         LUMA feed: local                       --> optional, 'auto' by
                                                    default
     """
-    _remove_storage_in_op_panel_using_rest(
+    remove_multiple_storages_in_op_panel_using_rest(
         storage_name, provider, hosts, onepanel_credentials
     )
     storage_id = _add_storage_in_op_panel_using_rest(
         config, storage_name, provider, hosts, onepanel_credentials
     )
-
-    provider_hostname = hosts[provider]["hostname"]
-    username = onepanel_credentials.username
-    password = onepanel_credentials.password
-    request.addfinalizer(
-        lambda: _restore_config_and_remove_storage(
-            provider_hostname,
-            username,
-            password,
-            storage_id,
-            storage_name,
-            config,
-        )
+    restore_config_and_remove_storage(
+        provider,
+        hosts,
+        onepanel_credentials,
+        request,
+        storage_id,
+        storage_name,
+        config,
     )
 
 
@@ -203,148 +194,25 @@ def safely_create_storage_rest(
 def remove_all_storages_named(
     storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
 ) -> None:
-    _remove_storage_in_op_panel_using_rest(
+    remove_multiple_storages_in_op_panel_using_rest(
         storage_name, provider, hosts, onepanel_credentials
     )
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
-def _remove_storage_in_op_panel_using_rest(
-    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
-) -> None:
-    provider_hostname = hosts[provider]["hostname"]
-    onepanel_username = onepanel_credentials.username
-    onepanel_password = onepanel_credentials.password
-
-    storage_ids = _get_storage_id_list_by_name(
-        storage_name, provider, hosts, onepanel_credentials
-    )
-    for storage_id in storage_ids:
-        _remove_storage_by_id(
-            provider_hostname, onepanel_username, onepanel_password, storage_id
-        )
-
-
-def _remove_storage_by_id(
-    provider_hostname: str,
-    onepanel_username: str,
-    onepanel_password: Optional[str],
-    storage_id: str,
-) -> None:
-    http_delete(
-        ip=provider_hostname,
-        port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "storages", storage_id),
-        auth=(onepanel_username, onepanel_password),
-    )
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
-def _remove_storage_by_id_and_wait_until_absent(
-    provider_hostname: str,
-    onepanel_username: str,
-    onepanel_password: Optional[str],
-    storage_id: str,
-) -> None:
-    storage_ids = _get_storages_ids(
-        provider_hostname, onepanel_username, onepanel_password
-    )
-    if storage_id not in storage_ids:
-        return
-
-    _remove_storage_by_id(
-        provider_hostname, onepanel_username, onepanel_password, storage_id
-    )
-    assert storage_id not in _get_storages_ids(
-        provider_hostname, onepanel_username, onepanel_password
-    )
-
-
-def _restore_config_and_remove_storage(
-    provider_hostname: str,
-    onepanel_username: str,
-    onepanel_password: Optional[str],
-    storage_id: str,
-    storage_name: str,
-    config: str,
-) -> None:
-    """Restore mutable storage parameters before removing the storage.
-
-    Oneprovider caches storage helper parameters after the storage record is
-    removed. Restoring the original parameters prevents a modified backend
-    configuration from leaking into a consecutive test run.
-    """
-    if storage_id not in _get_storages_ids(
-        provider_hostname, onepanel_username, onepanel_password
-    ):
-        return
-
-    storage_data = _storage_data_from_config(config, storage_name)
-    storage_config: dict[str, Any] = storage_data[storage_name]
-    storage_config.pop("importedStorage", None)
-    try:
-        http_patch(
-            ip=provider_hostname,
-            port=PANEL_REST_PORT,
-            path=get_panel_rest_path("provider", "storages", storage_id),
-            auth=(onepanel_username, onepanel_password),
-            data=json.dumps(storage_data),
-        )
-    finally:
-        _remove_storage_by_id_and_wait_until_absent(
-            provider_hostname, onepanel_username, onepanel_password, storage_id
-        )
 
 
 @given(parsers.parse('there is no "{name}" storage in "{provider}" Oneprovider panel'))
 def remove_storage_in_op_panel_rest(
     onepanel_credentials: User, hosts: Hosts, provider: str, name: str
 ) -> None:
-    _remove_storage_in_op_panel_using_rest(name, provider, hosts, onepanel_credentials)
-
-
-def _get_storages_ids(
-    provider_hostname: str,
-    onepanel_username: str,
-    onepanel_password: Optional[str],
-) -> list[str]:
-    return http_get(
-        ip=provider_hostname,
-        port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "storages"),
-        auth=(onepanel_username, onepanel_password),
-    ).json()["ids"]
-
-
-def _get_storage_id_list_by_name(
-    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
-) -> list[str]:
-    provider_hostname = hosts[provider]["hostname"]
-    onepanel_username = onepanel_credentials.username
-    onepanel_password = onepanel_credentials.password
-
-    storage_ids = _get_storages_ids(
-        provider_hostname, onepanel_username, onepanel_password
+    remove_multiple_storages_in_op_panel_using_rest(
+        name, provider, hosts, onepanel_credentials
     )
-    selected_ids = []
-    for storage_id in storage_ids:
-        response = http_get(
-            ip=provider_hostname,
-            port=PANEL_REST_PORT,
-            path=get_panel_rest_path("provider", "storages", storage_id),
-            auth=(onepanel_username, onepanel_password),
-        ).json()
-        if storage_name == response["name"]:
-            selected_ids.append(storage_id)
-    return selected_ids
 
 
 def get_first_storage_id_by_name(
     storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
 ) -> str:
-    return _get_storage_id_list_by_name(
-        storage_name, provider, hosts, onepanel_credentials
-    )[0]
+    ids = get_storage_ids_by_name(storage_name, provider, hosts, onepanel_credentials)
+    return ids[0]
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -355,7 +223,7 @@ def _add_storage_in_op_panel_using_rest(
     hosts: Hosts,
     onepanel_credentials: User,
 ) -> str:
-    storage_data = _storage_data_from_config(config, storage_name)
+    storage_data = storage_data_from_config(config, storage_name)
 
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
@@ -374,23 +242,6 @@ def _add_storage_in_op_panel_using_rest(
     if not isinstance(storage_id, str):
         raise TypeError("Storage creation response contains an invalid storage ID")
     return storage_id
-
-
-def _storage_data_from_config(
-    config: str, storage_name: str
-) -> dict[str, dict[str, Any]]:
-    storage_config: dict[str, object] = {}
-    options = yaml.load(config, yaml.Loader)
-
-    for key, val in options.items():
-        if key == "storage type":
-            storage_config["type"] = val.lower()
-        elif key == "imported storage":
-            storage_config["importedStorage"] = True
-        else:
-            storage_config[_camel_transform(key)] = val
-
-    return {storage_name: storage_config}
 
 
 @wt(
