@@ -15,6 +15,7 @@ from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.data_discovery import *
+from tests.gui.meta_steps.onezone.discovery import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.harvesters import *
 from tests.gui.meta_steps.onezone.spaces import *

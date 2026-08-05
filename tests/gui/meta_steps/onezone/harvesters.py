@@ -53,13 +53,13 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_space_from_harvester(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
@@ -78,7 +78,6 @@ def remove_space_from_harvester(
         'from harvester "{harvester_name}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_space_from_given_harvester(
     selenium: SeleniumDrivers, browser_id: str, space_name: str, harvester_name: str
 ) -> None:
@@ -100,7 +99,6 @@ def remove_space_from_given_harvester(
         'user of {browser_id} removes "{harvester_name}" harvester in Onezone page'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_harvester(
     selenium: SeleniumDrivers, browser_id: str, harvester_name: str
 ) -> None:
@@ -122,7 +120,6 @@ def remove_harvester(
         'user of {browser_id} creates "{harvester_name}" harvester in Onezone page'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -154,11 +151,9 @@ def create_harvester(
 @wt(
     parsers.parse(
         'user of {browser_id} adds "{space_name}" space to '
-        '"{harvester_name}" harvester using available spaces '
-        "dropdown"
+        '"{harvester_name}" harvester using available spaces dropdown'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def join_space_to_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -200,7 +195,6 @@ def join_space_to_harvester(
         "using available groups dropdown"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -260,7 +254,6 @@ def create_index_in_harvester(
         'from "{harvester_name}" harvester to user of {browser_id2}'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def send_invitation_token(
     selenium: SeleniumDrivers,
     browser_id1: str,
@@ -295,14 +288,14 @@ def send_invitation_token(
     copy_token_from_modal(selenium, browser_id1)
     close_modal(selenium, browser_id1, modal)
     send_copied_item_to_other_users(
-        browser_id1, item_type, browser_id2, tmp_memory, displays, clipboard
+        browser_id1, item_type, [browser_id2], tmp_memory, displays, clipboard
     )
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>sets|fails to set) "
-        'following privileges for "(?P<user_name>.*)" user in '
+        r"user of (?P<browser_id>.*) (?P<option>sets|fails to set) "
+        r'following privileges for "(?P<user_name>.*)" user in '
         r'"(?P<harvester_name>.*)" harvester:\n(?P<config>(.|\s)*)'
     )
 )
@@ -444,15 +437,16 @@ def check_harvesting_process_in_harvester(
 @wt(
     parsers.parse(
         'user of {browser_id} creates new index "{index_name}" that '
-        'includes {toggles_list} toggles for "{harvester_name}"'
-    )
+        'includes {toggles_list:ElementsSequence} toggles for "{harvester_name}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_with_toggles_list(
     browser_id: str,
     selenium: SeleniumDrivers,
     index_name: str,
-    toggles_list: str,
+    toggles_list: list[str],
     harvester_name: str,
 ) -> None:
     option = "Indices"

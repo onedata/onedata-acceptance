@@ -21,4 +21,3 @@ Feature: Inviting member to cluster
     And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 sees "oneprovider-1" in clusters menu
     Then user of browser2 sees that number of direct users is equal 2 on cluster members page
-

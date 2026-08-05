@@ -25,7 +25,7 @@ class FileAttr(PageObject):
 class ParameterSetting(PageObject):
     file_type = Button(".fileType-field .field-component")
     carried_file_attrs = Button(".fileAttributes-field .field-component")
-    attrs = WebItemsSequence(".tag-item", cls=FileAttr)
+    attributes = WebItemsSequence(".tag-item", cls=FileAttr)
 
 
 class LambdaParameter(PageObject):

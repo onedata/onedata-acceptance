@@ -10,7 +10,7 @@ from _pytest._py.path import LocalPath
 
 from tests.gui.meta_steps.oneprovider.common import (
     migrate_file_to_provider,
-    replicate_files_to_provider,
+    replicate_files_to_providers,
 )
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.meta_steps.oneprovider.transfers import (
@@ -65,8 +65,8 @@ def replicate_file_to_provider_op(
     elif client.lower() == "web gui":
         result = "replicates"
         go_to_filebrowser(selenium, user, tmp_memory, space)
-        replicate_files_to_provider(
-            selenium, user, path, tmp_memory, provider_to, hosts, result
+        replicate_files_to_providers(
+            selenium, user, [path], tmp_memory, [provider_to], hosts, result
         )
     else:
         raise NoSuchClientException(f"Client {client} not found")
@@ -187,8 +187,8 @@ def assert_details_of_recent_transfer_op(
 
 @wt(
     parsers.parse(
-        'using {client}, {user} waits for last transfer to finish in space "{space}" in'
-        " provider {host}"
+        "using {client}, {user} waits for last transfer to finish in space "
+        '"{space}" in provider {host}'
     )
 )
 def wait_for_recent_transfer_to_finish_op(
@@ -228,7 +228,7 @@ def upload_file_to_provider_browser(
     tmpdir: LocalPath,
 ) -> None:
     if client.lower() == "web gui":
-        wt_visit_file_browser(selenium, provider, space, user, tmp_memory, hosts)
+        wt_visit_file_browser(selenium, [provider], [space], [user], tmp_memory, hosts)
         upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
     else:
         raise NoSuchClientException(f"Client {client} not found")

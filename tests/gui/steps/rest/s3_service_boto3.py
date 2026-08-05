@@ -15,7 +15,7 @@ from botocore.config import Config  # pylint: disable=import-error
 
 from tests import ONES3_PORT
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, Tokens
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -101,22 +101,27 @@ def list_buckets(s3: S3Client) -> list[str]:
 @wt(
     parsers.parse(
         "using OneS3 and list buckets boto3 function, user {user} can see spaces"
-        ' "{spaces_list}"'
-    )
+        ' "{spaces_list:ElementsSequence}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
-@wt(parsers.parse('using OneS3, user {user} can see spaces "{spaces_list}"'))
+@wt(
+    parsers.parse(
+        'using OneS3, user {user} can see spaces "{spaces_list:ElementsSequence}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
+)
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
 def wt_assert_listed_buckets(
-    spaces_list: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+    spaces_list: list[str], tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
 ) -> None:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_spaces = list_buckets(s3)
-    parsed_spaces = parse_seq(spaces_list)
-    err_msg = (
-        f"Expected spaces: {parsed_spaces},\n does not match to actual ones:"
+    error_message = (
+        f"Expected spaces: {spaces_list},\n does not match to actual ones:"
         f" {actual_spaces}"
     )
-    assert set(actual_spaces) == set(parsed_spaces), err_msg
+    assert set(actual_spaces) == set(spaces_list), error_message
 
 
 def does_bucket_exist(s3: S3Client, bucket_name: str) -> bool:
@@ -127,8 +132,8 @@ def does_bucket_exist(s3: S3Client, bucket_name: str) -> bool:
 
 @wt(
     parsers.parse(
-        "using OneS3 and head bucket boto3 function, user {user} can see there is a"
-        ' space "{space_name}"'
+        "using OneS3 and head bucket boto3 function, user {user} can see there is"
+        ' a space "{space_name}"'
     )
 )
 def wt_assert_bucket_exists(
@@ -215,11 +220,11 @@ def wt_assert_file_content_read_from_bucket(
 ) -> None:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_content = read_file_content_from_bucket(s3, space_name, file_name)
-    err_msg = (
+    error_message = (
         f"Actual content:\n {actual_content}\n is different than expected:\n"
         f" {file_content}\n for file {file_name}"
     )
-    assert actual_content == file_content, err_msg
+    assert actual_content == file_content, error_message
 
 
 def list_bucket_content(s3: S3Client, bucket_name: str) -> list[str]:
@@ -229,14 +234,20 @@ def list_bucket_content(s3: S3Client, bucket_name: str) -> list[str]:
     return []
 
 
-@wt(parsers.parse('using OneS3, user {user} can see items {items} in "{space_name}"'))
+@wt(
+    parsers.parse(
+        "using OneS3, user {user} can see items "
+        '{items:ElementsSequence} in "{space_name}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
+)
 def wt_assert_bucket_content(
     space_name: str,
-    items: str,
+    items: list[str],
     tmp_memory: TmpMemory,
     tokens: Tokens,
     hosts: Hosts,
 ) -> None:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_content = list_bucket_content(s3, space_name)
-    assert set(actual_content) == set(parse_seq(items))
+    assert set(actual_content) == set(items)

@@ -7,19 +7,19 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-def scroll_to_css_selector(driver: WebDriver, css_sel: str) -> None:
+def scroll_to_css_selector(driver: WebDriver, css_selector: str) -> None:
     driver.execute_script(
         "var el = (typeof $ === 'function' ? "
-        f"$('{css_sel}')[0] : "
-        f"document.querySelector('{css_sel}')); "
+        f"$('{css_selector}')[0] : "
+        f"document.querySelector('{css_selector}')); "
         "el && el.scrollIntoView(true);"
     )
 
 
-def scroll_to_css_selector_bottom(driver: WebDriver, css_sel: str) -> None:
+def scroll_to_css_selector_bottom(driver: WebDriver, css_selector: str) -> None:
     driver.execute_script(
         "var el = (typeof $ === 'function' ? "
-        f"$('{css_sel}')[0] : "
-        f"document.querySelector('{css_sel}')); "
+        f"$('{css_selector}')[0] : "
+        f"document.querySelector('{css_selector}')); "
         "el && el.scrollIntoView(false);"
     )

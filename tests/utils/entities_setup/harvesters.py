@@ -9,7 +9,7 @@ from collections.abc import Mapping, MutableMapping
 from typing import Optional
 
 from tests import ELASTICSEARCH_PORT, OZ_REST_PORT
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import (
     get_zone_rest_path,
@@ -27,20 +27,26 @@ MutableIdMap = MutableMapping[str, str]
 
 @given(
     parsers.re(
-        "using REST, user (?P<user>.*) creates "
-        '(?P<harvesters_list>.*) harvesters? in "(?P<service>.*)" '
-        "Onezone service"
-    )
+        r"using REST, user (?P<user>.*) creates "
+        rf"(?P<harvesters_list>{ELEMENTS_SEQUENCE_PATTERN}) harvesters? in"
+        r' "(?P<service>.*)" Onezone service'
+    ),
+    converters={
+        "harvesters_list": parse_elements_sequence,
+    },
 )
 @given(
     parsers.re(
-        "user (?P<user>.*) has (?P<harvesters_list>.*) harvesters? "
-        'in "(?P<service>.*)" Onezone service'
-    )
+        rf"user (?P<user>.*) has (?P<harvesters_list>{ELEMENTS_SEQUENCE_PATTERN})"
+        r' harvesters? in "(?P<service>.*)" Onezone service'
+    ),
+    converters={
+        "harvesters_list": parse_elements_sequence,
+    },
 )
 def create_harvesters_rest(
     user: str,
-    harvesters_list: str,
+    harvesters_list: list[str],
     service: str,
     hosts: HostsConfig,
     users: Users,
@@ -51,7 +57,7 @@ def create_harvesters_rest(
     plugin = "elasticsearch_harvesting_backend"
     endpoint = f'{hosts["elasticsearch"]["name"]}:{ELASTICSEARCH_PORT}'
 
-    for harvester in parse_seq(harvesters_list):
+    for harvester in harvesters_list:
         _create_harvester(
             zone_hostname,
             owner.username,
@@ -147,13 +153,13 @@ def _remove_harvester(
 
 @given(
     parsers.re(
-        "spaces? (?P<space_list>.*) belongs? to "
-        '"(?P<harvester_name>.*)" harvester of user '
-        "(?P<username>.*)"
-    )
+        rf"spaces? (?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) belongs? to "
+        r'"(?P<harvester_name>.*)" harvester of user (?P<username>.*)'
+    ),
+    converters={"space_list": parse_elements_sequence},
 )
 def g_add_space_to_harvester(
-    space_list: str,
+    space_list: list[str],
     harvester_name: str,
     spaces: IdMap,
     harvesters: IdMap,
@@ -168,12 +174,14 @@ def g_add_space_to_harvester(
 
 @wt(
     parsers.re(
-        "using REST, user (?P<username>.*) adds spaces? "
-        '(?P<space_list>.*) to "(?P<harvester_name>.*)" harvester'
-    )
+        r"using REST, user (?P<username>.*) adds spaces? "
+        rf"(?P<space_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        r'"(?P<harvester_name>.*)" harvester'
+    ),
+    converters={"space_list": parse_elements_sequence},
 )
 def wt_add_space_to_harvester(
-    space_list: str,
+    space_list: list[str],
     harvester_name: str,
     spaces: IdMap,
     harvesters: IdMap,
@@ -187,7 +195,7 @@ def wt_add_space_to_harvester(
 
 
 def add_space_to_harvester(
-    space_list: str,
+    space_list: list[str],
     harvester_name: str,
     spaces: IdMap,
     harvesters: IdMap,
@@ -195,7 +203,7 @@ def add_space_to_harvester(
     username: str,
     users: Users,
 ) -> None:
-    for space in parse_seq(space_list):
+    for space in space_list:
         _add_space_to_harvester(
             space, harvester_name, spaces, harvesters, hosts, username, users
         )

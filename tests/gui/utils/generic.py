@@ -11,18 +11,34 @@ import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from enum import Enum
+from functools import partial
 from itertools import islice
 from time import sleep
 from typing import Literal, Optional, TypeVar, cast, overload
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.expected_conditions import (
+    visibility_of,
+    visibility_of_element_located,
+)
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
-from tests.gui.type_definitions import WebElemRoot
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.type_definitions import (
+    VisibilityCondition,
+    WebElementOrCssLocator,
+    WebElementOrSelector,
+    WebElemRoot,
+)
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
@@ -89,6 +105,9 @@ def parse_seq(
     separator: Optional[str] = None,
     default: Callable[[str], T] = cast(Callable[[str], T], str),
 ) -> list[T]:
+    """Parses regex-matched or separator-delimited values into a list,
+    e.g. '["1", "2"]', '"1"', '1,2', or '1'.
+    """
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
@@ -97,6 +116,49 @@ def parse_seq(
         for el in seq.strip("[]").split(separator)
         if el != ""
     ]
+
+
+# An empty sequence, e.g. []
+EMPTY_SEQUENCE = r"\[\]"
+
+# A quoted element, including spaces and special characters, e.g. "dev-oneprovider-0"
+QUOTED_ELEMENT = r'"[^"\n]+"'
+
+# A single unquoted element without separators or whitespace, e.g. new_space1
+UNQUOTED_ELEMENT = r'[^,\[\]"\s]+'
+
+# An element inside a sequence can be quoted or contain unquoted whitespace,
+# see BRACKETED_SEQUENCE
+SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
+
+# A comma-separated sequence of elements enclosed in square brackets.
+# Examples:
+#   [abc]                  -> element 1: abc
+#   [abc, def]             -> element 1: abc       | element 2: def
+#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
+#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
+#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
+BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}" rf"(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
+
+# An element sequence can be:
+#   abc                    -> element 1: abc
+#   abc-def                -> element 1: abc-def
+#   "abc def"              -> element 1: abc def
+#   "abc, def"             -> element 1: abc, def
+#   [abc]                  -> element 1: abc
+#   [abc, def]             -> element 1: abc       | element 2: def
+#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
+#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
+#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
+ELEMENTS_SEQUENCE_PATTERN = (
+    rf"(?:{QUOTED_ELEMENT}|{UNQUOTED_ELEMENT}|{BRACKETED_SEQUENCE}|{EMPTY_SEQUENCE})"
+)
+
+
+def parse_elements_sequence(value: str) -> list[str]:
+    if re.fullmatch(ELEMENTS_SEQUENCE_PATTERN, value) is None:
+        raise ValueError(f"Invalid elements sequence: {value!r}")
+    return parse_seq(value)
 
 
 def upload_file_path(file_name: str) -> str:
@@ -190,45 +252,124 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
         yield item, next_item
 
 
+def is_element_with_selector_visible_on_page(
+    driver: WebDriver, css_selector: str
+) -> bool:
+    try:
+        return bool(
+            visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
+        )
+    except NoSuchElementException:
+        return False
+
+
+def get_web_elem_or_locator(
+    web_elem_or_selector: WebElementOrSelector,
+) -> WebElementOrCssLocator:
+    match web_elem_or_selector:
+        case WebElement():
+            return web_elem_or_selector
+        case str():
+            return By.CSS_SELECTOR, web_elem_or_selector
+    raise TypeError(f"Unsupported element or selector: {web_elem_or_selector!r}")
+
+
+def get_visibility_condition(
+    web_elem_or_locator: WebElementOrCssLocator,
+) -> VisibilityCondition:
+    match web_elem_or_locator:
+        case WebElement() as element:
+            return visibility_of(element)
+
+        case (By.CSS_SELECTOR, str()) as locator:
+            return visibility_of_element_located(locator)
+
+        case unsupported:
+            raise TypeError(f"Unsupported element or locator: {unsupported!r}")
+
+
+def wait_for_visible_element_using_getter(
+    driver: WebDriver,
+    web_elem_getter: Callable[[WebDriver], WebElement],
+    timeout: float = WAIT_FRONTEND,
+) -> WebElement:
+    # Wait until the getter returns a visible element.
+    # RuntimeError raised by the getter is treated as a transient lookup failure.
+
+    def is_element_visible_using_getter(
+        driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
+    ) -> WebElement | None:
+        try:
+            web_elem = web_elem_getter(driver)
+            return web_elem if visibility_of(web_elem)(driver) else None
+        except RuntimeError:
+            return None
+
+    return WebDriverWait(driver, timeout=timeout).until(
+        partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
+    )
+
+
+def get_element_css_classes_when_visible(
+    driver: WebDriver, web_elem: WebElement, timeout: float = WAIT_FRONTEND // 4
+) -> list[str]:
+    def get_element_classes(driver: WebDriver) -> list[str] | None:
+        return (
+            web_elem.get_attribute("class").split()
+            if visibility_of(web_elem)(driver)
+            else None
+        )
+
+    return WebDriverWait(
+        driver,
+        timeout=timeout,
+        poll_frequency=0.05,
+        ignored_exceptions=[
+            ElementNotInteractableException,
+            StaleElementReferenceException,
+        ],
+    ).until(get_element_classes)
+
+
 def find_web_elem(
     web_elem_root: WebElemRoot,
-    css_sel: str,
-    err_msg: str | Callable[[], str],
+    css_selector: str,
+    error_message: str | Callable[[], str],
     scroll: bool = True,
 ) -> WebElement:
     try:
         if scroll:
-            _scroll_to_css_sel(web_elem_root, css_sel)
-        item = web_elem_root.find_element(By.CSS_SELECTOR, css_sel)
+            _scroll_to_css_selector(web_elem_root, css_selector)
+        item = web_elem_root.find_element(By.CSS_SELECTOR, css_selector)
     except NoSuchElementException as exc:
-        if callable(err_msg):
-            err_msg = err_msg()
-        raise RuntimeError(err_msg) from exc
+        if callable(error_message):
+            error_message = error_message()
+        raise RuntimeError(error_message) from exc
     return item
 
 
 def find_web_elem_with_text(
     web_elem_root: WebElemRoot,
-    css_sel: str,
+    css_selector: str,
     text: str,
-    err_msg: str | Callable[[], str],
+    error_message: str | Callable[[], str],
     scroll: bool = True,
 ) -> WebElement:
-    items = web_elem_root.find_elements(By.CSS_SELECTOR, css_sel)
+    items = web_elem_root.find_elements(By.CSS_SELECTOR, css_selector)
     if scroll:
-        _scroll_to_css_sel(web_elem_root, css_sel)
+        _scroll_to_css_selector(web_elem_root, css_selector)
     for item in items:
         if item.text.lower() == text.lower():
             return item
-    if callable(err_msg):
-        err_msg = err_msg()
-    raise RuntimeError(f'Css element with "{text}" text not found. {err_msg}')
+    if callable(error_message):
+        error_message = error_message()
+    raise RuntimeError(f'Css element with "{text}" text not found. {error_message}')
 
 
 def click_on_web_elem(
     driver: WebDriver,
     web_elem: WebElement,
-    err_msg: str | Callable[[], str],
+    error_message: str | Callable[[], str],
     delay: bool | float = True,
 ) -> None:
     disabled = "disabled" in web_elem.get_attribute("class")
@@ -247,17 +388,17 @@ def click_on_web_elem(
         action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
         action.perform()
     else:
-        if callable(err_msg):
-            err_msg = err_msg()
-        raise RuntimeError(err_msg)
+        if callable(error_message):
+            error_message = error_message()
+        raise RuntimeError(error_message)
 
 
-def _scroll_to_css_sel(web_elem_root: WebElemRoot, css_sel: str) -> None:
+def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> None:
     driver = getattr(web_elem_root, "parent", web_elem_root)
     driver.execute_script(
         "var el = (typeof $ === 'function' ? "
-        f"$('{css_sel}')[0] : "
-        f"document.querySelector('{css_sel}')); "
+        f"$('{css_selector}')[0] : "
+        f"document.querySelector('{css_selector}')); "
         "el && el.scrollIntoView(true);"
     )
 
@@ -419,11 +560,6 @@ class ListElement(Enum):
     WORKFLOWS = "workflows"
 
 
-class AlertPopup(Enum):
-    AUTHENTICATION_SUCCEEDED = "Authentication succeeded!"
-    STORAGE_IMPORT_SCAN_STARTED = "Storage import scan has started"
-
-
 PageName = Literal[
     "data",
     "shares",
@@ -435,3 +571,12 @@ PageName = Literal[
     "clusters",
     "cluster",
 ]
+
+
+class HostPattern(Enum):
+    PROVIDER_PANEL = r"oneprovider-[0-9]+ provider panel"
+    ZONE_PANEL = r"(?:onezone zone panel|[Oo]nezone panel)"
+    ZONE = r"[Oo]nezone"
+    ONEPANEL_EMERGENCY = r"emergency interface of Onepanel"
+    ONEZONE_EMERGENCY = r"emergency interface of Onezone"
+    PROVIDER_NODE = r"node[0-9]+ of oneprovider-[0-9]+ provider panel"

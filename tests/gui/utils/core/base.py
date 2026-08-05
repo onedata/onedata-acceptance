@@ -16,8 +16,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 class AbstractWebElement(ABC):
     __metaclass__ = ABCMeta
 
-    def __init__(self, css_sel: str, scroll: bool = True, name: str = "") -> None:
-        self.css_sel = css_sel
+    def __init__(self, css_selector: str, scroll: bool = True, name: str = "") -> None:
+        self.css_selector = css_selector
         self.scroll = scroll
         self.name = name
 

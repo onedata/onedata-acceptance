@@ -25,11 +25,11 @@ class PowerSelect(PageObject):
         str_prefix: str,
         require_full_match: bool,
     ) -> None:
-        prop = property_name.casefold()
+        normalized_property_name = property_name.casefold()
         match_func = (
-            (lambda item: prop == item.text.casefold())
+            (lambda item: normalized_property_name == item.text.casefold())
             if require_full_match
-            else (lambda item: prop in item.text.casefold())
+            else (lambda item: normalized_property_name in item.text.casefold())
         )
 
         for item in items:
@@ -37,7 +37,9 @@ class PowerSelect(PageObject):
                 item.click()
                 return
 
-        raise RuntimeError(f"{str_prefix}{property_name} not found in popup menu")
+        raise RuntimeError(
+            f"{str_prefix}{normalized_property_name} not found in popup menu"
+        )
 
     def choose_item(self, property_name: str, require_full_match: bool = True) -> None:
         self._choose_items(property_name, self.items, "", require_full_match)

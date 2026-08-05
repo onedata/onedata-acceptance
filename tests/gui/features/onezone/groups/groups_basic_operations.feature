@@ -42,13 +42,7 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser copies invitation token from modal
     And user of browser closes "Invite using token" modal
 
-    And user of browser clicks on "Tokens" in the main menu
-    And user of browser clicks on "Consume token" button in tokens sidebar
-    And user of browser pastes copied token into token text field
-    And user of browser chooses "group1" group from dropdown on tokens page
-    And user of browser clicks on Confirm button on consume token page
-
-    Then user of browser sees that error modal with text "Consuming token failed" appeared
+    Then user of browser fails to add group "group1" as subgroup using copied token and sees error modal
 
 
   Scenario: User generates group invitation token
@@ -80,7 +74,5 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser refreshes site
 
     Then user of browser sees "YOU DON’T HAVE ACCESS TO THIS RESOURCE" error on groups page
-
-
 
 

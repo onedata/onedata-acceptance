@@ -44,8 +44,8 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) adds xattr entry with "
-        'key "(?P<key_name>.*?)" and value "(?P<value>.*?)"'
+        r"user of (?P<browser_id>.*?) adds xattr entry with "
+        r'key "(?P<key_name>.*?)" and value "(?P<value>.*?)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -64,9 +64,9 @@ def get_modal_name_from_item_name(item_name: str) -> str:
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) adds and saves '(?P<text>.*?)' "
-        "(?P<input_type>JSON|RDF) metadata "
-        'for "(?P<item_name>.*?)"'
+        r"user of (?P<browser_id>.*?) adds and saves '(?P<text>.*?)' "
+        r"(?P<input_type>JSON|RDF) metadata "
+        r'for "(?P<item_name>.*?)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -94,9 +94,8 @@ def add_json_rdf_metadata_for_item(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) opens metadata panel on "
-        "(?P<tab>JSON|RDF) "
-        'tab for "(?P<item_name>.*?)"(?P<dir> directory|)'
+        r"user of (?P<browser_id>.*?) opens metadata panel on (?P<tab>JSON|RDF) "
+        r'tab for "(?P<item_name>.*?)"(?P<dir> directory|)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -116,10 +115,10 @@ def open_json_rdf_metadata_for_item(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) (?P<res>.*) to write "
-        '"(?P<path>.*)" (?P<item>file|directory)'
-        " (?P<tab_name>xattrs|JSON|RDF) metadata: ('|\")(?P<val>.*)('|\")"
-        ' in "(?P<space>.*)"'
+        r"user of (?P<browser_id>.*?) (?P<res>.*) to write "
+        r'"(?P<path>.*)" (?P<item>file|directory)'
+        r" (?P<tab_name>xattrs|JSON|RDF) metadata: ('|\")(?P<val>.*)('|\")"
+        r' in "(?P<space>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -151,9 +150,11 @@ def set_metadata_in_op_gui(
         space,
     )
     if tab_name == "xattrs":
-        attr, val = val.split("=")
-        type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, attr)
-        type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, val, attr)
+        attribute, val = val.split("=")
+        type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, attribute)
+        type_text_to_val_of_attr_in_new_xattr_entry(
+            selenium, browser_id, val, attribute
+        )
     else:
         click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
         type_text_to_metadata_textarea(selenium, browser_id, val, tab_name)
@@ -174,11 +175,10 @@ def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: str) -
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<res>.*) to read "
-        '"(?P<path>.*)" (?P<item>file|directory) '
-        "(?P<tab_name>xattrs|JSON|RDF) "
-        'metadata: "(?P<val>.*)"'
-        ' in "(?P<space>.*)"'
+        r"user of (?P<browser_id>.*) (?P<res>.*) to read "
+        r'"(?P<path>.*)" (?P<item>file|directory) '
+        r"(?P<tab_name>xattrs|JSON|RDF) "
+        r'metadata: "(?P<val>.*)" in "(?P<space>.*)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -210,8 +210,8 @@ def assert_metadata_in_op_gui(
         _assert_metadata_loading_alert(selenium, browser_id)
     else:
         if tab_name == "xattrs":
-            attr, val = val.split("=")
-            assert_there_is_such_xattr_meta_record(selenium, browser_id, attr, val)
+            attribute, val = val.split("=")
+            assert_there_is_such_xattr_meta_record(selenium, browser_id, attribute, val)
         else:
             click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
             assert_textarea_contains_record(selenium, browser_id, val, tab_name)
@@ -244,8 +244,8 @@ def assert_such_metadata_not_exist_in_op_gui(
     )
 
     if tab_name == "xattrs":
-        attr, val = val.split("=")
-        assert_there_is_no_such_meta_record(selenium, browser_id, attr)
+        attribute, val = val.split("=")
+        assert_there_is_no_such_meta_record(selenium, browser_id, attribute)
     else:
         click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
         assert_textarea_not_contain_record(selenium, browser_id, val, tab_name)

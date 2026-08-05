@@ -14,7 +14,7 @@ import yaml
 from _pytest._py.path import LocalPath
 
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import given, parsers, wt
 
@@ -334,9 +334,14 @@ def wt_rm_files_to_storage_mount_point(src_path: str, hosts: Hosts) -> None:
     _docker_rm(os.path.join(MOUNT_POINT, src_path), hosts)
 
 
-@given(parsers.parse("there is no {elems} in provider's storage mount point"))
-def g_rm_many_files_from_storage_mount_point(elems: str, hosts: Hosts) -> None:
-    for elem in parse_seq(elems):
+@given(
+    parsers.parse(
+        "there is no {elems:ElementsSequence} in provider's storage mount point",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
+)
+def g_rm_many_files_from_storage_mount_point(elems: list[str], hosts: Hosts) -> None:
+    for elem in elems:
         _docker_rm(os.path.join(MOUNT_POINT, elem), hosts)
 
 
@@ -378,8 +383,10 @@ def wt_assert_file_in_path_with_content(path: str, content: str, hosts: Hosts) -
     if path[0] == "/":
         path = path[1::]
     output = _docker_cat(os.path.join(MOUNT_POINT, path), hosts).decode("utf-8")
-    err_msg = f"content of the file {path} is expected to be {content} but is {output}"
-    assert output == content, err_msg
+    error_message = (
+        f"content of the file {path} is expected to be {content} but is {output}"
+    )
+    assert output == content, error_message
 
 
 def docker_ls(path: str, hosts: Hosts) -> list[str]:

@@ -11,7 +11,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import Popups
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import parse_elements_sequence, transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -112,8 +112,8 @@ def start_query_block(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on add another query block icon "
-        "in data discovery page"
+        "user of {browser_id} clicks on add another query block icon"
+        " in data discovery page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -151,20 +151,21 @@ def open_condition_properties_list(selenium: SeleniumDrivers, browser_id: str) -
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {properties_list} on condition properties list"
-    )
+        "user of {browser_id} sees {properties_list:ElementsSequence} on "
+        "condition properties list",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_properties_on_condition_properties_list(
-    selenium: SeleniumDrivers, browser_id: str, properties_list: str
+    selenium: SeleniumDrivers, browser_id: str, properties_list: list[str]
 ) -> None:
     driver = selenium[browser_id]
-    properties = parse_seq(properties_list)
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
-    for prop in properties:
+    for property_name in properties_list:
         assert query_builder_popup.assert_property(
-            prop
-        ), f"{prop} property not found in condition properties list"
+            property_name
+        ), f"{property_name} property not found in condition properties list"
 
 
 @wt(

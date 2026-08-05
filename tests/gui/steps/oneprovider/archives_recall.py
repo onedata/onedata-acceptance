@@ -7,13 +7,13 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-import re
 import time
 from collections.abc import Callable
 from datetime import datetime
 from typing import List
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import parse_size
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
@@ -62,8 +62,8 @@ def fail_to_see_recalled_data_statistics(
 
     recall_modal = Modals(selenium[browser_id]).archive_recall_information
     information = getattr(recall_modal, transform(info)).split("/")
-    err_msg = f"There is visible statistics of {info}"
-    assert information[0] == "", err_msg
+    error_message = f"There is visible statistics of {info}"
+    assert information[0] == "", error_message
 
 
 @wt(
@@ -84,8 +84,8 @@ def wait_for_status_in_archive_recall_information_modal(
         time.sleep(2)
         recall_status = Modals(driver).archive_recall_information.status
     else:
-        err_msg = f"Archive status:{recall_status} does not match expected"
-        assert recall_status == status, err_msg
+        error_message = f"Archive status:{recall_status} does not match expected"
+        assert recall_status == status, error_message
 
 
 @wt(
@@ -112,25 +112,35 @@ def assert_recall_duration_in_archive_recall_information_modal(
     begin = datetime.strptime(started_at, "%d %b %Y %H:%M:%S")
     finish = datetime.strptime(finished_at, "%d %b %Y %H:%M:%S")
 
-    err_msg = f"Recall start time {begin} is greater than finish time {finish}"
-    assert begin <= finish, err_msg
+    error_message = f"Recall start time {begin} is greater than finish time {finish}"
+    assert begin <= finish, error_message
 
 
 @wt(parsers.parse("user of {browser_id} sees that not all {kind} were recalled"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_all_files_were_recalled(
-    selenium: SeleniumDrivers, browser_id: str, kind: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    kind: str,
 ) -> None:
-    kind = kind + " recalled"
-    characters = "[\nMiB ]"
+    recalled_kind = f"{kind} recalled"
+
     data_info = getattr(
-        Modals(selenium[browser_id]).archive_recall_information, transform(kind)
+        Modals(selenium[browser_id]).archive_recall_information,
+        transform(recalled_kind),
     )
-    info = re.sub(characters, "", data_info).split("/")
-    all_data = float(info[1])
-    recalled = float(info[0]) / 1024 if "KiB" in data_info else float(info[0])
-    err_msg = f"Number of recalled {kind} is not smaller then all {kind}"
-    assert all_data > recalled, err_msg
+
+    recalled_text, all_data_text = data_info.replace("\n", "").split("/", maxsplit=1)
+    if kind == "data":
+        recalled = parse_size(recalled_text)
+        all_data = parse_size(all_data_text)
+    else:
+        recalled = int(recalled_text)
+        all_data = int(all_data_text)
+
+    assert (
+        recalled < all_data
+    ), f"Number of recalled {kind} is not smaller than all {kind}: {data_info!r}"
 
 
 @wt(
@@ -215,11 +225,11 @@ def assert_number_of_entries_in_archive_recall(
         _ = index
 
     detected_entries = _scroll_and_check_condition(browser_id, selenium, condition)
-    err_msg = (
+    error_message = (
         f"number of entries is {len(detected_entries)} is not equal to "
         f"number of items failed {number_of_items_failed}"
     )
-    assert len(detected_entries) == number_of_items_failed, err_msg
+    assert len(detected_entries) == number_of_items_failed, error_message
 
 
 @wt(
@@ -248,11 +258,13 @@ def assert_entries_with_file_names_in_archive_recall(
         for entry_name in new_entries_names:
             file_name_p_, file_name_s_ = file_name.rsplit(".", 1)
             file_name_p_ = file_name_p_.split("(")[0]
-            err_msg = (
+            error_message = (
                 f"file name {entry_name} does not match name or name "
                 f"duplicated of {file_name}"
             )
-            assert file_name_p == file_name_p_ and file_name_s == file_name_s_, err_msg
+            assert (
+                file_name_p == file_name_p_ and file_name_s == file_name_s_
+            ), error_message
 
     _scroll_and_check_condition(browser_id, selenium, condition)
 
@@ -280,11 +292,11 @@ def assert_entries_with_error_messages_in_archive_recall(
 
         new_entries_mes = new_entries_mes[index:]
         for entry_mes in new_entries_mes:
-            err_msg = (
+            error_message = (
                 f"There is visible error message {entry_mes}, but "
                 f"expected message is {message}"
             )
-            assert entry_mes == message, err_msg
+            assert entry_mes == message, error_message
 
     _scroll_and_check_condition(browser_id, selenium, condition)
 

@@ -28,9 +28,9 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) creates "
-        '"(?P<expression>.*)" QoS requirement for "(?P<file_name>.*)" in'
-        ' space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) creates "
+        r'"(?P<expression>.*)" QoS requirement for "(?P<file_name>.*)" in'
+        r' space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -66,9 +66,9 @@ def create_qos_requirement_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that file "
-        '"(?P<file_name>.*)" (?P<option>has not got|has some) QoS '
-        'requirements in space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) sees that file "
+        r'"(?P<file_name>.*)" (?P<option>has not got|has some) QoS '
+        r'requirements in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -104,9 +104,9 @@ def assert_qos_file_status_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) deletes all QoS "
-        'requirements for "(?P<file_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) deletes all QoS "
+        r'requirements for "(?P<file_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

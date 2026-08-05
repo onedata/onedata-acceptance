@@ -34,10 +34,10 @@ class DublinCoreMetadata(PageObject):
         ).click().perform()
 
     def write_to_last_input(self, driver: WebDriver, val: str, which: str) -> None:
-        css_sel = f'.form-control[data-dc-element-type="{which}"]'
+        css_selector = f'.form-control[data-dc-element-type="{which}"]'
         # WebItemsSequence, WebElementsSequence were not working for this
         # case (because of weird selectors)
-        inputs = self.driver.find_elements(By.CSS_SELECTOR, css_sel)
+        inputs = self.driver.find_elements(By.CSS_SELECTOR, css_selector)
         driver.execute_script("arguments[0].scrollIntoView();", inputs[-1])
         inputs[-1].clear()
         inputs[-1].send_keys(val)
@@ -48,8 +48,8 @@ class DublinCoreMetadata(PageObject):
             if button.text == "":
                 driver.execute_script("arguments[0].scrollIntoView();", button)
             if button.text == button_name:
-                css_sel = ".metadata-text .one-icon"
-                scroll_to_css_selector_bottom(self.driver, css_sel)
+                css_selector = ".metadata-text .one-icon"
+                scroll_to_css_selector_bottom(self.driver, css_selector)
                 try:
                     button.click()
                 except ElementNotInteractableException:

@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.onezone.uploads_page import UploadsPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -53,8 +54,8 @@ def assert_number_of_files_in_uploaded_files_list(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees that file "(?P<file_name>.*)"'
-        " (?P<option>is|is not) uploaded"
+        r'user of (?P<browser_id>.*) sees that file "(?P<file_name>.*)"'
+        r" (?P<option>is|is not) uploaded"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -74,14 +75,14 @@ def assert_file_is_uploaded(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks on "(?P<option>Uploads)" in the main menu'
+        r'user of (?P<browser_id>.*?) clicks on "(?P<option>Uploads)" in the main menu'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_uploads_in_the_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver).uploads_web_elem.click()
+    OZLoggedIn(driver).open_panel(UploadsPage)
 
 
 def click_on_provider_in_uploads_sidebar_with_provider_name(

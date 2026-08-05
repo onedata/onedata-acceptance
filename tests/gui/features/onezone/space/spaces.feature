@@ -105,7 +105,7 @@ Scenario: User successfully renames space in the sidebar
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Providers" of "space1" space in the sidebar
     And user of space_owner_browser clicks Add support button on providers page
-    And user of space_owner_browser clicks Copy button on Add support page
+    And user of space_owner_browser clicks "Copy" button on Add support page
     Then user of space_owner_browser sees copy token and token in support token text field are the same
     And user of space_owner_browser sees that copied token is non-empty
 

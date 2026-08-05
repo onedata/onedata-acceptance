@@ -13,7 +13,7 @@ import yaml
 
 from tests import PANEL_REST_PORT
 from tests.gui.meta_steps.onepanel.storages import get_first_storage_id_by_name
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.mixed.type_definitions import LumaMappings, MappingValue
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
@@ -264,25 +264,24 @@ def set_default_display_credentials_luma_lf(
     parsers.parse(
         'LUMA local feed mappings for imported storage "{storage}" '
         'at "{provider}" are created between '
-        "{uid_list} and {user_list}"
-    )
+        "{uid_list:ElementsSequence} and {user_list:ElementsSequence}",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 def create_imported_storage_luma_mappings_lf(
     storage: str,
     provider: str,
-    uid_list: str,
-    user_list: str,
+    uid_list: list[str],
+    user_list: list[str],
     hosts: Hosts,
     onepanel_credentials: User,
     users: Users,
 ) -> None:
-    uids = parse_seq(uid_list)
-    users_list = parse_seq(user_list)
     storage_id = get_first_storage_id_by_name(
         storage, provider, hosts, onepanel_credentials
     )
 
-    mappings = zip(uids, users_list)
+    mappings = zip(uid_list, user_list)
     for uid, user in mappings:
         _insert_mapping_of_uid_into_lf(
             uid, user, provider, hosts, onepanel_credentials, storage_id, users

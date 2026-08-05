@@ -25,7 +25,7 @@ def restart_provider(name: str, users: Users, hosts: Hosts) -> None:
 @wt(
     parsers.re(
         r"(?P<user>\w+) stops network on oneprovider (?P<name>.*) for "
-        "(?P<stop_time>.*) seconds"
+        r"(?P<stop_time>.*) seconds"
     )
 )
 def restart_network(name: str, stop_time: str, hosts: Hosts) -> None:
@@ -95,7 +95,7 @@ def start_network(name: str, hosts: Hosts) -> None:
 
 # NOTE: because of underlying escript implementation this step currently works
 # only for krakow oneprovider (TODO VFS-11324)
-@wt(parsers.re("user mocks archive verifiction on (?P<name>.*) Oneprovider to fail"))
+@wt(parsers.re(r"user mocks archive verifiction on (?P<name>.*) Oneprovider to fail"))
 def mock_archive_verification(name: str, hosts: Hosts, run_unmock: object) -> None:
     _ = run_unmock
     pod_name = hosts[service_name_to_alias_mapping(name)]["pod_name"]
@@ -121,7 +121,7 @@ def mock_archive_verification(name: str, hosts: Hosts, run_unmock: object) -> No
 
 # NOTE: because of underlying escript implementation this step currently works
 # only for krakow oneprovider (TODO VFS-11324)
-@wt(parsers.re("Archive verification is unmocked on (?P<name>.*) Oneprovider"))
+@wt(parsers.re(r"Archive verification is unmocked on (?P<name>.*) Oneprovider"))
 def unmock_archive_verification(name: str, hosts: Hosts) -> None:
     pod_name = hosts[service_name_to_alias_mapping(name)]["pod_name"]
     # TODO VFS-11325 do not copy escripts for each function invocation

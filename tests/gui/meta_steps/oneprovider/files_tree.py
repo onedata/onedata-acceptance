@@ -104,15 +104,15 @@ def check_tree_browser(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that the (file|item) "
-        "structure in (?P<which_browser>.*) "
+        r"structure in (?P<which_browser>.*) "
         r"is as follow:\n(?P<config>(.|\s)*)"
     )
 )
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that the file structure "
-        'for archive with description: "(?P<description>.*)" '
-        "in (?P<which_browser>.*) "
+        r'for archive with description: "(?P<description>.*)" '
+        r"in (?P<which_browser>.*) "
         r"is as follow:\n(?P<config>(.|\s)*)"
     )
 )

@@ -42,7 +42,7 @@ from tests.gui.utils.common.count_checksums import (
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     MetadataTab,
 )
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.gui.utils.oneprovider.automation import WorkflowVisualiser
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -144,9 +144,10 @@ def compare_store_contents(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} counts checksums {checksum_list} for "
-        '"{file_name}" in "{space}" space'
-    )
+        "user of {browser_id} counts checksums {checksum_list:ElementsSequence} for "
+        '"{file_name}" in "{space}" space',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def count_checksums_for_file(
@@ -154,7 +155,7 @@ def count_checksums_for_file(
     tmp_memory: TmpMemory,
     file_name: str,
     tmpdir: LocalPath,
-    checksum_list: str,
+    checksum_list: list[str],
     selenium: SeleniumDrivers,
 ) -> None:
 
@@ -162,7 +163,6 @@ def count_checksums_for_file(
         selenium, browser_id, file_name, tmp_memory, "file browser"
     )
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
-    checksums = parse_seq(checksum_list)
     results = {}
     checksum_functions = {
         "adler32_sum": adler32_sum,
@@ -171,9 +171,9 @@ def count_checksums_for_file(
         "sha512_sum": sha512_sum,
     }
 
-    for checksum in checksums:
-        sum_name = checksum + "_sum"
-        results[checksum] = checksum_functions[sum_name](downloaded_file)
+    for checksum in checksum_list:
+        checksum_function_name = checksum + "_sum"
+        results[checksum] = checksum_functions[checksum_function_name](downloaded_file)
 
     tmp_memory["checksums_" + file_name] = results
 
@@ -189,14 +189,15 @@ def checksums_counted_in_workflow(metadata_modal: MetadataTab) -> dict[str, str]
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that checksums {checksum_list} for"
+        "user of {browser_id} sees that checksums {checksum_list:ElementsSequence} for"
         ' "{file_name}" counted in workflow are alike to '
-        "those counted earlier by user"
-    )
+        "those counted earlier by user",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 def assert_checksums_are_the_same(
     browser_id: str,
-    checksum_list: str,
+    checksum_list: list[str],
     file_name: str,
     tmp_memory: TmpMemory,
     selenium: SeleniumDrivers,
@@ -205,7 +206,6 @@ def assert_checksums_are_the_same(
     status_type = "Metadata"
     modal_name = "Details modal"
     button = "X"
-    checksums = parse_seq(checksum_list)
 
     # checksums needs to be counted in advance using
     # count_checksums_for_file function
@@ -216,13 +216,13 @@ def assert_checksums_are_the_same(
     metadata_modal = Modals(selenium[browser_id]).details_modal.metadata
     workflow_checksum = checksums_counted_in_workflow(metadata_modal)
 
-    for key in checksums:
-        err_msg = (
+    for key in checksum_list:
+        error_message = (
             f"{key} checksum counted by user is {counted_checksum[key]},"
             " and is different from checksum counted in workflow: "
             f"{workflow_checksum[key]}"
         )
-        assert workflow_checksum[key] == counted_checksum[key], err_msg
+        assert workflow_checksum[key] == counted_checksum[key], error_message
 
     click_modal_button(selenium, browser_id, button, modal_name)
 
@@ -230,16 +230,17 @@ def assert_checksums_are_the_same(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that counted checksums"
-        ' {checksum_list} for "{file_name}" are alike to those'
-        " counted in workflow"
-    )
+        ' {checksum_list:ElementsSequence} for "{file_name}" are alike to '
+        "those counted in workflow",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 def count_checksums_and_compare_them(
     browser_id: str,
     tmp_memory: TmpMemory,
     file_name: str,
     tmpdir: LocalPath,
-    checksum_list: str,
+    checksum_list: list[str],
     selenium: SeleniumDrivers,
 ) -> None:
     count_checksums_for_file(
@@ -288,8 +289,7 @@ def assert_status_of_task_is_one_of_two(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that status of task "{task}" in '
-        '{ordinal} parallel box in "{lane}" lane is '
-        '"{expected_status}"'
+        '{ordinal} parallel box in "{lane}" lane is "{expected_status}"'
     )
 )
 def assert_status_of_task(

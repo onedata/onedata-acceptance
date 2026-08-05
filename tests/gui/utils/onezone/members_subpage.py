@@ -15,6 +15,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -27,6 +28,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import ButtonPageObject
 
 
 class MembersHeaderRow(PageObject):
@@ -122,22 +124,36 @@ class InvitationTokenArea(PageObject):
     close = Button(".oneicon-close")
 
 
+class MembersSubpageHeader(PageObject):
+    page_name = Label(".one-label")
+    bulk_edit_button = Button(".btn-toolbar .one-button")
+    direct_members_only = Toggle(".show-only-direct")
+
+
 class MembersPage(PageObject):
+    subpage_header = WebItem(".header-row .with-menu", cls=MembersSubpageHeader)
     groups = WebItem(".group-list", cls=MembersList)
     users = WebItem(".user-list", cls=MembersUserList)
+
+    lack_groups_view_privileges = WebElement(".row:not(.user-list-row) > .alert")
+    lack_users_view_privileges = WebElement(".row.user-list-row .alert")
+
     token = WebItem(".invitation-token-presenter", cls=InvitationTokenArea)
     memberships = WebItemsSequence(
         ".membership-visualiser .membership-row", cls=MembershipRow
     )
 
     forbidden_alert = WebElement(".alert.forbidden")
-    bulk_edit_button = Button(".header-row .btn")
     open_in_onezone = Button(".manage-via-onezone")
 
     direct_users_number = Label(".direct-users-number")
     direct_groups_number = Label(".direct-groups-number")
     effective_users_number = Label(".effective-users-number")
     effective_groups_number = Label(".effective-groups-number")
+
+    @property
+    def bulk_edit_button(self) -> ButtonPageObject:
+        return self.subpage_header.bulk_edit_button
 
     def close_member(self, driver: WebDriver) -> None:
         driver.execute_script("window.scrollBy(0,0)")

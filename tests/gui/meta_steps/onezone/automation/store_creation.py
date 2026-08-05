@@ -22,9 +22,9 @@ from tests.utils.bdd_utils import parsers, wt
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) creates (input|output) store for "
-        'workflow "(?P<workflow>.*)" with following configuration:'
-        r"\n(?P<config>(.|\s)*)"
+        r"user of (?P<browser_id>.*) creates (input|output) store for "
+        r'workflow "(?P<workflow>.*)" with following '
+        r"configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def create_store_for_workflow(

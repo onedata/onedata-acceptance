@@ -103,6 +103,15 @@ Example of a 2 provider deployment with specified onezone and oneprovider images
 
 # Useful test_run parameters
 
+* `--count N` - repeats every test in the suite `N` times on the same deployment.
+* `--reruns N` - reruns failed tests up to `N` times. Unlike `--count`, successful
+  tests are not repeated.
+* `--timeout SECONDS` - sets the timeout used while waiting for the Onedata
+  environment.
+* `--report-path PATH` - specifies the output path for the JUnit XML report.
+* `--op-image IMAGE` - selects the Oneprovider Docker image.
+* `--oz-image IMAGE` - selects the Onezone Docker image.
+* `--rest-cli-image IMAGE` - selects the REST CLI Docker image.
 * `--no-clean` - prevents deleting Onedata deployment after tests - makes consecutive runs much faster
   (a preexisting deployment is detected and reused) 
 * `--test-type gui` - determines the test type.
@@ -129,6 +138,22 @@ Example of a 2 provider deployment with specified onezone and oneprovider images
 
 **Parameters:** (for advanced usage)
 
+* `--local-charts-path PATH` - uses Helm charts from the specified local
+  directory instead of the default charts.
+* `--kube-config-path PATH` - specifies a non-default Kubernetes configuration
+  directory mounted in the test-runner container.
+* `--minikube-config-path PATH` - specifies a non-default Minikube configuration
+  directory mounted in the test-runner container.
+* `--ignore-xfail` - treats tests marked as expected failures as regular tests.
+  Primarily useful for verification and upgrade testing.
+* `--preserve-users` - preserves users left by previous tests; tests that would
+  create users with conflicting names are skipped.
+* `--file-mode <regular|hardlink|symlink>` - controls how files are created in
+  Oneclient tests.
+* `--gui-pkg-verification` - enables additional verification of installed GUI
+  packages.
+* `--pull-only-missing-images` - pulls only Docker images that are unavailable
+  locally.
 * `--no-mosaic-filter` - optional, if set, videos of tests using multiple browsers will
   be recorded as different video for each browser (mosaic video created by default)
 * `--update-etc-hosts` <!--- TODO VFS-10023 make description more specific after investigating this flag -->-

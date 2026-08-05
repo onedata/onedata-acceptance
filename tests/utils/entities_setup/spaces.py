@@ -15,7 +15,7 @@ import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import HostDescription, JsonObject, JsonValue
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import (
@@ -841,19 +841,20 @@ def create_files_names_alphabetically(
 @given(
     parsers.parse(
         "using REST, {user} creates {number} empty files in "
-        'directories {dir_list} named "file_001", "file_002", ...,'
-        ' "file_N" supported by "{provider}" provider'
-    )
+        'directories {dir_list:ElementsSequence} named "file_001", "file_002", ...,'
+        ' "file_N" supported by "{provider}" provider',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 def create_files_names_alphabetically_with_dir_list(
     user: str,
     number: str | int,
-    dir_list: str,
+    dir_list: list[str],
     provider: str,
     users: Users,
     hosts: Hosts,
 ) -> None:
-    for dir_path in parse_seq(dir_list):
+    for dir_path in dir_list:
         create_files_names_alphabetically(
             number, dir_path, users, user, provider, hosts
         )

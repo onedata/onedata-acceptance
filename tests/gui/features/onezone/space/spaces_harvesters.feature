@@ -10,7 +10,7 @@ Feature: Basic management of harvester in Space
 
     And users opened [space_owner_browser, browser1] browsers' windows
     And users of [space_owner_browser, browser1] opened [Onezone, Onezone] page
-    And users of [space_owner_browser, browser1] logged as [space-owner-user ,admin] to [Onezone, Onezone] service
+    And users of [space_owner_browser, browser1] logged as [space-owner-user, admin] to [Onezone, Onezone] service
 
 
   Scenario: User adds two harvesters to space using invitation tokens and removes them from it

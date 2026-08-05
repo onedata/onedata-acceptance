@@ -175,11 +175,11 @@ def assert_number_of_archive_in_op_rest(
     archive_api = ArchiveApi(client)
     dataset_archive = archive_api.list_dataset_archives(dataset_id)
     number_of_archives = len(dataset_archive.archives)
-    err_msg = (
+    error_message = (
         f"number of archives {number_of_archives}, "
         f"expected number of archives: {number}"
     )
-    assert int(number) == number_of_archives, err_msg
+    assert int(number) == number_of_archives, error_message
 
 
 def remove_archive_in_op_rest(
@@ -231,11 +231,11 @@ def assert_archive_with_option_in_op_rest(
     description: str,
 ) -> None:
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
-    err_msg = f"archive is not {option}"
+    error_message = f"archive is not {option}"
     if transform(option) == "bagit":
-        assert info.config.layout == transform(option), err_msg
+        assert info.config.layout == transform(option), error_message
     elif transform(option) == "dip":
-        assert info.config.include_dip, err_msg
+        assert info.config.include_dip, error_message
 
 
 def assert_base_archive_for_archive_in_op_rest(
@@ -248,19 +248,19 @@ def assert_base_archive_for_archive_in_op_rest(
     base_description: str,
 ) -> None:
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
-    err_msg = (
+    error_message = (
         f"Base archive: {info.base_archive_id} does not match expected "
         f"archive {tmp_memory[base_description]}"
     )
-    assert tmp_memory[base_description] == info.base_archive_id, err_msg
+    assert tmp_memory[base_description] == info.base_archive_id, error_message
 
 
 @wt(
     parsers.re(
-        "using REST, (?P<user>.+?) changes archive description to "
-        '"(?P<new_description>.*)" for archive with description '
-        '"(?P<description>.*)" for item "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using REST, (?P<user>.+?) changes archive description to "
+        r'"(?P<new_description>.*)" for archive with description '
+        r'"(?P<description>.*)" for item "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -284,10 +284,10 @@ def change_archive_description_in_op_rest(
 
 @wt(
     parsers.re(
-        "using REST, (?P<user>.+?) changes archive (?P<option>.*) "
-        'callback to "(?P<new_callback>.*)" for archive with '
-        'description "(?P<description>.*)" for item "(?P<item_name>.*)" '
-        'in space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using REST, (?P<user>.+?) changes archive (?P<option>.*) "
+        r'callback to "(?P<new_callback>.*)" for archive with '
+        r'description "(?P<description>.*)" for item "(?P<item_name>.*)" '
+        r'in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -320,14 +320,14 @@ def assert_archive_callback_in_op_rest(
 ) -> None:
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     callback = f"{option}_callback"
-    err_msg = (
+    error_message = (
         f"callback {getattr(info, callback)} does "
         f"not match expected: {expected_callback}"
     )
     if getattr(info, callback) is None:
-        assert expected_callback == "None", err_msg
+        assert expected_callback == "None", error_message
     else:
-        assert getattr(info, callback) == expected_callback, err_msg
+        assert getattr(info, callback) == expected_callback, error_message
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -370,7 +370,7 @@ def recalled_archive_details_in_op_rest(
     recall_details = archive_api.get_archive_recall_details(file_id)
     dataset_api = DatasetApi(client)
 
-    err_msg = (
+    error_message = (
         '{key} for archive recall "{name}" is {value} '
         "but expected value is {expected_value} "
     )
@@ -383,21 +383,21 @@ def recalled_archive_details_in_op_rest(
     expected_data = int(data["data_recalled"].split(" / ")[0].replace("B", ""))
     size_data = recall_details.total_byte_size
 
-    assert dataset_id == expected_dataset_id, err_msg.format(
+    assert dataset_id == expected_dataset_id, error_message.format(
         key="dataset",
         name=name,
         value=dataset_id,
         expected_value=expected_dataset_id,
     )
 
-    assert files == expected_files, err_msg.format(
+    assert files == expected_files, error_message.format(
         key="files recalled",
         name=name,
         value=files,
         expected_value=expected_files,
     )
 
-    assert size_data == expected_data, err_msg.format(
+    assert size_data == expected_data, error_message.format(
         key="data recalled", name=name, value=size_data, expected_value=expected_data
     )
 

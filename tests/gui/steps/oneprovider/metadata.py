@@ -15,7 +15,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     XattrMetadataEntry,
 )
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -37,20 +37,22 @@ def assert_all_metadata_tabs_marked_empty(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {tab_list} navigation tabs in metadata panel"
-    )
+        "user of {browser_id} sees {tab_list:ElementsSequence} navigation"
+        " tabs in metadata panel",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_metadata_panel_displayed(
-    selenium: SeleniumDrivers, browser_id: str, tab_list: str
+    selenium: SeleniumDrivers, browser_id: str, tab_list: list[str]
 ) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     nav = modal.navigation
-    for tab in parse_seq(tab_list):
+    for tab in tab_list:
         assert nav[tab] is not None, f"no navigation tab {tab} found"
 
 
-@wt(parsers.re("user of (?P<browser_id>.*?) sees that there is no xattrs metadata"))
+@wt(parsers.re(r"user of (?P<browser_id>.*?) sees that there is no xattrs metadata"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_xattrs_metadata_for_item(
     selenium: SeleniumDrivers, browser_id: str
@@ -107,17 +109,21 @@ def type_text_to_val_of_attr_in_new_xattr_entry(
 @wt(
     parsers.parse(
         "user of {browser_id} sees xattr metadata entry "
-        'with key "{attr_key}" and value "{attr_val}"'
+        'with key "{attr_key}" and value "{attribute_value}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_there_is_such_xattr_meta_record(
-    selenium: SeleniumDrivers, browser_id: str, attr_key: str, attr_val: str
+    selenium: SeleniumDrivers, browser_id: str, attr_key: str, attribute_value: str
 ) -> None:
-    attr_val = attr_val.lower()
+    attribute_value = attribute_value.lower()
     modal = Modals(selenium[browser_id]).details_modal.metadata
-    err_msg = f'no metadata entry "{attr_key}" with value "{attr_val}" found'
-    assert modal.xattrs.entries[attr_key].value.lower() == attr_val, err_msg
+    error_message = (
+        f'no metadata entry "{attr_key}" with value "{attribute_value}" found'
+    )
+    assert (
+        modal.xattrs.entries[attr_key].value.lower() == attribute_value
+    ), error_message
 
 
 @wt(
@@ -130,15 +136,14 @@ def assert_there_is_no_such_meta_record(
     selenium: SeleniumDrivers, browser_id: str, key_name: str
 ) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
-    err_msg = f"metadata entry {key_name} found while should not be"
-    assert key_name not in modal.xattrs.entries, err_msg
+    error_message = f"metadata entry {key_name} found while should not be"
+    assert key_name not in modal.xattrs.entries, error_message
 
 
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on delete "
-        "icon for xattr metadata entry with key "
-        '"{attr_name}"'
+        'icon for xattr metadata entry with key "{attr_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -152,8 +157,8 @@ def click_on_del_metadata_record_button(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) types '(?P<text>.+?)' "
-        "to (?P<tab_name>JSON|RDF) textarea in metadata panel"
+        r"user of (?P<browser_id>.+?) types '(?P<text>.+?)' "
+        r"to (?P<tab_name>JSON|RDF) textarea in metadata panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -167,9 +172,9 @@ def type_text_to_metadata_textarea(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) "
-        "textarea in metadata panel "
-        "contains '(?P<expected_metadata>.*)'"
+        r"user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) "
+        r"textarea in metadata panel "
+        r"contains '(?P<expected_metadata>.*)'"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -184,17 +189,17 @@ def assert_textarea_contains_record(
     if tab_name.lower() == "json":
         parsed_expected_metadata = json.loads(expected_metadata)
         metadata = json.loads(tab.text_area)
-        err_msg = f"got {metadata} instead of expected {parsed_expected_metadata}"
+        error_message = f"got {metadata} instead of expected {parsed_expected_metadata}"
         assert all(
             metadata.get(key, None) == value
             for key, value in parsed_expected_metadata.items()
-        ), err_msg
+        ), error_message
     else:
-        err_msg = (
+        error_message = (
             f"text in textarea: {tab.text_area} does not contain "
             f"{expected_metadata} but {tab.text_area}"
         )
-        assert expected_metadata in tab.text_area, err_msg
+        assert expected_metadata in tab.text_area, error_message
 
 
 def assert_textarea_not_contain_record(
@@ -220,14 +225,14 @@ def assert_textarea_is_empty_for_metadata(
 ) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
-    err_msg = f"{tab_name} textarea is not empty"
-    assert tab.text_area == "", err_msg
+    error_message = f"{tab_name} textarea is not empty"
+    assert tab.text_area == "", error_message
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) cleans (?P<tab_name>JSON|RDF) "
-        "textarea in metadata panel"
+        r"user of (?P<browser_id>.+?) cleans (?P<tab_name>JSON|RDF) "
+        r"textarea in metadata panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -65,3 +65,4 @@ Feature: Basic management of harvester memberships privileges with groups in One
     And user of browser2 does not see "group1" group in "harvester19" harvester members groups list
 
     And user of browser1 removes "harvester19" harvester in Onezone page
+    And user of browser1 removes group "group1"

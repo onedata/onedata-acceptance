@@ -85,8 +85,8 @@ def ls_absent(user: str, files: str, path: str, users: Users) -> None:
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) fails to move (?P<file1>.*) to (?P<file2>.*)"
-        " using shell command"
+        r"(?P<user>\w+) fails to move (?P<file1>.*) to "
+        r"(?P<file2>.*) using shell command"
     )
 )
 def shell_move_fail(user: str, file1: str, file2: str, users: Users) -> None:
@@ -122,7 +122,7 @@ def check_type(
 @then(
     parsers.re(
         r"(?P<user>\w+) checks using shell stat if file type of "
-        "(?P<file>.*) is (?P<file_type>.*)"
+        r"(?P<file>.*) is (?P<file_type>.*)"
     )
 )
 def shell_check_type(
@@ -153,13 +153,13 @@ def change_mode_fail(user: str, file: str, mode: str, users: Users) -> None:
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file>.*)"
-        " is (?P<comparator>.*) than (?P<time2>.*) time"
+        r" is (?P<comparator>.*) than (?P<time2>.*) time"
     )
 )
 @then(
     parsers.re(
         r"(?P<time1>.*) time of (?P<user>\w+)'s (?P<file>.*)"
-        " is (?P<comparator>.*) to (?P<time2>.*) time"
+        r" is (?P<comparator>.*) to (?P<time2>.*) time"
     )
 )
 def check_time(

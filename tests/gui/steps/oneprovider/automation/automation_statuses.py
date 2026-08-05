@@ -85,11 +85,11 @@ def await_for_task_status_in_parallel_box(
 ) -> None:
     box = get_parallel_box(selenium, browser_id, ordinal, lane)
     actual_status = box.task_list[task].status
-    err_msg = (
+    error_message = (
         f'After awaiting for task "{task}" its status ({actual_status})'
         f" is not {expected_status} as expected"
     )
-    assert actual_status.lower() == expected_status.lower(), err_msg
+    assert actual_status.lower() == expected_status.lower(), error_message
 
 
 @wt(
@@ -119,8 +119,8 @@ def get_status(page: WorkflowExecutionPage, option: str, name: str) -> str:
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) awaits for status of "(?P<name>.*)"'
-        ' (?P<option>lane|workflow) to be "(?P<expected_status>.*)"'
+        r'user of (?P<browser_id>.*) awaits for status of "(?P<name>.*)"'
+        r' (?P<option>lane|workflow) to be "(?P<expected_status>.*)"'
     )
 )
 @repeat_failed(interval=1, timeout=120)
@@ -133,11 +133,11 @@ def await_for_lane_or_workflow_status(
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     actual_status = get_status(page, option, name)
-    err_msg = (
+    error_message = (
         f'After awaiting for {option} "{name}" its'
         f" status is not {expected_status} as expected"
     )
-    assert actual_status.lower() == expected_status.lower(), err_msg
+    assert actual_status.lower() == expected_status.lower(), error_message
 
 
 @wt(
@@ -160,17 +160,17 @@ def assert_status_of_workflow(
 
 
 def assert_status(name: object, actual_status: str, expected_status: str) -> None:
-    err_msg = (
+    error_message = (
         f'Actual "{name}" status: "{actual_status}" does not '
         f'match expected: "{expected_status}"'
     )
-    assert actual_status.lower() == expected_status.lower(), err_msg
+    assert actual_status.lower() == expected_status.lower(), error_message
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) waits for workflow "
-        '"(?P<workflow>.*)" to be (?P<option>paused|cancelled|stopped)'
+        r"user of (?P<browser_id>.*) waits for workflow "
+        r'"(?P<workflow>.*)" to be (?P<option>paused|cancelled|stopped)'
     )
 )
 @repeat_failed(

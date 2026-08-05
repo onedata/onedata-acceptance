@@ -27,15 +27,15 @@ class WebElement(AbstractWebElement):
 
         return find_web_elem(
             instance.web_elem,
-            self.css_sel,
+            self.css_selector,
             lambda: self._format_msg("no {item} item found in {parent}", instance),
             scroll=self.scroll,
         )
 
-    def _format_msg(self, err_msg: str, parent: Any, **kwargs: Any) -> str:
+    def _format_msg(self, error_message: str, parent: Any, **kwargs: Any) -> str:
         name = self.name.replace("_", " ").strip().upper()
         p_name = self.parent_name if self.parent_name != "" else str(parent)
-        return err_msg.format(item=name, parent=p_name, **kwargs)
+        return error_message.format(item=name, parent=p_name, **kwargs)
 
 
 class WebElementWithText(WebElement):
@@ -49,12 +49,12 @@ class WebElementWithText(WebElement):
         if instance is None:
             return self
 
-        err_msg = 'no {item} with "{text}" text found in {parent}'
+        error_message = 'no {item} with "{text}" text found in {parent}'
         return find_web_elem_with_text(
             instance.web_elem,
-            self.css_sel,
+            self.css_selector,
             self.text,
-            lambda: self._format_msg(err_msg, instance, text=self.text),
+            lambda: self._format_msg(error_message, instance, text=self.text),
             scroll=self.scroll,
         )
 
@@ -102,14 +102,14 @@ class Input(WebElement):
 
 class AceEditor(WebElement):
     def __get__(self, instance: Any, owner: object) -> Any:
-        selector = self.css_sel + " .ace_content"
+        selector = self.css_selector + " .ace_content"
         script = f"var textarea = document.querySelector('{selector}');return textarea"
         driver = instance.web_elem.parent
         return driver.execute_script(script).text
 
     def __set__(self, instance: Any, val: Any) -> None:
         driver = instance.web_elem.parent
-        selector = self.css_sel + " .ace_text-input"
+        selector = self.css_selector + " .ace_text-input"
         script = (
             f"var textarea = document.querySelector('{selector}');"
             f"textarea.value = '{val}';"
@@ -126,7 +126,7 @@ class WebElementsSequence(AbstractWebElement):
         if instance is None:
             return self
 
-        return instance.web_elem.find_elements(By.CSS_SELECTOR, self.css_sel)
+        return instance.web_elem.find_elements(By.CSS_SELECTOR, self.css_selector)
 
 
 class WebItemsSequence(AbstractWebItem, WebElementsSequence):

@@ -139,5 +139,3 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
 
 
 
-
-

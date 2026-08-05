@@ -24,7 +24,7 @@ from oneprovider_client.rest import ApiException as OPException
 from tests import OP_REST_PORT
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import CDMIClient as cdmi
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_elements_sequence
 from tests.mixed.oneprovider_client import ApiClient
 from tests.mixed.oneprovider_client.models.inline_response2015 import InlineResponse2015
 from tests.mixed.oneprovider_client.models.share import Share
@@ -217,13 +217,13 @@ def see_items_in_op_rest(
     users: Users,
     host: str,
     hosts: Hosts,
-    path_list: str,
+    path_list: list[str],
     result: str,
     space: str,
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(client)
-    for path in parse_seq(path_list):
+    for path in path_list:
         path = f"{space}/{path}"
         check_if_item_exists_or_not_exists(result, path, client, file_api)
 
@@ -318,13 +318,13 @@ def assert_ace_in_op_rest(
     numerals: dict[str, int],
     path: str,
     num: str,
-    priv: str,
+    privileges: str,
     item_type: str,
     name: str,
 ) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     ace = client.read_metadata(path)["metadata"]["cdmi_acl"][numerals[num]]
-    assert_ace(priv, item_type, ace, name, num, path)
+    assert_ace(parse_elements_sequence(privileges), item_type, ace, name, num, path)
 
 
 def grant_acl_privileges_in_op_rest(
@@ -333,7 +333,7 @@ def grant_acl_privileges_in_op_rest(
     host: str,
     hosts: Hosts,
     path: str,
-    priv: str,
+    privileges: str,
     item_type: str,
     name: str,
     groups: Mapping[str, str],
@@ -343,7 +343,15 @@ def grant_acl_privileges_in_op_rest(
         acl = client.read_metadata(path)["metadata"]["cdmi_acl"]
     except KeyError:
         acl = []
-    acl = get_acl_metadata(acl, priv, item_type, groups, name, users, path)
+    acl = get_acl_metadata(
+        acl,
+        parse_elements_sequence(privileges),
+        item_type,
+        groups,
+        name,
+        users,
+        path,
+    )
     client.write_metadata(path, {"cdmi_acl": acl})
 
 
@@ -458,11 +466,11 @@ def get_time_for_file_in_op_rest(
 ) -> float:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
-    attr = time_attr(time_name, "cdmi")
+    attribute = time_attr(time_name, "cdmi")
     date_fmt = "%Y-%m-%dT%H:%M:%SZ"
 
     try:
-        time = datetime.strptime(metadata[attr], date_fmt)
+        time = datetime.strptime(metadata[attribute], date_fmt)
     except KeyError as ex:
         raise AssertionError(f"File {path} has no {ex.args[0]} metadata") from ex
 
@@ -481,11 +489,11 @@ def compare_file_time_with_copied_time_in_op_rest(
     time_name2: str,
 ) -> None:
     time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time_name1)
-    err_msg = (
+    error_message = (
         f"Time comparison failed. \nTime1: {time_name1} = {time1} \n"
         f"Time2: {time_name2} = {time2} \nComparator: {comparator}"
     )
-    assert compare(time1, time2, comparator), err_msg
+    assert compare(time1, time2, comparator), error_message
 
 
 def assert_files_time_relation_in_op_rest(
@@ -502,12 +510,12 @@ def assert_files_time_relation_in_op_rest(
     time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time1_name)
     time2 = get_time_for_file_in_op_rest(path2, user, users, host, hosts, time2_name)
 
-    err_msg = (
+    error_message = (
         f"Time comparison failed. \nTime1: {time1_name} = {time1} \n"
         f"Time2: {time2_name} = {time2} \nComparator: {comparator}"
     )
 
-    assert compare(time1, time2, comparator), err_msg
+    assert compare(time1, time2, comparator), error_message
 
 
 def assert_time_relation_in_op_rest(

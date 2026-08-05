@@ -27,6 +27,6 @@ Feature: Oneprovider transfers basic functionality
 
   # in standard browser view max 3 columns can be displayed
   Examples:
-    |columns_list                             | expected_columns_list                       |
-    |["User", "Type & Destination", "Status"] | ["User", "Type & Destination", "Status"]     |
-    |["Type & Destination", "Processed"]      | ["Type & Destination", "Processed", "Status] |
+    | columns_list                             | expected_columns_list                         |
+    | ["User", "Type & Destination", "Status"] | ["User", "Type & Destination", "Status"]      |
+    | ["Type & Destination", "Processed"]      | ["Type & Destination", "Processed", "Status"] |

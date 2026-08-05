@@ -103,9 +103,8 @@ def _as_credentials(credentials: User) -> CredentialsLike:
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) changes his "
-        'password to "(?P<new_password>.+?)" in "(?P<host>.+?)" '
-        "Onezone panel service"
+        r"using (?P<client>.*), (?P<user>.+?) changes his "
+        r'password to "(?P<new_password>.+?)" in "(?P<host>.+?)" Onezone panel service'
     )
 )
 def change_user_password_in_oz_panel(
@@ -132,8 +131,8 @@ def change_user_password_in_oz_panel(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) logs out from "
-        '"(?P<host>.+?)" Onezone panel service'
+        r"using (?P<client>.*), (?P<user>.+?) logs out from "
+        r'"(?P<host>.+?)" Onezone panel service'
     )
 )
 def log_out_from_oz_panel(client: str, user: str, selenium: SeleniumDrivers) -> None:
@@ -150,9 +149,9 @@ def log_out_from_oz_panel(client: str, user: str, selenium: SeleniumDrivers) -> 
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) successfully "
-        'logs in to "(?P<host>.+?)" Onezone panel service using '
-        'password "(?P<password>.+?)"'
+        r"using (?P<client>.*), (?P<user>.+?) successfully "
+        r'logs in to "(?P<host>.+?)" Onezone panel service using '
+        r'password "(?P<password>.+?)"'
     )
 )
 def login_to_oz_panel_using_new_password(
@@ -176,10 +175,10 @@ def login_to_oz_panel_using_new_password(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) modifies "
-        'provider "(?P<provider_name>.+?)" changing his name to '
-        '"(?P<new_provider_name>.+?)" and domain to test domain in '
-        '"(?P<host>.+?)" Oneprovider panel service'
+        r"using (?P<client>.*), (?P<user>.+?) modifies "
+        r'provider "(?P<provider_name>.+?)" changing his name to '
+        r'"(?P<new_provider_name>.+?)" and domain to test domain in '
+        r'"(?P<host>.+?)" Oneprovider panel service'
     )
 )
 def modify_provider_using_test_hostname_in_op_panel(
@@ -221,10 +220,10 @@ def modify_provider_using_test_hostname_in_op_panel(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) modifies provider named "
-        '"(?P<provider_name>.+?)" changing his name and '
-        'domain to match that of "(?P<target_provider>.+?)" provider '
-        'in "(?P<host>.+?)" Oneprovider panel service'
+        r"using (?P<client>.*), (?P<user>.+?) modifies provider named "
+        r'"(?P<provider_name>.+?)" changing his name and '
+        r'domain to match that of "(?P<target_provider>.+?)" provider '
+        r'in "(?P<host>.+?)" Oneprovider panel service'
     )
 )
 def modify_provider_using_known_hostname_in_op_panel(
@@ -264,9 +263,9 @@ def modify_provider_using_known_hostname_in_op_panel(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees provider named "
-        '"(?P<provider_name>.+?)" with test hostname of provider '
-        '"(?P<provider>.+?)" in "(?P<host>.+?)" Onezone service'
+        r"using (?P<client>.*), (?P<user>.+?) sees provider named "
+        r'"(?P<provider_name>.+?)" with test hostname of provider '
+        r'"(?P<provider>.+?)" in "(?P<host>.+?)" Onezone service'
     )
 )
 def assert_provider_has_given_name_and_test_hostname_in_oz(
@@ -309,8 +308,8 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) deregisters "
-        'provider in "(?P<host>.+?)" Oneprovider panel service'
+        r"using (?P<client>.*), (?P<user>.+?) deregisters "
+        r'provider in "(?P<host>.+?)" Oneprovider panel service'
     )
 )
 def deregister_provider_in_op_panel(
@@ -336,9 +335,9 @@ def deregister_provider_in_op_panel(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that "
-        'provider "(?P<provider_name>.+?)" has been deregistered in '
-        '"(?P<host>.+?)" Onezone service'
+        r"using (?P<client>.*), (?P<user>.+?) sees that "
+        r'provider "(?P<provider_name>.+?)" has been deregistered in '
+        r'"(?P<host>.+?)" Onezone service'
     )
 )
 def assert_there_is_no_provider_in_oz(
@@ -369,10 +368,9 @@ def assert_there_is_no_provider_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that "
-        'provider "(?P<provider_name>.+?)" does not support '
-        'space named "(?P<space_name>.+?)" in "(?P<host>.+?)" '
-        "Onezone service"
+        r"using (?P<client>.*), (?P<user>.+?) sees that "
+        r'provider "(?P<provider_name>.+?)" does not support '
+        r'space named "(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'
     )
 )
 def assert_provider_does_not_support_space_in_oz(
@@ -402,8 +400,8 @@ def assert_provider_does_not_support_space_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) registers "
-        'provider in "(?P<host>.+?)" Onezone service with following '
+        r"using (?P<client>.*), (?P<user>.+?) registers "
+        r'provider in "(?P<host>.+?)" Onezone service with following '
         r"configuration:\n(?P<config>(.|\s)*)"
     )
 )
@@ -459,10 +457,10 @@ def register_provider_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) generates space support "
-        'token for space named "(?P<space_name>.+?)" in '
-        '"(?P<host>.+?)" Onezone service and sends it to '
-        "(?P<supporting_user>.+)"
+        r"using (?P<client>.*), (?P<user>.+?) generates space support "
+        r'token for space named "(?P<space_name>.+?)" in '
+        r'"(?P<host>.+?)" Onezone service and sends it to '
+        r"(?P<supporting_user>.+)"
     )
 )
 def request_space_support(
@@ -507,18 +505,16 @@ def request_space_support(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) supports "
-        '"(?P<space_name>.*)" space in "(?P<host>.+?)" Oneprovider '
-        "panel service with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r"using (?P<client>.*), (?P<user>.+?) supports "
+        r'"(?P<space_name>.*)" space in "(?P<host>.+?)" Oneprovider '
+        r"panel service with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 @wt(
     parsers.re(
-        "using (?P<client>REST), (?P<user>.+?) supports space with test alias "
-        '"(?P<space_name>.*)" in "(?P<host>.+?)" Oneprovider '
-        "panel service with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r"using (?P<client>REST), (?P<user>.+?) supports space with test alias "
+        r'"(?P<space_name>.*)" in "(?P<host>.+?)" Oneprovider '
+        r"panel service with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def support_space_in_op_panel(
@@ -573,10 +569,10 @@ def support_space_in_op_panel(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that list "
-        "of supporting providers for space named "
-        '"(?P<space_name>.+?)" contains "(?P<provider_name>.+?)" in '
-        '"(?P<host>.+?)" Onezone service'
+        r"using (?P<client>.*), (?P<user>.+?) sees that list "
+        r"of supporting providers for space named "
+        r'"(?P<space_name>.+?)" contains "(?P<provider_name>.+?)" in '
+        r'"(?P<host>.+?)" Onezone service'
     )
 )
 def w_assert_space_is_supported_by_provider_in_oz(
@@ -606,10 +602,9 @@ def w_assert_space_is_supported_by_provider_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) revokes "
-        '"(?P<provider_name>.+?)" provider space support for space '
-        'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider '
-        "panel service"
+        r"using (?P<client>.*), (?P<user>.+?) revokes "
+        r'"(?P<provider_name>.+?)" provider space support for space '
+        r'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider panel service'
     )
 )
 def revoke_space_support_in_op_panel(
@@ -651,8 +646,8 @@ def revoke_space_support_in_op_panel(
 
 @wt(
     parsers.re(
-        "using docker, (?P<user>.+?) copies (?P<src_path>.+?) "
-        "to provider's storage mount point"
+        r"using docker, (?P<user>.+?) copies (?P<src_path>.+?) "
+        r"to provider's storage mount point"
     )
 )
 def cp_files_to_storage_mount_point(
@@ -664,8 +659,8 @@ def cp_files_to_storage_mount_point(
 
 @wt(
     parsers.re(
-        "using docker, (?P<user>.+?) copies (?P<src_path>.+?) "
-        "to (?P<dst_path>.+?) provider's storage mount point"
+        r"using docker, (?P<user>.+?) copies (?P<src_path>.+?) "
+        r"to (?P<dst_path>.+?) provider's storage mount point"
     )
 )
 def cp_files_to_path_in_storage_mount_point(
@@ -677,8 +672,8 @@ def cp_files_to_path_in_storage_mount_point(
 
 @wt(
     parsers.re(
-        "using docker, (?P<user>.+?) copies (?P<src_path>.+?) "
-        'to the root directory of "(?P<space_name>.+?)" space'
+        r"using docker, (?P<user>.+?) copies (?P<src_path>.+?) "
+        r'to the root directory of "(?P<space_name>.+?)" space'
     )
 )
 def cp_files_to_space_root_dir(
@@ -695,9 +690,9 @@ def cp_files_to_space_root_dir(
 
 @wt(
     parsers.re(
-        "using docker, (?P<user>.+?) copies (?P<src_path>.+?) "
-        "to (?P<dst_path>.+?) regular directory of "
-        '"(?P<space_name>.+?)" space'
+        r"using docker, (?P<user>.+?) copies (?P<src_path>.+?) "
+        r"to (?P<dst_path>.+?) regular directory of "
+        r'"(?P<space_name>.+?)" space'
     )
 )
 def cp_files_to_path_in_space_root_dir(
@@ -717,10 +712,9 @@ def cp_files_to_path_in_space_root_dir(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that "
-        "(?P<sync_type>import) strategy configuration for "
-        '"(?P<space>.+?)" in "(?P<host>.+?)" is as follow:\n'
-        r"(?P<config>(.|\s)*)"
+        r"using (?P<client>.*), (?P<user>.+?) sees that "
+        r"(?P<sync_type>import) strategy configuration for "
+        r'"(?P<space>.+?)" in "(?P<host>.+?)" is as follow:\n(?P<config>(.|\s)*)'
     )
 )
 def assert_proper_space_configuration_in_op_panel(
@@ -773,9 +767,9 @@ def assert_proper_space_configuration_in_op_panel(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) configures "
-        "import parameters for "
-        '"(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider panel '
+        r"using (?P<client>.*), (?P<user>.+?) configures "
+        r"import parameters for "
+        r'"(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider panel '
         r"service as follow:\n(?P<config>(.|\s)*)"
     )
 )
@@ -826,8 +820,8 @@ def configure_sync_parameters_for_space_in_op_panel(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that "
-        'content for "(?P<space_name>.+?)" in "(?P<host>.+?)" '
+        r"using (?P<client>.*), (?P<user>.+?) sees that "
+        r'content for "(?P<space_name>.+?)" in "(?P<host>.+?)" '
         r"Oneprovider service is as follow:\n(?P<config>(.|\s)*)"
     )
 )
@@ -882,8 +876,8 @@ def assert_space_content_in_op(
 
 @wt(
     parsers.re(
-        "using docker, user removes (?P<src_path>.+?) "
-        'from the root directory of "(?P<space_name>.+?)" space'
+        r"using docker, user removes (?P<src_path>.+?) "
+        r'from the root directory of "(?P<space_name>.+?)" space'
     )
 )
 def rm_files_from_space_root_dir(
@@ -895,8 +889,8 @@ def rm_files_from_space_root_dir(
 
 @wt(
     parsers.re(
-        "using docker, user removes (?P<src_path>.+?) "
-        "from provider's storage mount point"
+        r"using docker, user removes (?P<src_path>.+?) "
+        r"from provider's storage mount point"
     )
 )
 def rm_files_from_storage_mount_point(src_path: str, hosts: Hosts) -> None:
@@ -906,8 +900,8 @@ def rm_files_from_storage_mount_point(src_path: str, hosts: Hosts) -> None:
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) copies Id of "
-        '"(?P<space_name>.+?)" space in Spaces page in Onepanel'
+        r"using (?P<client>.*), (?P<user>.+?) copies Id of "
+        r'"(?P<space_name>.+?)" space in Spaces page in Onepanel'
     )
 )
 def copy_id_of_space(
@@ -942,9 +936,9 @@ def copy_id_of_space(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sends copied invite token "
-        "to (?P<send_to>.+?) user "
-        'in "(?P<host>.+?)" Onezone service'
+        r"using (?P<client>.*), (?P<user>.+?) sends copied invite token "
+        r"to (?P<send_to>.+?) user "
+        r'in "(?P<host>.+?)" Onezone service'
     )
 )
 def send_copied_invite_token(
@@ -959,7 +953,7 @@ def send_copied_invite_token(
     if client.lower() == "web gui":
 
         send_copied_invite_token_in_oz_gui(
-            selenium, user, send_to, tmp_memory, displays, clipboard
+            selenium, user, [send_to], tmp_memory, displays, clipboard
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

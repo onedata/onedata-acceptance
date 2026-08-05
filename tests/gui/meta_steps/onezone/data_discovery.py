@@ -14,15 +14,7 @@ import yaml
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
-    assert_data_discovery_page,
     click_button_on_data_disc_page,
-)
-from tests.gui.steps.onezone.harvesters.discovery import (
-    click_on_option_of_harvester_on_left_sidebar_menu,
-)
-from tests.gui.steps.onezone.spaces import (
-    click_element_on_lists_on_left_sidebar_menu,
-    click_on_option_in_the_sidebar,
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
@@ -182,28 +174,6 @@ def see_files_with_order(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} opens Data Discovery page of "{harvester_name}" harvester'
-    )
-)
-def open_data_discovery_of_harvester(
-    selenium: SeleniumDrivers, browser_id: str, harvester_name: str
-) -> None:
-    option = "Discovery"
-    list_name = "harvesters"
-    option2 = "data discovery"
-
-    click_on_option_in_the_sidebar(selenium, browser_id, option)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, list_name, harvester_name
-    )
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option2
-    )
-    assert_data_discovery_page(selenium, browser_id)
-
-
-@wt(
-    parsers.parse(
         'user of {browser_id} clicks on "Go to source file..." for "{filename}"'
     )
 )
@@ -246,24 +216,24 @@ def _parse_data(
         if isinstance(item, dict):
             if [*item][0] == "__onedata":
                 page.filter_properties_tree.tree_nodes["__onedata"].expander()
-                attrs = cast(list[JsonValue], item["__onedata"])
-                for attr in attrs:
-                    if isinstance(attr, dict):
-                        if [*attr][0] == "xattrs":
+                attributes = cast(list[JsonValue], item["__onedata"])
+                for attribute in attributes:
+                    if isinstance(attribute, dict):
+                        if [*attribute][0] == "xattrs":
                             node = page.filter_properties_tree.tree_nodes[
                                 "__onedata"
                             ].onedata_tree_nodes["xattrs"]
                             node.expander()
                             nodes = node.xattrs_tree_nodes
-                            for prop in cast(list[str], attr["xattrs"]):
-                                nodes[prop].checkbox.click()
+                            for property_name in cast(list[str], attribute["xattrs"]):
+                                nodes[property_name].checkbox.click()
                         else:
-                            raise RuntimeError(f"Do not support {attr}")
+                            raise RuntimeError(f"Do not support {attribute}")
                     else:
                         nodes = page.filter_properties_tree.tree_nodes[
                             "__onedata"
                         ].onedata_tree_nodes
-                        nodes[attr].checkbox.click()
+                        nodes[attribute].checkbox.click()
             else:
                 raise RuntimeError(f"Do not support {item}")
         else:
@@ -290,16 +260,19 @@ def compare_files_with_curl(
     assert len(expected_data) == len(curl_dict), msg
 
     for file_name in expected_data:
-        for prop in expected_data[file_name]:
-            if prop == "xattrs":
-                xattrs = expected_data[file_name][prop]
+        for property_name in expected_data[file_name]:
+            if property_name == "xattrs":
+                xattrs = expected_data[file_name][property_name]
                 for xattr in xattrs:
                     onedata = cast(JsonObject, curl_dict[file_name]["__onedata"])
                     file_xattrs = cast(dict[str, JsonObject], onedata["xattrs"])
                     assert file_xattrs[xattr]["__value"] == xattrs[xattr], msg
 
             else:
-                assert expected_data[file_name][prop] == curl_dict[file_name][prop], msg
+                assert (
+                    expected_data[file_name][property_name]
+                    == curl_dict[file_name][property_name]
+                ), msg
 
 
 def _curl_data_to_dict(

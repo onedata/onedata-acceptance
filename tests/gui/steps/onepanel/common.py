@@ -11,7 +11,11 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import LoginPage, Modals, OnePage, Onepanel
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -19,52 +23,59 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.+?) clicks? on (?P<btn>.+?) "
-        "button in (?P<content>welcome|spaces|account management|"
-        "storages|provider|member) page in Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on"
+        r" (?P<btn>.+?) button in (?P<content>welcome|spaces|account management|"
+        r"storages|provider|member) page in Onepanel"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_content(
-    selenium: SeleniumDrivers, browser_id_list: str, btn: str, content: str
+    selenium: SeleniumDrivers, browser_id_list: list[str], btn: str, content: str
 ) -> None:
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         content = getattr(Onepanel(selenium[browser_id]).content, transform(content))
         getattr(content, transform(btn)).click()
 
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.+?) clicks? on "
-        '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
-        "item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on "
+        r'(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
+        r"item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_subitem_for_item(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
+    browser_id_list: list[str],
     sidebar: str,
     sub_item: str,
     record: str,
     hosts: Hosts,
 ) -> None:
     record = hosts[record]["name"]
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].submenu[sub_item].click()
 
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.+?) clicks? on "
-        '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
-        "item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on "
+        r'(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
+        r"item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
+    ),
+    converters={"browser_id_list": parse_elements_sequence},
 )
 def g_click_on_subitem_for_item(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
+    browser_id_list: list[str],
     sidebar: str,
     sub_item: str,
     record: str,
@@ -77,39 +88,44 @@ def g_click_on_subitem_for_item(
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.+?) clicks? on "
-        "(?P<sub_item>.+?) item in submenu of item named "
-        '"(?P<record>.+?)" in (?P<sidebar>CLUSTERS) sidebar in '
-        "Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on "
+        r"(?P<sub_item>.+?) item in submenu of item named "
+        r'"(?P<record>.+?)" in (?P<sidebar>CLUSTERS) sidebar in Onepanel'
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_subitem_for_item_with_name(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
+    browser_id_list: list[str],
     sidebar: str,
     sub_item: str,
     record: str | int,
 ) -> None:
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].submenu[sub_item].click()
 
 
 @wt(
     parsers.re(
-        'users? of (?P<browser_id_list>.+?) clicks? on "(?P<record>.+?)"'
-        " item in (?P<sidebar>CLUSTERS) sidebar in Onepanel"
-    )
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) clicks? on"
+        r' "(?P<record>.+?)" item in (?P<sidebar>CLUSTERS) sidebar in Onepanel'
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_sidebar_item(
     selenium: SeleniumDrivers,
-    browser_id_list: str,
+    browser_id_list: list[str],
     sidebar: str,
     record: str,
 ) -> None:
-    for browser_id in parse_seq(browser_id_list):
+    for browser_id in browser_id_list:
         nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].click()
 
@@ -215,8 +231,8 @@ def click_on_toggle_in_onepanel_view(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{toggle}" toggle is {option} in {view_name}'
-        " view in Onepanel"
+        'user of {browser_id} sees that "{toggle}" toggle is {option} in '
+        "{view_name} view in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -236,8 +252,8 @@ def assert_toggle_checked_in_onepanel_view(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{label}" is "{label_content}" in {view_name}'
-        " view in Onepanel"
+        'user of {browser_id} sees that "{label}" is "{label_content}" in '
+        "{view_name} view in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -250,14 +266,14 @@ def assert_label_content_in_onepanel_view(
 ) -> None:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
-    err_msg = f"{label} should be {label_content} but is {actual_label}"
-    assert actual_label == label_content, err_msg
+    error_message = f"{label} should be {label_content} but is {actual_label}"
+    assert actual_label == label_content, error_message
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{label}" ends with "{suffix}" in {view_name}'
-        " view in Onepanel"
+        'user of {browser_id} sees that "{label}" ends with "{suffix}" in '
+        "{view_name} view in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -270,8 +286,8 @@ def assert_label_ends_with_in_onepanel_view(
 ) -> None:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
-    err_msg = f"{label} should end with {suffix} but it is {actual_label}"
-    assert actual_label.endswith(suffix), err_msg
+    error_message = f"{label} should end with {suffix} but it is {actual_label}"
+    assert actual_label.endswith(suffix), error_message
 
 
 @wt(
@@ -292,8 +308,8 @@ def assert_label_contains_prov_domain_in_onepanel_view(
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
     expected_domain = hosts[host]["hostname"]
-    err_msg = f"Expected domain: {expected_domain} is not in {actual_label}"
-    assert expected_domain in actual_label, err_msg
+    error_message = f"Expected domain: {expected_domain} is not in {actual_label}"
+    assert expected_domain in actual_label, error_message
 
 
 @wt(
@@ -309,8 +325,8 @@ def assert_warning_in_dns_names_in_onepanel_view(
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_warning = nav.dns_names_warning
     warning = warning.replace("\\", "")
-    err_msg = f"Actual warning {actual_warning} does not match expected {warning}"
-    assert warning in actual_warning, err_msg
+    error_message = f"Actual warning {actual_warning} does not match expected {warning}"
+    assert warning in actual_warning, error_message
 
 
 @wt(

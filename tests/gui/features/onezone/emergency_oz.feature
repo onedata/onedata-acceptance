@@ -69,8 +69,7 @@ Feature: Basic management of emergency Onezone panel
 
     Then user of browser clicks Sign in to emergency interface in Onepanel login page
     And user of browser types "new_password" to Passphrase input in Onepanel login form
-    And user of browser presses Sign in button in Onepanel login page
-    And user of browser sees an info notify with text matching to: Authentication succeeded!
+    And user of browser successfully signs in to Onezone panel
 
     # set previous password back
     And user of browser clicks on "Clusters" in the main menu
@@ -88,7 +87,6 @@ Feature: Basic management of emergency Onezone panel
     And user of browser clicks open in onezone in Onepanel login page
     Then user of browser sees sign in notification message: "test sign-in notification" in the login page
     And user of browser logs as admin to Onezone service
-    And user of browser removes "test sign-in notification" text from sign in notification in GUI settings page of "onezone"
 
 
   Scenario: User sees terms of use page after setting terms of use in Onezone emergency panel
@@ -97,10 +95,9 @@ Feature: Basic management of emergency Onezone panel
     And user of browser clicks open in onezone in Onepanel login page
     And user of browser logs as admin to Onezone service
     And user of browser expands account settings dropdown in the sidebar
-    And user of browser goes to Terms of use page
+    And user of browser goes to "Terms of use" page
     Then user of browser sees "test terms of use" on terms of use page
     And user of browser clicks "Back to main page" button on terms of use page
-    And user of browser removes "test terms of use" text from terms of use in GUI settings page of "onezone"
 
 
   Scenario: User sets and sees correct information about using cookies and privacy policy terms in Onezone emergency panel
@@ -115,5 +112,3 @@ Feature: Basic management of emergency Onezone panel
     Then user of browser sees "test privacy policy" on privacy policy page
     And user of browser clicks "I understand" button in cookies popup
     And user of browser clicks "Back to main page" button on privacy policy page
-    And user of browser removes "test privacy policy" text from privacy policy in GUI settings page of "onezone"
-    And user of browser removes "test cookie consent" text from cookie consent notification in GUI settings page of "onezone"

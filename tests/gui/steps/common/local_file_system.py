@@ -127,8 +127,7 @@ def download_file_to_local_file_system(
 @given(
     parsers.parse(
         'user of {browser_id} creates file named "{file_name}" '
-        'sized: {item_size} in "{directory_name}" on local file '
-        "system"
+        'sized: {item_size} in "{directory_name}" on local file system'
     )
 )
 def create_file_on_local_file_system(

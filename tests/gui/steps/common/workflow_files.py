@@ -30,16 +30,18 @@ def check_using_all_workflows() -> None:
     # remove extension
     workflows_names_set = set(map(lambda x: x.split(".")[0], workflows_names))
     used_workflows = set()
-    for dir_path, _, files in os.walk(TESTS_DIR):
+    for directory_path, _, files in os.walk(TESTS_DIR):
         for file in files:
             used_workflows.update(
-                check_names_in_file(os.path.join(dir_path, file), workflows_names_set)
+                check_names_in_file(
+                    os.path.join(directory_path, file), workflows_names_set
+                )
             )
-    err_msg = (
+    error_message = (
         "there are workflows not included in tests: "
         f"{workflows_names_set.difference(used_workflows)}"
     )
-    assert workflows_names_set == used_workflows, err_msg
+    assert workflows_names_set == used_workflows, error_message
 
 
 def check_names_in_file(path: str, names: set[str]) -> set[str]:

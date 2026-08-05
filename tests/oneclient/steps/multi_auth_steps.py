@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Mapping
 from typing import cast
 
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import EnvDesc, Hosts
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, then
@@ -17,24 +18,30 @@ from tests.utils.utils import assert_
 
 @given(
     parsers.re(
-        "oneclients (?P<client_ids>.*)\n"
-        "mounted on client_hosts (?P<client_hosts>.*) respectively,\n"
-        "using (?P<tokens>.*) by (?P<user_names>.*)"
-    )
+        rf"oneclients (?P<client_ids>{ELEMENTS_SEQUENCE_PATTERN})\n"
+        rf"mounted on client_hosts (?P<client_hosts>{ELEMENTS_SEQUENCE_PATTERN}) "
+        rf"respectively,\nusing (?P<tokens>.*) by "
+        rf"(?P<user_names>{ELEMENTS_SEQUENCE_PATTERN})"
+    ),
+    converters={
+        "client_hosts": parse_elements_sequence,
+        "client_ids": parse_elements_sequence,
+        "user_names": parse_elements_sequence,
+    },
 )
 def multi_mount(
-    user_names: str,
-    client_ids: str,
-    client_hosts: str,
+    user_names: list[str],
+    client_ids: list[str],
+    client_hosts: list[str],
     tokens: str,
     hosts: Hosts,
     users: Users,
     env_desc: EnvDesc,
 ) -> None:
     params = zip(
-        list_parser(user_names),
-        list_parser(client_ids),
-        list_parser(client_hosts),
+        user_names,
+        client_ids,
+        client_hosts,
         list_parser(tokens),
     )
 

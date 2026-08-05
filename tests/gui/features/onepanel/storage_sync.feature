@@ -102,7 +102,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             continuous scan: false
             max depth: 2
 
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     # configure update parameters
@@ -155,7 +154,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             continuous scan: false
             max depth: 2
 
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     And user of browser1 starts scan using "Start scan" button and waits till finished in Onepanel
@@ -221,7 +219,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             continuous scan: false
             max depth: 2
 
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
     And user of browser1 starts scan using "Start scan" button and waits till finished in Onepanel
 
@@ -286,7 +283,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             continuous scan: false
             max depth: 2
 
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     # configure update parameters
@@ -351,7 +347,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             continuous scan: true
             scan interval [s]: 1
 
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     And user of browser2 opens file browser for "space1" space
@@ -410,7 +405,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             detect deletions: true
             continuous scan: false
 
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that "space1" space name is displayed in the supported spaces overview panel in Onepanel
 
     And user of browser2 opens file browser for "space1" space

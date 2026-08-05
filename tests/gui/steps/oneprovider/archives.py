@@ -33,10 +33,10 @@ def assert_number_of_archives_for_item_in_dataset_browser(
 ) -> None:
     browser = tmp_memory[browser_id]["dataset_browser"]
     item_number = browser.data[name].number_of_archives.text
-    err_msg = (
+    error_message = (
         f"displayed {item_number} archives for {name} does not match expected {number}"
     )
-    assert number == item_number, err_msg
+    assert number == item_number, error_message
 
 
 @wt(
@@ -154,9 +154,9 @@ def assert_tag_for_archive_in_archive_browser(
     browser_id: str, tag_type: str, tmp_memory: TmpMemory, description: str
 ) -> None:
     browser = tmp_memory[browser_id]["archive_browser"]
-    err_msg = f"{tag_type} tag for archive with description is not visible"
+    error_message = f"{tag_type} tag for archive with description is not visible"
     archive = get_archive_with_description(browser, description)
-    assert archive.is_tag_visible(tag_type), err_msg
+    assert archive.is_tag_visible(tag_type), error_message
 
 
 def from_ordinal_number_to_int(ordinal_number: str) -> int:
@@ -180,18 +180,17 @@ def compare_base_archive_name_with_archive_with_description(
     browser: _ArchiveBrowser, base_description: str, item_base_archive: str
 ) -> None:
     base_archive_name = get_archive_with_description(browser, base_description).name
-    err_msg = (
+    error_message = (
         f"Item base archive: {item_base_archive} does not match  {base_archive_name}"
     )
-    assert item_base_archive == base_archive_name, err_msg
+    assert item_base_archive == base_archive_name, error_message
 
 
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that base archive for "
         r"latest created archive is archive with description:"
-        r' "(?P<base_description>.*?)" on archives list'
-        r" in archive browser"
+        r' "(?P<base_description>.*?)" on archives list in archive browser'
     )
 )
 def assert_base_archive_description_for_latest_created_archive(
@@ -208,8 +207,8 @@ def assert_base_archive_description_for_latest_created_archive(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that base archive for "
         r'archive with description: "(?P<description>.*?)" is archive '
-        r'with description: "(?P<base_description>.*?)" on archives list'
-        r" in archive browser"
+        r'with description: "(?P<base_description>.*?)" on archives '
+        r"list in archive browser"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -251,11 +250,11 @@ def assert_name_same_as_latest_created(
     browser = tmp_memory[browser_id]["archive_browser"]
     latest_created_name = browser.data[0].name
     base_archive_name = Modals(driver).create_archive.base_archive
-    err_msg = (
+    error_message = (
         f"Latest created archive: {latest_created_name} is not "
         f"the same as base name: {base_archive_name}"
     )
-    assert latest_created_name == base_archive_name, err_msg
+    assert latest_created_name == base_archive_name, error_message
 
 
 @wt(
@@ -321,11 +320,11 @@ def assert_description_for_archive(
     browser = tmp_memory[browser_id]["archive_browser"]
     number = from_ordinal_number_to_int(ordinal)
     archive_description = browser.data[number - 1].description
-    err_msg = (
+    error_message = (
         f"Archive description {archive_description} does not match"
         f" expected description: {description}"
     )
-    assert archive_description == description, err_msg
+    assert archive_description == description, error_message
 
 
 @wt(
@@ -416,8 +415,8 @@ def assert_archive_id_in_properties_modal(
 ) -> None:
     driver = selenium[browser_id]
     archive_id = Modals(driver).archive_details.archive_id
-    err_msg = "User does not see archive ID in Archive details modal"
-    assert archive_id is not None, err_msg
+    error_message = "User does not see archive ID in Archive details modal"
+    assert archive_id is not None, error_message
 
 
 @wt(
@@ -439,8 +438,8 @@ def assert_archive_info_in_properties_modal(
             pass
     else:
         text = getattr(Modals(driver).archive_details, transform(info))
-        err_msg = f"{info}: {text} does not match expected {info} {expected}"
-        assert expected == text, err_msg
+        error_message = f"{info}: {text} does not match expected {info} {expected}"
+        assert expected == text, error_message
 
 
 @wt(
@@ -456,8 +455,8 @@ def assert_toggle_checked_in_archive_details_modal(
     driver = selenium[browser_id]
     is_checked = getattr(Modals(driver).archive_details, transform(toggle)).is_checked()
 
-    err_msg = f"Toggle {toggle} is not checked in modal Archive details"
-    assert is_checked, err_msg
+    error_message = f"Toggle {toggle} is not checked in modal Archive details"
+    assert is_checked, error_message
 
 
 @wt(
@@ -491,15 +490,14 @@ def assert_item_from_modal_with_copied(
     driver = selenium[browser_id]
     copied = tmp_memory[transform(item)]
     text = getattr(getattr(Modals(driver), transform(modal)), transform(item))
-    err_msg = f"{item}: {text} is not the same as copied: {copied}"
-    assert text == copied, err_msg
+    error_message = f"{item}: {text} is not the same as copied: {copied}"
+    assert text == copied, error_message
 
 
 @wt(
     parsers.parse(
         'user of {browser_id} writes "{text}" into edit '
-        "description and successfully saves it, in archive details "
-        "modal"
+        "description and successfully saves it, in archive details modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -524,8 +522,8 @@ def assert_presence_of_creator_column_for_archive(
     browser = tmp_memory[browser_id]["archive_browser"]
     archive = get_archive_with_description(browser, description)
     creator = archive.creator
-    err_msg = f"visible creator name is {creator} but should be {name}"
-    assert creator == name, err_msg
+    error_message = f"visible creator name is {creator} but should be {name}"
+    assert creator == name, error_message
 
 
 @wt(
@@ -540,8 +538,8 @@ def assert_presence_of_creator_in_archive_details(
 ) -> None:
     driver = selenium[browser_id]
     creator = Modals(driver).archive_details.creator
-    err_msg = f"visible creator name is {creator} but should be {name}"
-    assert creator == name, err_msg
+    error_message = f"visible creator name is {creator} but should be {name}"
+    assert creator == name, error_message
 
 
 @wt(
@@ -575,8 +573,8 @@ def hover_over_option_in_data_row_menu_in_archive_browser(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) (?P<res>does not see|sees) "
-        'link "(?P<link>.*?)" in archive browser'
+        r"user of (?P<browser_id>.*?) (?P<res>does not see|sees) "
+        r'link "(?P<link>.*?)" in archive browser'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -600,8 +598,7 @@ def assert_archive_creation_link(
 @wt(
     parsers.parse(
         "user of {browser_id} sees popup message about insufficient "
-        'privileges requiring "{privilege}" privilege in archive '
-        "browser"
+        'privileges requiring "{privilege}" privilege in archive browser'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -620,8 +617,8 @@ def assert_popup_insufficient_privileges_message_in_archive_browser(
             "this space)."
         ),
     }
-    err_msg = (
+    error_message = (
         f"expected {message_dict[privilege]} info to be visible instead "
         f"of {toggle_info}"
     )
-    assert toggle_info == message_dict[privilege], err_msg
+    assert toggle_info == message_dict[privilege], error_message

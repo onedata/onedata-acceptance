@@ -30,6 +30,7 @@ from tests.gui.steps.onepanel.deployment import (
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -37,7 +38,7 @@ from tests.utils.user_utils import Users
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sets options for {host_regexp} host in "
+        "user of {browser_id} sets options for {host_pattern} host in "
         "step 1 of deployment process with following "
         "configuration:\n{config}"
     )
@@ -45,7 +46,7 @@ from tests.utils.user_utils import Users
 def setup_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
-    host_regexp: str,
+    host_pattern: str,
     config: str,
     hosts: Hosts,
 ) -> None:
@@ -60,13 +61,13 @@ def setup_step1(
      - Cluster Manager
      - Primary Cluster Manager
     """
-    _setup_step1(selenium, browser_id, host_regexp, config, hosts)
+    _setup_step1(selenium, browser_id, host_pattern, config, hosts)
 
 
 def _setup_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
-    host_regexp: str,
+    host_pattern: str,
     configuration: str,
     hosts: Hosts,
 ) -> None:
@@ -76,9 +77,9 @@ def _setup_step1(
     btn = "Deploy"
 
     wt_check_host_options_list_in_deployment_step1(
-        selenium, browser_id, options, host_regexp
+        selenium, browser_id, options, host_pattern
     )
-    if "onezone" in host_regexp:
+    if "onezone" in host_pattern:
         zone_for_name, zone_for_domain = _parse_zone_data(
             config["zone name"], config["zone domain"]
         )
@@ -175,11 +176,11 @@ def enable_provider_cluster_registration_for_user(
     last_step = "last step"
     wt_click_on_btn_in_deployment_step(selenium, browser_id, last_step_btn, last_step)
     service = "Onezone"
-    login_using_basic_auth(selenium, browser_id, user_login, users, service)
+    login_using_basic_auth(selenium, [browser_id], [user_login], users, [service])
     send_copied_invite_token_in_oz_gui(
         selenium,
         browser_id,
-        browser_id2,
+        [browser_id2],
         tmp_memory,
         displays,
         clipboard,
@@ -189,8 +190,7 @@ def enable_provider_cluster_registration_for_user(
 @wt(
     parsers.parse(
         "user of {browser_id} registers provider in step 2 of "
-        "deployment process in Onepanel with following config:\n"
-        "{config}"
+        "deployment process in Onepanel with following config:\n{config}"
     )
 )
 def setup_step2(
@@ -292,12 +292,10 @@ def _add_storage_in_step5(
     storage_type = config["storage type"]
     name = config["name"]
     name_box = "Storage name"
-    notify_type = "info"
-    text_regexp = ".*[Ss]torage.*added.*"
 
     wt_select_storage_type_in_deployment_step5(selenium, browser_id, storage_type)
     wt_type_text_to_in_box_in_deployment_step5(
         selenium, browser_id, name, storage_type, name_box
     )
     wt_click_on_add_btn_in_storage_add_form(selenium, browser_id)
-    notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
+    notify_visible_with_text(selenium, browser_id, AlertPopup.STORAGE_ADDED)

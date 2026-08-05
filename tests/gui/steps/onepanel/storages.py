@@ -41,9 +41,9 @@ def wt_select_storage_type_in_storage_page_op_panel(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-        "(?P<input_box>.*?) field in (?P<form>.*?) form "
-        "in storages page in Onepanel"
+        r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
+        r"(?P<input_box>.*?) field in (?P<form>.*?) form "
+        r"in storages page in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -62,9 +62,9 @@ def wt_type_text_to_in_box_in_storages_page_op_panel(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) checks "(?P<option>.*?)" in '
-        "Storage path type field in (?P<form>.*?) form "
-        "in storages page in Onepanel"
+        r'user of (?P<browser_id>.*?) checks "(?P<option>.*?)" in '
+        r"Storage path type field in (?P<form>.*?) form "
+        r"in storages page in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -116,9 +116,9 @@ def wt_expand_storage_item_in_storages_page_op_panel(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
-        "(?P<attr>.*?) is (?P<val>.*?) "
-        "in storages page in Onepanel"
+        r'user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
+        r"(?P<attribute>.*?) is (?P<val>.*?) "
+        r"in storages page in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -126,14 +126,14 @@ def wt_assert_storage_attr_in_storages_page_op_panel(
     selenium: SeleniumDrivers,
     browser_id: str,
     storage: str,
-    attr: str,
+    attribute: str,
     val: str,
 ) -> None:
     storages = Onepanel(selenium[browser_id]).content.storages.storages
-    displayed_val = getattr(storages[storage], transform(attr)).lower()
+    displayed_val = getattr(storages[storage], transform(attribute)).lower()
     assert (
         displayed_val == val.lower()
-    ), f"got {displayed_val} as storage's {attr} instead of expected {val}"
+    ), f"got {displayed_val} as storage's {attribute} instead of expected {val}"
 
 
 @wt(

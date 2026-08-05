@@ -41,19 +41,19 @@ Feature: Management of invite tokens in Onezone GUI, with admin user
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
 
-    Then user of browser2 succeeds to consume token for "harvester1" harvester
+    Then user of browser2 opens token consume view for "harvester1" harvester, pastes token and proceeds
 
     And user of browser1 refreshes site
     And user of browser1 sees that token usage count is "1/2"
 
     And user of browser2 sees that "space1" has appeared on the spaces list of "harvester1" harvester
-    Then user of browser2 succeeds to consume token for "harvester2" harvester
+    Then user of browser2 opens token consume view for "harvester2" harvester, pastes token and proceeds
 
     And user of browser1 refreshes site
     And user of browser1 sees that token usage count is "2/2"
 
     And user of browser2 sees that "space1" has appeared on the spaces list of "harvester2" harvester
-    Then user of browser2 fails to consume token for "harvester3" harvester
+    Then user of browser2 opens token consume view for "harvester3" harvester, pastes token, fails to proceed and sees error modal
     And user of browser2 removes all tokens
 
 
@@ -75,7 +75,7 @@ Feature: Management of invite tokens in Onezone GUI, with admin user
     And user of browser2 clicks on copy button in token view
     And user of browser2 sends copied token to user of browser1
 
-    And user of browser1 succeeds to consume token for "group1" group
+    And user of browser1 opens token consume view for "group1" group, pastes token and proceeds
 
     And user of browser2 sees exactly 2 item(s) on tokens list in tokens sidebar
     And user of browser2 clicks on "Clean up obsolete tokens" button in tokens sidebar

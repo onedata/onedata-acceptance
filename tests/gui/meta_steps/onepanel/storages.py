@@ -45,6 +45,7 @@ from tests.gui.steps.onepanel.storages import (
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.utils import Onepanel
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
@@ -68,10 +69,9 @@ def remove_storage_in_op_panel_using_gui(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.+?) adds "(?P<name>.*)" storage '
-        'in "(?P<provider_name>.+?)" Oneprovider panel service '
-        "with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r'user of (?P<browser_id>.+?) adds "(?P<name>.*)" storage '
+        r'in "(?P<provider_name>.+?)" Oneprovider panel service '
+        r"with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def add_storage_in_op_panel_using_gui(
@@ -107,7 +107,7 @@ def _go_to_storage_view_in_clusters(
         click_on_record_in_clusters_menu(selenium, browser_id, provider_name, hosts)
 
     wt_click_on_subitem_for_item(
-        selenium, browser_id, sidebar, sub_item, provider_name, hosts
+        selenium, [browser_id], sidebar, sub_item, provider_name, hosts
     )
 
 
@@ -119,12 +119,10 @@ def _add_storage_in_op_panel_using_gui(
     form = "POSIX"
     input_box = "Storage name"
     mount_point_option = "mount point"
-    notify_type = "info"
-    text_regexp = ".*[Ss]torage.*added.*"
     options = yaml.load(config, yaml.Loader)
 
     try:
-        wt_click_on_btn_in_content(selenium, browser_id, btn, content)
+        wt_click_on_btn_in_content(selenium, [browser_id], btn, content)
     except RuntimeError:
         pass
 
@@ -140,7 +138,7 @@ def _add_storage_in_op_panel_using_gui(
     if options.get("imported storage", False):
         enable_import_in_add_storage_form(selenium, browser_id)
     wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium, browser_id)
-    notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
+    notify_visible_with_text(selenium, browser_id, AlertPopup.STORAGE_ADDED)
 
 
 @given(

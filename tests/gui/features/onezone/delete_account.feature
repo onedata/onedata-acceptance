@@ -22,7 +22,6 @@ Feature: Delete Onezone user account
     # log in again
     And user of browser types "user1" to Username input in Onezone login form
     And user of browser types "password" to Password input in Onezone login form
-    And user of browser presses Sign in button in Onezone login page
-    Then user of browser sees error message about invalid credentials in Onezone login page
+    Then user of browser fails to sign in Onezone due to invalid credentials
 
 

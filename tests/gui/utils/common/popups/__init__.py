@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import re
+
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
@@ -14,7 +16,6 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.generic import AlertPopup
 from tests.utils.utils import repeat_failed
 
 from .alert_info_popup import AlertInfoPopup
@@ -28,6 +29,7 @@ from .data_distribution_popup import DataDistributionPopup
 from .data_row_menu import DataRowMenu
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .deregister_provider import DeregisterProvider
+from .generic import AlertPopup
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .handle_service import HandleService
 from .info import Info
@@ -140,8 +142,16 @@ class Popups:
     workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
+
     alert_info_popup = WebItem(".alert-info", cls=AlertInfoPopup)
     alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
+    notify_popups = WebItemsSequence(".ember-notify-cn", cls=AlertInfoPopup)
+
+    def get_all_alert_popups(self) -> list[AlertInfoPopup]:
+        return [
+            *self.alert_info_popups,
+            *self.notify_popups,
+        ]
 
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
@@ -150,7 +160,14 @@ class Popups:
         return "popups"
 
     def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
-        return self.alert_info_popups[alert_popup.value]
+        regexp = re.compile(alert_popup.message)
+        # check both types of popups
+        for notifies in (self.alert_info_popups, self.notify_popups):
+            for popup_val in notifies:
+                message = popup_val.message
+                if regexp.match(message):
+                    return notifies[message]
+        raise RuntimeError(f'No alert popup with message "{alert_popup.message}"')
 
     def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0

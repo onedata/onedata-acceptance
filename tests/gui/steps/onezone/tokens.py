@@ -10,10 +10,13 @@ import time
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
-from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
+from tests.gui.steps.common.common import (
+    wait_for_sliding_panel_to_stop_moving,
+)
+from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
@@ -92,13 +95,13 @@ def click_on_button_in_tokens_sidebar(
     selenium: SeleniumDrivers, browser_id: str, button: str
 ) -> None:
     driver = selenium[browser_id]
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(TokensPage)
 
     if button == "Create new token":
-        oz_page = OZLoggedIn(driver)
-        oz_page.open_panel(TokensPage)
         oz_page.tokens.sidebar.click_create_new_token(driver)
     elif button == "Clean up obsolete tokens":
-        sidebar = OZLoggedIn(driver).tokens.sidebar
+        sidebar = oz_page.tokens.sidebar
         button_clean = getattr(sidebar, transform(button))
         for _ in range(50):
             if "clickable" in button_clean.web_elem.get_attribute("class"):
@@ -107,7 +110,7 @@ def click_on_button_in_tokens_sidebar(
             time.sleep(0.1)
         raise RuntimeError(f"Did not manage to click {button} button")
     else:
-        sidebar = OZLoggedIn(driver).tokens.sidebar
+        sidebar = oz_page.tokens.sidebar
         getattr(sidebar, transform(button))()
 
 
@@ -158,16 +161,6 @@ def show_inactive_caveats(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 
 @wt(
-    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
-)
-@repeat_failed(timeout=WAIT_BACKEND)
-def click_on_confirm_button_on_tokens_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    OZLoggedIn(selenium[browser_id]).tokens.confirm_button()
-
-
-@wt(
     parsers.parse(
         'user of {browser_id} chooses "{member_name}" {type} '
         "from dropdown on tokens page"
@@ -183,23 +176,14 @@ def select_member_from_dropdown(
     Popups(driver).dropdown.options[member_name].click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Create token" button '
-        'in "Create new token" view'
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND * 2)
-def click_create_token_button_in_create_token_page(
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_and_get_create_token_button(
     selenium: SeleniumDrivers, browser_id: str
-) -> None:
+) -> WebElement:
     driver = selenium[browser_id]
-    # prevent clicking when there is ongoing animation
-    time.sleep(0.2)
     create_token_button = OZLoggedIn(driver).tokens.create_token_page.create_token
     create_token_button.click()
-    # ensure clicking at create token succeeded
-    wait_for_item_to_disappear(create_token_button)
+    return create_token_button.web_elem
 
 
 @wt(
@@ -217,10 +201,10 @@ def choose_token_type_to_create(
     getattr(OZLoggedIn(driver).tokens.create_token_page, option).click()
     # ensure correct option is selected
     option_input = f"{token_type}_input"
-    err_msg = f"did not manage to select {option}"
+    error_message = f"did not manage to select {option}"
     assert getattr(
         OZLoggedIn(driver).tokens.create_token_page, option_input
-    ).is_selected(), err_msg
+    ).is_selected(), error_message
 
 
 @wt(parsers.parse("user of {browser_id} clicks on copy button in token view"))
@@ -339,9 +323,9 @@ def assert_all_tokens_are_type(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that "
-        'token named "(?P<token_name>.*?)" is marked as '
-        "(?P<status>active|revoked)"
+        r"user of (?P<browser_id>.*?) sees that "
+        r'token named "(?P<token_name>.*?)" is marked as '
+        r"(?P<status>active|revoked)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -436,8 +420,7 @@ def assert_token_on_tokens_list(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) succeeds to type "(?P<token_name>.*?)" to token'
-        r" name "
-        r'input box in "Create new token" view'
+        r' name input box in "Create new token" view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -607,11 +590,13 @@ def assert_token_on_token_page_sidebar(
     tokens_page = OZLoggedIn(driver).tokens.sidebar
 
     if ability_to_see == "sees":
-        err_msg = f"token list on sidebar should contain {token_name}"
-        assert token_name in {token.name for token in tokens_page.tokens}, err_msg
+        error_message = f"token list on sidebar should contain {token_name}"
+        assert token_name in {token.name for token in tokens_page.tokens}, error_message
     if ability_to_see == "does not see":
-        err_msg = f"token list on sidebar should not contain {token_name}"
-        assert token_name not in {token.name for token in tokens_page.tokens}, err_msg
+        error_message = f"token list on sidebar should not contain {token_name}"
+        assert token_name not in {
+            token.name for token in tokens_page.tokens
+        }, error_message
 
 
 def choose_token_template(
@@ -649,3 +634,18 @@ def click_on_token_containing_name(
             token.click()
             return
     raise ValueError(f"token {token_name} not found")
+
+
+@wt(
+    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_on_confirm_button_on_tokens_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    # click the button without checking if a popup or error modal appeared
+    oz_page = OZLoggedIn(selenium[browser_id])
+    oz_page.tokens.confirm_button()
+    # it is needed to wait for the page refresh
+    wait_till_main_content_loaded(selenium[browser_id])
+    oz_page.update_current_page()

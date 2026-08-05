@@ -69,7 +69,7 @@ Feature: Management of privileges in onezone GUI
   Scenario: User sees that user added to space has default privileges
     When user of browser2 copies invite token to "space1" space
     And user of browser2 sends copied token to user of browser1
-    And user of browser1 joins space using received token
+    And user of browser1 succeeds to join space using received token
     And user of browser2 clicks "admin" user in "space1" space members users list
     Then user of browser2 sees following privileges of "admin" user in space members subpage:
           Space management:

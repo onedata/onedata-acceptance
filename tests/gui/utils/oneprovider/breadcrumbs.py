@@ -45,7 +45,7 @@ class _Breadcrumbs(PageObject):
             i = None
             dir1 = None
             dir2 = None
-            err_msg = "{dir} not found on {idx}th position in {item}"
+            error_message = "{dir} not found on {idx}th position in {item}"
             if archive:
                 breadcrumbs = [elem for i, elem in enumerate(breadcrumbs) if i != 1]
 
@@ -61,13 +61,17 @@ class _Breadcrumbs(PageObject):
                 for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs_name)):
                     if i == 0:
                         continue
-                    assert dir1 == dir2, err_msg.format(dir=dir1, idx=i, item=self)
+                    assert dir1 == dir2, error_message.format(
+                        dir=dir1, idx=i, item=self
+                    )
                 breadcrumbs[breadcrumbs_name.index(dir2) - 1].click()
             else:
                 for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs)):
                     if i == 0:
                         continue
-                    assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i, item=self)
+                    assert dir1 == dir2.text, error_message.format(
+                        dir=dir1, idx=i, item=self
+                    )
                 assert dir2 is not None
                 dir2.click()
 

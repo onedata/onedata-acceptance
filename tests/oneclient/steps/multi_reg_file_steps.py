@@ -33,8 +33,8 @@ def write_text_base(
 
 @wt(
     parsers.re(
-        r'(?P<user>\w+) writes "(?P<text>.*)" to (?P<file>[^\s]+) on '
-        "(?P<client_node>.*)"
+        r'(?P<user>\w+) writes "(?P<text>.*)" to (?P<file>[^\s]+) '
+        r"on (?P<client_node>.*)"
     )
 )
 def write_text(user: str, text: str, file: str, client_node: str, users: Users) -> None:
@@ -44,7 +44,7 @@ def write_text(user: str, text: str, file: str, client_node: str, users: Users) 
 @wt(
     parsers.re(
         r'(?P<user>\w+) writes "(?P<text>.*)" to previously opened '
-        "(?P<file>.*) on (?P<client_node>.*)"
+        r"(?P<file>.*) on (?P<client_node>.*)"
     )
 )
 def write_opened(
@@ -62,8 +62,8 @@ def write_opened(
 
 @when(
     parsers.re(
-        '(?P<user_name>.*) writes "(?P<data>.*)" at offset (?P<offset>.*) to '
-        "(?P<file>.*) on (?P<client_node>.*)"
+        r'(?P<user_name>.*) writes "(?P<data>.*)" at offset (?P<offset>.*) to '
+        r"(?P<file>.*) on (?P<client_node>.*)"
     )
 )
 def write_at_offset(
@@ -85,7 +85,7 @@ def write_at_offset(
 @wt(
     parsers.re(
         r'(?P<user>\w+) fails to write "(?P<text>.*)" to (?P<file>.*) '
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def write_text_fail(
@@ -114,9 +114,8 @@ def count_md5(
 
 @wt(
     parsers.re(
-        "(?P<user_name>.*) writes (?P<megabytes>.*) MB of random "
-        "characters to (?P<file>.*) on (?P<client_node>.*) and "
-        "saves MD5"
+        r"(?P<user_name>.*) writes (?P<megabytes>.*) MB of random "
+        r"characters to (?P<file>.*) on (?P<client_node>.*) and saves MD5"
     )
 )
 def write_rand_text(
@@ -145,7 +144,7 @@ def write_rand_text(
 @wt(
     parsers.re(
         r'(?P<user>\w+) reads "(?P<text>.*)" from file (?P<file>.*) '
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def read_text(user: str, text: str, file: str, client_node: str, users: Users) -> None:
@@ -165,7 +164,7 @@ def read_text(user: str, text: str, file: str, client_node: str, users: Users) -
 @wt(
     parsers.re(
         r'(?P<user>\w+) reads "(?P<text>.*)" from previously '
-        "opened file (?P<file>.*) on (?P<client_node>.*)"
+        r"opened file (?P<file>.*) on (?P<client_node>.*)"
     )
 )
 def read_opened(
@@ -203,8 +202,7 @@ def cannot_read(user: str, file: str, client_node: str, users: Users) -> None:
 
 @when(
     parsers.re(
-        r'(?P<user>\w+) appends "(?P<text>.*)" to (?P<file>.*) on '
-        "(?P<client_node>.*)"
+        r'(?P<user>\w+) appends "(?P<text>.*)" to (?P<file>.*) on (?P<client_node>.*)'
     )
 )
 def append(user: str, text: str, file: str, client_node: str, users: Users) -> None:
@@ -221,7 +219,7 @@ def append(user: str, text: str, file: str, client_node: str, users: Users) -> N
 @when(
     parsers.re(
         r'(?P<user>\w+) replaces "(?P<text1>.*)" with "(?P<text2>.*)" '
-        "in (?P<file>.*) on (?P<client_node>.*)"
+        r"in (?P<file>.*) on (?P<client_node>.*)"
     )
 )
 def replace(
@@ -241,7 +239,7 @@ def replace(
 @when(
     parsers.re(
         r"(?P<user>\w+) copies regular file (?P<file>.*) to "
-        "(?P<path>.*) on (?P<client_node>.*)"
+        r"(?P<path>.*) on (?P<client_node>.*)"
     )
 )
 def copy_reg_file(
@@ -293,7 +291,7 @@ def do_truncate_base(
 @wt(
     parsers.re(
         r"(?P<user>\w+) changes (?P<file>.*) size to (?P<new_size>.*) bytes "
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def do_truncate(
@@ -305,7 +303,7 @@ def do_truncate(
 @wt(
     parsers.re(
         r"(?P<user>\w+) fails to change (?P<file>.*) size to (?P<new_size>.*) "
-        "bytes on (?P<client_node>.*)"
+        r"bytes on (?P<client_node>.*)"
     )
 )
 def do_truncate_fail(
@@ -340,7 +338,7 @@ def execute_script_fail(user: str, script: str, client_node: str, users: Users) 
 @wt(
     parsers.re(
         r"(?P<user>\w+) opens (?P<file>.*) with mode (?P<mode>.*) "
-        "on (?P<client_node>.*)"
+        r"on (?P<client_node>.*)"
     )
 )
 def open_file(user: str, file: str, mode: str, client_node: str, users: Users) -> None:
@@ -363,14 +361,13 @@ def close_file(user: str, file: str, client_node: str, users: Users) -> None:
 @wt(
     parsers.re(
         r"(?P<user>\w+) sets current file position at offset "
-        r"(?P<offset>.*) in previously opened (?P<file>.*) on"
-        r" (?P<client_node>.*)"
+        r"(?P<offset>.*) in previously opened (?P<file>.*) on (?P<client_node>.*)"
     )
 )
 @wt(
     parsers.re(
         r"(?P<user>\w+) sets current file position in (?P<file>.*) at "
-        "offset (?P<offset>.*) on (?P<client_node>.*)"
+        r"offset (?P<offset>.*) on (?P<client_node>.*)"
     )
 )
 def set_file_position(

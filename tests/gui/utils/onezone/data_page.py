@@ -128,18 +128,18 @@ class ProvidersMap(Element):
     providers = WebElementsSequence(".one-atlas-point")
 
     def click_provider(self, provider_name: str, driver: WebDriver) -> None:
-        for prov in self.providers:
-            ActionChains(driver).move_to_element(prov).perform()
+        for provider in self.providers:
+            ActionChains(driver).move_to_element(provider).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
             if name == provider_name:
-                prov.click()
+                provider.click()
                 return
 
         raise RuntimeError(f"Provider {provider_name} was not found on the map")
 
     def hover_and_check_provider(self, provider_name: str, driver: WebDriver) -> None:
-        for prov in self.providers:
-            ActionChains(driver).move_to_element(prov).perform()
+        for provider in self.providers:
+            ActionChains(driver).move_to_element(provider).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
             if name == provider_name:
                 return
@@ -149,11 +149,11 @@ class ProvidersMap(Element):
     def get_provider_horizontal_position(
         self, provider_name: str, driver: WebDriver
     ) -> float:
-        for prov in self.providers:
-            ActionChains(driver).move_to_element(prov).perform()
+        for provider in self.providers:
+            ActionChains(driver).move_to_element(provider).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
             if name == provider_name:
-                style = prov.get_attribute("style")
+                style = provider.get_attribute("style")
                 match = re.search(r"left:\s*(\d+\.*\d*)px", style)
                 if match is None:
                     raise ValueError(f"Cannot parse left position from style: {style}")

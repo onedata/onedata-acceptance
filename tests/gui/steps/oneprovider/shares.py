@@ -188,8 +188,7 @@ def assert_share_in_shares_browser_in_shares_page(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that there is "{share_name}" '
-        "share that points to deleted directory "
-        "on shares view"
+        "share that points to deleted directory on shares view"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -283,8 +282,8 @@ def check_urls_are_equal(
 ) -> None:
     share_url = OPLoggedIn(selenium[browser_id]).shares_page.url
     modal_url = clipboard.paste(display=displays[browser_id])
-    err_msg = f"modal URL is {modal_url} and share URL is {share_url}"
-    assert share_url == modal_url, err_msg
+    error_message = f"modal URL is {modal_url} and share URL is {share_url}"
+    assert share_url == modal_url, error_message
 
 
 @wt(parsers.parse("user of {browser_id} copies share REST endpoint on shares view"))

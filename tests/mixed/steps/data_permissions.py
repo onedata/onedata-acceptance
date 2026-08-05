@@ -38,16 +38,15 @@ from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
-def _remove_parent_acl_from_string(priv: str) -> str:
-    return re.sub("[a-zA-Z]+:", "", priv)
+def _remove_parent_acl_from_string(privileges: str) -> str:
+    return re.sub("[a-zA-Z]+:", "", privileges)
 
 
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sets new ACE for "
-        '(?P<path>.*?) in space "(?P<space>.*)" with (?P<priv>.*) '
-        "privileges? set for (?P<item_type>.*?) (?P<name>.*) "
-        "in (?P<host>.*)"
+        r'(?P<path>.*?) in space "(?P<space>.*)" with (?P<privileges>.*) '
+        r"privileges? set for (?P<item_type>.*?) (?P<name>.*) in (?P<host>.*)"
     )
 )
 def grant_acl_privileges_in_op(
@@ -59,7 +58,7 @@ def grant_acl_privileges_in_op(
     host: str,
     hosts: Hosts,
     users: Users,
-    priv: str,
+    privileges: str,
     item_type: str,
     name: str,
     groups: Mapping[str, str],
@@ -73,33 +72,33 @@ def grant_acl_privileges_in_op(
             selenium,
             user,
             path,
-            priv,
+            privileges,
             name,
             tmp_memory,
             space,
         )
     elif client_lower == "rest":
-        priv = _remove_parent_acl_from_string(priv)
+        privileges = _remove_parent_acl_from_string(privileges)
         grant_acl_privileges_in_op_rest(
             user,
             users,
             host,
             hosts,
             full_path,
-            priv,
+            privileges,
             item_type,
             name,
             groups,
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        priv = _remove_parent_acl_from_string(priv)
+        privileges = _remove_parent_acl_from_string(privileges)
         grant_acl_privileges_in_op_oneclient(
             user,
             users,
             oneclient_host,
             full_path,
-            priv,
+            privileges,
             item_type,
             groups,
             name,
@@ -111,9 +110,9 @@ def grant_acl_privileges_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that (?P<path>.*?)"
-        ' in space "(?P<space>.*)" (has|have) (?P<priv>.*) '
-        "privileges? set for (?P<item_type>.*?) (?P<name>.*) in "
-        "(?P<num>.*) ACL record in (?P<host>.*)"
+        r' in space "(?P<space>.*)" (has|have) (?P<privileges>.*) '
+        r"privileges? set for (?P<item_type>.*?) (?P<name>.*) in "
+        r"(?P<num>.*) ACL record in (?P<host>.*)"
     )
 )
 def assert_ace_in_op(
@@ -126,7 +125,7 @@ def assert_ace_in_op(
     hosts: Hosts,
     users: Users,
     num: str,
-    priv: str,
+    privileges: str,
     item_type: str,
     name: str,
     numerals: dict[str, int],
@@ -139,7 +138,7 @@ def assert_ace_in_op(
         assert_ace_in_op_gui(
             selenium,
             user,
-            priv,
+            privileges,
             item_type,
             name,
             num,
@@ -149,7 +148,7 @@ def assert_ace_in_op(
             numerals,
         )
     elif client_lower == "rest":
-        priv = _remove_parent_acl_from_string(priv)
+        privileges = _remove_parent_acl_from_string(privileges)
         assert_ace_in_op_rest(
             user,
             users,
@@ -158,12 +157,12 @@ def assert_ace_in_op(
             numerals,
             full_path,
             num,
-            priv,
+            privileges,
             item_type,
             name,
         )
     elif "oneclient" in client_lower:
-        priv = _remove_parent_acl_from_string(priv)
+        privileges = _remove_parent_acl_from_string(privileges)
         oneclient_host = change_client_name_to_hostname(client_lower)
         assert_ace_in_op_oneclient(
             user,
@@ -171,7 +170,7 @@ def assert_ace_in_op(
             oneclient_host,
             full_path,
             num,
-            priv,
+            privileges,
             item_type,
             name,
             numerals,
@@ -183,8 +182,8 @@ def assert_ace_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees "
-        'that POSIX permission for item named "(?P<item_path>.*)" in '
-        '"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'
+        r'that POSIX permission for item named "(?P<item_path>.*)" in '
+        r'"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -225,8 +224,8 @@ def assert_posix_permissions_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to set "
-        '"(?P<mode>.*)" POSIX permission for item named '
-        '"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'
+        r'"(?P<mode>.*)" POSIX permission for item named '
+        r'"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def set_posix_permissions_in_op(

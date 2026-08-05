@@ -159,8 +159,8 @@ def assert_write_protection_flag_for_dataset_op_rest(
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     dataset_info = dataset_api.get_dataset(dataset_id)
     for flag in get_flags(option):
-        err_msg = f"dataset does not have {flag} flag"
-        assert flag in dataset_info.protection_flags, err_msg
+        error_message = f"dataset does not have {flag} flag"
+        assert flag in dataset_info.protection_flags, error_message
 
 
 def check_dataset_structure_in_op_rest(
@@ -180,37 +180,37 @@ def check_dataset_structure_in_op_rest(
     space_id = f"{spaces[space_name]}"
     state = "attached"
     for item in subtree:
-        [(excepted_dataset, excepted_dataset_subtree)] = item.items()
+        [(expected_dataset, expected_dataset_subtree)] = item.items()
         datasets = dataset_api.list_space_top_datasets(space_id, state)
         for dataset in datasets.datasets:
-            if dataset.name == excepted_dataset:
+            if dataset.name == expected_dataset:
                 check_structure_of_dataset_children_in_op_rest(
-                    dataset_api, dataset.dataset_id, excepted_dataset_subtree
+                    dataset_api, dataset.dataset_id, expected_dataset_subtree
                 )
                 break
         else:
-            raise AssertionError(f"There is no dataset for item {excepted_dataset}")
+            raise AssertionError(f"There is no dataset for item {expected_dataset}")
 
 
 def check_structure_of_dataset_children_in_op_rest(
-    dataset_api: DatasetApi, dataset_id: str, excepted_datasets_subtree: DatasetSubtree
+    dataset_api: DatasetApi, dataset_id: str, expected_datasets_subtree: DatasetSubtree
 ) -> None:
-    for child in excepted_datasets_subtree:
+    for child in expected_datasets_subtree:
         if isinstance(child, dict):
-            [(excepted_child_name, excepted_child_subtree)] = child.items()
+            [(expected_child_name, expected_child_subtree)] = child.items()
         else:
-            excepted_child_name = child
-            excepted_child_subtree = []
+            expected_child_name = child
+            expected_child_subtree = []
         dataset_children = dataset_api.list_dataset_children(dataset_id)
         for dataset in dataset_children.datasets:
-            if dataset.name == excepted_child_name:
+            if dataset.name == expected_child_name:
                 check_structure_of_dataset_children_in_op_rest(
-                    dataset_api, dataset.dataset_id, excepted_child_subtree
+                    dataset_api, dataset.dataset_id, expected_child_subtree
                 )
                 break
         else:
             raise AssertionError(
-                f"There is no dataset for child item {excepted_child_name}"
+                f"There is no dataset for child item {expected_child_name}"
             )
 
 
@@ -230,8 +230,8 @@ def check_effective_protection_flags_for_file_in_op_rest(
     file_id = _lookup_file_id(item_name, client)
     summary = dataset_api.get_file_dataset_summary(file_id)
     for flag in get_flags(option):
-        err_msg = f"dataset does not have {flag} flag for {item_name}"
-        assert flag in summary.effective_protection_flags, err_msg
+        error_message = f"dataset does not have {flag} flag for {item_name}"
+        assert flag in summary.effective_protection_flags, error_message
 
 
 def set_protection_flags_for_dataset_in_op_rest(
@@ -266,8 +266,8 @@ def check_effective_protection_flags_for_dataset_in_op_rest(
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     dataset_info = dataset_api.get_dataset(dataset_id)
     for flag in get_flags(option):
-        err_msg = f"dataset does not have {flag} flag for {item_name}"
-        assert flag in dataset_info.effective_protection_flags, err_msg
+        error_message = f"dataset does not have {flag} flag for {item_name}"
+        assert flag in dataset_info.effective_protection_flags, error_message
 
 
 def detach_dataset_in_op_rest(

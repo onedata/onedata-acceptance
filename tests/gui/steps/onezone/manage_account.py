@@ -12,6 +12,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.onezone.data_page import DataPage
+from tests.gui.utils.onezone.manage_account_page import ManageAccountPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -25,8 +26,9 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).open_panel(DataPage)
-    button = OZLoggedIn(driver).profile.profile.web_elem
+    oz_page = OZLoggedIn(driver)
+    oz_page.expand_panel_if_needed()
+    button = oz_page.profile.profile.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
 
 
@@ -41,7 +43,13 @@ def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) ->
 def click_on_option_in_account_settings_in_oz(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    Popups(selenium[browser_id]).user_account_menu.options[option].click()
+    driver = selenium[browser_id]
+    oz_page = OZLoggedIn(driver)
+    if option == "Manage account":
+        oz_page.open_panel(ManageAccountPage)
+    Popups(driver).user_account_menu.options[option].click()
+    if option == "Logout":
+        oz_page.set_current_page(DataPage)
 
 
 @wt(parsers.parse("user of {browser_id} clicks on menu button on Profile page"))
@@ -97,16 +105,17 @@ def assert_correct_user_name_in_oz(
 ) -> None:
     driver = selenium[browser_id]
     displayed_user_name = OZLoggedIn(driver).profile.user_name
-    err_msg = (
+    error_message = (
         f"expected {expected_user_name} as user name, but instead "
         f"displayed is {displayed_user_name} in USER NAME oz panel"
     )
-    assert displayed_user_name == expected_user_name, err_msg
+    assert displayed_user_name == expected_user_name, error_message
 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees "(?P<username>.*?)" alias in the sidebar panel'
+        r'user of (?P<browser_id>.*) sees "(?P<username>.*?)" '
+        r"alias in the sidebar panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -114,12 +123,12 @@ def wt_assert_user_alias_in_sidebar(
     selenium: SeleniumDrivers, browser_id: str, username: str
 ) -> None:
     driver = selenium[browser_id]
-    err_msg = "User alias: {} not found in the sidebar, visible alias: {}"
+    error_message = "User alias: {} not found in the sidebar, visible alias: {}"
 
     try:
         name = OZLoggedIn(driver).profile_username
-        assert name == username, err_msg.format(username, name)
+        assert name == username, error_message.format(username, name)
     except AssertionError:
         OZLoggedIn(driver).profile.profile()
         name = OZLoggedIn(driver).profile_username
-        assert name == username, err_msg.format(username, name)
+        assert name == username, error_message.format(username, name)

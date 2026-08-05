@@ -22,5 +22,5 @@ def see_item_is_dir_op_rest(
     resolve_file_path_api = FilePathResolutionApi(client)
     file_id = resolve_file_path_api.lookup_file_id(path).file_id
     file_api = BasicFileOperationsApi(client)
-    attrs = file_api.get_attrs(file_id)
-    return attrs.type == "DIR"
+    attributes = file_api.get_attrs(file_id)
+    return attributes.type == "DIR"

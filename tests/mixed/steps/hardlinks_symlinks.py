@@ -15,6 +15,7 @@ from tests.gui.meta_steps.oneprovider.data import (
     create_symlinks_of_file_with_path,
 )
 from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.oneprovider.data import (
     _lookup_file_id,
@@ -32,7 +33,6 @@ from tests.oneclient.steps.multi_file_steps import (
     create_symlink,
 )
 from tests.type_definitions import Hosts, SeleniumDrivers
-from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
 
@@ -40,8 +40,8 @@ from tests.utils.user_utils import Users
 @wt(
     parsers.re(
         r"using (?P<client>.*), user (?P<user>.+?) sees that "
-        r'"(?P<path1>.*)" symlink points to "(?P<path2>.*)" in "(?P<space>.*)"'
-        r" in (?P<host>.*)"
+        r'"(?P<path1>.*)" symlink points to "(?P<path2>.*)" in '
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def assert_file_symlink_value(
@@ -73,9 +73,11 @@ def assert_file_symlink_value(
 @wt(
     parsers.re(
         r"using (?P<client>.*), user (?P<user>.+) sees that"
-        r' "(?P<file_path>.*)" hardlinks point to "(?P<paths_list>.*)"'
+        r' "(?P<file_path>.*)" hardlinks point to'
+        rf' "(?P<paths_list>{ELEMENTS_SEQUENCE_PATTERN})"'
         r' in space "(?P<space>.*)" in (?P<host>.*)'
-    )
+    ),
+    converters={"paths_list": parse_elements_sequence},
 )
 def assert_file_hardlinks(
     client: str,
@@ -85,7 +87,7 @@ def assert_file_hardlinks(
     host: str,
     file_path: str,
     space: str,
-    paths_list: str,
+    paths_list: list[str],
 ) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
@@ -93,8 +95,7 @@ def assert_file_hardlinks(
         file_id = _lookup_file_id(f"{space}/{file_path}", user_client_op)
         actual_hardlinks = get_file_hardlinks_rest(users, user, hosts, host, file_id)
         expected_ids = [
-            _lookup_file_id(f"{space}/{path}", user_client_op)
-            for path in list_parser(paths_list)
+            _lookup_file_id(f"{space}/{path}", user_client_op) for path in paths_list
         ]
         assert set(actual_hardlinks) == set(expected_ids), (
             "The IDs of hardlinks from endpoint are not the same as IDs of provided"
@@ -108,8 +109,7 @@ def assert_file_hardlinks(
     parsers.re(
         r"using (?P<client>.*), user( of)? (?P<user>.+) creates"
         r' symlink located in "(?P<path>.*)" pointing to "(?P<file_name>.*)" in'
-        r' "(?P<space>.*)" in file browser'
-        r" in (?P<host>.*)"
+        r' "(?P<space>.*)" in file browser in (?P<host>.*)'
     )
 )
 def create_file_symlink(
@@ -155,8 +155,8 @@ def create_file_symlink(
 @wt(
     parsers.re(
         r"using (?P<client>.*), user (?P<user>.+) creates"
-        r' symlink located in "(?P<symlink_path>.*)" pointing to "(?P<file_path>.*)" in'
-        r' "(?P<space>.*)"'
+        r' symlink located in "(?P<symlink_path>.*)" pointing to '
+        r'"(?P<file_path>.*)" in "(?P<space>.*)"'
     )
 )
 def create_symlink_oneclient(
@@ -186,8 +186,7 @@ def create_symlink_oneclient(
     parsers.re(
         r"using (?P<client>.*), user( of)? (?P<user>.*) creates hardlink of "
         r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" directory in'
-        r' "(?P<space>.*)"'
-        r" in (?P<host>.*)"
+        r' "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def create_file_hardlink(
@@ -231,8 +230,8 @@ def create_file_hardlink(
 @wt(
     parsers.re(
         r"using (?P<client>.*), user (?P<user>.*) creates hardlink of "
-        r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" directory in'
-        r' "(?P<space>.*)"'
+        r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" '
+        r'directory in "(?P<space>.*)"'
     )
 )
 def create_hardlink_oneclient(
@@ -285,8 +284,7 @@ def assert_hardlink_between_files_rest(
 @wt(
     parsers.re(
         r'using (?P<client>\w+), user (?P<user>\w+) can see that "(?P<file_path1>.*)"'
-        r' and "(?P<file_path2>.*)" are'
-        r" hardlinked"
+        r' and "(?P<file_path2>.*)" are hardlinked'
     )
 )
 def assert_hardlink_between_files_oneclient(
