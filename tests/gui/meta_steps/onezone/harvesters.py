@@ -113,11 +113,11 @@ def click_create_button_and_succeed_to_create_harvester(
     request: FixtureRequest,
     admin_credentials: User,
 ) -> None:
-    _register_new_harvesters_finalizer(request, hosts, admin_credentials)
     click_create_button_in_discovery_page(selenium, browser_id)
     check_element_exists_on_sidebar_list(
         selenium, browser_id, harvester_name, "appeared", "harvesters"
     )
+    _register_new_harvesters_finalizer(request, hosts, admin_credentials)
 
 
 @wt(

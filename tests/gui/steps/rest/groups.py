@@ -32,8 +32,8 @@ def leave_user_group(
 
 def ensure_absence_of_group_using_rest(
     zone_hostname: str,
-    owner_username: str,
-    owner_password: str | None,
+    admin_username: str,
+    admin_password: str | None,
     group_id: str,
 ) -> None:
     try:
@@ -41,7 +41,7 @@ def ensure_absence_of_group_using_rest(
             ip=zone_hostname,
             port=OZ_REST_PORT,
             path=get_zone_rest_path("groups", group_id),
-            auth=(owner_username, owner_password),
+            auth=(admin_username, admin_password),
         )
     except HTTPNotFound:
         pass
