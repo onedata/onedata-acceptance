@@ -6,10 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import hashlib
 import hmac
-import json
-import subprocess as sp
 from datetime import datetime, timezone
-from typing import Any
 
 import requests
 from requests.exceptions import HTTPError
@@ -169,8 +166,7 @@ def create_bucket(bucket_name: str) -> None:
     )
 
     headers["Authorization"] = authorization_header
-
-    url = f"{get_s3_endpoint_url()}{canonical_uri}"
+    url = f"http://{HOST_URL}{canonical_uri}"
     response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
 
     response.raise_for_status()
@@ -198,8 +194,9 @@ def assert_bucket_exists(bucket_name: str) -> None:
         amz_date,
     )
 
+    url = f"http://{HOST_URL}{canonical_uri}"
     response = requests.head(
-        f"{get_s3_endpoint_url()}{canonical_uri}",
+        url,
         headers=headers,
         timeout=REQUEST_TIMEOUT,
     )
@@ -246,49 +243,7 @@ def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
 
     headers["Authorization"] = authorization_header
 
-    url = f"{get_s3_endpoint_url()}{canonical_uri}"
+    url = f"http://{HOST_URL}{canonical_uri}"
     response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
 
     response.raise_for_status()
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
-def get_current_s3_pod_ip() -> str:
-    output = sp.check_output(
-        [
-            "kubectl",
-            "get",
-            "pods",
-            "-l",
-            f"app={S3_APP_LABEL}",
-            "-o",
-            "json",
-        ],
-        text=True,
-    )
-    pods = json.loads(output)["items"]
-    ready_pods = [
-        pod
-        for pod in pods
-        if pod["metadata"].get("deletionTimestamp") is None
-        and pod["status"].get("phase") == "Running"
-        and any(
-            condition.get("type") == "Ready" and condition.get("status") == "True"
-            for condition in pod["status"].get("conditions", [])
-        )
-        and pod["status"].get("podIP")
-    ]
-    if not ready_pods:
-        raise RuntimeError(f'No ready pod found for app "{S3_APP_LABEL}"')
-
-    newest_pod = max(ready_pods, key=get_pod_creation_time)
-    return newest_pod["status"]["podIP"]
-
-
-def get_pod_creation_time(pod: dict[str, dict[str, Any]]) -> datetime:
-    timestamp = pod["metadata"]["creationTimestamp"]
-    return datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
-
-
-def get_s3_endpoint_url() -> str:
-    return f"http://{get_current_s3_pod_ip()}:{S3_SERVICE_PORT}"

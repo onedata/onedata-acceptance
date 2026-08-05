@@ -282,7 +282,6 @@ def _restore_config_and_remove_storage(
     storage_data = _storage_data_from_config(config, storage_name)
     storage_config: dict[str, Any] = storage_data[storage_name]
     storage_config.pop("importedStorage", None)
-
     try:
         http_patch(
             ip=provider_hostname,
