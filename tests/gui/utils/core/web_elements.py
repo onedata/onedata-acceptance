@@ -18,6 +18,9 @@ from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjects
 
 
 class WebElement(AbstractWebElement):
+    """Descriptor for locating and interacting with nested Selenium elements
+    inside a page object."""
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.parent_name = kwargs.pop("parent_name", "")
         super().__init__(*args, **kwargs)

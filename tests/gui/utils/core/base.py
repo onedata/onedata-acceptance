@@ -78,6 +78,8 @@ class AbstractPageObject:
 
 
 class PageObject(AbstractPageObject):
+    """Base GUI page object; .web_elem is the Selenium root element for this page object."""
+
     id: object
 
     def __init__(
