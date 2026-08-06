@@ -36,7 +36,7 @@ def modify_storage_parameter(
         if "name" in hosts[host] and hosts[host]["name"] == provider:
             onepanel_host = hosts[host]["hostname"]
     if not onepanel_host:
-        raise ValueError(f"onepanel host {provider} not found")
+        raise RuntimeError(f"onepanel host {provider} not found")
 
     modify_params = {"type": storage_type, parameter: value}
     modify_storage_parameters(

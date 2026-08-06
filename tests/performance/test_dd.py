@@ -178,7 +178,7 @@ def do_dd(
         input_file=input_file,
     )
     if not isinstance(result, str):
-        raise TypeError("dd did not return its output")
+        raise RuntimeError("dd did not return its output")
     return result
 
 

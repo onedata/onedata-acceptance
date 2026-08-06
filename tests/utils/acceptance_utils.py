@@ -108,7 +108,8 @@ def execute_command(
         raise ChildProcessError(message)
     if proc_returncode == 0 and should_fail:
         raise AssertionError(
-            f"Command did not fail: {' '.join(cmd)}, Err: {err_str}, Output: {out_str}"
+            f"Command did not fail but should: {' '.join(cmd)}, Err: {err_str}, Output:"
+            f" {out_str}"
         )
     return output
 
