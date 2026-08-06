@@ -28,6 +28,7 @@ from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps import multi_reg_file_steps
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup.spaces import CredentialsLike
 from tests.utils.user_utils import Users
 
 
@@ -48,6 +49,7 @@ def create_space_with_alias_in_oz(
     spaces: Spaces,
     space_aliases: SpaceAliases,
     request: pytest.FixtureRequest,
+    admin_credentials: CredentialsLike,
 ) -> None:
     if client.lower() == "rest":
         create_spaces_in_oz_using_rest(
@@ -58,6 +60,7 @@ def create_space_with_alias_in_oz(
             [space_name],
             spaces,
             request,
+            admin_credentials,
         )
         space_aliases[alias] = {"name": space_name, "sid": spaces[space_name]}
     else:

@@ -106,6 +106,7 @@ def create_spaces_in_oz(
     clipboard: Clipboard,
     displays: dict[str, str],
     request: FixtureRequest,
+    admin_credentials: CredentialsLike,
 ) -> None:
 
     if client.lower() == "rest":
@@ -117,6 +118,7 @@ def create_spaces_in_oz(
             space_list,
             spaces,
             request,
+            admin_credentials,
         )
     elif client.lower() == "web gui":
 

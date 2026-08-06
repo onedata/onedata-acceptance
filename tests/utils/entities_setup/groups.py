@@ -146,8 +146,8 @@ def _groups_creation(
             owner.username,
             owner.password,
             group_name,
-            admin_credentials,
             request,
+            admin_credentials,
         )
         groups[group_name] = group_id
 
@@ -188,6 +188,7 @@ def _create_group(
     group_name: str,
     admin_credentials: CredentialsLike,
     request: pytest.FixtureRequest,
+    admin_credentials: CredentialsLike,
     group_type: str = "team",
 ) -> str:
     group_properties = {"name": group_name, "type": group_type}
@@ -339,6 +340,7 @@ def create_n_groups_using_rest(
     number: str,
     admin_credentials: CredentialsLike,
     request: pytest.FixtureRequest,
+    admin_credentials: CredentialsLike,
     host: str = "onezone",
 ) -> None:
     zone_hostname = hosts[host]["hostname"]
@@ -351,4 +353,5 @@ def create_n_groups_using_rest(
             group_name,
             admin_credentials,
             request,
+            admin_credentials,
         )

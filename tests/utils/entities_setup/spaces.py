@@ -283,7 +283,12 @@ def _create_and_configure_spaces(
         owner = users_db[description["owner"]]
         users_to_add = description.get("users", [])
         spaces_db[space_name] = space_id = _create_space(
-            zone_hostname, owner.username, owner.password, space_name, request
+            zone_hostname,
+            owner.username,
+            owner.password,
+            space_name,
+            request,
+            admin_credentials,
         )
         _add_users_to_space(
             zone_hostname, admin_credentials, space_id, users_db, users_to_add
@@ -317,6 +322,7 @@ def _create_space(
     owner_password: str | None,
     space_name: str,
     request: pytest.FixtureRequest,
+    admin_credentials: CredentialsLike,
 ) -> str:
     space_properties = {"name": space_name}
     response = http_post(
@@ -329,7 +335,10 @@ def _create_space(
     space_id = response.headers["location"].split("/")[-1]
     request.addfinalizer(
         lambda: ensure_absence_of_space_using_rest(
-            zone_hostname, owner_username, owner_password, space_id
+            zone_hostname,
+            admin_credentials.username,
+            admin_credentials.password,
+            space_id,
         )
     )
     return space_id

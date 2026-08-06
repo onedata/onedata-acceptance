@@ -13,6 +13,7 @@ from tests.gui.steps.rest.shares import create_share_using_rest
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
+    CredentialsLike,
     ProviderEntry,
     _create_space,
     _get_support,
@@ -33,6 +34,7 @@ def create_n_spaces_without_support(
     hosts: Hosts,
     number: str,
     request: FixtureRequest,
+    admin_credentials: CredentialsLike,
 ) -> None:
     name_prefix = "space"
     zone_hostname = hosts[zone_host]["hostname"]
@@ -41,7 +43,12 @@ def create_n_spaces_without_support(
     for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
         _create_space(
-            zone_hostname, owner.username, owner.password, space_name, request
+            zone_hostname,
+            owner.username,
+            owner.password,
+            space_name,
+            request,
+            admin_credentials,
         )
 
 
@@ -61,6 +68,7 @@ def create_n_spaces_with_shares(
     storages: dict,
     shares: dict[str, str],
     request: FixtureRequest,
+    admin_credentials: CredentialsLike,
 ) -> None:
     name_prefix = "space"
     host = "oneprovider-1"
@@ -74,7 +82,12 @@ def create_n_spaces_with_shares(
     for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
         space_id = _create_space(
-            zone_hostname, owner.username, owner.password, space_name, request
+            zone_hostname,
+            owner.username,
+            owner.password,
+            space_name,
+            request,
+            admin_credentials,
         )
         _get_support(
             zone_hostname,
