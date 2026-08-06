@@ -9,8 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from selenium.webdriver.support.ui import WebDriverWait
-
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.url import (
     HOSTS_SEQUENCE_PATTERN,
@@ -21,9 +19,9 @@ from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.utils import LoginPage, OnePage
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    get_visibility_condition,
     parse_elements_sequence,
     transform,
+    wait_for_visible_element_using_getter,
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -169,10 +167,7 @@ def wt_assert_successful_login(
 ) -> None:
     driver = selenium[browser_id]
     sign_in_getter = lambda driver: LoginPage(driver).sign_in
-    WebDriverWait(driver, WAIT_FRONTEND).until(
-        lambda driver: get_visibility_condition(sign_in_getter(driver))(driver)
-    )
-    sign_in = sign_in_getter(driver)
+    sign_in = wait_for_visible_element_using_getter(driver, sign_in_getter)
     sign_in.click()
     wait_for_item_to_disappear(sign_in.web_elem, driver)
     assert_main_page_loaded(selenium, browser_id)
@@ -190,10 +185,7 @@ def wt_assert_failed_login_credentials(
 ) -> None:
     driver = selenium[browser_id]
     sign_in_getter = lambda driver: LoginPage(driver).sign_in
-    WebDriverWait(driver, WAIT_FRONTEND).until(
-        lambda driver: get_visibility_condition(sign_in_getter(driver))(driver)
-    )
-    sign_in_getter(driver).click()
+    wait_for_visible_element_using_getter(driver, sign_in_getter).click()
     _assert_error_message_about_credentials(selenium, browser_id)
 
 

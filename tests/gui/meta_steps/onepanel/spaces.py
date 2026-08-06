@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import yaml
-from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
@@ -55,7 +54,7 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import get_visibility_condition
+from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
@@ -71,14 +70,13 @@ from tests.utils.utils import repeat_failed
 )
 def support_space_using_form(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    # getter is here to avoid NoSuchElementException thrown before WebDriverWait
+    # Getter avoids raising NoSuchElementException before the wait starts.
     support_space_getter = lambda driver: Onepanel(
         driver
     ).content.spaces.form.support_space
-    WebDriverWait(driver, WAIT_FRONTEND).until(
-        lambda driver: get_visibility_condition(support_space_getter(driver))(driver)
+    support_space_btn = wait_for_visible_element_using_getter(
+        driver, support_space_getter
     )
-    support_space_btn = support_space_getter(driver)
     click_on_btn_in_space_support_form(selenium, browser_id)
     wait_for_item_to_disappear(support_space_btn.web_elem, driver)
     notify_visible_with_text(

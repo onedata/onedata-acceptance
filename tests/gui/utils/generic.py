@@ -11,6 +11,7 @@ import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from enum import Enum
+from functools import partial
 from itertools import islice
 from time import sleep
 from typing import Literal, Optional, TypeVar, cast, overload
@@ -285,6 +286,24 @@ def get_visibility_condition(
 
         case unsupported:
             raise TypeError(f"Unsupported element or locator: {unsupported!r}")
+
+
+def wait_for_visible_element_using_getter(
+    driver: WebDriver,
+    web_elem_getter: Callable[[WebDriver], WebElement],
+    timeout: float = WAIT_FRONTEND,
+) -> WebElement:
+    # Wait until the getter returns a visible element.
+
+    def is_element_visible_using_getter(
+        driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
+    ) -> WebElement | None:
+        web_elem = web_elem_getter(driver)
+        return web_elem if visibility_of(web_elem)(driver) else None
+
+    return WebDriverWait(driver, timeout=timeout).until(
+        partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
+    )
 
 
 def get_element_css_classes_when_visible(
