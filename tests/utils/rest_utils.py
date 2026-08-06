@@ -261,3 +261,5 @@ def http_request(  # pylint: disable=inconsistent-return-statements
             print("Test will freeze to allow debugging!")
             while True:
                 time.sleep(365 * 24 * 60 * 60)
+
+    raise RuntimeError("unreachable")
