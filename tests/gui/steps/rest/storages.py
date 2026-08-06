@@ -13,6 +13,7 @@ from pytest import FixtureRequest
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import _camel_transform
+from tests.gui.steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.type_definitions import Hosts
 from tests.utils.rest_utils import (
     get_panel_rest_path,
@@ -173,6 +174,9 @@ def restore_config_and_remove_storage_by_id(
             data=json.dumps(storage_data),
         )
     finally:
+        revoke_all_space_supports_using_rest(
+            provider_hostname, onepanel_username, onepanel_password
+        )
         remove_storage_by_id_and_wait_until_absent(
             provider_hostname, onepanel_username, onepanel_password, storage_id
         )

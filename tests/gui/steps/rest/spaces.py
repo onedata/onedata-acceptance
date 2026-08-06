@@ -5,10 +5,53 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests import OZ_REST_PORT
+from typing import Optional
+
+from tests import OP_REST_PORT, OZ_REST_PORT
+from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.http_exceptions import HTTPNotFound
-from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
+from tests.utils.rest_utils import (
+    get_panel_rest_path,
+    get_zone_rest_path,
+    http_delete,
+    http_get,
+)
 from tests.utils.user_utils import Users
+from tests.utils.utils import repeat_failed
+
+
+def get_supported_space_ids(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: Optional[str],
+) -> list[str]:
+    return http_get(
+        ip=provider_hostname,
+        port=OP_REST_PORT,
+        path=get_panel_rest_path("provider", "spaces"),
+        auth=(onepanel_username, onepanel_password),
+    ).json()["ids"]
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def revoke_all_space_supports_using_rest(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: Optional[str],
+) -> None:
+    for space_id in get_supported_space_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    ):
+        http_delete(
+            ip=provider_hostname,
+            port=OP_REST_PORT,
+            path=get_panel_rest_path("provider", "spaces", space_id),
+            auth=(onepanel_username, onepanel_password),
+        )
+
+    assert not get_supported_space_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    )
 
 
 def get_user_spaces(zone_hostname: str, user: str, users: Users) -> list[str]:

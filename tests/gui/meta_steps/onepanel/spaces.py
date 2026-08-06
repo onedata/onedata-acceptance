@@ -10,7 +10,6 @@ import time
 
 import yaml
 
-from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import (
     wait_until_scanning_is_finished_in_storage_import_tab,
@@ -51,13 +50,13 @@ from tests.gui.steps.onepanel.spaces import (
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
@@ -365,20 +364,7 @@ def _revoke_all_space_supports_using_rest(
 
     provider_hostname = hosts[provider_host]["hostname"]
 
-    spaces_list = http_get(
-        ip=provider_hostname,
-        port=OP_REST_PORT,
-        path=get_panel_rest_path("provider", "spaces"),
-        auth=(user, users[user].password),
-    ).json()
-
-    for space in spaces_list["ids"]:
-        http_delete(
-            ip=provider_hostname,
-            port=OP_REST_PORT,
-            path=get_panel_rest_path("provider", "spaces", space),
-            auth=(user, users[user].password),
-        )
+    revoke_all_space_supports_using_rest(provider_hostname, user, users[user].password)
 
 
 @given(parsers.parse("there are no spaces supported by {provider_host} in Onepanel"))
