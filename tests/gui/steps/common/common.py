@@ -18,10 +18,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.expected_conditions import (
-    invisibility_of_element,
-    visibility_of_element_located,
-)
+from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -292,11 +289,15 @@ def try_click_without_throwing_error(
         perform(action)
 
 
-def wait_for_element_to_appear(driver: WebDriver, css_sel: str, timeout: float) -> bool:
+def wait_for_element_to_appear(
+    driver: WebDriver,
+    web_elem_or_locator: WebElementOrCssLocator,
+    timeout: float = WAIT_FRONTEND,
+) -> bool:
     """Return whether the element appeared before the timeout."""
     try:
         WebDriverWait(driver, timeout).until(
-            visibility_of_element_located((By.CSS_SELECTOR, css_sel))
+            get_visibility_condition(web_elem_or_locator)
         )
     except TimeoutException:
         return False
@@ -306,7 +307,9 @@ def wait_for_element_to_appear(driver: WebDriver, css_sel: str, timeout: float) 
 def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
     """Return whether the error modal appeared before the timeout."""
     return wait_for_element_to_appear(
-        driver, ".alert-global.modal.in .modal-dialog", timeout
+        driver,
+        (By.CSS_SELECTOR, ".alert-global.modal.in .modal-dialog"),
+        timeout,
     )
 
 

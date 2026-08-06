@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import yaml
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_error_modal_to_appear
@@ -45,10 +46,7 @@ from tests.gui.steps.rest.provider import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import (
-    OnedataService,
-    wait_for_visible_element_using_getter,
-)
+from tests.gui.utils.generic import OnedataService, get_visibility_condition
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
@@ -65,9 +63,11 @@ def succeed_to_save_changes_in_modify_provider_detail_form(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    save_btn = wait_for_visible_element_using_getter(
-        driver, lambda driver: Onepanel(driver).content.provider.form.save
+    save_btn_getter = lambda driver: Onepanel(driver).content.provider.form.save
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        lambda driver: get_visibility_condition(save_btn_getter(driver))(driver)
     )
+    save_btn = save_btn_getter(driver)
     save_btn.click()
     wait_for_item_to_disappear(save_btn.web_elem, driver)
     notify_visible_with_text(
