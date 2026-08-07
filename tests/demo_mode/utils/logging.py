@@ -1,6 +1,6 @@
 """Lightweight progress logging for demo-mode tests."""
 
-__author__ = "Mateusz Zając"
+__author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
@@ -19,7 +19,7 @@ def _colored_label(label: str, color: str) -> str:
 
 def log_step_start(description: str) -> None:
     label = _colored_label("START", ANSI_YELLOW)
-    print(f"\n[demo-mode] {label}: {description}", flush=True)
+    print(f"[demo-mode] {label}: {description}", flush=True)
 
 
 def log_step_done(description: str) -> None:
