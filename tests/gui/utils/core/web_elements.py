@@ -18,8 +18,19 @@ from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjects
 
 
 class WebElement(AbstractWebElement):
-    """Descriptor for locating and interacting with nested Selenium elements
-    inside a page object."""
+    """Locate a Selenium element within a page object's root element.
+
+    ``WebElement`` is intended to be declared as a class attribute of a
+    ``PageObject`` subclass.  Access through a page-object instance searches its
+    ``web_elem`` using the descriptor's CSS selector and returns the matching
+    Selenium ``WebElement``.  The lookup happens on every access, so the result is
+    not cached.  Access through the class returns the descriptor itself.
+
+    By default, the lookup scrolls to the matching element.  The ``scroll``
+    constructor argument can disable that behavior.  The ``name`` and
+    ``parent_name`` arguments customize the element and parent descriptions used
+    in lookup errors.
+    """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.parent_name = kwargs.pop("parent_name", "")
@@ -109,8 +120,7 @@ class AceEditor(WebElement):
         selector = self.css_selector + " .ace_content"
         script = f"var textarea = document.querySelector('{selector}');return textarea"
         driver = instance.web_elem.parent
-        item = driver.execute_script(script)
-        if item is None:
+        if item := driver.execute_script(script):
             raise NoSuchElementException(
                 self._format_msg("no {item} item found in {parent}", instance)
             )

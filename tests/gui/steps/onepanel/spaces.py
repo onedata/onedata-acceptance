@@ -10,6 +10,7 @@ import re
 import time
 from subprocess import CalledProcessError
 
+import pytest
 import yaml
 from selenium.common.exceptions import (
     ElementNotInteractableException,
@@ -588,11 +589,8 @@ def cannot_click_on_navigation_tab_in_space(
 ) -> None:
     nav = Onepanel(selenium[browser_id]).content.spaces.space.navigation
     tab = transform(tab_name, strip_char='"')
-    try:
+    with pytest.raises((ElementNotInteractableException, NoSuchElementException)):
         getattr(nav, tab).click()
-    except (ElementNotInteractableException, NoSuchElementException):
-        return
-    raise AssertionError(f"can click on {tab_name}")
 
 
 @wt(
