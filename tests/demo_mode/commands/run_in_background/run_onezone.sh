@@ -1,1 +1,1 @@
-docker run --rm --detach -it --name oz_test onedata/onezone:xRELEASExVERSIONx demo
+docker run --rm --detach -i --name oz_test onedata/onezone:xRELEASExVERSIONx demo
