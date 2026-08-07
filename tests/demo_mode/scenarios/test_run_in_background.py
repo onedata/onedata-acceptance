@@ -17,5 +17,5 @@ TEST_FILE_CONTENT = b"Onedata demo-mode background REST test\n"
 def test_run_in_background(release: str) -> None:
     run_onezone_in_background(release)
     run_oneprovider_in_background(release)
-    assert_onezone_configuration()
+    assert_onezone_configuration(release)
     assert_rest_file_roundtrip(release, TEST_FILE_CONTENT)

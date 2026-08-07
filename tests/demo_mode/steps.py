@@ -117,7 +117,7 @@ def run_oneprovider_in_background(release: str) -> None:
     log_step_done(description)
 
 
-def assert_onezone_configuration() -> None:
+def assert_onezone_configuration(release: str) -> None:
     """Assert that Onezone exposes a valid public REST configuration."""
     description = "Asserting Onezone configuration"
     log_step_start(description)
@@ -125,8 +125,12 @@ def assert_onezone_configuration() -> None:
     onezone_configuration = get_onezone_configuration()
     onezone_name = onezone_configuration.get("name")
     onezone_version = onezone_configuration.get("version")
-    assert isinstance(onezone_name, str) and onezone_name
-    assert isinstance(onezone_version, str) and onezone_version
+    assert (
+        isinstance(onezone_name, str) and onezone_name
+    ), f"Expected a non-empty Onezone name, got {onezone_name!r}"
+    assert (
+        onezone_version == release
+    ), f"Expected Onezone version {release!r}, got {onezone_version!r}"
 
     log_step_done(description)
 
@@ -138,6 +142,9 @@ def assert_rest_file_roundtrip(release: str, file_content: bytes) -> None:
 
     access_token = get_access_token(release)
     downloaded_content = upload_and_download_file(access_token, file_content)
-    assert downloaded_content == file_content
+    assert downloaded_content == file_content, (
+        f"Downloaded content differs: expected {file_content!r}, "
+        f"got {downloaded_content!r}"
+    )
 
     log_step_done(description)
