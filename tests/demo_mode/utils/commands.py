@@ -12,12 +12,10 @@ from time import monotonic, sleep
 from typing import Final
 
 from tests.demo_mode.utils.logging import log_running_command
-from tests.utils.docker_utils import remove_container
 
 DEMO_MODE_ROOT: Final = Path(__file__).resolve().parents[1]
 COMMANDS_ROOT: Final = DEMO_MODE_ROOT / "commands"
 RELEASE_PLACEHOLDER: Final = "xRELEASExVERSIONx"
-DEMO_CONTAINER_NAMES: Final = ("op_test1", "oz_test")
 
 
 def command_path(relative_path: str) -> Path:
@@ -74,12 +72,6 @@ def stop_command(process: subprocess.Popen[str], timeout: float = 10) -> None:
         except ProcessLookupError:
             pass
         process.wait()
-
-
-def remove_demo_containers() -> None:
-    """Remove containers left by a current or interrupted demo-mode test."""
-    for container_name in DEMO_CONTAINER_NAMES:
-        remove_container(container_name)
 
 
 def run_command(

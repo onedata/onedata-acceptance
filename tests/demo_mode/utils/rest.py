@@ -10,7 +10,7 @@ from typing import Final, cast
 from uuid import uuid4
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
-from tests.type_definitions import JsonObject, JsonValue
+from tests.type_definitions import JsonObject
 from tests.utils.docker_utils import docker_ip
 from tests.utils.rest_utils import (
     get_panel_rest_path,
@@ -33,26 +33,6 @@ def _authorization_headers(access_token: str) -> dict[str, str]:
     return {"X-Auth-Token": access_token}
 
 
-def _json_object(value: JsonValue, description: str) -> JsonObject:
-    if not isinstance(value, dict):
-        raise AssertionError(f"Expected {description} to be a JSON object")
-    return value
-
-
-def _json_string(value: JsonValue, description: str) -> str:
-    if not isinstance(value, str) or not value:
-        raise AssertionError(f"Expected {description} to be a non-empty string")
-    return value
-
-
-def _json_string_list(value: JsonValue, description: str) -> list[str]:
-    if not isinstance(value, list) or not all(
-        isinstance(item, str) and item for item in value
-    ):
-        raise AssertionError(f"Expected {description} to be a list of strings")
-    return cast(list[str], value)
-
-
 def get_onezone_configuration() -> JsonObject:
     """Get the public configuration exposed by the demo Onezone REST API."""
     response = http_get(
@@ -70,17 +50,8 @@ def _list_supported_space_ids(access_token: str) -> list[str]:
         path=get_provider_rest_path("spaces"),
         headers=_authorization_headers(access_token),
     )
-    spaces = response.json()
-    if not isinstance(spaces, list):
-        raise AssertionError("Expected Oneprovider spaces to be a JSON list")
-
-    return [
-        _json_string(
-            _json_object(space, "Oneprovider space").get("spaceId"),
-            "Oneprovider space ID",
-        )
-        for space in spaces
-    ]
+    spaces = cast(list[JsonObject], response.json())
+    return [cast(str, space["spaceId"]) for space in spaces]
 
 
 def _list_user_space_ids(access_token: str) -> list[str]:
@@ -90,8 +61,8 @@ def _list_user_space_ids(access_token: str) -> list[str]:
         path=get_zone_rest_path("user", "spaces"),
         headers=_authorization_headers(access_token),
     )
-    response_body = _json_object(response.json(), "Onezone spaces response")
-    return _json_string_list(response_body.get("spaces"), "Onezone space IDs")
+    response_body = cast(JsonObject, response.json())
+    return cast(list[str], response_body["spaces"])
 
 
 def _create_space(access_token: str) -> str:
@@ -108,75 +79,75 @@ def _create_space(access_token: str) -> str:
     return location.rstrip("/").rsplit("/", maxsplit=1)[-1]
 
 
-def _support_space(space_id: str, access_token: str) -> None:
-    provider_ip = docker_ip(ONEPROVIDER_CONTAINER_NAME)
-    headers = _authorization_headers(access_token)
-    supported_spaces_response = http_get(
-        ip=provider_ip,
+def _list_onepanel_resource_ids(resource: str, access_token: str) -> list[str]:
+    response = http_get(
+        ip=docker_ip(ONEPROVIDER_CONTAINER_NAME),
         port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "spaces"),
-        headers=headers,
+        path=get_panel_rest_path("provider", resource),
+        headers=_authorization_headers(access_token),
     )
-    supported_spaces = _json_object(
-        supported_spaces_response.json(), "Onepanel spaces response"
-    )
-    supported_space_ids = _json_string_list(
-        supported_spaces.get("ids"), "Onepanel space IDs"
-    )
-    if space_id in supported_space_ids:
-        return
+    response_body = cast(JsonObject, response.json())
+    return cast(list[str], response_body["ids"])
 
-    support_token_response = http_post(
+
+def _create_space_support_token(space_id: str, access_token: str) -> str:
+    response = http_post(
         ip=docker_ip(ONEZONE_CONTAINER_NAME),
         port=OZ_REST_PORT,
         path=get_zone_rest_path("spaces", space_id, "providers", "token"),
-        headers=headers,
+        headers=_authorization_headers(access_token),
     )
-    support_token_body = _json_object(
-        support_token_response.json(), "space support token response"
-    )
-    support_token = _json_string(support_token_body.get("token"), "space support token")
+    response_body = cast(JsonObject, response.json())
+    return cast(str, response_body["token"])
 
-    storages_response = http_get(
-        ip=provider_ip,
-        port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "storages"),
-        headers=headers,
-    )
-    storages = _json_object(storages_response.json(), "Onepanel storages response")
-    storage_ids = _json_string_list(storages.get("ids"), "Onepanel storage IDs")
+
+def _get_first_storage_id(access_token: str) -> str:
+    storage_ids = _list_onepanel_resource_ids("storages", access_token)
     if not storage_ids:
         raise AssertionError("Demo Oneprovider has no storage available")
+    return storage_ids[0]
 
+
+def _submit_space_support(
+    support_token: str,
+    storage_id: str,
+    access_token: str,
+) -> None:
     http_post(
-        ip=provider_ip,
+        ip=docker_ip(ONEPROVIDER_CONTAINER_NAME),
         port=PANEL_REST_PORT,
         path=get_panel_rest_path("provider", "spaces"),
-        headers=headers,
+        headers=_authorization_headers(access_token),
         data=json.dumps(
             {
                 "token": support_token,
                 "size": SPACE_SUPPORT_SIZE,
-                "storageId": storage_ids[0],
+                "storageId": storage_id,
             }
         ),
     )
 
 
-def get_or_create_supported_space(access_token: str) -> str:
-    """Return a supported space, creating and supporting one when needed."""
-    supported_space_ids = _list_supported_space_ids(access_token)
-    if supported_space_ids:
-        return supported_space_ids[0]
+def _support_space(space_id: str, access_token: str) -> None:
+    if space_id in _list_onepanel_resource_ids("spaces", access_token):
+        return
 
+    _submit_space_support(
+        _create_space_support_token(space_id, access_token),
+        _get_first_storage_id(access_token),
+        access_token,
+    )
+
+
+def _get_or_create_user_space(access_token: str) -> str:
     user_space_ids = _list_user_space_ids(access_token)
-    space_id = user_space_ids[0] if user_space_ids else _create_space(access_token)
-    _support_space(space_id, access_token)
+    return user_space_ids[0] if user_space_ids else _create_space(access_token)
 
+
+def _wait_for_supported_space(space_id: str, access_token: str) -> str:
     deadline = monotonic() + SPACE_APPEARANCE_TIMEOUT
     while monotonic() < deadline:
-        supported_space_ids = _list_supported_space_ids(access_token)
-        if space_id in supported_space_ids:
+        if space_id in _list_supported_space_ids(access_token):
             return space_id
         sleep(1)
 
@@ -186,35 +157,56 @@ def get_or_create_supported_space(access_token: str) -> str:
     )
 
 
+def get_or_create_supported_space(access_token: str) -> str:
+    """Return a supported space, creating and supporting one when needed."""
+    supported_space_ids = _list_supported_space_ids(access_token)
+    if supported_space_ids:
+        return supported_space_ids[0]
+
+    space_id = _get_or_create_user_space(access_token)
+    _support_space(space_id, access_token)
+    return _wait_for_supported_space(space_id, access_token)
+
+
+def _upload_file(file_path: str, access_token: str, content: bytes) -> None:
+    http_put(
+        ip=docker_ip(ONEPROVIDER_CONTAINER_NAME),
+        port=OP_REST_PORT,
+        path=file_path,
+        headers={
+            **_authorization_headers(access_token),
+            "Content-Type": "application/octet-stream",
+        },
+        data=content,
+    )
+
+
+def _download_file(file_path: str, access_token: str) -> bytes:
+    return http_get(
+        ip=docker_ip(ONEPROVIDER_CONTAINER_NAME),
+        port=OP_REST_PORT,
+        path=file_path,
+        headers=_authorization_headers(access_token),
+    ).content
+
+
+def _remove_file(file_path: str, access_token: str) -> None:
+    http_delete(
+        ip=docker_ip(ONEPROVIDER_CONTAINER_NAME),
+        port=OP_REST_PORT,
+        path=file_path,
+        headers=_authorization_headers(access_token),
+    )
+
+
 def upload_and_download_file(access_token: str, content: bytes) -> bytes:
     """Upload a temporary text file through REST and download its content."""
-    provider_ip = docker_ip(ONEPROVIDER_CONTAINER_NAME)
     space_id = get_or_create_supported_space(access_token)
     file_name = f"demo-mode-rest-{uuid4().hex}.txt"
     file_path = get_provider_rest_path("data", space_id, "path", file_name)
-    headers = {
-        **_authorization_headers(access_token),
-        "Content-Type": "application/octet-stream",
-    }
 
-    http_put(
-        ip=provider_ip,
-        port=OP_REST_PORT,
-        path=file_path,
-        headers=headers,
-        data=content,
-    )
+    _upload_file(file_path, access_token, content)
     try:
-        return http_get(
-            ip=provider_ip,
-            port=OP_REST_PORT,
-            path=file_path,
-            headers=_authorization_headers(access_token),
-        ).content
+        return _download_file(file_path, access_token)
     finally:
-        http_delete(
-            ip=provider_ip,
-            port=OP_REST_PORT,
-            path=file_path,
-            headers=_authorization_headers(access_token),
-        )
+        _remove_file(file_path, access_token)

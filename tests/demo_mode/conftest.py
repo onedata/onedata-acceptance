@@ -9,7 +9,7 @@ from typing import cast
 import pytest
 from _pytest.config.argparsing import Parser
 
-from tests.demo_mode.utils.commands import remove_demo_containers
+from tests.demo_mode.utils.common import remove_demo_containers
 
 
 def pytest_addoption(parser: Parser) -> None:
