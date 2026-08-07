@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from contextlib import suppress
 from datetime import datetime
 
 from selenium.common.exceptions import NoSuchElementException
@@ -272,15 +273,13 @@ def open_raw_view_for_elem(
     store_content_list: PageObjectsSequence, index: int, modal: StoreDetails
 ) -> None:
     store_content_list[index].click()
-    try:
-        if modal.raw_view != "":
+    with suppress(NoSuchElementException):
+        if modal.raw_view:
             return
-    except NoSuchElementException:
-        try:
-            if modal.single_file_container.name != "":
-                return
-        except NoSuchElementException:
-            pass
+
+    with suppress(NoSuchElementException):
+        if modal.single_file_container.name:
+            return
 
     raise TimeoutError(
         f"Did not manage to open raw view for {index} element in store content list"

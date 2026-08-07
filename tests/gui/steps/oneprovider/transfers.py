@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import cast
 
+import pytest
 import yaml
 from selenium.common.exceptions import (
     ElementNotInteractableException,
@@ -322,18 +323,12 @@ def fail_to_click_option_in_data_distribution_popup(
     browser_id: str, option: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    try:
-        Popups(driver).data_distribution_popup.menu[option]()
-        raise AssertionError(
-            f'User can click on "{option}" option in in data row '
-            'menu in "Data distribution" panel'
-        )
-    except (
-        ElementNotInteractableException,
-        NoSuchElementException,
-        PageObjectNotFoundError,
-    ):
-        pass
+    menu = Popups(driver).data_distribution_popup.menu
+    if option not in menu:
+        return
+
+    with pytest.raises(ElementNotInteractableException):
+        menu[option]()
 
 
 @wt(
