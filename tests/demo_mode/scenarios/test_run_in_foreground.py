@@ -6,9 +6,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
+from tests.demo_mode.meta_steps import assert_rest_file_roundtrip
 from tests.demo_mode.steps import (
     assert_onezone_configuration,
-    assert_rest_file_roundtrip,
     run_oneprovider,
     run_onezone,
 )

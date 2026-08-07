@@ -17,13 +17,19 @@ from tests.demo_mode.utils.commands import (
     stop_command,
     wait_for_successful_command,
 )
+from tests.demo_mode.utils.common import (
+    SECOND_ONEPROVIDER_CONTAINER_NAME,
+)
 from tests.demo_mode.utils.logging import (
     log_running_command,
     log_step_done,
     log_step_start,
 )
 from tests.demo_mode.utils.rest import (
+    create_and_support_space,
+    get_oneprovider_configuration,
     get_onezone_configuration,
+    get_provider_supported_space_ids,
     upload_and_download_file,
 )
 
@@ -68,6 +74,36 @@ def run_oneprovider(
         release,
     )
     wait_for_successful_command(await_command)
+
+    log_step_done(description)
+    return process
+
+
+def run_second_oneprovider(
+    release: str,
+    onezone_process: subprocess.Popen[str],
+    first_oneprovider_process: subprocess.Popen[str],
+    request: pytest.FixtureRequest,
+) -> subprocess.Popen[str]:
+    """Start the second Oneprovider and wait until it is ready."""
+    description = "Running second Oneprovider"
+    log_step_start(description)
+
+    if onezone_process.poll() is not None:
+        raise AssertionError("Onezone stopped before the second Oneprovider startup")
+    if first_oneprovider_process.poll() is not None:
+        raise AssertionError("First Oneprovider stopped before its peer startup")
+
+    command = load_command(
+        "distributed_environment/run_second_oneprovider.sh",
+        release,
+    )
+    process = start_command(command)
+    request.addfinalizer(partial(stop_command, process))
+
+    wait_for_successful_command(
+        f"docker exec {SECOND_ONEPROVIDER_CONTAINER_NAME} await-demo"
+    )
 
     log_step_done(description)
     return process
@@ -135,16 +171,141 @@ def assert_onezone_configuration(release: str) -> None:
     log_step_done(description)
 
 
-def assert_rest_file_roundtrip(release: str, file_content: bytes) -> None:
-    """Assert that a tiny file can be uploaded and downloaded through REST."""
-    description = "Uploading and downloading a file through REST"
+def get_demo_access_token(release: str) -> str:
+    """Get the access token exposed by the demo environment."""
+    description = "Getting demo access token"
     log_step_start(description)
 
     access_token = get_access_token(release)
-    downloaded_content = upload_and_download_file(access_token, file_content)
+    log_step_done(description)
+    return access_token
+
+
+def _get_oneprovider_id(provider_container: str, release: str) -> str:
+    configuration = get_oneprovider_configuration(provider_container)
+    provider_id = configuration.get("providerId")
+    provider_version = configuration.get("version")
+    assert isinstance(provider_id, str) and provider_id, (
+        f"Expected {provider_container} to expose a non-empty provider ID, "
+        f"got {provider_id!r}"
+    )
+    assert (
+        provider_version == release
+    ), f"Expected {provider_container} version {release!r}, got {provider_version!r}"
+    return provider_id
+
+
+def assert_file_contents_are_distinct(
+    first_file_content: bytes,
+    second_file_content: bytes,
+) -> None:
+    """Assert that distributed providers are tested with different data."""
+    description = "Asserting distributed file contents differ"
+    log_step_start(description)
+
+    assert (
+        first_file_content != second_file_content
+    ), "Distributed providers must be tested with different file contents"
+    log_step_done(description)
+
+
+def assert_oneproviders_are_distinct(
+    first_provider_container: str,
+    second_provider_container: str,
+    release: str,
+) -> None:
+    """Assert that two containers expose distinct Oneprovider services."""
+    description = "Asserting Oneproviders are distinct"
+    log_step_start(description)
+
+    first_provider_id = _get_oneprovider_id(
+        first_provider_container,
+        release,
+    )
+    second_provider_id = _get_oneprovider_id(
+        second_provider_container,
+        release,
+    )
+    assert (
+        first_provider_id != second_provider_id
+    ), f"Distributed Oneproviders expose the same ID: {first_provider_id}"
+    log_step_done(description)
+
+
+def create_space_for_provider(
+    provider_container: str,
+    space_name: str,
+    access_token: str,
+) -> str:
+    """Create a space supported by the selected Oneprovider."""
+    description = f"Creating space for {provider_container}"
+    log_step_start(description)
+
+    space_id = create_and_support_space(
+        provider_container,
+        space_name,
+        access_token,
+    )
+    log_step_done(description)
+    return space_id
+
+
+def assert_space_support_is_isolated(
+    first_provider_container: str,
+    first_space_id: str,
+    second_provider_container: str,
+    second_space_id: str,
+    access_token: str,
+) -> None:
+    """Assert that each provider exclusively supports its assigned space."""
+    description = "Asserting provider space support is isolated"
+    log_step_start(description)
+
+    assert (
+        first_space_id != second_space_id
+    ), "Distributed providers unexpectedly use the same test space"
+    first_provider_spaces = get_provider_supported_space_ids(
+        first_provider_container,
+        access_token,
+    )
+    second_provider_spaces = get_provider_supported_space_ids(
+        second_provider_container,
+        access_token,
+    )
+    assert (
+        first_space_id in first_provider_spaces
+    ), "First Oneprovider does not support its assigned test space"
+    assert (
+        first_space_id not in second_provider_spaces
+    ), "Second Oneprovider unexpectedly supports the first provider's test space"
+    assert (
+        second_space_id in second_provider_spaces
+    ), "Second Oneprovider does not support its assigned test space"
+    assert (
+        second_space_id not in first_provider_spaces
+    ), "First Oneprovider unexpectedly supports the second provider's test space"
+    log_step_done(description)
+
+
+def assert_provider_rest_file_roundtrip(
+    provider_container: str,
+    access_token: str,
+    file_content: bytes,
+    space_id: str | None = None,
+) -> None:
+    """Assert a file upload and download through one provider."""
+    description = f"Uploading and downloading a file through {provider_container}"
+    log_step_start(description)
+
+    downloaded_content = upload_and_download_file(
+        access_token,
+        file_content,
+        provider_container,
+        space_id,
+    )
     assert downloaded_content == file_content, (
-        f"Downloaded content differs: expected {file_content!r}, "
-        f"got {downloaded_content!r}"
+        f"{provider_container} returned {downloaded_content!r}, "
+        f"expected {file_content!r}"
     )
 
     log_step_done(description)

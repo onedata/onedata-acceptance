@@ -8,7 +8,14 @@ from typing import Final
 
 from tests.utils.docker_utils import remove_container
 
-DEMO_CONTAINER_NAMES: Final = ("op_test1", "oz_test")
+ONEZONE_CONTAINER_NAME: Final = "oz_test"
+FIRST_ONEPROVIDER_CONTAINER_NAME: Final = "op_test1"
+SECOND_ONEPROVIDER_CONTAINER_NAME: Final = "op_test2"
+DEMO_CONTAINER_NAMES: Final = (
+    FIRST_ONEPROVIDER_CONTAINER_NAME,
+    SECOND_ONEPROVIDER_CONTAINER_NAME,
+    ONEZONE_CONTAINER_NAME,
+)
 
 
 def remove_demo_containers() -> None:
