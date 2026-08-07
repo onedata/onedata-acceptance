@@ -13,9 +13,11 @@ from tests.demo_mode.steps import (
     run_onezone,
 )
 
+TEST_FILE_CONTENT = b"Onedata demo-mode foreground REST test\n"
+
 
 def test_run_in_foreground(release: str, request: pytest.FixtureRequest) -> None:
     onezone_process = run_onezone(release, request)
     run_oneprovider(release, onezone_process, request)
     assert_onezone_configuration()
-    assert_rest_file_roundtrip(release)
+    assert_rest_file_roundtrip(release, TEST_FILE_CONTENT)

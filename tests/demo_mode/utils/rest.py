@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
-from time import monotonic, sleep
 from typing import Final, cast
 from uuid import uuid4
 
@@ -21,6 +20,7 @@ from tests.utils.rest_utils import (
     http_post,
     http_put,
 )
+from tests.utils.utils import repeat_failed
 
 ONEZONE_CONTAINER_NAME: Final = "oz_test"
 ONEPROVIDER_CONTAINER_NAME: Final = "op_test1"
@@ -144,17 +144,16 @@ def _get_or_create_user_space(access_token: str) -> str:
     return user_space_ids[0] if user_space_ids else _create_space(access_token)
 
 
+@repeat_failed(
+    timeout=SPACE_APPEARANCE_TIMEOUT,
+    interval=1,
+    exceptions=AssertionError,
+)
 def _wait_for_supported_space(space_id: str, access_token: str) -> str:
-    deadline = monotonic() + SPACE_APPEARANCE_TIMEOUT
-    while monotonic() < deadline:
-        if space_id in _list_supported_space_ids(access_token):
-            return space_id
-        sleep(1)
-
-    raise AssertionError(
-        f"Space {space_id} did not appear in Oneprovider within "
-        f"{SPACE_APPEARANCE_TIMEOUT:g}s"
-    )
+    assert space_id in _list_supported_space_ids(
+        access_token
+    ), f"Space {space_id} has not appeared in Oneprovider"
+    return space_id
 
 
 def get_or_create_supported_space(access_token: str) -> str:

@@ -27,8 +27,6 @@ from tests.demo_mode.utils.rest import (
     upload_and_download_file,
 )
 
-TEST_FILE_CONTENT = b"Onedata demo-mode REST test\n"
-
 
 def run_onezone(release: str, request: pytest.FixtureRequest) -> subprocess.Popen[str]:
     """Start Onezone and wait until it is ready."""
@@ -133,13 +131,13 @@ def assert_onezone_configuration() -> None:
     log_step_done(description)
 
 
-def assert_rest_file_roundtrip(release: str) -> None:
+def assert_rest_file_roundtrip(release: str, file_content: bytes) -> None:
     """Assert that a tiny file can be uploaded and downloaded through REST."""
     description = "Uploading and downloading a file through REST"
     log_step_start(description)
 
     access_token = get_access_token(release)
-    downloaded_content = upload_and_download_file(access_token, TEST_FILE_CONTENT)
-    assert downloaded_content == TEST_FILE_CONTENT
+    downloaded_content = upload_and_download_file(access_token, file_content)
+    assert downloaded_content == file_content
 
     log_step_done(description)
