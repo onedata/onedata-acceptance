@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.generic import (
@@ -55,6 +56,20 @@ def confirm_name_input_on_main_groups_page(
 
 def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
     return list(filter(lambda g: g.name == group_name, page.groups_list))
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_group_and_click_menu_button(
+    selenium: SeleniumDrivers, browser_id: str, option: str, group_name: str
+) -> Group:
+    driver = selenium[browser_id]
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(GroupsPage)
+    group_item = oz_page.groups.groups_list[group_name]
+    group_item.click()
+    group_item.menu()
+    Popups(driver).menu_popup_with_text.menu[option]()
+    return group_item
 
 
 @wt(
@@ -295,3 +310,14 @@ def assert_group_in_groups_page(
 
     header = [header for header in group_headers if header.name == group_name]
     assert header, f"There is no group {group_name} in groups list."
+
+
+def copy_group_id_from_groups_sidebar_list(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> str:
+    _ = get_group_and_click_menu_button(selenium, browser_id, "Copy ID", group_name)
+    return clipboard.paste(display=displays[browser_id])

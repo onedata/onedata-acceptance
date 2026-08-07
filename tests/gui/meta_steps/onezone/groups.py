@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
-from selenium.webdriver.remote.webdriver import WebDriver
+import pytest
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import (
@@ -27,6 +27,8 @@ from tests.gui.steps.onezone.groups import (
     assert_group_exists,
     click_create_group_button_in_panel,
     confirm_name_input_on_main_groups_page,
+    copy_group_id_from_groups_sidebar_list,
+    get_group_and_click_menu_button,
     go_to_group_subpage,
     input_name_into_input_box_on_main_groups_page,
     press_enter_on_active_element,
@@ -39,14 +41,16 @@ from tests.gui.steps.onezone.members import (
     copy_token_from_modal,
     remove_member_from_parent,
 )
-from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
+from tests.gui.steps.rest.groups import (
+    ensure_absence_of_group_using_rest,
+    get_user_groups,
+    leave_user_group,
+)
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.generic import parse_elements_sequence
-from tests.gui.utils.onezone import OZLoggedIn
-from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.entities_setup.users import CredentialsLike
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
@@ -59,31 +63,6 @@ def click_on_confirmation_button_to_rename_group(group: Any) -> None:
 @repeat_failed(timeout=WAIT_FRONTEND)
 def input_new_group_name_into_rename_group_inpux_box(group: Any, text: str) -> None:
     group.edit_box.value = text
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Group:
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(GroupsPage)
-    page = oz_page.groups
-    return page.groups_list[group_name]
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_group_menu(driver: WebDriver, group: Any, option: str) -> None:
-    group.menu()
-    Popups(driver).menu_popup_with_text.menu[option]()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def get_group_and_click_menu_button(
-    selenium: SeleniumDrivers, browser_id: str, option: str, group: str
-) -> Any:
-    driver = selenium[browser_id]
-    group_item = get_group_by_name_from_main_page(driver, group)
-    group_item.click()
-    click_on_option_in_group_menu(driver, group_item, option)
-    return group_item
 
 
 @wt(
@@ -113,9 +92,7 @@ def rename_group(
     new_group_name: str,
     confirm_type: str,
 ) -> None:
-    option = "Rename"
-
-    group = get_group_and_click_menu_button(selenium, browser_id, option, group_name)
+    group = get_group_and_click_menu_button(selenium, browser_id, "Rename", group_name)
     input_new_group_name_into_rename_group_inpux_box(group, new_group_name)
     if confirm_type == "button":
         click_on_confirmation_button_to_rename_group(group)
@@ -178,12 +155,46 @@ def remove_group(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_groups_using_op_gui(
-    selenium: SeleniumDrivers, browser_id: str, group_list: list[str]
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group_list: list[str],
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    hosts: Hosts,
+    admin_credentials: CredentialsLike,
 ) -> None:
-    for group in group_list:
-        click_create_group_button_in_panel(selenium, browser_id)
-        input_name_into_input_box_on_main_groups_page(selenium, browser_id, group)
-        confirm_name_input_on_main_groups_page(selenium, browser_id)
+    for group_name in group_list:
+        create_single_group_using_op_gui(selenium, browser_id, group_name)
+        group_id = copy_group_id_from_groups_sidebar_list(
+            selenium, browser_id, group_name, clipboard, displays
+        )
+        _register_finalizer_to_remove_group(request, hosts, group_id, admin_credentials)
+
+
+def _register_finalizer_to_remove_group(
+    request: pytest.FixtureRequest,
+    hosts: Hosts,
+    group_id: str,
+    admin_credentials: CredentialsLike,
+) -> None:
+    zone_hostname = hosts["onezone"]["hostname"]
+    request.addfinalizer(
+        lambda: ensure_absence_of_group_using_rest(
+            zone_hostname,
+            admin_credentials.username,
+            admin_credentials.password,
+            group_id,
+        )
+    )
+
+
+def create_single_group_using_op_gui(
+    selenium: SeleniumDrivers, browser_id: str, group_name: str
+) -> None:
+    click_create_group_button_in_panel(selenium, browser_id)
+    input_name_into_input_box_on_main_groups_page(selenium, browser_id, text=group_name)
+    confirm_name_input_on_main_groups_page(selenium, browser_id)
 
 
 def see_groups_using_op_gui(
