@@ -6,8 +6,6 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
-
 import pytest
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -26,9 +24,9 @@ from tests.gui.steps.modals.modal import (
 from tests.gui.steps.onezone.groups import (
     assert_group_exists,
     click_create_group_button_in_panel,
+    click_on_option_in_group_menu,
     confirm_name_input_on_main_groups_page,
-    copy_group_id_from_groups_sidebar_list,
-    get_group_and_click_menu_button,
+    get_group_by_name_from_main_page,
     go_to_group_subpage,
     input_name_into_input_box_on_main_groups_page,
     press_enter_on_active_element,
@@ -48,6 +46,7 @@ from tests.gui.steps.rest.groups import (
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.onezone.groups.groups_page import Group
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.users import CredentialsLike
@@ -56,23 +55,33 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_confirmation_button_to_rename_group(group: Any) -> None:
+def click_on_confirmation_button_to_rename_group(group: Group) -> None:
     group.edit_box.confirm()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def input_new_group_name_into_rename_group_inpux_box(group: Any, text: str) -> None:
+def input_new_group_name_into_rename_group_inpux_box(group: Group, text: str) -> None:
     group.edit_box.value = text
+
+
+def get_group_and_click_menu_button(
+    selenium: SeleniumDrivers, browser_id: str, option: str, group_name: str
+) -> Group:
+    driver = selenium[browser_id]
+    group = get_group_by_name_from_main_page(driver, group_name)
+    group.click()
+    click_on_option_in_group_menu(driver, group, option)
+    return group
 
 
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) clicks on "
-        r'"(?P<option>Rename|Leave|Remove)" '
+        r'"(?P<option>Rename|Leave|Remove|Copy ID)" '
         r'button in group "(?P<group>.*)" menu in the sidebar'
     )
 )
-def wt_get_group_and_click_menu_button(
+def click_menu_button_for_group(
     selenium: SeleniumDrivers, browser_id: str, option: str, group: str
 ) -> None:
     _ = get_group_and_click_menu_button(selenium, browser_id, option, group)
@@ -166,7 +175,7 @@ def create_groups_using_op_gui(
 ) -> None:
     for group_name in group_list:
         create_single_group_using_op_gui(selenium, browser_id, group_name)
-        group_id = copy_group_id_from_groups_sidebar_list(
+        group_id = get_group_id_from_groups_sidebar_list(
             selenium, browser_id, group_name, clipboard, displays
         )
         _register_finalizer_to_remove_group(request, hosts, group_id, admin_credentials)
@@ -445,3 +454,14 @@ def fail_to_add_subgroups_using_op_gui(
             displays,
         )
         wait_for_error_modal_to_disappear(selenium[user])
+
+
+def get_group_id_from_groups_sidebar_list(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> str:
+    click_menu_button_for_group(selenium, browser_id, "Copy ID", group_name)
+    return clipboard.paste(display=displays[browser_id])
