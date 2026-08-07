@@ -15,6 +15,7 @@ from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
 from tests.gui.meta_steps.onezone.automation.lambda_creation import *
 from tests.gui.meta_steps.onezone.automation.workflow_management import *
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.members import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.common.browser_creation import *

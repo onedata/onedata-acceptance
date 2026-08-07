@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import (
     add_element_with_copied_token,
     fail_to_add_element_with_copied_token,
@@ -37,7 +38,6 @@ from tests.gui.steps.onezone.members import (
     click_element_in_members_list,
     click_on_option_in_members_list_menu,
     copy_token_from_modal,
-    remove_member_from_parent,
 )
 from tests.gui.steps.rest.groups import (
     ensure_absence_of_group_using_rest,

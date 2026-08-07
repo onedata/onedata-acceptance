@@ -527,57 +527,6 @@ def check_user_in_space_members_list(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) removes "(?P<member_name>.*)" '
-        r'(?P<member_type>user|group) from "(?P<name>.*)" '
-        r"(?P<where>cluster|group|harvester|space|automation) members"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def remove_member_from_parent(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    member_name: str,
-    member_type: str,
-    name: str,
-    tmp_memory: TmpMemory,
-    where: str,
-) -> None:
-    driver = selenium[browser_id]
-    if where != "cluster":
-        page_name = cast(PageName, _change_to_tab_name(where))
-        oz_page = OZLoggedIn(selenium[browser_id])
-        oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
-        main_page = getattr(oz_page, page_name)
-        list_name = f"{where}s_list"
-        getattr(main_page, list_name)[name]()
-        getattr(main_page, list_name)[name].members()
-    members_page = _find_members_page(driver, where)
-    list_name = member_type + "s"
-    (
-        getattr(members_page, list_name)
-        .items[member_name]
-        .header.click_menu(selenium[browser_id])
-    )
-
-    if member_type == "user":
-        modal_name = "remove user from "
-    elif member_type == "group" and where != "group":
-        modal_name = "remove group from "
-    else:
-        modal_name = "remove subgroup from "
-
-    if where == "automation":
-        where = "atm. inventory"
-    modal_name += where
-
-    Popups(driver).menu_popup_with_text.menu["Remove this member"]()
-
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    Modals(driver).remove_modal.remove()
-
-
-@wt(
-    parsers.re(
         r'user of (?P<browser_id>.*) clicks "(?P<option>( |.)*)" for '
         r'"(?P<username>.*)" user in users list'
     )

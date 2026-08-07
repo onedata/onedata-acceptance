@@ -12,6 +12,7 @@ from functools import partial
 import pytest
 from selenium.common.exceptions import TimeoutException
 
+from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
@@ -32,7 +33,6 @@ from tests.gui.steps.onezone.members import (
     click_element_in_members_list,
     click_on_option_in_members_list_menu,
     copy_token_from_modal,
-    remove_member_from_parent,
     see_privileges_for_member,
     try_setting_privileges_in_members_subpage,
     wt_wait_for_modal_to_appear,
