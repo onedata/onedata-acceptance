@@ -54,3 +54,18 @@ def run_cmd(
 
 def docker_ip(container: object) -> str:
     return docker.inspect(container)["NetworkSettings"]["IPAddress"]
+
+
+def remove_container(name: str) -> None:
+    """Force-remove all Docker containers matching the exact name."""
+    containers = docker.ps(
+        all=True,
+        quiet=True,
+        filters=[("name", f"^/{name}$")],
+    )
+    if containers:
+        subprocess.run(
+            ["docker", "rm", "--force", *containers],
+            stdout=subprocess.DEVNULL,
+            check=True,
+        )

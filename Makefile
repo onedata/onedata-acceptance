@@ -87,6 +87,7 @@ endif
 .PHONY: test_oneclient, test_oneclient_pkg, test_oneclient_src
 .PHONY: test_performance, test_performance_pkg, test_performance_src
 .PHONY: test_upgrade
+.PHONY: test_demo_mode
 .PHONY: format
 
 test_gui:
@@ -124,6 +125,17 @@ test_upgrade_pkg:
 	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_TEST_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/pkg/"${CONFIG_FILE}".yaml
 test_upgrade_src:
 	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_TEST_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/src/"${CONFIG_FILE}".yaml
+
+test_demo_mode:
+	@test -n "${RELEASE}" || (echo "RELEASE is required, for example: make test_demo_mode RELEASE=25.1"; exit 2)
+	docker run --rm -i --network=host \
+	 -e PYTHONDONTWRITEBYTECODE=1 \
+	 -v $(CURDIR):$(CURDIR):ro \
+	 -v /var/run/docker.sock:/var/run/docker.sock \
+	 -w $(CURDIR) ${ACCEPTANCE_TEST_IMAGE} \
+	 python3 -m pytest --color=yes -p no:cacheprovider -rs -s -v \
+	 --confcutdir=tests/demo_mode \
+	 tests/demo_mode/scenarios --release="${RELEASE}"
 
 
 ##
@@ -172,10 +184,12 @@ endef
 ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__init__.py tests/__init__.py \
  tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
  tests/performance/__init__.py tests/performance/type_definitions.py tests/performance/test_*.py \
- tests/oneclient/steps tests/oneclient/__init__.py tests/utils tests/upgrade
+ tests/oneclient/steps tests/oneclient/__init__.py tests/utils tests/upgrade \
+ tests/demo_mode/utils tests/demo_mode/steps.py tests/demo_mode/__init__.py
 ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py \
- tests/oneclient/conftest.py tests/performance/conftest.py
-ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios
+ tests/oneclient/conftest.py tests/performance/conftest.py tests/demo_mode/conftest.py
+ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios \
+ tests/demo_mode/scenarios
 
 
 format:
