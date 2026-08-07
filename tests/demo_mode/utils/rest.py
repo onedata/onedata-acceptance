@@ -280,6 +280,20 @@ def _remove_file(
     )
 
 
+def download_and_remove_file(
+    provider_container: str,
+    access_token: str,
+    space_id: str,
+    file_name: str,
+) -> bytes:
+    """Download a file by path and remove it afterward."""
+    file_path = get_provider_rest_path("data", space_id, "path", file_name)
+    try:
+        return _download_file(provider_container, file_path, access_token)
+    finally:
+        _remove_file(provider_container, file_path, access_token)
+
+
 def upload_and_download_file(
     access_token: str,
     content: bytes,

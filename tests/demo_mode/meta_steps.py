@@ -10,8 +10,10 @@ from tests.demo_mode.steps import (
     assert_file_contents_are_distinct,
     assert_oneproviders_are_distinct,
     assert_provider_rest_file_roundtrip,
+    assert_rest_file_content,
     assert_space_support_is_isolated,
     create_space_for_provider,
+    get_comprehensive_example_file_name,
     get_demo_access_token,
 )
 from tests.demo_mode.utils.common import (
@@ -21,6 +23,8 @@ from tests.demo_mode.utils.common import (
 
 FIRST_DISTRIBUTED_SPACE_NAME: Final = "demo-mode-first-provider-space"
 SECOND_DISTRIBUTED_SPACE_NAME: Final = "demo-mode-second-provider-space"
+COMPREHENSIVE_DEMO_SPACE_ID: Final = "cb274b2b8bb1750d9be37dd4a3eb7014chb175"
+COMPREHENSIVE_FILE_CONTENT: Final = b"hello world\\n"
 
 
 def assert_rest_file_roundtrip(release: str, file_content: bytes) -> None:
@@ -30,6 +34,19 @@ def assert_rest_file_roundtrip(release: str, file_content: bytes) -> None:
         FIRST_ONEPROVIDER_CONTAINER_NAME,
         access_token,
         file_content,
+    )
+
+
+def assert_comprehensive_example(release: str, command_output: str) -> None:
+    """Assert the file created by the comprehensive example."""
+    file_name = get_comprehensive_example_file_name(command_output)
+    access_token = get_demo_access_token(release)
+    assert_rest_file_content(
+        FIRST_ONEPROVIDER_CONTAINER_NAME,
+        access_token,
+        COMPREHENSIVE_DEMO_SPACE_ID,
+        file_name,
+        COMPREHENSIVE_FILE_CONTENT,
     )
 
 

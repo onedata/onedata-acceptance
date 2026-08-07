@@ -27,6 +27,7 @@ from tests.demo_mode.utils.logging import (
 )
 from tests.demo_mode.utils.rest import (
     create_and_support_space,
+    download_and_remove_file,
     get_oneprovider_configuration,
     get_onezone_configuration,
     get_provider_supported_space_ids,
@@ -153,6 +154,28 @@ def run_oneprovider_in_background(release: str) -> None:
     log_step_done(description)
 
 
+def run_comprehensive_example(release: str, timeout: float = 480) -> str:
+    """Run the comprehensive example command and return its output."""
+    description = "Running comprehensive example"
+    log_step_start(description)
+
+    command = load_command("comprehensive_example/example.sh", release)
+    log_running_command(command)
+    try:
+        result = run_command(command, timeout=timeout, capture_output=True)
+    except subprocess.TimeoutExpired as error:
+        raise AssertionError(
+            f"Comprehensive example did not finish within {timeout}s"
+        ) from error
+    assert result.returncode == 0, (
+        "Comprehensive example failed with exit code "
+        f"{result.returncode}:\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+    )
+
+    log_step_done(description)
+    return result.stdout
+
+
 def assert_onezone_configuration(release: str) -> None:
     """Assert that Onezone exposes a valid public REST configuration."""
     description = "Asserting Onezone configuration"
@@ -179,6 +202,58 @@ def get_demo_access_token(release: str) -> str:
     access_token = get_access_token(release)
     log_step_done(description)
     return access_token
+
+
+def get_comprehensive_example_file_name(command_output: str) -> str:
+    """Extract the created filename from comprehensive-example output."""
+    description = "Checking comprehensive example output"
+    log_step_start(description)
+
+    output_lines = [
+        line
+        for line in command_output.splitlines()
+        if line.startswith("All done! Created a file called ")
+    ]
+    assert len(output_lines) == 1, (
+        "Expected one comprehensive-example success message, got "
+        f"{output_lines!r} in output:\n{command_output}"
+    )
+    message_parts = output_lines[0].split('"')
+    assert (
+        len(message_parts) >= 3
+    ), f"Could not extract a filename from: {output_lines[0]!r}"
+    file_name = message_parts[1]
+    assert file_name.endswith(
+        ".txt"
+    ), f"Expected comprehensive example to create a .txt file, got {file_name!r}"
+
+    log_step_done(description)
+    return file_name
+
+
+def assert_rest_file_content(
+    provider_container: str,
+    access_token: str,
+    space_id: str,
+    file_name: str,
+    expected_content: bytes,
+) -> None:
+    """Download, verify, and remove an existing file through REST."""
+    description = f"Checking {file_name} through {provider_container}"
+    log_step_start(description)
+
+    downloaded_content = download_and_remove_file(
+        provider_container,
+        access_token,
+        space_id,
+        file_name,
+    )
+    assert downloaded_content == expected_content, (
+        f"{provider_container} returned {downloaded_content!r}, "
+        f"expected {expected_content!r}"
+    )
+
+    log_step_done(description)
 
 
 def _get_oneprovider_id(provider_container: str, release: str) -> str:
