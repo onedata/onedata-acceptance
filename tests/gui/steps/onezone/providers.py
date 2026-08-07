@@ -11,17 +11,13 @@ from collections.abc import Iterator
 from itertools import zip_longest
 
 import requests
-from selenium.common.exceptions import (
-    ElementNotInteractableException,
-    NoSuchElementException,
-)
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -242,19 +238,10 @@ def assert_provider_working_in_oz_panel(
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ProvidersPage)
     page = oz_page.providers
-    try:
-        provider_record = page.providers_list[provider]
-        provider_record.click()
-    except (
-        ElementNotInteractableException,
-        NoSuchElementException,
-        PageObjectNotFoundError,
-    ):
-        assert False, f'no provider "{provider}" found on providers list'
-    else:
-        assert (
-            page.is_working()
-        ), f'provider icon in Onezone for "{provider}" is not green'
+    providers = page.providers_list
+    assert provider in providers, f'no provider "{provider}" found on providers list'
+    providers[provider].click()
+    assert page.is_working(), f'provider icon in Onezone for "{provider}" is not green'
 
 
 def click_on_provider_in_providers_sidebar_with_provider_name(

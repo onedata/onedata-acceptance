@@ -9,10 +9,6 @@ import os
 from typing import Optional
 
 from _pytest._py.path import LocalPath
-from selenium.common.exceptions import (
-    ElementNotInteractableException,
-    NoSuchElementException,
-)
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -295,8 +291,13 @@ def click_on_create_new_revision_button(
     page.lambdas_page.lambdas_list[lambda_name].create_new_revision.click()
 
 
-def collapse_revision_list(subpage: Lambda | Workflow) -> None:
-    subpage.show_revisions_button.click()
+def ensure_revision_is_visible(subpage: Lambda | Workflow, revision_id: str) -> None:
+    revisions = subpage.revision_list
+    if revision_id in revisions:
+        return
+
+    if len(revisions) == 1 and revisions[0].id != "1":
+        subpage.show_revisions_button.click()
 
 
 def get_lambda_or_workflow_bracket(
@@ -305,18 +306,7 @@ def get_lambda_or_workflow_bracket(
     page_name = page + "s_page"
     subpage = getattr(OZLoggedIn(selenium[browser_id]).automation, page_name)
     list_name = page + "s_list"
-    bracket = getattr(subpage, list_name)[object_name]
-
-    try:
-        collapse_revision_list(bracket)
-    except (
-        AttributeError,
-        ElementNotInteractableException,
-        NoSuchElementException,
-    ):
-        pass
-
-    return bracket
+    return getattr(subpage, list_name)[object_name]
 
 
 @wt(
@@ -338,8 +328,10 @@ def assert_revision_description_in_object_bracket(
     description: str,
 ) -> None:
     bracket = get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name)
+    revision_id = ordinal[:-2]
+    ensure_revision_is_visible(bracket, revision_id)
 
-    revision = bracket.revision_list[ordinal[:-2]]
+    revision = bracket.revision_list[revision_id]
 
     if option == "does not see":
         assert revision.name != description, f"Revision: {object_name} found"
@@ -364,11 +356,13 @@ def assert_revision_of_object(
     page: str,
 ) -> None:
     bracket = get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name)
+    revision_id = ordinal[:-2]
+    ensure_revision_is_visible(bracket, revision_id)
 
     if option == "does not see":
-        assert ordinal[:-2] not in bracket.revision_list, f"{ordinal} revision found"
+        assert revision_id not in bracket.revision_list, f"{ordinal} revision found"
     else:
-        assert ordinal[:-2] in bracket.revision_list, f"{ordinal} revision not found"
+        assert revision_id in bracket.revision_list, f"{ordinal} revision not found"
 
 
 @wt(
@@ -405,8 +399,9 @@ def click_option_in_revision_menu_button(
     if ordinal is None:
         item.revision_list[0].menu_button.click()
     else:
-        ordinal_parsed = str(from_ordinal_number_to_int(ordinal))
-        item.revision_list[ordinal_parsed].menu_button.click()
+        revision_id = str(from_ordinal_number_to_int(ordinal))
+        ensure_revision_is_visible(item, revision_id)
+        item.revision_list[revision_id].menu_button.click()
     Popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
 

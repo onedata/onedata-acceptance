@@ -121,10 +121,10 @@ class AceEditor(WebElement):
         script = f"var textarea = document.querySelector('{selector}');return textarea"
         driver = instance.web_elem.parent
         if item := driver.execute_script(script):
-            raise NoSuchElementException(
-                self._format_msg("no {item} item found in {parent}", instance)
-            )
-        return item.text
+            return item.text
+        raise NoSuchElementException(
+            self._format_msg("no {item} item found in {parent}", instance)
+        )
 
     def __set__(self, instance: Any, val: Any) -> None:
         driver = instance.web_elem.parent
