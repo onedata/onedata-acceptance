@@ -56,8 +56,12 @@ class AlertPopup(Enum):
     )
     CEASED_SUPPORT = (r"Ceased.*[Ss]upport.*", "Info", ".alert-info")
     STORAGE_ADDED = (r".*[Ss]torage.*added.*", "Success", ".alert-info")
-    MEMBER_ADDED = (r".*[Mm]ember.*added.*", "Success", ".alert-info")
-    GROUP_REMOVED_FROM_CLUSTER = (r".*[Gg]roup.*removed.*from.*cluster.*", "Success", ".alert-info")
+    MEMBER_ADDED = (r".*[Mm]ember.*added.*", "Success", ".ember-notify-cn")
+    GROUP_REMOVED_FROM_CLUSTER = (
+        r".*[Gg]roup.*removed.*from.*cluster.*",
+        "Success",
+        ".ember-notify-cn",
+    )
 
     def __init__(
         self,

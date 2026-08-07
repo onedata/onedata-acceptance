@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import cast
 
-from tests.gui.steps.common.common import close_alert_popup_if_present
+from tests.gui.steps.common.common import wait_till_alert_popup_or_error_modal_disappear
 from tests.gui.steps.modals.modal import (
     assert_element_text_in_modal,
     wt_wait_for_modal_to_appear,
@@ -50,7 +50,6 @@ from tests.utils.utils import repeat_failed
         r"(?P<where>cluster|group|harvester|space|automation) members"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_member_from_parent(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -89,11 +88,14 @@ def remove_member_from_parent(
     modal_name += where
 
     Popups(driver).menu_popup_with_text.menu["Remove this member"]()
-
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(driver).remove_modal.remove()
-    for popup in (AlertPopup.MEMBER_ADDED, AlertPopup.GROUP_REMOVED_FROM_CLUSTER):
-        close_alert_popup_if_present(driver, popup)
+
+    for popup_enum in (AlertPopup.MEMBER_ADDED, AlertPopup.GROUP_REMOVED_FROM_CLUSTER):
+        popup = Popups(driver).get_alert_popup(popup_enum)
+        wait_till_alert_popup_or_error_modal_disappear(
+            selenium, popup.web_elem, lambda _, current_popup=popup: current_popup.close
+        )
 
 
 def fail_to_set_privileges_using_op_gui(
