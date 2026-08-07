@@ -29,3 +29,4 @@ def release(request: pytest.FixtureRequest) -> str:
 def cleanup_demo_containers(request: pytest.FixtureRequest) -> None:
     remove_demo_containers()
     request.addfinalizer(remove_demo_containers)
+    print(flush=True)

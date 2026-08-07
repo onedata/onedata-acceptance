@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.demo_mode.steps import (
     assert_onezone_configuration,
+    assert_rest_file_roundtrip,
     run_oneprovider_in_background,
     run_onezone_in_background,
 )
@@ -15,3 +16,4 @@ def test_run_in_background(release: str) -> None:
     run_onezone_in_background(release)
     run_oneprovider_in_background(release)
     assert_onezone_configuration()
+    assert_rest_file_roundtrip(release)
