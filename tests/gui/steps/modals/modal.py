@@ -20,8 +20,10 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.popups.generic import ItemCreatedAlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.type_definitions import SeleniumDrivers
@@ -538,9 +540,14 @@ def assert_there_is_no_button_in_panel(
 def click_modal_button(
     selenium: SeleniumDrivers, browser_id: str, button: str, modal_name: str
 ) -> None:
-    modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal_name))
+    normalized_modal_name = check_modal_name(modal_name)
+    modal = getattr(Modals(selenium[browser_id]), normalized_modal_name)
     button = button.replace(".", "")
     getattr(modal, transform(button)).click()
+    if normalized_modal_name == "create_group" and transform(button) == "create":
+        close_alert_popup_if_present(
+            selenium[browser_id], popup=ItemCreatedAlertPopup.GROUP_CREATED
+        )
 
 
 @wt(

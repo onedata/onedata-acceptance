@@ -29,7 +29,7 @@ from .data_distribution_popup import DataDistributionPopup
 from .data_row_menu import DataRowMenu
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .deregister_provider import DeregisterProvider
-from .generic import AlertPopup
+from .generic import AlertPopup, AlertPopupBase
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .handle_service import HandleService
 from .info import Info
@@ -159,7 +159,7 @@ class Popups:
     def __str__(self) -> str:
         return "popups"
 
-    def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
+    def get_alert_popup(self, alert_popup: AlertPopupBase) -> AlertInfoPopup:
         regexp = re.compile(alert_popup.message)
         # check both types of popups
         for notifies in (self.alert_info_popups, self.notify_popups):

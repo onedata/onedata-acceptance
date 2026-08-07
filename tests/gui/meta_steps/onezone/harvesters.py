@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onezone.harvesters.configuration import (
@@ -53,6 +54,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.popups.generic import ItemCreatedAlertPopup
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -146,6 +148,9 @@ def create_harvester(
     click_create_button_in_discovery_page(selenium, browser_id)
     click_on_option_in_harvester_menu(selenium, browser_id, option, harvester_name)
     harvesters[harvester_name] = clipboard.paste(display=displays[browser_id])
+    close_alert_popup_if_present(
+        selenium[browser_id], popup=ItemCreatedAlertPopup.HARVESTER_CREATED
+    )
 
 
 @wt(

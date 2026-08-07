@@ -9,9 +9,22 @@ from enum import Enum
 from typing import Literal
 
 AlertPopupCategory = Literal["Success", "Info", "Warning", "Fail"]
+CreatedItemType = Literal["space", "group", "harvester", "automation inventory"]
 
 
-class AlertPopup(Enum):
+class AlertPopupBase:
+    def __init__(
+        self,
+        message: str,
+        category: AlertPopupCategory,
+        css_sel: str,
+    ) -> None:
+        self.message = message
+        self.category = category
+        self.css_sel = css_sel
+
+
+class AlertPopup(AlertPopupBase, Enum):
     AUTHENTICATION_SUCCEEDED = (
         "Authentication succeeded!",
         "Success",
@@ -57,23 +70,40 @@ class AlertPopup(Enum):
     CEASED_SUPPORT = (r"Ceased.*[Ss]upport.*", "Info", ".alert-info")
     STORAGE_ADDED = (r".*[Ss]torage.*added.*", "Success", ".alert-info")
 
+
+class ItemCreatedAlertPopup(AlertPopupBase, Enum):
+    SPACE_CREATED = "space"
+    GROUP_CREATED = "group"
+    HARVESTER_CREATED = "harvester"
+    AUTOMATION_INVENTORY_CREATED = "automation inventory"
+
     def __init__(
         self,
-        message: str,
-        category: AlertPopupCategory,
-        css_sel: str,
+        item_type: CreatedItemType,
     ) -> None:
-        self.message = message
-        self.category = category
-        self.css_sel = css_sel
+        self.item_type = item_type
+        super().__init__(
+            rf"New {item_type} created successfully",
+            "Success",
+            ".alert-info",
+        )
 
 
-ALERT_POPUP_ALIASES: dict[str, AlertPopup] = {
-    popup.name.lower().replace("_", " "): popup for popup in AlertPopup
+AlertPopupType = AlertPopup | ItemCreatedAlertPopup
+
+
+ALL_ALERT_POPUPS: tuple[AlertPopupType, ...] = (
+    *AlertPopup,
+    *ItemCreatedAlertPopup,
+)
+
+
+ALERT_POPUP_ALIASES: dict[str, AlertPopupBase] = {
+    popup.name.lower().replace("_", " "): popup for popup in ALL_ALERT_POPUPS
 }
 
 
-def parse_alert_popup(value: str) -> AlertPopup:
+def parse_alert_popup(value: str) -> AlertPopupBase:
     value = value.strip().lower()
     try:
         return ALERT_POPUP_ALIASES[value]

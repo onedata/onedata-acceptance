@@ -7,10 +7,14 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import get_visible_items_list
+from tests.gui.steps.common.common import (
+    close_alert_popup_if_present,
+    get_visible_items_list,
+)
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
+from tests.gui.utils.common.popups.generic import ItemCreatedAlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -25,7 +29,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) clicks on Create group button in groups sidebar"
+        r'user of (?P<browser_id>.*) clicks on "Create group" button in groups sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -51,6 +55,9 @@ def confirm_name_input_on_main_groups_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     OZLoggedIn(selenium[browser_id]).groups.input_box.confirm()
+    close_alert_popup_if_present(
+        selenium[browser_id], popup=ItemCreatedAlertPopup.GROUP_CREATED
+    )
 
 
 def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
@@ -143,6 +150,9 @@ def assert_error_page_appeared(
 def confirm_add_group(selenium: SeleniumDrivers, browser_id: str, option: str) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
+        close_alert_popup_if_present(
+            selenium[browser_id], popup=ItemCreatedAlertPopup.GROUP_CREATED
+        )
     else:
         confirm_name_input_on_main_groups_page(selenium, browser_id)
 
