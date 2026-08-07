@@ -94,7 +94,9 @@ def remove_member_from_parent(
     for popup_enum in (AlertPopup.MEMBER_ADDED, AlertPopup.GROUP_REMOVED_FROM_CLUSTER):
         popup = Popups(driver).get_alert_popup(popup_enum)
         wait_till_alert_popup_or_error_modal_disappear(
-            selenium, popup.web_elem, lambda _, current_popup=popup: current_popup.close
+            selenium,
+            popup.web_elem,
+            lambda _, current_popup=popup: current_popup.close,  # type: ignore[misc]
         )
 
 
