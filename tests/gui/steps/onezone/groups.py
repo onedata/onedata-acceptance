@@ -68,9 +68,13 @@ def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Grou
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_group_menu(driver: WebDriver, group: Group, option: str) -> None:
+def click_on_option_in_group_menu_and_get_group(
+    driver: WebDriver, group_name: str, option: str
+) -> Group:
+    group = get_group_by_name_from_main_page(driver, group_name)
     group.menu()
     Popups(driver).menu_popup_with_text.menu[option]()
+    return group
 
 
 @wt(

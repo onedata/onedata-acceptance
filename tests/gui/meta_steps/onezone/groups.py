@@ -25,9 +25,8 @@ from tests.gui.steps.modals.modal import (
 from tests.gui.steps.onezone.groups import (
     assert_group_exists,
     click_create_group_button_in_panel,
-    click_on_option_in_group_menu,
+    click_on_option_in_group_menu_and_get_group,
     confirm_name_input_on_main_groups_page,
-    get_group_by_name_from_main_page,
     go_to_group_subpage,
     input_name_into_input_box_on_main_groups_page,
     press_enter_on_active_element,
@@ -68,10 +67,8 @@ def get_group_and_click_menu_button(
     selenium: SeleniumDrivers, browser_id: str, option: str, group_name: str
 ) -> Group:
     driver = selenium[browser_id]
-    group = get_group_by_name_from_main_page(driver, group_name)
-    group.click()
-    click_on_option_in_group_menu(driver, group, option)
-    return group
+    go_to_group_subpage(selenium, browser_id, group_name, "main")
+    return click_on_option_in_group_menu_and_get_group(driver, group_name, option)
 
 
 @wt(
