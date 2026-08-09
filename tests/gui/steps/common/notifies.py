@@ -29,7 +29,7 @@ from tests.gui.utils import OnePage, PublicOnePage
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.common.popups.alert_info_popup import AlertInfoPopup
 from tests.gui.utils.common.popups.generic import (
-    AlertPopup,
+    AlertPopupBase,
     parse_alert_popup,
 )
 from tests.type_definitions import SeleniumDrivers
@@ -77,7 +77,7 @@ def capture_matching_popup(
 def notify_visible_with_text(
     selenium: SeleniumDrivers,
     browser_id: str,
-    alert_popup: AlertPopup,
+    alert_popup: AlertPopupBase,
 ) -> None:
     driver = selenium[browser_id]
     text_regexp = alert_popup.message

@@ -400,5 +400,11 @@ def assert_image_in_browser(
 ) -> None:
     driver = selenium[browser_id]
     url = driver.find_elements(By.TAG_NAME, "img")[0].get_attribute("src")
-    error_message = f"{image_name} is not visible in browser"
-    assert image_name in url, error_message
+    err_msg = f"{image_name} is not visible in browser"
+    assert image_name in url, err_msg
+
+
+@wt(parsers.parse("user of {browser_id} opens a new tab and switches to it"))
+def open_new_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    driver.switch_to.new_window("tab")

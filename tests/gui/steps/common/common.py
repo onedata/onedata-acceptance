@@ -40,7 +40,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
-from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.common.popups.generic import AlertPopupBase
 from tests.gui.utils.generic import (
     ListElement,
     get_visibility_condition,
@@ -315,6 +315,7 @@ def click_close_button_and_wait_to_disappear(
     web_elem_or_locator: WebElementOrCssLocator,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
+    print(get_close_button(driver))
     try_click_without_throwing_error(
         lambda: get_close_button(driver).click()  # pylint: disable=unnecessary-lambda
     )
@@ -322,6 +323,7 @@ def click_close_button_and_wait_to_disappear(
         invisibility_of_element(web_elem_or_locator),
         message="Popup or modal is still visible",
     )
+    print("Closed")
     return True
 
 
@@ -354,13 +356,13 @@ def wait_till_alert_popup_or_error_modal_disappear(
 
 def close_alert_popup_if_present(
     driver: WebDriver,
-    popup: AlertPopup,
+    popup: AlertPopupBase,
 ) -> bool:
     # Close an alert identified by its enum value.
     # If popup doesn't appear, don't throw an error.
     # If it appeared and was not closed, raise.
     def get_alert_popup_close_button_fun(
-        driver: WebDriver, alert_popup: AlertPopup
+        driver: WebDriver, alert_popup: AlertPopupBase
     ) -> Clickable:
         return Popups(driver).alert_popups.get_alert_popup(alert_popup).close
 

@@ -30,7 +30,7 @@ from .data_distribution_popup import DataDistributionPopup
 from .data_row_menu import DataRowMenu
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .deregister_provider import DeregisterProvider
-from .generic import AlertPopup
+from .generic import AlertPopupBase
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .handle_service import HandleService
 from .info import Info
@@ -65,7 +65,7 @@ class AlertPopups(PageObject):
             *self.success,
         ]
 
-    def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
+    def get_alert_popup(self, alert_popup: AlertPopupBase) -> AlertInfoPopup:
         regexp = re.compile(alert_popup.message)
         for popup in self.get_all_alert_popups():
             if regexp.match(popup.message):
