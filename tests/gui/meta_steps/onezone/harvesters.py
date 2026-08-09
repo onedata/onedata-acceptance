@@ -235,7 +235,7 @@ def create_harvester(
     harvester_id = clipboard.paste(display=displays[browser_id])
     harvesters[harvester_name] = harvester_id
     close_alert_popup_if_present(
-            selenium[browser_id], popup=ItemCreatedAlertPopup.HARVESTER_CREATED
+        selenium[browser_id], popup=ItemCreatedAlertPopup.HARVESTER_CREATED
     )
 
     request.addfinalizer(
