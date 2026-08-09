@@ -48,7 +48,9 @@ def capture_matching_popup(
     seen_popups: set[CapturedPopup],
     regexp: re.Pattern[str],
 ) -> bool:
-    detected_popups: list[AlertInfoPopup] = Popups(driver).get_all_alert_popups()
+    detected_popups: list[AlertInfoPopup] = Popups(
+        driver
+    ).alert_popups.get_all_alert_popups()
     for popup in detected_popups:
         try:
             web_elem = popup.web_elem

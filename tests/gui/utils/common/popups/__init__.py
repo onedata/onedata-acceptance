@@ -10,6 +10,7 @@ import re
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
+from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Label,
     WebElementsSequence,
@@ -52,6 +53,24 @@ from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .workflow_creation_alert import WorkflowCreationAlert
 from .workflow_menu import WorkflowMenu
+
+
+class AlertPopups(PageObject):
+    info = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
+    success = WebItemsSequence(".alert-success", cls=AlertInfoPopup)
+
+    def get_all_alert_popups(self) -> list[AlertInfoPopup]:
+        return [
+            *self.info,
+            *self.success,
+        ]
+
+    def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
+        regexp = re.compile(alert_popup.message)
+        for popup in self.get_all_alert_popups():
+            if regexp.match(popup.message):
+                return popup
+        raise RuntimeError(f'No alert popup with message "{alert_popup.message}"')
 
 
 class Popups:
@@ -143,41 +162,13 @@ class Popups:
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
 
-    alert_info_popup = WebItem(".alert-info", cls=AlertInfoPopup)
-    alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
-    notify_show_popups = WebItemsSequence(
-        ".ember-notify-cn .ember-notify-show", cls=AlertInfoPopup
-    )
-    notify_hide_popups = WebItemsSequence(
-        ".ember-notify-cn .ember-notify-hide", cls=AlertInfoPopup
-    )
-
-    def get_all_alert_popups(self) -> list[AlertInfoPopup]:
-        return [
-            *self.alert_info_popups,
-            *self.notify_show_popups,
-            *self.notify_hide_popups,
-        ]
+    alert_popups = WebItem(".ember-notify-cn", cls=AlertPopups)
 
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
     def __str__(self) -> str:
         return "popups"
-
-    def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
-        regexp = re.compile(alert_popup.message)
-        # check all types of popups
-        for notifies in (
-            self.alert_info_popups,
-            self.notify_show_popups,
-            self.notify_hide_popups,
-        ):
-            for popup_val in notifies:
-                message = popup_val.message
-                if regexp.match(message):
-                    return notifies[message]
-        raise RuntimeError(f'No alert popup with message "{alert_popup.message}"')
 
     def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0

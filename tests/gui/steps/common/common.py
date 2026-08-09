@@ -362,7 +362,7 @@ def close_alert_popup_if_present(
     def get_alert_popup_close_button_fun(
         driver: WebDriver, alert_popup: AlertPopup
     ) -> Clickable:
-        return Popups(driver).get_alert_popup(alert_popup).close
+        return Popups(driver).alert_popups.get_alert_popup(alert_popup).close
 
     get_close_button = partial(get_alert_popup_close_button_fun, alert_popup=popup)
 
