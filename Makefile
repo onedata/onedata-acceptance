@@ -126,8 +126,16 @@ test_upgrade_pkg:
 test_upgrade_src:
 	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_TEST_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/src/"${CONFIG_FILE}".yaml
 
+DEMO_MODE_SCENARIOS_ROOT := tests/demo_mode/scenarios
+ifdef SCENARIO
+DEMO_MODE_TEST_PATH := ${DEMO_MODE_SCENARIOS_ROOT}/${SCENARIO}.py
+else
+DEMO_MODE_TEST_PATH := ${DEMO_MODE_SCENARIOS_ROOT}
+endif
+
 test_demo_mode:
 	@test -n "${RELEASE}" || (echo "RELEASE is required, for example: make test_demo_mode RELEASE=25.1"; exit 2)
+	@test -z "${SCENARIO}" || test -f "${DEMO_MODE_TEST_PATH}" || (echo "Unknown demo-mode scenario: ${SCENARIO}"; exit 2)
 	docker run --rm -i --network=host \
 	 -e PYTHONDONTWRITEBYTECODE=1 \
 	 -v $(CURDIR):$(CURDIR):ro \
@@ -135,7 +143,7 @@ test_demo_mode:
 	 -w $(CURDIR) ${ACCEPTANCE_TEST_IMAGE} \
 	 python3 -m pytest --color=yes -p no:cacheprovider -rs -s -v \
 	 --confcutdir=tests/demo_mode \
-	 tests/demo_mode/scenarios --release="${RELEASE}"
+	 ${DEMO_MODE_TEST_PATH} --release="${RELEASE}"
 
 
 ##
