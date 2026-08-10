@@ -65,7 +65,6 @@ class AlertPopup(AlertPopupBase, Enum):
         r".*[Gg]roup.*removed.*from.*cluster.*",
         "Success",
     )
-    MEMBER_GROUP_ADDED = (r".*[Mm]ember.*group.*added.*", "Success")
 
 
 class ItemCreatedAlertPopup(AlertPopupBase, Enum):

@@ -14,6 +14,7 @@ from selenium.common.exceptions import TimeoutException
 
 from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
@@ -40,6 +41,7 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.rest.provider import GuiMessageType, modify_gui_setting_message
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
@@ -170,6 +172,7 @@ def add_group_to_cluster(
 
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_name, modal)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
 
 
 @given(

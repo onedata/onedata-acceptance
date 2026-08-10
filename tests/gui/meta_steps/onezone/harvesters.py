@@ -62,7 +62,7 @@ from tests.gui.steps.rest.harvesters import (
     remove_harvester_using_rest,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.common.popups.generic import ItemCreatedAlertPopup
+from tests.gui.utils.common.popups.generic import AlertPopup, ItemCreatedAlertPopup
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -323,6 +323,7 @@ def add_group_to_harvester(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_in_modal, modal)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
 
 
 @wt(

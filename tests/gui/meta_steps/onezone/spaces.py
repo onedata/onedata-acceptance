@@ -12,7 +12,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
-from tests.gui.steps.common.common import get_visible_items_list
+from tests.gui.steps.common.common import (
+    close_alert_popup_if_present,
+    get_visible_items_list,
+)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -517,6 +520,7 @@ def add_group_to_space_or_group(
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
 
     click_modal_button(selenium, browser_id, button_in_modal, modal)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
 
 
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
