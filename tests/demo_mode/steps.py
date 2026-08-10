@@ -6,10 +6,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import subprocess
 from functools import partial
+from shlex import quote
+from shutil import rmtree
+from typing import Final
 
 import pytest
 
 from tests.demo_mode.utils.commands import (
+    DEMO_MODE_ROOT,
+    command_path,
     get_access_token,
     load_command,
     run_command,
@@ -33,6 +38,8 @@ from tests.demo_mode.utils.rest import (
     get_provider_supported_space_ids,
     upload_and_download_file,
 )
+
+PYTHON_ACCESS_VENV: Final = DEMO_MODE_ROOT / "venv"
 
 
 def run_onezone(release: str, request: pytest.FixtureRequest) -> subprocess.Popen[str]:
@@ -169,6 +176,47 @@ def run_comprehensive_example(release: str, timeout: float = 480) -> str:
         ) from error
     assert result.returncode == 0, (
         "Comprehensive example failed with exit code "
+        f"{result.returncode}:\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+    )
+
+    log_step_done(description)
+    return result.stdout
+
+
+def _remove_python_access_environment() -> None:
+    rmtree(PYTHON_ACCESS_VENV, ignore_errors=True)
+
+
+def run_python_access_example(
+    request: pytest.FixtureRequest,
+    timeout: float = 480,
+) -> str:
+    """Prepare and run the Python access example in its generated venv."""
+    description = "Running Python access example"
+    log_step_start(description)
+
+    request.addfinalizer(_remove_python_access_environment)
+    _remove_python_access_environment()
+
+    setup_script = command_path("python_access/setup_environment.sh")
+    access_script = command_path("python_access/check_python_access.py")
+    python = PYTHON_ACCESS_VENV / "bin" / "python"
+    command = "\n".join(
+        (
+            "set -e",
+            f"source {quote(str(setup_script))} > /dev/null",
+            f"{quote(str(python))} {quote(str(access_script))}",
+        )
+    )
+    log_running_command(command)
+    try:
+        result = run_command(command, timeout=timeout, capture_output=True)
+    except subprocess.TimeoutExpired as error:
+        raise AssertionError(
+            f"Python access example did not finish within {timeout}s"
+        ) from error
+    assert result.returncode == 0, (
+        "Python access example failed with exit code "
         f"{result.returncode}:\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
     )
 
