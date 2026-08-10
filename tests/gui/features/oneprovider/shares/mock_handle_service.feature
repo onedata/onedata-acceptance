@@ -204,6 +204,7 @@ Scenario: User sees public data status tag after refreshing file list
   And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
   And user of space_owner_browser clicks "Files" of "space1" space in the sidebar
   And user of space_owner_browser sees file browser in files tab in Oneprovider page
+  And user of space_owner_browser sees public data status tag for "dir1" in file browser
   And user of space_owner_browser clicks "Refresh" button from file browser menu bar
   Then user of space_owner_browser sees public data status tag for "dir1" in file browser
   
