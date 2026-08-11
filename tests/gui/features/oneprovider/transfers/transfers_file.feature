@@ -42,9 +42,10 @@ Feature: Oneprovider transfers files functionality
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
 
-    And user of browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
+    And user of browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
     And user of browser replicates "large_file.txt" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
@@ -65,9 +66,10 @@ Feature: Oneprovider transfers files functionality
 
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
+    And user of browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
 
   Scenario: User tries to migrate file to too small space on remote provider
@@ -83,9 +85,10 @@ Feature: Oneprovider transfers files functionality
 
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
+    And user of browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
 
 
   Scenario: User tries to replicate file to too small space on remote provider
@@ -94,9 +97,10 @@ Feature: Oneprovider transfers files functionality
     Then user of browser fails to replicate "large_file.txt" to provider "oneprovider-2"
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
+    And user of browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
 
 
   Scenario: User migrates file to remote provider
@@ -105,9 +109,10 @@ Feature: Oneprovider transfers files functionality
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
-    And user of browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
+    And user of browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
 
     And user of browser migrates "large_file.txt" from provider "oneprovider-1" to provider "oneprovider-2"
 
@@ -128,39 +133,44 @@ Feature: Oneprovider transfers files functionality
 
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely empty
-            oneprovider-2: entirely filled
+    And user of browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely empty
+                oneprovider-2: entirely filled
 
 
   Scenario: User sees that there are no file blocks on provider from which file was downloaded and then evicted
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of browser sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
+    And user of browser sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
 
     # download file to other provider
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
+    And user of browser sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
 
     And user of browser clicks and presses enter on item named "20B-0.txt" in file browser
     And user of browser is idle for 5 seconds
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
+    And user of browser sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
     # evict file from oneprovider-1
     And user of browser evicts file "20B-0.txt" from provider oneprovider-1
     And user of browser sees file browser in files tab in Oneprovider page
-    Then user of browser sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely empty
-            oneprovider-2: entirely filled
+    Then user of browser sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely empty
+                oneprovider-2: entirely filled
 
 
   Scenario: User replicates multiple selected files to remote provider
@@ -171,17 +181,16 @@ Feature: Oneprovider transfers files functionality
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
 
-    And user of browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
-
-    And user of browser sees file chunks for file "file1.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
-
-    And user of browser sees file chunks for file "file2.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
+    And user of browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
+            file1.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
+            file2.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
 
     And user of browser selects ["large_file.txt", "file1.txt", "file2.txt"] and replicates them to provider "oneprovider-2"
 
@@ -208,13 +217,13 @@ Feature: Oneprovider transfers files functionality
                 status: completed
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
-    And user of browser sees file chunks for file "file1.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
-
-    And user of browser sees file chunks for file "file2.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
+    And user of browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+            file1.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+            file2.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled

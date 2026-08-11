@@ -66,9 +66,11 @@ Feature: Quality of Service tests for 2 providers with auto-cleaning using multi
     And user of browser_emergency is idle for 25 seconds
 
     Then user of browser_emergency sees 20 B released size in cleaning report in Onepanel
-    And user of browser_unified sees file chunks for file "large_file.txt" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely filled
-    And user of browser_unified sees file chunks for file "20B-0.txt" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely empty
+    And user of browser_unified sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+    And user of browser_unified sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty

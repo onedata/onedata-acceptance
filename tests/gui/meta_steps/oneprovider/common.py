@@ -153,35 +153,37 @@ def assert_eviction_done(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) sees file chunks for file "
-        r'"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'
+        r"user of (?P<browser_id>.*) sees file chunks for files:\n(?P<desc>(.|\s)*)"
     )
 )
 def wt_assert_file_chunks(
     selenium: SeleniumDrivers,
     browser_id: str,
-    file_name: str,
     desc: str,
     tmp_memory: TmpMemory,
     hosts: Hosts,
 ) -> None:
+    parsed_desc = yaml.load(desc, yaml.Loader)
     option = "Data distribution"
     details_modal = "Details modal"
     tab = "Distribution"
     close_button = "X"
-    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
-    assert_tab_in_modal(selenium, browser_id, tab, details_modal)
-    _assert_file_chunks(selenium, browser_id, hosts, desc)
-    click_modal_button(selenium, browser_id, close_button, details_modal)
+    for file_name, file_desc in parsed_desc.items():
+        click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
+        click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+        assert_tab_in_modal(selenium, browser_id, tab, details_modal)
+        _assert_file_chunks(selenium, browser_id, hosts, file_desc)
+        click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _assert_file_chunks(
-    selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, desc: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    hosts: Hosts,
+    desc: dict[str, str],
 ) -> None:
-    parsed_desc = yaml.load(desc, yaml.Loader)
-    for provider, chunks in parsed_desc.items():
+    for provider, chunks in desc.items():
         if chunks == "entirely empty":
             assert_provider_chunk_in_data_distribution_empty(
                 selenium, browser_id, provider, hosts
