@@ -52,4 +52,4 @@ def screens() -> list[int]:
 
 
 scenarios("../features/oneprovider/transfers/transfers_file.feature")
-# scenarios("../features/oneprovider/transfers/transfers_basic.feature")
+scenarios("../features/oneprovider/transfers/transfers_basic.feature")
