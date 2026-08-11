@@ -9,12 +9,15 @@ from typing import Final
 from tests.demo_mode.steps import (
     assert_file_contents_are_distinct,
     assert_oneproviders_are_distinct,
+    assert_persistent_provider_state,
     assert_provider_rest_file_roundtrip,
     assert_rest_file_content,
     assert_space_support_is_isolated,
     create_space_for_provider,
     get_comprehensive_example_file_name,
     get_demo_access_token,
+    get_oneprovider_id,
+    upload_rest_file,
 )
 from tests.demo_mode.utils.common import (
     FIRST_ONEPROVIDER_CONTAINER_NAME,
@@ -25,6 +28,53 @@ FIRST_DISTRIBUTED_SPACE_NAME: Final = "demo-mode-first-provider-space"
 SECOND_DISTRIBUTED_SPACE_NAME: Final = "demo-mode-second-provider-space"
 COMPREHENSIVE_DEMO_SPACE_ID: Final = "cb274b2b8bb1750d9be37dd4a3eb7014chb175"
 COMPREHENSIVE_FILE_CONTENT: Final = b"hello world\\n"
+PERSISTENCE_SPACE_NAME: Final = "demo-mode-persistence-space"
+
+
+def create_persistence_state(
+    release: str,
+    file_content: bytes,
+) -> tuple[str, str, str, str]:
+    """Create and return state that must survive a demo-mode restart."""
+    access_token = get_demo_access_token(release)
+    provider_id = get_oneprovider_id(FIRST_ONEPROVIDER_CONTAINER_NAME, release)
+    space_id = create_space_for_provider(
+        FIRST_ONEPROVIDER_CONTAINER_NAME,
+        PERSISTENCE_SPACE_NAME,
+        access_token,
+    )
+    file_name = upload_rest_file(
+        FIRST_ONEPROVIDER_CONTAINER_NAME,
+        space_id,
+        access_token,
+        file_content,
+    )
+    return access_token, provider_id, space_id, file_name
+
+
+def assert_persistence_state(
+    release: str,
+    file_content: bytes,
+    access_token: str,
+    provider_id: str,
+    space_id: str,
+    file_name: str,
+) -> None:
+    """Assert that demo credentials, configuration, and data survived restart."""
+    restarted_access_token = get_demo_access_token(release)
+    assert restarted_access_token == access_token, (
+        "Demo access token changed after restart: "
+        f"expected {access_token!r}, got {restarted_access_token!r}"
+    )
+    assert_persistent_provider_state(
+        FIRST_ONEPROVIDER_CONTAINER_NAME,
+        release,
+        provider_id,
+        space_id,
+        file_name,
+        file_content,
+        access_token,
+    )
 
 
 def assert_rest_file_roundtrip(release: str, file_content: bytes) -> None:

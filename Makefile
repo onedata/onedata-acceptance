@@ -138,7 +138,9 @@ test_demo_mode:
 	@test -z "${SCENARIO}" || test -f "${DEMO_MODE_TEST_PATH}" || (echo "Unknown demo-mode scenario: ${SCENARIO}"; exit 2)
 	docker run --rm -i --network=host \
 	 -e PYTHONDONTWRITEBYTECODE=1 \
+	 -e DEMO_MODE_HOST_TMP=/demo-mode-host-tmp \
 	 -v $(CURDIR):$(CURDIR):ro \
+	 -v /tmp:/demo-mode-host-tmp \
 	 -v /var/run/docker.sock:/var/run/docker.sock \
 	 -w $(CURDIR) ${ACCEPTANCE_TEST_IMAGE} \
 	 python3 -m pytest --color=yes -p no:cacheprovider -rs -s -v \

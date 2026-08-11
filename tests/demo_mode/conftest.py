@@ -10,6 +10,10 @@ import pytest
 from _pytest.config.argparsing import Parser
 
 from tests.demo_mode.utils.common import remove_demo_containers
+from tests.demo_mode.utils.persistence import (
+    prepare_demo_persistence,
+    remove_demo_persistence,
+)
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -30,3 +34,12 @@ def cleanup_demo_containers(request: pytest.FixtureRequest) -> None:
     remove_demo_containers()
     request.addfinalizer(remove_demo_containers)
     print(flush=True)
+
+
+@pytest.fixture
+def isolated_persistence_directories(
+    request: pytest.FixtureRequest,
+) -> None:
+    """Own and clean the fixed host paths used by persistence commands."""
+    request.addfinalizer(remove_demo_persistence)
+    prepare_demo_persistence()

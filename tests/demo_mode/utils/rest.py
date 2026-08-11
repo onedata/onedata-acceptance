@@ -280,6 +280,30 @@ def _remove_file(
     )
 
 
+def upload_file(
+    provider_container: str,
+    space_id: str,
+    access_token: str,
+    content: bytes,
+) -> str:
+    """Upload a file that remains available for later assertions."""
+    file_name = f"demo-mode-rest-{uuid4().hex}.txt"
+    file_path = get_provider_rest_path("data", space_id, "path", file_name)
+    _upload_file(provider_container, file_path, access_token, content)
+    return file_name
+
+
+def download_file(
+    provider_container: str,
+    space_id: str,
+    file_name: str,
+    access_token: str,
+) -> bytes:
+    """Download an existing file without removing it."""
+    file_path = get_provider_rest_path("data", space_id, "path", file_name)
+    return _download_file(provider_container, file_path, access_token)
+
+
 def download_and_remove_file(
     provider_container: str,
     access_token: str,
@@ -303,11 +327,19 @@ def upload_and_download_file(
     """Upload a temporary text file through REST and download its content."""
     if space_id is None:
         space_id = get_or_create_supported_space(access_token, provider_container)
-    file_name = f"demo-mode-rest-{uuid4().hex}.txt"
+    file_name = upload_file(
+        provider_container,
+        space_id,
+        access_token,
+        content,
+    )
     file_path = get_provider_rest_path("data", space_id, "path", file_name)
-
-    _upload_file(provider_container, file_path, access_token, content)
     try:
-        return _download_file(provider_container, file_path, access_token)
+        return download_file(
+            provider_container,
+            space_id,
+            file_name,
+            access_token,
+        )
     finally:
         _remove_file(provider_container, file_path, access_token)
