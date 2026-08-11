@@ -6,13 +6,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from typing import Final, cast
+from urllib.parse import urlsplit
 from uuid import uuid4
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
-from tests.demo_mode.utils.common import (
-    FIRST_ONEPROVIDER_CONTAINER_NAME,
-    ONEZONE_CONTAINER_NAME,
-)
+from tests.demo_mode.utils.commands import get_onezone_url
+from tests.demo_mode.utils.common import FIRST_ONEPROVIDER_CONTAINER_NAME
 from tests.type_definitions import JsonObject
 from tests.utils.docker_utils import docker_ip
 from tests.utils.rest_utils import (
@@ -35,11 +34,39 @@ def _authorization_headers(access_token: str) -> dict[str, str]:
     return {"X-Auth-Token": access_token}
 
 
+def _get_onezone_rest_endpoint() -> tuple[str, int]:
+    onezone_url = get_onezone_url()
+    parsed_url = urlsplit(onezone_url)
+    has_disallowed_components = (
+        parsed_url.username is not None
+        or parsed_url.password is not None
+        or parsed_url.path not in ("", "/")
+        or bool(parsed_url.query)
+        or bool(parsed_url.fragment)
+    )
+    if (
+        parsed_url.scheme != "https"
+        or not parsed_url.hostname
+        or has_disallowed_components
+    ):
+        raise AssertionError(
+            f"The Onezone URL command returned an invalid URL: {onezone_url!r}"
+        )
+    try:
+        port = parsed_url.port or OZ_REST_PORT
+    except ValueError as error:
+        raise AssertionError(
+            f"The Onezone URL command returned an invalid URL: {onezone_url!r}"
+        ) from error
+    return parsed_url.hostname, port
+
+
 def get_onezone_configuration() -> JsonObject:
     """Get the public configuration exposed by the demo Onezone REST API."""
+    onezone_host, onezone_port = _get_onezone_rest_endpoint()
     response = http_get(
-        ip=docker_ip(ONEZONE_CONTAINER_NAME),
-        port=OZ_REST_PORT,
+        ip=onezone_host,
+        port=onezone_port,
         path=get_zone_rest_path("configuration"),
     )
     return cast(JsonObject, response.json())
@@ -70,9 +97,10 @@ def _list_accessible_space_ids(
 
 
 def _list_user_space_ids(access_token: str) -> list[str]:
+    onezone_host, onezone_port = _get_onezone_rest_endpoint()
     response = http_get(
-        ip=docker_ip(ONEZONE_CONTAINER_NAME),
-        port=OZ_REST_PORT,
+        ip=onezone_host,
+        port=onezone_port,
         path=get_zone_rest_path("user", "spaces"),
         headers=_authorization_headers(access_token),
     )
@@ -81,9 +109,10 @@ def _list_user_space_ids(access_token: str) -> list[str]:
 
 
 def _create_space(space_name: str, access_token: str) -> str:
+    onezone_host, onezone_port = _get_onezone_rest_endpoint()
     response = http_post(
-        ip=docker_ip(ONEZONE_CONTAINER_NAME),
-        port=OZ_REST_PORT,
+        ip=onezone_host,
+        port=onezone_port,
         path=get_zone_rest_path("user", "spaces"),
         headers=_authorization_headers(access_token),
         data=json.dumps({"name": space_name}),
@@ -110,9 +139,10 @@ def _list_onepanel_resource_ids(
 
 
 def _create_space_support_token(space_id: str, access_token: str) -> str:
+    onezone_host, onezone_port = _get_onezone_rest_endpoint()
     response = http_post(
-        ip=docker_ip(ONEZONE_CONTAINER_NAME),
-        port=OZ_REST_PORT,
+        ip=onezone_host,
+        port=onezone_port,
         path=get_zone_rest_path("spaces", space_id, "providers", "token"),
         headers=_authorization_headers(access_token),
     )

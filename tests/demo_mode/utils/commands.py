@@ -16,6 +16,7 @@ from tests.demo_mode.utils.logging import log_running_command
 DEMO_MODE_ROOT: Final = Path(__file__).resolve().parents[1]
 COMMANDS_ROOT: Final = DEMO_MODE_ROOT / "commands"
 RELEASE_PLACEHOLDER: Final = "xRELEASExVERSIONx"
+ONEZONE_URL_PREFIX: Final = "URL: "
 
 
 def command_path(relative_path: str) -> Path:
@@ -130,7 +131,7 @@ def wait_for_successful_command(
 
 
 def get_access_token(release: str) -> str:
-    command = load_command("access_token/get_oneprovider_token.sh", release)
+    command = load_command("common/get_oneprovider_token.sh", release)
     result = run_command(command, capture_output=True)
     if result.returncode != 0:
         raise AssertionError(
@@ -142,3 +143,25 @@ def get_access_token(release: str) -> str:
     if not access_token:
         raise AssertionError("The access-token command returned an empty result")
     return access_token
+
+
+def get_onezone_url() -> str:
+    """Run the common tutorial command and return its Onezone URL."""
+    command = command_path("common/get_onezone_url.sh").read_text(encoding="utf-8")
+    result = run_command(command, capture_output=True)
+    if result.returncode != 0:
+        raise AssertionError(
+            "The Onezone URL command failed with exit code "
+            f"{result.returncode}:\n{result.stderr}"
+        )
+
+    output_lines = result.stdout.splitlines()
+    if len(output_lines) != 1 or not output_lines[0].startswith(ONEZONE_URL_PREFIX):
+        raise AssertionError(
+            f"The Onezone URL command returned unexpected output: {result.stdout!r}"
+        )
+
+    onezone_url = output_lines[0].removeprefix(ONEZONE_URL_PREFIX)
+    if not onezone_url:
+        raise AssertionError("The Onezone URL command returned an empty URL")
+    return onezone_url
