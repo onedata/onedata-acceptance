@@ -92,31 +92,45 @@ def run_python_access_example(
     return result.stdout
 
 
-def get_comprehensive_example_file_name(command_output: str) -> str:
-    """Extract the created filename from comprehensive-example output."""
-    description = "Checking comprehensive example output"
+def assert_comprehensive_example_success_message_count(
+    output_lines: list[str],
+    command_output: str,
+) -> None:
+    """Assert that comprehensive-example output has one success message."""
+    description = "Checking comprehensive example success message"
     log_step_start(description)
 
-    output_lines = [
-        line
-        for line in command_output.splitlines()
-        if line.startswith("All done! Created a file called ")
-    ]
     assert len(output_lines) == 1, (
         "Expected one comprehensive-example success message, got "
         f"{output_lines!r} in output:\n{command_output}"
     )
-    message_parts = output_lines[0].split('"')
-    assert (
-        len(message_parts) >= 3
-    ), f"Could not extract a filename from: {output_lines[0]!r}"
-    file_name = message_parts[1]
+
+    log_step_done(description)
+
+
+def assert_comprehensive_example_message_contains_file_name(
+    message: str,
+    message_parts: list[str],
+) -> None:
+    """Assert that a comprehensive-example message contains a filename."""
+    description = "Checking comprehensive example filename message"
+    log_step_start(description)
+
+    assert len(message_parts) >= 3, f"Could not extract a filename from: {message!r}"
+
+    log_step_done(description)
+
+
+def assert_comprehensive_example_file_name(file_name: str) -> None:
+    """Assert that the comprehensive example created a text file."""
+    description = "Checking comprehensive example filename"
+    log_step_start(description)
+
     assert file_name.endswith(
         ".txt"
     ), f"Expected comprehensive example to create a .txt file, got {file_name!r}"
 
     log_step_done(description)
-    return file_name
 
 
 def assert_python_access_example_output(

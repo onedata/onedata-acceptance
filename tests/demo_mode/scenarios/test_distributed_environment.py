@@ -7,11 +7,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 
 from tests.demo_mode.meta_steps.environment import run_onezone_with_two_oneproviders
-from tests.demo_mode.steps.rest import (
+from tests.demo_mode.meta_steps.rest import (
     assert_oneproviders_are_distinct,
     assert_onezone_configuration,
-    assert_rest_file_content,
     assert_space_support_is_isolated,
+)
+from tests.demo_mode.steps.rest import (
+    assert_rest_file_content,
     create_space_for_provider,
     get_demo_access_token,
     upload_rest_file,

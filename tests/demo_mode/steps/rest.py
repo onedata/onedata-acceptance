@@ -20,22 +20,34 @@ from tests.demo_mode.utils.rest import (
     remove_file,
     upload_file,
 )
+from tests.type_definitions import JsonObject
 
 
-def assert_onezone_configuration(release: str, expected_name: str) -> None:
-    """Assert that Onezone exposes the expected public REST configuration."""
-    description = "Asserting Onezone configuration"
+def get_onezone_rest_configuration() -> JsonObject:
+    """Get Onezone's public REST configuration."""
+    return get_onezone_configuration()
+
+
+def assert_onezone_name(actual_name: object, expected_name: str) -> None:
+    """Assert that Onezone exposes the expected name."""
+    description = "Asserting Onezone name"
     log_step_start(description)
 
-    configuration = get_onezone_configuration()
-    onezone_name = configuration.get("name")
-    onezone_version = configuration.get("version")
     assert (
-        onezone_name == expected_name
-    ), f"Expected Onezone name {expected_name!r}, got {onezone_name!r}"
+        actual_name == expected_name
+    ), f"Expected Onezone name {expected_name!r}, got {actual_name!r}"
+
+    log_step_done(description)
+
+
+def assert_onezone_version(actual_version: object, expected_version: str) -> None:
+    """Assert that Onezone exposes the expected version."""
+    description = "Asserting Onezone version"
+    log_step_start(description)
+
     assert (
-        onezone_version == release
-    ), f"Expected Onezone version {release!r}, got {onezone_version!r}"
+        actual_version == expected_version
+    ), f"Expected Onezone version {expected_version!r}, got {actual_version!r}"
 
     log_step_done(description)
 
@@ -75,32 +87,49 @@ def assert_rest_file_content(
     log_step_done(description)
 
 
-def get_oneprovider_id(provider_container: str, release: str) -> str:
-    """Return the validated ID exposed by a Oneprovider."""
-    configuration = get_oneprovider_configuration(provider_container)
-    provider_id = configuration.get("providerId")
-    provider_version = configuration.get("version")
+def get_oneprovider_rest_configuration(provider_container: str) -> JsonObject:
+    """Get a Oneprovider's public REST configuration."""
+    return get_oneprovider_configuration(provider_container)
+
+
+def assert_oneprovider_id(provider_container: str, provider_id: object) -> None:
+    """Assert that a Oneprovider exposes a valid ID."""
+    description = f"Asserting {provider_container} ID"
+    log_step_start(description)
+
     assert isinstance(provider_id, str) and provider_id, (
         f"Expected {provider_container} to expose a non-empty provider ID, "
         f"got {provider_id!r}"
     )
-    assert (
-        provider_version == release
-    ), f"Expected {provider_container} version {release!r}, got {provider_version!r}"
-    return provider_id
+
+    log_step_done(description)
 
 
-def assert_oneproviders_are_distinct(
-    first_provider_container: str,
-    second_provider_container: str,
-    release: str,
+def assert_oneprovider_version(
+    provider_container: str,
+    actual_version: object,
+    expected_version: str,
 ) -> None:
-    """Assert that two containers expose distinct Oneprovider services."""
+    """Assert that a Oneprovider exposes the expected version."""
+    description = f"Asserting {provider_container} version"
+    log_step_start(description)
+
+    assert actual_version == expected_version, (
+        f"Expected {provider_container} version {expected_version!r}, got"
+        f" {actual_version!r}"
+    )
+
+    log_step_done(description)
+
+
+def assert_oneprovider_ids_are_distinct(
+    first_provider_id: str,
+    second_provider_id: str,
+) -> None:
+    """Assert that two Oneprovider IDs are distinct."""
     description = "Asserting Oneproviders are distinct"
     log_step_start(description)
 
-    first_provider_id = get_oneprovider_id(first_provider_container, release)
-    second_provider_id = get_oneprovider_id(second_provider_container, release)
     assert (
         first_provider_id != second_provider_id
     ), f"Distributed Oneproviders expose the same ID: {first_provider_id}"
@@ -161,29 +190,20 @@ def upload_rest_file(
     log_step_done(description)
 
 
-def assert_space_support_is_isolated(
-    first_provider_container: str,
-    first_space_id: str,
-    second_provider_container: str,
-    second_space_id: str,
+def assert_provider_does_not_support_space(
+    provider_container: str,
+    space_id: str,
     access_token: str,
 ) -> None:
-    """Assert that neither provider supports the other provider's space."""
-    description = "Asserting provider space support is isolated"
+    """Assert that a provider does not support a specific space."""
+    description = f"Asserting {provider_container} does not support {space_id}"
     log_step_start(description)
 
-    first_provider_spaces = get_provider_supported_space_ids(
-        first_provider_container,
-        access_token,
-    )
-    second_provider_spaces = get_provider_supported_space_ids(
-        second_provider_container,
+    supported_space_ids = get_provider_supported_space_ids(
+        provider_container,
         access_token,
     )
     assert (
-        first_space_id not in second_provider_spaces
-    ), "Second Oneprovider unexpectedly supports the first provider's test space"
-    assert (
-        second_space_id not in first_provider_spaces
-    ), "First Oneprovider unexpectedly supports the second provider's test space"
+        space_id not in supported_space_ids
+    ), f"{provider_container} unexpectedly supports space {space_id}"
     log_step_done(description)

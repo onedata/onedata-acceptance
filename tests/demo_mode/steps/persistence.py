@@ -9,7 +9,7 @@ from functools import partial
 
 import pytest
 
-from tests.demo_mode.steps.rest import get_oneprovider_id
+from tests.demo_mode.type_definitions import PersistentService
 from tests.demo_mode.utils.commands import (
     load_command,
     start_command,
@@ -17,7 +17,7 @@ from tests.demo_mode.utils.commands import (
     wait_for_successful_command,
 )
 from tests.demo_mode.utils.logging import log_step_done, log_step_start
-from tests.demo_mode.utils.rest import download_file, get_provider_supported_space_ids
+from tests.demo_mode.utils.rest import get_provider_supported_space_ids
 
 
 def _run_persistent_service(
@@ -25,8 +25,9 @@ def _run_persistent_service(
     command_path: str,
     await_command_path: str,
     release: str,
+    container_name: str,
     request: pytest.FixtureRequest,
-) -> subprocess.Popen[str]:
+) -> PersistentService:
     log_step_start(description)
 
     command = load_command(command_path, release)
@@ -35,30 +36,33 @@ def _run_persistent_service(
     wait_for_successful_command(load_command(await_command_path, release))
 
     log_step_done(description)
-    return process
+    return PersistentService(container_name=container_name, process=process)
 
 
 def run_persistent_onezone(
     release: str,
+    container_name: str,
     request: pytest.FixtureRequest,
-) -> subprocess.Popen[str]:
+) -> PersistentService:
     """Start Onezone using the unmodified persistence command."""
     return _run_persistent_service(
         "Running persistent Onezone",
         "persistency/run_onezone.sh",
         "run_in_background/await_onezone.sh",
         release,
+        container_name,
         request,
     )
 
 
 def run_persistent_oneprovider(
     release: str,
-    onezone_process: subprocess.Popen[str],
+    onezone: PersistentService,
+    container_name: str,
     request: pytest.FixtureRequest,
-) -> subprocess.Popen[str]:
+) -> PersistentService:
     """Start Oneprovider using the unmodified persistence command."""
-    if onezone_process.poll() is not None:
+    if onezone.process.poll() is not None:
         raise AssertionError("Onezone stopped before Oneprovider could be started")
 
     return _run_persistent_service(
@@ -66,27 +70,22 @@ def run_persistent_oneprovider(
         "persistency/run_oneprovider.sh",
         "run_in_background/await_oneprovider.sh",
         release,
+        container_name,
         request,
     )
 
 
 def stop_persistent_environment(
-    oneprovider_process: subprocess.Popen[str],
-    onezone_process: subprocess.Popen[str],
-    oneprovider_container: str,
-    onezone_container: str,
+    services: list[PersistentService],
     timeout: float = 60,
 ) -> None:
     """Gracefully stop and reap a persistent demo-mode environment."""
     description = "Stopping persistent demo-mode environment"
     log_step_start(description)
 
-    for container_name, process in (
-        (oneprovider_container, oneprovider_process),
-        (onezone_container, onezone_process),
-    ):
+    for service in services:
         result = subprocess.run(
-            ["docker", "stop", container_name],
+            ["docker", "stop", service.container_name],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
@@ -95,38 +94,62 @@ def stop_persistent_environment(
         )
         if result.returncode != 0:
             raise AssertionError(
-                f"Failed to stop {container_name} with exit code "
+                f"Failed to stop {service.container_name} with exit code "
                 f"{result.returncode}:\n{result.stdout}"
             )
         try:
-            process.wait(timeout=timeout)
+            service.process.wait(timeout=timeout)
         except subprocess.TimeoutExpired as error:
-            stop_command(process)
+            stop_command(service.process)
             raise AssertionError(
-                f"The command running {container_name} did not exit after Docker stop"
+                "The command running "
+                f"{service.container_name} did not exit after Docker stop"
             ) from error
 
     log_step_done(description)
 
 
-def assert_persistent_provider_state(
-    provider_container: str,
-    release: str,
-    expected_provider_id: str,
-    space_id: str,
-    file_name: str,
-    expected_content: bytes,
-    access_token: str,
+def assert_access_token_is_persistent(
+    expected_access_token: str,
+    actual_access_token: str,
 ) -> None:
-    """Assert provider configuration, support, and file data after a restart."""
-    description = f"Asserting persistent state through {provider_container}"
+    """Assert that the demo access token persisted across a restart."""
+    description = "Asserting demo access token persisted"
     log_step_start(description)
 
-    provider_id = get_oneprovider_id(provider_container, release)
-    assert provider_id == expected_provider_id, (
-        f"Expected provider ID {expected_provider_id!r} after restart, "
-        f"got {provider_id!r}"
+    assert actual_access_token == expected_access_token, (
+        "Demo access token changed after restart: "
+        f"expected {expected_access_token!r}, got {actual_access_token!r}"
     )
+
+    log_step_done(description)
+
+
+def assert_provider_id_is_persistent(
+    expected_provider_id: str,
+    actual_provider_id: str,
+) -> None:
+    """Assert that a provider ID persisted across a restart."""
+    description = "Asserting provider ID persisted"
+    log_step_start(description)
+
+    assert actual_provider_id == expected_provider_id, (
+        f"Expected provider ID {expected_provider_id!r} after restart, "
+        f"got {actual_provider_id!r}"
+    )
+
+    log_step_done(description)
+
+
+def assert_space_support_is_persistent(
+    provider_container: str,
+    space_id: str,
+    access_token: str,
+) -> None:
+    """Assert that provider space support persisted across a restart."""
+    description = f"Asserting space support persisted through {provider_container}"
+    log_step_start(description)
+
     supported_space_ids = get_provider_supported_space_ids(
         provider_container,
         access_token,
@@ -134,10 +157,5 @@ def assert_persistent_provider_state(
     assert (
         space_id in supported_space_ids
     ), f"Space {space_id} is no longer supported by {provider_container} after restart"
-    content = download_file(provider_container, space_id, file_name, access_token)
-    assert content == expected_content, (
-        f"{provider_container} returned {content!r} after restart, "
-        f"expected {expected_content!r}"
-    )
 
     log_step_done(description)
