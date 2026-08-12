@@ -14,18 +14,12 @@ from tempfile import mkdtemp
 import pytest
 
 from tests.demo_mode.utils.commands import command_path, load_command, run_command
-from tests.demo_mode.utils.logging import (
-    log_running_command,
-    log_step_done,
-    log_step_start,
-)
+from tests.demo_mode.utils.logging import log_running_command, log_step
 
 
+@log_step("Running comprehensive example")
 def run_comprehensive_example(release: str, timeout: float = 480) -> str:
     """Run the comprehensive example command and return its output."""
-    description = "Running comprehensive example"
-    log_step_start(description)
-
     command = load_command("comprehensive_example/example.sh", release)
     log_running_command(command)
     try:
@@ -39,18 +33,15 @@ def run_comprehensive_example(release: str, timeout: float = 480) -> str:
         f"{result.returncode}:\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
     )
 
-    log_step_done(description)
     return result.stdout
 
 
+@log_step("Running Python access example")
 def run_python_access_example(
     request: pytest.FixtureRequest,
     timeout: float = 480,
 ) -> str:
     """Prepare and run the Python access example in its generated venv."""
-    description = "Running Python access example"
-    log_step_start(description)
-
     environment_root = Path(mkdtemp(prefix="demo-mode-python-access-"))
     request.addfinalizer(partial(rmtree, environment_root, ignore_errors=True))
 
@@ -88,61 +79,44 @@ def run_python_access_example(
         f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
     )
 
-    log_step_done(description)
     return result.stdout
 
 
+@log_step("Checking comprehensive example success message")
 def assert_comprehensive_example_success_message_count(
     output_lines: list[str],
     command_output: str,
 ) -> None:
     """Assert that comprehensive-example output has one success message."""
-    description = "Checking comprehensive example success message"
-    log_step_start(description)
-
     assert len(output_lines) == 1, (
         "Expected one comprehensive-example success message, got "
         f"{output_lines!r} in output:\n{command_output}"
     )
 
-    log_step_done(description)
 
-
+@log_step("Checking comprehensive example filename message")
 def assert_comprehensive_example_message_contains_file_name(
     message: str,
     message_parts: list[str],
 ) -> None:
     """Assert that a comprehensive-example message contains a filename."""
-    description = "Checking comprehensive example filename message"
-    log_step_start(description)
-
     assert len(message_parts) >= 3, f"Could not extract a filename from: {message!r}"
 
-    log_step_done(description)
 
-
+@log_step("Checking comprehensive example filename")
 def assert_comprehensive_example_file_name(file_name: str) -> None:
     """Assert that the comprehensive example created a text file."""
-    description = "Checking comprehensive example filename"
-    log_step_start(description)
-
     assert file_name.endswith(
         ".txt"
     ), f"Expected comprehensive example to create a .txt file, got {file_name!r}"
 
-    log_step_done(description)
 
-
+@log_step("Checking Python access example output")
 def assert_python_access_example_output(
     command_output: str,
     expected_output: str,
 ) -> None:
     """Assert that the Python access example returned the expected output."""
-    description = "Checking Python access example output"
-    log_step_start(description)
-
     assert (
         command_output == expected_output
     ), f"Expected Python access output {expected_output!r}, got {command_output!r}"
-
-    log_step_done(description)

@@ -16,29 +16,26 @@ from tests.demo_mode.utils.commands import (
     stop_command,
     wait_for_successful_command,
 )
-from tests.demo_mode.utils.logging import log_step_done, log_step_start
+from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.rest import get_provider_supported_space_ids
 
 
 def _run_persistent_service(
-    description: str,
     command_path: str,
     await_command_path: str,
     release: str,
     container_name: str,
     request: pytest.FixtureRequest,
 ) -> PersistentService:
-    log_step_start(description)
-
     command = load_command(command_path, release)
     process = start_command(command)
     request.addfinalizer(partial(stop_command, process))
     wait_for_successful_command(load_command(await_command_path, release))
 
-    log_step_done(description)
     return PersistentService(container_name=container_name, process=process)
 
 
+@log_step("Running persistent Onezone")
 def run_persistent_onezone(
     release: str,
     container_name: str,
@@ -46,7 +43,6 @@ def run_persistent_onezone(
 ) -> PersistentService:
     """Start Onezone using the unmodified persistence command."""
     return _run_persistent_service(
-        "Running persistent Onezone",
         "persistency/run_onezone.sh",
         "run_in_background/await_onezone.sh",
         release,
@@ -55,6 +51,7 @@ def run_persistent_onezone(
     )
 
 
+@log_step("Running persistent Oneprovider")
 def run_persistent_oneprovider(
     release: str,
     onezone: PersistentService,
@@ -66,7 +63,6 @@ def run_persistent_oneprovider(
         raise AssertionError("Onezone stopped before Oneprovider could be started")
 
     return _run_persistent_service(
-        "Running persistent Oneprovider",
         "persistency/run_oneprovider.sh",
         "run_in_background/await_oneprovider.sh",
         release,
@@ -75,14 +71,12 @@ def run_persistent_oneprovider(
     )
 
 
+@log_step("Stopping persistent demo-mode environment")
 def stop_persistent_environment(
     services: list[PersistentService],
     timeout: float = 60,
 ) -> None:
     """Gracefully stop and reap a persistent demo-mode environment."""
-    description = "Stopping persistent demo-mode environment"
-    log_step_start(description)
-
     for service in services:
         result = subprocess.run(
             ["docker", "stop", service.container_name],
@@ -106,50 +100,38 @@ def stop_persistent_environment(
                 f"{service.container_name} did not exit after Docker stop"
             ) from error
 
-    log_step_done(description)
 
-
+@log_step("Asserting demo access token persisted")
 def assert_access_token_is_persistent(
     expected_access_token: str,
     actual_access_token: str,
 ) -> None:
     """Assert that the demo access token persisted across a restart."""
-    description = "Asserting demo access token persisted"
-    log_step_start(description)
-
     assert actual_access_token == expected_access_token, (
         "Demo access token changed after restart: "
         f"expected {expected_access_token!r}, got {actual_access_token!r}"
     )
 
-    log_step_done(description)
 
-
+@log_step("Asserting provider ID persisted")
 def assert_provider_id_is_persistent(
     expected_provider_id: str,
     actual_provider_id: str,
 ) -> None:
     """Assert that a provider ID persisted across a restart."""
-    description = "Asserting provider ID persisted"
-    log_step_start(description)
-
     assert actual_provider_id == expected_provider_id, (
         f"Expected provider ID {expected_provider_id!r} after restart, "
         f"got {actual_provider_id!r}"
     )
 
-    log_step_done(description)
 
-
+@log_step("Asserting provider space support persisted")
 def assert_space_support_is_persistent(
     provider_container: str,
     space_id: str,
     access_token: str,
 ) -> None:
     """Assert that provider space support persisted across a restart."""
-    description = f"Asserting space support persisted through {provider_container}"
-    log_step_start(description)
-
     supported_space_ids = get_provider_supported_space_ids(
         provider_container,
         access_token,
@@ -157,5 +139,3 @@ def assert_space_support_is_persistent(
     assert (
         space_id in supported_space_ids
     ), f"Space {space_id} is no longer supported by {provider_container} after restart"
-
-    log_step_done(description)

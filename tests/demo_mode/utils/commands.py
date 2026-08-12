@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import signal
 import subprocess
+from contextlib import suppress
 from pathlib import Path
 from time import monotonic, sleep
 from typing import Final
@@ -61,18 +62,14 @@ def stop_command(process: subprocess.Popen[str], timeout: float = 10) -> None:
     if process.poll() is not None:
         return
 
-    try:
+    with suppress(ProcessLookupError):
         os.killpg(os.getpgid(process.pid), signal.SIGTERM)
-    except ProcessLookupError:
-        pass
 
     try:
         process.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
-        try:
+        with suppress(ProcessLookupError):
             os.killpg(os.getpgid(process.pid), signal.SIGKILL)
-        except ProcessLookupError:
-            pass
         process.wait()
 
 

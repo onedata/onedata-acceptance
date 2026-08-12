@@ -13,21 +13,23 @@ from tests.demo_mode.steps.rest import (
     assert_onezone_name,
     assert_onezone_version,
     assert_provider_does_not_support_space,
-    get_oneprovider_rest_configuration,
-    get_onezone_rest_configuration,
+)
+from tests.demo_mode.utils.rest import (
+    get_oneprovider_configuration,
+    get_onezone_configuration,
 )
 
 
 def assert_onezone_configuration(release: str, expected_name: str) -> None:
     """Assert that Onezone exposes the expected public REST configuration."""
-    configuration = get_onezone_rest_configuration()
+    configuration = get_onezone_configuration()
     assert_onezone_name(configuration.get("name"), expected_name)
     assert_onezone_version(configuration.get("version"), release)
 
 
 def get_oneprovider_id(provider_container: str, release: str) -> str:
     """Return the validated ID exposed by a Oneprovider."""
-    configuration = get_oneprovider_rest_configuration(provider_container)
+    configuration = get_oneprovider_configuration(provider_container)
     provider_id = configuration.get("providerId")
     assert_oneprovider_id(provider_container, provider_id)
     assert_oneprovider_version(
