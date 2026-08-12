@@ -6,6 +6,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Final
 
+import pytest
+
 from tests.demo_mode.steps import (
     assert_file_contents_are_distinct,
     assert_oneproviders_are_distinct,
@@ -31,6 +33,7 @@ def create_persistence_state(
     release: str,
     file_content: bytes,
     provider_container: str,
+    request: pytest.FixtureRequest,
 ) -> tuple[str, str, str, str]:
     """Create and return state that must survive a demo-mode restart."""
     access_token = get_demo_access_token(release)
@@ -45,6 +48,7 @@ def create_persistence_state(
         space_id,
         access_token,
         file_content,
+        request,
     )
     return access_token, provider_id, space_id, file_name
 

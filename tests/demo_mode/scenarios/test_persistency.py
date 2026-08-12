@@ -11,6 +11,7 @@ from tests.demo_mode.meta_steps import (
     create_persistence_state,
 )
 from tests.demo_mode.steps import (
+    assert_onezone_configuration,
     run_persistent_oneprovider,
     run_persistent_onezone,
     stop_persistent_environment,
@@ -20,6 +21,7 @@ from tests.demo_mode.steps import (
 @pytest.mark.usefixtures("isolated_persistence_directories")
 def test_persistency(
     release: str,
+    onezone_name: str,
     onezone_container_name: str,
     first_oneprovider_container_name: str,
     request: pytest.FixtureRequest,
@@ -32,10 +34,12 @@ def test_persistency(
         onezone_process,
         request,
     )
+    assert_onezone_configuration(release, onezone_name)
     access_token, provider_id, space_id, file_name = create_persistence_state(
         release,
         test_file_content,
         first_oneprovider_container_name,
+        request,
     )
 
     stop_persistent_environment(
@@ -51,6 +55,7 @@ def test_persistency(
         restarted_onezone_process,
         request,
     )
+    assert_onezone_configuration(release, onezone_name)
     assert_persistence_state(
         release,
         test_file_content,

@@ -29,12 +29,12 @@ from tests.demo_mode.utils.logging import (
 )
 from tests.demo_mode.utils.rest import (
     create_and_support_space,
-    download_and_remove_file,
     download_file,
     get_oneprovider_configuration,
     get_onezone_configuration,
     get_provider_supported_space_ids,
     get_space_id,
+    remove_file,
     upload_and_download_file,
     upload_file,
 )
@@ -320,7 +320,7 @@ def run_python_access_example(
     return result.stdout
 
 
-def assert_onezone_configuration(release: str) -> None:
+def assert_onezone_configuration(release: str, expected_name: str) -> None:
     """Assert that Onezone exposes a valid public REST configuration."""
     description = "Asserting Onezone configuration"
     log_step_start(description)
@@ -329,8 +329,8 @@ def assert_onezone_configuration(release: str) -> None:
     onezone_name = onezone_configuration.get("name")
     onezone_version = onezone_configuration.get("version")
     assert (
-        isinstance(onezone_name, str) and onezone_name
-    ), f"Expected a non-empty Onezone name, got {onezone_name!r}"
+        onezone_name == expected_name
+    ), f"Expected Onezone name {expected_name!r}, got {onezone_name!r}"
     assert (
         onezone_version == release
     ), f"Expected Onezone version {release!r}, got {onezone_version!r}"
@@ -382,15 +382,15 @@ def assert_rest_file_content(
     file_name: str,
     expected_content: bytes,
 ) -> None:
-    """Download, verify, and remove an existing file through REST."""
+    """Download and verify an existing file through REST."""
     description = f"Checking {file_name} through {provider_container}"
     log_step_start(description)
 
-    downloaded_content = download_and_remove_file(
+    downloaded_content = download_file(
         provider_container,
-        access_token,
         space_id,
         file_name,
+        access_token,
     )
     assert downloaded_content == expected_content, (
         f"{provider_container} returned {downloaded_content!r}, "
@@ -490,9 +490,10 @@ def upload_rest_file(
     space_id: str,
     access_token: str,
     content: bytes,
+    request: pytest.FixtureRequest,
 ) -> str:
-    """Upload a REST file without removing it after the request."""
-    description = f"Uploading persistent file through {provider_container}"
+    """Upload a REST file and schedule its removal after the test."""
+    description = f"Uploading file through {provider_container}"
     log_step_start(description)
 
     file_name = upload_file(
@@ -500,6 +501,15 @@ def upload_rest_file(
         space_id,
         access_token,
         content,
+    )
+    request.addfinalizer(
+        partial(
+            remove_file,
+            provider_container,
+            space_id,
+            file_name,
+            access_token,
+        )
     )
 
     log_step_done(description)

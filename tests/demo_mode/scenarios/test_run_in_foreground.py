@@ -19,6 +19,8 @@ from tests.demo_mode.steps import (
 
 def test_run_in_foreground(
     release: str,
+    onezone_name: str,
+    demo_space_name: str,
     first_oneprovider_container_name: str,
     request: pytest.FixtureRequest,
 ) -> None:
@@ -27,12 +29,12 @@ def test_run_in_foreground(
     onezone_process = run_onezone(release, request)
     run_oneprovider(release, onezone_process, request)
 
-    assert_onezone_configuration(release)
+    assert_onezone_configuration(release, onezone_name)
 
     access_token = get_demo_access_token(release)
     space_id = get_rest_space_id(
         first_oneprovider_container_name,
-        "demo-space",
+        demo_space_name,
         access_token,
     )
     file_name = upload_rest_file(
@@ -40,6 +42,7 @@ def test_run_in_foreground(
         space_id,
         access_token,
         test_file_content,
+        request,
     )
     assert_rest_file_content(
         first_oneprovider_container_name,

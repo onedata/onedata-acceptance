@@ -69,3 +69,9 @@ def remove_container(name: str) -> None:
             stdout=subprocess.DEVNULL,
             check=True,
         )
+
+
+def remove_containers(container_names: list[str]) -> None:
+    """Force-remove Docker containers with the specified names."""
+    for container_name in container_names:
+        remove_container(container_name)

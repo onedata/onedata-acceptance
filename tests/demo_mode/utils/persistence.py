@@ -9,7 +9,7 @@ from pathlib import Path
 from shutil import rmtree
 from typing import Final
 
-from tests.demo_mode.utils.common import remove_demo_containers
+from tests.utils.docker_utils import remove_containers
 
 HOST_TMP_ENVIRONMENT_VARIABLE: Final = "DEMO_MODE_HOST_TMP"
 PERSISTENCE_DIRECTORY_NAMES: Final = ("oz-pers", "op-pers", "op-storage")
@@ -61,9 +61,9 @@ def _assert_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:
     return existing_paths, marker, marker_exists
 
 
-def remove_demo_persistence(demo_container_names: tuple[str, ...]) -> None:
+def remove_demo_persistence(container_names: list[str]) -> None:
     """Remove containers and all bind-mounted state owned by the persistence test."""
-    remove_demo_containers(demo_container_names)
+    remove_containers(container_names)
     existing_paths, marker, marker_exists = _assert_test_owns_existing_paths()
 
     for path in existing_paths:
@@ -80,8 +80,8 @@ def remove_demo_persistence(demo_container_names: tuple[str, ...]) -> None:
     )
 
 
-def prepare_demo_persistence(demo_container_names: tuple[str, ...]) -> None:
+def prepare_demo_persistence(container_names: list[str]) -> None:
     """Reserve the clean fixed host paths used by persistence commands."""
-    remove_demo_persistence(demo_container_names)
+    remove_demo_persistence(container_names)
     marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
     marker.write_text(OWNERSHIP_MARKER_CONTENT, encoding="utf-8")

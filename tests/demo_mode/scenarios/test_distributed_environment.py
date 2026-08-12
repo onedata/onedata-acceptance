@@ -17,6 +17,7 @@ from tests.demo_mode.steps import (
 
 def test_distributed_environment(
     release: str,
+    onezone_name: str,
     first_oneprovider_container_name: str,
     second_oneprovider_container_name: str,
     request: pytest.FixtureRequest,
@@ -30,7 +31,7 @@ def test_distributed_environment(
         second_oneprovider_container_name,
         request,
     )
-    assert_onezone_configuration(release)
+    assert_onezone_configuration(release, onezone_name)
     assert_distributed_rest_file_roundtrips(
         release,
         b"Data stored through the first Oneprovider\n",

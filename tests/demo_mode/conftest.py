@@ -13,11 +13,11 @@ import pytest
 from _pytest.config.argparsing import Parser
 from urllib3.exceptions import InsecureRequestWarning
 
-from tests.demo_mode.utils.common import remove_demo_containers
 from tests.demo_mode.utils.persistence import (
     prepare_demo_persistence,
     remove_demo_persistence,
 )
+from tests.utils.docker_utils import remove_containers
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -31,6 +31,16 @@ def pytest_addoption(parser: Parser) -> None:
 @pytest.fixture
 def release(request: pytest.FixtureRequest) -> str:
     return cast(str, request.config.getoption("release"))
+
+
+@pytest.fixture
+def onezone_name() -> str:
+    return "Demo Onezone"
+
+
+@pytest.fixture
+def demo_space_name() -> str:
+    return "demo-space"
 
 
 @pytest.fixture
@@ -49,16 +59,16 @@ def second_oneprovider_container_name() -> str:
 
 
 @pytest.fixture
-def demo_container_names(
+def container_names(
     first_oneprovider_container_name: str,
     second_oneprovider_container_name: str,
     onezone_container_name: str,
-) -> tuple[str, ...]:
-    return (
+) -> list[str]:
+    return [
         first_oneprovider_container_name,
         second_oneprovider_container_name,
         onezone_container_name,
-    )
+    ]
 
 
 @pytest.fixture(autouse=True)
@@ -72,18 +82,18 @@ def suppress_unverified_https_warning() -> Iterator[None]:
 @pytest.fixture(autouse=True)
 def cleanup_demo_containers(
     request: pytest.FixtureRequest,
-    demo_container_names: tuple[str, ...],
+    container_names: list[str],
 ) -> None:
-    remove_demo_containers(demo_container_names)
-    request.addfinalizer(partial(remove_demo_containers, demo_container_names))
+    remove_containers(container_names)
+    request.addfinalizer(partial(remove_containers, container_names))
     print(flush=True)
 
 
 @pytest.fixture
 def isolated_persistence_directories(
     request: pytest.FixtureRequest,
-    demo_container_names: tuple[str, ...],
+    container_names: list[str],
 ) -> None:
     """Own and clean the fixed host paths used by persistence commands."""
-    request.addfinalizer(partial(remove_demo_persistence, demo_container_names))
-    prepare_demo_persistence(demo_container_names)
+    request.addfinalizer(partial(remove_demo_persistence, container_names))
+    prepare_demo_persistence(container_names)

@@ -13,8 +13,12 @@ from tests.demo_mode.steps import (
 )
 
 
-def test_python_access(release: str, request: pytest.FixtureRequest) -> None:
-    expected_output = "['demo-space']\nTEST\n"
+def test_python_access(
+    release: str,
+    demo_space_name: str,
+    request: pytest.FixtureRequest,
+) -> None:
+    expected_output = f"['{demo_space_name}']\nTEST\n"
 
     onezone_process = run_onezone(release, request)
     run_oneprovider(release, onezone_process, request)
