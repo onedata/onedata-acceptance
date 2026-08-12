@@ -11,7 +11,6 @@ from uuid import uuid4
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.demo_mode.utils.commands import get_onezone_url
-from tests.demo_mode.utils.common import FIRST_ONEPROVIDER_CONTAINER_NAME
 from tests.type_definitions import JsonObject
 from tests.utils.docker_utils import docker_ip
 from tests.utils.rest_utils import (
@@ -86,14 +85,21 @@ def _list_accessible_space_ids(
     provider_container: str,
     access_token: str,
 ) -> list[str]:
+    spaces = _list_accessible_spaces(provider_container, access_token)
+    return [cast(str, space["spaceId"]) for space in spaces]
+
+
+def _list_accessible_spaces(
+    provider_container: str,
+    access_token: str,
+) -> list[JsonObject]:
     response = http_get(
         ip=docker_ip(provider_container),
         port=OP_REST_PORT,
         path=get_provider_rest_path("spaces"),
         headers=_authorization_headers(access_token),
     )
-    spaces = cast(list[JsonObject], response.json())
-    return [cast(str, space["spaceId"]) for space in spaces]
+    return cast(list[JsonObject], response.json())
 
 
 def _list_user_space_ids(access_token: str) -> list[str]:
@@ -238,6 +244,24 @@ def get_provider_supported_space_ids(
     )
 
 
+def get_space_id(
+    provider_container: str,
+    space_name: str,
+    access_token: str,
+) -> str:
+    """Return the ID of an accessible space with the requested name."""
+    matching_space_ids = [
+        cast(str, space["spaceId"])
+        for space in _list_accessible_spaces(provider_container, access_token)
+        if space.get("name") == space_name
+    ]
+    assert len(matching_space_ids) == 1, (
+        f"Expected exactly one accessible space named {space_name!r} through "
+        f"{provider_container}, got {len(matching_space_ids)}"
+    )
+    return matching_space_ids[0]
+
+
 def create_and_support_space(
     provider_container: str,
     space_name: str,
@@ -251,7 +275,7 @@ def create_and_support_space(
 
 def get_or_create_supported_space(
     access_token: str,
-    provider_container: str = FIRST_ONEPROVIDER_CONTAINER_NAME,
+    provider_container: str,
 ) -> str:
     """Return a supported space, creating and supporting one when needed."""
     supported_space_ids = get_provider_supported_space_ids(
@@ -351,7 +375,7 @@ def download_and_remove_file(
 def upload_and_download_file(
     access_token: str,
     content: bytes,
-    provider_container: str = FIRST_ONEPROVIDER_CONTAINER_NAME,
+    provider_container: str,
     space_id: str | None = None,
 ) -> bytes:
     """Upload a temporary text file through REST and download its content."""

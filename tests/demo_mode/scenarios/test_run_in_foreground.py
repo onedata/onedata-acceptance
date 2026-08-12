@@ -6,18 +6,45 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.demo_mode.meta_steps import assert_rest_file_roundtrip
 from tests.demo_mode.steps import (
     assert_onezone_configuration,
+    assert_rest_file_content,
+    get_demo_access_token,
+    get_rest_space_id,
     run_oneprovider,
     run_onezone,
+    upload_rest_file,
 )
 
-TEST_FILE_CONTENT = b"Onedata demo-mode foreground REST test\n"
 
+def test_run_in_foreground(
+    release: str,
+    first_oneprovider_container_name: str,
+    request: pytest.FixtureRequest,
+) -> None:
+    test_file_content = b"Onedata demo-mode foreground REST test\n"
 
-def test_run_in_foreground(release: str, request: pytest.FixtureRequest) -> None:
     onezone_process = run_onezone(release, request)
     run_oneprovider(release, onezone_process, request)
+
     assert_onezone_configuration(release)
-    assert_rest_file_roundtrip(release, TEST_FILE_CONTENT)
+
+    access_token = get_demo_access_token(release)
+    space_id = get_rest_space_id(
+        first_oneprovider_container_name,
+        "demo-space",
+        access_token,
+    )
+    file_name = upload_rest_file(
+        first_oneprovider_container_name,
+        space_id,
+        access_token,
+        test_file_content,
+    )
+    assert_rest_file_content(
+        first_oneprovider_container_name,
+        access_token,
+        space_id,
+        file_name,
+        test_file_content,
+    )

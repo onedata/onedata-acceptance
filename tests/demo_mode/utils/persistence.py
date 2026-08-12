@@ -61,9 +61,9 @@ def _assert_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:
     return existing_paths, marker, marker_exists
 
 
-def remove_demo_persistence() -> None:
+def remove_demo_persistence(demo_container_names: tuple[str, ...]) -> None:
     """Remove containers and all bind-mounted state owned by the persistence test."""
-    remove_demo_containers()
+    remove_demo_containers(demo_container_names)
     existing_paths, marker, marker_exists = _assert_test_owns_existing_paths()
 
     for path in existing_paths:
@@ -80,8 +80,8 @@ def remove_demo_persistence() -> None:
     )
 
 
-def prepare_demo_persistence() -> None:
+def prepare_demo_persistence(demo_container_names: tuple[str, ...]) -> None:
     """Reserve the clean fixed host paths used by persistence commands."""
-    remove_demo_persistence()
+    remove_demo_persistence(demo_container_names)
     marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
     marker.write_text(OWNERSHIP_MARKER_CONTENT, encoding="utf-8")

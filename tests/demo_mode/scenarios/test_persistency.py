@@ -16,11 +16,16 @@ from tests.demo_mode.steps import (
     stop_persistent_environment,
 )
 
-TEST_FILE_CONTENT = b"Onedata demo-mode persistence REST test\n"
-
 
 @pytest.mark.usefixtures("isolated_persistence_directories")
-def test_persistency(release: str, request: pytest.FixtureRequest) -> None:
+def test_persistency(
+    release: str,
+    onezone_container_name: str,
+    first_oneprovider_container_name: str,
+    request: pytest.FixtureRequest,
+) -> None:
+    test_file_content = b"Onedata demo-mode persistence REST test\n"
+
     onezone_process = run_persistent_onezone(release, request)
     oneprovider_process = run_persistent_oneprovider(
         release,
@@ -29,10 +34,16 @@ def test_persistency(release: str, request: pytest.FixtureRequest) -> None:
     )
     access_token, provider_id, space_id, file_name = create_persistence_state(
         release,
-        TEST_FILE_CONTENT,
+        test_file_content,
+        first_oneprovider_container_name,
     )
 
-    stop_persistent_environment(oneprovider_process, onezone_process)
+    stop_persistent_environment(
+        oneprovider_process,
+        onezone_process,
+        first_oneprovider_container_name,
+        onezone_container_name,
+    )
 
     restarted_onezone_process = run_persistent_onezone(release, request)
     run_persistent_oneprovider(
@@ -42,7 +53,8 @@ def test_persistency(release: str, request: pytest.FixtureRequest) -> None:
     )
     assert_persistence_state(
         release,
-        TEST_FILE_CONTENT,
+        test_file_content,
+        first_oneprovider_container_name,
         access_token,
         provider_id,
         space_id,

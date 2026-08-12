@@ -22,11 +22,6 @@ from tests.demo_mode.utils.commands import (
     stop_command,
     wait_for_successful_command,
 )
-from tests.demo_mode.utils.common import (
-    FIRST_ONEPROVIDER_CONTAINER_NAME,
-    ONEZONE_CONTAINER_NAME,
-    SECOND_ONEPROVIDER_CONTAINER_NAME,
-)
 from tests.demo_mode.utils.logging import (
     log_running_command,
     log_step_done,
@@ -39,6 +34,7 @@ from tests.demo_mode.utils.rest import (
     get_oneprovider_configuration,
     get_onezone_configuration,
     get_provider_supported_space_ids,
+    get_space_id,
     upload_and_download_file,
     upload_file,
 )
@@ -97,6 +93,8 @@ def run_persistent_oneprovider(
 def stop_persistent_environment(
     oneprovider_process: subprocess.Popen[str],
     onezone_process: subprocess.Popen[str],
+    oneprovider_container: str,
+    onezone_container: str,
     timeout: float = 60,
 ) -> None:
     """Gracefully stop and reap a persistent demo-mode environment."""
@@ -104,8 +102,8 @@ def stop_persistent_environment(
     log_step_start(description)
 
     for container_name, process in (
-        (FIRST_ONEPROVIDER_CONTAINER_NAME, oneprovider_process),
-        (ONEZONE_CONTAINER_NAME, onezone_process),
+        (oneprovider_container, oneprovider_process),
+        (onezone_container, onezone_process),
     ):
         result = subprocess.run(
             ["docker", "stop", container_name],
@@ -180,6 +178,7 @@ def run_second_oneprovider(
     release: str,
     onezone_process: subprocess.Popen[str],
     first_oneprovider_process: subprocess.Popen[str],
+    second_oneprovider_container: str,
     request: pytest.FixtureRequest,
 ) -> subprocess.Popen[str]:
     """Start the second Oneprovider and wait until it is ready."""
@@ -199,7 +198,7 @@ def run_second_oneprovider(
     request.addfinalizer(partial(stop_command, process))
 
     wait_for_successful_command(
-        f"docker exec {SECOND_ONEPROVIDER_CONTAINER_NAME} await-demo"
+        f"docker exec {second_oneprovider_container} await-demo"
     )
 
     log_step_done(description)
@@ -467,6 +466,21 @@ def create_space_for_provider(
         space_name,
         access_token,
     )
+    log_step_done(description)
+    return space_id
+
+
+def get_rest_space_id(
+    provider_container: str,
+    space_name: str,
+    access_token: str,
+) -> str:
+    """Get the ID of an existing space accessible through REST."""
+    description = f"Getting {space_name} ID through {provider_container}"
+    log_step_start(description)
+
+    space_id = get_space_id(provider_container, space_name, access_token)
+
     log_step_done(description)
     return space_id
 

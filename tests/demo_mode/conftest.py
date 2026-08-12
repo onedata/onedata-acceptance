@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import warnings
 from collections.abc import Iterator
+from functools import partial
 from typing import cast
 
 import pytest
@@ -32,6 +33,34 @@ def release(request: pytest.FixtureRequest) -> str:
     return cast(str, request.config.getoption("release"))
 
 
+@pytest.fixture
+def onezone_container_name() -> str:
+    return "oz_test"
+
+
+@pytest.fixture
+def first_oneprovider_container_name() -> str:
+    return "op_test1"
+
+
+@pytest.fixture
+def second_oneprovider_container_name() -> str:
+    return "op_test2"
+
+
+@pytest.fixture
+def demo_container_names(
+    first_oneprovider_container_name: str,
+    second_oneprovider_container_name: str,
+    onezone_container_name: str,
+) -> tuple[str, ...]:
+    return (
+        first_oneprovider_container_name,
+        second_oneprovider_container_name,
+        onezone_container_name,
+    )
+
+
 @pytest.fixture(autouse=True)
 def suppress_unverified_https_warning() -> Iterator[None]:
     """Suppress the expected warning for demo services' self-signed certificates."""
@@ -41,16 +70,20 @@ def suppress_unverified_https_warning() -> Iterator[None]:
 
 
 @pytest.fixture(autouse=True)
-def cleanup_demo_containers(request: pytest.FixtureRequest) -> None:
-    remove_demo_containers()
-    request.addfinalizer(remove_demo_containers)
+def cleanup_demo_containers(
+    request: pytest.FixtureRequest,
+    demo_container_names: tuple[str, ...],
+) -> None:
+    remove_demo_containers(demo_container_names)
+    request.addfinalizer(partial(remove_demo_containers, demo_container_names))
     print(flush=True)
 
 
 @pytest.fixture
 def isolated_persistence_directories(
     request: pytest.FixtureRequest,
+    demo_container_names: tuple[str, ...],
 ) -> None:
     """Own and clean the fixed host paths used by persistence commands."""
-    request.addfinalizer(remove_demo_persistence)
-    prepare_demo_persistence()
+    request.addfinalizer(partial(remove_demo_persistence, demo_container_names))
+    prepare_demo_persistence(demo_container_names)

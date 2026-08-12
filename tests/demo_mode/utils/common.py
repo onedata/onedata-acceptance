@@ -4,21 +4,10 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Final
-
 from tests.utils.docker_utils import remove_container
 
-ONEZONE_CONTAINER_NAME: Final = "oz_test"
-FIRST_ONEPROVIDER_CONTAINER_NAME: Final = "op_test1"
-SECOND_ONEPROVIDER_CONTAINER_NAME: Final = "op_test2"
-DEMO_CONTAINER_NAMES: Final = (
-    FIRST_ONEPROVIDER_CONTAINER_NAME,
-    SECOND_ONEPROVIDER_CONTAINER_NAME,
-    ONEZONE_CONTAINER_NAME,
-)
 
-
-def remove_demo_containers() -> None:
+def remove_demo_containers(container_names: tuple[str, ...]) -> None:
     """Remove containers left by a current or interrupted demo-mode test."""
-    for container_name in DEMO_CONTAINER_NAMES:
+    for container_name in container_names:
         remove_container(container_name)

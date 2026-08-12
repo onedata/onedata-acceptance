@@ -11,7 +11,14 @@ from tests.demo_mode.steps import (
 )
 
 
-def test_comprehensive_example(release: str) -> None:
+def test_comprehensive_example(
+    release: str,
+    first_oneprovider_container_name: str,
+) -> None:
     command_output = run_comprehensive_example(release)
     assert_onezone_configuration(release)
-    assert_comprehensive_example(release, command_output)
+    assert_comprehensive_example(
+        release,
+        command_output,
+        first_oneprovider_container_name,
+    )
