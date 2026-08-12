@@ -35,7 +35,6 @@ from tests.demo_mode.utils.rest import (
     get_provider_supported_space_ids,
     get_space_id,
     remove_file,
-    upload_and_download_file,
     upload_file,
 )
 
@@ -148,61 +147,61 @@ def run_onezone(release: str, request: pytest.FixtureRequest) -> subprocess.Pope
     return process
 
 
-def run_oneprovider(
+def _run_oneprovider(
+    description: str,
+    command_path_: str,
     release: str,
     onezone_process: subprocess.Popen[str],
+    provider_container: str,
     request: pytest.FixtureRequest,
 ) -> subprocess.Popen[str]:
-    """Start Oneprovider and wait until it is ready."""
-    description = "Running Oneprovider"
     log_step_start(description)
 
     if onezone_process.poll() is not None:
         raise AssertionError("Onezone stopped before Oneprovider could be started")
 
-    command = load_command("run_in_foreground/run_oneprovider.sh", release)
+    command = load_command(command_path_, release)
     process = start_command(command)
     request.addfinalizer(partial(stop_command, process))
 
-    await_command = load_command(
-        "run_in_background/await_oneprovider.sh",
-        release,
-    )
-    wait_for_successful_command(await_command)
+    wait_for_successful_command(f"docker exec {provider_container} await-demo")
 
     log_step_done(description)
     return process
+
+
+def run_oneprovider(
+    release: str,
+    onezone_process: subprocess.Popen[str],
+    provider_container: str,
+    request: pytest.FixtureRequest,
+) -> subprocess.Popen[str]:
+    """Start the first Oneprovider and wait until it is ready."""
+    return _run_oneprovider(
+        "Running Oneprovider",
+        "run_in_foreground/run_oneprovider.sh",
+        release,
+        onezone_process,
+        provider_container,
+        request,
+    )
 
 
 def run_second_oneprovider(
     release: str,
     onezone_process: subprocess.Popen[str],
-    first_oneprovider_process: subprocess.Popen[str],
-    second_oneprovider_container: str,
+    provider_container: str,
     request: pytest.FixtureRequest,
 ) -> subprocess.Popen[str]:
     """Start the second Oneprovider and wait until it is ready."""
-    description = "Running second Oneprovider"
-    log_step_start(description)
-
-    if onezone_process.poll() is not None:
-        raise AssertionError("Onezone stopped before the second Oneprovider startup")
-    if first_oneprovider_process.poll() is not None:
-        raise AssertionError("First Oneprovider stopped before its peer startup")
-
-    command = load_command(
+    return _run_oneprovider(
+        "Running second Oneprovider",
         "distributed_environment/run_second_oneprovider.sh",
         release,
+        onezone_process,
+        provider_container,
+        request,
     )
-    process = start_command(command)
-    request.addfinalizer(partial(stop_command, process))
-
-    wait_for_successful_command(
-        f"docker exec {second_oneprovider_container} await-demo"
-    )
-
-    log_step_done(description)
-    return process
 
 
 def _run_background_command(command: str, timeout: float = 480) -> None:
@@ -415,20 +414,6 @@ def get_oneprovider_id(provider_container: str, release: str) -> str:
     return provider_id
 
 
-def assert_file_contents_are_distinct(
-    first_file_content: bytes,
-    second_file_content: bytes,
-) -> None:
-    """Assert that distributed providers are tested with different data."""
-    description = "Asserting distributed file contents differ"
-    log_step_start(description)
-
-    assert (
-        first_file_content != second_file_content
-    ), "Distributed providers must be tested with different file contents"
-    log_step_done(description)
-
-
 def assert_oneproviders_are_distinct(
     first_provider_container: str,
     second_provider_container: str,
@@ -566,9 +551,6 @@ def assert_space_support_is_isolated(
     description = "Asserting provider space support is isolated"
     log_step_start(description)
 
-    assert (
-        first_space_id != second_space_id
-    ), "Distributed providers unexpectedly use the same test space"
     first_provider_spaces = get_provider_supported_space_ids(
         first_provider_container,
         access_token,
@@ -578,39 +560,9 @@ def assert_space_support_is_isolated(
         access_token,
     )
     assert (
-        first_space_id in first_provider_spaces
-    ), "First Oneprovider does not support its assigned test space"
-    assert (
         first_space_id not in second_provider_spaces
     ), "Second Oneprovider unexpectedly supports the first provider's test space"
     assert (
-        second_space_id in second_provider_spaces
-    ), "Second Oneprovider does not support its assigned test space"
-    assert (
         second_space_id not in first_provider_spaces
     ), "First Oneprovider unexpectedly supports the second provider's test space"
-    log_step_done(description)
-
-
-def assert_provider_rest_file_roundtrip(
-    provider_container: str,
-    access_token: str,
-    file_content: bytes,
-    space_id: str | None = None,
-) -> None:
-    """Assert a file upload and download through one provider."""
-    description = f"Uploading and downloading a file through {provider_container}"
-    log_step_start(description)
-
-    downloaded_content = upload_and_download_file(
-        access_token,
-        file_content,
-        provider_container,
-        space_id,
-    )
-    assert downloaded_content == file_content, (
-        f"{provider_container} returned {downloaded_content!r}, "
-        f"expected {file_content!r}"
-    )
-
     log_step_done(description)

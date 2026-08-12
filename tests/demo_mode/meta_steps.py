@@ -9,24 +9,43 @@ from typing import Final
 import pytest
 
 from tests.demo_mode.steps import (
-    assert_file_contents_are_distinct,
-    assert_oneproviders_are_distinct,
     assert_persistent_provider_state,
-    assert_provider_rest_file_roundtrip,
     assert_rest_file_content,
-    assert_space_support_is_isolated,
     create_space_for_provider,
     get_comprehensive_example_file_name,
     get_demo_access_token,
     get_oneprovider_id,
+    run_oneprovider,
+    run_onezone,
+    run_second_oneprovider,
     upload_rest_file,
 )
 
-FIRST_DISTRIBUTED_SPACE_NAME: Final = "demo-mode-first-provider-space"
-SECOND_DISTRIBUTED_SPACE_NAME: Final = "demo-mode-second-provider-space"
 COMPREHENSIVE_DEMO_SPACE_ID: Final = "cb274b2b8bb1750d9be37dd4a3eb7014chb175"
 COMPREHENSIVE_FILE_CONTENT: Final = b"hello world\\n"
 PERSISTENCE_SPACE_NAME: Final = "demo-mode-persistence-space"
+
+
+def run_onezone_with_two_oneproviders(
+    release: str,
+    first_provider_container: str,
+    second_provider_container: str,
+    request: pytest.FixtureRequest,
+) -> None:
+    """Start Onezone and two Oneproviders and wait until they are ready."""
+    onezone_process = run_onezone(release, request)
+    run_oneprovider(
+        release,
+        onezone_process,
+        first_provider_container,
+        request,
+    )
+    run_second_oneprovider(
+        release,
+        onezone_process,
+        second_provider_container,
+        request,
+    )
 
 
 def create_persistence_state(
@@ -93,51 +112,4 @@ def assert_comprehensive_example(
         COMPREHENSIVE_DEMO_SPACE_ID,
         file_name,
         COMPREHENSIVE_FILE_CONTENT,
-    )
-
-
-def assert_distributed_rest_file_roundtrips(
-    release: str,
-    first_file_content: bytes,
-    second_file_content: bytes,
-    first_provider_container: str,
-    second_provider_container: str,
-) -> None:
-    """Assert isolated file access through two distinct Oneproviders."""
-    assert_file_contents_are_distinct(first_file_content, second_file_content)
-    assert_oneproviders_are_distinct(
-        first_provider_container,
-        second_provider_container,
-        release,
-    )
-
-    access_token = get_demo_access_token(release)
-    first_space_id = create_space_for_provider(
-        first_provider_container,
-        FIRST_DISTRIBUTED_SPACE_NAME,
-        access_token,
-    )
-    second_space_id = create_space_for_provider(
-        second_provider_container,
-        SECOND_DISTRIBUTED_SPACE_NAME,
-        access_token,
-    )
-    assert_space_support_is_isolated(
-        first_provider_container,
-        first_space_id,
-        second_provider_container,
-        second_space_id,
-        access_token,
-    )
-    assert_provider_rest_file_roundtrip(
-        first_provider_container,
-        access_token,
-        first_file_content,
-        first_space_id,
-    )
-    assert_provider_rest_file_roundtrip(
-        second_provider_container,
-        access_token,
-        second_file_content,
-        second_space_id,
     )

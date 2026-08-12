@@ -24,7 +24,6 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.utils import repeat_failed
 
-TEST_SPACE_NAME: Final = "demo-mode-rest-space"
 SPACE_SUPPORT_SIZE: Final = 1024**3
 SPACE_APPEARANCE_TIMEOUT: Final = 60.0
 
@@ -100,18 +99,6 @@ def _list_accessible_spaces(
         headers=_authorization_headers(access_token),
     )
     return cast(list[JsonObject], response.json())
-
-
-def _list_user_space_ids(access_token: str) -> list[str]:
-    onezone_host, onezone_port = _get_onezone_rest_endpoint()
-    response = http_get(
-        ip=onezone_host,
-        port=onezone_port,
-        path=get_zone_rest_path("user", "spaces"),
-        headers=_authorization_headers(access_token),
-    )
-    response_body = cast(JsonObject, response.json())
-    return cast(list[str], response_body["spaces"])
 
 
 def _create_space(space_name: str, access_token: str) -> str:
@@ -207,15 +194,6 @@ def _support_space(
     )
 
 
-def _get_or_create_user_space(access_token: str) -> str:
-    user_space_ids = _list_user_space_ids(access_token)
-    return (
-        user_space_ids[0]
-        if user_space_ids
-        else _create_space(TEST_SPACE_NAME, access_token)
-    )
-
-
 @repeat_failed(
     timeout=SPACE_APPEARANCE_TIMEOUT,
     interval=1,
@@ -269,23 +247,6 @@ def create_and_support_space(
 ) -> str:
     """Create a new user space and support it with the selected provider."""
     space_id = _create_space(space_name, access_token)
-    _support_space(provider_container, space_id, access_token)
-    return _wait_for_accessible_space(provider_container, space_id, access_token)
-
-
-def get_or_create_supported_space(
-    access_token: str,
-    provider_container: str,
-) -> str:
-    """Return a supported space, creating and supporting one when needed."""
-    supported_space_ids = get_provider_supported_space_ids(
-        provider_container,
-        access_token,
-    )
-    if supported_space_ids:
-        return supported_space_ids[0]
-
-    space_id = _get_or_create_user_space(access_token)
     _support_space(provider_container, space_id, access_token)
     return _wait_for_accessible_space(provider_container, space_id, access_token)
 
@@ -367,29 +328,3 @@ def remove_file(
     """Remove an existing file."""
     file_path = get_provider_rest_path("data", space_id, "path", file_name)
     _remove_file(provider_container, file_path, access_token)
-
-
-def upload_and_download_file(
-    access_token: str,
-    content: bytes,
-    provider_container: str,
-    space_id: str | None = None,
-) -> bytes:
-    """Upload a temporary text file through REST and download its content."""
-    if space_id is None:
-        space_id = get_or_create_supported_space(access_token, provider_container)
-    file_name = upload_file(
-        provider_container,
-        space_id,
-        access_token,
-        content,
-    )
-    try:
-        return download_file(
-            provider_container,
-            space_id,
-            file_name,
-            access_token,
-        )
-    finally:
-        remove_file(provider_container, space_id, file_name, access_token)
