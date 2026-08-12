@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 from typing import Final, cast
 from urllib.parse import urlsplit
-from uuid import uuid4
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.demo_mode.utils.commands import get_onezone_url
@@ -298,14 +297,13 @@ def _remove_file(
 def upload_file(
     provider_container: str,
     space_id: str,
+    file_name: str,
     access_token: str,
     content: bytes,
-) -> str:
+) -> None:
     """Upload a file that remains available for later assertions."""
-    file_name = f"demo-mode-rest-{uuid4().hex}.txt"
     file_path = get_provider_rest_path("data", space_id, "path", file_name)
     _upload_file(provider_container, file_path, access_token, content)
-    return file_name
 
 
 def download_file(

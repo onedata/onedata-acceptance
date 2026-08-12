@@ -138,15 +138,16 @@ def get_rest_space_id(
 def upload_rest_file(
     provider_container: str,
     space_id: str,
+    file_name: str,
     access_token: str,
     content: bytes,
     request: pytest.FixtureRequest,
-) -> str:
+) -> None:
     """Upload a REST file and schedule its removal after the test."""
     description = f"Uploading file through {provider_container}"
     log_step_start(description)
 
-    file_name = upload_file(provider_container, space_id, access_token, content)
+    upload_file(provider_container, space_id, file_name, access_token, content)
     request.addfinalizer(
         partial(
             remove_file,
@@ -158,7 +159,6 @@ def upload_rest_file(
     )
 
     log_step_done(description)
-    return file_name
 
 
 def assert_space_support_is_isolated(

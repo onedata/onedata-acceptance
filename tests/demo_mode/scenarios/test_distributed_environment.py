@@ -25,7 +25,9 @@ def test_distributed_environment(
     second_oneprovider_container_name: str,
     request: pytest.FixtureRequest,
 ) -> None:
+    first_file_name = "first-provider-rest-test.txt"
     first_file_content = b"Data stored through the first Oneprovider\n"
+    second_file_name = "second-provider-rest-test.txt"
     second_file_content = b"Data stored through the second Oneprovider\n"
 
     run_onezone_with_two_oneproviders(
@@ -61,9 +63,10 @@ def test_distributed_environment(
         access_token,
     )
 
-    first_file_name = upload_rest_file(
+    upload_rest_file(
         first_oneprovider_container_name,
         first_space_id,
+        first_file_name,
         access_token,
         first_file_content,
         request,
@@ -75,9 +78,10 @@ def test_distributed_environment(
         first_file_name,
         first_file_content,
     )
-    second_file_name = upload_rest_file(
+    upload_rest_file(
         second_oneprovider_container_name,
         second_space_id,
+        second_file_name,
         access_token,
         second_file_content,
         request,

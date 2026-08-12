@@ -22,6 +22,7 @@ def create_persistence_state(
     request: pytest.FixtureRequest,
 ) -> tuple[str, str, str, str]:
     """Create and return state that must survive a demo-mode restart."""
+    file_name = "persistence-rest-test.txt"
     access_token = get_demo_access_token(release)
     provider_id = get_oneprovider_id(provider_container, release)
     space_id = create_space_for_provider(
@@ -29,9 +30,10 @@ def create_persistence_state(
         "demo-mode-persistence-space",
         access_token,
     )
-    file_name = upload_rest_file(
+    upload_rest_file(
         provider_container,
         space_id,
+        file_name,
         access_token,
         file_content,
         request,
