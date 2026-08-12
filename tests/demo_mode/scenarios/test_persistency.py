@@ -6,16 +6,16 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.demo_mode.meta_steps import (
+from tests.demo_mode.meta_steps.persistence import (
     assert_persistence_state,
     create_persistence_state,
 )
-from tests.demo_mode.steps import (
-    assert_onezone_configuration,
+from tests.demo_mode.steps.persistence import (
     run_persistent_oneprovider,
     run_persistent_onezone,
     stop_persistent_environment,
 )
+from tests.demo_mode.steps.rest import assert_onezone_configuration
 
 
 @pytest.mark.usefixtures("isolated_persistence_directories")

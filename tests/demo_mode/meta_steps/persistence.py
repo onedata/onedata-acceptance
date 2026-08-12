@@ -1,51 +1,18 @@
-"""Composite steps used by demo-mode tests."""
+"""Composite steps for persistent demo-mode state."""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Final
-
 import pytest
 
-from tests.demo_mode.steps import (
-    assert_persistent_provider_state,
-    assert_rest_file_content,
+from tests.demo_mode.steps.persistence import assert_persistent_provider_state
+from tests.demo_mode.steps.rest import (
     create_space_for_provider,
-    get_comprehensive_example_file_name,
     get_demo_access_token,
     get_oneprovider_id,
-    run_oneprovider,
-    run_onezone,
-    run_second_oneprovider,
     upload_rest_file,
 )
-
-COMPREHENSIVE_DEMO_SPACE_ID: Final = "cb274b2b8bb1750d9be37dd4a3eb7014chb175"
-COMPREHENSIVE_FILE_CONTENT: Final = b"hello world\\n"
-PERSISTENCE_SPACE_NAME: Final = "demo-mode-persistence-space"
-
-
-def run_onezone_with_two_oneproviders(
-    release: str,
-    first_provider_container: str,
-    second_provider_container: str,
-    request: pytest.FixtureRequest,
-) -> None:
-    """Start Onezone and two Oneproviders and wait until they are ready."""
-    onezone_process = run_onezone(release, request)
-    run_oneprovider(
-        release,
-        onezone_process,
-        first_provider_container,
-        request,
-    )
-    run_second_oneprovider(
-        release,
-        onezone_process,
-        second_provider_container,
-        request,
-    )
 
 
 def create_persistence_state(
@@ -59,7 +26,7 @@ def create_persistence_state(
     provider_id = get_oneprovider_id(provider_container, release)
     space_id = create_space_for_provider(
         provider_container,
-        PERSISTENCE_SPACE_NAME,
+        "demo-mode-persistence-space",
         access_token,
     )
     file_name = upload_rest_file(
@@ -95,21 +62,4 @@ def assert_persistence_state(
         file_name,
         file_content,
         access_token,
-    )
-
-
-def assert_comprehensive_example(
-    release: str,
-    command_output: str,
-    provider_container: str,
-) -> None:
-    """Assert the file created by the comprehensive example."""
-    file_name = get_comprehensive_example_file_name(command_output)
-    access_token = get_demo_access_token(release)
-    assert_rest_file_content(
-        provider_container,
-        access_token,
-        COMPREHENSIVE_DEMO_SPACE_ID,
-        file_name,
-        COMPREHENSIVE_FILE_CONTENT,
     )

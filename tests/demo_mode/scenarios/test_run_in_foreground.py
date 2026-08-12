@@ -6,13 +6,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.demo_mode.steps import (
+from tests.demo_mode.meta_steps.environment import run_onezone_with_oneprovider
+from tests.demo_mode.steps.rest import (
     assert_onezone_configuration,
     assert_rest_file_content,
     get_demo_access_token,
     get_rest_space_id,
-    run_oneprovider,
-    run_onezone,
     upload_rest_file,
 )
 
@@ -26,10 +25,8 @@ def test_run_in_foreground(
 ) -> None:
     test_file_content = b"Onedata demo-mode foreground REST test\n"
 
-    onezone_process = run_onezone(release, request)
-    run_oneprovider(
+    run_onezone_with_oneprovider(
         release,
-        onezone_process,
         first_oneprovider_container_name,
         request,
     )
