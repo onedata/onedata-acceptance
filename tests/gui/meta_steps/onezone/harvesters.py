@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onezone.harvesters.configuration import (
@@ -56,7 +55,6 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
@@ -231,7 +229,6 @@ def add_group_to_harvester(
         'in "{harvester_name}" harvester in Discovery page'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_in_harvester(
     selenium: SeleniumDrivers, browser_id: str, index_name: str, harvester_name: str
 ) -> None:
@@ -299,7 +296,6 @@ def send_invitation_token(
         r'"(?P<harvester_name>.*)" harvester:\n(?P<config>(.|\s)*)'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_privilege_config_in_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -339,7 +335,6 @@ def change_privilege_config_in_harvester(
         'to "{harvester_renamed}" in Onezone page'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def rename_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -441,7 +436,6 @@ def check_harvesting_process_in_harvester(
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_with_toggles_list(
     browser_id: str,
     selenium: SeleniumDrivers,
@@ -466,7 +460,6 @@ def create_index_with_toggles_list(
         ' on GUI plugin tab for "{harvester_name}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_indices_for_harvester(
     browser_id: str, selenium: SeleniumDrivers, index_name: str, harvester_name: str
 ) -> None:

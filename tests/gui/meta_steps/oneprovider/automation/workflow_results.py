@@ -12,7 +12,6 @@ import time
 from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -46,7 +45,6 @@ from tests.gui.utils.generic import parse_elements_sequence
 from tests.gui.utils.oneprovider.automation import WorkflowVisualiser
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 def get_store_details_json(
@@ -149,7 +147,6 @@ def compare_store_contents(
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def count_checksums_for_file(
     browser_id: str,
     tmp_memory: TmpMemory,

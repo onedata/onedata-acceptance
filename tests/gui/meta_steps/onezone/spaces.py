@@ -71,7 +71,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Copy" button on Add support page'))
@@ -98,7 +97,6 @@ def copy_support_token_from_add_support_page(
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(
     selenium: SeleniumDrivers,
     user: str,
@@ -155,7 +153,6 @@ def send_support_token_in_oz_using_gui(
     ),
     converters={"space_list": parse_elements_sequence},
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def leave_spaces_in_oz_using_gui(
     selenium: SeleniumDrivers, user: str, space_list: list[str]
 ) -> None:
@@ -447,7 +444,6 @@ def leave_user_spaces_in_onezone_using_rest(
         '"{space_name}" space using available harvesters dropdown'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_harvester_to_existing_space(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -484,7 +480,6 @@ def add_harvester_to_existing_space(
         r'"(?P<where_name>.*)" (?P<where>group|space) using available groups dropdown'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_space_or_group(
     browser_id: str,
     group_name: str,
@@ -520,7 +515,6 @@ def add_group_to_space_or_group(
 
 
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def copy_user_space_invite_token(
     browser_id: str, space_name: str, selenium: SeleniumDrivers
 ) -> None:

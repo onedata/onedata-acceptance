@@ -11,7 +11,6 @@ import time
 import yaml
 
 from tests import OP_REST_PORT
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import (
     wait_until_scanning_is_finished_in_storage_import_tab,
 )
@@ -59,7 +58,6 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -324,7 +322,6 @@ def assert_proper_space_configuration_in_op_panel_gui(
         "there are no spaces supported in Onepanel used by user of {browser_id}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def revoke_all_space_supports(
     selenium: SeleniumDrivers, browser_id: str, hosts: Hosts
 ) -> None:
@@ -382,7 +379,6 @@ def _revoke_all_space_supports_using_rest(
 
 
 @given(parsers.parse("there are no spaces supported by {provider_host} in Onepanel"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def g_revoke_all_space_supports_using_rest(
     selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
 ) -> None:
@@ -390,7 +386,6 @@ def g_revoke_all_space_supports_using_rest(
 
 
 @wt(parsers.parse("{provider_host} revokes all spaces support in Onepanel using REST"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_revoke_all_space_supports_using_rest(
     selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
 ) -> None:
@@ -403,7 +398,6 @@ def wt_revoke_all_space_supports_using_rest(
         "in auto-cleaning tab in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def set_quota_in_auto_cleaning(
     selenium: SeleniumDrivers, browser_id: str, quota: str, value: str
 ) -> None:

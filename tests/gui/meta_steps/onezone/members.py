@@ -29,8 +29,6 @@ from tests.gui.utils.onezone import OZLoggedIn
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.entities_setup.spaces import WAIT_FRONTEND
-from tests.utils.utils import repeat_failed
 
 
 def fail_to_set_privileges_using_op_gui(
@@ -134,7 +132,6 @@ def assert_group_in_space_using_op_gui(
     )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def _assert_message_and_bulk_edit_btn(
     members_page: MembersPage, expected_message: str
 ) -> None:

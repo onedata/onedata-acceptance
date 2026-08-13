@@ -11,7 +11,6 @@ import time
 
 import yaml
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
@@ -59,7 +58,6 @@ from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import ListElement, WhichBrowser, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 OPTION_IN_SPACE = "Datasets, Archives"
 DATASET_BROWSER = "dataset browser"
@@ -74,7 +72,6 @@ ARCHIVE_FILE_BROWSER = "archive file browser"
         "configuration:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive(
     browser_id: str,
     selenium: SeleniumDrivers,
@@ -125,7 +122,6 @@ def create_archive(
         " {follow_symbolic_links}:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive_with_follow_symbolic_link(
     browser_id: str,
     selenium: SeleniumDrivers,
@@ -245,7 +241,6 @@ def _create_archive(
         )
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def copy_archive_id_to_tmp_memory(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -538,7 +533,6 @@ def recall_archive_for_archive_in_op_gui(
     click_modal_button(selenium, browser_id, button_name, modal_name)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(
     browser_id: str,
     item_name: str,

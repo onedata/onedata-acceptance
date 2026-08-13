@@ -9,10 +9,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import yaml
-from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -25,7 +23,6 @@ from tests.gui.utils.common.modals.workflows_modals.function_pods_activity impor
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 def change_tab_in_function_pods_activity_modal(
@@ -43,11 +40,6 @@ def change_tab_in_function_pods_activity_modal(
         "user of {browser_id} waits for all pods to "
         'finish execution in modal "Function pods activity"'
     )
-)
-@repeat_failed(
-    interval=1,
-    timeout=180,
-    exceptions=(AssertionError, StaleElementReferenceException),
 )
 def wait_for_ongoing_pods_to_be_terminated(
     selenium: SeleniumDrivers, browser_id: str
@@ -84,7 +76,6 @@ def assert_lambda_name_in_tab_name(
         'in modal "Function pods activity"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> None:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).function_pods_activity
@@ -98,7 +89,6 @@ def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> 
         'modal "Function pods activity"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: str) -> None:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).function_pods_activity
@@ -125,7 +115,6 @@ def gather_events_list(
         r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_in_pods_monitor(
     selenium: SeleniumDrivers, browser_id: str, events: str, option: str
 ) -> None:
@@ -152,7 +141,6 @@ def assert_events_in_pods_monitor(
         r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_containing_lambda_name(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -246,7 +234,6 @@ def checks_events_for_task(
         '"{lane}" lane contains lambda name "{lambda_name}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_pod_name_for_task(
     selenium: SeleniumDrivers,
     browser_id: str,

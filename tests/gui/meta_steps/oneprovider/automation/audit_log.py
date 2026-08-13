@@ -20,7 +20,6 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import GUI_LOGDIR
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import (
     get_store_details_json,
     open_modal_and_get_store_content,
@@ -77,7 +76,6 @@ from tests.gui.utils.oneprovider.automation import Task, WorkflowLane
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
-from tests.utils.utils import repeat_failed
 
 
 class AuditLogDebugContent(TypedDict):
@@ -737,7 +735,6 @@ def wt_click_on_elem_in_store_details_modal(
     )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def check_if_element_is_selected(
     tmp_memory: TmpMemory, browser_id: str, name: str, which_browser: str
 ) -> None:
@@ -1179,7 +1176,6 @@ def assert_content_of_task_audit_log(
         pass
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_log_in_workflow_audit_log(
     driver: WebDriver, severity: str, source: str
 ) -> None:

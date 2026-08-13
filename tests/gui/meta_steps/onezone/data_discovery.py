@@ -12,7 +12,6 @@ from typing import cast
 
 import yaml
 
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     click_button_on_data_disc_page,
 )
@@ -21,7 +20,6 @@ from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils.onezone.data_discovery_page import ResultSample
 from tests.type_definitions import JsonObject, JsonValue, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -36,7 +34,6 @@ from tests.utils.utils import repeat_failed
         "data discovery page:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND * 4, interval=2)
 def assert_data_discovery_files(
     selenium: SeleniumDrivers, browser_id: str, config: str, spaces: dict[str, str]
 ) -> None:
@@ -161,7 +158,6 @@ def assert_not_files_properties(
         "data discovery page:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def see_files_with_order(
     selenium: SeleniumDrivers, browser_id: str, config: str
 ) -> None:
@@ -185,7 +181,6 @@ def go_to_source_of_file(
 
 
 @wt(parsers.parse("user of {browser_id} sees {number} files on data discovery page"))
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_files_on_data_disc(
     selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:

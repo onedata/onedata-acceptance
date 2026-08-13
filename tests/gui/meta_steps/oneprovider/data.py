@@ -15,7 +15,6 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import navigate_to_tab_in_op_using_gui
 from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_labeled_menu
@@ -87,7 +86,6 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(
@@ -645,7 +643,6 @@ def upload_file_to_op_gui(
         check_error_in_upload_presenter(selenium, browser_id)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_mtime_not_earlier_than_op_gui(
     path: str,
     mtime: str,
@@ -696,7 +693,6 @@ def go_to_path_(
     )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_path(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -1142,7 +1138,6 @@ def copy_object_id_to_tmp_memory(
         'content of downloaded file is equal to: "{content}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_and_press_enter_with_content_check(
     browser_id: str,
     item_name: str,

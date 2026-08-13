@@ -9,7 +9,6 @@ from typing import Optional
 
 from selenium.common.exceptions import StaleElementReferenceException
 
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
     assert_browser_in_tab_in_op,
@@ -63,7 +62,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 def open_permission_modal(
@@ -114,7 +112,6 @@ def _assert_posix_permissions(
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,

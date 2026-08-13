@@ -8,7 +8,6 @@ import json
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Popups
@@ -20,7 +19,6 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -35,7 +33,6 @@ from tests.utils.utils import repeat_failed
         "columns": parse_elements_sequence,
     },
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def select_columns_to_be_visible_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,

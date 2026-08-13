@@ -17,14 +17,6 @@ from tests.gui.utils.generic import (
 from tests.gui.utils.homepage.documentation import DocumentationPage, EndpointInfo
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
-
-# The docs timeout needs to be higher than the standard WAIT_FRONTEND,
-# because opening the docs page is a resource-consuming operation.
-# Additionally, waiting for the headers to expand or for the desired section
-# to become active also takes some time.
-DEFAULT_DOCS_TIMEOUT = 30
-
 
 SPACE_ENDPOINTS = {
     "Get space details": EndpointInfo.space("GET", "Get space details"),
@@ -114,7 +106,6 @@ FILE_DETAILS_ENDPOINTS = {
 }
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_sidebar_link_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, link: str
 ) -> None:
@@ -138,7 +129,6 @@ def assert_active_sidebar_link_in_docs_subpage(
         r' in "(?P<subpage>Docs|API)" subpage in documentation'
     )
 )
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_chapter_tab_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, chapter: str
 ) -> None:
@@ -155,7 +145,6 @@ def assert_active_chapter_tab_in_docs_subpage(
     ), f"Expected active chapter tab: {chapter}, but found: {active_tab}"
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_user_sees_name_in_header_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, name: str
 ) -> None:
@@ -167,7 +156,6 @@ def assert_user_sees_name_in_header_in_docs_subpage(
     ), f"Expected header: {name}, but found header: {page.current_header}"
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_docs_title_contains(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
@@ -184,7 +172,6 @@ def assert_docs_title_contains(
         "folders": parse_elements_sequence,
     },
 )
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_expanded_folders_in_sidebar_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, folders: list[str]
 ) -> None:

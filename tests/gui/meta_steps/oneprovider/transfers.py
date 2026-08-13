@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import replicate_files_to_providers
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
@@ -35,7 +34,6 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -86,7 +84,6 @@ def open_transfer_page_by_clicking_on_link(
         'user of {browser_id} evicts file "{file_name}" from provider {provider}'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def evict_file(
     selenium: SeleniumDrivers,
     browser_id: str,

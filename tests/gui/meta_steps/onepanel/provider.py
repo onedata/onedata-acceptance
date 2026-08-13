@@ -11,7 +11,7 @@ import time
 
 import yaml
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -52,7 +52,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -222,7 +221,6 @@ def register_provider_in_op_using_gui(
         r"(?P<by>by user of|by) (?P<browser_id>.+?) in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -259,7 +257,6 @@ def change_provider_name_if_name_is_different_than_given(
         'is of status "{status}"'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_cluster_ones3_node_status_rest(
     hosts: Hosts,
     provider: str,

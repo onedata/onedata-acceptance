@@ -15,7 +15,6 @@ from _pytest._py.path import LocalPath
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import (
     assert_lambda_exists,
@@ -39,7 +38,6 @@ from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 ALL_LAMBDA_NAMES = []
 
@@ -169,7 +167,6 @@ def _create_lambda_manually(
         '"{docker_image}" docker image in "{inventory}" inventory'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_lambda_using_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -242,7 +239,6 @@ def change_parameter_type_in_lambda_form(
         r'of "(?P<param_type>.*)" type'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_parameter_into_lambda_form(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -395,13 +391,11 @@ def download_and_remove_lambda_dump_from_inventory(
     click_modal_button(selenium, browser_id, option_unlink, modal)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_lambda_menu(driver: WebDriver, lambda_name: str) -> None:
     page = OZLoggedIn(driver).automation
     page.lambdas_page.lambdas_list[lambda_name].lambda_menu.click()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_lambda_menu(driver: WebDriver, option: str) -> None:
     Popups(driver).menu_popup_with_label.menu[option].click()
 

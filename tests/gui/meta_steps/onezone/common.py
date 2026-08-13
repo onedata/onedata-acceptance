@@ -12,7 +12,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
 from tests.gui.steps.common.login import (
     login_using_basic_auth,
@@ -45,7 +44,6 @@ from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 @given(
@@ -111,7 +109,6 @@ def login_using_gui(
     login_using_basic_auth(selenium, login_ids, user_list, users, host_list)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def visit_op(selenium: SeleniumDrivers, browser_id: str, provider_name: str) -> None:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
@@ -122,7 +119,6 @@ def visit_op(selenium: SeleniumDrivers, browser_id: str, provider_name: str) -> 
     click_visit_provider(driver)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_visit_provider(driver: WebDriver) -> None:
     Popups(driver).provider_map_popover.visit_provider()
 
@@ -152,7 +148,6 @@ def g_wt_visit_op(
         "providers_list": parse_elements_sequence,
     },
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def g_visit_op(
     selenium: SeleniumDrivers,
     browser_id_list: list[str],
@@ -172,7 +167,6 @@ def g_visit_op(
         "providers_list": parse_elements_sequence,
     },
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_visit_op(
     selenium: SeleniumDrivers,
     browser_id_list: list[str],
@@ -294,7 +288,6 @@ def search_for_members(
 
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone page"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
 
@@ -312,7 +305,6 @@ def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None
 
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone Emergency panel"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def logout_from_onezone_emergency_panel(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
@@ -329,7 +321,6 @@ def logout_from_onezone_emergency_panel(
 
 
 @wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_username(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -351,7 +342,6 @@ def change_username(
 
 
 @wt(parsers.parse("user of {browser_id} changes {username} password to {new_password}"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_password(
     selenium: SeleniumDrivers,
     browser_id: str,

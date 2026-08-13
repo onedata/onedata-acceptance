@@ -12,7 +12,6 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
@@ -43,7 +42,6 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 def open_initial_modal(data_type: str, driver: WebDriver) -> None:
@@ -132,7 +130,6 @@ def choose_group_as_initial_workflow_value_for_store(
     _select_groups_from_select_groups_modal(driver, group_list)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def _select_groups_from_select_groups_modal(
     driver: WebDriver, group_list: str | list[str]
 ) -> None:
@@ -212,10 +209,6 @@ def choose_file_as_initial_workflow_value(
         r" (?P<option>start|finish)"
     )
 )
-@repeat_failed(
-    interval=1,
-    timeout=360,
-)
 def wait_for_workflows_in_automation_subpage(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
@@ -227,11 +220,6 @@ def wait_for_workflows_in_automation_subpage(
         r"user of (?P<browser_id>.*) waits extended time for "
         r"all workflows to (?P<option>start|finish)"
     )
-)
-@repeat_failed(
-    interval=1,
-    timeout=1500,
-    exceptions=(AssertionError, StaleElementReferenceException),
 )
 def wait_for_workflows_in_automation_subpage_extended_time(
     selenium: SeleniumDrivers, browser_id: str, option: str

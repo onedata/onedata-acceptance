@@ -50,7 +50,6 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
 from tests.utils.user_utils import User
-from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
@@ -186,7 +185,6 @@ def remove_all_storages_named(
     )
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def _remove_storage_in_op_panel_using_rest(
     storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
 ) -> None:
@@ -268,7 +266,6 @@ def get_first_storage_id_by_name(
     )[0]
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def _add_storage_in_op_panel_using_rest(
     config: str,
     storage_name: str,
