@@ -473,6 +473,12 @@ class OnedataService(Enum):
     ONES3 = "ones3"
 
 
+class TransferState(Enum):
+    ENDED = "ended"
+    ONGOING = "ongoing"
+    WAITING = "waiting"
+
+
 class SpecialDir(Enum):
     ARCHIVE_DIR = "archive directory"
     DATASET_ARCHIVES_DIR = "dataset archives directory"
