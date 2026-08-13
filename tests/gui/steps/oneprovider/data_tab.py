@@ -498,16 +498,23 @@ def upload_files_to_cwd_in_data_tab_extended_wait(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload local file "{file_path}" to remote current dir'
-    )
+    parsers.re(
+        r"user of (?P<browser_id>\w+) uses upload button from file browser "
+        rf"menu bar to upload local files? (?P<file_paths>{ELEMENTS_SEQUENCE_PATTERN})"
+        r" to remote current dir"
+    ),
+    converters={
+        "file_paths": parse_elements_sequence,
+    },
 )
-def upload_file_to_cwd_in_data_tab(
-    selenium: SeleniumDrivers, browser_id: str, file_path: str, tmpdir: LocalPath
+def upload_files_to_cwd_in_data_tab(
+    selenium: SeleniumDrivers, browser_id: str, file_paths: list[str], tmpdir: LocalPath
 ) -> None:
-    upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path, tmpdir)
-    wait_for_file_upload_to_finish(selenium, browser_id)
+    for file_path in file_paths:
+        upload_file_to_cwd_in_data_tab_no_waiting(
+            selenium, browser_id, file_path, tmpdir
+        )
+        wait_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -517,7 +524,7 @@ def upload_file_to_cwd_in_data_tab(
         '"{directory_path}" to remote current dir'
     )
 )
-def upload_files_to_cwd_in_data_tab(
+def upload_directory_files_to_cwd_in_data_tab(
     selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
 ) -> None:
     upload_files_to_cwd_in_data_tab_no_waiting(

@@ -19,7 +19,7 @@ from tests.gui.meta_steps.oneprovider.transfers import (
     wait_for_all_transfers_to_start_and_finish,
 )
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
-from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
+from tests.gui.steps.oneprovider.data_tab import upload_files_to_cwd_in_data_tab
 from tests.gui.steps.oneprovider.transfers import assert_ended_first_transfer
 from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.transfers import (
@@ -229,6 +229,6 @@ def upload_file_to_provider_browser(
 ) -> None:
     if client.lower() == "web gui":
         wt_visit_file_browser(selenium, [provider], [space], [user], tmp_memory, hosts)
-        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
+        upload_files_to_cwd_in_data_tab(selenium, user, [path], tmpdir)
     else:
         raise NoSuchClientException(f"Client {client} not found")

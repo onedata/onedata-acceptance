@@ -175,9 +175,7 @@ Feature: Oneprovider transfers files functionality
 
   Scenario: User replicates multiple selected files to remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
-    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser uses upload button from file browser menu bar to upload local file "file1.txt" to remote current dir
-    And user of browser uses upload button from file browser menu bar to upload local file "file2.txt" to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local files ["large_file.txt", "file1.txt", "file2.txt"] to remote current dir
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
 
