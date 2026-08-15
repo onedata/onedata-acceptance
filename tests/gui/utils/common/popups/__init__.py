@@ -12,7 +12,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
-from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Label,
     WebElementsSequence,
@@ -57,9 +56,15 @@ from .workflow_creation_alert import WorkflowCreationAlert
 from .workflow_menu import WorkflowMenu
 
 
-class AlertPopups(PageObject):
-    info = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
-    success = WebItemsSequence(".alert-success", cls=AlertInfoPopup)
+class AlertPopups:
+    info = WebItemsSequence(".ember-notify-cn .alert-info", cls=AlertInfoPopup)
+    success = WebItemsSequence(".ember-notify-cn .alert-success", cls=AlertInfoPopup)
+
+    def __init__(self, driver: WebDriver) -> None:
+        self.driver = self.web_elem = driver
+
+    def __str__(self) -> str:
+        return "alert popups"
 
     def get_all_alert_popups(self) -> list[AlertInfoPopup]:
         return [
@@ -166,10 +171,9 @@ class Popups:
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
 
-    alert_popups = WebItem(".ember-notify-cn", cls=AlertPopups)
-
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
+        self.alert_popups = AlertPopups(driver)
 
     def __str__(self) -> str:
         return "popups"
