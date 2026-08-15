@@ -90,16 +90,15 @@ def remove_member_from_parent(
     Popups(driver).menu_popup_with_text.menu["Remove this member"]()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(driver).remove_modal.remove()
+
     for popup_enum in (AlertPopup.MEMBER_ADDED, AlertPopup.GROUP_REMOVED_FROM_CLUSTER):
-        try:
-            popup = Popups(driver).alert_popups.get_alert_popup(popup_enum)
+        popup = Popups(driver).alert_popups.get_alert_popup(popup_enum)
+        if popup is not None:
             wait_till_alert_popup_or_error_modal_disappear(
                 selenium,
                 popup.web_elem,
                 lambda _, current_popup=popup: current_popup.close,  # type: ignore[misc]
             )
-        except RuntimeError:
-            pass
 
 
 def fail_to_set_privileges_using_op_gui(

@@ -6,9 +6,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+import time
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -65,12 +67,14 @@ class AlertPopups(PageObject):
             *self.success,
         ]
 
-    def get_alert_popup(self, alert_popup: AlertPopupBase) -> AlertInfoPopup:
+    def get_alert_popup(self, alert_popup: AlertPopupBase) -> AlertInfoPopup | None:
         regexp = re.compile(alert_popup.message)
-        for popup in self.get_all_alert_popups():
-            if regexp.match(popup.message):
-                return popup
-        raise RuntimeError(f'No alert popup with message "{alert_popup.message}"')
+        for _ in range(10):
+            for popup in self.get_all_alert_popups():
+                if regexp.match(popup.message):
+                    return popup
+            time.sleep(0.1)
+        return None
 
 
 class Popups:
