@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 import time
 
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -72,12 +73,24 @@ class AlertPopups:
             *self.success,
         ]
 
-    def get_alert_popup(self, alert_popup: AlertPopupBase) -> AlertInfoPopup | None:
+    def find_alert_popup(self, alert_popup: AlertPopupBase) -> AlertInfoPopup | None:
+        """Return the currently displayed alert matching the expected message."""
         regexp = re.compile(alert_popup.message)
-        for _ in range(10):
-            for popup in self.get_all_alert_popups():
+        for popup in self.get_all_alert_popups():
+            try:
                 if regexp.match(popup.message):
                     return popup
+            except StaleElementReferenceException:
+                # Alert popups disappear automatically. Ignore elements that
+                # vanish while their messages are being read.
+                continue
+        return None
+
+    def get_alert_popup(self, alert_popup: AlertPopupBase) -> AlertInfoPopup | None:
+        for _ in range(10):
+            popup = self.find_alert_popup(alert_popup)
+            if popup is not None:
+                return popup
             time.sleep(0.1)
         return None
 

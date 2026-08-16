@@ -337,7 +337,7 @@ def wait_till_alert_popup_or_error_modal_disappear(
     web_elem_or_selector: WebElementOrSelector,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    if not wait_for_element_to_appear(driver, web_elem_or_selector, WAIT_FRONTEND):
+    if not wait_for_element_to_appear(driver, web_elem_or_selector, WAIT_FRONTEND // 4):
         return False
     web_elem_or_locator = get_web_elem_or_locator(web_elem_or_selector)
 
@@ -360,12 +360,21 @@ def close_alert_popup_if_present(
     if alert_popup is None:
         return False
 
-    get_close_button = lambda _: alert_popup.close
-    return wait_till_alert_popup_or_error_modal_disappear(
-        driver,
-        popup.css_sel,
-        get_close_button,
+    def close_matching_popup() -> None:
+        current_popup = Popups(driver).alert_popups.find_alert_popup(popup)
+        if current_popup is not None:
+            current_popup.close.click()
+
+    try_click_without_throwing_error(close_matching_popup)
+
+    def is_popup_closed(driver: WebDriver) -> bool:
+        return Popups(driver).alert_popups.find_alert_popup(popup) is None
+
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        is_popup_closed,
+        message=f'Alert popup matching "{popup.message}" is still visible',
     )
+    return True
 
 
 def parse_size(size: str) -> float:
