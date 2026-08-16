@@ -712,8 +712,10 @@ def try_setting_privileges_in_members_subpage(
             click_button_on_element_header_in_members_and_wait(
                 selenium, browser_id, button, where, tree
             )
-            close_alert_popup_if_present(selenium[browser_id], AlertPopup.PRIVILEGES_SAVED)
-            
+            close_alert_popup_if_present(
+                selenium[browser_id], AlertPopup.PRIVILEGES_SAVED
+            )
+
         else:
             assert (
                 not result
