@@ -387,6 +387,7 @@ def send_invitation_token(
         member,
     )
     copy_token_from_modal(selenium, browser_id1)
+    close_alert_popup_if_present(selenium[browser_id1], AlertPopup.SUCCESSFULLY_COPIED)
     close_modal(selenium, browser_id1, modal)
     send_copied_item_to_other_users(
         browser_id1, item_type, [browser_id2], tmp_memory, displays, clipboard

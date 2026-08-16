@@ -78,6 +78,7 @@ def invite_user_to_cluster(
 
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
     close_modal(selenium, browser_id, modal)
     send_copied_item_to_other_users(
         browser_id, item_type, [browser], tmp_memory, displays, clipboard

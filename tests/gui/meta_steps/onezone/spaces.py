@@ -273,6 +273,7 @@ def invite_other_users_to_space_using_gui(
     )
     click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
+    close_alert_popup_if_present(selenium[user], AlertPopup.SUCCESSFULLY_COPIED)
     send_invitation_token_to_browser(
         user,
         item_type,
@@ -543,6 +544,7 @@ def copy_user_space_invite_token(
     )
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
     close_modal(selenium, browser_id, modal)
 
 
