@@ -20,7 +20,7 @@ from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     wait_for_error_modal_to_disappear,
     wait_for_sliding_panel_to_stop_moving,
-    wait_till_alert_popup_or_error_modal_disappear,
+    wait_till_error_modal_disappear,
 )
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
@@ -213,7 +213,7 @@ def assert_invalid_id_in_error_modal_and_close_modal(
     error_message = (
         f"There is no info about id of invalid target {target_name} in error modal"
     )
-    wait_till_alert_popup_or_error_modal_disappear(
+    wait_till_error_modal_disappear(
         driver, ".alert-global.modal.in .modal-dialog", lambda _: error_modal.close
     )
     match target_type:

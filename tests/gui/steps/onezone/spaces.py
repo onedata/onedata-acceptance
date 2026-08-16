@@ -20,7 +20,7 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
-from tests.gui.utils.common.popups.generic import ItemCreatedAlertPopup
+from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
@@ -123,7 +123,7 @@ def create_new_space_by_click_on_create_new_space_button(
 ) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).data.input_box.confirm()
-    close_alert_popup_if_present(driver, popup=ItemCreatedAlertPopup.SPACE_CREATED)
+    close_alert_popup_if_present(driver, popup=CreatedItemAlertPopup.SPACE)
 
 
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
@@ -136,7 +136,7 @@ def create_new_space_on_onezone_page(
     page.input_box.value = space_name
     page.input_box.confirm()
     close_alert_popup_if_present(
-        selenium[browser_id], popup=ItemCreatedAlertPopup.SPACE_CREATED
+        selenium[browser_id], popup=CreatedItemAlertPopup.SPACE
     )
 
 
@@ -901,7 +901,7 @@ def confirm_create_new_space(
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
         close_alert_popup_if_present(
-            selenium[browser_id], popup=ItemCreatedAlertPopup.SPACE_CREATED
+            selenium[browser_id], popup=CreatedItemAlertPopup.SPACE
         )
     else:
         create_new_space_by_click_on_create_new_space_button(selenium, browser_id)

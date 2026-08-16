@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import cast
 
-from tests.gui.steps.common.common import wait_till_alert_popup_or_error_modal_disappear
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.modals.modal import (
     assert_element_text_in_modal,
     wt_wait_for_modal_to_appear,
@@ -92,13 +92,7 @@ def remove_member_from_parent(
     Modals(driver).remove_modal.remove()
 
     for popup_enum in (AlertPopup.MEMBER_ADDED, AlertPopup.GROUP_REMOVED_FROM_CLUSTER):
-        popup = Popups(driver).alert_popups.get_alert_popup(popup_enum)
-        if popup is not None:
-            wait_till_alert_popup_or_error_modal_disappear(
-                selenium,
-                popup.web_elem,
-                lambda _, current_popup=popup: current_popup.close,  # type: ignore[misc]
-            )
+        close_alert_popup_if_present(selenium[browser_id], popup_enum)
 
 
 def fail_to_set_privileges_using_op_gui(

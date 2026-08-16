@@ -16,7 +16,7 @@ from tests.gui.steps.common.common import (
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
-from tests.gui.utils.common.popups.generic import ItemCreatedAlertPopup
+from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -58,7 +58,7 @@ def confirm_name_input_on_main_groups_page(
 ) -> None:
     OZLoggedIn(selenium[browser_id]).groups.input_box.confirm()
     close_alert_popup_if_present(
-        selenium[browser_id], popup=ItemCreatedAlertPopup.GROUP_CREATED
+        selenium[browser_id], popup=CreatedItemAlertPopup.GROUP
     )
 
 
@@ -171,7 +171,7 @@ def confirm_add_group(selenium: SeleniumDrivers, browser_id: str, option: str) -
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
         close_alert_popup_if_present(
-            selenium[browser_id], popup=ItemCreatedAlertPopup.GROUP_CREATED
+            selenium[browser_id], popup=CreatedItemAlertPopup.GROUP
         )
     else:
         confirm_name_input_on_main_groups_page(selenium, browser_id)

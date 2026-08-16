@@ -62,7 +62,7 @@ from tests.gui.steps.rest.harvesters import (
     remove_harvester_using_rest,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.common.popups.generic import AlertPopup, ItemCreatedAlertPopup
+from tests.gui.utils.common.popups.generic import AlertPopup, CreatedItemAlertPopup
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -235,7 +235,7 @@ def create_harvester(
     harvester_id = clipboard.paste(display=displays[browser_id])
     harvesters[harvester_name] = harvester_id
     close_alert_popup_if_present(
-        selenium[browser_id], popup=ItemCreatedAlertPopup.HARVESTER_CREATED
+        selenium[browser_id], popup=CreatedItemAlertPopup.HARVESTER
     )
 
     request.addfinalizer(

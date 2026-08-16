@@ -271,7 +271,7 @@ def wait_for_error_modal_to_disappear(driver: WebDriver) -> bool:
     def get_error_modal_close_button(current_driver: WebDriver) -> Clickable:
         return Modals(current_driver).error.close
 
-    return wait_till_alert_popup_or_error_modal_disappear(
+    return wait_till_error_modal_disappear(
         driver,
         ".alert-global.modal.in .modal-dialog",
         get_error_modal_close_button,
@@ -332,7 +332,7 @@ def click_close_button_and_wait_to_disappear(
     return True
 
 
-def wait_till_alert_popup_or_error_modal_disappear(
+def wait_till_error_modal_disappear(
     driver: WebDriver,
     web_elem_or_selector: WebElementOrSelector,
     get_close_button: Callable[[WebDriver], Clickable],

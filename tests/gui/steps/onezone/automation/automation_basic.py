@@ -19,7 +19,7 @@ from tests.gui.steps.common.common import (
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.common.popups.generic import ItemCreatedAlertPopup
+from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -77,7 +77,7 @@ def confirm_name_input_on_main_automation_page(
     OZLoggedIn(selenium[browser_id]).automation.input_box.confirm()
     close_alert_popup_if_present(
         selenium[browser_id],
-        popup=ItemCreatedAlertPopup.AUTOMATION_INVENTORY_CREATED,
+        popup=CreatedItemAlertPopup.AUTOMATION_INVENTORY,
     )
 
 

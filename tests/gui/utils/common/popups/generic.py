@@ -65,13 +65,17 @@ class AlertPopup(AlertPopupBase, Enum):
         r".*[Gg]roup.*removed.*from.*cluster.*",
         "Success",
     )
+    PRIVILEGES_SAVED = (
+        r".*[Pp]rivileges.*saved.*successfully.*",
+        "Success",
+    )
 
 
-class ItemCreatedAlertPopup(AlertPopupBase, Enum):
-    SPACE_CREATED = "space"
-    GROUP_CREATED = "group"
-    HARVESTER_CREATED = "harvester"
-    AUTOMATION_INVENTORY_CREATED = "automation inventory"
+class CreatedItemAlertPopup(AlertPopupBase, Enum):
+    SPACE = "space"
+    GROUP = "group"
+    HARVESTER = "harvester"
+    AUTOMATION_INVENTORY = "automation inventory"
 
     def __init__(
         self,
@@ -84,10 +88,10 @@ class ItemCreatedAlertPopup(AlertPopupBase, Enum):
         )
 
 
-AlertPopupType = AlertPopup | ItemCreatedAlertPopup
+AlertPopupType = AlertPopup | CreatedItemAlertPopup
 ALL_ALERT_POPUPS: tuple[AlertPopupType, ...] = (
     *AlertPopup,
-    *ItemCreatedAlertPopup,
+    *CreatedItemAlertPopup,
 )
 
 
