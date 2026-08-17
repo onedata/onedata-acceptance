@@ -41,8 +41,13 @@ In general, there are two ways of running acceptance tests:
    - `$SUITE` - file name from `tests/*/scenarios` without extension; determines 
      the test suite to run. 
    - `$KEYWORDS` - optional pytest keyword expression used to select tests from
-     the suite (for example,
-     `KEYWORDS="test_user_fails_to_view_group_after_leaving_it"`).
+     the suite. It is passed to pytest as `-k EXPRESSION`, so you build it from
+     test-name fragments and boolean operators. Examples:
+     `KEYWORDS="test_user_fails_to_view_group_after_leaving_it"`,
+     `KEYWORDS="fails_to_view_group and not admin"`,
+     `KEYWORDS="group and (leave or delete)"`.
+     In other words, write a logical expression over words that appear in the
+     test name or pytest keyword; pytest keeps only matching tests.
    - `$ENV_FILE` - file name from `tests/*/environments` without extension; determines 
      the env-file (description of Onedata deployment). If not specified, default 
      [1oz_1op_deployed.yaml](tests/gui/environments/1oz_1op_deployed.yaml) will be used.
@@ -117,11 +122,18 @@ suite, or exact pytest node ID, and `-k` to filter the collected tests by name.
   - runs one scenario using its exact pytest node ID. A parameterized node ID can
   also be supplied to select one particular test variant.
 * `-k EXPRESSION` - runs tests whose names match the case-insensitive pytest
-  keyword expression. Expressions support `and`, `or`, `not`, and parentheses,
-  for example `-k 'fails_to_view_group and not admin'`.
+  keyword expression. Build the expression from test-name fragments or keyword
+  names using boolean operators: `and`, `or`, `not`, and parentheses. For
+  example:
+  - `-k 'fails_to_view_group'` selects tests whose names contain that fragment.
+  - `-k 'fails_to_view_group and not admin'` keeps the failing case but excludes
+    names containing `admin`.
+  - `-k 'group and (leave or delete)'` selects tests that mention `group` and
+    either `leave` or `delete`.
 
 When using the Makefile, `SUITE` corresponds to the suite file passed with `-t`,
-while `KEYWORDS` is passed as `-k`. For example:
+while `KEYWORDS` is passed as `-k`. The value you set should therefore be a
+logical expression over parts of the test names you want to match. For example:
 
 ```bash
 make ENV_FILE=1oz_1op_deployed SUITE=test_onezone_groups_basic \
