@@ -7,8 +7,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import hashlib
 import hmac
 from datetime import datetime, timezone
+from http import HTTPStatus
 
 import requests
+from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests.exceptions import HTTPError, Timeout
 
 from tests.conftest import REQUEST_TIMEOUT
 
@@ -18,6 +21,62 @@ S3_APP_LABEL = "dev-volume-s3-krakow"
 
 ACCESS_KEY = "accessKey"
 SECRET_KEY = "verySecretKey"
+
+RETRYABLE_BUCKET_HTTP_STATUSES: frozenset[int] = frozenset(
+    {
+        HTTPStatus.NOT_FOUND,
+        HTTPStatus.REQUEST_TIMEOUT,
+        HTTPStatus.TOO_EARLY,
+        HTTPStatus.TOO_MANY_REQUESTS,
+        HTTPStatus.INTERNAL_SERVER_ERROR,
+        HTTPStatus.BAD_GATEWAY,
+        HTTPStatus.SERVICE_UNAVAILABLE,
+        HTTPStatus.GATEWAY_TIMEOUT,
+    }
+)
+
+
+class _RetryableBucketHTTPError(HTTPError):
+    """HTTP failure that can be retried while waiting for the S3 service."""
+
+
+def _raise_for_bucket_status(response: requests.Response) -> None:
+    try:
+        response.raise_for_status()
+    except HTTPError as ex:
+        if response.status_code not in RETRYABLE_BUCKET_HTTP_STATUSES:
+            raise
+
+        raise _RetryableBucketHTTPError(
+            *ex.args,
+            response=response,
+            request=ex.request,
+        ) from ex
+
+
+@given(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
+@wt(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
+def create_s3_bucket_rest(bucket_name: str) -> None:
+    ensure_bucket_exists(bucket_name)
+
+
+@wt(
+    parsers.parse(
+        "using REST, user of {browser_id} copies item with "
+        'recently copied path from "{src_bucket}" bucket into "{dst_bucket}" bucket'
+    )
+)
+def copy_item_s3_bucket(
+    browser_id: str,
+    dst_bucket: str,
+    src_bucket: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
+    path = clipboard.paste(display=displays[browser_id])
+    copy_item_between_buckets(
+        dst_bucket, f"{src_bucket}{path}/999999", f"{path[1::]}/999999"
+    )
 
 
 def sign(key: bytes, msg: str) -> bytes:
@@ -139,7 +198,7 @@ def create_bucket(bucket_name: str) -> None:
     url = f"http://{HOST_URL}{canonical_uri}"
     response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
 
-    response.raise_for_status()
+    _raise_for_bucket_status(response)
 
 
 def assert_bucket_exists(bucket_name: str) -> None:
@@ -170,7 +229,24 @@ def assert_bucket_exists(bucket_name: str) -> None:
         headers=headers,
         timeout=REQUEST_TIMEOUT,
     )
-    response.raise_for_status()
+    _raise_for_bucket_status(response)
+
+
+@repeat_failed(
+    timeout=WAIT_BACKEND,
+    exceptions=(RequestsConnectionError, Timeout, _RetryableBucketHTTPError),
+)
+def ensure_bucket_exists(bucket_name: str) -> None:
+    try:
+        create_bucket(bucket_name)
+    except HTTPError as ex:
+        # Creating an existing bucket is an idempotent success.
+        if ex.response.status_code != HTTPStatus.CONFLICT:
+            raise
+
+    # Do not trust the bucket initializer's exit status. It can succeed after
+    # contacting an old MinIO pod during a rolling update.
+    assert_bucket_exists(bucket_name)
 
 
 def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:

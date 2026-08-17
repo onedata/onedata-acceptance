@@ -291,7 +291,9 @@ def try_click_without_throwing_error(
 
 
 def wait_for_element_to_appear(
-    driver: WebDriver, web_elem_or_selector: WebElementOrSelector, timeout: float
+    driver: WebDriver,
+    web_elem_or_selector: WebElementOrSelector,
+    timeout: float = WAIT_FRONTEND,
 ) -> bool:
     """Return whether the element appeared before the timeout."""
     web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(
