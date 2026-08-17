@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Optional
-
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.http_exceptions import HTTPNotFound
@@ -23,7 +21,7 @@ from tests.utils.utils import repeat_failed
 def get_supported_space_ids(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: Optional[str],
+    onepanel_password: str,
 ) -> list[str]:
     return http_get(
         ip=provider_hostname,
@@ -37,7 +35,7 @@ def get_supported_space_ids(
 def revoke_all_space_supports_using_rest(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: Optional[str],
+    onepanel_password: str,
 ) -> None:
     for space_id in get_supported_space_ids(
         provider_hostname, onepanel_username, onepanel_password
@@ -75,7 +73,7 @@ def leave_user_space(
 
 
 def ensure_absence_of_space_using_rest(
-    zone_hostname: str, owner_username: str, owner_password: str | None, space_id: str
+    zone_hostname: str, owner_username: str, owner_password: str, space_id: str
 ) -> None:
     try:
         http_delete(

@@ -711,7 +711,7 @@ def assert_spaces_with_ids_in_mount_point(
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         user_client = login_to_oz(
-            user, cast(str, users[user].password), hosts[zone_name]["hostname"]
+            user, users[user].password, hosts[zone_name]["hostname"]
         )
 
         user_api = UserApi(user_client)

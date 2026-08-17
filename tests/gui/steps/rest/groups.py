@@ -33,7 +33,7 @@ def leave_user_group(
 def ensure_absence_of_group_using_rest(
     zone_hostname: str,
     admin_username: str,
-    admin_password: str | None,
+    admin_password: str,
     group_id: str,
 ) -> None:
     try:

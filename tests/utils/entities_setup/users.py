@@ -253,7 +253,8 @@ def _add_user_to_zone_cluster(
     user_credentials: User,
     cluster_privileges: Optional[list[str]],
 ) -> User:
-    username, password = user_credentials.username, user_credentials.password
+    username = user_credentials.username
+    password = user_credentials.password
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
 

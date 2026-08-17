@@ -54,7 +54,7 @@ class CredentialsLike(Protocol):
     def username(self) -> str: ...
 
     @property
-    def password(self) -> str | None: ...
+    def password(self) -> str: ...
 
 
 class MemberOptions(TypedDict):
@@ -78,7 +78,7 @@ class CdmiCreator(Protocol):
         path: str,
         data: str | None = None,
         repeats: int = 10,
-        auth: tuple[str, str | None] | None = None,
+        auth: tuple[str, str] | None = None,
         headers: Mapping[str, str] | None = None,
         **extra: str,
     ) -> requests.Response | None: ...
@@ -319,7 +319,7 @@ def _create_and_configure_spaces(
 def _create_space(
     zone_hostname: str,
     owner_username: str,
-    owner_password: str | None,
+    owner_password: str,
     space_name: str,
     request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
@@ -371,7 +371,7 @@ def _add_users_to_space(
 def _add_user_to_space(
     zone_hostname: str,
     admin_username: str,
-    admin_password: str | None,
+    admin_password: str,
     space_id: str,
     user_id: str,
     privileges: list[str] | None,
@@ -417,7 +417,7 @@ def _add_groups_to_space(
 def _add_group_to_space(
     zone_hostname: str,
     admin_username: str,
-    admin_password: str | None,
+    admin_password: str,
     space_id: str,
     group_id: str,
     privileges: list[str] | None,
@@ -517,7 +517,7 @@ def wait_for_storage_details(
     provider_hostname: str,
     storage_id: str,
     onepanel_username: str,
-    onepanel_password: str | None,
+    onepanel_password: str,
 ) -> requests.Response:
     storage_details = http_get(
         ip=provider_hostname,
@@ -532,7 +532,7 @@ def wait_for_storage_details(
 def wait_for_storages_id(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: str | None,
+    onepanel_password: str,
 ) -> requests.Response:
     storages_id = http_get(
         ip=provider_hostname,
@@ -546,7 +546,7 @@ def wait_for_storages_id(
 def _get_storage_id(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: str | None,
+    onepanel_password: str,
     storage_name: str,
 ) -> str:
     storages_id = wait_for_storages_id(
@@ -606,7 +606,7 @@ def init_storage(
         path: str,
         data: str | None = None,
         repeats: int = 10,
-        auth: tuple[str, str | None] | None = None,
+        auth: tuple[str, str] | None = None,
         headers: Mapping[str, str] | None = None,
         **_extra: str,
     ) -> requests.Response | None:
@@ -886,7 +886,7 @@ def create_files_names_alphabetically_with_dir_list(
 
 
 def _get_users_space_id_list(
-    zone_hostname: str, owner_username: str, owner_password: str | None
+    zone_hostname: str, owner_username: str, owner_password: str
 ) -> list[str]:
 
     resp = http_get(
@@ -900,7 +900,7 @@ def _get_users_space_id_list(
 
 
 def _rm_all_spaces_for_user(
-    zone_hostname: str, owner_username: str, owner_password: str | None
+    zone_hostname: str, owner_username: str, owner_password: str
 ) -> None:
     spaces_id_list = _get_users_space_id_list(
         zone_hostname, owner_username, owner_password
@@ -921,7 +921,9 @@ def _rm_all_spaces_for_user(
 def _rm_all_spaces_for_users_list(zone_hostname: str, users_db: Users) -> None:
     for user_credentials in users_db.values():
         _rm_all_spaces_for_user(
-            zone_hostname, user_credentials.username, user_credentials.password
+            zone_hostname,
+            user_credentials.username,
+            user_credentials.password,
         )
 
 
@@ -934,7 +936,9 @@ def g_remove_all_space_supports_using_rest(
     zone_hostname = host["hostname"]
     user_credentials = users[user]
     _rm_all_spaces_for_user(
-        zone_hostname, user_credentials.username, user_credentials.password
+        zone_hostname,
+        user_credentials.username,
+        user_credentials.password,
     )
 
 

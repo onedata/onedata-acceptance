@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import cast
-
 import pytest
 from onezone_client import SpaceApi, UserApi
 
@@ -86,9 +84,7 @@ def request_space_support_using_rest_for_space_with_alias(
     space_aliases: SpaceAliases,
 ) -> None:
     if client.lower() == "rest":
-        user_client = login_to_oz(
-            user, cast(str, users[user].password), hosts[host]["hostname"]
-        )
+        user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
         space_api = SpaceApi(user_client)
         token = space_api.create_space_support_token(space_aliases[alias]["sid"]).token
         tmp_memory[supporting_user]["mailbox"]["token"] = token
@@ -201,9 +197,7 @@ def remove_space_with_alias_in_oz(
 ) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
-        user_client = login_to_oz(
-            user, cast(str, users[user].password), hosts[host]["hostname"]
-        )
+        user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
         space_api = SpaceApi(user_client)
         space_api.remove_space(space_aliases[alias]["sid"])
     else:
@@ -229,9 +223,7 @@ def rename_space_with_alias_in_oz(
 ) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
-        user_client = login_to_oz(
-            user, cast(str, users[user].password), hosts[host]["hostname"]
-        )
+        user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
         user_api = UserApi(user_client)
         space_api = SpaceApi(user_client)
         space = user_api.get_user_space(space_aliases[alias]["sid"])

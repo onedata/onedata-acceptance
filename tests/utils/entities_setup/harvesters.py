@@ -58,6 +58,7 @@ def create_harvesters_rest(
 ) -> None:
     zone_hostname = hosts[service]["hostname"]
     owner = users[user]
+    owner_password = owner.password
     plugin = "elasticsearch_harvesting_backend"
     endpoint = f'{hosts["elasticsearch"]["name"]}:{ELASTICSEARCH_PORT}'
 
@@ -65,7 +66,7 @@ def create_harvesters_rest(
         _create_harvester(
             zone_hostname,
             owner.username,
-            owner.password,
+            owner_password,
             harvester,
             endpoint,
             plugin,
@@ -77,7 +78,7 @@ def create_harvesters_rest(
 def _create_harvester(
     zone_hostname: str,
     owner_username: str,
-    owner_password: str | None,
+    owner_password: str,
     harvester_name: str,
     endpoint: str,
     plugin: str,
@@ -116,7 +117,7 @@ def _create_harvester(
 def _create_harvester_gui_index(
     zone_hostname: str,
     owner_username: str,
-    owner_password: str | None,
+    owner_password: str,
     harvester_id: str,
 ) -> None:
     index_details = {
@@ -216,10 +217,11 @@ def _add_space_to_harvester(
     space_id = spaces[space_name]
     harvester_id = harvesters[harvester_name]
     zone_hostname = hosts["onezone"]["hostname"]
+    password = users[username].password
 
     http_put(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("harvesters", harvester_id, "spaces", space_id),
-        auth=(username, users[username].password),
+        auth=(username, password),
     )

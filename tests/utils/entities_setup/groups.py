@@ -29,7 +29,7 @@ HostsConfig = Mapping[str, Mapping[str, str]]
 
 class CredentialsLike(Protocol):
     username: str
-    password: str | None
+    password: str
 
 
 class MemberOptions(TypedDict):
@@ -184,7 +184,7 @@ def _unpack_member_entry(entry: MemberEntry) -> tuple[str, list[str] | None]:
 def _create_group(
     zone_hostname: str,
     owner_username: str,
-    owner_password: str | None,
+    owner_password: str,
     group_name: str,
     request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
@@ -227,7 +227,10 @@ def _add_user_to_group(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("groups", group_id, "users", user_id),
-        auth=(admin_credentials.username, admin_credentials.password),
+        auth=(
+            admin_credentials.username,
+            admin_credentials.password,
+        ),
         data=data,
     )
 
@@ -248,7 +251,10 @@ def _add_child_group(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("groups", parent_id, "children", child_id),
-        auth=(admin_credentials.username, admin_credentials.password),
+        auth=(
+            admin_credentials.username,
+            admin_credentials.password,
+        ),
         data=data,
     )
 

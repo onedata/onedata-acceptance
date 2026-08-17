@@ -74,7 +74,7 @@ def _remove_harvesters_created_after(
     initial_harvester_ids: set[str],
     zone_hostname: str,
     username: str,
-    password: str | None,
+    password: str,
 ) -> None:
     current_harvester_ids = get_user_harvester_ids(zone_hostname, username, password)
     for harvester_id in current_harvester_ids - initial_harvester_ids:

@@ -12,7 +12,7 @@ from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
 def get_user_harvester_ids(
     zone_hostname: str,
     username: str,
-    password: str | None,
+    password: str,
 ) -> set[str]:
     response = http_get(
         ip=zone_hostname,
@@ -28,7 +28,7 @@ def remove_harvester_using_rest(
     harvester_id: str,
     zone_hostname: str,
     owner_username: str,
-    owner_password: str | None,
+    owner_password: str,
 ) -> None:
     try:
         http_delete(

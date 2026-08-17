@@ -36,7 +36,7 @@ InventoriesConfig = Mapping[str, InventoryDescription]
 
 class CredentialsLike(Protocol):
     username: str
-    password: Optional[str]
+    password: str
 
 
 @given(
@@ -169,7 +169,10 @@ def _add_user_to_inventory(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("atm_inventories", inventory_id, "users", user_id),
-        auth=(admin_credentials.username, admin_credentials.password),
+        auth=(
+            admin_credentials.username,
+            admin_credentials.password,
+        ),
         data=data,
     )
 
@@ -190,6 +193,9 @@ def _add_group_to_inventory(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("atm_inventories", inventory_id, "groups", group_id),
-        auth=(admin_credentials.username, admin_credentials.password),
+        auth=(
+            admin_credentials.username,
+            admin_credentials.password,
+        ),
         data=data,
     )

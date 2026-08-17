@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 from pytest import FixtureRequest
@@ -28,7 +28,7 @@ from tests.utils.utils import repeat_failed
 def get_storages_ids(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: Optional[str],
+    onepanel_password: str,
 ) -> list[str]:
     return http_get(
         ip=provider_hostname,
@@ -41,7 +41,7 @@ def get_storages_ids(
 def remove_storage_by_id(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: Optional[str],
+    onepanel_password: str,
     storage_id: str,
 ) -> None:
     http_delete(
@@ -102,7 +102,7 @@ def remove_multiple_storages_in_op_panel_using_rest(
 def remove_storage_by_id_and_wait_until_absent(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: Optional[str],
+    onepanel_password: str,
     storage_id: str,
 ) -> None:
     storage_ids = get_storages_ids(
@@ -146,7 +146,7 @@ def restore_config_and_remove_storage(
 def restore_config_and_remove_storage_by_id(
     provider_hostname: str,
     onepanel_username: str,
-    onepanel_password: Optional[str],
+    onepanel_password: str,
     storage_id: str,
     storage_name: str,
     config: str,
