@@ -67,6 +67,20 @@ def get_space_ids_supported_by_storage(
     return matching_space_ids
 
 
+def revoke_space_support_using_rest(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    space_id: str,
+) -> None:
+    http_delete(
+        ip=provider_hostname,
+        port=OP_REST_PORT,
+        path=get_panel_rest_path("provider", "spaces", space_id),
+        auth=(onepanel_username, onepanel_password),
+    )
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
 def revoke_all_space_supports_using_rest(
     provider_hostname: str,
@@ -76,11 +90,8 @@ def revoke_all_space_supports_using_rest(
     for space_id in get_supported_space_ids(
         provider_hostname, onepanel_username, onepanel_password
     ):
-        http_delete(
-            ip=provider_hostname,
-            port=OP_REST_PORT,
-            path=get_panel_rest_path("provider", "spaces", space_id),
-            auth=(onepanel_username, onepanel_password),
+        revoke_space_support_using_rest(
+            provider_hostname, onepanel_username, onepanel_password, space_id
         )
 
     assert not get_supported_space_ids(
@@ -98,11 +109,8 @@ def revoke_space_supports_for_storage_using_rest(
     for space_id in get_space_ids_supported_by_storage(
         provider_hostname, onepanel_username, onepanel_password, storage_id
     ):
-        http_delete(
-            ip=provider_hostname,
-            port=OP_REST_PORT,
-            path=get_panel_rest_path("provider", "spaces", space_id),
-            auth=(onepanel_username, onepanel_password),
+        revoke_space_support_using_rest(
+            provider_hostname, onepanel_username, onepanel_password, space_id
         )
 
     assert not get_space_ids_supported_by_storage(

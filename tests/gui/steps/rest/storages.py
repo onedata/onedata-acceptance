@@ -89,26 +89,6 @@ def get_storage_ids_by_name(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def remove_multiple_storages_in_op_panel_using_rest(
-    storage_name: str,
-    provider: str,
-    hosts: Hosts,
-    onepanel_credentials: User,
-) -> None:
-    provider_hostname = hosts[provider]["hostname"]
-    onepanel_username = onepanel_credentials.username
-    onepanel_password = onepanel_credentials.password
-
-    storage_ids = get_storage_ids_by_name(
-        storage_name, provider, hosts, onepanel_credentials
-    )
-    for storage_id in storage_ids:
-        remove_storage_by_id(
-            provider_hostname, onepanel_username, onepanel_password, storage_id
-        )
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
 def remove_storage_by_id_and_wait_until_absent(
     provider_hostname: str,
     onepanel_username: str,

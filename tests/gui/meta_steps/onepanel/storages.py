@@ -43,7 +43,7 @@ from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.rest.storages import (
     get_storage_ids_by_name,
-    remove_multiple_storages_in_op_panel_using_rest,
+    remove_storage_by_id,
     restore_config_and_remove_storage_by_id,
     storage_data_from_config,
 )
@@ -75,6 +75,25 @@ def _register_storage_finalizer(
             config,
         )
     )
+
+
+def remove_multiple_storages_in_op_panel_using_rest(
+    storage_name: str,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+) -> None:
+    provider_hostname = hosts[provider]["hostname"]
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    storage_ids = get_storage_ids_by_name(
+        storage_name, provider, hosts, onepanel_credentials
+    )
+    for storage_id in storage_ids:
+        remove_storage_by_id(
+            provider_hostname, onepanel_username, onepanel_password, storage_id
+        )
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
