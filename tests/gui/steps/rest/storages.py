@@ -8,7 +8,6 @@ import json
 from typing import Any
 
 import yaml
-from pytest import FixtureRequest
 
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
@@ -116,30 +115,6 @@ def remove_storage_by_id_and_wait_until_absent(
     )
     assert storage_id not in get_storages_ids(
         provider_hostname, onepanel_username, onepanel_password
-    )
-
-
-def restore_config_and_remove_storage(
-    provider: str,
-    hosts: Hosts,
-    onepanel_credentials: User,
-    request: FixtureRequest,
-    storage_id: str,
-    storage_name: str,
-    config: str,
-) -> None:
-    provider_hostname = hosts[provider]["hostname"]
-    username = onepanel_credentials.username
-    password = onepanel_credentials.password
-    request.addfinalizer(
-        lambda: restore_config_and_remove_storage_by_id(
-            provider_hostname,
-            username,
-            password,
-            storage_id,
-            storage_name,
-            config,
-        )
     )
 
 

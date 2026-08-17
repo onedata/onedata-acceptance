@@ -28,6 +28,20 @@ IdMap = Mapping[str, str]
 MutableIdMap = MutableMapping[str, str]
 
 
+def _register_harvester_finalizer(
+    request: FixtureRequest,
+    zone_hostname: str,
+    owner_username: str,
+    owner_password: str,
+    harvester_id: str,
+) -> None:
+    request.addfinalizer(
+        lambda: remove_harvester_using_rest(
+            harvester_id, zone_hostname, owner_username, owner_password
+        )
+    )
+
+
 @given(
     parsers.re(
         r"using REST, user (?P<user>.*) creates "
@@ -63,15 +77,24 @@ def create_harvesters_rest(
     endpoint = f'{hosts["elasticsearch"]["name"]}:{ELASTICSEARCH_PORT}'
 
     for harvester in harvesters_list:
-        _create_harvester(
+        harvester_id = _create_harvester(
             zone_hostname,
             owner.username,
             owner_password,
             harvester,
             endpoint,
             plugin,
-            harvesters,
+        )
+        _register_harvester_finalizer(
             request,
+            zone_hostname,
+            owner.username,
+            owner_password,
+            harvester_id,
+        )
+        harvesters[harvester] = harvester_id
+        _create_harvester_gui_index(
+            zone_hostname, owner.username, owner_password, harvester_id
         )
 
 
@@ -82,9 +105,7 @@ def _create_harvester(
     harvester_name: str,
     endpoint: str,
     plugin: str,
-    harvesters: MutableIdMap,
-    request: FixtureRequest,
-) -> None:
+) -> str:
     harvester_details = {
         "name": harvester_name,
         "harvestingBackendEndpoint": endpoint,
@@ -99,18 +120,7 @@ def _create_harvester(
         data=json.dumps(harvester_details),
     )
 
-    # set harvester id
-    harvester_id = response.headers["Location"].split("/")[-1]
-    request.addfinalizer(
-        lambda: remove_harvester_using_rest(
-            harvester_id, zone_hostname, owner_username, owner_password
-        )
-    )
-    harvesters[harvester_name] = harvester_id
-
-    _create_harvester_gui_index(
-        zone_hostname, owner_username, owner_password, harvester_id
-    )
+    return response.headers["Location"].split("/")[-1]
 
 
 def _create_harvester_gui_index(

@@ -44,7 +44,7 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.rest.storages import (
     get_storage_ids_by_name,
     remove_multiple_storages_in_op_panel_using_rest,
-    restore_config_and_remove_storage,
+    restore_config_and_remove_storage_by_id,
     storage_data_from_config,
 )
 from tests.gui.utils import Onepanel
@@ -54,6 +54,27 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_post
 from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
+
+
+def _register_storage_finalizer(
+    request: pytest.FixtureRequest,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+    storage_id: str,
+    storage_name: str,
+    config: str,
+) -> None:
+    request.addfinalizer(
+        lambda: restore_config_and_remove_storage_by_id(
+            hosts[provider]["hostname"],
+            onepanel_credentials.username,
+            onepanel_credentials.password,
+            storage_id,
+            storage_name,
+            config,
+        )
+    )
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
@@ -175,11 +196,11 @@ def safely_create_storage_rest(
     storage_id = _add_storage_in_op_panel_using_rest(
         config, storage_name, provider, hosts, onepanel_credentials
     )
-    restore_config_and_remove_storage(
+    _register_storage_finalizer(
+        request,
         provider,
         hosts,
         onepanel_credentials,
-        request,
         storage_id,
         storage_name,
         config,

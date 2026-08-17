@@ -8,7 +8,7 @@ import json
 import time
 from collections.abc import Mapping, MutableMapping, Sequence
 from functools import cache
-from typing import Protocol, TypedDict, cast
+from typing import Callable, Protocol, TypedDict, cast
 
 import pytest
 import requests
@@ -102,6 +102,23 @@ SpaceDescription = TypedDict(
     total=False,
 )
 type SpacesConfig = Mapping[str, SpaceDescription]
+type SpaceFinalizerRegistrar = Callable[[str], None]
+
+
+def _register_space_finalizer(
+    request: pytest.FixtureRequest,
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    space_id: str,
+) -> None:
+    request.addfinalizer(
+        lambda: delete_space_if_present_using_rest(
+            zone_hostname,
+            admin_credentials.username,
+            admin_credentials.password,
+            space_id,
+        )
+    )
 
 
 @given(
@@ -121,8 +138,10 @@ def create_and_configure_spaces_step(
     spaces: Spaces,
     request: pytest.FixtureRequest,
 ) -> None:
+    spaces_config = cast(SpacesConfig, yaml.load(config, yaml.Loader))
+    zone_hostname = hosts[zone_host]["hostname"]
     create_and_configure_spaces(
-        cast(SpacesConfig, yaml.load(config, yaml.Loader)),
+        spaces_config,
         zone_host,
         admin_credentials,
         onepanel_credentials,
@@ -131,7 +150,9 @@ def create_and_configure_spaces_step(
         groups,
         storages,
         spaces,
-        request,
+        lambda space_id: _register_space_finalizer(
+            request, zone_hostname, admin_credentials, space_id
+        ),
     )
 
 
@@ -145,7 +166,7 @@ def create_and_configure_spaces(
     groups: Groups,
     storages: Storages,
     spaces: Spaces,
-    request: pytest.FixtureRequest,
+    register_finalizer: SpaceFinalizerRegistrar | None = None,
 ) -> None:
     """Create and configure spaces according to given config.
 
@@ -229,7 +250,7 @@ def create_and_configure_spaces(
         groups,
         storages,
         spaces,
-        request,
+        register_finalizer,
     )
 
 
@@ -250,6 +271,7 @@ def add_spaces_configuration(
     spaces: Spaces,
     request: pytest.FixtureRequest,
 ) -> None:
+    zone_hostname = hosts[zone_host]["hostname"]
     _create_and_configure_spaces(
         cast(SpacesConfig, yaml.load(config, yaml.Loader)),
         zone_host,
@@ -260,7 +282,9 @@ def add_spaces_configuration(
         groups,
         storages,
         spaces,
-        request,
+        lambda space_id: _register_space_finalizer(
+            request, zone_hostname, admin_credentials, space_id
+        ),
     )
 
 
@@ -274,7 +298,7 @@ def _create_and_configure_spaces(
     groups_db: Groups,
     storages_db: Storages,
     spaces_db: Spaces,
-    request: pytest.FixtureRequest,
+    register_finalizer: SpaceFinalizerRegistrar | None,
 ) -> None:
     zone = cast(Mapping[str, str], hosts[zone_name])
     zone_hostname = zone["hostname"]
@@ -287,9 +311,9 @@ def _create_and_configure_spaces(
             owner.username,
             owner.password,
             space_name,
-            request,
-            admin_credentials,
         )
+        if register_finalizer:
+            register_finalizer(space_id)
         _add_users_to_space(
             zone_hostname, admin_credentials, space_id, users_db, users_to_add
         )
@@ -321,8 +345,6 @@ def _create_space(
     owner_username: str,
     owner_password: str,
     space_name: str,
-    request: pytest.FixtureRequest,
-    admin_credentials: CredentialsLike,
 ) -> str:
     space_properties = {"name": space_name}
     response = http_post(
@@ -332,16 +354,7 @@ def _create_space(
         auth=(owner_username, owner_password),
         data=json.dumps(space_properties),
     )
-    space_id = response.headers["location"].split("/")[-1]
-    request.addfinalizer(
-        lambda: delete_space_if_present_using_rest(
-            zone_hostname,
-            admin_credentials.username,
-            admin_credentials.password,
-            space_id,
-        )
-    )
-    return space_id
+    return response.headers["location"].split("/")[-1]
 
 
 def _add_users_to_space(

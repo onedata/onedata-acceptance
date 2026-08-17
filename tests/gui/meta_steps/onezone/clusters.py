@@ -47,6 +47,25 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
 
 
+def _register_gui_settings_finalizer(
+    request: pytest.FixtureRequest,
+    hosts: Hosts,
+    record: str,
+    kind_of_agreement: GuiMessageType,
+    onepanel_credentials: User,
+) -> None:
+    request.addfinalizer(
+        partial(
+            modify_gui_setting_message,
+            hosts,
+            host=record,
+            message_id=kind_of_agreement,
+            onepanel_credentials=onepanel_credentials,
+            new_message="",
+        )
+    )
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} invites user of {browser} to "{cluster}" cluster'
@@ -249,15 +268,8 @@ def set_gui_settings(
     onepanel_credentials: User,
     request: pytest.FixtureRequest,
 ) -> None:
-    request.addfinalizer(
-        partial(
-            modify_gui_setting_message,
-            hosts,
-            host=record,
-            message_id=kind_of_agreement,
-            onepanel_credentials=onepanel_credentials,
-            new_message="",
-        )
+    _register_gui_settings_finalizer(
+        request, hosts, record, kind_of_agreement, onepanel_credentials
     )
     menu = "Clusters"
     option = "GUI settings"
