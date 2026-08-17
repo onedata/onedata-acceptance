@@ -4,11 +4,14 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import requests
-from requests.exceptions import HTTPError
+from http import HTTPStatus
+
+from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests.exceptions import HTTPError, Timeout
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.rest.s3 import (
+    _RetryableBucketHTTPError,
     assert_bucket_exists,
     copy_item_between_buckets,
     create_bucket,
@@ -43,13 +46,16 @@ def copy_item_s3_bucket(
     )
 
 
-@repeat_failed(timeout=WAIT_BACKEND, exceptions=(requests.RequestException,))
+@repeat_failed(
+    timeout=WAIT_BACKEND,
+    exceptions=(RequestsConnectionError, Timeout, _RetryableBucketHTTPError),
+)
 def ensure_bucket_exists(bucket_name: str) -> None:
     try:
         create_bucket(bucket_name)
     except HTTPError as ex:
         # Creating an existing bucket is an idempotent success.
-        if ex.response.status_code != 409:
+        if ex.response.status_code != HTTPStatus.CONFLICT:
             raise
 
     # Do not trust the bucket initializer's exit status. It can succeed after

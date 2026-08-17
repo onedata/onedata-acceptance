@@ -11,15 +11,7 @@ import boto3  # pylint: disable=import-error
 from _pytest._py.path import LocalPath
 from botocore.config import Config  # pylint: disable=import-error
 
-from tests import ONES3_PORT
-from tests.gui.type_definitions import TmpMemory
-from tests.type_definitions import Hosts, Tokens
-from tests.utils.utils import repeat_failed
-
 DEFAULT_ONES3_TIMEOUT = 10
-
-# secret key can be set arbitrarily
-SECRET_KEY = "secretKey"
 
 S3_REGION_NAME = "pl-reg-k1"
 
@@ -79,16 +71,6 @@ def create_s3client(s3_endpoint: str, access_token: str, secret_key: str) -> S3C
     )
 
 
-def get_s3client(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts) -> S3Client:
-    if tmp_memory["s3 client"]:
-        return cast(S3Client, tmp_memory["s3 client"])
-    s3_endpoint = f"https://{hosts['oneprovider-1']['hostname']}:{ONES3_PORT}"
-    tmp_memory["s3 client"] = create_s3client(
-        s3_endpoint, tokens["oc_token"]["token"], SECRET_KEY
-    )
-    return cast(S3Client, tmp_memory["s3 client"])
-
-
 def list_buckets(s3: S3Client) -> list[str]:
     return [bucket["Name"] for bucket in s3.list_buckets()["Buckets"]]
 
@@ -108,7 +90,6 @@ def download_file_from_bucket(
     s3.download_file(Bucket=bucket_name, Key=file_path, Filename=local_path)
 
 
-@repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
 def create_file_in_bucket(
     s3: S3Client, bucket_name: str, file_name: str, file_content: str
 ) -> None:

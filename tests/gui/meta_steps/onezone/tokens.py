@@ -143,7 +143,6 @@ def succeed_to_consume_token_using_confirm_button(
         assert not is_element_with_selector_visible_on_page(
             driver, ".alert-global.modal.in .modal-dialog"
         ), "Error modal appeared"
-    OZLoggedIn(driver).update_current_page()
 
 
 def fail_to_consume_token_using_confirm_button(
@@ -223,7 +222,6 @@ def assert_invalid_id_in_error_modal_and_close_modal(
             assert spaces[target_name] in modal_text, error_message
         case "inventory":
             assert inventories[target_name] in modal_text, error_message
-            OZLoggedIn(driver).update_current_page()
         case "harvester":
             assert harvesters[target_name] in modal_text, error_message
         case _:

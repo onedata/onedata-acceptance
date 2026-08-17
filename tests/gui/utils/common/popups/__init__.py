@@ -24,6 +24,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.utils.utils import repeat_failed
 
 from .alert_info_popup import AlertInfoPopup
@@ -206,4 +207,4 @@ class Popups:
         for popup in self.query_builder_popups:
             if popup.web_elem.is_displayed():
                 return popup
-        raise RuntimeError("No query builder popups visible")
+        raise PageObjectNotFoundError("No query builder popups visible")

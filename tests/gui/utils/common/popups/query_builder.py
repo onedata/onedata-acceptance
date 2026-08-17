@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, WebItemsSequence
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 
 
 class Property(PageObject):
@@ -66,7 +67,7 @@ class ExpressionBuilderPopup(PageObject):
             if comparator.get_name() == comparator_name:
                 comparator.click()
                 return
-        raise RuntimeError(f"There is no comparator {comparator_name}")
+        raise PageObjectNotFoundError(f"There is no comparator {comparator_name}")
 
     def expand_values(self) -> None:
         self.values_choice()
@@ -77,4 +78,4 @@ class ExpressionBuilderPopup(PageObject):
             if value.get_name() == value_name:
                 value.click()
                 return
-        raise RuntimeError(f"There is no value {value_name} available")
+        raise PageObjectNotFoundError(f"There is no value {value_name} available")

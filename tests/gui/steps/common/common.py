@@ -17,9 +17,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.expected_conditions import (
-    invisibility_of_element,
-)
+from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -315,7 +313,9 @@ def wait_for_element_to_appear(
 def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
     """Return whether the error modal appeared before the timeout."""
     return wait_for_element_to_appear(
-        driver, ".alert-global.modal.in .modal-dialog", timeout
+        driver,
+        (By.CSS_SELECTOR, ".alert-global.modal.in .modal-dialog"),
+        timeout,
     )
 
 

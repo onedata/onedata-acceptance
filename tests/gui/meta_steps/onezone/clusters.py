@@ -10,7 +10,11 @@ import time
 from functools import partial
 
 import pytest
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+    TimeoutException,
+)
 
 from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
@@ -42,6 +46,7 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.rest.provider import GuiMessageType, modify_gui_setting_message
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
@@ -221,7 +226,11 @@ def no_member_in_parent(
             tmp_memory,
             where,
         )
-    except RuntimeError:
+    except (
+        ElementNotInteractableException,
+        NoSuchElementException,
+        PageObjectNotFoundError,
+    ):
         pass
 
 

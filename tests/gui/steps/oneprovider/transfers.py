@@ -7,8 +7,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import cast
 
+import pytest
 import yaml
 from selenium.common.exceptions import (
+    ElementNotInteractableException,
     NoSuchElementException,
     StaleElementReferenceException,
 )
@@ -21,6 +23,7 @@ from tests.gui.steps.common.miscellaneous import (
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -57,7 +60,7 @@ def _assert_transfer(
         transfer_val = None
         try:
             transfer_val = getattr(transfer, key.replace(" ", "_"))
-        except (RuntimeError, NoSuchElementException):
+        except NoSuchElementException:
             # if key differs from column name, consider creating suitable dict
             key = key.replace(" ", "_")
             if key in ["type", "destination"]:
@@ -164,7 +167,11 @@ def cancel_or_rerun_transfer(
     if state == "waiting":
         try:
             getattr(transfers, state)[0].menu_button()
-        except RuntimeError:
+        except (
+            ElementNotInteractableException,
+            NoSuchElementException,
+            PageObjectNotFoundError,
+        ):
             cast(TransferRecordActive, transfers.ongoing[0]).menu_button()
     else:
         getattr(transfers, transform(state))[0].menu_button()
@@ -316,14 +323,12 @@ def fail_to_click_option_in_data_distribution_popup(
     browser_id: str, option: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    try:
-        Popups(driver).data_distribution_popup.menu[option]()
-        raise AssertionError(
-            f'User can click on "{option}" option in in data row '
-            'menu in "Data distribution" panel'
-        )
-    except RuntimeError:
-        pass
+    menu = Popups(driver).data_distribution_popup.menu
+    if option not in menu:
+        return
+
+    with pytest.raises(ElementNotInteractableException):
+        menu[option]()
 
 
 @wt(

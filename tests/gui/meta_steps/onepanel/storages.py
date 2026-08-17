@@ -11,7 +11,10 @@ import re
 
 import pytest
 import yaml
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
@@ -147,7 +150,7 @@ def _add_storage_in_op_panel_using_gui(
 
     try:
         wt_click_on_btn_in_content(selenium, [browser_id], btn, content)
-    except RuntimeError:
+    except (ElementNotInteractableException, NoSuchElementException):
         pass
 
     storage_type = options["storage type"]
@@ -347,7 +350,7 @@ def _try_confirm_changes_in_modify_storage_modal(
         wait_for_named_modal_to_disappear(
             selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5
         )
-    except (NoSuchElementException, RuntimeError):
+    except NoSuchElementException:
         pass
 
 

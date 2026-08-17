@@ -207,7 +207,7 @@ def _create_user(
         return _create_new_user(
             zone_hostname, onepanel_credentials, username, password, user_conf_details
         )
-    except HTTPBadRequest:
+    except HTTPBadRequest as exc:
         # this error appear when trying to create user with name that already exist
         # (possible remnants from previous tests)
         if rm_users:
@@ -222,7 +222,10 @@ def _create_user(
                 user_conf_details,
             )
         skip(f'"{username}" user already exist')
-    raise RuntimeError(f'Creation of user "{username}" was skipped')
+        # type-checker expects the function to return something or raise an exception
+        raise RuntimeError(
+            f'Pytest failed to skip test when user "{username}" already exists'
+        ) from exc
 
 
 def _configure_user(

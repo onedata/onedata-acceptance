@@ -78,6 +78,19 @@ class AbstractPageObject:
 
 
 class PageObject(AbstractPageObject):
+    """Represent a page, component, or other logical region of the web GUI.
+
+    Each page object is rooted at ``web_elem``, a Selenium element that scopes
+    lookups performed by descriptors such as ``WebElement``.  The object also
+    keeps the WebDriver used for interactions and an optional parent page object,
+    which provides context in error messages and string representations.
+
+    Subclasses normally declare element descriptors as class attributes and add
+    operations meaningful for the represented GUI region.  Calling ``click()``
+    clicks ``_click_area`` when a subclass defines one; otherwise it clicks the
+    root ``web_elem``.
+    """
+
     id: object
 
     def __init__(

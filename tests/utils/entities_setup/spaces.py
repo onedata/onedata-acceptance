@@ -16,7 +16,7 @@ import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.rest.spaces import delete_space_if_present_using_rest
+from tests.gui.meta_steps.rest.spaces import delete_space_if_present_using_rest
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import HostDescription, JsonObject, JsonValue
 from tests.utils.bdd_utils import given, parsers, wt
@@ -574,7 +574,7 @@ def _get_storage_id(
         if storage_details.json()["name"] == storage_name:
             return storage_id
 
-    raise RuntimeError(
+    raise ValueError(
         f"Storage with name '{storage_name}' was not found in Oneprovider "
         f"at {provider_hostname}. Make sure you have provided the right environment "
         "(env file) for the test."

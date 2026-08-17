@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 
 from _pytest._py.path import LocalPath
+from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
@@ -87,7 +88,7 @@ def create_dataset(
 
     try:
         OPLoggedIn(selenium[browser_id]).file_browser.breadcrumbs
-    except RuntimeError:
+    except NoSuchElementException:
         go_to_and_assert_browser(
             selenium,
             browser_id,

@@ -6,8 +6,9 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import re
 from typing import cast
+
+from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, Onepanel, Popups
@@ -137,12 +138,10 @@ def wt_click_on_discard_btn_in_domain_change_modal(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     try:
-        Modals(selenium[browser_id]).configure_web_cert.discard()
-    except RuntimeError as e:
-        if re.match(r"no.*item found in modals", str(e)):
-            pass
-        else:
-            raise
+        modal = Modals(selenium[browser_id]).configure_web_cert
+    except NoSuchElementException:
+        return
+    modal.discard()
 
 
 @wt(parsers.parse("user of {browser_id} activates Request a subdomain toggle"))

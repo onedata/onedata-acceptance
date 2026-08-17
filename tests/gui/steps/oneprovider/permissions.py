@@ -7,7 +7,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 
 import pytest
-from selenium.common.exceptions import InvalidElementStateException, JavascriptException
+from selenium.common.exceptions import (
+    InvalidElementStateException,
+    JavascriptException,
+    NoSuchElementException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -293,8 +297,8 @@ def assert_acl_record_editable(
     ]
     try:
         _ = getattr(perm, f"_{name}_select")
-    except RuntimeError as exc:
-        raise RuntimeError(
+    except NoSuchElementException as exc:
+        raise AssertionError(
             f"Subject {name} is not editable in {num} ACL record"
         ) from exc
 

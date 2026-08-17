@@ -29,7 +29,7 @@ def assert_provider_has_name_and_hostname_in_oz_rest(
             ), f"Provider has domain {provider.domain} instead of {domain}"
             break
     else:
-        raise RuntimeError(f'Couldn\'t find provider named "{provider_name}"')
+        raise AssertionError(f'Couldn\'t find provider named "{provider_name}"')
 
 
 def assert_there_is_no_provider_in_oz_rest(

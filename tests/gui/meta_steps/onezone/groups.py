@@ -15,6 +15,7 @@ from tests.gui.meta_steps.onezone.tokens import (
     fail_to_add_element_with_copied_token,
     paste_and_consume_received_token,
 )
+from tests.gui.meta_steps.rest.groups import delete_group_if_present_using_rest
 from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     wait_for_error_modal_to_disappear,
@@ -41,11 +42,7 @@ from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu,
     copy_token_from_modal,
 )
-from tests.gui.steps.rest.groups import (
-    ensure_absence_of_group_using_rest,
-    get_user_groups,
-    leave_user_group,
-)
+from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import parse_elements_sequence
@@ -190,7 +187,7 @@ def _register_finalizer_to_remove_group(
 ) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
     request.addfinalizer(
-        lambda: ensure_absence_of_group_using_rest(
+        lambda: delete_group_if_present_using_rest(
             zone_hostname,
             admin_credentials.username,
             admin_credentials.password,

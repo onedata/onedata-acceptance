@@ -65,9 +65,8 @@ def succeed_to_save_changes_in_modify_provider_detail_form(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    save_btn = wait_for_visible_element_using_getter(
-        driver, lambda driver: Onepanel(driver).content.provider.form.save
-    )
+    save_btn_getter = lambda driver: Onepanel(driver).content.provider.form.save
+    save_btn = wait_for_visible_element_using_getter(driver, save_btn_getter)
     save_btn.click()
     wait_for_item_to_disappear(save_btn.web_elem, driver)
     notify_visible_with_text(

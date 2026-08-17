@@ -4,14 +4,18 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import cast
+
 from _pytest._py.path import LocalPath
 
+from tests import ONES3_PORT
 from tests.gui.steps.rest.s3_service_boto3 import (
     DEFAULT_ONES3_TIMEOUT,
+    S3Client,
     create_file_in_bucket,
+    create_s3client,
     does_bucket_exist,
     download_file_from_bucket,
-    get_s3client,
     list_bucket_content,
     list_buckets,
     read_file_content_from_bucket,
@@ -21,6 +25,19 @@ from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, Tokens
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+# The S3 secret key can be set arbitrarily.
+SECRET_KEY = "secretKey"
+
+
+def get_s3client(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts) -> S3Client:
+    if tmp_memory["s3 client"]:
+        return cast(S3Client, tmp_memory["s3 client"])
+    s3_endpoint = f"https://{hosts['oneprovider-1']['hostname']}:{ONES3_PORT}"
+    tmp_memory["s3 client"] = create_s3client(
+        s3_endpoint, tokens["oc_token"]["token"], SECRET_KEY
+    )
+    return cast(S3Client, tmp_memory["s3 client"])
 
 
 @wt(
@@ -86,6 +103,7 @@ def wt_download_file_from_bucket(
         '"{file_content}" in "{space_name}"'
     )
 )
+@repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
 def wt_create_file_in_bucket(
     space_name: str,
     file_name: str,
