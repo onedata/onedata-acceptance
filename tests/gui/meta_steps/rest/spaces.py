@@ -1,0 +1,65 @@
+"""Meta steps for space management using REST API helpers."""
+
+__author__ = "Mateusz Zajac, Jakub Karczewski"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+from tests.gui.steps.rest.spaces import (
+    get_space_details,
+    get_supported_space_ids,
+    revoke_space_support_using_rest,
+)
+
+
+def get_space_ids_supported_by_storage(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    storage_id: str,
+) -> list[str]:
+    matching_space_ids = []
+    for space_id in get_supported_space_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    ):
+        space_details = get_space_details(
+            provider_hostname, onepanel_username, onepanel_password, space_id
+        )
+        if space_details["storageId"] == storage_id:
+            matching_space_ids.append(space_id)
+
+    return matching_space_ids
+
+
+def revoke_all_space_supports_using_rest(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+) -> None:
+    for space_id in get_supported_space_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    ):
+        revoke_space_support_using_rest(
+            provider_hostname, onepanel_username, onepanel_password, space_id
+        )
+
+    assert not get_supported_space_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    )
+
+
+def revoke_space_supports_for_storage_using_rest(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    storage_id: str,
+) -> None:
+    for space_id in get_space_ids_supported_by_storage(
+        provider_hostname, onepanel_username, onepanel_password, storage_id
+    ):
+        revoke_space_support_using_rest(
+            provider_hostname, onepanel_username, onepanel_password, space_id
+        )
+
+    assert not get_space_ids_supported_by_storage(
+        provider_hostname, onepanel_username, onepanel_password, storage_id
+    )

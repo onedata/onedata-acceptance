@@ -11,7 +11,7 @@ from typing import Protocol, cast
 import yaml
 
 from tests import PANEL_REST_PORT
-from tests.gui.meta_steps.onepanel.storages import (
+from tests.gui.meta_steps.rest.storages import (
     remove_multiple_storages_in_op_panel_using_rest,
 )
 from tests.utils.bdd_utils import given, parsers

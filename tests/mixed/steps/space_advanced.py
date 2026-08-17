@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from pytest import FixtureRequest
 
-from tests.gui.steps.rest.shares import create_share_using_rest
+from tests.gui.meta_steps.rest.shares import create_share_using_rest
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (

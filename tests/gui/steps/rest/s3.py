@@ -9,13 +9,8 @@ import hmac
 from datetime import datetime, timezone
 
 import requests
-from requests.exceptions import HTTPError
 
 from tests.conftest import REQUEST_TIMEOUT
-from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.type_definitions import Clipboard
-from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.utils import repeat_failed
 
 S3_SERVICE_PORT = 9000
 HOST_URL = f"dev-volume-s3-krakow.default:{S3_SERVICE_PORT}"
@@ -23,31 +18,6 @@ S3_APP_LABEL = "dev-volume-s3-krakow"
 
 ACCESS_KEY = "accessKey"
 SECRET_KEY = "verySecretKey"
-
-
-@given(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
-@wt(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
-def create_s3_bucket_rest(bucket_name: str) -> None:
-    ensure_bucket_exists(bucket_name)
-
-
-@wt(
-    parsers.parse(
-        "using REST, user of {browser_id} copies item with "
-        'recently copied path from "{src_bucket}" bucket into "{dst_bucket}" bucket'
-    )
-)
-def copy_item_s3_bucket(
-    browser_id: str,
-    dst_bucket: str,
-    src_bucket: str,
-    clipboard: Clipboard,
-    displays: dict[str, str],
-) -> None:
-    path = clipboard.paste(display=displays[browser_id])
-    copy_item_between_buckets(
-        dst_bucket, f"{src_bucket}{path}/999999", f"{path[1::]}/999999"
-    )
 
 
 def sign(key: bytes, msg: str) -> bytes:
@@ -201,20 +171,6 @@ def assert_bucket_exists(bucket_name: str) -> None:
         timeout=REQUEST_TIMEOUT,
     )
     response.raise_for_status()
-
-
-@repeat_failed(timeout=WAIT_BACKEND, exceptions=(requests.RequestException,))
-def ensure_bucket_exists(bucket_name: str) -> None:
-    try:
-        create_bucket(bucket_name)
-    except HTTPError as ex:
-        # Creating an existing bucket is an idempotent success.
-        if ex.response.status_code != 409:
-            raise
-
-    # Do not trust the bucket initializer's exit status. It can succeed after
-    # contacting an old MinIO pod during a rolling update.
-    assert_bucket_exists(bucket_name)
 
 
 def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:

@@ -15,6 +15,12 @@ from selenium.common.exceptions import NoSuchElementException
 
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.meta_steps.rest.storages import (
+    get_storage_ids_by_name,
+    remove_multiple_storages_in_op_panel_using_rest,
+    restore_config_and_remove_storage_by_id,
+    storage_data_from_config,
+)
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import (
@@ -41,12 +47,6 @@ from tests.gui.steps.onepanel.storages import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.rest.storages import (
-    get_storage_ids_by_name,
-    remove_storage_by_id,
-    restore_config_and_remove_storage_by_id,
-    storage_data_from_config,
-)
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -75,25 +75,6 @@ def _register_storage_finalizer(
             config,
         )
     )
-
-
-def remove_multiple_storages_in_op_panel_using_rest(
-    storage_name: str,
-    provider: str,
-    hosts: Hosts,
-    onepanel_credentials: User,
-) -> None:
-    provider_hostname = hosts[provider]["hostname"]
-    onepanel_username = onepanel_credentials.username
-    onepanel_password = onepanel_credentials.password
-
-    storage_ids = get_storage_ids_by_name(
-        storage_name, provider, hosts, onepanel_credentials
-    )
-    for storage_id in storage_ids:
-        remove_storage_by_id(
-            provider_hostname, onepanel_username, onepanel_password, storage_id
-        )
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))

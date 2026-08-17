@@ -11,6 +11,7 @@ import time
 import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.gui.steps.common.miscellaneous import (
     wait_until_scanning_is_finished_in_storage_import_tab,
 )
@@ -50,7 +51,6 @@ from tests.gui.steps.onepanel.spaces import (
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
