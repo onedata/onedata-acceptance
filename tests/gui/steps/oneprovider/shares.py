@@ -6,7 +6,7 @@ __author__ = "Bartosz Walkowicz, Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -150,7 +150,7 @@ def no_shares_message(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     try:
         msg = OPLoggedIn(driver).shares_page.no_shares_msg
-    except RuntimeError:
+    except NoSuchElementException:
         driver.refresh()
         switch_to_iframe(selenium, browser_id)
         msg = OPLoggedIn(driver).shares_page.no_shares_msg

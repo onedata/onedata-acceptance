@@ -10,7 +10,7 @@ from abc import ABC
 from collections.abc import Iterable
 from typing import ClassVar, Optional
 
-from selenium.common.exceptions import JavascriptException
+from selenium.common.exceptions import JavascriptException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -135,7 +135,7 @@ class Browser(ABC, PageObject):
     def is_empty(self) -> bool:
         try:
             self._empty_dir_icon
-        except RuntimeError:
+        except NoSuchElementException:
             return False
         return True
 

@@ -70,7 +70,7 @@ def start_recording(
         time.sleep(0.1)
     if proc.poll() is not None:
         _, err = proc.communicate()
-        raise RuntimeError(f"ffmpeg did not start successfully, err:\n{err}")
+        raise ChildProcessError(f"ffmpeg did not start successfully, err:\n{err}")
     return proc, paths
 
 

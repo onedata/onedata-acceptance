@@ -225,7 +225,9 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
     if test_type == "upgrade":
 
         if not env_file:
-            raise RuntimeError("In upgrade tests --env-file option must be provided")
+            raise pytest.UsageError(
+                "In upgrade tests --env-file option must be provided"
+            )
 
         with open(env_file, "r") as f:
             test_config = yaml.load(f, yaml.Loader)

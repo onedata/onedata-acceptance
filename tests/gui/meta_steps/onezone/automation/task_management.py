@@ -23,6 +23,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_editor_bracket,
 )
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -229,7 +230,7 @@ def modify_task_results(
             [(res_name, new_res)] = res.items()
             try:
                 result = page.workflows_page.task_form.results[res_name]
-            except RuntimeError:
+            except PageObjectNotFoundError:
                 result = page.workflows_page.task_form.results[res_name + ":"]
             if option == "adding":
                 result.add_mapping()

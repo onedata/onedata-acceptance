@@ -12,6 +12,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebElementsSequence
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 
 
 class PowerSelect(PageObject):
@@ -37,7 +38,7 @@ class PowerSelect(PageObject):
                 item.click()
                 return
 
-        raise RuntimeError(
+        raise PageObjectNotFoundError(
             f"{str_prefix}{normalized_property_name} not found in popup menu"
         )
 
@@ -57,7 +58,7 @@ class PowerSelect(PageObject):
             if item.text.split(separator)[0].strip() == property_name:
                 item.click()
                 return
-        raise RuntimeError(f"{property_name} not found in popup menu")
+        raise PageObjectNotFoundError(f"{property_name} not found in popup menu")
 
     def __str__(self) -> str:
         return "Power select options"

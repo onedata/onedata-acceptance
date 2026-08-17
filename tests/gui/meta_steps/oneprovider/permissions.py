@@ -7,7 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Optional
 
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
@@ -85,7 +86,7 @@ def open_permission_modal(
 
     try:
         select_permission_type(selenium, browser_id, permission_type)
-    except RuntimeError as err:
+    except ElementNotInteractableException as err:
         if permission_type == "posix":
             assert_posix_tab_in_panel(selenium, browser_id, modal_name)
         else:
@@ -123,27 +124,18 @@ def assert_posix_permissions_in_op_gui(
     perm: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    modal_name = "Details modal"
-    close_button = "X"
-    try:
-        click_modal_button(selenium, browser_id, close_button, modal_name)
-        _assert_posix_permissions(
-            selenium,
-            browser_id,
-            space,
-            path,
-            perm,
-            tmp_memory,
-        )
-    except (AttributeError, StaleElementReferenceException, RuntimeError):
-        _assert_posix_permissions(
-            selenium,
-            browser_id,
-            space,
-            path,
-            perm,
-            tmp_memory,
-        )
+    driver = selenium[browser_id]
+    if driver.find_elements(By.CSS_SELECTOR, ".modal.in .modal-dialog"):
+        Modals(driver).details_modal.x()
+
+    _assert_posix_permissions(
+        selenium,
+        browser_id,
+        space,
+        path,
+        perm,
+        tmp_memory,
+    )
 
 
 @wt(

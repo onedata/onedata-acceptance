@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from functools import partial
 from typing import Any
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
@@ -17,6 +18,20 @@ from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjects
 
 
 class WebElement(AbstractWebElement):
+    """Locate a Selenium element within a page object's root element.
+
+    ``WebElement`` is intended to be declared as a class attribute of a
+    ``PageObject`` subclass.  Access through a page-object instance searches its
+    ``web_elem`` using the descriptor's CSS selector and returns the matching
+    Selenium ``WebElement``.  The lookup happens on every access, so the result is
+    not cached.  Access through the class returns the descriptor itself.
+
+    By default, the lookup scrolls to the matching element.  The ``scroll``
+    constructor argument can disable that behavior.  The ``name`` and
+    ``parent_name`` arguments customize the element and parent descriptions used
+    in lookup errors.
+    """
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.parent_name = kwargs.pop("parent_name", "")
         super().__init__(*args, **kwargs)
@@ -105,7 +120,11 @@ class AceEditor(WebElement):
         selector = self.css_selector + " .ace_content"
         script = f"var textarea = document.querySelector('{selector}');return textarea"
         driver = instance.web_elem.parent
-        return driver.execute_script(script).text
+        if item := driver.execute_script(script):
+            return item.text
+        raise NoSuchElementException(
+            self._format_msg("no {item} item found in {parent}", instance)
+        )
 
     def __set__(self, instance: Any, val: Any) -> None:
         driver = instance.web_elem.parent

@@ -23,6 +23,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
 
 from .common import EditBox, InputBox
@@ -135,7 +136,9 @@ class ProvidersMap(Element):
                 provider.click()
                 return
 
-        raise RuntimeError(f"Provider {provider_name} was not found on the map")
+        raise PageObjectNotFoundError(
+            f"Provider {provider_name} was not found on the map"
+        )
 
     def hover_and_check_provider(self, provider_name: str, driver: WebDriver) -> None:
         for provider in self.providers:
@@ -144,7 +147,9 @@ class ProvidersMap(Element):
             if name == provider_name:
                 return
 
-        raise RuntimeError(f"Provider {provider_name} was not found on the map")
+        raise PageObjectNotFoundError(
+            f"Provider {provider_name} was not found on the map"
+        )
 
     def get_provider_horizontal_position(
         self, provider_name: str, driver: WebDriver
@@ -161,7 +166,9 @@ class ProvidersMap(Element):
 
                 return float(position)
 
-        raise RuntimeError(f"Provider {provider_name} was not found on the map")
+        raise PageObjectNotFoundError(
+            f"Provider {provider_name} was not found on the map"
+        )
 
 
 class SpaceOverviewPage(PageObject):
@@ -301,7 +308,7 @@ class DataPage(SidebarPanelPage):
                 space.click()
                 if space.name == name:
                     return
-        raise RuntimeError(f"{name} space not found")
+        raise PageObjectNotFoundError(f"{name} space not found")
 
     def get_visible_spaces_list(self) -> list[SpaceHeader]:
         return [space for space in self.spaces_headers_list if space.name != ""]

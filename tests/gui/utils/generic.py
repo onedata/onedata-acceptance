@@ -294,16 +294,12 @@ def wait_for_visible_element_using_getter(
     timeout: float = WAIT_FRONTEND,
 ) -> WebElement:
     # Wait until the getter returns a visible element.
-    # RuntimeError raised by the getter is treated as a transient lookup failure.
 
     def is_element_visible_using_getter(
         driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
     ) -> WebElement | None:
-        try:
-            web_elem = web_elem_getter(driver)
-            return web_elem if visibility_of(web_elem)(driver) else None
-        except RuntimeError:
-            return None
+        web_elem = web_elem_getter(driver)
+        return web_elem if visibility_of(web_elem)(driver) else None
 
     return WebDriverWait(driver, timeout=timeout).until(
         partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
@@ -344,7 +340,7 @@ def find_web_elem(
     except NoSuchElementException as exc:
         if callable(error_message):
             error_message = error_message()
-        raise RuntimeError(error_message) from exc
+        raise NoSuchElementException(error_message) from exc
     return item
 
 
@@ -363,7 +359,9 @@ def find_web_elem_with_text(
             return item
     if callable(error_message):
         error_message = error_message()
-    raise RuntimeError(f'Css element with "{text}" text not found. {error_message}')
+    raise NoSuchElementException(
+        f'Css element with "{text}" text not found. {error_message}'
+    )
 
 
 def click_on_web_elem(
@@ -390,7 +388,7 @@ def click_on_web_elem(
     else:
         if callable(error_message):
             error_message = error_message()
-        raise RuntimeError(error_message)
+        raise ElementNotInteractableException(error_message)
 
 
 def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> None:

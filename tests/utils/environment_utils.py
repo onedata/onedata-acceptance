@@ -642,7 +642,7 @@ def verify_env_ready(admin_user: User, hosts: Mapping[str, object]) -> None:
     start = time.time()
     while not ready:
         if time.time() - start > 2 * ENV_READY_TIMEOUT_SECONDS:
-            raise RuntimeError("Environment not ready after upgrade")
+            raise TimeoutError("Environment not ready after upgrade")
         time.sleep(1)
         try:
             providers = get_providers_list(admin_user, zone_hostname)

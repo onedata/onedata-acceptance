@@ -6,6 +6,10 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -178,7 +182,7 @@ def join_space_to_harvester(
     )
     try:
         click_button_in_harvester_spaces_page(selenium, browser_id, button_name)
-    except RuntimeError:
+    except (ElementNotInteractableException, NoSuchElementException):
         click_option_in_discovery_page_menu(
             selenium, browser_id, button_name.capitalize()
         )

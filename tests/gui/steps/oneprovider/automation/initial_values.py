@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Optional, Protocol, cast
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -51,7 +52,7 @@ def check_if_select_files_modal_disappeared(
         raise AssertionError(
             f"Files: {files} as initial value for workflow was not selected"
         )
-    except RuntimeError:
+    except NoSuchElementException:
         pass
 
 
@@ -135,7 +136,7 @@ def click_input_link_in_automation_page(
         try:
             # for input store type Single Value this Button does not work
             OPLoggedIn(driver).automation_page.files_input_link.click()
-        except RuntimeError:
+        except NoSuchElementException:
             # for adding another files to input store (type List) this Button
             # does not work because it finds two links (one for changing file,
             # another for adding)

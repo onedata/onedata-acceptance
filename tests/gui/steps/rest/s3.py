@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import hashlib
 import hmac
-import subprocess as sp
 from datetime import datetime
 
 import requests
@@ -14,25 +13,12 @@ from requests.exceptions import HTTPError
 
 from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.type_definitions import Clipboard
-from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.bdd_utils import parsers, wt
 
 HOST_URL = "dev-volume-s3-krakow.default:9000"
 
 ACCESS_KEY = "accessKey"
 SECRET_KEY = "verySecretKey"
-
-
-@given(parsers.parse("S3 host entry is added to /etc/hosts"))
-def add_s3_host_entry() -> None:
-    # temporary solution when s3 host entry will be added by onenv remove this function
-    ip = sp.check_output(
-        "kubectl get pods -o wide | grep dev-volume-s3-krakow |"
-        " grep -v dev-volume-s3-krakow-init | awk '{print $6}'",
-        shell=True,
-        text=True,
-    )
-    ip = ip.replace("\n", "")
-    add_etc_hosts_entries(ip, "dev-volume-s3-krakow.default")
 
 
 @wt(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
@@ -214,12 +200,3 @@ def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
     response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
 
     response.raise_for_status()
-
-
-def add_etc_hosts_entries(service_ip: str, service_host: str) -> None:
-    sp.run(
-        f'sudo bash -c "echo {service_ip} {service_host} >> /etc/hosts"',
-        shell=True,
-        text=True,
-        check=True,
-    )

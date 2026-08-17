@@ -16,6 +16,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.utils.utils import repeat_failed
 
 from .alert_info_popup import AlertInfoPopup
@@ -167,7 +168,9 @@ class Popups:
                 message = popup_val.message
                 if regexp.match(message):
                     return notifies[message]
-        raise RuntimeError(f'No alert popup with message "{alert_popup.message}"')
+        raise PageObjectNotFoundError(
+            f'No alert popup with message "{alert_popup.message}"'
+        )
 
     def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0
@@ -177,4 +180,4 @@ class Popups:
         for popup in self.query_builder_popups:
             if popup.web_elem.is_displayed():
                 return popup
-        raise RuntimeError("No query builder popups visible")
+        raise PageObjectNotFoundError("No query builder popups visible")

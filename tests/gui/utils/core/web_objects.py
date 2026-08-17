@@ -15,6 +15,10 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+class PageObjectNotFoundError(RuntimeError):
+    """Raised when an item cannot be found in a page-object sequence."""
+
+
 class ButtonPageObject(PageObject):
     name = "button"
     item_not_found_msg = "{text} btn not found in {parent}"
@@ -82,7 +86,7 @@ class PageObjectsSequence:
             item = self._getitem_by_idx(sel)
             if item:
                 return self.cls(self.driver, item, self.parent)
-            raise RuntimeError(
+            raise PageObjectNotFoundError(
                 "Index out of bound. Requested item at "
                 f"{sel} while limit is {len(self)} in "
                 f"{self.parent}"
@@ -91,7 +95,7 @@ class PageObjectsSequence:
             item = self._getitem_by_id(sel)
             if item:
                 return item
-            raise RuntimeError(f'no "{sel}" found in {self.parent}')
+            raise PageObjectNotFoundError(f'no "{sel}" found in {self.parent}')
         raise TypeError(f"unsupported selector type: {type(sel).__name__}")
 
     def __contains__(self, item: object) -> bool:

@@ -6,6 +6,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_filebrowser,
@@ -302,7 +307,7 @@ def click_save_button_metadata(selenium: SeleniumDrivers, browser_id: str) -> No
     panel = "Metadata"
     try:
         click_panel_button(selenium, browser_id, button, panel)
-    except RuntimeError:
+    except (ElementNotInteractableException, NoSuchElementException):
         pass
 
 

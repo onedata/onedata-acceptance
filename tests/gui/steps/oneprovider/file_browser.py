@@ -119,7 +119,7 @@ def assert_presence_in_file_browser_with_order(
             except StopIteration:
                 return
 
-    raise RuntimeError(
+    raise AssertionError(
         "item(s) not in browser or not in specified order "
         f"{item_list} starting from {curr_item}"
     )

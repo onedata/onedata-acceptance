@@ -108,7 +108,7 @@ def click_on_button_in_tokens_sidebar(
                 button_clean.click()
                 return
             time.sleep(0.1)
-        raise RuntimeError(f"Did not manage to click {button} button")
+        raise TimeoutError(f"Did not manage to click {button} button")
     else:
         sidebar = oz_page.tokens.sidebar
         getattr(sidebar, transform(button))()
@@ -648,4 +648,3 @@ def click_on_confirm_button_on_tokens_page(
     oz_page.tokens.confirm_button()
     # it is needed to wait for the page refresh
     wait_till_main_content_loaded(selenium[browser_id])
-    oz_page.update_current_page()

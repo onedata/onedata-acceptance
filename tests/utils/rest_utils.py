@@ -220,6 +220,9 @@ def http_request(  # pylint: disable=inconsistent-return-statements
     stream: bool = False,
     retries: int = 5,
 ) -> requests.Response:
+    if retries <= 0:
+        raise ValueError("retries must be greater than zero")
+
     protocol = "https" if use_ssl else "http"
     request_headers: dict[str, str] = dict(DEFAULT_HEADERS) if default_headers else {}
     if headers:
@@ -258,4 +261,5 @@ def http_request(  # pylint: disable=inconsistent-return-statements
             print("Test will freeze to allow debugging!")
             while True:
                 time.sleep(365 * 24 * 60 * 60)
-    raise RuntimeError("HTTP request was not attempted")
+
+    raise RuntimeError("unreachable")

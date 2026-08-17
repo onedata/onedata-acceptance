@@ -7,7 +7,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Optional
 
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -25,6 +28,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.utils import repeat_failed
 
@@ -345,12 +349,12 @@ class PrivilegeTree(PageObject):
         while privilege_row is None and privilege_row_try < 10:
             try:
                 privilege_row = self.privilege_groups[name]
-            except RuntimeError:
+            except PageObjectNotFoundError:
                 privilege_row_try += 1
                 time.sleep(1)
 
         if privilege_row is None:
-            raise RuntimeError(f"Privilege group '{name}' not found after retries")
+            raise TimeoutError(f"Privilege group '{name}' not found after retries")
 
         granted = group["granted"]
         result = True
@@ -382,6 +386,6 @@ class PrivilegeTree(PageObject):
             try:
                 self.spinner  # pylint: disable=pointless-statement
                 time.sleep(0.1)
-            except RuntimeError:
+            except NoSuchElementException:
                 return
-        raise RuntimeError("Did not manage to set privileges, exceeded loading time")
+        raise TimeoutError("Did not manage to set privileges, exceeded loading time")

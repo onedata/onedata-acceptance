@@ -71,7 +71,7 @@ class Task(Element):
     def get_elem_id(self) -> str:
         elem_id = self.web_elem.get_attribute("id")
         if elem_id is None:
-            raise RuntimeError(f"Task {self.name} has no id")
+            raise AttributeError(f"Task {self.name} has no id")
         return elem_id
 
     def click_on_drag_handle(self) -> None:

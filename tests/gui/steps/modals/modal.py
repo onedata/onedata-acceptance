@@ -170,7 +170,7 @@ def assert_modal_does_not_appear(
     driver = selenium[browser_id]
     try:
         _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
-        raise RuntimeError(f"Modal {modal_name} has appeared")
+        raise AssertionError(f"Modal {modal_name} has appeared")
     except TimeoutException:
         pass
 
@@ -222,7 +222,7 @@ def wait_for_named_modal_to_disappear(
     modal_name = check_modal_name(modal_name)
     try:
         modal = getattr(Modals(driver), transform(modal_name))
-    except RuntimeError:
+    except NoSuchElementException:
         return
     WebDriverWait(
         driver,
@@ -269,7 +269,7 @@ def _click_on_confirmation_btn_in_modal(
             click_on_btn(driver, btn, error_message)
             break
     else:
-        raise RuntimeError(f"no button named {button_name} found")
+        raise AssertionError(f"no button named {button_name} found")
 
 
 @wt(
@@ -395,7 +395,7 @@ def assert_btn_in_modal_is_disabled(
             assert not btn.is_enabled(), f"{btn_name} is not disabled"
             break
     else:
-        raise RuntimeError(f"no button named {button_name} found")
+        raise AssertionError(f"no button named {button_name} found")
 
 
 @wt(parsers.parse('user of {browser_id} selects "{text}" option in displayed modal'))
@@ -429,7 +429,7 @@ def assert_btn_in_modal_is_enabled(
             assert btn.is_enabled(), f"{btn_name} is disabled"
             break
     else:
-        raise RuntimeError(f"no button named {button_name} found")
+        raise AssertionError(f"no button named {button_name} found")
 
 
 @wt(
@@ -524,7 +524,7 @@ def assert_there_is_no_button_in_panel(
             f'There is a "{button}" button visible in {panel_name}'
             " panel when it shouldn't be"
         )
-    except RuntimeError:
+    except NoSuchElementException:
         pass
 
 
@@ -658,7 +658,7 @@ def look_for_tab_name(navigation: PageObjectsSequence, name: str) -> str:
     for elem in navigation:
         if name in elem.name:
             return elem.name
-    raise RuntimeError(f"tab {name} not found")
+    raise ValueError(f"tab {name} not found")
 
 
 def _assert_number_of_shares_in_modal(
@@ -746,7 +746,7 @@ def close_modal(selenium: SeleniumDrivers, browser_id: str, modal: str) -> None:
             getattr(Modals(selenium[browser_id]), modal).cancel()
         except AttributeError:
             getattr(Modals(selenium[browser_id]), modal).x()
-    except RuntimeError:
+    except NoSuchElementException:
         return
 
     wait_for_named_modal_to_disappear(selenium, browser_id, modal)

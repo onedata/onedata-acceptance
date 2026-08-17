@@ -10,6 +10,7 @@ import time
 from typing import cast
 
 import yaml
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -36,7 +37,10 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
-from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.core.web_objects import (
+    PageObjectNotFoundError,
+    PageObjectsSequence,
+)
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -129,7 +133,7 @@ def assert_element_is_member_of_parent_in_memberships(
         return False
 
     if not search_for_members(driver, records, member_name, parent_name, fun):
-        raise RuntimeError(
+        raise AssertionError(
             f'not found "{member_name}" {member_type} as a member of'
             f' "{parent_name}" {parent_type}'
         )
@@ -160,12 +164,12 @@ def assert_element_is_not_member_of_parent_in_memberships(
 
     def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
-            raise RuntimeError(
+            raise AssertionError(
                 f'found "{member_name}" {member_type} as a member of'
                 f' "{parent_name}" {parent_type}'
             )
         if member_index == 0:
-            raise RuntimeError(
+            raise AssertionError(
                 f'found "{member_name}" {member_type} as a member of'
                 f' "{parent_name}" {parent_type}'
             )
@@ -409,8 +413,8 @@ def assert_generated_token_is_present(
     try:
         text = Modals(selenium[browser_id]).invite_using_token.token
         assert len(text) > 0, "Token is empty, while it should be non-empty"
-    except RuntimeError as exc:
-        raise RuntimeError("No token area found on page") from exc
+    except NoSuchElementException as exc:
+        raise AssertionError("No token area found on page") from exc
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) copies invitation token from modal"))
@@ -441,7 +445,7 @@ def assert_element_is_groups_child(
 
     try:
         page.members_page.groups.items[child]
-    except RuntimeError:
+    except (PageObjectNotFoundError, NoSuchElementException):
         assert option == "does not see", f'"{child}" is not "{parent}" child'
     else:
         assert option == "sees", f'"{child}" is "{parent}" child'
@@ -478,7 +482,7 @@ def assert_member_is_in_parent_members_list(
                 assert page.users.items[member_name].is_displayed(), error_message
             else:
                 assert page.groups.items[member_name].is_displayed(), error_message
-        except RuntimeError as exc:
+        except PageObjectNotFoundError as exc:
             raise AssertionError(error_message) from exc
 
     else:
@@ -491,7 +495,7 @@ def assert_member_is_in_parent_members_list(
                 assert not page.users.items[member_name].is_displayed(), error_message
             else:
                 assert not page.groups.items[member_name].is_displayed(), error_message
-        except RuntimeError:
+        except PageObjectNotFoundError:
             pass
 
 
@@ -515,7 +519,7 @@ def check_user_in_space_members_list(
     page.spaces_list[space_name].members()
     try:
         page.members_page.users.items[username]
-    except RuntimeError:
+    except PageObjectNotFoundError:
         assert (
             option == "does not see"
         ), f'user "{username}" not found on "{space_name}" space members list'
@@ -1065,12 +1069,12 @@ def check_element_in_members_subpage(
         try:
             error_message = f"{member_name} {member_type} not found"
             assert member_name in member_list, error_message
-        except RuntimeError as exc:
+        except NoSuchElementException as exc:
             raise AssertionError(error_message) from exc
     else:
         try:
             assert member_name not in member_list, f"{member_name} {member_type}"
-        except RuntimeError:
+        except NoSuchElementException:
             pass
 
 

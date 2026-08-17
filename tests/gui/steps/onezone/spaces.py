@@ -9,7 +9,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any, cast
 
-from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    NoSuchElementException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -20,6 +23,7 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -154,7 +158,7 @@ def assert_no_provider_for_space(
     provider = hosts[provider_name]["name"]
     try:
         page.providers_page.providers_list[provider]
-    except RuntimeError:
+    except (NoSuchElementException, PageObjectNotFoundError):
         pass
     else:
         assert (

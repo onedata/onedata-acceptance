@@ -35,7 +35,7 @@ def _enter_text(input_box: SeleniumWebElement, text: str) -> None:
     input_box.clear()
     input_box.send_keys(text)
     if input_box.get_attribute("value") != text and input_box.text != text:
-        raise RuntimeError(f'entering "{text}" to input box failed')
+        raise AssertionError(f'entering "{text}" to input box failed')
 
 
 @wt(parsers.parse('user of {browser_id} types "{text}" on keyboard'))
