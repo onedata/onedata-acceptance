@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from contextlib import suppress
+
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.http_exceptions import HTTPNotFound
@@ -72,15 +74,13 @@ def leave_user_space(
     )
 
 
-def ensure_absence_of_space_using_rest(
+def delete_space_if_present_using_rest(
     zone_hostname: str, owner_username: str, owner_password: str, space_id: str
 ) -> None:
-    try:
+    with suppress(HTTPNotFound):
         http_delete(
             ip=zone_hostname,
             port=OZ_REST_PORT,
             path=get_zone_rest_path("spaces", space_id),
             auth=(owner_username, owner_password),
         )
-    except HTTPNotFound:
-        pass
