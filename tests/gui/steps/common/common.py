@@ -38,7 +38,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
-from tests.gui.utils.common.popups.generic import AlertPopupBase
+from tests.gui.utils.common.popups.generic import AlertPopupType
 from tests.gui.utils.generic import (
     ListElement,
     get_visibility_condition,
@@ -351,7 +351,7 @@ def wait_till_error_modal_disappear(
 
 def close_alert_popup_if_present(
     driver: WebDriver,
-    popup: AlertPopupBase,
+    popup: AlertPopupType,
 ) -> bool:
     # Close an alert identified by its enum value.
     # If popup doesn't appear, don't throw an error.

@@ -101,13 +101,12 @@ def _create_harvester(
 
     # set harvester id
     harvester_id = response.headers["Location"].split("/")[-1]
-    harvesters[harvester_name] = harvester_id
-
     request.addfinalizer(
         lambda: remove_harvester_using_rest(
             harvester_id, zone_hostname, owner_username, owner_password
         )
     )
+    harvesters[harvester_name] = harvester_id
 
     _create_harvester_gui_index(
         zone_hostname, owner_username, owner_password, harvester_id

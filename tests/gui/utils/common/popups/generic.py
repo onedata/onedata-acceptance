@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from enum import Enum
-from typing import Literal
+from typing import Final, Literal
 
 AlertPopupCategory = Literal["Success", "Info", "Warning", "Fail"]
 CreatedItemType = Literal["space", "group", "harvester", "automation inventory"]
@@ -83,24 +83,24 @@ class CreatedItemAlertPopup(AlertPopupBase, Enum):
     ) -> None:
         self.item_type = item_type
         super().__init__(
-            rf"New {item_type} created successfully",
+            f"New {item_type} created successfully",
             "Success",
         )
 
 
 AlertPopupType = AlertPopup | CreatedItemAlertPopup
-ALL_ALERT_POPUPS: tuple[AlertPopupType, ...] = (
+ALL_ALERT_POPUPS: Final[tuple[AlertPopupType, ...]] = (
     *AlertPopup,
     *CreatedItemAlertPopup,
 )
 
 
-ALERT_POPUP_ALIASES: dict[str, AlertPopupBase] = {
+ALERT_POPUP_ALIASES: Final[dict[str, AlertPopupType]] = {
     popup.name.lower().replace("_", " "): popup for popup in ALL_ALERT_POPUPS
 }
 
 
-def parse_alert_popup(value: str) -> AlertPopupBase:
+def parse_alert_popup(value: str) -> AlertPopupType:
     value = value.strip().lower()
     try:
         return ALERT_POPUP_ALIASES[value]

@@ -8,8 +8,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 import time
 
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+    TimeoutException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
@@ -32,7 +37,7 @@ from .data_distribution_popup import DataDistributionPopup
 from .data_row_menu import DataRowMenu
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .deregister_provider import DeregisterProvider
-from .generic import AlertPopupBase
+from .generic import AlertPopupType
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .handle_service import HandleService
 from .info import Info
@@ -73,26 +78,28 @@ class AlertPopups:
             *self.success,
         ]
 
-    def find_alert_popup(self, alert_popup: AlertPopupBase) -> AlertInfoPopup | None:
+    def find_alert_popup(self, alert_popup: AlertPopupType) -> AlertInfoPopup | None:
         """Return the currently displayed alert matching the expected message."""
         regexp = re.compile(alert_popup.message)
         for popup in self.get_all_alert_popups():
             try:
                 if regexp.match(popup.message):
                     return popup
-            except StaleElementReferenceException:
+            except (StaleElementReferenceException, NoSuchElementException):
                 # Alert popups disappear automatically. Ignore elements that
                 # vanish while their messages are being read.
                 continue
         return None
 
-    def get_alert_popup(self, alert_popup: AlertPopupBase) -> AlertInfoPopup | None:
-        for _ in range(10):
-            popup = self.find_alert_popup(alert_popup)
-            if popup is not None:
-                return popup
-            time.sleep(0.1)
-        return None
+    def get_alert_popup(self, alert_popup: AlertPopupType) -> AlertInfoPopup | None:
+        try:
+            return WebDriverWait(
+                self.driver,
+                timeout=1,
+                poll_frequency=0.05,
+            ).until(lambda _: self.find_alert_popup(alert_popup))
+        except TimeoutException:
+            return None
 
 
 class Popups:

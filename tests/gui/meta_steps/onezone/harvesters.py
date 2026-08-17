@@ -233,10 +233,6 @@ def create_harvester(
     click_create_button_in_discovery_page(selenium, browser_id)
     click_on_option_in_harvester_menu(selenium, browser_id, option, harvester_name)
     harvester_id = clipboard.paste(display=displays[browser_id])
-    harvesters[harvester_name] = harvester_id
-    close_alert_popup_if_present(
-        selenium[browser_id], popup=CreatedItemAlertPopup.HARVESTER
-    )
 
     request.addfinalizer(
         lambda: remove_harvester_using_rest(
@@ -245,6 +241,11 @@ def create_harvester(
             admin_credentials.username,
             admin_credentials.password,
         )
+    )
+
+    harvesters[harvester_name] = harvester_id
+    close_alert_popup_if_present(
+        selenium[browser_id], popup=CreatedItemAlertPopup.HARVESTER
     )
 
 
