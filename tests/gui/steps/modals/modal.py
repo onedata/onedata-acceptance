@@ -36,7 +36,7 @@ in_type_to_id = {
 }
 
 
-def check_modal_name(modal_name: str) -> str:
+def resolve_modal_attribute_name(modal_name: str) -> str:
     modal_name = transform(modal_name)
     # dict mapping part of the modal name into the used modal name in tests
     s = {
@@ -221,7 +221,7 @@ def wait_for_named_modal_to_disappear(
     wait_time: int = WAIT_FRONTEND,
 ) -> None:
     driver = selenium[browser_id]
-    modal_name = check_modal_name(modal_name)
+    modal_name = resolve_modal_attribute_name(modal_name)
     try:
         modal = getattr(Modals(driver), transform(modal_name))
     except NoSuchElementException:
@@ -449,7 +449,7 @@ def assert_element_text_in_modal(
     element: str,
 ) -> None:
     driver = selenium[browser_id]
-    modal = check_modal_name(modal)
+    modal = resolve_modal_attribute_name(modal)
     element_sel = "forbidden_alert" if element == "alert" else "info"
     assert_element_text(getattr(Modals(driver), modal), element_sel, text)
 
@@ -517,7 +517,8 @@ def assert_there_is_no_button_in_panel(
     selenium: SeleniumDrivers, browser_id: str, button: str, panel_name: str
 ) -> None:
     modal = getattr(
-        Modals(selenium[browser_id]).details_modal, check_modal_name(panel_name)
+        Modals(selenium[browser_id]).details_modal,
+        resolve_modal_attribute_name(panel_name),
     )
 
     try:
@@ -540,11 +541,11 @@ def assert_there_is_no_button_in_panel(
 def click_modal_button(
     selenium: SeleniumDrivers, browser_id: str, button: str, modal_name: str
 ) -> None:
-    normalized_modal_name = check_modal_name(modal_name)
-    modal = getattr(Modals(selenium[browser_id]), normalized_modal_name)
+    modal_attribute_name = resolve_modal_attribute_name(modal_name)
+    modal = getattr(Modals(selenium[browser_id]), modal_attribute_name)
     button = button.replace(".", "")
     getattr(modal, transform(button)).click()
-    if normalized_modal_name == "create_group" and transform(button) == "create":
+    if modal_attribute_name == "create_group" and transform(button) == "create":
         close_alert_popup_if_present(
             selenium[browser_id], popup=CreatedItemAlertPopup.GROUP
         )
@@ -560,7 +561,9 @@ def click_modal_button(
 def click_modal_link(
     selenium: SeleniumDrivers, browser_id: str, link: str, modal_name: str
 ) -> None:
-    modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal_name))
+    modal = getattr(
+        Modals(selenium[browser_id]), resolve_modal_attribute_name(modal_name)
+    )
     getattr(modal, transform(link)).click()
 
 
@@ -598,7 +601,9 @@ def write_name_into_text_field_in_panel(
     if name_textfield == "":
         name_textfield = "input name"
     driver = selenium[browser_id]
-    modal = getattr(Modals(driver).details_modal, check_modal_name(panel_name))
+    modal = getattr(
+        Modals(driver).details_modal, resolve_modal_attribute_name(panel_name)
+    )
     setattr(modal, transform(name_textfield), item_name)
 
 
@@ -636,7 +641,7 @@ def write_name_into_text_field_in_modal(
     if name_textfield == "":
         name_textfield = "input name"
     driver = selenium[browser_id]
-    modal = getattr(Modals(driver), check_modal_name(modal_name))
+    modal = getattr(Modals(driver), resolve_modal_attribute_name(modal_name))
     setattr(modal, transform(name_textfield), item_name)
 
 
@@ -745,7 +750,7 @@ def get_error_modal_text(selenium: SeleniumDrivers, browser_id: str) -> str:
 @wt(parsers.re(r'user of (?P<browser_id>.*) closes "(?P<modal>.*)" (modal|panel)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_modal(selenium: SeleniumDrivers, browser_id: str, modal: str) -> None:
-    modal = check_modal_name(modal)
+    modal = resolve_modal_attribute_name(modal)
     try:
         getattr(Modals(selenium[browser_id]), modal).close()
     except AttributeError:
@@ -827,7 +832,7 @@ def switch_toggle_in_modal(
     modal_name: str,
 ) -> None:
     driver = selenium[browser_id]
-    modal = getattr(Modals(driver), check_modal_name(modal_name))
+    modal = getattr(Modals(driver), resolve_modal_attribute_name(modal_name))
     toggle = getattr(modal, transform(toggle_name))
     getattr(toggle, option[:-1])()
 
