@@ -42,7 +42,6 @@ from tests.mixed.steps.rest.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_rest,
 )
 from tests.mixed.steps.rest.onezone.space_management import (
-    CredentialsLike,
     assert_spaces_have_appeared_in_oz_rest,
     assert_spaces_have_been_renamed_in_oz_rest,
     assert_there_are_no_spaces_in_oz_rest,
@@ -60,6 +59,10 @@ from tests.oneclient.steps.multi_file_steps import ls_present_spaces
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup.spaces import (
+    CredentialsLike,
+    _register_space_finalizer,
+)
 from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
@@ -117,8 +120,12 @@ def create_spaces_in_oz(
             host,
             space_list,
             spaces,
-            request,
-            admin_credentials,
+            lambda space_id: _register_space_finalizer(
+                request,
+                hosts[host]["hostname"],
+                admin_credentials,
+                space_id,
+            ),
         )
     elif client.lower() == "web gui":
 

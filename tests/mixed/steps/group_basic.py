@@ -49,6 +49,7 @@ from tests.mixed.steps.rest.onezone.group_management import (
 from tests.mixed.utils.common import NoSuchClientException
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup.groups import _register_group_finalizer
 from tests.utils.entities_setup.users import CredentialsLike
 from tests.utils.http_exceptions import HTTPUnauthorized
 from tests.utils.rest_utils import get_zone_rest_path, http_post
@@ -78,9 +79,17 @@ def create_groups(
     request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
 ) -> None:
+    register_finalizer = lambda group_id: _register_group_finalizer(
+        request,
+        hosts[host]["hostname"],
+        admin_credentials,
+        group_id,
+    )
 
     if client.lower() == "rest":
-        create_groups_using_rest(user, users, hosts, group_list, host)
+        create_groups_using_rest(
+            user, users, hosts, group_list, register_finalizer, host
+        )
     elif client.lower() == "web gui":
         create_groups_using_op_gui(
             selenium,
@@ -88,9 +97,7 @@ def create_groups(
             group_list,
             clipboard,
             displays,
-            request,
-            hosts,
-            admin_credentials,
+            register_finalizer,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

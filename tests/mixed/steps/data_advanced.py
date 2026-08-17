@@ -26,7 +26,10 @@ from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps import multi_reg_file_steps
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.entities_setup.spaces import CredentialsLike
+from tests.utils.entities_setup.spaces import (
+    CredentialsLike,
+    _register_space_finalizer,
+)
 from tests.utils.user_utils import Users
 
 
@@ -57,8 +60,12 @@ def create_space_with_alias_in_oz(
             host,
             [space_name],
             spaces,
-            request,
-            admin_credentials,
+            lambda space_id: _register_space_finalizer(
+                request,
+                hosts[host]["hostname"],
+                admin_credentials,
+                space_id,
+            ),
         )
         space_aliases[alias] = {"name": space_name, "sid": spaces[space_name]}
     else:

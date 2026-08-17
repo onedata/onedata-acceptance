@@ -15,7 +15,6 @@ from tests.gui.meta_steps.onezone.tokens import (
     fail_to_add_element_with_copied_token,
     paste_and_consume_received_token,
 )
-from tests.gui.meta_steps.rest.groups import delete_group_if_present_using_rest
 from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     wait_for_error_modal_to_disappear,
@@ -49,6 +48,10 @@ from tests.gui.utils.generic import parse_elements_sequence
 from tests.gui.utils.onezone.groups.groups_page import Group
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.entities_setup.groups import (
+    GroupFinalizerRegistrar,
+    _register_group_finalizer,
+)
 from tests.utils.entities_setup.users import CredentialsLike
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
@@ -161,7 +164,7 @@ def remove_group(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_groups_using_op_gui(
+def create_groups_using_op_gui_step(
     selenium: SeleniumDrivers,
     browser_id: str,
     group_list: list[str],
@@ -171,29 +174,35 @@ def create_groups_using_op_gui(
     hosts: Hosts,
     admin_credentials: CredentialsLike,
 ) -> None:
+    create_groups_using_op_gui(
+        selenium,
+        browser_id,
+        group_list,
+        clipboard,
+        displays,
+        lambda group_id: _register_group_finalizer(
+            request,
+            hosts["onezone"]["hostname"],
+            admin_credentials,
+            group_id,
+        ),
+    )
+
+
+def create_groups_using_op_gui(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group_list: list[str],
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    register_finalizer: GroupFinalizerRegistrar,
+) -> None:
     for group_name in group_list:
         create_single_group_using_op_gui(selenium, browser_id, group_name)
         group_id = get_group_id_from_groups_sidebar_list(
             selenium, browser_id, group_name, clipboard, displays
         )
-        _register_finalizer_to_remove_group(request, hosts, group_id, admin_credentials)
-
-
-def _register_finalizer_to_remove_group(
-    request: pytest.FixtureRequest,
-    hosts: Hosts,
-    group_id: str,
-    admin_credentials: CredentialsLike,
-) -> None:
-    zone_hostname = hosts["onezone"]["hostname"]
-    request.addfinalizer(
-        lambda: delete_group_if_present_using_rest(
-            zone_hostname,
-            admin_credentials.username,
-            admin_credentials.password,
-            group_id,
-        )
-    )
+        register_finalizer(group_id)
 
 
 def create_single_group_using_op_gui(

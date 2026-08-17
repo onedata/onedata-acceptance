@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
-from pytest import FixtureRequest  # pylint: disable=wrong-import-order
 
 from tests.mixed.steps.rest.onezone.common import (
     get_provider_with_name,
@@ -25,8 +24,8 @@ from tests.mixed.utils.common import login_to_oz
 from tests.type_definitions import Hosts
 from tests.utils.entities_setup.spaces import (
     CredentialsLike,
+    SpaceFinalizerRegistrar,
     _create_space,
-    _register_space_finalizer,
 )
 from tests.utils.user_utils import Users
 
@@ -38,8 +37,7 @@ def create_spaces_in_oz_using_rest(
     zone_name: str,
     space_list: list[str],
     spaces: SpaceMap,
-    request: FixtureRequest,
-    admin_credentials: CredentialsLike,
+    register_finalizer: SpaceFinalizerRegistrar,
 ) -> None:
     for space_name in space_list:
         space_id = _create_space(
@@ -48,12 +46,7 @@ def create_spaces_in_oz_using_rest(
             users[user].password,
             space_name,
         )
-        _register_space_finalizer(
-            request,
-            hosts[zone_name]["hostname"],
-            admin_credentials,
-            space_id,
-        )
+        register_finalizer(space_id)
         spaces[space_name] = space_id
 
 
