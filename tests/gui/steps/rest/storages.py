@@ -37,6 +37,20 @@ def get_storages_ids(
     ).json()["ids"]
 
 
+def get_storage_details(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    storage_id: str,
+) -> dict[str, Any]:
+    return http_get(
+        ip=provider_hostname,
+        port=PANEL_REST_PORT,
+        path=get_panel_rest_path("provider", "storages", storage_id),
+        auth=(onepanel_username, onepanel_password),
+    ).json()
+
+
 def remove_storage_by_id(
     provider_hostname: str,
     onepanel_username: str,
@@ -66,13 +80,10 @@ def get_storage_ids_by_name(
     )
     selected_ids = []
     for storage_id in storage_ids:
-        response = http_get(
-            ip=provider_hostname,
-            port=PANEL_REST_PORT,
-            path=get_panel_rest_path("provider", "storages", storage_id),
-            auth=(onepanel_username, onepanel_password),
-        ).json()
-        if storage_name == response["name"]:
+        storage_details = get_storage_details(
+            provider_hostname, onepanel_username, onepanel_password, storage_id
+        )
+        if storage_name == storage_details["name"]:
             selected_ids.append(storage_id)
     return selected_ids
 

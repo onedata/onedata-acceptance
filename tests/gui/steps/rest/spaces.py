@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from contextlib import suppress
+from typing import Any
 
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
@@ -33,6 +34,20 @@ def get_supported_space_ids(
     ).json()["ids"]
 
 
+def get_space_details(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    space_id: str,
+) -> dict[str, Any]:
+    return http_get(
+        ip=provider_hostname,
+        port=OP_REST_PORT,
+        path=get_panel_rest_path("provider", "spaces", space_id),
+        auth=(onepanel_username, onepanel_password),
+    ).json()
+
+
 def get_space_ids_supported_by_storage(
     provider_hostname: str,
     onepanel_username: str,
@@ -43,12 +58,9 @@ def get_space_ids_supported_by_storage(
     for space_id in get_supported_space_ids(
         provider_hostname, onepanel_username, onepanel_password
     ):
-        space_details = http_get(
-            ip=provider_hostname,
-            port=OP_REST_PORT,
-            path=get_panel_rest_path("provider", "spaces", space_id),
-            auth=(onepanel_username, onepanel_password),
-        ).json()
+        space_details = get_space_details(
+            provider_hostname, onepanel_username, onepanel_password, space_id
+        )
         if space_details["storageId"] == storage_id:
             matching_space_ids.append(space_id)
 
