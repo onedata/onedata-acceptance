@@ -357,30 +357,14 @@ def revoke_all_space_supports(
     selenium[browser_id].refresh()
 
 
-def _revoke_all_space_supports_using_rest(
-    _selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
-) -> None:
-    user = "onepanel"
-
-    provider_hostname = hosts[provider_host]["hostname"]
-
-    revoke_all_space_supports_using_rest(provider_hostname, user, users[user].password)
-
-
 @given(parsers.parse("there are no spaces supported by {provider_host} in Onepanel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_revoke_all_space_supports_using_rest(
-    selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
+    hosts: Hosts, users: Users, provider_host: str
 ) -> None:
-    _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
-
-
-@wt(parsers.parse("{provider_host} revokes all spaces support in Onepanel using REST"))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_revoke_all_space_supports_using_rest(
-    selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
-) -> None:
-    _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
+    user = "onepanel"
+    provider_hostname = hosts[provider_host]["hostname"]
+    revoke_all_space_supports_using_rest(provider_hostname, user, users[user].password)
 
 
 @wt(

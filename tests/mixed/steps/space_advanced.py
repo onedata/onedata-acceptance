@@ -17,6 +17,7 @@ from tests.utils.entities_setup.spaces import (
     ProviderEntry,
     _create_space,
     _get_support,
+    _register_space_finalizer,
     create_empty_file,
 )
 from tests.utils.user_utils import User, Users
@@ -42,14 +43,13 @@ def create_n_spaces_without_support(
     owner = users[user]
     for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
-        _create_space(
+        space_id = _create_space(
             zone_hostname,
             owner.username,
             owner.password,
             space_name,
-            request,
-            admin_credentials,
         )
+        _register_space_finalizer(request, zone_hostname, admin_credentials, space_id)
 
 
 @wt(
@@ -86,9 +86,8 @@ def create_n_spaces_with_shares(
             owner.username,
             owner.password,
             space_name,
-            request,
-            admin_credentials,
         )
+        _register_space_finalizer(request, zone_hostname, admin_credentials, space_id)
         _get_support(
             zone_hostname,
             onepanel_credentials,

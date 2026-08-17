@@ -23,7 +23,11 @@ from tests.mixed.type_definitions import MutableSpaces as SpaceMap
 from tests.mixed.type_definitions import SpaceManagementTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
 from tests.type_definitions import Hosts
-from tests.utils.entities_setup.spaces import CredentialsLike, _create_space
+from tests.utils.entities_setup.spaces import (
+    CredentialsLike,
+    _create_space,
+    _register_space_finalizer,
+)
 from tests.utils.user_utils import Users
 
 
@@ -43,8 +47,12 @@ def create_spaces_in_oz_using_rest(
             user,
             users[user].password,
             space_name,
+        )
+        _register_space_finalizer(
             request,
+            hosts[zone_name]["hostname"],
             admin_credentials,
+            space_id,
         )
         spaces[space_name] = space_id
 
