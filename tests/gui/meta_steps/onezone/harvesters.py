@@ -57,10 +57,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
-from tests.gui.steps.rest.harvesters import (
-    get_user_harvester_ids,
-    remove_harvester_using_rest,
-)
+from tests.gui.steps.rest.harvesters import remove_harvester_using_rest
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup, CreatedItemAlertPopup
 from tests.gui.utils.generic import parse_elements_sequence
@@ -70,33 +67,18 @@ from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 
-def _remove_harvesters_created_after(
-    initial_harvester_ids: set[str],
-    zone_hostname: str,
-    username: str,
-    password: str,
-) -> None:
-    current_harvester_ids = get_user_harvester_ids(zone_hostname, username, password)
-    for harvester_id in current_harvester_ids - initial_harvester_ids:
-        remove_harvester_using_rest(harvester_id, zone_hostname, username, password)
-
-
-def _register_new_harvesters_finalizer(
+def _register_harvester_finalizer(
     request: FixtureRequest,
     hosts: Hosts,
     admin_credentials: User,
+    harvester_id: str,
 ) -> None:
-    zone_hostname = hosts["onezone"]["hostname"]
-    username = admin_credentials.username
-    password = admin_credentials.password
-    initial_harvester_ids = get_user_harvester_ids(zone_hostname, username, password)
-
     request.addfinalizer(
-        lambda: _remove_harvesters_created_after(
-            initial_harvester_ids,
-            zone_hostname,
-            username,
-            password,
+        lambda: remove_harvester_using_rest(
+            harvester_id,
+            hosts["onezone"]["hostname"],
+            admin_credentials.username,
+            admin_credentials.password,
         )
     )
 
@@ -114,12 +96,16 @@ def click_create_button_and_succeed_to_create_harvester(
     hosts: Hosts,
     request: FixtureRequest,
     admin_credentials: User,
+    clipboard: Clipboard,
+    displays: dict[str, str],
 ) -> None:
     click_create_button_in_discovery_page(selenium, browser_id)
     check_element_exists_on_sidebar_list(
         selenium, browser_id, harvester_name, "appeared", "harvesters"
     )
-    _register_new_harvesters_finalizer(request, hosts, admin_credentials)
+    click_on_option_in_harvester_menu(selenium, browser_id, "Copy ID", harvester_name)
+    harvester_id = clipboard.paste(display=displays[browser_id])
+    _register_harvester_finalizer(request, hosts, admin_credentials, harvester_id)
 
 
 @wt(
@@ -132,11 +118,7 @@ def click_create_button_and_fail_to_create_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
     harvester_name: str,
-    hosts: Hosts,
-    request: FixtureRequest,
-    admin_credentials: User,
 ) -> None:
-    _register_new_harvesters_finalizer(request, hosts, admin_credentials)
     click_create_button_in_discovery_page(selenium, browser_id)
     assert_error_popup_has_appeared(selenium, browser_id)
     check_element_exists_on_sidebar_list(
@@ -234,14 +216,7 @@ def create_harvester(
     click_on_option_in_harvester_menu(selenium, browser_id, option, harvester_name)
     harvester_id = clipboard.paste(display=displays[browser_id])
 
-    request.addfinalizer(
-        lambda: remove_harvester_using_rest(
-            harvester_id,
-            hosts["onezone"]["hostname"],
-            admin_credentials.username,
-            admin_credentials.password,
-        )
-    )
+    _register_harvester_finalizer(request, hosts, admin_credentials, harvester_id)
 
     harvesters[harvester_name] = harvester_id
     close_alert_popup_if_present(
