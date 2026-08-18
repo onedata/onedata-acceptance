@@ -484,7 +484,7 @@ def assert_member_is_in_parent_members_list(
                 assert page.users.items[member_name].is_displayed(), error_message
             else:
                 assert page.groups.items[member_name].is_displayed(), error_message
-        except PageObjectNotFoundError as exc:
+        except (PageObjectNotFoundError, NoSuchElementException) as exc:
             raise AssertionError(error_message) from exc
 
     else:
@@ -497,7 +497,7 @@ def assert_member_is_in_parent_members_list(
                 assert not page.users.items[member_name].is_displayed(), error_message
             else:
                 assert not page.groups.items[member_name].is_displayed(), error_message
-        except PageObjectNotFoundError:
+        except (PageObjectNotFoundError, NoSuchElementException):
             pass
 
 
@@ -521,7 +521,7 @@ def check_user_in_space_members_list(
     page.spaces_list[space_name].members()
     try:
         page.members_page.users.items[username]
-    except PageObjectNotFoundError:
+    except (PageObjectNotFoundError, NoSuchElementException):
         assert (
             option == "does not see"
         ), f'user "{username}" not found on "{space_name}" space members list'

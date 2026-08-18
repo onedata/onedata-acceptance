@@ -768,7 +768,7 @@ Onepanel members:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_members test_gui_pkg
+          - make SUITE=test_onepanel_members COUNT=7 test_gui_pkg
 
 # Onepanel two hosts deployment:
 #   <<: *acceptance-tests-in-chrome-job
