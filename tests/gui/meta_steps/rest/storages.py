@@ -13,6 +13,7 @@ from tests.gui.meta_steps.rest.spaces import (
 )
 from tests.gui.steps.common.miscellaneous import _camel_transform
 from tests.gui.steps.rest.storages import (
+    assert_storage_absence,
     get_storage_details,
     get_storages_ids,
     modify_storage_using_rest,
@@ -79,8 +80,8 @@ def remove_storage_by_id_and_wait_until_absent(
     remove_storage_by_id(
         provider_hostname, onepanel_username, onepanel_password, storage_id
     )
-    assert storage_id not in get_storages_ids(
-        provider_hostname, onepanel_username, onepanel_password
+    assert_storage_absence(
+        provider_hostname, onepanel_username, onepanel_password, storage_id
     )
 
 

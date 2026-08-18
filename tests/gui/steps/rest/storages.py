@@ -8,12 +8,14 @@ import json
 from typing import Any
 
 from tests import PANEL_REST_PORT
+from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.rest_utils import (
     get_panel_rest_path,
     http_delete,
     http_get,
     http_patch,
 )
+from tests.utils.utils import repeat_failed
 
 
 def get_storages_ids(
@@ -41,6 +43,18 @@ def get_storage_details(
         path=get_panel_rest_path("provider", "storages", storage_id),
         auth=(onepanel_username, onepanel_password),
     ).json()
+
+
+@repeat_failed(timeout=WAIT_BACKEND, exceptions=AssertionError)
+def assert_storage_absence(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    storage_id: str,
+) -> None:
+    assert storage_id not in get_storages_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    )
 
 
 def remove_storage_by_id(

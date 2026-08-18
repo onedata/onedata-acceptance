@@ -21,6 +21,7 @@ from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.rest.storages import (
     get_storage_ids_by_name,
     remove_multiple_storages_in_op_panel_using_rest,
+    restore_config_and_remove_storage_by_id,
     storage_data_from_config,
 )
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
@@ -53,7 +54,6 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.entities_setup.storage import cleanup_storage
 from tests.utils.rest_utils import get_panel_rest_path, http_post
 from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
@@ -69,7 +69,7 @@ def _register_storage_finalizer(
     config: str,
 ) -> None:
     request.addfinalizer(
-        lambda: cleanup_storage(
+        lambda: restore_config_and_remove_storage_by_id(
             hosts[provider]["hostname"],
             onepanel_credentials.username,
             onepanel_credentials.password,
