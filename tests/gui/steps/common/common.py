@@ -314,7 +314,7 @@ def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
     """Return whether the error modal appeared before the timeout."""
     return wait_for_element_to_appear(
         driver,
-        (By.CSS_SELECTOR, ".alert-global.modal.in .modal-dialog"),
+        ".alert-global.modal.in .modal-dialog",
         timeout,
     )
 

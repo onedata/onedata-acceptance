@@ -11,12 +11,16 @@ from typing import Protocol, cast
 import yaml
 
 from tests import PANEL_REST_PORT
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.rest.storages import (
     remove_multiple_storages_in_op_panel_using_rest,
+    restore_config_and_remove_storage_by_id,
 )
 from tests.utils.bdd_utils import given, parsers
+from tests.utils.http_exceptions import HTTPServerError
 from tests.utils.rest_utils import get_panel_rest_path, http_post
 from tests.utils.user_utils import User
+from tests.utils.utils import repeat_failed
 
 HostsConfig = Mapping[str, Mapping[str, str]]
 
@@ -24,6 +28,29 @@ HostsConfig = Mapping[str, Mapping[str, str]]
 class CredentialsLike(Protocol):
     username: str
     password: str
+
+
+@repeat_failed(
+    timeout=WAIT_BACKEND,
+    exceptions=(HTTPServerError, AssertionError),
+)
+def cleanup_storage(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    storage_id: str,
+    storage_name: str,
+    config: str,
+) -> None:
+    """Restore and remove a storage, retrying transient teardown failures."""
+    restore_config_and_remove_storage_by_id(
+        provider_hostname,
+        onepanel_username,
+        onepanel_password,
+        storage_id,
+        storage_name,
+        config,
+    )
 
 
 @given(
