@@ -13,8 +13,9 @@ from tests.demo_mode.meta_steps.rest import (
     assert_space_support_is_isolated,
 )
 from tests.demo_mode.steps.rest import (
-    assert_rest_file_content,
+    assert_file_content,
     create_space_for_provider,
+    download_rest_file,
     get_demo_access_token,
     upload_rest_file,
 )
@@ -73,11 +74,15 @@ def test_distributed_environment(
         first_file_content,
         request,
     )
-    assert_rest_file_content(
+    downloaded_content = download_rest_file(
         first_oneprovider_container_name,
         access_token,
         first_space_id,
         first_file_name,
+    )
+    assert_file_content(
+        first_oneprovider_container_name,
+        downloaded_content,
         first_file_content,
     )
     upload_rest_file(
@@ -88,10 +93,14 @@ def test_distributed_environment(
         second_file_content,
         request,
     )
-    assert_rest_file_content(
+    downloaded_content = download_rest_file(
         second_oneprovider_container_name,
         access_token,
         second_space_id,
         second_file_name,
+    )
+    assert_file_content(
+        second_oneprovider_container_name,
+        downloaded_content,
         second_file_content,
     )

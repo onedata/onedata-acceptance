@@ -9,7 +9,8 @@ import pytest
 from tests.demo_mode.meta_steps.environment import run_onezone_with_oneprovider
 from tests.demo_mode.meta_steps.rest import assert_onezone_configuration
 from tests.demo_mode.steps.rest import (
-    assert_rest_file_content,
+    assert_file_content,
+    download_rest_file,
     get_demo_access_token,
     get_rest_space_id,
     upload_rest_file,
@@ -48,10 +49,14 @@ def test_run_in_foreground(
         test_file_content,
         request,
     )
-    assert_rest_file_content(
+    downloaded_content = download_rest_file(
         first_oneprovider_container_name,
         access_token,
         space_id,
         test_file_name,
+    )
+    assert_file_content(
+        first_oneprovider_container_name,
+        downloaded_content,
         test_file_content,
     )

@@ -23,12 +23,11 @@ ONEZONE_URL_PREFIX: Final = "URL: "
 def command_path(relative_path: str) -> Path:
     """Return a validated path to an unmodified file in ``commands``."""
     path = (COMMANDS_ROOT / relative_path).resolve()
-    try:
-        path.relative_to(COMMANDS_ROOT)
-    except ValueError as error:
+    if not path.is_relative_to(COMMANDS_ROOT):
         raise ValueError(
-            f"Command path escapes {COMMANDS_ROOT}: {relative_path}"
-        ) from error
+            f"Command path must resolve within {COMMANDS_ROOT}, but "
+            f"{relative_path!r} resolves to {path}"
+        )
 
     if not path.is_file():
         raise FileNotFoundError(path)
@@ -57,19 +56,29 @@ def start_command(command: str) -> subprocess.Popen[str]:
     return process
 
 
+def _has_process_finished(process: subprocess.Popen[str]) -> bool:
+    return process.poll() is not None
+
+
+def _send_signal_to_process_group(
+    process: subprocess.Popen[str], signal_number: signal.Signals
+) -> None:
+    with suppress(ProcessLookupError):
+        process_group_id = os.getpgid(process.pid)
+        os.killpg(process_group_id, signal_number)
+
+
 def stop_command(process: subprocess.Popen[str], timeout: float = 10) -> None:
     """Stop and reap a command together with its child processes."""
-    if process.poll() is not None:
+    if _has_process_finished(process):
         return
 
-    with suppress(ProcessLookupError):
-        os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+    _send_signal_to_process_group(process, signal.SIGTERM)
 
     try:
         process.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
-        with suppress(ProcessLookupError):
-            os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+        _send_signal_to_process_group(process, signal.SIGKILL)
         process.wait()
 
 
@@ -93,6 +102,14 @@ def run_command(
     )
 
 
+def _remaining_time(deadline: float) -> float:
+    return max(0, deadline - monotonic())
+
+
+def _sleep_before_retry(deadline: float, interval: float) -> None:
+    sleep(min(interval, _remaining_time(deadline)))
+
+
 def wait_for_successful_command(
     command: str,
     timeout: float = 480,
@@ -105,7 +122,7 @@ def wait_for_successful_command(
         try:
             result = run_command(
                 command,
-                timeout=deadline - monotonic(),
+                timeout=_remaining_time(deadline),
                 capture_output=True,
             )
         except subprocess.TimeoutExpired as error:
@@ -116,7 +133,7 @@ def wait_for_successful_command(
         if result.returncode == 0:
             return result
 
-        sleep(min(interval, max(0, deadline - monotonic())))
+        _sleep_before_retry(deadline, interval)
 
     if result is None:
         raise AssertionError(f"Command was not run before its {timeout}s timeout")

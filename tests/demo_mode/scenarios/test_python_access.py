@@ -7,10 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 
 from tests.demo_mode.meta_steps.environment import run_onezone_with_oneprovider
-from tests.demo_mode.steps.examples import (
-    assert_python_access_example_output,
-    run_python_access_example,
-)
+from tests.demo_mode.meta_steps.examples import run_python_access_example
+from tests.demo_mode.steps.examples import assert_python_access_example_output
 
 
 def test_python_access(

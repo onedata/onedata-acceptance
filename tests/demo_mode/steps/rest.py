@@ -42,23 +42,31 @@ def get_demo_access_token(release: str) -> str:
     return get_access_token(release)
 
 
-@log_step("Checking REST file content")
-def assert_rest_file_content(
+@log_step("Downloading REST file")
+def download_rest_file(
     provider_container: str,
     access_token: str,
     space_id: str,
     file_name: str,
-    expected_content: bytes,
-) -> None:
-    """Download and verify an existing file through REST."""
-    downloaded_content = download_file(
+) -> bytes:
+    """Download an existing file through REST."""
+    return download_file(
         provider_container,
         space_id,
         file_name,
         access_token,
     )
-    assert downloaded_content == expected_content, (
-        f"{provider_container} returned {downloaded_content!r}, "
+
+
+@log_step("Asserting file content")
+def assert_file_content(
+    provider_container: str,
+    actual_content: bytes,
+    expected_content: bytes,
+) -> None:
+    """Assert that a downloaded file has the expected content."""
+    assert actual_content == expected_content, (
+        f"{provider_container} returned {actual_content!r}, "
         f"expected {expected_content!r}"
     )
 

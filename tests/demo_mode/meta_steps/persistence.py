@@ -13,8 +13,9 @@ from tests.demo_mode.steps.persistence import (
     assert_space_support_is_persistent,
 )
 from tests.demo_mode.steps.rest import (
-    assert_rest_file_content,
+    assert_file_content,
     create_space_for_provider,
+    download_rest_file,
     get_demo_access_token,
     upload_rest_file,
 )
@@ -69,10 +70,14 @@ def assert_persistence_state(
         state.space_id,
         state.access_token,
     )
-    assert_rest_file_content(
+    downloaded_content = download_rest_file(
         provider_container,
         state.access_token,
         state.space_id,
         state.file_name,
+    )
+    assert_file_content(
+        provider_container,
+        downloaded_content,
         file_content,
     )
