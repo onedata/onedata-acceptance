@@ -53,7 +53,7 @@ BAGIT_ARCHIVES = {
 
 class CredentialsLike(Protocol):
     username: str
-    password: Optional[str]
+    password: str
 
 
 class WorkflowRun(TypedDict, total=False):

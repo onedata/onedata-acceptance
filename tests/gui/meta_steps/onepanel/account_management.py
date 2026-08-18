@@ -53,13 +53,12 @@ def change_user_password_in_oz_panel_using_gui(
 def login_to_oz_panel_using_new_password_gui(
     selenium: SeleniumDrivers, user: str, password: str
 ) -> None:
-    alert_popup = AlertPopup.AUTHENTICATION_SUCCEEDED
 
     wt_enter_text_to_field_in_login_form(selenium, user, "Username", user)
     wt_enter_text_to_field_in_login_form(selenium, user, "Password", password)
     press_sign_in_btn_on_login_page(selenium, user)
 
-    notify_visible_with_text(selenium, user, alert_popup)
+    notify_visible_with_text(selenium, user, AlertPopup.AUTHENTICATION_SUCCEEDED)
 
 
 def log_out_from_oz_panel_gui(username: str, selenium: SeleniumDrivers) -> None:

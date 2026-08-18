@@ -11,7 +11,7 @@ import re
 import subprocess as sp
 import time
 from collections.abc import Mapping
-from typing import Literal, Optional, TypedDict, cast, overload
+from typing import Literal, Optional, Required, TypedDict, cast, overload
 
 import pytest
 import requests
@@ -73,7 +73,7 @@ class DeploymentStatus(TypedDict, total=False):
 
 class PatchUser(TypedDict, total=False):
     name: str
-    password: str
+    password: Required[str]
     idps: dict[str, object]
 
 
@@ -265,7 +265,7 @@ def setup_users(patch_cfg: PatchConfig, users: Users, zone_hostname: str) -> Non
         user_name = user_cfg.get("name")
         if user_name is None:
             raise ValueError("Patch user must have a name")
-        password = user_cfg.get("password")
+        password = user_cfg["password"]
         new_user = User(
             username=user_name, zone_hostname=zone_hostname, password=password
         )

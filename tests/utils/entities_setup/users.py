@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Generator, Mapping, MutableMapping
+from contextlib import suppress
 from typing import Optional, Protocol, TypedDict
 
 import yaml
@@ -256,7 +257,8 @@ def _add_user_to_zone_cluster(
     user_credentials: User,
     cluster_privileges: Optional[list[str]],
 ) -> User:
-    username, password = user_credentials.username, user_credentials.password
+    username = user_credentials.username
+    password = user_credentials.password
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
 
@@ -312,13 +314,9 @@ def _rm_user(
     user_credentials: User,
     ignore_http_exceptions: bool = False,
 ) -> None:
-    try:
+    ignored_exception = HTTPError if ignore_http_exceptions else HTTPNotFound
+    with suppress(ignored_exception):
         _rm_zone_user(zone_hostname, admin_credentials, user_credentials.user_id)
-    except HTTPNotFound:
-        pass
-    except HTTPError as ex:
-        if not ignore_http_exceptions:
-            raise ex
 
 
 @repeat_failed(attempts=5)

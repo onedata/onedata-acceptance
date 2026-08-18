@@ -33,7 +33,7 @@ Headers = Optional[Mapping[str, str]]
 Params = Optional[Mapping[str, Optional[str | int | list[str]]]]
 RequestData = Optional[str | bytes]
 Certificate = Optional[str | tuple[str, str]]
-Auth = Optional[tuple[str, Optional[str]]]
+Auth = Optional[tuple[str, str]]
 HttpMethod = Callable[..., requests.Response]
 
 

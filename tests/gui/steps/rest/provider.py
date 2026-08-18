@@ -11,7 +11,6 @@ from requests import Response
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
 from tests.gui.utils.generic import OnedataService
 from tests.type_definitions import Hosts, JsonObject
-from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import (
     get_panel_rest_path,
     get_provider_rest_path,
@@ -48,20 +47,12 @@ def get_provider_id(provider: str, hosts: Hosts, users: Users) -> str:
     return provider_conf["providerId"]
 
 
-@wt(
-    parsers.parse(
-        "using REST, user {user} sees that status of OneS3 of {provider} is ok"
-    )
-)
-def assert_provider_ones3_status_ok(provider: str, hosts: Hosts) -> None:
-    provider_hostname = hosts[provider]["hostname"]
-    status = http_get(
+def get_provider_ones3_status(provider_hostname: str) -> JsonObject:
+    return http_get(
         ip=provider_hostname,
         port=ONES3_PORT,
         path="/.__onedata__status__",
     ).json()
-    error_message = f"Status of OneS3 is {status["isOk"]}"
-    assert status["isOk"], error_message
 
 
 def add_provider_service_node(

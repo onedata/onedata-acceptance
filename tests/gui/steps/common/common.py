@@ -8,7 +8,6 @@ import re
 import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
-from functools import partial
 from typing import Any, cast
 
 from selenium.common.exceptions import (
@@ -37,7 +36,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
-from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.common.popups.generic import AlertPopupType
 from tests.gui.utils.generic import (
     ListElement,
     get_visibility_condition,
@@ -270,7 +269,7 @@ def wait_for_error_modal_to_disappear(driver: WebDriver) -> bool:
     def get_error_modal_close_button(current_driver: WebDriver) -> Clickable:
         return Modals(current_driver).error.close
 
-    return wait_till_alert_popup_or_error_modal_disappear(
+    return wait_till_error_modal_disappear(
         driver,
         ".alert-global.modal.in .modal-dialog",
         get_error_modal_close_button,
@@ -291,14 +290,21 @@ def try_click_without_throwing_error(
 
 def wait_for_element_to_appear(
     driver: WebDriver,
-    web_elem_or_locator: WebElementOrCssLocator,
+    web_elem_or_selector: WebElementOrSelector,
     timeout: float = WAIT_FRONTEND,
 ) -> bool:
     """Return whether the element appeared before the timeout."""
+    web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(
+        web_elem_or_selector
+    )
+    visibility_condition: VisibilityCondition = get_visibility_condition(
+        web_elem_or_locator
+    )
     try:
-        WebDriverWait(driver, timeout).until(
-            get_visibility_condition(web_elem_or_locator)
-        )
+        # selenium function visibility_of does not ignore StaleElementReferenceException
+        WebDriverWait(
+            driver, timeout, ignored_exceptions=[StaleElementReferenceException]
+        ).until(visibility_condition)
     except TimeoutException:
         return False
     return True
@@ -308,7 +314,7 @@ def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
     """Return whether the error modal appeared before the timeout."""
     return wait_for_element_to_appear(
         driver,
-        (By.CSS_SELECTOR, ".alert-global.modal.in .modal-dialog"),
+        ".alert-global.modal.in .modal-dialog",
         timeout,
     )
 
@@ -321,7 +327,6 @@ def click_close_button_and_wait_to_disappear(
     try_click_without_throwing_error(
         lambda: get_close_button(driver).click()  # pylint: disable=unnecessary-lambda
     )
-
     WebDriverWait(driver, WAIT_FRONTEND).until(
         invisibility_of_element(web_elem_or_locator),
         message="Popup or modal is still visible",
@@ -329,24 +334,14 @@ def click_close_button_and_wait_to_disappear(
     return True
 
 
-def wait_till_alert_popup_or_error_modal_disappear(
+def wait_till_error_modal_disappear(
     driver: WebDriver,
     web_elem_or_selector: WebElementOrSelector,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(
-        web_elem_or_selector
-    )
-    visibility_condition: VisibilityCondition = get_visibility_condition(
-        web_elem_or_locator
-    )
-    try:
-        # selenium function visibility_of does not ignore StaleElementReferenceException
-        WebDriverWait(
-            driver, WAIT_FRONTEND, ignored_exceptions=[StaleElementReferenceException]
-        ).until(visibility_condition)
-    except TimeoutException:
+    if not wait_for_element_to_appear(driver, web_elem_or_selector, WAIT_FRONTEND // 4):
         return False
+    web_elem_or_locator = get_web_elem_or_locator(web_elem_or_selector)
 
     click_close_button_and_wait_to_disappear(
         driver,
@@ -358,23 +353,30 @@ def wait_till_alert_popup_or_error_modal_disappear(
 
 def close_alert_popup_if_present(
     driver: WebDriver,
-    popup: AlertPopup,
+    popup: AlertPopupType,
 ) -> bool:
     # Close an alert identified by its enum value.
     # If popup doesn't appear, don't throw an error.
     # If it appeared and was not closed, raise.
-    def get_alert_popup_close_button_fun(
-        driver: WebDriver, alert_popup: AlertPopup
-    ) -> Clickable:
-        return Popups(driver).get_alert_popup(alert_popup).close
+    alert_popup = Popups(driver).alert_popups.get_alert_popup(popup)
+    if alert_popup is None:
+        return False
 
-    get_close_button = partial(get_alert_popup_close_button_fun, alert_popup=popup)
+    def close_matching_popup() -> None:
+        current_popup = Popups(driver).alert_popups.find_alert_popup(popup)
+        if current_popup is not None:
+            current_popup.close.click()
 
-    return wait_till_alert_popup_or_error_modal_disappear(
-        driver,
-        popup.css_sel,
-        get_close_button,
+    try_click_without_throwing_error(close_matching_popup)
+
+    def is_popup_closed(driver: WebDriver) -> bool:
+        return Popups(driver).alert_popups.find_alert_popup(popup) is None
+
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        is_popup_closed,
+        message=f'Alert popup matching "{popup.message}" is still visible',
     )
+    return True
 
 
 def parse_size(size: str) -> float:

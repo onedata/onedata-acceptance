@@ -6,12 +6,14 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from pytest import FixtureRequest
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
 )
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onezone.harvesters.configuration import (
@@ -22,6 +24,7 @@ from tests.gui.steps.onezone.harvesters.configuration import (
 )
 from tests.gui.steps.onezone.harvesters.discovery import (
     assert_space_has_appeared_in_discovery_page,
+    check_element_exists_on_sidebar_list,
     choose_element_from_dropdown_in_add_element_modal,
     click_button_in_harvester_spaces_page,
     click_button_on_discovery_on_left_sidebar_menu,
@@ -53,14 +56,77 @@ from tests.gui.steps.onezone.members import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.onezone.spaces import (
+    assert_error_popup_has_appeared,
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
+from tests.gui.steps.rest.harvesters import remove_harvester_using_rest
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.popups.generic import AlertPopup, CreatedItemAlertPopup
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
+
+
+def _register_harvester_finalizer(
+    request: FixtureRequest,
+    hosts: Hosts,
+    admin_credentials: User,
+    harvester_id: str,
+) -> None:
+    request.addfinalizer(
+        lambda: remove_harvester_using_rest(
+            harvester_id,
+            hosts["onezone"]["hostname"],
+            admin_credentials.username,
+            admin_credentials.password,
+        )
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks on Create button in discovery page "
+        'and succeeds to create "{harvester_name}" harvester'
+    )
+)
+def click_create_button_and_succeed_to_create_harvester(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    harvester_name: str,
+    hosts: Hosts,
+    request: FixtureRequest,
+    admin_credentials: User,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
+    click_create_button_in_discovery_page(selenium, browser_id)
+    check_element_exists_on_sidebar_list(
+        selenium, browser_id, harvester_name, "appeared", "harvesters"
+    )
+    click_on_option_in_harvester_menu(selenium, browser_id, "Copy ID", harvester_name)
+    harvester_id = clipboard.paste(display=displays[browser_id])
+    _register_harvester_finalizer(request, hosts, admin_credentials, harvester_id)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks on Create button in discovery page "
+        'and fails to create "{harvester_name}" harvester'
+    )
+)
+def click_create_button_and_fail_to_create_harvester(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    harvester_name: str,
+) -> None:
+    click_create_button_in_discovery_page(selenium, browser_id)
+    assert_error_popup_has_appeared(selenium, browser_id)
+    check_element_exists_on_sidebar_list(
+        selenium, browser_id, harvester_name, "disappeared", "harvesters"
+    )
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
@@ -132,6 +198,8 @@ def create_harvester(
     harvesters: dict[str, str],
     clipboard: Clipboard,
     displays: dict[str, str],
+    request: FixtureRequest,
+    admin_credentials: User,
 ) -> None:
     where = "Discovery"
     input_name = "name"
@@ -149,7 +217,14 @@ def create_harvester(
     )
     click_create_button_in_discovery_page(selenium, browser_id)
     click_on_option_in_harvester_menu(selenium, browser_id, option, harvester_name)
-    harvesters[harvester_name] = clipboard.paste(display=displays[browser_id])
+    harvester_id = clipboard.paste(display=displays[browser_id])
+
+    _register_harvester_finalizer(request, hosts, admin_credentials, harvester_id)
+
+    harvesters[harvester_name] = harvester_id
+    close_alert_popup_if_present(
+        selenium[browser_id], popup=CreatedItemAlertPopup.HARVESTER
+    )
 
 
 @wt(
@@ -227,6 +302,7 @@ def add_group_to_harvester(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_in_modal, modal)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
 
 
 @wt(
@@ -290,6 +366,7 @@ def send_invitation_token(
         member,
     )
     copy_token_from_modal(selenium, browser_id1)
+    close_alert_popup_if_present(selenium[browser_id1], AlertPopup.SUCCESSFULLY_COPIED)
     close_modal(selenium, browser_id1, modal)
     send_copied_item_to_other_users(
         browser_id1, item_type, [browser_id2], tmp_memory, displays, clipboard

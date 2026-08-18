@@ -16,7 +16,9 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 
+from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
@@ -36,7 +38,6 @@ from tests.gui.steps.onezone.members import (
     click_element_in_members_list,
     click_on_option_in_members_list_menu,
     copy_token_from_modal,
-    remove_member_from_parent,
     see_privileges_for_member,
     try_setting_privileges_in_members_subpage,
     wt_wait_for_modal_to_appear,
@@ -44,10 +45,30 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.rest.provider import GuiMessageType, modify_gui_setting_message
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
+
+
+def _register_gui_settings_finalizer(
+    request: pytest.FixtureRequest,
+    hosts: Hosts,
+    record: str,
+    kind_of_agreement: GuiMessageType,
+    onepanel_credentials: User,
+) -> None:
+    request.addfinalizer(
+        partial(
+            modify_gui_setting_message,
+            hosts,
+            host=record,
+            message_id=kind_of_agreement,
+            onepanel_credentials=onepanel_credentials,
+            new_message="",
+        )
+    )
 
 
 @wt(
@@ -81,6 +102,7 @@ def invite_user_to_cluster(
 
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
     close_modal(selenium, browser_id, modal)
     send_copied_item_to_other_users(
         browser_id, item_type, [browser], tmp_memory, displays, clipboard
@@ -175,6 +197,7 @@ def add_group_to_cluster(
 
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_name, modal)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
 
 
 @given(
@@ -254,15 +277,8 @@ def set_gui_settings(
     onepanel_credentials: User,
     request: pytest.FixtureRequest,
 ) -> None:
-    request.addfinalizer(
-        partial(
-            modify_gui_setting_message,
-            hosts,
-            host=record,
-            message_id=kind_of_agreement,
-            onepanel_credentials=onepanel_credentials,
-            new_message="",
-        )
+    _register_gui_settings_finalizer(
+        request, hosts, record, kind_of_agreement, onepanel_credentials
     )
     menu = "Clusters"
     option = "GUI settings"

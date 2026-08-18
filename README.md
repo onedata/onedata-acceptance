@@ -36,10 +36,18 @@ In general, there are two ways of running acceptance tests:
 1. **Using `Makefile`** (recommended):
 
    ```
-   make ENV_FILE=$ENV SUITE=$SUITE OPTS=$OPTS $test_type_identifier
+   make ENV_FILE=$ENV SUITE=$SUITE KEYWORDS=$KEYWORDS OPTS=$OPTS $test_type_identifier
    ```
    - `$SUITE` - file name from `tests/*/scenarios` without extension; determines 
      the test suite to run. 
+   - `$KEYWORDS` - optional pytest keyword expression used to select tests from
+     the suite. It is passed to pytest as `-k EXPRESSION`, so you build it from
+     test-name fragments and boolean operators. Examples:
+     `KEYWORDS="test_user_fails_to_view_group_after_leaving_it"`,
+     `KEYWORDS="fails_to_view_group and not admin"`,
+     `KEYWORDS="group and (leave or delete)"`.
+     In other words, write a logical expression over words that appear in the
+     test name or pytest keyword; pytest keeps only matching tests.
    - `$ENV_FILE` - file name from `tests/*/environments` without extension; determines 
      the env-file (description of Onedata deployment). If not specified, default 
      [1oz_1op_deployed.yaml](tests/gui/environments/1oz_1op_deployed.yaml) will be used.
@@ -103,6 +111,40 @@ Example of a 2 provider deployment with specified onezone and oneprovider images
 
 # Useful test_run parameters
 
+## Selecting tests
+
+The selectors below can be combined. Use `-t` to limit collection to a directory,
+suite, or exact pytest node ID, and `-k` to filter the collected tests by name.
+
+* `-t tests/gui` - runs all tests under the specified directory.
+* `-t tests/gui/scenarios/test_onezone_groups_basic.py` - runs one test suite.
+* `-t 'tests/gui/scenarios/test_onezone_groups_basic.py::test_user_fails_to_view_group_after_leaving_it'`
+  - runs one scenario using its exact pytest node ID. A parameterized node ID can
+  also be supplied to select one particular test variant.
+* `-k EXPRESSION` - runs tests whose names match the case-insensitive pytest
+  keyword expression. Build the expression from test-name fragments or keyword
+  names using boolean operators: `and`, `or`, `not`, and parentheses. For
+  example:
+  - `-k 'fails_to_view_group'` selects tests whose names contain that fragment.
+  - `-k 'fails_to_view_group and not admin'` keeps the failing case but excludes
+    names containing `admin`.
+  - `-k 'group and (leave or delete)'` selects tests that mention `group` and
+    either `leave` or `delete`.
+
+When using the Makefile, `SUITE` corresponds to the suite file passed with `-t`,
+while `KEYWORDS` is passed as `-k`. The value you set should therefore be a
+logical expression over parts of the test names you want to match. For example:
+
+```bash
+make ENV_FILE=1oz_1op_deployed SUITE=test_onezone_groups_basic \
+    KEYWORDS=test_user_fails_to_view_group_after_leaving_it COUNT=3 test_gui
+```
+
+See [pytest's test selection documentation](https://docs.pytest.org/en/stable/how-to/usage.html#specifying-which-tests-to-run)
+for the complete syntax.
+
+## Other useful parameters
+
 * `--count N` - repeats every test in the suite `N` times on the same deployment.
 * `--reruns N` - reruns failed tests up to `N` times. Unlike `--count`, successful
   tests are not repeated.
@@ -115,9 +157,6 @@ Example of a 2 provider deployment with specified onezone and oneprovider images
 * `--no-clean` - prevents deleting Onedata deployment after tests - makes consecutive runs much faster
   (a preexisting deployment is detected and reused) 
 * `--test-type gui` - determines the test type.
-* `-t tests/gui` - set the path with test cases to gui tests. For example, 
-  you can filter out tests to single suite using scenario file:
-  `-t tests/gui/scenarios/test_onezone_basic.py`.
 * `--driver=Chrome` - set the browser to test in
 * `-i onedata/gui_builder:latest` - use Docker image with dependencies for GUI tests
   (i.e. Python, Selenium, Xvfb, Chrome)
@@ -128,9 +167,6 @@ Example of a 2 provider deployment with specified onezone and oneprovider images
 * `--local` - uses locally installed testing toolkit instead of dockerized one
 * `--no-pull` - prevents from downloading docker images (by default all tests scenarios force pulling docker
    images even if they are already present on host machine.)
-* `-k="test_posix_storage_operations"` - used to select specific test, runs tests 
-  which contain names that match given string expression (case-insensitive). For more
-  information see: [pytest documentation](https://docs.pytest.org/en/6.2.x/usage.html#specifying-tests-selecting-tests).
 * `--pdb` - used to run the pdb debugger just after encountering a failure. For more information see: [pytest documentation](https://docs.pytest.org/en/stable/how-to/failures.html)
 * `--oc-image=docker.onedata.org/oneclient-dev:develop` - used to specify oneclient service docker image
 * `--sources` - optional, if used, Onedata deployment starts using sources. Sources have

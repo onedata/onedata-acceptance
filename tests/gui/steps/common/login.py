@@ -71,8 +71,6 @@ def _login_to_service(
     ):
         driver = selenium[browser_id]
         password = users[username].password
-        if password is None:
-            raise ValueError(f"User {username} has no password")
 
         if "emergency interface" in service:
             click_sign_in_to_emergency_interface(selenium, browser_id)
