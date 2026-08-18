@@ -73,10 +73,8 @@ def revoke_space_supports_for_storage_using_rest(
     for space_id in get_space_ids_supported_by_storage(
         provider_hostname, onepanel_username, onepanel_password, storage_id
     ):
-        # A space finalizer may have already removed the space in Onezone while
-        # Onepanel still briefly lists its support. In that case Oneprovider
-        # reports `not_found`, which Onepanel exposes as a server error. Treat
-        # the revoke as idempotent and verify the resulting state below.
+        # TODO: VFS-13774 Replace with HTTPNotFound once Onepanel returns 404
+        # for revoked space support instead of 500 when space does not exist
         with suppress(HTTPServerError):
             revoke_space_support_using_rest(
                 provider_hostname, onepanel_username, onepanel_password, space_id
