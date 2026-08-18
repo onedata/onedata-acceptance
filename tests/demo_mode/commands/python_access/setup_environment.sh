@@ -9,7 +9,7 @@ pip install fs.onedatarestfs
 pip install setuptools==81.0.0
 
 # Export necessary OnedataRESTFS arguments as environment variables
-export OZ_IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' oz_test)
+export OZ_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' oz_test)
 export ACCESS_TOKEN=$(docker exec op_test1 demo-access-token)
 
 # # Finally start Python3 shell

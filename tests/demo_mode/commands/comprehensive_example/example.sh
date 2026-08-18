@@ -1,7 +1,7 @@
 docker run --rm -i -d --name oz_test onedata/onezone:xRELEASExVERSIONx demo
-OZ_IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' oz_test)
+OZ_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' oz_test)
 docker run --rm -i -d --name op_test1 onedata/oneprovider:xRELEASExVERSIONx demo $OZ_IP
-OP_IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' op_test1)
+OP_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' op_test1)
 docker exec op_test1 await-demo
 ACCESS_TOKEN=$(docker exec op_test1 demo-access-token)
 DEMO_SPACE_ID="cb274b2b8bb1750d9be37dd4a3eb7014chb175"

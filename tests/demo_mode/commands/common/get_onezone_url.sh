@@ -1,1 +1,1 @@
-echo "URL: https://$(docker inspect -f '{{.NetworkSettings.IPAddress}}' oz_test)"
+echo "URL: https://$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' oz_test)"
