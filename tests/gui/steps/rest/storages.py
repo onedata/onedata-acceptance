@@ -1,6 +1,6 @@
 """Helpers for storages management using REST API."""
 
-__author__ = "Jakub Karczewski"
+__author__ = "Mateusz Zajac, Jakub Karczewski"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 

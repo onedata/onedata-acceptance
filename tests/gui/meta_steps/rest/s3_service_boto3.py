@@ -1,6 +1,6 @@
 """Meta steps for OneS3 calls using lower-level boto3 helpers."""
 
-__author__ = "Wojciech Szmelich"
+__author__ = "Mateusz Zajac, Jakub Karczewski"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
