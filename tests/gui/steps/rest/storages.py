@@ -5,10 +5,12 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+from contextlib import suppress
 from typing import Any
 
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
+from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import (
     get_panel_rest_path,
     http_delete,
@@ -63,12 +65,13 @@ def remove_storage_by_id(
     onepanel_password: str,
     storage_id: str,
 ) -> None:
-    http_delete(
-        ip=provider_hostname,
-        port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "storages", storage_id),
-        auth=(onepanel_username, onepanel_password),
-    )
+    with suppress(HTTPNotFound):
+        http_delete(
+            ip=provider_hostname,
+            port=PANEL_REST_PORT,
+            path=get_panel_rest_path("provider", "storages", storage_id),
+            auth=(onepanel_username, onepanel_password),
+        )
 
 
 def modify_storage_using_rest(
