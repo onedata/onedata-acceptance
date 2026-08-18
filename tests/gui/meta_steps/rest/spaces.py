@@ -12,7 +12,7 @@ from tests.gui.steps.rest.spaces import (
     get_supported_space_ids,
     revoke_space_support_using_rest,
 )
-from tests.utils.http_exceptions import HTTPNotFound
+from tests.utils.http_exceptions import HTTPNotFound, HTTPServerError
 from tests.utils.rest_utils import get_zone_rest_path, http_delete
 
 
@@ -73,9 +73,14 @@ def revoke_space_supports_for_storage_using_rest(
     for space_id in get_space_ids_supported_by_storage(
         provider_hostname, onepanel_username, onepanel_password, storage_id
     ):
-        revoke_space_support_using_rest(
-            provider_hostname, onepanel_username, onepanel_password, space_id
-        )
+        # A space finalizer may have already removed the space in Onezone while
+        # Onepanel still briefly lists its support. In that case Oneprovider
+        # reports `not_found`, which Onepanel exposes as a server error. Treat
+        # the revoke as idempotent and verify the resulting state below.
+        with suppress(HTTPServerError):
+            revoke_space_support_using_rest(
+                provider_hostname, onepanel_username, onepanel_password, space_id
+            )
 
     assert not get_space_ids_supported_by_storage(
         provider_hostname, onepanel_username, onepanel_password, storage_id
