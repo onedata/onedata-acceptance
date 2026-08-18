@@ -10,8 +10,10 @@ from collections.abc import Mapping, MutableMapping
 from pytest import FixtureRequest
 
 from tests import ELASTICSEARCH_PORT, OZ_REST_PORT
-from tests.gui.meta_steps.rest.harvesters import remove_harvester_using_rest
-from tests.gui.steps.rest.harvesters import get_user_harvester_ids
+from tests.gui.steps.rest.harvesters import (
+    get_user_harvester_ids,
+    remove_harvester_using_rest,
+)
 from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import (

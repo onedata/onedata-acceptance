@@ -22,7 +22,6 @@ from tests.gui.meta_steps.rest.storages import (
     get_storage_ids_by_name,
     remove_multiple_storages_in_op_panel_using_rest,
     restore_config_and_remove_storage_by_id,
-    storage_data_from_config,
 )
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -50,6 +49,7 @@ from tests.gui.steps.onepanel.storages import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.rest.storages import storage_data_from_config
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers

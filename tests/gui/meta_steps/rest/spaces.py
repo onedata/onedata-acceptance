@@ -6,27 +6,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from contextlib import suppress
 
-from tests import OZ_REST_PORT
 from tests.gui.steps.rest.spaces import (
     assert_no_space_supports_for_storage_using_rest,
     get_space_ids_supported_by_storage,
     get_supported_space_ids,
     revoke_space_support_using_rest,
 )
-from tests.utils.http_exceptions import HTTPNotFound, HTTPServerError
-from tests.utils.rest_utils import get_zone_rest_path, http_delete
-
-
-def delete_space_if_present_using_rest(
-    zone_hostname: str, owner_username: str, owner_password: str, space_id: str
-) -> None:
-    with suppress(HTTPNotFound):
-        http_delete(
-            ip=zone_hostname,
-            port=OZ_REST_PORT,
-            path=get_zone_rest_path("spaces", space_id),
-            auth=(owner_username, owner_password),
-        )
+from tests.utils.http_exceptions import HTTPServerError
 
 
 def revoke_all_space_supports_using_rest(

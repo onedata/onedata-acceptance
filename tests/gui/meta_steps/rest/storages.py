@@ -4,20 +4,16 @@ __author__ = "Mateusz Zajac, Jakub Karczewski"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
-
-import yaml
-
 from tests.gui.meta_steps.rest.spaces import (
     revoke_space_supports_for_storage_using_rest,
 )
-from tests.gui.steps.common.miscellaneous import _camel_transform
 from tests.gui.steps.rest.storages import (
     assert_storage_absence,
     get_storage_details,
     get_storages_ids,
     modify_storage_using_rest,
     remove_storage_by_id,
+    storage_data_from_config,
 )
 from tests.type_definitions import Hosts
 from tests.utils.user_utils import User
@@ -122,20 +118,3 @@ def restore_config_and_remove_storage_by_id(
         remove_storage_by_id_and_wait_until_absent(
             provider_hostname, onepanel_username, onepanel_password, storage_id
         )
-
-
-def storage_data_from_config(
-    config: str, storage_name: str
-) -> dict[str, dict[str, Any]]:
-    storage_config: dict[str, object] = {}
-    options = yaml.load(config, yaml.Loader)
-
-    for key, val in options.items():
-        if key == "storage type":
-            storage_config["type"] = val.lower()
-        elif key == "imported storage":
-            storage_config["importedStorage"] = True
-        else:
-            storage_config[_camel_transform(key)] = val
-
-    return {storage_name: storage_config}

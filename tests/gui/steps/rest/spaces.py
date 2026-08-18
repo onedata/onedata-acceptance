@@ -83,6 +83,18 @@ def leave_user_space(
     )
 
 
+def delete_space_if_present_using_rest(
+    zone_hostname: str, owner_username: str, owner_password: str, space_id: str
+) -> None:
+    with suppress(HTTPNotFound):
+        http_delete(
+            ip=zone_hostname,
+            port=OZ_REST_PORT,
+            path=get_zone_rest_path("spaces", space_id),
+            auth=(owner_username, owner_password),
+        )
+
+
 def get_space_ids_supported_by_storage(
     provider_hostname: str,
     onepanel_username: str,

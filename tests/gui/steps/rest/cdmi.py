@@ -1,4 +1,4 @@
-"""Meta steps for CDMI operations."""
+"""Steps for CDMI operations."""
 
 __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"

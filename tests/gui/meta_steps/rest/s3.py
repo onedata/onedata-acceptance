@@ -13,10 +13,8 @@ from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.rest.s3 import (
     _RetryableBucketHTTPError,
     assert_bucket_exists,
-    copy_item_between_buckets,
     create_bucket,
 )
-from tests.gui.type_definitions import Clipboard
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -25,25 +23,6 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
 def create_s3_bucket_rest(bucket_name: str) -> None:
     ensure_bucket_exists(bucket_name)
-
-
-@wt(
-    parsers.parse(
-        "using REST, user of {browser_id} copies item with "
-        'recently copied path from "{src_bucket}" bucket into "{dst_bucket}" bucket'
-    )
-)
-def copy_item_s3_bucket(
-    browser_id: str,
-    dst_bucket: str,
-    src_bucket: str,
-    clipboard: Clipboard,
-    displays: dict[str, str],
-) -> None:
-    path = clipboard.paste(display=displays[browser_id])
-    copy_item_between_buckets(
-        dst_bucket, f"{src_bucket}{path}/999999", f"{path[1::]}/999999"
-    )
 
 
 @repeat_failed(

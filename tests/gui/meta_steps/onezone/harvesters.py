@@ -13,7 +13,6 @@ from selenium.common.exceptions import (
 )
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.meta_steps.rest.harvesters import remove_harvester_using_rest
 from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
@@ -61,6 +60,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
+from tests.gui.steps.rest.harvesters import remove_harvester_using_rest
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup, CreatedItemAlertPopup
 from tests.gui.utils.generic import parse_elements_sequence

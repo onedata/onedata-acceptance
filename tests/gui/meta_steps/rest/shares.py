@@ -24,6 +24,12 @@ from tests.utils.user_utils import Users
         '"{item_path}" supported by "{provider}" provider'
     )
 )
+@wt(
+    parsers.parse(
+        'using REST, user {user} creates "{share_name}" share of '
+        '"{item_path}" supported by "{provider}" provider'
+    )
+)
 def create_share_using_rest(
     item_path: str,
     provider: str,
@@ -39,24 +45,6 @@ def create_share_using_rest(
     shares[share_name] = create_share_for_file_using_rest(
         provider_hostname, access_token, file_id, share_name
     )
-
-
-@wt(
-    parsers.parse(
-        'using REST, user {user} creates "{share_name}" share of '
-        '"{item_path}" supported by "{provider}" provider'
-    )
-)
-def wt_create_share_using_rest(
-    item_path: str,
-    provider: str,
-    user: str,
-    share_name: str,
-    hosts: Hosts,
-    users: Users,
-    shares: dict[str, str],
-) -> None:
-    create_share_using_rest(item_path, provider, user, share_name, hosts, users, shares)
 
 
 @given(parsers.parse("using REST, user {user} creates following shares:\n{config}"))

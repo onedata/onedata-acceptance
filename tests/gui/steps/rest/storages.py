@@ -8,8 +8,11 @@ import json
 from contextlib import suppress
 from typing import Any
 
+import yaml
+
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.steps.common.miscellaneous import _camel_transform
 from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import (
     get_panel_rest_path,
@@ -88,3 +91,20 @@ def modify_storage_using_rest(
         auth=(onepanel_username, onepanel_password),
         data=json.dumps(storage_data),
     )
+
+
+def storage_data_from_config(
+    config: str, storage_name: str
+) -> dict[str, dict[str, Any]]:
+    storage_config: dict[str, object] = {}
+    options = yaml.load(config, yaml.Loader)
+
+    for key, val in options.items():
+        if key == "storage type":
+            storage_config["type"] = val.lower()
+        elif key == "imported storage":
+            storage_config["importedStorage"] = True
+        else:
+            storage_config[_camel_transform(key)] = val
+
+    return {storage_name: storage_config}
