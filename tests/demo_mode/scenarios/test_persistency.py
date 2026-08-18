@@ -22,48 +22,35 @@ from tests.demo_mode.steps.persistence import (
 def test_persistency(
     release: str,
     onezone_name: str,
-    onezone_container_name: str,
-    first_oneprovider_container_name: str,
+    onezone_container: str,
+    first_oneprovider: str,
     request: pytest.FixtureRequest,
 ) -> None:
     test_file_content = b"Onedata demo-mode persistence REST test\n"
 
-    onezone = run_persistent_onezone(
-        release,
-        onezone_container_name,
-        request,
-    )
+    onezone = run_persistent_onezone(release, onezone_container, request)
     oneprovider = run_persistent_oneprovider(
         release,
         onezone,
-        first_oneprovider_container_name,
+        first_oneprovider,
         request,
     )
     assert_onezone_configuration(release, onezone_name)
     persistence_state = create_persistence_state(
         release,
         test_file_content,
-        first_oneprovider_container_name,
+        first_oneprovider,
         request,
     )
 
     stop_persistent_environment([oneprovider, onezone])
 
-    restarted_onezone = run_persistent_onezone(
-        release,
-        onezone_container_name,
-        request,
-    )
-    run_persistent_oneprovider(
-        release,
-        restarted_onezone,
-        first_oneprovider_container_name,
-        request,
-    )
+    restarted_onezone = run_persistent_onezone(release, onezone_container, request)
+    run_persistent_oneprovider(release, restarted_onezone, first_oneprovider, request)
     assert_onezone_configuration(release, onezone_name)
     assert_persistence_state(
         release,
         test_file_content,
-        first_oneprovider_container_name,
+        first_oneprovider,
         persistence_state,
     )

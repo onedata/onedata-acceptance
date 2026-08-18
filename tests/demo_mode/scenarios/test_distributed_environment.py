@@ -6,26 +6,28 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.demo_mode.meta_steps.environment import run_onezone_with_two_oneproviders
 from tests.demo_mode.meta_steps.rest import (
     assert_oneproviders_are_distinct,
     assert_onezone_configuration,
     assert_space_support_is_isolated,
+    upload_and_verify_rest_file_content,
+)
+from tests.demo_mode.steps.environment import (
+    run_oneprovider,
+    run_onezone,
+    run_second_oneprovider,
 )
 from tests.demo_mode.steps.rest import (
-    assert_file_content,
     create_space_for_provider,
-    download_rest_file,
     get_demo_access_token,
-    upload_rest_file,
 )
 
 
 def test_distributed_environment(
     release: str,
     onezone_name: str,
-    first_oneprovider_container_name: str,
-    second_oneprovider_container_name: str,
+    first_oneprovider: str,
+    second_oneprovider: str,
     request: pytest.FixtureRequest,
 ) -> None:
     first_file_name = "first-provider-rest-test.txt"
@@ -33,74 +35,45 @@ def test_distributed_environment(
     second_file_name = "second-provider-rest-test.txt"
     second_file_content = b"Data stored through the second Oneprovider\n"
 
-    run_onezone_with_two_oneproviders(
-        release,
-        first_oneprovider_container_name,
-        second_oneprovider_container_name,
-        request,
-    )
+    onezone = run_onezone(release, request)
+    run_oneprovider(release, onezone, first_oneprovider, request)
+    run_second_oneprovider(release, onezone, second_oneprovider, request)
     assert_onezone_configuration(release, onezone_name)
 
-    assert_oneproviders_are_distinct(
-        first_oneprovider_container_name,
-        second_oneprovider_container_name,
-        release,
-    )
+    assert_oneproviders_are_distinct(first_oneprovider, second_oneprovider, release)
 
     access_token = get_demo_access_token(release)
     first_space_id = create_space_for_provider(
-        first_oneprovider_container_name,
+        first_oneprovider,
         "demo-mode-first-provider-space",
         access_token,
     )
     second_space_id = create_space_for_provider(
-        second_oneprovider_container_name,
+        second_oneprovider,
         "demo-mode-second-provider-space",
         access_token,
     )
     assert_space_support_is_isolated(
-        first_oneprovider_container_name,
+        first_oneprovider,
         first_space_id,
-        second_oneprovider_container_name,
+        second_oneprovider,
         second_space_id,
         access_token,
     )
 
-    upload_rest_file(
-        first_oneprovider_container_name,
+    upload_and_verify_rest_file_content(
+        first_oneprovider,
         first_space_id,
         first_file_name,
         access_token,
         first_file_content,
         request,
     )
-    downloaded_content = download_rest_file(
-        first_oneprovider_container_name,
-        access_token,
-        first_space_id,
-        first_file_name,
-    )
-    assert_file_content(
-        first_oneprovider_container_name,
-        downloaded_content,
-        first_file_content,
-    )
-    upload_rest_file(
-        second_oneprovider_container_name,
+    upload_and_verify_rest_file_content(
+        second_oneprovider,
         second_space_id,
         second_file_name,
         access_token,
         second_file_content,
         request,
-    )
-    downloaded_content = download_rest_file(
-        second_oneprovider_container_name,
-        access_token,
-        second_space_id,
-        second_file_name,
-    )
-    assert_file_content(
-        second_oneprovider_container_name,
-        downloaded_content,
-        second_file_content,
     )

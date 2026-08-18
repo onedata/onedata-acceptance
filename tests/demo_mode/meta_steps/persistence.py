@@ -76,8 +76,4 @@ def assert_persistence_state(
         state.space_id,
         state.file_name,
     )
-    assert_file_content(
-        provider_container,
-        downloaded_content,
-        file_content,
-    )
+    assert_file_content(provider_container, downloaded_content, file_content)
