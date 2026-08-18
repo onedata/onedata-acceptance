@@ -9,6 +9,7 @@ from contextlib import suppress
 from typing import Any
 
 from tests import OP_REST_PORT, OZ_REST_PORT
+from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import (
     get_panel_rest_path,
@@ -17,6 +18,7 @@ from tests.utils.rest_utils import (
     http_get,
 )
 from tests.utils.user_utils import Users
+from tests.utils.utils import repeat_failed
 
 
 def get_supported_space_ids(
@@ -78,4 +80,35 @@ def leave_user_space(
         port=OZ_REST_PORT,
         path=get_zone_rest_path("user", "spaces", space_id),
         auth=(user, users[user].password),
+    )
+
+
+def get_space_ids_supported_by_storage(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    storage_id: str,
+) -> list[str]:
+    matching_space_ids = []
+    for space_id in get_supported_space_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    ):
+        space_details = get_space_details(
+            provider_hostname, onepanel_username, onepanel_password, space_id
+        )
+        if space_details["storageId"] == storage_id:
+            matching_space_ids.append(space_id)
+
+    return matching_space_ids
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_no_space_supports_for_storage_using_rest(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    storage_id: str,
+) -> None:
+    assert not get_space_ids_supported_by_storage(
+        provider_hostname, onepanel_username, onepanel_password, storage_id
     )

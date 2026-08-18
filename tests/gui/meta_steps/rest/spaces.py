@@ -8,7 +8,8 @@ from contextlib import suppress
 
 from tests import OZ_REST_PORT
 from tests.gui.steps.rest.spaces import (
-    get_space_details,
+    assert_no_space_supports_for_storage_using_rest,
+    get_space_ids_supported_by_storage,
     get_supported_space_ids,
     revoke_space_support_using_rest,
 )
@@ -26,25 +27,6 @@ def delete_space_if_present_using_rest(
             path=get_zone_rest_path("spaces", space_id),
             auth=(owner_username, owner_password),
         )
-
-
-def get_space_ids_supported_by_storage(
-    provider_hostname: str,
-    onepanel_username: str,
-    onepanel_password: str,
-    storage_id: str,
-) -> list[str]:
-    matching_space_ids = []
-    for space_id in get_supported_space_ids(
-        provider_hostname, onepanel_username, onepanel_password
-    ):
-        space_details = get_space_details(
-            provider_hostname, onepanel_username, onepanel_password, space_id
-        )
-        if space_details["storageId"] == storage_id:
-            matching_space_ids.append(space_id)
-
-    return matching_space_ids
 
 
 def revoke_all_space_supports_using_rest(
@@ -82,6 +64,6 @@ def revoke_space_supports_for_storage_using_rest(
                 provider_hostname, onepanel_username, onepanel_password, space_id
             )
 
-    assert not get_space_ids_supported_by_storage(
+    assert_no_space_supports_for_storage_using_rest(
         provider_hostname, onepanel_username, onepanel_password, storage_id
     )
