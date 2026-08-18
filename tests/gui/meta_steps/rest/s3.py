@@ -6,12 +6,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from http import HTTPStatus
 
-from requests.exceptions import ConnectionError as RequestsConnectionError
-from requests.exceptions import HTTPError, Timeout
+from requests.exceptions import HTTPError
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.rest.s3 import (
-    _RetryableBucketHTTPError,
     assert_bucket_exists,
     create_bucket,
 )
@@ -25,10 +23,7 @@ def create_s3_bucket_rest(bucket_name: str) -> None:
     ensure_bucket_exists(bucket_name)
 
 
-@repeat_failed(
-    timeout=WAIT_BACKEND,
-    exceptions=(RequestsConnectionError, Timeout, _RetryableBucketHTTPError),
-)
+@repeat_failed(timeout=WAIT_BACKEND)
 def ensure_bucket_exists(bucket_name: str) -> None:
     try:
         create_bucket(bucket_name)
