@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import re
 import subprocess
 
 from environment import docker  # pylint: disable=import-error
@@ -56,22 +57,19 @@ def docker_ip(container: object) -> str:
     return docker.inspect(container)["NetworkSettings"]["IPAddress"]
 
 
-def remove_container(name: str) -> None:
-    """Force-remove all Docker containers matching the exact name."""
+def remove_containers(container_names: list[str]) -> None:
+    """Force-remove Docker containers with the specified names."""
+    if not container_names:
+        return
+
+    name_filters = [("name", rf"^/{re.escape(name)}$") for name in container_names]
+
     containers = docker.ps(
         all=True,
         quiet=True,
-        filters=[("name", f"^/{name}$")],
+        filters=name_filters,
     )
+
     if containers:
-        subprocess.run(
-            ["docker", "rm", "--force", *containers],
-            stdout=subprocess.DEVNULL,
-            check=True,
-        )
-
-
-def remove_containers(container_names: list[str]) -> None:
-    """Force-remove Docker containers with the specified names."""
-    for container_name in container_names:
-        remove_container(container_name)
+        print("\nRemoved docker containers:", flush=True)
+        docker.remove(containers, force=True)
