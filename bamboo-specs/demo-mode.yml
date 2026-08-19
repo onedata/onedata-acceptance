@@ -27,7 +27,7 @@ Default Job:
       description: New test
   artifact-subscriptions: []
 repositories:
-- demo-mode-tests:
+- onedata-acceptance:
     scope: global
 triggers:
 - bitbucket-server-trigger
