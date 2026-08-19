@@ -12,6 +12,10 @@ from ast import literal_eval
 from typing import Optional, cast
 
 import yaml
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,
@@ -58,6 +62,7 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.oneprovider.automation import NumberInput
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_workflow_dump
@@ -253,7 +258,11 @@ def _execute_workflow_with_input_config(
         )
     except IndexError:
         pass
-    except RuntimeError:
+    except (
+        ElementNotInteractableException,
+        NoSuchElementException,
+        PageObjectNotFoundError,
+    ):
         driver.switch_to.default_content()
         click_element_on_lists_on_left_sidebar_menu(
             selenium, browser_id, "spaces", space

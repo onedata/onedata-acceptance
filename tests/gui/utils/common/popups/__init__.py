@@ -6,9 +6,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+import time
 
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+    TimeoutException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.web_elements import (
     Label,
@@ -16,6 +24,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.utils.utils import repeat_failed
 
 from .alert_info_popup import AlertInfoPopup
@@ -29,7 +38,7 @@ from .data_distribution_popup import DataDistributionPopup
 from .data_row_menu import DataRowMenu
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .deregister_provider import DeregisterProvider
-from .generic import AlertPopup
+from .generic import AlertPopupType
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .handle_service import HandleService
 from .info import Info
@@ -52,6 +61,46 @@ from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .workflow_creation_alert import WorkflowCreationAlert
 from .workflow_menu import WorkflowMenu
+
+
+class AlertPopups:
+    info = WebItemsSequence(".ember-notify-cn .alert-info", cls=AlertInfoPopup)
+    success = WebItemsSequence(".ember-notify-cn .alert-success", cls=AlertInfoPopup)
+
+    def __init__(self, driver: WebDriver) -> None:
+        self.driver = self.web_elem = driver
+
+    def __str__(self) -> str:
+        return "alert popups"
+
+    def get_all_alert_popups(self) -> list[AlertInfoPopup]:
+        return [
+            *self.info,
+            *self.success,
+        ]
+
+    def find_alert_popup(self, alert_popup: AlertPopupType) -> AlertInfoPopup | None:
+        """Return the currently displayed alert matching the expected message."""
+        regexp = re.compile(alert_popup.message)
+        for popup in self.get_all_alert_popups():
+            try:
+                if regexp.match(popup.message):
+                    return popup
+            except (StaleElementReferenceException, NoSuchElementException):
+                # Alert popups disappear automatically. Ignore elements that
+                # vanish while their messages are being read.
+                continue
+        return None
+
+    def get_alert_popup(self, alert_popup: AlertPopupType) -> AlertInfoPopup | None:
+        try:
+            return WebDriverWait(
+                self.driver,
+                timeout=1,
+                poll_frequency=0.05,
+            ).until(lambda _: self.find_alert_popup(alert_popup))
+        except TimeoutException:
+            return None
 
 
 class Popups:
@@ -143,31 +192,12 @@ class Popups:
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
 
-    alert_info_popup = WebItem(".alert-info", cls=AlertInfoPopup)
-    alert_info_popups = WebItemsSequence(".alert-info", cls=AlertInfoPopup)
-    notify_popups = WebItemsSequence(".ember-notify-cn", cls=AlertInfoPopup)
-
-    def get_all_alert_popups(self) -> list[AlertInfoPopup]:
-        return [
-            *self.alert_info_popups,
-            *self.notify_popups,
-        ]
-
     def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
+        self.alert_popups = AlertPopups(driver)
 
     def __str__(self) -> str:
         return "popups"
-
-    def get_alert_popup(self, alert_popup: AlertPopup) -> AlertInfoPopup:
-        regexp = re.compile(alert_popup.message)
-        # check both types of popups
-        for notifies in (self.alert_info_popups, self.notify_popups):
-            for popup_val in notifies:
-                message = popup_val.message
-                if regexp.match(message):
-                    return notifies[message]
-        raise RuntimeError(f'No alert popup with message "{alert_popup.message}"')
 
     def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0
@@ -177,4 +207,4 @@ class Popups:
         for popup in self.query_builder_popups:
             if popup.web_elem.is_displayed():
                 return popup
-        raise RuntimeError("No query builder popups visible")
+        raise PageObjectNotFoundError("No query builder popups visible")

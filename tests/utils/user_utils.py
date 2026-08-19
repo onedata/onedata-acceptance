@@ -37,7 +37,7 @@ class User:  # pylint: disable=too-many-instance-attributes
         self,
         zone_hostname: str,
         username: str,
-        password: Optional[str] = None,
+        password: str,
         user_id: Optional[str] = None,
     ) -> None:
         self.username = username

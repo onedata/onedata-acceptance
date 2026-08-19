@@ -11,7 +11,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.onezone.data_page import DataPage
 from tests.gui.utils.onezone.manage_account_page import ManageAccountPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -48,8 +47,6 @@ def click_on_option_in_account_settings_in_oz(
     if option == "Manage account":
         oz_page.open_panel(ManageAccountPage)
     Popups(driver).user_account_menu.options[option].click()
-    if option == "Logout":
-        oz_page.set_current_page(DataPage)
 
 
 @wt(parsers.parse("user of {browser_id} clicks on menu button on Profile page"))

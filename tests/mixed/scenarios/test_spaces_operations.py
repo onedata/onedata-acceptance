@@ -15,6 +15,8 @@ from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.rest.s3_service_boto3 import *
+from tests.gui.meta_steps.rest.shares import *
 from tests.gui.steps.common.browser_creation import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
@@ -44,8 +46,6 @@ from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
-from tests.gui.steps.rest.s3_service_boto3 import *
-from tests.gui.steps.rest.shares import *
 from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.members import *
 from tests.mixed.steps.onepanel_basic import *

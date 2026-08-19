@@ -23,7 +23,6 @@ from tests.gui.utils.generic import (
     transform,
     wait_for_visible_element_using_getter,
 )
-from tests.gui.utils.onezone import OZLoggedIn
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -72,8 +71,6 @@ def _login_to_service(
     ):
         driver = selenium[browser_id]
         password = users[username].password
-        if password is None:
-            raise ValueError(f"User {username} has no password")
 
         if "emergency interface" in service:
             click_sign_in_to_emergency_interface(selenium, browser_id)
@@ -82,11 +79,6 @@ def _login_to_service(
         else:
             _login_using_basic_auth(LoginPage(driver), username, password)
         assert_main_page_loaded(selenium, browser_id)
-
-        OZLoggedIn(driver).set_current_page_during_login_logout(
-            is_login=True,
-            emergency_interface="emergency" in service,
-        )
 
 
 @given(
@@ -172,9 +164,8 @@ def wt_assert_successful_login(
     selenium: SeleniumDrivers, browser_id: str, service: str
 ) -> None:
     driver = selenium[browser_id]
-    sign_in = wait_for_visible_element_using_getter(
-        driver, lambda driver: LoginPage(driver).sign_in
-    )
+    sign_in_getter = lambda driver: LoginPage(driver).sign_in
+    sign_in = wait_for_visible_element_using_getter(driver, sign_in_getter)
     sign_in.click()
     wait_for_item_to_disappear(sign_in.web_elem, driver)
     assert_main_page_loaded(selenium, browser_id)
@@ -191,10 +182,8 @@ def wt_assert_failed_login_credentials(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    sign_in = wait_for_visible_element_using_getter(
-        driver, lambda driver: LoginPage(driver).sign_in
-    )
-    sign_in.click()
+    sign_in_getter = lambda driver: LoginPage(driver).sign_in
+    wait_for_visible_element_using_getter(driver, sign_in_getter).click()
     _assert_error_message_about_credentials(selenium, browser_id)
 
 

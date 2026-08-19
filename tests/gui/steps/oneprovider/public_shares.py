@@ -258,7 +258,7 @@ def check_item_presence_in_dublin_core_metadata(
         if info.text == item:
             break
     else:
-        raise RuntimeError(f'{item} was not found in "Dublin Core Metadata"')
+        raise AssertionError(f'{item} was not found in "Dublin Core Metadata"')
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

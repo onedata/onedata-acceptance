@@ -20,7 +20,7 @@ from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     wait_for_error_modal_to_disappear,
     wait_for_sliding_panel_to_stop_moving,
-    wait_till_alert_popup_or_error_modal_disappear,
+    wait_till_error_modal_disappear,
 )
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
@@ -141,7 +141,6 @@ def succeed_to_consume_token_using_confirm_button(
         assert not is_element_with_selector_visible_on_page(
             driver, ".alert-global.modal.in .modal-dialog"
         ), "Error modal appeared"
-    OZLoggedIn(driver).update_current_page()
 
 
 def fail_to_consume_token_using_confirm_button(
@@ -211,7 +210,7 @@ def assert_invalid_id_in_error_modal_and_close_modal(
     error_message = (
         f"There is no info about id of invalid target {target_name} in error modal"
     )
-    wait_till_alert_popup_or_error_modal_disappear(
+    wait_till_error_modal_disappear(
         driver, ".alert-global.modal.in .modal-dialog", lambda _: error_modal.close
     )
     match target_type:
@@ -221,7 +220,6 @@ def assert_invalid_id_in_error_modal_and_close_modal(
             assert spaces[target_name] in modal_text, error_message
         case "inventory":
             assert inventories[target_name] in modal_text, error_message
-            OZLoggedIn(driver).update_current_page()
         case "harvester":
             assert harvesters[target_name] in modal_text, error_message
         case _:

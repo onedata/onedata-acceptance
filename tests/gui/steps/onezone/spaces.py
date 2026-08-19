@@ -9,17 +9,23 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any, cast
 
-from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    NoSuchElementException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -121,6 +127,7 @@ def create_new_space_by_click_on_create_new_space_button(
 ) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).data.input_box.confirm()
+    close_alert_popup_if_present(driver, popup=CreatedItemAlertPopup.SPACE)
 
 
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
@@ -132,6 +139,9 @@ def create_new_space_on_onezone_page(
     page.create_space_button()
     page.input_box.value = space_name
     page.input_box.confirm()
+    close_alert_popup_if_present(
+        selenium[browser_id], popup=CreatedItemAlertPopup.SPACE
+    )
 
 
 @wt(
@@ -154,7 +164,7 @@ def assert_no_provider_for_space(
     provider = hosts[provider_name]["name"]
     try:
         page.providers_page.providers_list[provider]
-    except RuntimeError:
+    except (NoSuchElementException, PageObjectNotFoundError):
         pass
     else:
         assert (
@@ -894,6 +904,9 @@ def confirm_create_new_space(
 ) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
+        close_alert_popup_if_present(
+            selenium[browser_id], popup=CreatedItemAlertPopup.SPACE
+        )
     else:
         create_new_space_by_click_on_create_new_space_button(selenium, browser_id)
 

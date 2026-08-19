@@ -36,7 +36,7 @@ def wt_select_storage_type_in_storage_page_op_panel(
         if storage.text.lower() == storage_type.lower():
             storage_selector_list.options[storage.text].click()
             return
-    raise RuntimeError(f"storage {storage_type} not found")
+    raise ValueError(f"storage {storage_type} not found")
 
 
 @wt(
@@ -111,7 +111,7 @@ def wt_expand_storage_item_in_storages_page_op_panel(
     storage_item.expand()
 
     if not storage_item.is_expanded():
-        raise RuntimeError(f"did not manage to expand storage {storage}")
+        raise AssertionError(f"did not manage to expand storage {storage}")
 
 
 @wt(
@@ -165,7 +165,7 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(
     if toolbar.is_displayed():
         toolbar.options[option].click()
     else:
-        raise RuntimeError("no storage toolbar found in Onepanel")
+        raise AssertionError("no storage toolbar found in Onepanel")
 
 
 @wt(

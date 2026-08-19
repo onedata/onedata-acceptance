@@ -10,7 +10,7 @@ import time
 
 import yaml
 
-from tests import OP_REST_PORT
+from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.gui.steps.common.miscellaneous import (
     wait_until_scanning_is_finished_in_storage_import_tab,
 )
@@ -56,7 +56,6 @@ from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
 from tests.utils.user_utils import Users
 
 
@@ -68,8 +67,12 @@ from tests.utils.user_utils import Users
 )
 def support_space_using_form(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
+    # Getter avoids raising NoSuchElementException before the wait starts.
+    support_space_getter = lambda driver: Onepanel(
+        driver
+    ).content.spaces.form.support_space
     support_space_btn = wait_for_visible_element_using_getter(
-        driver, lambda driver: Onepanel(driver).content.spaces.form.support_space
+        driver, support_space_getter
     )
     click_on_btn_in_space_support_form(selenium, browser_id)
     wait_for_item_to_disappear(support_space_btn.web_elem, driver)
@@ -355,41 +358,13 @@ def revoke_all_space_supports(
     selenium[browser_id].refresh()
 
 
-def _revoke_all_space_supports_using_rest(
-    _selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
-) -> None:
-    user = "onepanel"
-
-    provider_hostname = hosts[provider_host]["hostname"]
-
-    spaces_list = http_get(
-        ip=provider_hostname,
-        port=OP_REST_PORT,
-        path=get_panel_rest_path("provider", "spaces"),
-        auth=(user, users[user].password),
-    ).json()
-
-    for space in spaces_list["ids"]:
-        http_delete(
-            ip=provider_hostname,
-            port=OP_REST_PORT,
-            path=get_panel_rest_path("provider", "spaces", space),
-            auth=(user, users[user].password),
-        )
-
-
 @given(parsers.parse("there are no spaces supported by {provider_host} in Onepanel"))
 def g_revoke_all_space_supports_using_rest(
-    selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
+    hosts: Hosts, users: Users, provider_host: str
 ) -> None:
-    _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
-
-
-@wt(parsers.parse("{provider_host} revokes all spaces support in Onepanel using REST"))
-def wt_revoke_all_space_supports_using_rest(
-    selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
-) -> None:
-    _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
+    user = "onepanel"
+    provider_hostname = hosts[provider_host]["hostname"]
+    revoke_all_space_supports_using_rest(provider_hostname, user, users[user].password)
 
 
 @wt(

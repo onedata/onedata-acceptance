@@ -16,7 +16,11 @@ from typing import TypedDict, cast
 
 import yaml
 from _pytest._py.path import LocalPath
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import GUI_LOGDIR
@@ -844,7 +848,11 @@ def assert_content_of_store(
             )
     try:
         modal.close()
-    except (StaleElementReferenceException, RuntimeError):
+    except (
+        StaleElementReferenceException,
+        NoSuchElementException,
+        ElementNotInteractableException,
+    ):
         pass
 
 
@@ -1009,7 +1017,7 @@ def assert_content_of_user_task_audit_log(
             f'Audit log in task "{task_name}" in lane'
             f' "{lane_name}" contains user\'s entry'
         )
-    except RuntimeError:
+    except NoSuchElementException:
         pass
     modal.x()
     click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, close)
@@ -1230,7 +1238,7 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
                 assert file_log == visible_log, error_message
                 modal.close_details.click()
     else:
-        raise RuntimeError(f"file {file_name} has not been downloaded")
+        raise AssertionError(f"file {file_name} has not been downloaded")
 
 
 @wt(
@@ -1269,7 +1277,7 @@ def _assert_workflow_audit_log_contains_entries(
         if assert_expected_in_entries(expected_entry, data_file):
             continue
         error_message = f"there is no entry {expected_entry} in workflow audit log"
-        raise RuntimeError(error_message)
+        raise AssertionError(error_message)
     modal.x()
 
 
@@ -1319,7 +1327,7 @@ def assert_workflow_audit_log_contains_entry(
     error_message = (
         f"there is no entry containing data about {item_list} in workflow audit log"
     )
-    raise RuntimeError(error_message)
+    raise AssertionError(error_message)
 
 
 def _assert_all_items_in_json(item_list: list[str], data: AuditLogContent) -> bool:

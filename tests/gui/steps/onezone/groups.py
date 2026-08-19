@@ -6,11 +6,17 @@ __author__ = "Michal Stanisz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import get_visible_items_list
+from tests.gui.steps.common.common import (
+    close_alert_popup_if_present,
+    get_visible_items_list,
+)
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
+from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -25,7 +31,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) clicks on Create group button in groups sidebar"
+        r'user of (?P<browser_id>.*) clicks on "Create group" button in groups sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -51,10 +57,41 @@ def confirm_name_input_on_main_groups_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     OZLoggedIn(selenium[browser_id]).groups.input_box.confirm()
+    close_alert_popup_if_present(
+        selenium[browser_id], popup=CreatedItemAlertPopup.GROUP
+    )
 
 
 def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
     return list(filter(lambda g: g.name == group_name, page.groups_list))
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Group:
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(GroupsPage)
+    page = oz_page.groups
+    return page.groups_list[group_name]
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_in_group_menu_and_get_group(
+    driver: WebDriver, group_name: str, option: str
+) -> Group:
+    group = get_group_by_name_from_main_page(driver, group_name)
+    group.menu()
+    Popups(driver).menu_popup_with_text.menu[option]()
+    return group
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_confirmation_button_to_rename_group(group: Group) -> None:
+    group.edit_box.confirm()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def input_new_group_name_into_rename_group_inpux_box(group: Group, text: str) -> None:
+    group.edit_box.value = text
 
 
 @wt(
@@ -143,6 +180,9 @@ def assert_error_page_appeared(
 def confirm_add_group(selenium: SeleniumDrivers, browser_id: str, option: str) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
+        close_alert_popup_if_present(
+            selenium[browser_id], popup=CreatedItemAlertPopup.GROUP
+        )
     else:
         confirm_name_input_on_main_groups_page(selenium, browser_id)
 

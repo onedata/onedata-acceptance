@@ -6,7 +6,7 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Protocol, cast
+from typing import cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
 
@@ -22,13 +22,12 @@ from tests.mixed.type_definitions import MutableSpaces as SpaceMap
 from tests.mixed.type_definitions import SpaceManagementTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
 from tests.type_definitions import Hosts
-from tests.utils.entities_setup.spaces import _create_space
+from tests.utils.entities_setup.spaces import (
+    CredentialsLike,
+    SpaceFinalizerRegistrar,
+    _create_space,
+)
 from tests.utils.user_utils import Users
-
-
-class CredentialsLike(Protocol):
-    username: str
-    password: str
 
 
 def create_spaces_in_oz_using_rest(
@@ -38,11 +37,16 @@ def create_spaces_in_oz_using_rest(
     zone_name: str,
     space_list: list[str],
     spaces: SpaceMap,
+    register_finalizer: SpaceFinalizerRegistrar,
 ) -> None:
     for space_name in space_list:
         space_id = _create_space(
-            hosts[zone_name]["hostname"], user, users[user].password, space_name
+            hosts[zone_name]["hostname"],
+            user,
+            users[user].password,
+            space_name,
         )
+        register_finalizer(space_id)
         spaces[space_name] = space_id
 
 

@@ -11,7 +11,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
-from tests.gui.steps.modals.modal import check_modal_name
+from tests.gui.steps.modals.modal import resolve_modal_attribute_name
 from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser,
     click_option_in_data_row_menu_in_browser,
@@ -37,7 +37,7 @@ def assert_chart_title_in_details_modal(
     which_title: str,
     modal: str,
 ) -> None:
-    modal_name = check_modal_name(modal)
+    modal_name = resolve_modal_attribute_name(modal)
     modal_page = getattr(Modals(selenium[browser_id]), modal_name).size_statistics
     if which_title == "charts title":
         charts_title = modal_page.charts_title
@@ -55,7 +55,7 @@ def assert_chart_title_in_details_modal(
 def click_on_chart_in_modal(
     browser_id: str, selenium: SeleniumDrivers, modal: str
 ) -> None:
-    modal = check_modal_name(modal)
+    modal = resolve_modal_attribute_name(modal)
     getattr(Modals(selenium[browser_id]), modal).size_statistics.chart[0].chart.click()
 
 
@@ -70,7 +70,7 @@ def assert_button_in_modal_not_active(
     browser_id: str, modal: str, element: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    modal_page = getattr(Modals(driver), check_modal_name(modal))
+    modal_page = getattr(Modals(driver), resolve_modal_attribute_name(modal))
     error_message = f'"{element}" button is in active state'
     assert not modal_page.is_element_active(transform(element)), error_message
 
@@ -105,7 +105,9 @@ def assert_tooltip_on_chart_in_modal(
 def click_on_navigation_tab_in_modal(
     selenium: SeleniumDrivers, browser_id: str, tab_name: str, modal: str
 ) -> None:
-    modal_page = getattr(Modals(selenium[browser_id]), check_modal_name(modal))
+    modal_page = getattr(
+        Modals(selenium[browser_id]), resolve_modal_attribute_name(modal)
+    )
     tab = modal_page.navigation[tab_name]
     tab.web_elem.click()
 
@@ -121,7 +123,8 @@ def click_on_navigation_tab_in_panel(
     selenium: SeleniumDrivers, browser_id: str, tab_name: str, modal: str
 ) -> None:
     modal_page = getattr(
-        Modals(selenium[browser_id]).details_modal, check_modal_name(modal)
+        Modals(selenium[browser_id]).details_modal,
+        resolve_modal_attribute_name(modal),
     )
     tab = modal_page.navigation[tab_name]
     tab.web_elem.click()
@@ -143,13 +146,13 @@ def assert_tab_in_modal(
     # changing.
     # TODO: VFS-12424 Add class to fully-transitioned file details panel
     driver = selenium[browser_id]
-    modal_name_transformed = check_modal_name(transform(modal_name))
-    if modal_name_transformed == "details_modal":
+    modal_attribute_name = resolve_modal_attribute_name(transform(modal_name))
+    if modal_attribute_name == "details_modal":
         wait_for_sliding_panel_to_stop_moving(
             driver, WAIT_FRONTEND, ".modal-content .modal-body"
         )
 
-    active_tab = getattr(Modals(driver), modal_name_transformed).active_tab
+    active_tab = getattr(Modals(driver), modal_attribute_name).active_tab
     error_message = (
         f"Expected tab: {tab} does not match actual active tab: "
         f"{active_tab} on modal {modal_name}"
@@ -169,7 +172,8 @@ def assert_posix_tab_in_panel(
 ) -> None:
     elem_name = "posix_permission_edition"
     posix_hidden = getattr(
-        Modals(selenium[browser_id]), check_modal_name(transform(modal_name))
+        Modals(selenium[browser_id]),
+        resolve_modal_attribute_name(transform(modal_name)),
     ).edit_permissions.is_hidden(elem_name)
     assert (
         not posix_hidden

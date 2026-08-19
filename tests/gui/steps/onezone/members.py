@@ -10,12 +10,14 @@ import time
 from typing import cast
 
 import yaml
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.modals.modal import (
     assert_element_text,
     wt_wait_for_modal_to_appear,
@@ -35,8 +37,12 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
-from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.core.web_objects import (
+    PageObjectNotFoundError,
+    PageObjectsSequence,
+)
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -129,7 +135,7 @@ def assert_element_is_member_of_parent_in_memberships(
         return False
 
     if not search_for_members(driver, records, member_name, parent_name, fun):
-        raise RuntimeError(
+        raise AssertionError(
             f'not found "{member_name}" {member_type} as a member of'
             f' "{parent_name}" {parent_type}'
         )
@@ -160,12 +166,12 @@ def assert_element_is_not_member_of_parent_in_memberships(
 
     def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
-            raise RuntimeError(
+            raise AssertionError(
                 f'found "{member_name}" {member_type} as a member of'
                 f' "{parent_name}" {parent_type}'
             )
         if member_index == 0:
-            raise RuntimeError(
+            raise AssertionError(
                 f'found "{member_name}" {member_type} as a member of'
                 f' "{parent_name}" {parent_type}'
             )
@@ -409,8 +415,8 @@ def assert_generated_token_is_present(
     try:
         text = Modals(selenium[browser_id]).invite_using_token.token
         assert len(text) > 0, "Token is empty, while it should be non-empty"
-    except RuntimeError as exc:
-        raise RuntimeError("No token area found on page") from exc
+    except NoSuchElementException as exc:
+        raise AssertionError("No token area found on page") from exc
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) copies invitation token from modal"))
@@ -441,7 +447,7 @@ def assert_element_is_groups_child(
 
     try:
         page.members_page.groups.items[child]
-    except RuntimeError:
+    except (PageObjectNotFoundError, NoSuchElementException):
         assert option == "does not see", f'"{child}" is not "{parent}" child'
     else:
         assert option == "sees", f'"{child}" is "{parent}" child'
@@ -478,7 +484,7 @@ def assert_member_is_in_parent_members_list(
                 assert page.users.items[member_name].is_displayed(), error_message
             else:
                 assert page.groups.items[member_name].is_displayed(), error_message
-        except RuntimeError as exc:
+        except (PageObjectNotFoundError, NoSuchElementException) as exc:
             raise AssertionError(error_message) from exc
 
     else:
@@ -491,7 +497,7 @@ def assert_member_is_in_parent_members_list(
                 assert not page.users.items[member_name].is_displayed(), error_message
             else:
                 assert not page.groups.items[member_name].is_displayed(), error_message
-        except RuntimeError:
+        except (PageObjectNotFoundError, NoSuchElementException):
             pass
 
 
@@ -515,7 +521,7 @@ def check_user_in_space_members_list(
     page.spaces_list[space_name].members()
     try:
         page.members_page.users.items[username]
-    except RuntimeError:
+    except (PageObjectNotFoundError, NoSuchElementException):
         assert (
             option == "does not see"
         ), f'user "{username}" not found on "{space_name}" space members list'
@@ -523,57 +529,6 @@ def check_user_in_space_members_list(
         assert (
             option == "sees"
         ), f'user "{username}" found on "{space_name}" space members list'
-
-
-@wt(
-    parsers.re(
-        r'user of (?P<browser_id>.*) removes "(?P<member_name>.*)" '
-        r'(?P<member_type>user|group) from "(?P<name>.*)" '
-        r"(?P<where>cluster|group|harvester|space|automation) members"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def remove_member_from_parent(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    member_name: str,
-    member_type: str,
-    name: str,
-    tmp_memory: TmpMemory,
-    where: str,
-) -> None:
-    driver = selenium[browser_id]
-    if where != "cluster":
-        page_name = cast(PageName, _change_to_tab_name(where))
-        oz_page = OZLoggedIn(selenium[browser_id])
-        oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
-        main_page = getattr(oz_page, page_name)
-        list_name = f"{where}s_list"
-        getattr(main_page, list_name)[name]()
-        getattr(main_page, list_name)[name].members()
-    members_page = _find_members_page(driver, where)
-    list_name = member_type + "s"
-    (
-        getattr(members_page, list_name)
-        .items[member_name]
-        .header.click_menu(selenium[browser_id])
-    )
-
-    if member_type == "user":
-        modal_name = "remove user from "
-    elif member_type == "group" and where != "group":
-        modal_name = "remove group from "
-    else:
-        modal_name = "remove subgroup from "
-
-    if where == "automation":
-        where = "atm. inventory"
-    modal_name += where
-
-    Popups(driver).menu_popup_with_text.menu["Remove this member"]()
-
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    Modals(driver).remove_modal.remove()
 
 
 @wt(
@@ -761,6 +716,10 @@ def try_setting_privileges_in_members_subpage(
             click_button_on_element_header_in_members_and_wait(
                 selenium, browser_id, button, where, tree
             )
+            close_alert_popup_if_present(
+                selenium[browser_id], AlertPopup.PRIVILEGES_SAVED
+            )
+
         else:
             assert (
                 not result
@@ -1065,12 +1024,12 @@ def check_element_in_members_subpage(
         try:
             error_message = f"{member_name} {member_type} not found"
             assert member_name in member_list, error_message
-        except RuntimeError as exc:
+        except NoSuchElementException as exc:
             raise AssertionError(error_message) from exc
     else:
         try:
             assert member_name not in member_list, f"{member_name} {member_type}"
-        except RuntimeError:
+        except NoSuchElementException:
             pass
 
 

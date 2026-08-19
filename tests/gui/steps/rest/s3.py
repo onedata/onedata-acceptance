@@ -6,64 +6,66 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import hashlib
 import hmac
-import subprocess as sp
-from datetime import datetime
+from datetime import datetime, timezone
+from http import HTTPStatus
 
 import requests
 from requests.exceptions import HTTPError
 
 from tests.conftest import REQUEST_TIMEOUT
+from tests.gui.steps.rest.provider import get_provider_ones3_status
 from tests.gui.type_definitions import Clipboard
-from tests.utils.bdd_utils import given, parsers, wt
+from tests.type_definitions import Hosts
+from tests.utils.bdd_utils import parsers, wt
 
-HOST_URL = "dev-volume-s3-krakow.default:9000"
+S3_SERVICE_PORT = 9000
+HOST_URL = f"dev-volume-s3-krakow.default:{S3_SERVICE_PORT}"
+S3_APP_LABEL = "dev-volume-s3-krakow"
 
 ACCESS_KEY = "accessKey"
 SECRET_KEY = "verySecretKey"
 
+RETRYABLE_BUCKET_HTTP_STATUSES: frozenset[int] = frozenset(
+    {
+        HTTPStatus.NOT_FOUND,
+        HTTPStatus.REQUEST_TIMEOUT,
+        HTTPStatus.TOO_EARLY,
+        HTTPStatus.TOO_MANY_REQUESTS,
+        HTTPStatus.INTERNAL_SERVER_ERROR,
+        HTTPStatus.BAD_GATEWAY,
+        HTTPStatus.SERVICE_UNAVAILABLE,
+        HTTPStatus.GATEWAY_TIMEOUT,
+    }
+)
 
-@given(parsers.parse("S3 host entry is added to /etc/hosts"))
-def add_s3_host_entry() -> None:
-    # temporary solution when s3 host entry will be added by onenv remove this function
-    ip = sp.check_output(
-        "kubectl get pods -o wide | grep dev-volume-s3-krakow |"
-        " grep -v dev-volume-s3-krakow-init | awk '{print $6}'",
-        shell=True,
-        text=True,
-    )
-    ip = ip.replace("\n", "")
-    add_etc_hosts_entries(ip, "dev-volume-s3-krakow.default")
+
+class _RetryableBucketHTTPError(HTTPError):
+    """HTTP failure that can be retried while waiting for the S3 service."""
 
 
-@wt(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
-def create_s3_bucket_rest(bucket_name: str) -> None:
+def _raise_for_bucket_status(response: requests.Response) -> None:
     try:
-        create_bucket(bucket_name)
-    except HTTPError as e:
-        # if bucket already exists do not throw exception
-        if e.response.status_code == 409:
-            pass
-        else:
-            raise e
+        response.raise_for_status()
+    except HTTPError as ex:
+        if response.status_code not in RETRYABLE_BUCKET_HTTP_STATUSES:
+            raise
+
+        raise _RetryableBucketHTTPError(
+            *ex.args,
+            response=response,
+            request=ex.request,
+        ) from ex
 
 
 @wt(
     parsers.parse(
-        "using REST, user of {browser_id} copies item with "
-        'recently copied path from "{src_bucket}" bucket into "{dst_bucket}" bucket'
+        "using REST, user {user} sees that status of OneS3 of {provider} is ok"
     )
 )
-def copy_item_s3_bucket(
-    browser_id: str,
-    dst_bucket: str,
-    src_bucket: str,
-    clipboard: Clipboard,
-    displays: dict[str, str],
-) -> None:
-    path = clipboard.paste(display=displays[browser_id])
-    copy_item_between_buckets(
-        dst_bucket, f"{src_bucket}{path}/999999", f"{path[1::]}/999999"
-    )
+def assert_provider_ones3_status_ok(provider: str, hosts: Hosts) -> None:
+    status = get_provider_ones3_status(hosts[provider]["hostname"])
+    error_message = f"Status of OneS3 is {status['isOk']}"
+    assert status["isOk"], error_message
 
 
 def sign(key: bytes, msg: str) -> bytes:
@@ -123,6 +125,7 @@ def create_authorization_header(
 
 
 def s3_authorization(
+    method: str,
     headers: dict[str, str],
     canonical_uri: str,
     canonical_querystring: str,
@@ -132,7 +135,7 @@ def s3_authorization(
 ) -> str:
     signed_headers = ";".join(headers.keys())
     canonical_request = create_canonical_request(
-        "PUT",
+        method,
         canonical_uri,
         canonical_querystring,
         headers,
@@ -158,8 +161,9 @@ def s3_authorization(
 
 
 def create_bucket(bucket_name: str) -> None:
-    amz_date = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-    date_stamp = datetime.utcnow().strftime("%Y%m%d")
+    now = datetime.now(timezone.utc)
+    amz_date = now.strftime("%Y%m%dT%H%M%SZ")
+    date_stamp = now.strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"
     canonical_uri = f"/{bucket_name}"
     canonical_querystring = ""
@@ -170,6 +174,7 @@ def create_bucket(bucket_name: str) -> None:
     }
 
     authorization_header = s3_authorization(
+        "PUT",
         headers,
         canonical_uri,
         canonical_querystring,
@@ -179,16 +184,47 @@ def create_bucket(bucket_name: str) -> None:
     )
 
     headers["Authorization"] = authorization_header
-
     url = f"http://{HOST_URL}{canonical_uri}"
     response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
 
-    response.raise_for_status()
+    _raise_for_bucket_status(response)
+
+
+def assert_bucket_exists(bucket_name: str) -> None:
+    now = datetime.now(timezone.utc)
+    amz_date = now.strftime("%Y%m%dT%H%M%SZ")
+    date_stamp = now.strftime("%Y%m%d")
+    payload_hash = "UNSIGNED-PAYLOAD"
+    canonical_uri = f"/{bucket_name}"
+    headers = {
+        "host": HOST_URL,
+        "x-amz-content-sha256": payload_hash,
+        "x-amz-date": amz_date,
+    }
+
+    headers["Authorization"] = s3_authorization(
+        "HEAD",
+        headers,
+        canonical_uri,
+        "",
+        payload_hash,
+        date_stamp,
+        amz_date,
+    )
+
+    url = f"http://{HOST_URL}{canonical_uri}"
+    response = requests.head(
+        url,
+        headers=headers,
+        timeout=REQUEST_TIMEOUT,
+    )
+    _raise_for_bucket_status(response)
 
 
 def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
-    amz_date = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-    date_stamp = datetime.utcnow().strftime("%Y%m%d")
+    now = datetime.now(timezone.utc)
+    amz_date = now.strftime("%Y%m%dT%H%M%SZ")
+    date_stamp = now.strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"
     canonical_uri = f"/{dst_bucket}/{dst}"
     canonical_querystring = ""
@@ -200,6 +236,7 @@ def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
         "x-amz-date": amz_date,
     }
     authorization_header = s3_authorization(
+        "PUT",
         headers,
         canonical_uri,
         canonical_querystring,
@@ -216,10 +253,20 @@ def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
     response.raise_for_status()
 
 
-def add_etc_hosts_entries(service_ip: str, service_host: str) -> None:
-    sp.run(
-        f'sudo bash -c "echo {service_ip} {service_host} >> /etc/hosts"',
-        shell=True,
-        text=True,
-        check=True,
+@wt(
+    parsers.parse(
+        "using REST, user of {browser_id} copies item with "
+        'recently copied path from "{src_bucket}" bucket into "{dst_bucket}" bucket'
+    )
+)
+def copy_item_s3_bucket(
+    browser_id: str,
+    dst_bucket: str,
+    src_bucket: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
+    path = clipboard.paste(display=displays[browser_id])
+    copy_item_between_buckets(
+        dst_bucket, f"{src_bucket}{path}/999999", f"{path[1::]}/999999"
     )

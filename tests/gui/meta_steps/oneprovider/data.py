@@ -11,6 +11,7 @@ from typing import Optional
 import yaml
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
+    ElementNotInteractableException,
     NoSuchElementException,
     StaleElementReferenceException,
 )
@@ -76,6 +77,7 @@ from tests.gui.type_definitions import (
     TmpMemory,
 )
 from tests.gui.utils import Modals, OPLoggedIn
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,
@@ -102,7 +104,12 @@ def _click_menu_for_elem_somewhere_in_file_browser(
         browser = tmp_memory[browser_id]["file_browser"]
         browser.click_on_background()
         click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    except (KeyError, RuntimeError, StaleElementReferenceException):
+    except (
+        KeyError,
+        PageObjectNotFoundError,
+        NoSuchElementException,
+        StaleElementReferenceException,
+    ):
         go_to_filebrowser(selenium, browser_id, tmp_memory, space)
         # TODO VFS-12315 remove sleep in acc tests
         time.sleep(0.5)
@@ -290,7 +297,7 @@ def create_item_in_op_gui(
 
     try:
         _open_menu_for_item_in_file_browser()
-    except (RuntimeError, KeyError):
+    except (ElementNotInteractableException, KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, browser_id, tmp_memory, space)
         _open_menu_for_item_in_file_browser()
 

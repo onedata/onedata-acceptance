@@ -12,7 +12,10 @@ import time
 
 import yaml
 from _pytest._py.path import LocalPath
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
@@ -34,6 +37,7 @@ from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sid
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_lambda_dump
@@ -297,7 +301,11 @@ def modify_parameter_in_lambda_form(
             for el in val:
                 try:
                     Popups(driver).options_selector.choose_option(transform(el))
-                except (ElementNotInteractableException, RuntimeError):
+                except (
+                    ElementNotInteractableException,
+                    NoSuchElementException,
+                    PageObjectNotFoundError,
+                ):
                     time.sleep(1)
                     Popups(driver).options_selector.choose_option(transform(el))
 

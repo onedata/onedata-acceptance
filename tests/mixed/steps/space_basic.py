@@ -10,6 +10,7 @@ from collections.abc import Mapping
 from typing import cast
 
 from onezone_client import UserApi
+from pytest import FixtureRequest  # pylint: disable=wrong-import-order
 
 from tests.gui.meta_steps.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_gui,
@@ -41,7 +42,6 @@ from tests.mixed.steps.rest.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_rest,
 )
 from tests.mixed.steps.rest.onezone.space_management import (
-    CredentialsLike,
     assert_spaces_have_appeared_in_oz_rest,
     assert_spaces_have_been_renamed_in_oz_rest,
     assert_there_are_no_spaces_in_oz_rest,
@@ -59,6 +59,10 @@ from tests.oneclient.steps.multi_file_steps import ls_present_spaces
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup.spaces import (
+    CredentialsLike,
+    _register_space_finalizer,
+)
 from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
@@ -104,11 +108,24 @@ def create_spaces_in_oz(
     spaces: Spaces,
     clipboard: Clipboard,
     displays: dict[str, str],
+    request: FixtureRequest,
+    admin_credentials: CredentialsLike,
 ) -> None:
 
     if client.lower() == "rest":
         create_spaces_in_oz_using_rest(
-            user, _as_space_users(users), hosts, host, space_list, spaces
+            user,
+            _as_space_users(users),
+            hosts,
+            host,
+            space_list,
+            spaces,
+            lambda space_id: _register_space_finalizer(
+                request,
+                hosts[host]["hostname"],
+                admin_credentials,
+                space_id,
+            ),
         )
     elif client.lower() == "web gui":
 
@@ -701,7 +718,7 @@ def assert_spaces_with_ids_in_mount_point(
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         user_client = login_to_oz(
-            user, cast(str, users[user].password), hosts[zone_name]["hostname"]
+            user, users[user].password, hosts[zone_name]["hostname"]
         )
 
         user_api = UserApi(user_client)

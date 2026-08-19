@@ -10,6 +10,7 @@ import re
 import time
 
 import yaml
+from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
@@ -167,7 +168,7 @@ def _create_archive(
     option_state = "disabled"
     try:
         OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
-    except RuntimeError:
+    except NoSuchElementException:
         click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space_name, OPTION_IN_SPACE
         )

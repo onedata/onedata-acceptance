@@ -8,7 +8,6 @@ from typing import ClassVar, TypeVar
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
@@ -32,18 +31,15 @@ PageT = TypeVar("PageT", bound=GenericPage)
 
 
 class OZLoggedIn:
-    _current_page_by_session_id: ClassVar[dict[str, type[GenericPage]]] = {}
-
-    _page_class_by_name: ClassVar[dict[PageName, type[SidebarPanelPage]]] = {
-        "data": DataPage,
-        "shares": SharesPage,
-        "providers": ProvidersPage,
-        "groups": GroupsPage,
-        "tokens": TokensPage,
-        "discovery": DiscoveryPage,
-        "automation": AutomationPage,
-        "clusters": ClustersPage,
-        "cluster": ClustersPage,
+    _panel_id_by_page_class: ClassVar[dict[type[SidebarPanelPage], int]] = {
+        DataPage: 0,
+        SharesPage: 1,
+        ProvidersPage: 2,
+        GroupsPage: 3,
+        TokensPage: 4,
+        DiscoveryPage: 5,
+        AutomationPage: 6,
+        ClustersPage: 7,
     }
 
     _atlas = WebElement(".onezone-atlas")
@@ -59,59 +55,25 @@ class OZLoggedIn:
 
     def __init__(self, driver: WebDriver) -> None:
         self.web_elem = driver
-        self._current_page_by_session_id.setdefault(self._session_id, DataPage)
-
-    @property
-    def _session_id(self) -> str:
-        session_id = self.web_elem.session_id
-        if session_id is None:
-            raise RuntimeError("WebDriver has no active session")
-        return session_id
-
-    @property
-    def current_page_cls(self) -> type[GenericPage]:
-        return self._current_page_by_session_id[self._session_id]
-
-    def set_current_page(self, page_cls: type[GenericPage]) -> None:
-        self._current_page_by_session_id[self._session_id] = page_cls
-
-    def set_current_page_during_login_logout(
-        self, *, is_login: bool, emergency_interface: bool
-    ) -> None:
-        # Emergency interface sessions always start with `ClustersPage` as the
-        # current panel. The previously selected panel may persist after logout
-        # and can also carry over between emergency and regular Onezone sessions,
-        # so we explicitly reset it after a successful emergency login. Regular
-        # Onezone logout logic similarly resets the current panel to `DataPage`,
-        # which is the expected default unless the next login uses the emergency
-        # interface.
-        if is_login and not emergency_interface:
-            return
-
-        default_page = ClustersPage if emergency_interface else DataPage
-        self.set_current_page(default_page)
-
-    def get_current_page(self) -> type[GenericPage]:
-        return self._current_page_by_session_id[self._session_id]
-
-    @repeat_failed(timeout=WAIT_FRONTEND)
-    def update_current_page(self) -> None:
-        self.expand_panel_if_needed()
-        for page_name, page_cls in self._page_class_by_name.items():
-            if self.is_panel_active(page_name):
-                self._current_page_by_session_id[self._session_id] = page_cls
-                return
-        raise RuntimeError("No page is selected")
 
     def __str__(self) -> str:
         return "Onezone page"
 
-    @staticmethod
-    def get_page_class(page_name: PageName) -> type[SidebarPanelPage]:
-        return OZLoggedIn._page_class_by_name[page_name]
+    @classmethod
+    def get_page_class(cls, page_name: PageName) -> type[SidebarPanelPage]:
+        expected_name = "clusters" if page_name == "cluster" else page_name
+        for page_cls in cls._panel_id_by_page_class:
+            if page_cls.panel_name == expected_name:
+                return page_cls
+        raise KeyError(page_name)
+
+    @classmethod
+    def _get_panel_id(cls, panel_name: PageName) -> int:
+        return cls._panel_id_by_page_class[cls.get_page_class(panel_name)]
 
     def _panel_has_class(self, panel_name: PageName, class_name: str) -> bool:
-        return element_has_class(self.get_panel_by_name(panel_name), class_name)
+        panel_id = self._get_panel_id(panel_name)
+        return element_has_class(self._panels[panel_id], class_name)
 
     def is_panel_menu_expanded(self) -> bool:
         return element_has_class(self._sidebar_menu, "expanded")
@@ -125,25 +87,10 @@ class OZLoggedIn:
     def is_panel_selected(self, panel_name: PageName) -> bool:
         return self._panel_has_class(panel_name, "selected")
 
-    def get_panel_by_name(self, panel_name: PageName) -> SeleniumWebElement:
-        if not self.is_panel_menu_expanded():
-            raise RuntimeError(
-                f'cannot get "{panel_name}" panel, because main panel is not expanded'
-            )
-        for panel in self._panels:
-            name = panel.text.lower()
-            if name == panel_name:
-                return panel
-            if name == "cluster" and panel_name == "clusters":
-                return panel
-            if name == "clusters" and panel_name == "cluster":
-                return panel
-        raise RuntimeError(f'no "{panel_name}" on {self} found')
-
     @repeat_failed(timeout=WAIT_FRONTEND)
     def click_on_sidebar_menu_panel(self, panel_name: PageName) -> None:
-        panel = self.get_panel_by_name(panel_name)
-        panel.click()
+        panel_id = self._get_panel_id(panel_name)
+        self._panels[panel_id].click()
 
     def _wait_for_panel_to_expand(self) -> None:
         WebDriverWait(self.web_elem, WAIT_FRONTEND).until(
@@ -158,20 +105,18 @@ class OZLoggedIn:
         self._wait_for_panel_to_expand()
 
     def open_panel(self, page_cls: type[PageT]) -> None:
-        if page_cls is self.current_page_cls:
-            return
+        if issubclass(page_cls, SidebarPanelPage):
+            panel_name = page_cls.panel_name
+            if self.is_panel_active(panel_name):
+                return
 
         self.expand_panel_if_needed()
 
         if page_cls is UploadsPage:
             self.uploads_web_elem.click()
         elif issubclass(page_cls, SidebarPanelPage):
-            panel_name = page_cls.panel_name
-
             if not self.is_panel_selected(panel_name):
                 self.click_on_sidebar_menu_panel(panel_name)
-
-        self.set_current_page(page_cls)
 
     @property
     def data(self) -> DataPage:

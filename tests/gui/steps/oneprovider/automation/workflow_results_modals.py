@@ -7,8 +7,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from contextlib import suppress
 from datetime import datetime
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait
@@ -99,7 +101,7 @@ def choose_time_resolution(
             option.click()
             break
     else:
-        raise RuntimeError(
+        raise ValueError(
             f'There is no {resolution} in time resolution list in modal "{modal}".'
         )
 
@@ -155,7 +157,7 @@ def assert_number_of_proceeded_files(
                 assert value[0] == float(number), error_message
             break
     else:
-        raise RuntimeError(
+        raise AssertionError(
             f"There is no {option} processing speed on chart with processing stat."
         )
 
@@ -270,18 +272,18 @@ def compare_array_in_store_details_modal(modal: StoreDetails, item_list: str) ->
 def open_raw_view_for_elem(
     store_content_list: PageObjectsSequence, index: int, modal: StoreDetails
 ) -> None:
-    for _ in range(10):
-        store_content_list[index].click()
-        try:
-            if modal.raw_view != "":
-                break
-        except AttributeError:
-            if modal.single_file_container.name != "":
-                break
-    else:
-        raise RuntimeError(
-            f"Did not manage to open raw view for {index} element in store content list"
-        )
+    store_content_list[index].click()
+    with suppress(NoSuchElementException):
+        if modal.raw_view:
+            return
+
+    with suppress(NoSuchElementException):
+        if modal.single_file_container.name:
+            return
+
+    raise TimeoutError(
+        f"Did not manage to open raw view for {index} element in store content list"
+    )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -297,7 +299,7 @@ def get_store_content(
     store_content_list = getattr(modal, store_content_type)
     try:
         open_raw_view_for_elem(store_content_list, index, modal)
-    except RuntimeError:
+    except TimeoutError:
         # this closes the successful copy alert
         modal.name_header.click()
         open_raw_view_for_elem(store_content_list, index, modal)
