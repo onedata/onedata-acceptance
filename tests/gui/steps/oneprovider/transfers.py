@@ -17,14 +17,12 @@ from selenium.common.exceptions import (
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
+    select_columns_to_be_visible_in_transfers,
+)
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
     switch_to_iframe,
-)
-from tests.gui.steps.oneprovider.browser import (
-    click_configure_columns_button,
-    get_column_names_from_configure_columns_menu,
-    set_column_visibility_in_configure_columns_menu,
 )
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
@@ -68,11 +66,11 @@ def _assert_transfer(
             # if key differs from column name, consider creating suitable dict
             key = key.replace(" ", "_")
             if key in ["type", "destination"]:
-                _select_columns_to_be_visible_in_transfers(
+                select_columns_to_be_visible_in_transfers(
                     selenium, browser_id, ["type_&_destination"]
                 )
             else:
-                _select_columns_to_be_visible_in_transfers(selenium, browser_id, [key])
+                select_columns_to_be_visible_in_transfers(selenium, browser_id, [key])
             transfer_val = getattr(transfer, key)
         try:
             assert transfer_val == str(
@@ -395,29 +393,11 @@ def assert_option_in_provider_popup_menu(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _select_columns_to_be_visible_in_transfers(
-    selenium: SeleniumDrivers, browser_id: str, columns: list[str]
-) -> None:
-    columns = [column.lower().replace(" ", "_") for column in columns]
-    driver = selenium[browser_id]
-    transfer = OPLoggedIn(driver).transfers
-    click_configure_columns_button(transfer)
-    column_names = get_column_names_from_configure_columns_menu(driver)
-    for column_name in column_names:
-        parsed_column_name = column_name.lower().replace(" ", "_")
-        set_column_visibility_in_configure_columns_menu(
-            driver, column_name, parsed_column_name in columns
-        )
-    # hide columns menu popup
-    click_configure_columns_button(transfer)
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
 def _get_transfers_and_enable_initial_cols(
     browser_id: str, selenium: SeleniumDrivers
 ) -> _TransfersTab:
     columns = ["user", "type & destination", "status"]
-    _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
+    select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
     return OPLoggedIn(selenium[browser_id]).transfers
 
 
@@ -434,7 +414,7 @@ def _get_transfers_and_enable_initial_cols(
 def select_columns_to_be_visible_in_transfers(
     selenium: SeleniumDrivers, browser_id: str, columns: list[str]
 ) -> None:
-    _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
+    select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
 
 
 @wt(

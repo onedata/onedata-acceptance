@@ -13,7 +13,10 @@ from selenium.webdriver.remote.webelement import WebElement
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebElementsSequence
-from tests.gui.utils.core.web_objects import PageObjectNotFoundError, PageObjectsSequence
+from tests.gui.utils.core.web_objects import (
+    PageObjectNotFoundError,
+    PageObjectsSequence,
+)
 
 
 class PowerSelect(PageObject):

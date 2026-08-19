@@ -16,7 +16,7 @@ from tests.gui.steps.oneprovider.browser import (
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Popups
+from tests.gui.utils import OPLoggedIn, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -25,6 +25,23 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+
+
+def select_columns_to_be_visible_in_transfers(
+    selenium: SeleniumDrivers, browser_id: str, columns: list[str]
+) -> None:
+    columns = [column.lower().replace(" ", "_") for column in columns]
+    driver = selenium[browser_id]
+    transfer = OPLoggedIn(driver).transfers
+    click_configure_columns_button(transfer)
+    column_names = get_column_names_from_configure_columns_menu(driver)
+    for column_name in column_names:
+        parsed_column_name = column_name.lower().replace(" ", "_")
+        set_column_visibility_in_configure_columns_menu(
+            driver, column_name, parsed_column_name in columns
+        )
+    # hide columns menu popup
+    click_configure_columns_button(transfer)
 
 
 @wt(
