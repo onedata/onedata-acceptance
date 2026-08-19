@@ -28,7 +28,7 @@ def test_run_in_foreground(
     test_file_content = b"Onedata demo-mode foreground REST test\n"
 
     onezone = run_onezone(release, request)
-    run_oneprovider(release, onezone, first_oneprovider, request)
+    run_oneprovider(release, onezone, request)
 
     assert_onezone_configuration(release, onezone_name)
 

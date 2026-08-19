@@ -35,56 +35,53 @@ def run_onezone(release: str, request: pytest.FixtureRequest) -> subprocess.Pope
     return process
 
 
-def _run_oneprovider(
-    command_path: str,
-    release: str,
-    onezone_process: subprocess.Popen[str],
-    provider_container: str,
-    request: pytest.FixtureRequest,
-) -> subprocess.Popen[str]:
-    if onezone_process.poll() is not None:
-        raise AssertionError("Onezone stopped before Oneprovider could be started")
-
-    command = load_command(command_path, release)
-    process = start_command(command)
-    request.addfinalizer(partial(stop_command, process))
-    wait_for_successful_command(f"docker exec {provider_container} await-demo")
-
-    return process
-
-
 @log_step("Running Oneprovider")
 def run_oneprovider(
     release: str,
     onezone_process: subprocess.Popen[str],
-    provider_container: str,
     request: pytest.FixtureRequest,
 ) -> subprocess.Popen[str]:
     """Start the first Oneprovider and wait until it is ready."""
-    return _run_oneprovider(
-        "run_in_foreground/run_oneprovider.sh",
+    if onezone_process.poll() is not None:
+        raise AssertionError("Onezone stopped before Oneprovider could be started")
+
+    command = load_command("run_in_foreground/run_oneprovider.sh", release)
+    process = start_command(command)
+    request.addfinalizer(partial(stop_command, process))
+    await_command = load_command(
+        "run_in_background/await_oneprovider.sh",
         release,
-        onezone_process,
-        provider_container,
-        request,
     )
+    wait_for_successful_command(await_command)
+
+    return process
 
 
 @log_step("Running second Oneprovider")
 def run_second_oneprovider(
     release: str,
     onezone_process: subprocess.Popen[str],
-    provider_container: str,
     request: pytest.FixtureRequest,
 ) -> subprocess.Popen[str]:
     """Start the second Oneprovider and wait until it is ready."""
-    return _run_oneprovider(
+    if onezone_process.poll() is not None:
+        raise AssertionError(
+            "Onezone stopped before second Oneprovider could be started"
+        )
+
+    command = load_command(
         "distributed_environment/run_second_oneprovider.sh",
         release,
-        onezone_process,
-        provider_container,
-        request,
     )
+    process = start_command(command)
+    request.addfinalizer(partial(stop_command, process))
+    await_command = load_command(
+        "test_only/await_second_oneprovider.sh",
+        release,
+    )
+    wait_for_successful_command(await_command)
+
+    return process
 
 
 def _run_background_command(command: str, timeout: float = 480) -> None:

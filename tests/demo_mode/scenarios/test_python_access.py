@@ -14,13 +14,12 @@ from tests.demo_mode.steps.examples import assert_python_access_example_output
 def test_python_access(
     release: str,
     demo_space_name: str,
-    first_oneprovider: str,
     request: pytest.FixtureRequest,
 ) -> None:
     expected_output = f"['{demo_space_name}']\nTEST\n"
 
     onezone = run_onezone(release, request)
-    run_oneprovider(release, onezone, first_oneprovider, request)
+    run_oneprovider(release, onezone, request)
 
     command_output = run_python_access_example(request)
     assert_python_access_example_output(command_output, expected_output)

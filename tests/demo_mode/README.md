@@ -10,10 +10,12 @@ and persistence.
 
 Please read this document before writing or modifying demo-mode tests.
 
-The shell commands under [commands](commands) are the examples exercised by the
-tests. They are loaded verbatim, with only `xRELEASExVERSIONx` replaced by the
-release supplied on the command line. Keep these commands suitable for use as
-standalone examples.
+The shell commands under [commands](commands), except those in
+[test_only](commands/test_only), are the examples exercised by the tests. They
+are loaded verbatim, with only `xRELEASExVERSIONx` replaced by the release
+supplied on the command line. Keep these commands suitable for use as standalone
+examples. The `test_only` directory contains supporting commands that are not
+part of the tutorial.
 
 The original documentation used `docker run -it`. The `-t` option, which
 allocates a pseudo-TTY, was intentionally removed because no terminal is
