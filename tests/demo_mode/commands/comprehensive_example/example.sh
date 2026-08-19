@@ -1,7 +1,13 @@
-docker run --rm -i -d --name oz_test onedata/onezone:xRELEASExVERSIONx demo
-OZ_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' oz_test)
-docker run --rm -i -d --name op_test1 onedata/oneprovider:xRELEASExVERSIONx demo $OZ_IP
-OP_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' op_test1)
+docker run --rm -i --detach --name oz_test onedata/onezone:xRELEASExVERSIONx demo
+OZ_NAME=oz_test;\
+until OZ_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $OZ_NAME 2>/dev/null) && [ -n "$OZ_IP" ]; do\
+	echo -en "Awaiting the ${OZ_NAME} container...\r"; sleep 1;\
+done; echo; \
+docker run --rm -i --detach --name op_test1 onedata/oneprovider:xRELEASExVERSIONx demo $OZ_IP
+OP_NAME=op_test1;\
+until OP_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $OP_NAME 2>/dev/null) && [ -n "$OP_IP" ]; do\
+	echo -en "Awaiting the ${OP_NAME} container...\r"; sleep 1;\
+done; echo; \
 docker exec op_test1 await-demo
 ACCESS_TOKEN=$(docker exec op_test1 demo-access-token)
 DEMO_SPACE_ID="cb274b2b8bb1750d9be37dd4a3eb7014chb175"
