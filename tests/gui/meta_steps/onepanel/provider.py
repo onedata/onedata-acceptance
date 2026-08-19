@@ -29,6 +29,7 @@ from tests.gui.steps.onepanel.deployment import (
 )
 from tests.gui.steps.onepanel.provider import (
     deactivate_request_subdomain_toggle,
+    get_provider_name_from_provider_panel,
     wt_assert_value_of_provider_attribute,
     wt_click_on_discard_btn_in_domain_change_modal,
     wt_type_val_to_in_box_in_provider_details_form,
@@ -234,9 +235,7 @@ def change_provider_name_if_name_is_different_than_given(
         selenium, [browser_id], sidebar, sub_item, record
     )
 
-    current_provider = Onepanel(
-        selenium[browser_id]
-    ).content.provider.details.provider_name
+    current_provider = get_provider_name_from_provider_panel(selenium, browser_id)
     domain = hosts[provider]["hostname"]
     provider = hosts[provider]["name"]
     if current_provider != provider:

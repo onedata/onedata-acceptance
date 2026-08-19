@@ -12,12 +12,15 @@ import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.modals.modal import click_modal_button
+from tests.gui.steps.modals.modal import click_modal_button, get_modal
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_on_link_in_task_box,
     click_on_task_in_lane,
 )
-from tests.gui.utils import Modals
+from tests.gui.steps.oneprovider.automation.pods_activity import (
+    assert_no_pods_in_function_pods_activity_modal,
+    click_on_first_pod_in_function_pods_activity_modal,
+)
 from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
     FunctionPodsActivity,
 )
@@ -45,10 +48,10 @@ def wait_for_ongoing_pods_to_be_terminated(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(selenium[browser_id]).function_pods_activity
+    driver = selenium[browser_id]
+    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
     change_tab_in_function_pods_activity_modal(modal, "Current")
-
-    assert len(modal.pods_list) == 0, "Pods has not been terminated"
+    assert_no_pods_in_function_pods_activity_modal(driver)
 
 
 @wt(
@@ -61,7 +64,9 @@ def assert_lambda_name_in_tab_name(
     selenium: SeleniumDrivers, browser_id: str, tab: str, lambda_name: str
 ) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(selenium[browser_id]).function_pods_activity
+    modal = get_modal(
+        selenium[browser_id], "Function pods activity", FunctionPodsActivity
+    )
     change_tab_in_function_pods_activity_modal(modal, tab)
     pod_name = modal.pods_list[0].pod_name
     error_message = (
@@ -78,9 +83,10 @@ def assert_lambda_name_in_tab_name(
 )
 def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(selenium[browser_id]).function_pods_activity
+    driver = selenium[browser_id]
+    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
     change_tab_in_function_pods_activity_modal(modal, tab)
-    modal.pods_list[0].click()
+    click_on_first_pod_in_function_pods_activity_modal(driver)
 
 
 @wt(
@@ -91,10 +97,10 @@ def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> 
 )
 def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: str) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(selenium[browser_id]).function_pods_activity
+    driver = selenium[browser_id]
+    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
     change_tab_in_function_pods_activity_modal(modal, "All")
-
-    modal.pods_list[0].click()
+    click_on_first_pod_in_function_pods_activity_modal(driver)
 
 
 def gather_events_list(
@@ -121,7 +127,7 @@ def assert_events_in_pods_monitor(
 
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(driver).function_pods_activity
+    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
     events_list = [
         event for event in yaml.load(events, yaml.Loader) if "+" not in event
     ]
@@ -150,7 +156,7 @@ def assert_events_containing_lambda_name(
 ) -> None:
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(driver).function_pods_activity
+    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
     events_list = [
         event.replace('"', "").split(" + ")[1]
         for event in yaml.load(events, yaml.Loader)
@@ -261,7 +267,9 @@ def check_number_of_events(
 ) -> None:
     driver = selenium[browser_id]
     actual_num = int(
-        Modals(driver).function_pods_activity.get_number_of_data_rows(driver)
+        get_modal(
+            driver, "Function pods activity", FunctionPodsActivity
+        ).get_number_of_data_rows(driver)
     )
     expected_num = int(exp_num)
     error_message = (

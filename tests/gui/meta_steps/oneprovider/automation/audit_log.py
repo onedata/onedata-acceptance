@@ -45,6 +45,7 @@ from tests.gui.steps.oneprovider.automation.automation_statuses import (
 )
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     check_number_of_elements_in_store_details_modal,
+    click_on_log_in_workflow_audit_log,
     click_on_task_audit_log,
     close_modal_and_task,
     compare_array_in_store_details_modal,
@@ -56,6 +57,7 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_store_content,
     open_store_details_modal,
 )
+from tests.gui.steps.oneprovider.browser import check_if_element_is_selected
 from tests.gui.steps.oneprovider.common import (
     wait_for_file_with_unknown_name_to_download,
 )
@@ -74,7 +76,6 @@ from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
     parse_seq,
-    transform,
 )
 from tests.gui.utils.oneprovider.automation import Task, WorkflowLane
 from tests.type_definitions import SeleniumDrivers
@@ -739,15 +740,6 @@ def wt_click_on_elem_in_store_details_modal(
     )
 
 
-def check_if_element_is_selected(
-    tmp_memory: TmpMemory, browser_id: str, name: str, which_browser: str
-) -> None:
-    error_message = f"Element {name} is not selected in {which_browser}"
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    if_selected = browser.data[name].is_selected()
-    assert if_selected, error_message
-
-
 @wt(
     parsers.parse(
         'user of {browser_id} sees "{name}" item selected in the'
@@ -1182,18 +1174,6 @@ def assert_content_of_task_audit_log(
         )
     except StaleElementReferenceException:
         pass
-
-
-def click_on_log_in_workflow_audit_log(
-    driver: WebDriver, severity: str, source: str
-) -> None:
-    modal = Modals(driver).audit_log
-    if severity in ["Error", "Debug"]:
-        modal.logs_entry[severity].click()
-    elif source == "user":
-        modal.user_log.click()
-    else:
-        modal.logs_entry[0].click()
 
 
 @wt(

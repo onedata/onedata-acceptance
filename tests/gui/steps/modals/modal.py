@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import cast
+from typing import TypeVar, cast
 
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -23,12 +23,15 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+
+ModalT = TypeVar("ModalT", bound=Modal)
 
 in_type_to_id = {
     "username": "login-form-username-input",
@@ -145,6 +148,12 @@ def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
         lambda _: _find(),
         message=f"waiting for {modal_name:s} modal to appear",
     )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_modal(driver: WebDriver, modal_name: str, modal_type: type[ModalT]) -> ModalT:
+    modal_web_elem = _find_modal(driver, modal_name)
+    return modal_type(driver, modal_web_elem)
 
 
 def _wait_for_modal_to_appear(

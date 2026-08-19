@@ -24,6 +24,7 @@ from tests.gui.steps.onepanel.spaces import (
     click_on_navigation_tab_in_space,
     click_start_scan_button_in_storage_import_tab,
     confirm_quota_value_change,
+    get_spaces_list_from_spaces_page,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
@@ -344,7 +345,7 @@ def revoke_all_space_supports(
     )
     # wait for load spaces list
     time.sleep(1)
-    spaces_list = Onepanel(selenium[browser_id]).content.spaces.spaces
+    spaces_list = get_spaces_list_from_spaces_page(selenium, browser_id)
 
     while len(spaces_list) > 0:
         space = spaces_list[0]
@@ -354,7 +355,7 @@ def revoke_all_space_supports(
         wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
         # wait for update spaces list
         time.sleep(1)
-        spaces_list = Onepanel(selenium[browser_id]).content.spaces.spaces
+        spaces_list = get_spaces_list_from_spaces_page(selenium, browser_id)
     selenium[browser_id].refresh()
 
 
