@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -18,6 +19,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     change_tab_in_automation_subpage,
     click_on_task_in_lane,
     switch_to_automation_page,
+    wait_until_workflow_executions_list_is_empty,
 )
 from tests.gui.steps.oneprovider.automation.automation_statuses import (
     await_for_task_status_in_parallel_box,
@@ -28,6 +30,7 @@ from tests.gui.steps.oneprovider.automation.initial_values import (
     open_select_initial_datasets_modal,
     open_select_initial_files_modal,
     open_select_initial_groups_modal,
+    select_groups_from_select_groups_modal,
 )
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     choose_time_resolution,
@@ -126,17 +129,7 @@ def choose_group_as_initial_workflow_value_for_store(
     driver = selenium[browser_id]
     open_select_initial_groups_modal(selenium, browser_id, store_name)
     # Modal can be opened but groups might not be loaded yet
-    _select_groups_from_select_groups_modal(driver, group_list)
-
-
-def _select_groups_from_select_groups_modal(
-    driver: WebDriver, group_list: str | list[str]
-) -> None:
-    if isinstance(group_list, str):
-        parsed_list = parse_seq(group_list)
-    else:
-        parsed_list = group_list
-    Modals(driver).select_groups.select(parsed_list)
+    select_groups_from_select_groups_modal(driver, group_list)
 
 
 def provide_text_to_object_initial_workflow_value_store(
@@ -211,7 +204,9 @@ def choose_file_as_initial_workflow_value(
 def wait_for_workflows_in_automation_subpage(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
+    _wait_for_workflows_in_automation_subpage(
+        selenium, browser_id, option, timeout=360, ignored_exceptions=(Exception,)
+    )
 
 
 @wt(
@@ -223,7 +218,13 @@ def wait_for_workflows_in_automation_subpage(
 def wait_for_workflows_in_automation_subpage_extended_time(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
+    _wait_for_workflows_in_automation_subpage(
+        selenium,
+        browser_id,
+        option,
+        timeout=1500,
+        ignored_exceptions=(AssertionError, StaleElementReferenceException),
+    )
 
 
 def wait_for_workflow_execution_in_atm_subpage(
@@ -235,7 +236,11 @@ def wait_for_workflow_execution_in_atm_subpage(
 
 
 def _wait_for_workflows_in_automation_subpage(
-    selenium: SeleniumDrivers, browser_id: str, option: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    timeout: float,
+    ignored_exceptions: tuple[type[Exception], ...] = (),
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     if option == "start":
@@ -245,7 +250,7 @@ def _wait_for_workflows_in_automation_subpage(
         change_tab_in_automation_subpage(selenium, browser_id, "Ongoing")
         err = "Ongoing workflows did not finish their run"
 
-    assert len(page.workflow_executions_list) == 0, err
+    wait_until_workflow_executions_list_is_empty(page, err, timeout, ignored_exceptions)
 
 
 def assert_no_suspended_workflows_in_atm_subpage(
@@ -256,7 +261,7 @@ def assert_no_suspended_workflows_in_atm_subpage(
     error_message = (
         "Workflow did not finished successfully and it is in suspended state."
     )
-    assert len(page.workflow_executions_list) == 0, error_message
+    wait_until_workflow_executions_list_is_empty(page, error_message)
 
 
 @wt(

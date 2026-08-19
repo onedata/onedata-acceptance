@@ -15,6 +15,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import (
@@ -52,6 +53,23 @@ def switch_to_automation_page(
 ) -> WorkflowExecutionPage:
     switch_to_iframe(selenium, browser_id)
     return OPLoggedIn(selenium[browser_id]).automation_page
+
+
+def wait_until_workflow_executions_list_is_empty(
+    page: WorkflowExecutionPage,
+    error_message: str,
+    timeout: float = WAIT_BACKEND,
+    ignored_exceptions: tuple[type[Exception], ...] = (),
+) -> None:
+    WebDriverWait(
+        page.driver,
+        timeout,
+        poll_frequency=1,
+        ignored_exceptions=ignored_exceptions,
+    ).until(
+        lambda _: len(page.workflow_executions_list) == 0,
+        message=error_message,
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
