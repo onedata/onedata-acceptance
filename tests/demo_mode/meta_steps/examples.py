@@ -29,23 +29,18 @@ def _prepare_python_access_directory(
     return environment_root
 
 
-def _build_python_access_command(
-    environment_root: Path,
-    setup_log_path: Path,
-) -> str:
+def _build_python_access_command(setup_log_path: Path) -> str:
     setup_script = command_path("python_access/setup_environment.sh")
     access_script = command_path("python_access/check_python_access.py")
-    python = environment_root / "venv" / "bin" / "python"
     quoted_setup_script = quote(str(setup_script))
     quoted_setup_log_path = quote(str(setup_log_path))
-    quoted_python = quote(str(python))
     quoted_access_script = quote(str(access_script))
 
     return "\n".join(
         (
             "set -e",
             f"source {quoted_setup_script} > {quoted_setup_log_path} 2>&1",
-            f"{quoted_python} {quoted_access_script}",
+            f"python3 {quoted_access_script}",
         )
     )
 
@@ -84,7 +79,7 @@ def run_python_access_example(
     """Prepare and run the Python access example in its generated venv."""
     environment_root = _prepare_python_access_directory(request)
     setup_log_path = environment_root / "setup.log"
-    command = _build_python_access_command(environment_root, setup_log_path)
+    command = _build_python_access_command(setup_log_path)
     result = _run_python_access_command(command, environment_root, timeout)
     setup_log = _read_setup_log(setup_log_path)
 
