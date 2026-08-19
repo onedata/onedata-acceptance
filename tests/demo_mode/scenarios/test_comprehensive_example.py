@@ -4,11 +4,9 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from tests.demo_mode.meta_steps.examples import get_comprehensive_example_file_name
 from tests.demo_mode.meta_steps.rest import assert_onezone_configuration
-from tests.demo_mode.steps.examples import (
-    get_comprehensive_example_file_name,
-    run_comprehensive_example,
-)
+from tests.demo_mode.steps.examples import run_comprehensive_example
 from tests.demo_mode.steps.rest import (
     assert_file_content,
     download_rest_file,

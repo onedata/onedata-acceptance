@@ -6,7 +6,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import subprocess
 
+import pytest
+
 from tests.demo_mode.utils.commands import load_command, run_command
+from tests.demo_mode.utils.examples import (
+    build_python_access_command,
+    prepare_python_access_directory,
+    read_setup_log,
+    run_python_access_command,
+)
 from tests.demo_mode.utils.logging import log_running_command, log_step
 
 
@@ -58,26 +66,6 @@ def assert_comprehensive_example_file_name(file_name: str) -> None:
     ), f"Expected comprehensive example to create a .txt file, got {file_name!r}"
 
 
-@log_step("Getting comprehensive example file name")
-def get_comprehensive_example_file_name(command_output: str) -> str:
-    """Extract the validated filename from comprehensive-example output."""
-    success_message_prefix = "All done! Created a file called "
-    output_lines = [
-        line
-        for line in command_output.splitlines()
-        if line.startswith(success_message_prefix)
-    ]
-    assert_comprehensive_example_success_message_count(output_lines, command_output)
-
-    message = output_lines[0]
-    message_parts = message.split('"')
-    assert_comprehensive_example_message_contains_file_name(message, message_parts)
-
-    file_name = message_parts[1]
-    assert_comprehensive_example_file_name(file_name)
-    return file_name
-
-
 @log_step("Checking Python access example output")
 def assert_python_access_example_output(
     command_output: str,
@@ -87,3 +75,24 @@ def assert_python_access_example_output(
     assert (
         command_output == expected_output
     ), f"Expected Python access output {expected_output!r}, got {command_output!r}"
+
+
+@log_step("Running Python access example")
+def run_python_access_example(
+    request: pytest.FixtureRequest,
+    timeout: float = 480,
+) -> str:
+    """Prepare and run the Python access example in its generated venv."""
+    environment_root = prepare_python_access_directory(request)
+    setup_log_path = environment_root / "setup.log"
+    command = build_python_access_command(setup_log_path)
+    result = run_python_access_command(command, environment_root, timeout)
+    setup_log = read_setup_log(setup_log_path)
+
+    assert result.returncode == 0, (
+        "Python access example failed with exit code "
+        f"{result.returncode}:\nsetup output:\n{setup_log}\n"
+        f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+    )
+
+    return result.stdout

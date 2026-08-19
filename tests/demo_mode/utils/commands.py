@@ -102,6 +102,17 @@ def run_command(
     )
 
 
+def run_background_command(command: str, timeout: float = 480) -> None:
+    """Run a detached-container command and assert that it succeeds."""
+    log_running_command(command)
+    result = run_command(command, timeout=timeout, capture_output=True)
+    if result.returncode != 0:
+        raise AssertionError(
+            f"Background command failed with exit code {result.returncode}:\n"
+            f"{command}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+        )
+
+
 def _remaining_time(deadline: float) -> float:
     return max(0, deadline - monotonic())
 

@@ -5,34 +5,14 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import subprocess
-from functools import partial
 
 import pytest
 
 from tests.demo_mode.type_definitions import PersistentService
-from tests.demo_mode.utils.commands import (
-    load_command,
-    start_command,
-    stop_command,
-    wait_for_successful_command,
-)
+from tests.demo_mode.utils.commands import stop_command
 from tests.demo_mode.utils.logging import log_step
+from tests.demo_mode.utils.persistence import run_persistent_service
 from tests.demo_mode.utils.rest import get_provider_supported_space_ids
-
-
-def _run_persistent_service(
-    command_path: str,
-    await_command_path: str,
-    release: str,
-    container_name: str,
-    request: pytest.FixtureRequest,
-) -> PersistentService:
-    command = load_command(command_path, release)
-    process = start_command(command)
-    request.addfinalizer(partial(stop_command, process))
-    wait_for_successful_command(load_command(await_command_path, release))
-
-    return PersistentService(container_name=container_name, process=process)
 
 
 @log_step("Running persistent Onezone")
@@ -42,7 +22,7 @@ def run_persistent_onezone(
     request: pytest.FixtureRequest,
 ) -> PersistentService:
     """Start Onezone using the unmodified persistence command."""
-    return _run_persistent_service(
+    return run_persistent_service(
         "persistency/run_onezone.sh",
         "run_in_background/await_onezone.sh",
         release,
@@ -62,7 +42,7 @@ def run_persistent_oneprovider(
     if onezone.process.poll() is not None:
         raise AssertionError("Onezone stopped before Oneprovider could be started")
 
-    return _run_persistent_service(
+    return run_persistent_service(
         "persistency/run_oneprovider.sh",
         "run_in_background/await_oneprovider.sh",
         release,

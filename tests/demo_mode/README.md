@@ -30,6 +30,12 @@ The test code is divided into:
 * [meta_steps](meta_steps) - reusable sequences of steps,
 * [utils](utils) - Docker command, REST, logging, and persistence helpers.
 
+A step represents one logical test operation and must not import or call meta
+steps. A meta step combines at least two steps; it may call both steps and other
+meta steps. Accordingly, `meta_steps` modules may import `steps` modules, but
+`steps` modules must never import `meta_steps`. Supporting functions that are
+neither steps nor meta steps belong in `utils`.
+
 
 # Prerequisites
 

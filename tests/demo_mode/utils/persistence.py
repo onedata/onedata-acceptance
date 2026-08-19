@@ -5,16 +5,42 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
+from functools import partial
 from pathlib import Path
 from shutil import rmtree
 from typing import Final
 
+import pytest
+
+from tests.demo_mode.type_definitions import PersistentService
+from tests.demo_mode.utils.commands import (
+    load_command,
+    start_command,
+    stop_command,
+    wait_for_successful_command,
+)
 from tests.utils.docker_utils import remove_containers
 
 HOST_TMP_ENVIRONMENT_VARIABLE: Final = "DEMO_MODE_HOST_TMP"
 PERSISTENCE_DIRECTORY_NAMES: Final = ("oz-pers", "op-pers", "op-storage")
 OWNERSHIP_MARKER_NAME: Final = ".onedata-demo-mode-persistence-test-owned"
 OWNERSHIP_MARKER_CONTENT: Final = "onedata-demo-mode-persistence-test-v1\n"
+
+
+def run_persistent_service(
+    command_path: str,
+    await_command_path: str,
+    release: str,
+    container_name: str,
+    request: pytest.FixtureRequest,
+) -> PersistentService:
+    """Start a persistent service and register its command for cleanup."""
+    command = load_command(command_path, release)
+    process = start_command(command)
+    request.addfinalizer(partial(stop_command, process))
+    wait_for_successful_command(load_command(await_command_path, release))
+
+    return PersistentService(container_name=container_name, process=process)
 
 
 def _host_tmp_path() -> Path:

@@ -11,12 +11,12 @@ import pytest
 
 from tests.demo_mode.utils.commands import (
     load_command,
-    run_command,
+    run_background_command,
     start_command,
     stop_command,
     wait_for_successful_command,
 )
-from tests.demo_mode.utils.logging import log_running_command, log_step
+from tests.demo_mode.utils.logging import log_step
 
 
 @log_step("Running Onezone")
@@ -84,21 +84,11 @@ def run_second_oneprovider(
     return process
 
 
-def _run_background_command(command: str, timeout: float = 480) -> None:
-    log_running_command(command)
-    result = run_command(command, timeout=timeout, capture_output=True)
-    if result.returncode != 0:
-        raise AssertionError(
-            f"Background command failed with exit code {result.returncode}:\n"
-            f"{command}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
-        )
-
-
 @log_step("Running Onezone in background")
 def run_onezone_in_background(release: str) -> None:
     """Start Onezone in detached mode and actively wait until it is ready."""
     command = load_command("run_in_background/run_onezone.sh", release)
-    _run_background_command(command)
+    run_background_command(command)
     await_command = load_command("run_in_background/await_onezone.sh", release)
     wait_for_successful_command(await_command)
 
@@ -107,6 +97,6 @@ def run_onezone_in_background(release: str) -> None:
 def run_oneprovider_in_background(release: str) -> None:
     """Start Oneprovider in detached mode and actively wait until it is ready."""
     command = load_command("run_in_background/run_oneprovider.sh", release)
-    _run_background_command(command)
+    run_background_command(command)
     await_command = load_command("run_in_background/await_oneprovider.sh", release)
     wait_for_successful_command(await_command)
