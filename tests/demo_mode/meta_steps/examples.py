@@ -36,12 +36,16 @@ def _build_python_access_command(
     setup_script = command_path("python_access/setup_environment.sh")
     access_script = command_path("python_access/check_python_access.py")
     python = environment_root / "venv" / "bin" / "python"
+    quoted_setup_script = quote(str(setup_script))
+    quoted_setup_log_path = quote(str(setup_log_path))
+    quoted_python = quote(str(python))
+    quoted_access_script = quote(str(access_script))
 
     return "\n".join(
         (
             "set -e",
-            f"source {quote(str(setup_script))} > {quote(str(setup_log_path))} 2>&1",
-            f"{quote(str(python))} {quote(str(access_script))}",
+            f"source {quoted_setup_script} > {quoted_setup_log_path} 2>&1",
+            f"{quoted_python} {quoted_access_script}",
         )
     )
 
