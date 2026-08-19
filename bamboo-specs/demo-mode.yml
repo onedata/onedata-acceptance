@@ -1,0 +1,62 @@
+---
+version: 2
+plan:
+  project-key: ODSRV
+  key: DEM
+  name: demo-mode-tests
+stages:
+- Default Stage:
+    manual: false
+    final: false
+    jobs:
+    - Default Job
+Default Job:
+  key: JOB1
+  tasks:
+  - checkout:
+      force-clean-build: false
+      description: Checkout Default Repository
+  - script:
+      interpreter: SHELL
+      scripts:
+      - echo test
+  - script:
+      interpreter: SHELL
+      scripts:
+      - echo test2
+      description: New test
+  artifact-subscriptions: []
+repositories:
+- demo-mode-tests:
+    scope: global
+triggers:
+- bitbucket-server-trigger
+branches:
+  create: manually
+  delete: never
+  link-to-jira: true
+notifications: []
+labels: []
+dependencies:
+  require-all-stages-passing: false
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: system-default
+---
+version: 2
+plan:
+  key: ODSRV-DEM
+plan-permissions:
+- users:
+  - plgnikolow
+  - rosezajac
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+  - view-configuration
+...
