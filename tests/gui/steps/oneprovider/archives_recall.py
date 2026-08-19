@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import re
 import time
 from collections.abc import Callable
 from datetime import datetime
@@ -14,12 +15,26 @@ from typing import List
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import parse_size
+from tests.gui.steps.modals.modal import get_modal
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
+    ArchiveRecallInformation,
+)
 from tests.gui.utils.generic import transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_archive_recall_information_property_without_whitespace(
+    selenium: SeleniumDrivers, browser_id: str, property_name: str
+) -> str:
+    modal = get_modal(
+        selenium[browser_id], "Archive recall information", ArchiveRecallInformation
+    )
+    return re.sub(r"\s*", "", getattr(modal, property_name))
 
 
 @wt(

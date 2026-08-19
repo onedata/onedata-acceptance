@@ -73,6 +73,7 @@ def press_backspace_on_active_element(
     driver.switch_to.active_element.send_keys(Keys.BACKSPACE)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_title_contains(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
@@ -85,7 +86,6 @@ def assert_title_contains(
         'user of {browser_id} should see that the page title contains "{text}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_title_contains(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:

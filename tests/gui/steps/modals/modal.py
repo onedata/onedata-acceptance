@@ -773,6 +773,15 @@ def close_modal(selenium: SeleniumDrivers, browser_id: str, modal: str) -> None:
     wait_for_named_modal_to_disappear(selenium, browser_id, modal)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def close_any_modal_if_present(driver: WebDriver) -> None:
+    modal_dialogs = driver.find_elements(By.CSS_SELECTOR, ".modal.in .modal-dialog")
+    if not modal_dialogs:
+        return
+
+    modal_dialogs[0].find_element(By.CSS_SELECTOR, ".close").click()
+
+
 @wt(parsers.parse("user of {browser_id} clicks copy command icon in REST API modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_icon_in_rest_api_modal(

@@ -63,6 +63,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     confirm_create_new_space,
     copy_token,
+    get_space_names_from_sidebar,
     type_space_name_on_input_on_create_new_space_page,
     wt_wait_for_modal_to_appear,
 )
@@ -171,9 +172,7 @@ def leave_spaces_in_oz_using_gui(
     driver.switch_to.default_content()
 
     if space_list == ["all"]:
-        space_names = [
-            elem.name for elem in OZLoggedIn(driver).data.spaces_headers_list
-        ]
+        space_names = get_space_names_from_sidebar(selenium, user)
     else:
         space_names = space_list
 

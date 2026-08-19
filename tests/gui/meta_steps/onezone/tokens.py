@@ -10,7 +10,6 @@ import time
 from typing import Optional
 
 import yaml
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
@@ -22,7 +21,6 @@ from tests.gui.steps.common.common import (
     wait_for_sliding_panel_to_stop_moving,
     wait_till_error_modal_disappear,
 )
-from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
@@ -101,10 +99,6 @@ def paste_received_token_into_text_field(
     _paste_token_into_text_field(selenium, browser_id, token)
 
 
-def _click_confirm_btn(driver: WebDriver) -> None:
-    OZLoggedIn(driver).tokens.confirm_button()
-
-
 @wt(
     parsers.parse(
         'user of {browser_id} clicks on "Create token" button '
@@ -134,8 +128,7 @@ def succeed_to_consume_token_using_confirm_button(
     browser_id: str,
 ) -> None:
     driver = selenium[browser_id]
-    _click_confirm_btn(driver)
-    wait_till_main_content_loaded(driver)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id)
     # Case when popup did not appear or the test didn't catch it in time
     if not close_alert_popup_if_present(driver, AlertPopup.SUCCESSFULLY_JOINED):
         assert not is_element_with_selector_visible_on_page(
@@ -150,7 +143,7 @@ def fail_to_consume_token_using_confirm_button(
     close_error_modal: bool = True,
 ) -> None:
     driver = selenium[browser_id]
-    _click_confirm_btn(driver)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id)
     assert_error_modal_with_text_appeared(selenium, browser_id, text=message)
     if close_error_modal:
         wait_for_error_modal_to_disappear(driver)

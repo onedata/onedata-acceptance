@@ -21,7 +21,11 @@ from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
     switch_to_iframe,
 )
-from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
+from tests.gui.steps.oneprovider.browser import (
+    click_configure_columns_button,
+    get_column_names_from_configure_columns_menu,
+    set_column_visibility_in_configure_columns_menu,
+)
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
@@ -394,23 +398,18 @@ def assert_option_in_provider_popup_menu(
 def _select_columns_to_be_visible_in_transfers(
     selenium: SeleniumDrivers, browser_id: str, columns: list[str]
 ) -> None:
-    option_select = "select"
-    option_unselect = "unselect"
     columns = [column.lower().replace(" ", "_") for column in columns]
-    transfer = OPLoggedIn(selenium[browser_id]).transfers
-    transfer.configure_columns.click()
-    columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
-    for column in columns_menu:
-        column_name = column.name.lower().replace(" ", "_")
-        if column_name in columns:
-            getattr(columns_menu[column.name], option_select)()
-        else:
-            getattr(columns_menu[column.name], option_unselect)()
+    driver = selenium[browser_id]
+    transfer = OPLoggedIn(driver).transfers
+    click_configure_columns_button(transfer)
+    column_names = get_column_names_from_configure_columns_menu(driver)
+    for column_name in column_names:
+        parsed_column_name = column_name.lower().replace(" ", "_")
+        set_column_visibility_in_configure_columns_menu(
+            driver, column_name, parsed_column_name in columns
+        )
     # hide columns menu popup
-    transfer.configure_columns.click()
+    click_configure_columns_button(transfer)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

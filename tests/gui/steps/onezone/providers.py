@@ -35,6 +35,21 @@ TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
 TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 120
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_provider_popover_on_world_map(
+    selenium: SeleniumDrivers, browser_id: str, provider_name: str
+) -> None:
+    driver = selenium[browser_id]
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(ProvidersPage)
+    oz_page.providers[provider_name]()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_visit_provider(driver: WebDriver) -> None:
+    Popups(driver).provider_map_popover.visit_provider()
+
+
 @wt(
     parsers.parse(
         "user of {browser_id} sees that provider popup for "

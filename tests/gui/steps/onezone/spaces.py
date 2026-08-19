@@ -52,6 +52,15 @@ SPACE_TABS = [
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
+def get_space_names_from_sidebar(
+    selenium: SeleniumDrivers, browser_id: str
+) -> list[str]:
+    return [
+        elem.name for elem in OZLoggedIn(selenium[browser_id]).data.spaces_headers_list
+    ]
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
     # select data in main menu if not selected
     OZLoggedIn(driver).open_panel(DataPage)

@@ -16,8 +16,10 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import network_throttling_download
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
+from tests.gui.type_definitions import Clickable, TmpMemory
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.common.popups.configure_columns_menu import ColumnOption
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
@@ -42,6 +44,42 @@ class RowMenu(Protocol):
     def choose_option(self, option: str) -> None: ...
 
     def return_option(self, name: str) -> MenuOption: ...
+
+
+class ColumnsConfigurable(Protocol):
+    configure_columns: Clickable
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_configure_columns_button(browser: ColumnsConfigurable) -> None:
+    browser.configure_columns.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_column_names_from_configure_columns_menu(driver: WebDriver) -> list[str]:
+    menu = Popups(driver).configure_columns_menu
+    wait_for_item_to_appear(menu.web_elem)
+    return [column.name for column in menu.columns]
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_column_from_configure_columns_menu(
+    driver: WebDriver, column_name: str
+) -> ColumnOption:
+    menu = Popups(driver).configure_columns_menu
+    wait_for_item_to_appear(menu.web_elem)
+    return menu.columns[column_name]
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def set_column_visibility_in_configure_columns_menu(
+    driver: WebDriver, column_name: str, visible: bool
+) -> None:
+    column = get_column_from_configure_columns_menu(driver, column_name)
+    if visible:
+        column.select()
+    else:
+        column.unselect()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

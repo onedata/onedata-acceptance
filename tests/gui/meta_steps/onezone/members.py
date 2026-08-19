@@ -18,6 +18,7 @@ from tests.gui.steps.onezone.members import (
     _change_to_tab_name,
     _find_members_page,
     assert_member_is_in_parent_members_list,
+    assert_membership_access_denied_message_and_bulk_edit_button,
     assert_privileges_in_members_subpage,
     click_element_in_members_list,
     click_member_checkbox,
@@ -36,7 +37,6 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
 )
 from tests.gui.utils.onezone import PageName
-from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -194,23 +194,6 @@ def assert_group_in_space_using_op_gui(
     )
 
 
-def _assert_message_and_bulk_edit_btn(
-    members_page: MembersPage, expected_message: str
-) -> None:
-    message_groups = members_page.lack_groups_view_privileges.text
-    message_users = members_page.lack_users_view_privileges.text
-    bulk_edit_button = members_page.bulk_edit_button
-
-    error_message = (
-        "The message about lack of privileges to view membership is not visible"
-    )
-    assert message_groups == expected_message, f"{error_message} for groups"
-    assert message_users == expected_message, f"{error_message} for users"
-    assert (
-        not bulk_edit_button.is_enabled()
-    ), "Bulk edit button is supposed to be disabled"
-
-
 @wt(
     parsers.re(
         rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) cannot view "
@@ -224,14 +207,12 @@ def assert_cannot_view_group_membership(
     selenium: SeleniumDrivers, browser_ids: list[str], group: str
 ) -> None:
     for browser_id in browser_ids:
-        driver = selenium[browser_id]
-        oz_page = OZLoggedIn(driver)
         go_to_group_subpage(selenium, browser_id, group, "members")
 
-        members_page = oz_page.groups.members_page
         expected_message = "Insufficient privileges to access this resource."
-
-        _assert_message_and_bulk_edit_btn(members_page, expected_message)
+        assert_membership_access_denied_message_and_bulk_edit_button(
+            selenium, browser_id, expected_message
+        )
 
 
 @wt(

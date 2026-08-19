@@ -2,13 +2,11 @@
 using web GUI
 """
 
-import time
 from collections.abc import Callable
 from itertools import zip_longest
 from typing import cast
 
 from _pytest._py.path import LocalPath
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -29,18 +27,31 @@ from tests.gui.steps.oneprovider.data_tab import (
     choose_provider_in_selected_page,
     click_choose_other_oneprovider_on_file_browser,
 )
+from tests.gui.steps.onezone.manage_account import (
+    click_emergency_panel_logout,
+    click_on_option_in_account_settings_in_oz,
+    confirm_password_change,
+    confirm_username_change,
+    enter_new_username,
+    enter_password_change_values,
+    expand_account_settings_in_oz,
+    open_manage_account_page,
+    start_password_change,
+    start_username_change,
+)
+from tests.gui.steps.onezone.providers import (
+    click_visit_provider,
+    open_provider_popover_on_world_map,
+)
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
-from tests.gui.utils.onezone.manage_account_page import ManageAccountPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow
-from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -111,16 +122,8 @@ def login_using_gui(
 
 def visit_op(selenium: SeleniumDrivers, browser_id: str, provider_name: str) -> None:
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ProvidersPage)
-    providers_panel = oz_page.providers
-    time.sleep(0.5)
-    providers_panel[provider_name]()
+    open_provider_popover_on_world_map(selenium, browser_id, provider_name)
     click_visit_provider(driver)
-
-
-def click_visit_provider(driver: WebDriver) -> None:
-    Popups(driver).provider_map_popover.visit_provider()
 
 
 def g_wt_visit_op(
@@ -289,27 +292,17 @@ def search_for_members(
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone page"))
 def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None:
-    driver = selenium[browser_id]
-
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ManageAccountPage)
-    oz_page.expand_panel_if_needed()
-
-    oz_page.profile.profile.click()
-    button = Popups(driver).user_account_menu.options["Logout"].web_elem
-    ActionChains(driver).move_to_element(button).click(button).perform()
+    open_manage_account_page(selenium, browser_id)
+    expand_account_settings_in_oz(selenium, browser_id)
+    click_on_option_in_account_settings_in_oz(selenium, browser_id, "Logout")
 
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone Emergency panel"))
 def logout_from_onezone_emergency_panel(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ManageAccountPage)
-    oz_page.expand_panel_if_needed()
-    button = oz_page.profile.logout.web_elem
-    ActionChains(driver).move_to_element(button).click(button).perform()
+    open_manage_account_page(selenium, browser_id)
+    click_emergency_panel_logout(selenium, browser_id)
 
 
 @wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))
@@ -320,16 +313,12 @@ def change_username(
     new_username: str,
     users: Users,
 ) -> None:
-    driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ManageAccountPage)
-    oz_page.expand_panel_if_needed()
-    profile = oz_page.profile
-    profile.profile.click()
-    Popups(driver).user_account_menu.options["Manage account"].click()
-    profile.rename_username()
-    profile.edit_user_name_box.value = new_username
-    getattr(profile.edit_user_name_box, "confirm").click()
+    open_manage_account_page(selenium, browser_id)
+    expand_account_settings_in_oz(selenium, browser_id)
+    click_on_option_in_account_settings_in_oz(selenium, browser_id, "Manage account")
+    start_username_change(selenium, browser_id)
+    enter_new_username(selenium, browser_id, new_username)
+    confirm_username_change(selenium, browser_id)
     users[username].username = new_username
 
 
@@ -341,19 +330,13 @@ def change_password(
     username: str,
     users: Users,
 ) -> None:
-    driver = selenium[browser_id]
     cur_passwd = users[username].password
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ManageAccountPage)
-    oz_page.expand_panel_if_needed()
-    profile = oz_page.profile
-    profile.profile.click()
-    Popups(driver).user_account_menu.options["Manage account"].click()
-    profile.rename_password()
-    profile.current_password_box = cur_passwd
-    profile.type_new_password_box = new_password
-    profile.retype_new_password_box = new_password
-    profile.change_password.click()
+    open_manage_account_page(selenium, browser_id)
+    expand_account_settings_in_oz(selenium, browser_id)
+    click_on_option_in_account_settings_in_oz(selenium, browser_id, "Manage account")
+    start_password_change(selenium, browser_id)
+    enter_password_change_values(selenium, browser_id, cur_passwd, new_password)
+    confirm_password_change(selenium, browser_id)
     users[username].password = new_password
 
 

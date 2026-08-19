@@ -17,12 +17,61 @@ from tests.gui.steps.onezone.automation.automation_basic import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.automation_page import AutomationPage
+from tests.gui.utils.onezone.lambdas_subpage import LambdaParameter
 from tests.gui.utils.onezone.workflows_subpage import JSONWorkflowsPanel
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+def _get_parameter_from_lambda_form(
+    selenium: SeleniumDrivers, browser_id: str, option: str, ordinal: str
+) -> LambdaParameter:
+    form = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
+    parameters = getattr(form, transform(option))
+    ordinal = "1st" if not ordinal else ordinal
+    return getattr(parameters, "bracket_" + ordinal.strip())
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_parameter_button_in_lambda_form(
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
+    form = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
+    getattr(form, transform(option)).add_button()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def enter_parameter_name_in_lambda_form(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    ordinal: str,
+    name: str,
+) -> None:
+    driver = selenium[browser_id]
+    parameter = _get_parameter_from_lambda_form(selenium, browser_id, option, ordinal)
+    name_input = parameter.name
+    css_selector = "#" + name_input.web_elem.get_attribute("id")
+    scroll_to_css_selector(driver, css_selector)
+    name_input.value = name
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_parameter_type_in_lambda_form(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    ordinal: str,
+    parameter_type: str,
+) -> None:
+    driver = selenium[browser_id]
+    parameter = _get_parameter_from_lambda_form(selenium, browser_id, option, ordinal)
+    parameter.type_dropdown.click()
+    Popups(driver).power_select.choose_item(parameter_type)
 
 
 @wt(

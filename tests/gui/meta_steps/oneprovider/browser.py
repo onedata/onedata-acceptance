@@ -4,23 +4,20 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Optional, Protocol, cast
+from typing import Optional
 
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
+from tests.gui.steps.oneprovider.browser import click_configure_columns_button
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.type_definitions import Clickable, TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-
-
-class BrowserWithConfigureColumns(Protocol):
-    configure_columns: Clickable
 
 
 @wt(
@@ -80,9 +77,8 @@ def create_xattr_columns_in_columns_menu_in_browser(
 ) -> None:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
-    browser = cast(BrowserWithConfigureColumns, browser)
 
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
     wait_for_item_to_appear(
         Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
@@ -101,7 +97,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
     new_xattr_column.create.click()
 
     # hide columns menu popup
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
 
 
 @wt(
@@ -222,9 +218,8 @@ def create_json_column_in_columns_menu(
 ) -> None:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
-    browser = cast(BrowserWithConfigureColumns, browser)
 
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
     wait_for_item_to_appear(
         Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
@@ -253,7 +248,7 @@ def create_json_column_in_columns_menu(
     new_json_col.create()
 
     # hide columns menu popup
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
 
 
 @wt(

@@ -36,6 +36,7 @@ from tests.gui.steps.oneprovider.archives import (
 )
 from tests.gui.steps.oneprovider.archives_recall import (
     assert_recall_duration_in_archive_recall_information_modal,
+    get_archive_recall_information_property_without_whitespace,
 )
 from tests.gui.steps.oneprovider.browser import (
     assert_items_presence_in_browser,
@@ -55,7 +56,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Modals, OPLoggedIn
+from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import ListElement, WhichBrowser, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -545,7 +546,6 @@ def recalled_archive_details_in_op_gui(
     click_on_status_tag_for_file_in_file_browser(
         browser_id, status_type, item_name, tmp_memory
     )
-    recall_modal = Modals(selenium[browser_id]).archive_recall_information
 
     for key, expected_value in data.items():
         if key == "time":
@@ -564,7 +564,9 @@ def recalled_archive_details_in_op_gui(
                 selenium, browser_id, start, stop
             )
         else:
-            value = re.sub(r"\s*", "", getattr(recall_modal, key))
+            value = get_archive_recall_information_property_without_whitespace(
+                selenium, browser_id, key
+            )
             expected_value = re.sub(r"\s*", "", expected_value)
             error_message = (
                 f'{key} for archive recall "{item_name}" is {value} '
