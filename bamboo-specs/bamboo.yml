@@ -36,3 +36,5 @@
 !include 'upgrade-src-perm.yml'
 ---
 !include 'demo-mode.yml'
+---
+!include 'demo-mode-perm.yml'

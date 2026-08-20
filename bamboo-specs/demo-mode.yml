@@ -26,12 +26,34 @@ Comprehensive example:
       path: onedata-acceptance
       force-clean-build: true
       description: Checkout Default Repository
+  - script: &init-submodules
+      interpreter: SHELL
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+        make submodules
+      working-dir: onedata-acceptance
+      description: Init submodules
   - script: &run-demo-mode-test
       interpreter: SHELL
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_comprehensive_example
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_comprehensive_example RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
       working-dir: onedata-acceptance
       description: Run demo mode test
+  final-tasks: &final-tasks
+  - test-parser:
+      type: junit
+      ignore-time: false
+      test-results: onedata-acceptance/test-reports/results*.xml
+      description: Parse test results
+  - script:
+      interpreter: SHELL
+      scripts:
+      - |-
+        docker rm -f "demo-mode-runner-${bamboo.buildResultKey}" 2>/dev/null || true
+        docker rm -f oz_test op_test1 op_test2 2>/dev/null || true
+      description: Clean up demo mode containers
   requirements: &requirements
   - system.docker.executable
   artifact-subscriptions: []
@@ -41,10 +63,12 @@ Distributed environment:
   other: *common-opts
   tasks:
   - checkout: *checkout-default-repository
+  - script: *init-submodules
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_distributed_environment
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_distributed_environment RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+  final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []
 
@@ -53,10 +77,12 @@ Persistency:
   other: *common-opts
   tasks:
   - checkout: *checkout-default-repository
+  - script: *init-submodules
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_persistency
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_persistency RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+  final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []
 
@@ -65,10 +91,12 @@ Python access:
   other: *common-opts
   tasks:
   - checkout: *checkout-default-repository
+  - script: *init-submodules
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_python_access
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_python_access RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+  final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []
 
@@ -77,10 +105,12 @@ Run in background:
   other: *common-opts
   tasks:
   - checkout: *checkout-default-repository
+  - script: *init-submodules
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_background
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_background RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+  final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []
 
@@ -89,10 +119,12 @@ Run in foreground:
   other: *common-opts
   tasks:
   - checkout: *checkout-default-repository
+  - script: *init-submodules
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_foreground
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_foreground RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+  final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []
 
