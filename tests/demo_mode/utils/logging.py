@@ -60,6 +60,10 @@ def _safe_log_name(name: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "-", file_name).strip("-.") or "unknown"
 
 
+def _command_log_name(command_name: str) -> str:
+    return _safe_log_name(command_name).removesuffix(".sh")
+
+
 def _next_command_log_number() -> int:
     return next(_command_log_counter.get())
 
@@ -83,10 +87,10 @@ def open_command_log(
     command_name: str,
 ) -> Generator[TextIO, None, None]:
     command_number = _next_command_log_number()
-    log_name = _safe_log_name(command_name)
-    log_path = (
-        _current_command_logs_dir.get() / f"command-{command_number:03d}-{log_name}.log"
-    )
+    log_name = _command_log_name(command_name)
+    command_logs_dir = _current_command_logs_dir.get() / log_name
+    command_logs_dir.mkdir(exist_ok=True)
+    log_path = command_logs_dir / f"command-{command_number:03d}-{log_name}.log"
     with log_path.open("w", encoding="utf-8") as log_file:
         log_file.write(f"Command:\n{command}\n\nOutput:\n")
         log_file.flush()
