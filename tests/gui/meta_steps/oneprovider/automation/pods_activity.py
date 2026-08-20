@@ -6,8 +6,6 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
-
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -18,24 +16,15 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_on_task_in_lane,
 )
 from tests.gui.steps.oneprovider.automation.pods_activity import (
-    assert_no_pods_in_function_pods_activity_modal,
+    change_tab_in_function_pods_activity_modal,
     click_on_first_pod_in_function_pods_activity_modal,
+    wait_until_all_pods_are_terminated_in_function_pods_activity_modal,
 )
 from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
     FunctionPodsActivity,
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-
-
-def change_tab_in_function_pods_activity_modal(
-    modal: FunctionPodsActivity, tab_name: str
-) -> None:
-    tab_number = 0 if tab_name == "Current" else 1
-
-    time.sleep(0.25)
-    modal.tabs[tab_number].click()
-    time.sleep(0.25)
 
 
 @wt(
@@ -49,9 +38,7 @@ def wait_for_ongoing_pods_to_be_terminated(
 ) -> None:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
-    change_tab_in_function_pods_activity_modal(modal, "Current")
-    assert_no_pods_in_function_pods_activity_modal(driver)
+    wait_until_all_pods_are_terminated_in_function_pods_activity_modal(driver)
 
 
 @wt(

@@ -22,6 +22,9 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
 from tests.gui.steps.oneprovider.automation.automation_statuses import (
     assert_task_status_in_parallel_box,
 )
+from tests.gui.steps.oneprovider.automation.workflow_results import (
+    count_checksums_for_downloaded_file,
+)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     assert_processing_chart,
     get_store_content,
@@ -32,12 +35,6 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals
-from tests.gui.utils.common.count_checksums import (
-    adler32_sum,
-    md5_sum,
-    sha256_sum,
-    sha512_sum,
-)
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     MetadataTab,
 )
@@ -160,19 +157,9 @@ def count_checksums_for_file(
         selenium, browser_id, file_name, tmp_memory, "file browser"
     )
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
-    results = {}
-    checksum_functions = {
-        "adler32_sum": adler32_sum,
-        "md5_sum": md5_sum,
-        "sha256_sum": sha256_sum,
-        "sha512_sum": sha512_sum,
-    }
-
-    for checksum in checksum_list:
-        checksum_function_name = checksum + "_sum"
-        results[checksum] = checksum_functions[checksum_function_name](downloaded_file)
-
-    tmp_memory["checksums_" + file_name] = results
+    tmp_memory["checksums_" + file_name] = count_checksums_for_downloaded_file(
+        downloaded_file, checksum_list
+    )
 
 
 def checksums_counted_in_workflow(metadata_modal: MetadataTab) -> dict[str, str]:

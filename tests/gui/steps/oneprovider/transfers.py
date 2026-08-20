@@ -411,7 +411,7 @@ def _get_transfers_and_enable_initial_cols(
         "columns": parse_elements_sequence,
     },
 )
-def select_columns_to_be_visible_in_transfers(
+def wt_select_columns_to_be_visible_in_transfers(
     selenium: SeleniumDrivers, browser_id: str, columns: list[str]
 ) -> None:
     select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
