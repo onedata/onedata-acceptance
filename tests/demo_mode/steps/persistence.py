@@ -12,28 +12,27 @@ from environment import docker  # pylint: disable=import-error
 from tests.demo_mode.type_definitions import PersistentService
 from tests.demo_mode.utils.commands import stop_command
 from tests.demo_mode.utils.logging import log_step
-from tests.demo_mode.utils.persistence import run_persistent_service
+from tests.demo_mode.utils.persistence import start_persistent_service
 from tests.demo_mode.utils.rest import get_provider_supported_space_ids
 
 
-@log_step("Running persistent Onezone")
-def run_persistent_onezone(
+@log_step("Starting persistent Onezone")
+def start_persistent_onezone(
     release: str,
     container_name: str,
     request: pytest.FixtureRequest,
 ) -> PersistentService:
     """Start Onezone using the unmodified persistence command."""
-    return run_persistent_service(
+    return start_persistent_service(
         "persistency/run_onezone.sh",
-        "run_in_background/await_onezone.sh",
         release,
         container_name,
         request,
     )
 
 
-@log_step("Running persistent Oneprovider")
-def run_persistent_oneprovider(
+@log_step("Starting persistent Oneprovider")
+def start_persistent_oneprovider(
     release: str,
     onezone: PersistentService,
     container_name: str,
@@ -43,9 +42,8 @@ def run_persistent_oneprovider(
     if onezone.process.poll() is not None:
         raise AssertionError("Onezone stopped before Oneprovider could be started")
 
-    return run_persistent_service(
+    return start_persistent_service(
         "persistency/run_oneprovider.sh",
-        "run_in_background/await_oneprovider.sh",
         release,
         container_name,
         request,

@@ -129,12 +129,18 @@ assigns an automatic name and `--rm` removes the runner after it exits normally.
 
 ## Container and service readiness
 
-After issuing a service startup command, the tests first poll Docker until the
-exact-name container is running. Foreground startup commands are monitored
-during this stage so an early command exit fails immediately. Only then do the
-tests run the tutorial's `await` or `await-demo` command. These commands retain
-their retries because a running container does not yet imply that the Onezone
-or Oneprovider service is ready.
+Except for the comprehensive example, each scenario starts its Onezone and all
+required Oneprovider commands before awaiting any service. The Oneprovider
+commands can start immediately because they wait internally for the Onezone
+container IP. The distributed scenario starts both Oneproviders this way.
+
+After launching all commands, the tests poll Docker until each exact-name
+container is running. Foreground startup commands are monitored during this
+stage so an early command exit fails immediately. Only then do the tests run
+the tutorial's `await` or `await-demo` command. These commands retain their
+retries because a running container does not yet imply that the Onezone or
+Oneprovider service is ready. Foreground commands remain active until cleanup;
+detached launch commands are instead required to finish successfully.
 
 
 ## Command logs and artifacts

@@ -7,10 +7,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 
 from tests.demo_mode.meta_steps.rest import get_oneprovider_id
+from tests.demo_mode.steps.environment import await_running_container
 from tests.demo_mode.steps.persistence import (
     assert_access_token_is_persistent,
     assert_provider_id_is_persistent,
     assert_space_support_is_persistent,
+    start_persistent_oneprovider,
+    start_persistent_onezone,
 )
 from tests.demo_mode.steps.rest import (
     assert_file_content,
@@ -19,7 +22,37 @@ from tests.demo_mode.steps.rest import (
     get_demo_access_token,
     upload_rest_file,
 )
-from tests.demo_mode.type_definitions import PersistentState
+from tests.demo_mode.type_definitions import PersistentService, PersistentState
+
+
+def start_persistent_environment(
+    release: str,
+    onezone_container: str,
+    first_oneprovider_container: str,
+    request: pytest.FixtureRequest,
+) -> tuple[PersistentService, PersistentService]:
+    """Start both persistent commands before awaiting their services."""
+    onezone = start_persistent_onezone(release, onezone_container, request)
+    oneprovider = start_persistent_oneprovider(
+        release,
+        onezone,
+        first_oneprovider_container,
+        request,
+    )
+
+    await_running_container(
+        release,
+        onezone.container_name,
+        "run_in_background/await_onezone.sh",
+        onezone.process,
+    )
+    await_running_container(
+        release,
+        oneprovider.container_name,
+        "run_in_background/await_oneprovider.sh",
+        oneprovider.process,
+    )
+    return onezone, oneprovider
 
 
 def save_persistent_state(

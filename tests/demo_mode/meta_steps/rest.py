@@ -46,31 +46,31 @@ def get_oneprovider_id(provider_container: str, release: str) -> str:
 
 
 def assert_oneproviders_are_distinct(
-    first_oneprovider: str,
-    second_oneprovider: str,
+    first_oneprovider_container: str,
+    second_oneprovider_container: str,
     release: str,
 ) -> None:
     """Assert that two containers expose distinct Oneprovider services."""
-    first_provider_id = get_oneprovider_id(first_oneprovider, release)
-    second_provider_id = get_oneprovider_id(second_oneprovider, release)
+    first_provider_id = get_oneprovider_id(first_oneprovider_container, release)
+    second_provider_id = get_oneprovider_id(second_oneprovider_container, release)
     assert_oneprovider_ids_are_distinct(first_provider_id, second_provider_id)
 
 
 def assert_space_support_is_isolated(
-    first_oneprovider: str,
+    first_oneprovider_container: str,
     first_space_id: str,
-    second_oneprovider: str,
+    second_oneprovider_container: str,
     second_space_id: str,
     access_token: str,
 ) -> None:
     """Assert that neither provider supports the other provider's space."""
     assert_provider_does_not_support_space(
-        second_oneprovider,
+        second_oneprovider_container,
         first_space_id,
         access_token,
     )
     assert_provider_does_not_support_space(
-        first_oneprovider,
+        first_oneprovider_container,
         second_space_id,
         access_token,
     )

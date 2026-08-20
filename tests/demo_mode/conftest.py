@@ -57,22 +57,26 @@ def onezone_container() -> str:
 
 
 @pytest.fixture
-def first_oneprovider() -> str:
+def first_oneprovider_container() -> str:
     return "op_test1"
 
 
 @pytest.fixture
-def second_oneprovider() -> str:
+def second_oneprovider_container() -> str:
     return "op_test2"
 
 
 @pytest.fixture
 def container_names(
-    first_oneprovider: str,
-    second_oneprovider: str,
+    first_oneprovider_container: str,
+    second_oneprovider_container: str,
     onezone_container: str,
 ) -> list[str]:
-    return [first_oneprovider, second_oneprovider, onezone_container]
+    return [
+        first_oneprovider_container,
+        second_oneprovider_container,
+        onezone_container,
+    ]
 
 
 @pytest.fixture(autouse=True)

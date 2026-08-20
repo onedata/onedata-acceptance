@@ -59,22 +59,55 @@ def docker_ip(container: object) -> str:
     return docker.inspect(container)["NetworkSettings"]["IPAddress"]
 
 
-def remove_containers(container_names: list[str]) -> None:
+def remove_containers(
+    container_names: list[str],
+    timeout: float = 60,
+    interval: float = 1,
+) -> None:
     """Force-remove Docker containers with the specified names."""
     if not container_names:
         return
 
     name_filters = [("name", rf"^/{re.escape(name)}$") for name in container_names]
+    deadline = deadline_after(timeout)
+    removal_started = False
+    last_error: subprocess.CalledProcessError | None = None
 
-    containers = docker.ps(
+    while remaining_time(deadline) > 0:
+        containers = docker.ps(
+            all=True,
+            quiet=True,
+            filters=name_filters,
+        )
+        if not containers:
+            return
+
+        if not removal_started:
+            print("\nRemoved docker containers:", flush=True)
+            removal_started = True
+
+        try:
+            docker.remove(
+                containers,
+                force=True,
+                stderr=subprocess.DEVNULL,
+            )
+        except subprocess.CalledProcessError as error:
+            last_error = error
+            sleep_before_retry(deadline, interval)
+        else:
+            return
+
+    remaining_containers = docker.ps(
         all=True,
         quiet=True,
         filters=name_filters,
     )
-
-    if containers:
-        print("\nRemoved docker containers:", flush=True)
-        docker.remove(containers, force=True)
+    if remaining_containers:
+        raise AssertionError(
+            "Could not remove demo-mode containers within "
+            f"{timeout}s: {', '.join(container_names)}"
+        ) from last_error
 
 
 def wait_for_running_container(

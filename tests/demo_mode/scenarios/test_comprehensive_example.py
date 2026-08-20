@@ -17,7 +17,7 @@ from tests.demo_mode.steps.rest import (
 def test_comprehensive_example(
     release: str,
     onezone_name: str,
-    first_oneprovider: str,
+    first_oneprovider_container: str,
 ) -> None:
     demo_space_id = "cb274b2b8bb1750d9be37dd4a3eb7014chb175"
     expected_file_content = b"hello world\\n"
@@ -26,9 +26,13 @@ def test_comprehensive_example(
     file_name = get_comprehensive_example_file_name(command_output)
     access_token = get_demo_access_token(release)
     downloaded_content = download_rest_file(
-        first_oneprovider,
+        first_oneprovider_container,
         access_token,
         demo_space_id,
         file_name,
     )
-    assert_file_content(first_oneprovider, downloaded_content, expected_file_content)
+    assert_file_content(
+        first_oneprovider_container,
+        downloaded_content,
+        expected_file_content,
+    )

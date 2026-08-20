@@ -149,23 +149,24 @@ def run_command(
         )
 
 
-def run_background_command(
-    command: str,
+def wait_for_successful_process(
+    process: subprocess.Popen[str],
     command_name: str,
     timeout: float = 600,
 ) -> None:
-    """Run a detached-container command and assert that it succeeds."""
-    log_running_command(command)
-    result = run_command(
-        command,
-        command_name,
-        timeout=timeout,
-        capture_output=True,
-    )
-    if result.returncode != 0:
+    """Wait for an already started command and assert that it succeeds."""
+    try:
+        returncode = process.wait(timeout=timeout)
+    except subprocess.TimeoutExpired as error:
+        stop_command(process)
         raise AssertionError(
-            f"Background command failed with exit code {result.returncode}:\n"
-            f"{command}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+            f"Command {command_name} did not finish within {timeout}s"
+        ) from error
+
+    if returncode != 0:
+        raise AssertionError(
+            f"Command {command_name} failed with exit code {returncode}; "
+            "see its command log for output"
         )
 
 
