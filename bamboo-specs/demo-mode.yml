@@ -3,28 +3,99 @@ plan:
   project-key: ODSRV
   key: DMA
   name: demo mode acceptance
+variables:
+  release: "25.1"
 stages:
-- Default Stage:
+- Demo mode tests:
     manual: false
     final: false
     jobs:
-    - Default Job
-Default Job:
-  key: JOB1
+    - Comprehensive example
+    - Distributed environment
+    - Persistency
+    - Python access
+    - Run in background
+    - Run in foreground
+
+Comprehensive example:
+  key: CEX
+  other: &common-opts
+    clean-working-dir: true
   tasks:
-  - checkout:
-      force-clean-build: false
+  - checkout: &checkout-default-repository
+      path: onedata-acceptance
+      force-clean-build: true
       description: Checkout Default Repository
-  - script:
+  - script: &run-demo-mode-test
       interpreter: SHELL
       scripts:
-      - echo test
-  - script:
-      interpreter: SHELL
-      scripts:
-      - echo test2
-      description: New test
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_comprehensive_example
+      working-dir: onedata-acceptance
+      description: Run demo mode test
+  requirements: &requirements
+  - system.docker.executable
   artifact-subscriptions: []
+
+Distributed environment:
+  key: DISTENV
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_distributed_environment
+  requirements: *requirements
+  artifact-subscriptions: []
+
+Persistency:
+  key: PERSIST
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_persistency
+  requirements: *requirements
+  artifact-subscriptions: []
+
+Python access:
+  key: PYACCESS
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_python_access
+  requirements: *requirements
+  artifact-subscriptions: []
+
+Run in background:
+  key: BACKGROUND
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_background
+  requirements: *requirements
+  artifact-subscriptions: []
+
+Run in foreground:
+  key: FOREGROUND
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_foreground
+  requirements: *requirements
+  artifact-subscriptions: []
+
 repositories:
 - onedata-acceptance:
     scope: global
