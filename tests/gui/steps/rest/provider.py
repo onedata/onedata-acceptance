@@ -9,6 +9,7 @@ from typing import Literal
 from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import OnedataService
 from tests.type_definitions import Hosts, JsonObject
 from tests.utils.rest_utils import (
@@ -19,6 +20,7 @@ from tests.utils.rest_utils import (
     http_post,
 )
 from tests.utils.user_utils import User, Users
+from tests.utils.utils import repeat_failed
 
 type GuiMessageType = Literal[
     "cookie consent notification",
@@ -94,6 +96,21 @@ def get_provider_service_nodes_statuses(
         auth=(onepanel_username, onepanel_password),
     )
     return res.json()
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_provider_service_nodes_statuses(
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: User,
+    service: OnedataService,
+    expected_statuses: JsonObject,
+) -> None:
+    actual_statuses = get_provider_service_nodes_statuses(
+        hosts, provider, onepanel_credentials, service
+    )
+    error_message = f"expected {expected_statuses}, but got {actual_statuses}"
+    assert expected_statuses == actual_statuses, error_message
 
 
 def start_stop_provider_service_node(

@@ -40,7 +40,7 @@ from tests.gui.steps.oneprovider.common import (
 )
 from tests.gui.steps.rest.provider import (
     add_provider_service_node,
-    get_provider_service_nodes_statuses,
+    assert_provider_service_nodes_statuses,
     start_stop_provider_service_node,
 )
 from tests.gui.type_definitions import TmpMemory
@@ -262,12 +262,14 @@ def assert_provider_cluster_ones3_node_status_rest(
     status: str,
 ) -> None:
     host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
-    res = get_provider_service_nodes_statuses(
-        hosts, provider, onepanel_credentials, OnedataService.ONES3
+    expected_statuses: JsonObject = {host: status}
+    assert_provider_service_nodes_statuses(
+        hosts,
+        provider,
+        onepanel_credentials,
+        OnedataService.ONES3,
+        expected_statuses,
     )
-    exp_res = {host: status}
-    error_message = f"expected {exp_res}, but got {res}"
-    assert exp_res == res, error_message
 
 
 @wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
