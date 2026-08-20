@@ -106,8 +106,15 @@ normal API negotiation.
 
 The Makefile target itself runs pytest in an acceptance-test runner container.
 Through the mounted Docker socket, that runner starts Onezone and Oneprovider
-as sibling containers on the host Docker daemon. `RUNNER_NAME` can optionally
-assign a name to the runner:
+as sibling containers on the host Docker daemon. As in the GUI, mixed, and
+Oneclient test runner, the container starts as root, adds the Docker socket's
+group, and switches to the invoking host user's UID and GID before replacing
+itself with pytest. Consequently, logs and reports created in bind-mounted
+directories belong to the local or Bamboo user and can be cleaned normally.
+The switched user receives an ephemeral writable home directory inside the
+runner container, so command-line tools do not try to access root's config.
+
+`RUNNER_NAME` can optionally assign a name to the runner:
 
 ```bash
 make test_demo_mode RELEASE=25.1 RUNNER_NAME=my-demo-mode-runner

@@ -60,7 +60,7 @@ Comprehensive example:
         docker rm -f oz_test op_test1 op_test2 2>/dev/null || true
       description: Clean up demo mode containers
   requirements: &requirements
-  - system.docker.executable
+  - minikube
   artifacts: &command-log-artifacts
   - name: command-logs
     location: onedata-acceptance/tests/demo_mode/logs
@@ -80,7 +80,6 @@ _Autoformatter check:
       - make black-check
       working-dir: onedata-acceptance
       description: Black formatting
-  requirements: *requirements
   artifact-subscriptions: []
 
 _Static analysis:
@@ -93,7 +92,6 @@ _Static analysis:
       scripts:
       - make static-analysis
       description: Static analysis
-  requirements: *requirements
   artifact-subscriptions: []
 
 _Type_check:
@@ -106,7 +104,6 @@ _Type_check:
       scripts:
       - make type-check
       description: Type checker
-  requirements: *requirements
   artifact-subscriptions: []
 
 Distributed environment:

@@ -145,16 +145,20 @@ test_demo_mode:
 	@test -n "${RELEASE}" || (echo "RELEASE is required, for example: make test_demo_mode RELEASE=25.1"; exit 2)
 	@test -z "${SCENARIO}" || test -f "${DEMO_MODE_TEST_PATH}" || (echo "Unknown demo-mode scenario: ${SCENARIO}"; exit 2)
 	@mkdir -p "${DEMO_MODE_TEST_REPORTS_DIR}" "${DEMO_MODE_LOGS_DIR}"
+	@rm -f "${DEMO_MODE_TEST_REPORTS_DIR}/results-demo-mode.xml"
 	docker run ${DEMO_MODE_RUNNER_NAME_OPTION} ${DEMO_MODE_DOCKER_API_VERSION_OPTION} --rm -i --network=host \
 	 -e PYTHONDONTWRITEBYTECODE=1 \
 	 -e DEMO_MODE_HOST_TMP=/demo-mode-host-tmp \
+	 -e DEMO_MODE_HOST_UID="$$(id -u)" \
+	 -e DEMO_MODE_HOST_GID="$$(id -g)" \
 	 -v $(CURDIR):$(CURDIR):ro \
 	 -v ${DEMO_MODE_TEST_REPORTS_DIR}:${DEMO_MODE_TEST_REPORTS_DIR} \
 	 -v ${DEMO_MODE_LOGS_DIR}:${DEMO_MODE_LOGS_DIR} \
 	 -v /tmp:/demo-mode-host-tmp \
 	 -v /var/run/docker.sock:/var/run/docker.sock \
 	 -w $(CURDIR) ${ACCEPTANCE_TEST_IMAGE} \
-	 python3 -m pytest --color=yes -p no:cacheprovider -rs -s -v \
+	 python3 -m tests.demo_mode.utils.test_runner \
+	 --color=yes -p no:cacheprovider -rs -s -v \
 	 --confcutdir=tests/demo_mode \
 	 --junitxml=${DEMO_MODE_TEST_REPORTS_DIR}/results-demo-mode.xml \
 	 ${DEMO_MODE_TEST_PATH} --release="${RELEASE}"
