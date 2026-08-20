@@ -1,0 +1,14 @@
+version: 2
+plan:
+  key: ODSRV-DEM
+plan-permissions:
+- users:
+  - plgnikolow
+  - rosezajac
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+  - view-configuration
