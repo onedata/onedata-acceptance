@@ -13,10 +13,11 @@ stages:
     jobs:
     - Comprehensive example
     - Distributed environment
-    - Persistency
     - Python access
     - Run in background
     - Run in foreground
+    # TODO: VFS-13556 Uncomment after fixing the persistency tutorial
+    # - Persistency
 
 Comprehensive example:
   key: CEX
@@ -73,19 +74,20 @@ Distributed environment:
   requirements: *requirements
   artifact-subscriptions: []
 
-Persistency:
-  key: PERSIST
-  other: *common-opts
-  tasks:
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script:
-      <<: *run-demo-mode-test
-      scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_persistency RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
-  final-tasks: *final-tasks
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-13556 Uncomment after fixing the persistency tutorial
+# Persistency:
+#   key: PERSIST
+#   other: *common-opts
+#   tasks:
+#   - checkout: *checkout-default-repository
+#   - script: *init-submodules
+#   - script:
+#       <<: *run-demo-mode-test
+#       scripts:
+#       - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_persistency RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+#   final-tasks: *final-tasks
+#   requirements: *requirements
+#   artifact-subscriptions: []
 
 Python access:
   key: PYACCESS
