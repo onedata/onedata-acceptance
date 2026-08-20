@@ -61,6 +61,12 @@ Comprehensive example:
       description: Clean up demo mode containers
   requirements: &requirements
   - system.docker.executable
+  artifacts: &command-log-artifacts
+  - name: command-logs
+    location: onedata-acceptance/tests/demo_mode/logs
+    pattern: "**/*.log"
+    shared: false
+    required: false
   artifact-subscriptions: []
 
 _Autoformatter check:
@@ -115,6 +121,7 @@ Distributed environment:
       - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_distributed_environment RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
+  artifacts: *command-log-artifacts
   artifact-subscriptions: []
 
 # TODO: VFS-13556 Uncomment after fixing the persistency tutorial
@@ -130,6 +137,7 @@ Distributed environment:
 #       - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_persistency RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
 #   final-tasks: *final-tasks
 #   requirements: *requirements
+#   artifacts: *command-log-artifacts
 #   artifact-subscriptions: []
 
 Python access:
@@ -144,6 +152,7 @@ Python access:
       - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_python_access RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
+  artifacts: *command-log-artifacts
   artifact-subscriptions: []
 
 Run in background:
@@ -158,6 +167,7 @@ Run in background:
       - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_background RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
+  artifacts: *command-log-artifacts
   artifact-subscriptions: []
 
 Run in foreground:
@@ -172,6 +182,7 @@ Run in foreground:
       - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_foreground RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
+  artifacts: *command-log-artifacts
   artifact-subscriptions: []
 
 repositories:

@@ -13,6 +13,7 @@ import pytest
 from _pytest.config.argparsing import Parser
 from urllib3.exceptions import InsecureRequestWarning
 
+from tests.demo_mode.utils.logging import command_logs_for_test
 from tests.demo_mode.utils.persistence import (
     prepare_demo_persistence,
     remove_demo_persistence,
@@ -31,6 +32,13 @@ def pytest_addoption(parser: Parser) -> None:
 @pytest.fixture
 def release(request: pytest.FixtureRequest) -> str:
     return cast(str, request.config.getoption("release"))
+
+
+@pytest.fixture(autouse=True)
+def command_log_directory(request: pytest.FixtureRequest) -> Iterator[None]:
+    test_name = request.node.name.removeprefix("test_")
+    with command_logs_for_test(test_name):
+        yield
 
 
 @pytest.fixture

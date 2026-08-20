@@ -128,6 +128,7 @@ test_upgrade_src:
 
 DEMO_MODE_SCENARIOS_ROOT := tests/demo_mode/scenarios
 DEMO_MODE_TEST_REPORTS_DIR := $(CURDIR)/test-reports
+DEMO_MODE_LOGS_DIR := $(CURDIR)/tests/demo_mode/logs
 ifdef SCENARIO
 DEMO_MODE_TEST_PATH := ${DEMO_MODE_SCENARIOS_ROOT}/${SCENARIO}.py
 else
@@ -143,12 +144,13 @@ endif
 test_demo_mode:
 	@test -n "${RELEASE}" || (echo "RELEASE is required, for example: make test_demo_mode RELEASE=25.1"; exit 2)
 	@test -z "${SCENARIO}" || test -f "${DEMO_MODE_TEST_PATH}" || (echo "Unknown demo-mode scenario: ${SCENARIO}"; exit 2)
-	@mkdir -p "${DEMO_MODE_TEST_REPORTS_DIR}"
+	@mkdir -p "${DEMO_MODE_TEST_REPORTS_DIR}" "${DEMO_MODE_LOGS_DIR}"
 	docker run ${DEMO_MODE_RUNNER_NAME_OPTION} ${DEMO_MODE_DOCKER_API_VERSION_OPTION} --rm -i --network=host \
 	 -e PYTHONDONTWRITEBYTECODE=1 \
 	 -e DEMO_MODE_HOST_TMP=/demo-mode-host-tmp \
 	 -v $(CURDIR):$(CURDIR):ro \
 	 -v ${DEMO_MODE_TEST_REPORTS_DIR}:${DEMO_MODE_TEST_REPORTS_DIR} \
+	 -v ${DEMO_MODE_LOGS_DIR}:${DEMO_MODE_LOGS_DIR} \
 	 -v /tmp:/demo-mode-host-tmp \
 	 -v /var/run/docker.sock:/var/run/docker.sock \
 	 -w $(CURDIR) ${ACCEPTANCE_TEST_IMAGE} \

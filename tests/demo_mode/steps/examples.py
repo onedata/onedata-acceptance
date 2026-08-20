@@ -24,7 +24,12 @@ def run_comprehensive_example(release: str, timeout: float = 600) -> str:
     command = load_command("comprehensive_example/example.sh", release)
     log_running_command(command)
     try:
-        result = run_command(command, timeout=timeout, capture_output=True)
+        result = run_command(
+            command,
+            "comprehensive_example/example.sh",
+            timeout=timeout,
+            capture_output=True,
+        )
     except subprocess.TimeoutExpired as error:
         raise AssertionError(
             f"Comprehensive example did not finish within {timeout}s"

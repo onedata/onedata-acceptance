@@ -55,6 +55,7 @@ def run_python_access_command(
     try:
         return run_command(
             command,
+            "python-access",
             timeout=timeout,
             capture_output=True,
             cwd=environment_root,

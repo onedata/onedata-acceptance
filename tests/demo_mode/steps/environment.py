@@ -22,15 +22,16 @@ from tests.demo_mode.utils.logging import log_step
 @log_step("Running Onezone")
 def run_onezone(release: str, request: pytest.FixtureRequest) -> subprocess.Popen[str]:
     """Start Onezone and wait until it is ready."""
-    command = load_command("run_in_foreground/run_onezone.sh", release)
-    process = start_command(command)
+    command_path = "run_in_foreground/run_onezone.sh"
+    command = load_command(command_path, release)
+    process = start_command(command, command_path)
     request.addfinalizer(partial(stop_command, process))
 
     await_command = load_command(
         "run_in_background/await_onezone.sh",
         release,
     )
-    wait_for_successful_command(await_command)
+    wait_for_successful_command(await_command, "run_in_background/await_onezone.sh")
 
     return process
 
@@ -45,14 +46,18 @@ def run_oneprovider(
     if onezone_process.poll() is not None:
         raise AssertionError("Onezone stopped before Oneprovider could be started")
 
-    command = load_command("run_in_foreground/run_oneprovider.sh", release)
-    process = start_command(command)
+    command_path = "run_in_foreground/run_oneprovider.sh"
+    command = load_command(command_path, release)
+    process = start_command(command, command_path)
     request.addfinalizer(partial(stop_command, process))
     await_command = load_command(
         "run_in_background/await_oneprovider.sh",
         release,
     )
-    wait_for_successful_command(await_command)
+    wait_for_successful_command(
+        await_command,
+        "run_in_background/await_oneprovider.sh",
+    )
 
     return process
 
@@ -69,17 +74,15 @@ def run_second_oneprovider(
             "Onezone stopped before second Oneprovider could be started"
         )
 
-    command = load_command(
-        "distributed_environment/run_second_oneprovider.sh",
-        release,
-    )
-    process = start_command(command)
+    command_path = "distributed_environment/run_second_oneprovider.sh"
+    command = load_command(command_path, release)
+    process = start_command(command, command_path)
     request.addfinalizer(partial(stop_command, process))
     await_command = load_command(
         "test_only/await_second_oneprovider.sh",
         release,
     )
-    wait_for_successful_command(await_command)
+    wait_for_successful_command(await_command, "test_only/await_second_oneprovider.sh")
 
     return process
 
@@ -87,16 +90,21 @@ def run_second_oneprovider(
 @log_step("Running Onezone in background")
 def run_onezone_in_background(release: str) -> None:
     """Start Onezone in detached mode and actively wait until it is ready."""
-    command = load_command("run_in_background/run_onezone.sh", release)
-    run_background_command(command)
+    command_path = "run_in_background/run_onezone.sh"
+    command = load_command(command_path, release)
+    run_background_command(command, command_path)
     await_command = load_command("run_in_background/await_onezone.sh", release)
-    wait_for_successful_command(await_command)
+    wait_for_successful_command(await_command, "run_in_background/await_onezone.sh")
 
 
 @log_step("Running Oneprovider in background")
 def run_oneprovider_in_background(release: str) -> None:
     """Start Oneprovider in detached mode and actively wait until it is ready."""
-    command = load_command("run_in_background/run_oneprovider.sh", release)
-    run_background_command(command)
+    command_path = "run_in_background/run_oneprovider.sh"
+    command = load_command(command_path, release)
+    run_background_command(command, command_path)
     await_command = load_command("run_in_background/await_oneprovider.sh", release)
-    wait_for_successful_command(await_command)
+    wait_for_successful_command(
+        await_command,
+        "run_in_background/await_oneprovider.sh",
+    )

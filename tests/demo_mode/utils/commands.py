@@ -8,16 +8,23 @@ import os
 import signal
 import subprocess
 from contextlib import suppress
+from dataclasses import dataclass
 from pathlib import Path
 from time import monotonic, sleep
-from typing import Final
+from typing import Final, TextIO
 
-from tests.demo_mode.utils.logging import log_running_command
+from tests.demo_mode.utils.logging import log_running_command, open_command_log
 
 DEMO_MODE_ROOT: Final = Path(__file__).resolve().parents[1]
 COMMANDS_ROOT: Final = DEMO_MODE_ROOT / "commands"
 RELEASE_PLACEHOLDER: Final = "xRELEASExVERSIONx"
 ONEZONE_URL_PREFIX: Final = "URL: "
+
+
+@dataclass(frozen=True)
+class CommandOutput:
+    stdout: str
+    stderr: str
 
 
 def command_path(relative_path: str) -> Path:
@@ -41,18 +48,42 @@ def load_command(relative_path: str, release: str) -> str:
     return command
 
 
-def start_command(command: str) -> subprocess.Popen[str]:
-    log_running_command(command)
-    process = subprocess.Popen(  # pylint: disable=consider-using-with
+def _start_subprocess(  # pylint: disable=consider-using-with
+    command: str,
+    cwd: Path,
+    log_file: TextIO,
+    capture_output: bool = False,
+) -> subprocess.Popen[str]:
+    stdout: int | TextIO
+    stderr: int | TextIO
+
+    if capture_output:
+        stdout = subprocess.PIPE
+        stderr = subprocess.PIPE
+    else:
+        stdout = log_file
+        stderr = subprocess.STDOUT
+
+    return subprocess.Popen(
         command,
-        cwd=DEMO_MODE_ROOT,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        cwd=cwd,
+        stdout=stdout,
+        stderr=stderr,
         executable="/bin/bash",
         shell=True,
         start_new_session=True,
         text=True,
     )
+
+
+def start_command(command: str, command_name: str) -> subprocess.Popen[str]:
+    log_running_command(command)
+    with open_command_log(command, command_name) as log_file:
+        process = _start_subprocess(
+            command,
+            DEMO_MODE_ROOT,
+            log_file,
+        )
     return process
 
 
@@ -64,8 +95,13 @@ def _send_signal_to_process_group(
     process: subprocess.Popen[str], signal_number: signal.Signals
 ) -> None:
     with suppress(ProcessLookupError):
-        process_group_id = os.getpgid(process.pid)
-        os.killpg(process_group_id, signal_number)
+        os.killpg(process.pid, signal_number)
+
+
+def _kill_subprocess(process: subprocess.Popen[str]) -> CommandOutput:
+    _send_signal_to_process_group(process, signal.SIGKILL)
+    stdout, stderr = process.communicate()
+    return CommandOutput(stdout or "", stderr or "")
 
 
 def stop_command(process: subprocess.Popen[str], timeout: float = 10) -> None:
@@ -84,28 +120,48 @@ def stop_command(process: subprocess.Popen[str], timeout: float = 10) -> None:
 
 def run_command(
     command: str,
+    command_name: str,
     timeout: float | None = None,
     capture_output: bool = False,
     cwd: Path = DEMO_MODE_ROOT,
 ) -> subprocess.CompletedProcess[str]:
-    output = subprocess.PIPE if capture_output else subprocess.DEVNULL
-    return subprocess.run(
-        command,
-        cwd=cwd,
-        stdout=output,
-        stderr=output,
-        executable="/bin/bash",
-        shell=True,
-        text=True,
-        timeout=timeout,
-        check=False,
-    )
+    with open_command_log(command, command_name) as log_file:
+        process = _start_subprocess(command, cwd, log_file, capture_output)
+
+        try:
+            command_stdout, command_stderr = process.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            command_output = _kill_subprocess(process)
+            log_file.write(command_output.stdout)
+            log_file.write(command_output.stderr)
+            raise
+
+        if capture_output:
+            log_file.write(command_stdout)
+            log_file.write(command_stderr)
+
+        assert process.returncode is not None
+        return subprocess.CompletedProcess(
+            process.args,
+            process.returncode,
+            command_stdout,
+            command_stderr,
+        )
 
 
-def run_background_command(command: str, timeout: float = 600) -> None:
+def run_background_command(
+    command: str,
+    command_name: str,
+    timeout: float = 600,
+) -> None:
     """Run a detached-container command and assert that it succeeds."""
     log_running_command(command)
-    result = run_command(command, timeout=timeout, capture_output=True)
+    result = run_command(
+        command,
+        command_name,
+        timeout=timeout,
+        capture_output=True,
+    )
     if result.returncode != 0:
         raise AssertionError(
             f"Background command failed with exit code {result.returncode}:\n"
@@ -123,6 +179,7 @@ def _sleep_before_retry(deadline: float, interval: float) -> None:
 
 def wait_for_successful_command(
     command: str,
+    command_name: str,
     timeout: float = 600,
     interval: float = 1,
 ) -> subprocess.CompletedProcess[str]:
@@ -133,6 +190,7 @@ def wait_for_successful_command(
         try:
             result = run_command(
                 command,
+                command_name,
                 timeout=_remaining_time(deadline),
                 capture_output=True,
             )
@@ -156,8 +214,9 @@ def wait_for_successful_command(
 
 
 def get_access_token(release: str) -> str:
-    command = load_command("common/get_oneprovider_token.sh", release)
-    result = run_command(command, capture_output=True)
+    relative_command_path = "common/get_oneprovider_token.sh"
+    command = load_command(relative_command_path, release)
+    result = run_command(command, relative_command_path, capture_output=True)
     if result.returncode != 0:
         raise AssertionError(
             "The access-token command failed with exit code "
@@ -172,8 +231,9 @@ def get_access_token(release: str) -> str:
 
 def get_onezone_url() -> str:
     """Run the common tutorial command and return its Onezone URL."""
-    command = command_path("common/get_onezone_url.sh").read_text(encoding="utf-8")
-    result = run_command(command, capture_output=True)
+    relative_command_path = "common/get_onezone_url.sh"
+    command = command_path(relative_command_path).read_text(encoding="utf-8")
+    result = run_command(command, relative_command_path, capture_output=True)
     if result.returncode != 0:
         raise AssertionError(
             "The Onezone URL command failed with exit code "

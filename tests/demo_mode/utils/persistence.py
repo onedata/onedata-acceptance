@@ -36,9 +36,12 @@ def run_persistent_service(
 ) -> PersistentService:
     """Start a persistent service and register its command for cleanup."""
     command = load_command(command_path, release)
-    process = start_command(command)
+    process = start_command(command, command_path)
     request.addfinalizer(partial(stop_command, process))
-    wait_for_successful_command(load_command(await_command_path, release))
+    wait_for_successful_command(
+        load_command(await_command_path, release),
+        await_command_path,
+    )
 
     return PersistentService(container_name=container_name, process=process)
 
