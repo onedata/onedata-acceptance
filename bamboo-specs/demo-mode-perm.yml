@@ -1,6 +1,6 @@
 version: 2
 plan:
-  key: ODSRV-DEM
+  key: ODSRV-DMA
 plan-permissions:
 - users:
   - plgnikolow

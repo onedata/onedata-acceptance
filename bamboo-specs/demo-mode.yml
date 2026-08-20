@@ -1,7 +1,7 @@
 version: 2
 plan:
   project-key: ODSRV
-  key: DEM
+  key: DMA
   name: demo-mode-tests
 stages:
 - Default Stage:
