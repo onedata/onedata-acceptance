@@ -5,6 +5,7 @@ plan:
   name: demo mode acceptance
 variables:
   release: "25.1"
+  dockerApiVersion: "1.41"
 stages:
 - Demo mode tests:
     manual: false
@@ -38,7 +39,7 @@ Comprehensive example:
   - script: &run-demo-mode-test
       interpreter: SHELL
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_comprehensive_example RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_comprehensive_example RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
       working-dir: onedata-acceptance
       description: Run demo mode test
   final-tasks: &final-tasks
@@ -67,7 +68,7 @@ Distributed environment:
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_distributed_environment RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_distributed_environment RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []
@@ -81,7 +82,7 @@ Persistency:
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_persistency RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_persistency RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []
@@ -95,7 +96,7 @@ Python access:
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_python_access RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_python_access RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []
@@ -109,7 +110,7 @@ Run in background:
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_background RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_background RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []
@@ -123,7 +124,7 @@ Run in foreground:
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_foreground RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}"
+      - make test_demo_mode RELEASE="${bamboo.release}" SCENARIO=test_run_in_foreground RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
   artifact-subscriptions: []

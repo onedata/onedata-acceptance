@@ -64,6 +64,35 @@ To run one scenario, pass its file name without the `.py` extension:
 make test_demo_mode RELEASE=25.1 SCENARIO=test_python_access
 ```
 
+The Docker client in the acceptance-test image communicates with the host
+Docker daemon through `/var/run/docker.sock`. Normally, Docker negotiates a
+compatible API version automatically. If the client is newer than the daemon
+and negotiation fails, set `DOCKER_API_VERSION` to the maximum API version
+supported by the daemon:
+
+```bash
+make test_demo_mode RELEASE=25.1 DOCKER_API_VERSION=1.41
+```
+
+The demo-mode Bamboo plan supplies this override because its agents use a
+daemon that supports Docker API version 1.41. Local runs can omit it and use
+normal API negotiation.
+
+The Makefile target itself runs pytest in an acceptance-test runner container.
+Through the mounted Docker socket, that runner starts Onezone and Oneprovider
+as sibling containers on the host Docker daemon. `RUNNER_NAME` can optionally
+assign a name to the runner:
+
+```bash
+make test_demo_mode RELEASE=25.1 RUNNER_NAME=my-demo-mode-runner
+```
+
+Bamboo gives every runner a unique name based on the build result key. Its
+final cleanup task uses that name to remove a runner left behind by a cancelled
+or interrupted build, before removing the fixed `oz_test`, `op_test1`, and
+`op_test2` service containers. Local runs do not need `RUNNER_NAME`; Docker
+assigns an automatic name and `--rm` removes the runner after it exits normally.
+
 Unlike the GUI, mixed, and Oneclient suites, demo-mode tests do not use an
 `ENV_FILE` or `test_run.py`. Each scenario starts the required Onezone and
 Oneprovider containers directly.
