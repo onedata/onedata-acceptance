@@ -66,11 +66,7 @@ def _is_valid_ownership_marker(marker: Path) -> bool:
 
 
 def _get_unowned_paths(existing_paths: list[Path]) -> list[Path]:
-    return [
-        path
-        for path in existing_paths
-        if not path.is_dir() or path.is_symlink()
-    ]
+    return [path for path in existing_paths if not path.is_dir() or path.is_symlink()]
 
 
 def _assert_and_get_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:

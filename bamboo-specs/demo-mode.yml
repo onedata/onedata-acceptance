@@ -11,6 +11,9 @@ stages:
     manual: false
     final: false
     jobs:
+    - _Autoformatter check
+    - _Static analysis
+    - _Type_check
     - Comprehensive example
     - Distributed environment
     - Python access
@@ -58,6 +61,46 @@ Comprehensive example:
       description: Clean up demo mode containers
   requirements: &requirements
   - system.docker.executable
+  artifact-subscriptions: []
+
+_Autoformatter check:
+  key: BLFR
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script: &run-check
+      interpreter: SHELL
+      scripts:
+      - make black-check
+      working-dir: onedata-acceptance
+      description: Black formatting
+  requirements: *requirements
+  artifact-subscriptions: []
+
+_Static analysis:
+  key: STAN
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script:
+      <<: *run-check
+      scripts:
+      - make static-analysis
+      description: Static analysis
+  requirements: *requirements
+  artifact-subscriptions: []
+
+_Type_check:
+  key: TCH
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script:
+      <<: *run-check
+      scripts:
+      - make type-check
+      description: Type checker
+  requirements: *requirements
   artifact-subscriptions: []
 
 Distributed environment:
