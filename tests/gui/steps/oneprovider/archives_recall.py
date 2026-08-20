@@ -15,12 +15,8 @@ from typing import List
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import parse_size
-from tests.gui.steps.modals.modal import get_modal
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
-from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
-    ArchiveRecallInformation,
-)
 from tests.gui.utils.generic import transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -31,9 +27,7 @@ from tests.utils.utils import repeat_failed
 def get_archive_recall_information_property_without_whitespace(
     selenium: SeleniumDrivers, browser_id: str, property_name: str
 ) -> str:
-    modal = get_modal(
-        selenium[browser_id], "Archive recall information", ArchiveRecallInformation
-    )
+    modal = Modals(selenium[browser_id]).archive_recall_information
     return re.sub(r"\s*", "", getattr(modal, property_name))
 
 
