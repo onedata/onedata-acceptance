@@ -15,11 +15,6 @@ from typing import Final, ParamSpec, TextIO, TypeVar
 
 from tests.utils.path_utils import make_logdir
 
-ANSI_RESET: Final = "\033[0m"
-ANSI_BOLD: Final = "\033[1m"
-ANSI_GREEN: Final = "\033[32m"
-ANSI_YELLOW: Final = "\033[33m"
-ANSI_CYAN: Final = "\033[36m"
 COMMAND_LOGS_ROOT: Final = Path(__file__).resolve().parents[1] / "logs"
 COMMAND_LOGS_DIR: Final = Path(make_logdir(str(COMMAND_LOGS_ROOT), "report"))
 _current_command_logs_dir: ContextVar[Path] = ContextVar(
@@ -36,23 +31,16 @@ Step = Callable[P, R]
 StepDecorator = Callable[[Step[P, R]], Step[P, R]]
 
 
-def _colored_label(label: str, color: str) -> str:
-    return f"{ANSI_BOLD}{color}{label}{ANSI_RESET}"
-
-
 def _log_step_start(description: str) -> None:
-    label = _colored_label("START", ANSI_YELLOW)
-    print(f"[demo-mode] {label}: {description}", flush=True)
+    print(f"[demo-mode] START: {description}", flush=True)
 
 
 def _log_step_done(description: str) -> None:
-    label = _colored_label("DONE", ANSI_GREEN)
-    print(f"[demo-mode] {label}: {description}", flush=True)
+    print(f"[demo-mode] DONE: {description}", flush=True)
 
 
 def log_running_command(command: str) -> None:
-    label = _colored_label("RUNNING COMMAND", ANSI_CYAN)
-    print(f"[demo-mode] {label}:\n{command}", flush=True)
+    print(f"[demo-mode] RUNNING COMMAND:\n{command}", flush=True)
 
 
 def _safe_log_name(name: str) -> str:
@@ -88,9 +76,9 @@ def open_command_log(
 ) -> Generator[TextIO, None, None]:
     command_number = _next_command_log_number()
     log_name = _command_log_name(command_name)
-    command_logs_dir = _current_command_logs_dir.get() / log_name
-    command_logs_dir.mkdir(exist_ok=True)
-    log_path = command_logs_dir / f"command-{command_number:03d}-{log_name}.log"
+    log_path = (
+        _current_command_logs_dir.get() / f"command-{command_number:03d}-{log_name}.log"
+    )
     with log_path.open("w", encoding="utf-8") as log_file:
         log_file.write(f"Command:\n{command}\n\nOutput:\n")
         log_file.flush()

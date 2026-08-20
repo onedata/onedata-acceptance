@@ -149,11 +149,12 @@ The test runner keeps printing its normal pytest and demo-mode progress to the
 terminal. Output produced by each shell or Docker command is written separately
 to numbered and named files. A timestamped
 `tests/demo_mode/logs/report.<timestamp>` directory represents the pytest run
-and contains a separate subdirectory for each test and then for each command.
-For example, the first `run_onezone.sh` invocation is stored as
-`python_access/run_onezone/command-001-run_onezone.log`. Repeated attempts of
-the same command share its directory and retain distinct sequence numbers. The
-`.sh` suffix is omitted from artifact directory and log-file names. This is
+and contains a separate subdirectory for each test. Command logs are stored
+directly in that test directory. For example, the first `run_onezone.sh`
+invocation is stored as
+`python_access/command-001-run_onezone.log`. Repeated attempts of the same
+command retain distinct sequence numbers. The `.sh` suffix is omitted from
+log-file names. This is
 consistent with the GUI and mixed tests and keeps scenarios separate when the
 complete suite is run without `SCENARIO`. The Bamboo plan publishes the report
 directory as the `command-logs` artifact belonging to that job result.
