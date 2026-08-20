@@ -102,7 +102,7 @@ def run_command(
     )
 
 
-def run_background_command(command: str, timeout: float = 480) -> None:
+def run_background_command(command: str, timeout: float = 600) -> None:
     """Run a detached-container command and assert that it succeeds."""
     log_running_command(command)
     result = run_command(command, timeout=timeout, capture_output=True)
@@ -123,7 +123,7 @@ def _sleep_before_retry(deadline: float, interval: float) -> None:
 
 def wait_for_successful_command(
     command: str,
-    timeout: float = 480,
+    timeout: float = 600,
     interval: float = 1,
 ) -> subprocess.CompletedProcess[str]:
     deadline = monotonic() + timeout

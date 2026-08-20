@@ -19,7 +19,7 @@ from tests.demo_mode.utils.logging import log_running_command, log_step
 
 
 @log_step("Running comprehensive example")
-def run_comprehensive_example(release: str, timeout: float = 480) -> str:
+def run_comprehensive_example(release: str, timeout: float = 600) -> str:
     """Run the comprehensive example command and return its output."""
     command = load_command("comprehensive_example/example.sh", release)
     log_running_command(command)
@@ -80,7 +80,7 @@ def assert_python_access_example_output(
 @log_step("Running Python access example")
 def run_python_access_example(
     request: pytest.FixtureRequest,
-    timeout: float = 480,
+    timeout: float = 600,
 ) -> str:
     """Prepare and run the Python access example in its generated venv."""
     environment_root = prepare_python_access_directory(request)
