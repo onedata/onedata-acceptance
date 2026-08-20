@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import yaml
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button, get_modal
@@ -18,6 +17,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
 from tests.gui.steps.oneprovider.automation.pods_activity import (
     change_tab_in_function_pods_activity_modal,
     click_on_first_pod_in_function_pods_activity_modal,
+    wait_for_events_in_function_pods_activity_modal,
     wait_until_all_pods_are_terminated_in_function_pods_activity_modal,
 )
 from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
@@ -90,17 +90,6 @@ def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: str) ->
     click_on_first_pod_in_function_pods_activity_modal(driver)
 
 
-def gather_events_list(
-    modal: FunctionPodsActivity, driver: WebDriver, option: str
-) -> list[str]:
-    gathered_list = []
-    number = modal.get_number_of_data_rows(driver)
-    for i in reversed(range(int(number) + 1)):
-        elem = modal.get_elem_by_data_row_id(i, driver, option)
-        gathered_list.append(elem)
-    return gathered_list
-
-
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees events in modal "
@@ -114,16 +103,10 @@ def assert_events_in_pods_monitor(
 
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
     events_list = [
         event for event in yaml.load(events, yaml.Loader) if "+" not in event
     ]
-    gathered_list = gather_events_list(modal, driver, option)
-
-    for event in events_list:
-        assert (
-            event in gathered_list
-        ), f"{option}: {event} has not been found. Events found: {gathered_list}"
+    wait_for_events_in_function_pods_activity_modal(driver, events_list, option)
 
 
 @wt(
@@ -143,7 +126,6 @@ def assert_events_containing_lambda_name(
 ) -> None:
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
     events_list = [
         event.replace('"', "").split(" + ")[1]
         for event in yaml.load(events, yaml.Loader)
@@ -151,19 +133,9 @@ def assert_events_containing_lambda_name(
     ]
     if not events_list:
         events_list = yaml.load(events, yaml.Loader)
-    gathered_list = gather_events_list(modal, driver, option)
-
-    for event in events_list:
-        matching = []
-        for elem in gathered_list:
-            if event in elem and lambda_name in elem:
-                matching.append(elem)
-                break
-
-        error_message = (
-            f"{option}: {event} that contains {lambda_name} has not been found"
-        )
-        assert matching, error_message
+    wait_for_events_in_function_pods_activity_modal(
+        driver, events_list, option, lambda_name
+    )
 
 
 def get_lambda_name(events: str) -> str:

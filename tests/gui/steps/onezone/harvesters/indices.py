@@ -14,7 +14,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
-    click_button_on_data_disc_page,
+    wt_click_button_on_data_disc_page,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
@@ -306,7 +306,7 @@ def assert_info_on_data_discovery_page(
         text_in_result_list(key, info, results_list)
     except AssertionError:
         button_name = "Query"
-        click_button_on_data_disc_page(selenium, browser_id, button_name)
+        wt_click_button_on_data_disc_page(selenium, browser_id, button_name)
         time.sleep(1)
         results_list = DataDiscovery(driver).results_list
         text_in_result_list(key, info, results_list)

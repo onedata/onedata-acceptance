@@ -126,6 +126,7 @@ def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
             "create",
             "unlink",
             "download",
+            "function pods activity",
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(

@@ -7,13 +7,13 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-import time
+from functools import partial
 from typing import cast
 
 import yaml
 
 from tests.gui.steps.onezone.harvesters.data_discovery import (
-    click_button_on_data_disc_page,
+    wait_for_data_discovery_query_result,
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
@@ -37,11 +37,17 @@ from tests.utils.bdd_utils import parsers, wt
 def assert_data_discovery_files(
     selenium: SeleniumDrivers, browser_id: str, config: str, spaces: dict[str, str]
 ) -> None:
-    button_name = "Query"
-
-    click_button_on_data_disc_page(selenium, browser_id, button_name)
-    time.sleep(1)
-    assert_files(selenium, browser_id, config, spaces)
+    wait_for_data_discovery_query_result(
+        selenium,
+        browser_id,
+        partial(
+            assert_files,
+            selenium=selenium,
+            browser_id=browser_id,
+            config=config,
+            spaces=spaces,
+        ),
+    )
 
 
 def assert_files(
