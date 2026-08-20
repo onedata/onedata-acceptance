@@ -19,15 +19,15 @@ from tests.demo_mode.steps.rest import (
     get_demo_access_token,
     upload_rest_file,
 )
-from tests.demo_mode.type_definitions import PersistenceState
+from tests.demo_mode.type_definitions import PersistentState
 
 
-def create_persistence_state(
+def save_persistent_state(
     release: str,
     file_content: bytes,
     provider_container: str,
     request: pytest.FixtureRequest,
-) -> PersistenceState:
+) -> PersistentState:
     """Create and return state that must survive a demo-mode restart."""
     file_name = "persistence-rest-test.txt"
     access_token = get_demo_access_token(release)
@@ -45,7 +45,7 @@ def create_persistence_state(
         file_content,
         request,
     )
-    return PersistenceState(
+    return PersistentState(
         access_token=access_token,
         provider_id=provider_id,
         space_id=space_id,
@@ -57,7 +57,7 @@ def assert_persistence_state(
     release: str,
     file_content: bytes,
     provider_container: str,
-    state: PersistenceState,
+    state: PersistentState,
 ) -> None:
     """Assert that demo credentials, configuration, and data survived restart."""
     restarted_access_token = get_demo_access_token(release)

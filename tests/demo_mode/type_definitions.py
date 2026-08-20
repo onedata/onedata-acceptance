@@ -17,7 +17,7 @@ class PersistentService:
 
 
 @dataclass(frozen=True)
-class PersistenceState:
+class PersistentState:
     """Demo-mode state expected to survive an environment restart."""
 
     access_token: str

@@ -8,7 +8,7 @@ import pytest
 
 from tests.demo_mode.meta_steps.persistence import (
     assert_persistence_state,
-    create_persistence_state,
+    save_persistent_state,
 )
 from tests.demo_mode.meta_steps.rest import assert_onezone_configuration
 from tests.demo_mode.steps.persistence import (
@@ -36,7 +36,7 @@ def test_persistency(
         request,
     )
     assert_onezone_configuration(release, onezone_name)
-    persistence_state = create_persistence_state(
+    persistence_state = save_persistent_state(
         release,
         test_file_content,
         first_oneprovider,

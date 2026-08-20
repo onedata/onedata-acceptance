@@ -57,26 +57,40 @@ def _path_exists(path: Path) -> bool:
     return os.path.lexists(path)
 
 
-def _assert_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:
-    marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
-    marker_exists = _path_exists(marker)
-    marker_is_valid = (
-        marker_exists
-        and marker.is_file()
+def _is_valid_ownership_marker(marker: Path) -> bool:
+    return (
+        marker.is_file()
         and not marker.is_symlink()
         and marker.read_text(encoding="utf-8") == OWNERSHIP_MARKER_CONTENT
     )
-    if marker_exists and not marker_is_valid:
-        raise AssertionError(
-            f"Invalid demo-mode persistence test ownership marker: {marker}"
-        )
 
-    existing_paths = [path for path in _persistence_paths() if _path_exists(path)]
-    unowned_paths = [
+
+def _get_unowned_paths(existing_paths: list[Path]) -> list[Path]:
+    return [
         path
         for path in existing_paths
-        if not marker_is_valid or not path.is_dir() or path.is_symlink()
+        if not path.is_dir() or path.is_symlink()
     ]
+
+
+def _assert_and_get_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:
+    marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
+    marker_exists = _path_exists(marker)
+    existing_paths = [path for path in _persistence_paths() if _path_exists(path)]
+
+    if marker_exists:
+        if not _is_valid_ownership_marker(marker):
+            raise AssertionError(
+                f"Invalid demo-mode persistence test ownership marker: {marker}"
+            )
+    elif existing_paths:
+        formatted_paths = ", ".join(str(path) for path in existing_paths)
+        raise AssertionError(
+            "Refusing to remove demo-mode persistence paths not owned by the test: "
+            f"{formatted_paths}"
+        )
+
+    unowned_paths = _get_unowned_paths(existing_paths)
     if unowned_paths:
         formatted_paths = ", ".join(str(path) for path in unowned_paths)
         raise AssertionError(
@@ -87,15 +101,22 @@ def _assert_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:
     return existing_paths, marker, marker_exists
 
 
-def remove_demo_persistence(container_names: list[str]) -> None:
-    """Remove containers and all bind-mounted state owned by the persistence test."""
-    remove_containers(container_names)
-    existing_paths, marker, marker_exists = _assert_test_owns_existing_paths()
-
+def _remove_persistence_paths_and_marker(
+    existing_paths: list[Path],
+    marker: Path,
+    marker_exists: bool,
+) -> None:
     for path in existing_paths:
         rmtree(path)
     if marker_exists:
         marker.unlink()
+
+
+def remove_demo_persistence(container_names: list[str]) -> None:
+    """Remove containers and all bind-mounted state owned by the persistence test."""
+    remove_containers(container_names)
+    existing_paths, marker, marker_exists = _assert_and_get_test_owns_existing_paths()
+    _remove_persistence_paths_and_marker(existing_paths, marker, marker_exists)
 
     remaining_paths = [path for path in _persistence_paths() if _path_exists(path)]
     if _path_exists(marker):
