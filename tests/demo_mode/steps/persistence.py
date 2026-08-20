@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import subprocess
 
 import pytest
+from environment import docker  # pylint: disable=import-error
 
 from tests.demo_mode.type_definitions import PersistentService
 from tests.demo_mode.utils.commands import stop_command
@@ -58,19 +59,10 @@ def stop_persistent_environment(
 ) -> None:
     """Gracefully stop and reap a persistent demo-mode environment."""
     for service in services:
-        result = subprocess.run(
-            ["docker", "stop", service.container_name],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            timeout=timeout,
-            check=False,
+        docker.stop(
+            service.container_name,
+            command_timeout=timeout,
         )
-        if result.returncode != 0:
-            raise AssertionError(
-                f"Failed to stop {service.container_name} with exit code "
-                f"{result.returncode}:\n{result.stdout}"
-            )
         try:
             service.process.wait(timeout=timeout)
         except subprocess.TimeoutExpired as error:
