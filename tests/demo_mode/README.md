@@ -127,6 +127,16 @@ or interrupted build, before removing the fixed `oz_test`, `op_test1`, and
 assigns an automatic name and `--rm` removes the runner after it exits normally.
 
 
+## Container and service readiness
+
+After issuing a service startup command, the tests first poll Docker until the
+exact-name container is running. Foreground startup commands are monitored
+during this stage so an early command exit fails immediately. Only then do the
+tests run the tutorial's `await` or `await-demo` command. These commands retain
+their retries because a running container does not yet imply that the Onezone
+or Oneprovider service is ready.
+
+
 ## Command logs and artifacts
 
 The test runner keeps printing its normal pytest and demo-mode progress to the

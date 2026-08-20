@@ -26,6 +26,7 @@ from tests.demo_mode.steps.rest import (
 def test_distributed_environment(
     release: str,
     onezone_name: str,
+    onezone_container: str,
     first_oneprovider: str,
     second_oneprovider: str,
     request: pytest.FixtureRequest,
@@ -35,9 +36,9 @@ def test_distributed_environment(
     second_file_name = "second-provider-rest-test.txt"
     second_file_content = b"Data stored through the second Oneprovider\n"
 
-    onezone = run_onezone(release, request)
-    run_oneprovider(release, onezone, request)
-    run_second_oneprovider(release, onezone, request)
+    onezone = run_onezone(release, onezone_container, request)
+    run_oneprovider(release, onezone, first_oneprovider, request)
+    run_second_oneprovider(release, onezone, second_oneprovider, request)
     assert_onezone_configuration(release, onezone_name)
 
     assert_oneproviders_are_distinct(first_oneprovider, second_oneprovider, release)

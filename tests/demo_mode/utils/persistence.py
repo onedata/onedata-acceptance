@@ -19,7 +19,7 @@ from tests.demo_mode.utils.commands import (
     stop_command,
     wait_for_successful_command,
 )
-from tests.utils.docker_utils import remove_containers
+from tests.utils.docker_utils import remove_containers, wait_for_running_container
 
 HOST_TMP_ENVIRONMENT_VARIABLE: Final = "DEMO_MODE_HOST_TMP"
 PERSISTENCE_DIRECTORY_NAMES: Final = ("oz-pers", "op-pers", "op-storage")
@@ -38,6 +38,7 @@ def run_persistent_service(
     command = load_command(command_path, release)
     process = start_command(command, command_path)
     request.addfinalizer(partial(stop_command, process))
+    wait_for_running_container(container_name, process)
     wait_for_successful_command(
         load_command(await_command_path, release),
         await_command_path,

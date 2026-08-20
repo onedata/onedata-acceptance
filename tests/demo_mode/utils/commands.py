@@ -10,10 +10,10 @@ import subprocess
 from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
-from time import monotonic, sleep
 from typing import Final, TextIO
 
 from tests.demo_mode.utils.logging import log_running_command, open_command_log
+from tests.utils.time_utils import deadline_after, remaining_time, sleep_before_retry
 
 DEMO_MODE_ROOT: Final = Path(__file__).resolve().parents[1]
 COMMANDS_ROOT: Final = DEMO_MODE_ROOT / "commands"
@@ -169,29 +169,21 @@ def run_background_command(
         )
 
 
-def _remaining_time(deadline: float) -> float:
-    return max(0, deadline - monotonic())
-
-
-def _sleep_before_retry(deadline: float, interval: float) -> None:
-    sleep(min(interval, _remaining_time(deadline)))
-
-
 def wait_for_successful_command(
     command: str,
     command_name: str,
     timeout: float = 600,
     interval: float = 1,
 ) -> subprocess.CompletedProcess[str]:
-    deadline = monotonic() + timeout
+    deadline = deadline_after(timeout)
     result: subprocess.CompletedProcess[str] | None = None
 
-    while monotonic() < deadline:
+    while remaining_time(deadline) > 0:
         try:
             result = run_command(
                 command,
                 command_name,
-                timeout=_remaining_time(deadline),
+                timeout=remaining_time(deadline),
                 capture_output=True,
             )
         except subprocess.TimeoutExpired as error:
@@ -202,7 +194,7 @@ def wait_for_successful_command(
         if result.returncode == 0:
             return result
 
-        _sleep_before_retry(deadline, interval)
+        sleep_before_retry(deadline, interval)
 
     if result is None:
         raise AssertionError(f"Command was not run before its {timeout}s timeout")

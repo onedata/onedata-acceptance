@@ -10,6 +10,8 @@ import subprocess
 
 from environment import docker  # pylint: disable=import-error
 
+from tests.utils.time_utils import deadline_after, remaining_time, sleep_before_retry
+
 DockerCommand = str | list[str]
 
 
@@ -73,3 +75,32 @@ def remove_containers(container_names: list[str]) -> None:
     if containers:
         print("\nRemoved docker containers:", flush=True)
         docker.remove(containers, force=True)
+
+
+def wait_for_running_container(
+    container_name: str,
+    startup_process: subprocess.Popen[str] | None = None,
+    timeout: float = 600,
+    interval: float = 1,
+) -> None:
+    """Wait until an exact-name container is running."""
+    deadline = deadline_after(timeout)
+    name_filters = [("name", rf"^/{re.escape(container_name)}$")]
+
+    while remaining_time(deadline) > 0:
+        if startup_process is not None and startup_process.poll() is not None:
+            raise AssertionError(
+                f"Startup command exited before {container_name} was running "
+                f"(exit code {startup_process.returncode})"
+            )
+
+        containers = docker.ps(
+            quiet=True,
+            filters=name_filters,
+        )
+        if containers:
+            return
+
+        sleep_before_retry(deadline, interval)
+
+    raise AssertionError(f"Container {container_name} did not start within {timeout}s")

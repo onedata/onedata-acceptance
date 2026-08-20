@@ -24,14 +24,15 @@ def test_run_in_background(
     release: str,
     onezone_name: str,
     demo_space_name: str,
+    onezone_container: str,
     first_oneprovider: str,
     request: pytest.FixtureRequest,
 ) -> None:
     test_file_name = "background-rest-test.txt"
     test_file_content = b"Onedata demo-mode background REST test\n"
 
-    run_onezone_in_background(release)
-    run_oneprovider_in_background(release)
+    run_onezone_in_background(release, onezone_container)
+    run_oneprovider_in_background(release, first_oneprovider)
 
     assert_onezone_configuration(release, onezone_name)
 
