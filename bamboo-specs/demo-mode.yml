@@ -185,8 +185,7 @@ Run in foreground:
 repositories:
 - onedata-acceptance:
     scope: global
-triggers:
-- bitbucket-server-trigger
+triggers: []
 branches:
   create: manually
   delete: never
