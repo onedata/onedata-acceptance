@@ -262,7 +262,7 @@ def assert_provider_cluster_ones3_node_status_rest(
     status: str,
 ) -> None:
     host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
-    expected_statuses: JsonObject = {host: status}
+    expected_statuses = {host: status}
     assert_provider_service_nodes_statuses(
         hosts,
         provider,

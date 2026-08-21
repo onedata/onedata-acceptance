@@ -84,12 +84,15 @@ def set_column_visibility_in_configure_columns_menu(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_if_element_is_selected(
-    tmp_memory: TmpMemory, browser_id: str, name: str, which_browser: str
+    tmp_memory: TmpMemory,
+    browser_id: str,
+    name: str,
+    which_browser: WhichBrowser,
 ) -> None:
-    error_message = f"Element {name} is not selected in {which_browser}"
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    if_selected = browser.data[name].is_selected()
-    assert if_selected, error_message
+    browser_name = which_browser.value
+    error_message = f"Element {name} is not selected in {browser_name}"
+    browser = tmp_memory[browser_id][transform(browser_name)]
+    assert browser.data[name].is_selected(), error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

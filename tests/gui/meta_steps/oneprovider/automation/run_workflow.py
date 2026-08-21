@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -204,9 +203,7 @@ def choose_file_as_initial_workflow_value(
 def wait_for_workflows_in_automation_subpage(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    _wait_for_workflows_in_automation_subpage(
-        selenium, browser_id, option, timeout=360, ignored_exceptions=(Exception,)
-    )
+    _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
 
 
 @wt(
@@ -218,13 +215,7 @@ def wait_for_workflows_in_automation_subpage(
 def wait_for_workflows_in_automation_subpage_extended_time(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    _wait_for_workflows_in_automation_subpage(
-        selenium,
-        browser_id,
-        option,
-        timeout=1500,
-        ignored_exceptions=(AssertionError, StaleElementReferenceException),
-    )
+    _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
 
 
 def wait_for_workflow_execution_in_atm_subpage(
@@ -239,8 +230,6 @@ def _wait_for_workflows_in_automation_subpage(
     selenium: SeleniumDrivers,
     browser_id: str,
     option: str,
-    timeout: float,
-    ignored_exceptions: tuple[type[Exception], ...] = (),
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     if option == "start":
@@ -250,7 +239,7 @@ def _wait_for_workflows_in_automation_subpage(
         change_tab_in_automation_subpage(selenium, browser_id, "Ongoing")
         err = "Ongoing workflows did not finish their run"
 
-    wait_until_workflow_executions_list_is_empty(page, err, timeout, ignored_exceptions)
+    wait_until_workflow_executions_list_is_empty(page, err)
 
 
 def assert_no_suspended_workflows_in_atm_subpage(

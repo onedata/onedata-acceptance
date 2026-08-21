@@ -31,8 +31,6 @@ from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
-ModalT = TypeVar("ModalT", bound=Modal)
-
 in_type_to_id = {
     "username": "login-form-username-input",
     "password": "login-form-password-input",
@@ -151,8 +149,7 @@ def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
     )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def get_modal(driver: WebDriver, modal_name: str, modal_type: type[ModalT]) -> ModalT:
+def get_modal[T: Modal](driver: WebDriver, modal_name: str, modal_type: type[T]) -> T:
     modal_web_elem = _find_modal(driver, modal_name)
     return modal_type(driver, modal_web_elem)
 
@@ -775,7 +772,7 @@ def close_modal(selenium: SeleniumDrivers, browser_id: str, modal: str) -> None:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def close_any_modal_if_present(driver: WebDriver) -> None:
+def close_first_modal_if_present(driver: WebDriver) -> None:
     modal_dialogs = driver.find_elements(By.CSS_SELECTOR, ".modal.in .modal-dialog")
     if not modal_dialogs:
         return

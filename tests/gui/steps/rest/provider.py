@@ -84,7 +84,7 @@ def get_provider_service_nodes_statuses(
     provider: str,
     onepanel_credentials: User,
     service: OnedataService,
-) -> JsonObject:
+) -> dict[str, str]:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -104,7 +104,7 @@ def assert_provider_service_nodes_statuses(
     provider: str,
     onepanel_credentials: User,
     service: OnedataService,
-    expected_statuses: JsonObject,
+    expected_statuses: dict[str, str],
 ) -> None:
     actual_statuses = get_provider_service_nodes_statuses(
         hosts, provider, onepanel_credentials, service

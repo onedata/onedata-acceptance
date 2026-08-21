@@ -23,7 +23,7 @@ from tests.gui.steps.modals.modal import (
     check_warning_modal,
     click_modal_button,
     click_panel_button,
-    close_any_modal_if_present,
+    close_first_modal_if_present,
 )
 from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
 from tests.gui.steps.oneprovider.data_tab import (
@@ -121,7 +121,7 @@ def assert_posix_permissions_in_op_gui(
     perm: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    close_any_modal_if_present(selenium[browser_id])
+    close_first_modal_if_present(selenium[browser_id])
 
     _assert_posix_permissions(
         selenium,

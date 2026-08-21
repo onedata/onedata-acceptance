@@ -21,7 +21,7 @@ from tests.gui.steps.oneprovider.automation.pods_activity import (
     wait_until_all_pods_are_terminated_in_function_pods_activity_modal,
 )
 from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
-    FunctionPodsActivity,
+    PodsActivity,
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -51,9 +51,7 @@ def assert_lambda_name_in_tab_name(
     selenium: SeleniumDrivers, browser_id: str, tab: str, lambda_name: str
 ) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = get_modal(
-        selenium[browser_id], "Function pods activity", FunctionPodsActivity
-    )
+    modal = get_modal(selenium[browser_id], "Function pods activity", PodsActivity)
     change_tab_in_function_pods_activity_modal(modal, tab)
     pod_name = modal.pods_list[0].pod_name
     error_message = (
@@ -71,7 +69,7 @@ def assert_lambda_name_in_tab_name(
 def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> None:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
+    modal = get_modal(driver, "Function pods activity", PodsActivity)
     change_tab_in_function_pods_activity_modal(modal, tab)
     click_on_first_pod_in_function_pods_activity_modal(driver)
 
@@ -85,7 +83,7 @@ def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> 
 def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: str) -> None:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    modal = get_modal(driver, "Function pods activity", FunctionPodsActivity)
+    modal = get_modal(driver, "Function pods activity", PodsActivity)
     change_tab_in_function_pods_activity_modal(modal, "All")
     click_on_first_pod_in_function_pods_activity_modal(driver)
 
@@ -227,7 +225,7 @@ def check_number_of_events(
     driver = selenium[browser_id]
     actual_num = int(
         get_modal(
-            driver, "Function pods activity", FunctionPodsActivity
+            driver, "Function pods activity", PodsActivity
         ).get_number_of_data_rows(driver)
     )
     expected_num = int(exp_num)

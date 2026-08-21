@@ -74,6 +74,7 @@ from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDe
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
+    WhichBrowser,
     parse_elements_sequence,
     parse_seq,
 )
@@ -743,7 +744,8 @@ def wt_click_on_elem_in_store_details_modal(
 @wt(
     parsers.parse(
         'user of {browser_id} sees "{name}" item selected in the'
-        " {which_browser} opened in new web browser tab"
+        " {which_browser:WhichBrowser} opened in new web browser tab",
+        extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 def assert_element_selected_in_new_browser_tab(
@@ -751,10 +753,10 @@ def assert_element_selected_in_new_browser_tab(
     selenium: SeleniumDrivers,
     name: str,
     tmp_memory: TmpMemory,
-    which_browser: str,
+    which_browser: WhichBrowser,
 ) -> None:
     switch_to_last_tab(selenium, browser_id)
-    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, which_browser)
+    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, which_browser.value)
     check_if_element_is_selected(tmp_memory, browser_id, name, which_browser)
 
 

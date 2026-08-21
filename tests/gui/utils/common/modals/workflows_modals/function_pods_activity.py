@@ -37,7 +37,7 @@ class EventRecord(PageObject):
     message = Label(".event-message")
 
 
-class FunctionPodsActivity(Modal):
+class PodsActivity(Modal):
     tabs = WebItemsSequence(".pods-filter-btn-group .btn-sm", cls=FilterTab)
 
     pods_list = WebItemsSequence(

@@ -1,7 +1,7 @@
 """Steps for handling workflow results in Oneprovider GUI."""
 
-__author__ = "Katarzyna Such"
-__copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
+__author__ = "Jakub Karczewski, Mateusz Zajac, Katarzyna Such"
+__copyright__ = "Copyright (C) 2023-2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
