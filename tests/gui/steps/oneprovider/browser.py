@@ -28,6 +28,7 @@ from tests.gui.utils.generic import (
     parse_seq,
     sort_json_from_string,
     transform,
+    wait_for_visible_element_using_getter,
 )
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
@@ -62,24 +63,26 @@ def get_column_names_from_configure_columns_menu(driver: WebDriver) -> list[str]
     return [column.name for column in menu.columns]
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def get_column_from_configure_columns_menu(
     driver: WebDriver, column_name: str
 ) -> ColumnOption:
-    menu = Popups(driver).configure_columns_menu
-    wait_for_item_to_appear(menu.web_elem)
+    menu_getter = lambda driver: Popups(driver).configure_columns_menu
+    menu = wait_for_visible_element_using_getter(driver, menu_getter)
     return menu.columns[column_name]
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_column_visibility_in_configure_columns_menu(
-    driver: WebDriver, column_name: str, visible: bool
+def change_column_visibility(
+    column: ColumnOption, column_name: str, visible: bool
 ) -> None:
-    column = get_column_from_configure_columns_menu(driver, column_name)
     if visible:
         column.select()
     else:
         column.unselect()
+    assert column.is_selected() == visible, (
+        f'column "{column_name}" is '
+        f'{"not " if visible else ""}selected after changing its visibility'
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

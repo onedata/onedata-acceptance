@@ -6,9 +6,9 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
 from collections.abc import Callable
 
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -282,17 +282,25 @@ def wait_for_data_discovery_query_result(
 ) -> None:
     driver = selenium[browser_id]
 
+    def result_is_expected(_: object) -> bool:
+        assert_result()
+        return True
+
     def query_returns_expected_result(_: object) -> bool:
         _click_button_on_data_disc_page(selenium, browser_id, "Query")
-        time.sleep(1)
-        assert_result()
+        WebDriverWait(
+            driver,
+            1,
+            poll_frequency=0.1,
+            ignored_exceptions=(AssertionError,),
+        ).until(result_is_expected)
         return True
 
     WebDriverWait(
         driver,
         WAIT_BACKEND * 4,
         poll_frequency=1,
-        ignored_exceptions=(Exception,),
+        ignored_exceptions=(TimeoutException,),
     ).until(query_returns_expected_result)
 
 

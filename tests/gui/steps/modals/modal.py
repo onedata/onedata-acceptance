@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import TypeVar, cast
+from typing import cast
 
 from selenium.common.exceptions import (
     NoSuchElementException,

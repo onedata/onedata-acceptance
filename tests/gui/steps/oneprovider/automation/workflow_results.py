@@ -4,7 +4,6 @@ __author__ = "Jakub Karczewski, Mateusz Zajac, Katarzyna Such"
 __copyright__ = "Copyright (C) 2023-2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.type_definitions import FilePath
 from tests.gui.utils.common.count_checksums import (
     adler32_sum,
@@ -12,10 +11,8 @@ from tests.gui.utils.common.count_checksums import (
     sha256_sum,
     sha512_sum,
 )
-from tests.utils.utils import repeat_failed
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def count_checksums_for_downloaded_file(
     downloaded_file: FilePath, checksum_list: list[str]
 ) -> dict[str, str]:

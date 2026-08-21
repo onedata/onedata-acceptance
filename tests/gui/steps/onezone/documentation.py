@@ -26,7 +26,6 @@ def _get_api_tab(driver: WebDriver, modal_name: str) -> ApiTab:
     return getattr(Modals(driver), modal_name).api
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def click_operations_dropdown_in_api_modal(
     selenium: SeleniumDrivers, browser_id: str, modal_name: str
 ) -> None:
@@ -52,7 +51,6 @@ def choose_rest_api_command_from_dropdown(
     Popups(selenium[browser_id]).power_select.choose_item(f"{command}\nREST")
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def click_rest_api_documentation_link(
     selenium: SeleniumDrivers, browser_id: str, modal_name: str
 ) -> None:
@@ -66,11 +64,15 @@ def get_documentation_page(
     return getattr(Homepage(selenium[browser_id]), transform(subpage))
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_sidebar_link_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, link: str
 ) -> None:
     page = get_documentation_page(selenium, browser_id, subpage)
+    assert_active_sidebar_link(page, link)
+
+
+@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
+def assert_active_sidebar_link(page: DocumentationPage, link: str) -> None:
     active_links = page.sidebar.get_active_rows_names()
     assert (
         len(active_links) == 1

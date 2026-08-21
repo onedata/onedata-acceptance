@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.common.miscellaneous import press_backspace_on_active_element
@@ -27,6 +29,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _get_parameter_from_lambda_form(
     selenium: SeleniumDrivers, browser_id: str, option: str, ordinal: str
 ) -> LambdaParameter:
@@ -44,7 +47,6 @@ def click_add_parameter_button_in_lambda_form(
     getattr(form, transform(option)).add_button()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def enter_parameter_name_in_lambda_form(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -60,7 +62,6 @@ def enter_parameter_name_in_lambda_form(
     name_input.value = name
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def select_parameter_type_in_lambda_form(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -70,6 +71,13 @@ def select_parameter_type_in_lambda_form(
 ) -> None:
     driver = selenium[browser_id]
     parameter = _get_parameter_from_lambda_form(selenium, browser_id, option, ordinal)
+    select_parameter_type(parameter, driver, parameter_type)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_parameter_type(
+    parameter: LambdaParameter, driver: WebDriver, parameter_type: str
+) -> None:
     parameter.type_dropdown.click()
     Popups(driver).power_select.choose_item(parameter_type)
 

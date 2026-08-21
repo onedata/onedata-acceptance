@@ -7,12 +7,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 
 import yaml
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.steps.oneprovider.browser import (
+    change_column_visibility,
     click_configure_columns_button,
     get_column_from_configure_columns_menu,
     get_column_names_from_configure_columns_menu,
-    set_column_visibility_in_configure_columns_menu,
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
@@ -25,6 +26,13 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+
+
+def set_column_visibility_in_configure_columns_menu(
+    driver: WebDriver, column_name: str, visible: bool
+) -> None:
+    column = get_column_from_configure_columns_menu(driver, column_name)
+    change_column_visibility(column, column_name, visible)
 
 
 def select_columns_to_be_visible_in_transfers(

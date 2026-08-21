@@ -21,7 +21,7 @@ from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_t
 from tests.gui.steps.onezone.automation.automation_basic import (
     assert_lambda_exists,
     click_on_lambda_menu,
-    click_on_option_in_lambda_menu,
+    click_on_popup_in_lambda_menu,
     click_option_in_revision_menu_button,
     go_to_inventory_subpage,
     has_downloaded_workflow_file_content,
@@ -387,7 +387,7 @@ def download_and_remove_lambda_dump_from_inventory(
     )
 
     click_on_lambda_menu(driver, lambda_name)
-    click_on_option_in_lambda_menu(driver, option_unlink)
+    click_on_popup_in_lambda_menu(driver, option_unlink)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal, tmp_memory)
     click_modal_button(selenium, browser_id, option_unlink, modal)
 

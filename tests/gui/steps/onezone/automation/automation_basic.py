@@ -420,7 +420,7 @@ def click_on_lambda_menu(driver: WebDriver, lambda_name: str) -> None:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_lambda_menu(driver: WebDriver, option: str) -> None:
+def click_on_popup_in_lambda_menu(driver: WebDriver, option: str) -> None:
     Popups(driver).menu_popup_with_label.menu[option].click()
 
 

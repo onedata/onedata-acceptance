@@ -92,6 +92,7 @@ def click_on_confirmation_button_to_rename_group(group: Group) -> None:
 @repeat_failed(timeout=WAIT_FRONTEND)
 def input_new_group_name_into_rename_group_inpux_box(group: Group, text: str) -> None:
     group.edit_box.value = text
+    assert group.edit_box.value == text, "Failed to write new group name to input box"
 
 
 @wt(

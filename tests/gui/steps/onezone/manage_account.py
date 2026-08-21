@@ -81,7 +81,7 @@ def confirm_username_change(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_password_change(selenium: SeleniumDrivers, browser_id: str) -> None:
+def click_edit_password_form(selenium: SeleniumDrivers, browser_id: str) -> None:
     OZLoggedIn(selenium[browser_id]).profile.rename_password()
 
 

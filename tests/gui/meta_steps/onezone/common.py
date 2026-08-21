@@ -28,6 +28,7 @@ from tests.gui.steps.oneprovider.data_tab import (
     click_choose_other_oneprovider_on_file_browser,
 )
 from tests.gui.steps.onezone.manage_account import (
+    click_edit_password_form,
     click_emergency_panel_logout,
     click_on_option_in_account_settings_in_oz,
     confirm_password_change,
@@ -36,7 +37,6 @@ from tests.gui.steps.onezone.manage_account import (
     enter_password_change_values,
     expand_account_settings_in_oz,
     open_manage_account_page,
-    start_password_change,
     start_username_change,
 )
 from tests.gui.steps.onezone.providers import (
@@ -334,7 +334,7 @@ def change_password(
     open_manage_account_page(selenium, browser_id)
     expand_account_settings_in_oz(selenium, browser_id)
     click_on_option_in_account_settings_in_oz(selenium, browser_id, "Manage account")
-    start_password_change(selenium, browser_id)
+    click_edit_password_form(selenium, browser_id)
     enter_password_change_values(selenium, browser_id, cur_passwd, new_password)
     confirm_password_change(selenium, browser_id)
     users[username].password = new_password
