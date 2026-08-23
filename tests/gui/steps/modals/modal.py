@@ -49,6 +49,7 @@ def resolve_modal_attribute_name(modal_name: str) -> str:
         "file_details": "details_modal",
         "directory_details": "details_modal",
         "share": "share",
+        "function_pods_activity": "pods_activity",
     }
     for k, v in s.items():
         if k in modal_name:

@@ -208,7 +208,7 @@ def assert_pod_name_for_task(
     close = "closes"
     link = "Pods activity"
     button = "X"
-    modal = "Function pods activity"
+    modal = "Pods activity"
 
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
     click_on_link_in_task_box(selenium, browser_id, lane, task, link, ordinal)
