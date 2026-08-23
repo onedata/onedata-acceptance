@@ -56,9 +56,12 @@ from tests.gui.steps.oneprovider.shares import (
     click_share_in_shares_browser,
     is_selected_share_named,
 )
+from tests.gui.steps.onezone.documentation import (
+    choose_rest_api_command_from_dropdown,
+)
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Modals, Popups
+from tests.gui.utils import Modals
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.xml_addons import (
     check_ace_editor_appeared,
@@ -271,11 +274,10 @@ def copy_command_from_api_in_file_details_modal(
 ) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).details_modal
-    command = f"{command}\nREST"
 
     modal.navigation["API"].click()
     modal.api.operations.click()
-    Popups(driver).power_select.choose_item(command)
+    choose_rest_api_command_from_dropdown(selenium, browser_id, command)
     modal.api.copy_button.click()
 
 

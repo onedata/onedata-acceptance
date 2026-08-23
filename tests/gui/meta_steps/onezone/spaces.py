@@ -35,6 +35,9 @@ from tests.gui.steps.onezone.groups import go_to_group_subpage
 from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal,
 )
+from tests.gui.steps.onezone.documentation import (
+    choose_rest_api_command_from_dropdown,
+)
 from tests.gui.steps.onezone.members import (
     assert_member_is_in_parent_members_list,
     click_on_option_in_members_list_menu,
@@ -69,7 +72,7 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
 from tests.gui.type_definitions import Clipboard, NamedElement, TmpMemory
-from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
@@ -560,10 +563,9 @@ def copy_command_from_rest_api_modal(
 ) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).rest_api
-    command = f"{command}\nREST"
 
     modal.api.operations.click()
-    Popups(driver).power_select.choose_item(command)
+    choose_rest_api_command_from_dropdown(selenium, browser_id, command)
     modal.api.copy_button.click()
 
 

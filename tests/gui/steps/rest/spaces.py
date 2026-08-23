@@ -115,6 +115,17 @@ def get_space_ids_supported_by_storage(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
+def assert_no_space_supports_using_rest(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+) -> None:
+    assert not get_supported_space_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    )
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_no_space_supports_for_storage_using_rest(
     provider_hostname: str,
     onepanel_username: str,

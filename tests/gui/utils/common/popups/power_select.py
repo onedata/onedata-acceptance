@@ -10,7 +10,6 @@ from collections.abc import Iterable
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebElementsSequence
 from tests.gui.utils.core.web_objects import (
@@ -75,14 +74,6 @@ class PowerSelect(PageObject):
         self._choose_items(
             property_name, self.item_groups, "item group: ", require_full_match
         )
-
-    def choose_item_with_id(self, property_name: str) -> None:
-        separator = CONFLICT_NAME_SEPARATOR
-        for item in self._items:
-            if item.text.split(separator)[0].strip() == property_name:
-                item.click()
-                return
-        raise PageObjectNotFoundError(f"{property_name} not found in popup menu")
 
     def __str__(self) -> str:
         return "Power select options"

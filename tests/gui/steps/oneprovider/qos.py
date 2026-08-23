@@ -18,7 +18,11 @@ from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
+from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.qos import (
+    QoSValueOption,
+)
 from tests.gui.utils.core import scroll_to_css_selector_bottom
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -387,9 +391,15 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
     provider_name = hosts[provider]["name"]
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
-    popup.qos_values_choice()
-    separator = PROVIDER_PREFIX_CHAR
-    Popups(driver).power_select.choose_item(f"{item} {separator}{provider_name}")
+    popup.qos_values_choice.click()
+    options = Popups(driver).power_select.items_as(QoSValueOption)
+    for option in options:
+        if option.name == item and option.qualifier == provider_name:
+            option.click()
+            return
+    raise PageObjectNotFoundError(
+        f'QoS value "{item}" at provider "{provider_name}" not found'
+    )
 
 
 @wt(
@@ -409,8 +419,8 @@ def assert_list_of_providers_in_add_cond_popup(
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    separator = f" {PROVIDER_PREFIX_CHAR}"
-    actual = [v.text.split(separator)[0] for v in Popups(driver).power_select.items]
+    options = Popups(driver).power_select.items_as(QoSValueOption)
+    actual = [option.name for option in options]
     compare_lists(expected, actual)
 
 
@@ -436,7 +446,8 @@ def assert_list_of_storages_in_add_cond_popup(
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    actual = [v.text for v in Popups(driver).power_select.items]
+    options = Popups(driver).power_select.items_as(QoSValueOption)
+    actual = [option.label for option in options]
     compare_lists(expected, actual)
 
 
@@ -454,7 +465,8 @@ def choose_value_of_provider_item_in_add_cond_popup(
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    Popups(driver).power_select.choose_item_with_id(f"{provider_name}")
+    options = Popups(driver).power_select.items_as(QoSValueOption)
+    options[provider_name].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" in "Add QoS condition" popup'))

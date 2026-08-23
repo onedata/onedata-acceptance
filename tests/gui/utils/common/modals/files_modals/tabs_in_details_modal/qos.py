@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.common.exceptions import JavascriptException
 
+from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.query_builder import QueryBuilder
 from tests.gui.utils.core.base import PageObject
@@ -19,6 +20,23 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+
+
+class QoSValueOption(PageObject):
+    @property
+    def label(self) -> str:
+        return self.web_elem.text
+
+    @property
+    def name(self) -> str:
+        return self.label.rsplit(f" {CONFLICT_NAME_SEPARATOR}")[0]
+
+    id = name
+
+    @property
+    def qualifier(self) -> str | None:
+        parts = self.label.rsplit(f" {CONFLICT_NAME_SEPARATOR}")
+        return parts[1] if len(parts) == 2 else None
 
 
 class Requirement(PageObject):
