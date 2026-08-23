@@ -17,6 +17,7 @@ from tests.gui.utils.common.modals.workflows_modals.pods_activity import (
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def change_tab_in_pods_activity_modal(modal: PodsActivity, tab_name: str) -> None:
     tab_number = 0 if tab_name == "Current" else 1
     modal.tabs[tab_number].click()
