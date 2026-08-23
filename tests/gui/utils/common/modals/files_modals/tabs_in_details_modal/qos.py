@@ -28,10 +28,10 @@ class QoSValueOption(PageObject):
         return self.web_elem.text
 
     @property
-    def name(self) -> str:
+    def value_name(self) -> str:
         return self.label.rsplit(f" {CONFLICT_NAME_SEPARATOR}")[0]
 
-    id = name
+    id = value_name
 
     @property
     def qualifier(self) -> str | None:

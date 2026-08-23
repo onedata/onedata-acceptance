@@ -394,7 +394,7 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
     popup.qos_values_choice.click()
     options = Popups(driver).power_select.items_as(QoSValueOption)
     for option in options:
-        if option.name == item and option.qualifier == provider_name:
+        if option.value_name == item and option.qualifier == provider_name:
             option.click()
             return
     raise PageObjectNotFoundError(
@@ -420,7 +420,7 @@ def assert_list_of_providers_in_add_cond_popup(
     popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
     options = Popups(driver).power_select.items_as(QoSValueOption)
-    actual = [option.name for option in options]
+    actual = [option.value_name for option in options]
     compare_lists(expected, actual)
 
 

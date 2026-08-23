@@ -137,7 +137,7 @@ class Modals:
     duplicate_revision = WebItem(".modal-dialog", cls=DuplicateRevision)
     select_files = WebItem(".modal-dialog", cls=SelectFiles)
     select_groups = WebItem(".modal-dialog", cls=SelectGroups)
-    function_pods_activity = WebItem(".modal-dialog", cls=PodsActivity)
+    pods_activity = WebItem(".modal-dialog", cls=PodsActivity)
     task_time_series = WebItem(".modal-dialog", cls=TaskTimeSeries)
     store_details = WebItem(".modal-dialog", cls=StoreDetails)
     audit_log = WebItem(".modal-dialog", cls=AuditLog)

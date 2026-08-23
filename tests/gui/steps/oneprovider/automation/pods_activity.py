@@ -5,9 +5,10 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_PODS_TERMINATION
 from tests.gui.steps.modals.modal import get_modal
 from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.workflows_modals.pods_activity import (
@@ -21,17 +22,25 @@ def change_tab_in_pods_activity_modal(modal: PodsActivity, tab_name: str) -> Non
     modal.tabs[tab_number].click()
 
 
-def wait_until_all_pods_are_terminated_in_pods_activity_modal(
-    driver: WebDriver,
-) -> None:
-    modal = Modals(driver).function_pods_activity
-    change_tab_in_pods_activity_modal(modal, "Current")
+@repeat_failed(
+    interval=1,
+    timeout=WAIT_PODS_TERMINATION,
+    exceptions=(AssertionError, StaleElementReferenceException),
+)
+def assert_all_pods_are_terminated(modal: PodsActivity) -> None:
     assert len(modal.pods_list) == 0, "Pods has not been terminated"
 
 
+def wait_until_all_pods_are_terminated_in_pods_activity_modal(
+    driver: WebDriver,
+) -> None:
+    modal = Modals(driver).pods_activity
+    change_tab_in_pods_activity_modal(modal, "Current")
+    assert_all_pods_are_terminated(modal)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_first_pod_in_pods_activity_modal(driver: WebDriver) -> None:
-    modal = get_modal(driver, "Function pods activity", PodsActivity)
+def click_on_first_pod_in_pods_activity_modal(modal: PodsActivity) -> None:
     modal.pods_list[0].click()
 
 

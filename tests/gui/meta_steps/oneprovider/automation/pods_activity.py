@@ -71,7 +71,7 @@ def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> 
     driver = selenium[browser_id]
     modal = get_modal(driver, "Function pods activity", PodsActivity)
     change_tab_in_pods_activity_modal(modal, tab)
-    click_on_first_pod_in_pods_activity_modal(driver)
+    click_on_first_pod_in_pods_activity_modal(modal)
 
 
 @wt(
@@ -85,7 +85,7 @@ def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: str) ->
     driver = selenium[browser_id]
     modal = get_modal(driver, "Function pods activity", PodsActivity)
     change_tab_in_pods_activity_modal(modal, "All")
-    click_on_first_pod_in_pods_activity_modal(driver)
+    click_on_first_pod_in_pods_activity_modal(modal)
 
 
 @wt(

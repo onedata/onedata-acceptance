@@ -31,12 +31,12 @@ from tests.gui.steps.onepanel.spaces import (
     wt_clicks_on_understand_risk_in_cease_support_modal,
     wt_expands_toolbar_icon_for_space_in_onepanel,
 )
+from tests.gui.steps.onezone.documentation import (
+    choose_rest_api_command_from_dropdown,
+)
 from tests.gui.steps.onezone.groups import go_to_group_subpage
 from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal,
-)
-from tests.gui.steps.onezone.documentation import (
-    choose_rest_api_command_from_dropdown,
 )
 from tests.gui.steps.onezone.members import (
     assert_member_is_in_parent_members_list,
