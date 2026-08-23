@@ -13,6 +13,7 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
+from tests.gui.utils.homepage import RestApiCommand
 from tests.gui.utils.homepage.documentation import DocumentationPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -36,9 +37,9 @@ def click_operations_dropdown_in_api_modal(
 def get_rest_api_commands_from_dropdown(
     selenium: SeleniumDrivers, browser_id: str
 ) -> list[str]:
+    command_items = Popups(selenium[browser_id]).power_select.items_as(RestApiCommand)
     commands = [
-        item.text.split("\n")[0]
-        for item in Popups(selenium[browser_id]).power_select.items
+        item.command_title for item in command_items if item.command_type == "REST"
     ]
     assert commands, "No REST API commands found in operations dropdown"
     return commands
@@ -48,7 +49,12 @@ def get_rest_api_commands_from_dropdown(
 def choose_rest_api_command_from_dropdown(
     selenium: SeleniumDrivers, browser_id: str, command: str
 ) -> None:
-    Popups(selenium[browser_id]).power_select.choose_item(f"{command}\nREST")
+    command_items = Popups(selenium[browser_id]).power_select.items_as(RestApiCommand)
+    for item in command_items:
+        if item.command_title == command and item.command_type == "REST":
+            item.click()
+            return
+    raise AssertionError(f'REST API command "{command}" not found')
 
 
 def click_rest_api_documentation_link(

@@ -9,7 +9,8 @@ from typing import Literal
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.utils.core.web_elements import WebElementsSequence
+from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.web_elements import Label, WebElementsSequence
 from tests.gui.utils.homepage.documentation import (
     APIPage,
     DocsPage,
@@ -44,3 +45,8 @@ class Homepage:
     @property
     def docs(self) -> DocsPage:
         return DocsPage(self.web_elem, self.web_elem, parent=self)
+
+
+class RestApiCommand(PageObject):
+    command_title = Label(".api-command-title")
+    command_type = Label(".api-command-type")
