@@ -60,7 +60,7 @@ from .troubles_modals.warning_modal import WarningModal
 from .workflows_modals.audit_log import AuditLog
 from .workflows_modals.create_new_lane import CreateNewLane
 from .workflows_modals.duplicate_revision import DuplicateRevision
-from .workflows_modals.function_pods_activity import PodsActivity
+from .workflows_modals.pods_activity import PodsActivity
 from .workflows_modals.select_files_directories_symlink import SelectFiles
 from .workflows_modals.select_groups import SelectGroups
 from .workflows_modals.store_details import StoreDetails

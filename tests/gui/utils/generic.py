@@ -32,7 +32,11 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import (
+    WAIT_EXTENDED_WORKFLOW_EXECUTION,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+)
 from tests.gui.type_definitions import (
     VisibilityCondition,
     WebElementOrCssLocator,
@@ -469,6 +473,11 @@ class WhichBrowser(Enum):
 class OnedataService(Enum):
     WORKERS = "workers"
     ONES3 = "ones3"
+
+
+class WorkflowExecutionWaitDuration(Enum):
+    NORMAL = WAIT_NORMAL_WORKFLOW_EXECUTION
+    EXTENDED = WAIT_EXTENDED_WORKFLOW_EXECUTION
 
 
 class SpecialDir(Enum):

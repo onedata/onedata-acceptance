@@ -15,12 +15,12 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_on_task_in_lane,
 )
 from tests.gui.steps.oneprovider.automation.pods_activity import (
-    change_tab_in_function_pods_activity_modal,
-    click_on_first_pod_in_function_pods_activity_modal,
-    wait_for_events_in_function_pods_activity_modal,
-    wait_until_all_pods_are_terminated_in_function_pods_activity_modal,
+    change_tab_in_pods_activity_modal,
+    click_on_first_pod_in_pods_activity_modal,
+    wait_for_events_in_pods_activity_modal,
+    wait_until_all_pods_are_terminated_in_pods_activity_modal,
 )
-from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
+from tests.gui.utils.common.modals.workflows_modals.pods_activity import (
     PodsActivity,
 )
 from tests.type_definitions import SeleniumDrivers
@@ -38,7 +38,7 @@ def wait_for_ongoing_pods_to_be_terminated(
 ) -> None:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    wait_until_all_pods_are_terminated_in_function_pods_activity_modal(driver)
+    wait_until_all_pods_are_terminated_in_pods_activity_modal(driver)
 
 
 @wt(
@@ -52,7 +52,7 @@ def assert_lambda_name_in_tab_name(
 ) -> None:
     switch_to_iframe(selenium, browser_id)
     modal = get_modal(selenium[browser_id], "Function pods activity", PodsActivity)
-    change_tab_in_function_pods_activity_modal(modal, tab)
+    change_tab_in_pods_activity_modal(modal, tab)
     pod_name = modal.pods_list[0].pod_name
     error_message = (
         f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
@@ -70,8 +70,8 @@ def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> 
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     modal = get_modal(driver, "Function pods activity", PodsActivity)
-    change_tab_in_function_pods_activity_modal(modal, tab)
-    click_on_first_pod_in_function_pods_activity_modal(driver)
+    change_tab_in_pods_activity_modal(modal, tab)
+    click_on_first_pod_in_pods_activity_modal(driver)
 
 
 @wt(
@@ -84,8 +84,8 @@ def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: str) ->
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     modal = get_modal(driver, "Function pods activity", PodsActivity)
-    change_tab_in_function_pods_activity_modal(modal, "All")
-    click_on_first_pod_in_function_pods_activity_modal(driver)
+    change_tab_in_pods_activity_modal(modal, "All")
+    click_on_first_pod_in_pods_activity_modal(driver)
 
 
 @wt(
@@ -104,7 +104,7 @@ def assert_events_in_pods_monitor(
     events_list = [
         event for event in yaml.load(events, yaml.Loader) if "+" not in event
     ]
-    wait_for_events_in_function_pods_activity_modal(driver, events_list, option)
+    wait_for_events_in_pods_activity_modal(driver, events_list, option)
 
 
 @wt(
@@ -131,9 +131,7 @@ def assert_events_containing_lambda_name(
     ]
     if not events_list:
         events_list = yaml.load(events, yaml.Loader)
-    wait_for_events_in_function_pods_activity_modal(
-        driver, events_list, option, lambda_name
-    )
+    wait_for_events_in_pods_activity_modal(driver, events_list, option, lambda_name)
 
 
 def get_lambda_name(events: str) -> str:

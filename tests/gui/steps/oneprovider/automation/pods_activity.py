@@ -10,29 +10,27 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import get_modal
 from tests.gui.utils import Modals
-from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
+from tests.gui.utils.common.modals.workflows_modals.pods_activity import (
     PodsActivity,
 )
 from tests.utils.utils import repeat_failed
 
 
-def change_tab_in_function_pods_activity_modal(
-    modal: PodsActivity, tab_name: str
-) -> None:
+def change_tab_in_pods_activity_modal(modal: PodsActivity, tab_name: str) -> None:
     tab_number = 0 if tab_name == "Current" else 1
     modal.tabs[tab_number].click()
 
 
-def wait_until_all_pods_are_terminated_in_function_pods_activity_modal(
+def wait_until_all_pods_are_terminated_in_pods_activity_modal(
     driver: WebDriver,
 ) -> None:
     modal = Modals(driver).function_pods_activity
-    change_tab_in_function_pods_activity_modal(modal, "Current")
+    change_tab_in_pods_activity_modal(modal, "Current")
     assert len(modal.pods_list) == 0, "Pods has not been terminated"
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_first_pod_in_function_pods_activity_modal(driver: WebDriver) -> None:
+def click_on_first_pod_in_pods_activity_modal(driver: WebDriver) -> None:
     modal = get_modal(driver, "Function pods activity", PodsActivity)
     modal.pods_list[0].click()
 
@@ -87,7 +85,7 @@ def assert_each_event_is_gathered_with_lambda(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_events_in_function_pods_activity_modal(
+def wait_for_events_in_pods_activity_modal(
     driver: WebDriver,
     events: list[str],
     option: str,

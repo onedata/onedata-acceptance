@@ -37,6 +37,7 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
+    WorkflowExecutionWaitDuration,
     parse_elements_sequence,
     parse_seq,
     transform,
@@ -215,7 +216,12 @@ def wait_for_workflows_in_automation_subpage(
 def wait_for_workflows_in_automation_subpage_extended_time(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
+    _wait_for_workflows_in_automation_subpage(
+        selenium,
+        browser_id,
+        option,
+        wait_duration=WorkflowExecutionWaitDuration.EXTENDED,
+    )
 
 
 def wait_for_workflow_execution_in_atm_subpage(
@@ -230,6 +236,10 @@ def _wait_for_workflows_in_automation_subpage(
     selenium: SeleniumDrivers,
     browser_id: str,
     option: str,
+    *,
+    wait_duration: WorkflowExecutionWaitDuration = (
+        WorkflowExecutionWaitDuration.NORMAL
+    ),
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     if option == "start":
@@ -239,7 +249,11 @@ def _wait_for_workflows_in_automation_subpage(
         change_tab_in_automation_subpage(selenium, browser_id, "Ongoing")
         err = "Ongoing workflows did not finish their run"
 
-    wait_until_workflow_executions_list_is_empty(page, err)
+    wait_until_workflow_executions_list_is_empty(
+        page,
+        err,
+        timeout=wait_duration.value,
+    )
 
 
 def assert_no_suspended_workflows_in_atm_subpage(
