@@ -19,7 +19,7 @@ class DocsSidebar(DocumentationSidebar):
     category_rows = WebItemsSequence("a", cls=ButtonWithTextPageObject)
 
     def get_active_rows_names(self) -> list[str]:
-        return [row.id for row in self.category_rows if row.is_active()]
+        return [row.text for row in self.category_rows if row.is_active()]
 
 
 class DocsPage(DocumentationPage):

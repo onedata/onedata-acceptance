@@ -13,20 +13,22 @@ from tests.gui.utils.core.web_elements import (
 )
 
 
+class ExpandedFolder(PageObject):
+    toggle = WebItem(".folder-toggle", cls=ButtonWithTextPageObject)
+
+
 class DocumentationSidebar(PageObject):
-    expanded_folders = WebItemsSequence(
-        ".sidebar-folder.expanded", cls=ButtonWithTextPageObject
-    )
+    expanded_folders = WebItemsSequence(".sidebar-folder.expanded", cls=ExpandedFolder)
 
     def get_expanded_folders_names(self) -> list[str]:
-        return [folder.id.split("\n")[0] for folder in self.expanded_folders]
+        return [folder.toggle.text for folder in self.expanded_folders]
 
 
 class Chapters(PageObject):
     tabs = WebItemsSequence(".chapter-tab", cls=ButtonWithTextPageObject)
 
     def get_active_chapter_tabs_names(self) -> list[str]:
-        return [tab.id for tab in self.tabs if tab.is_active()]
+        return [tab.text for tab in self.tabs if tab.is_active()]
 
 
 class DocumentationPage(PageObject):
