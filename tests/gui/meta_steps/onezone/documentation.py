@@ -15,7 +15,7 @@ from tests.gui.steps.common.url import (
 )
 from tests.gui.steps.onezone.documentation import (
     assert_active_chapter_tab_in_docs_subpage,
-    assert_active_sidebar_link_in_docs_subpage,
+    assert_active_sidebar_link_on_open_docs_page,
     assert_expanded_folders_in_sidebar_in_docs_subpage,
     assert_user_sees_name_in_header_in_docs_subpage,
     choose_rest_api_command_from_dropdown,
@@ -139,7 +139,7 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
         assert_user_sees_name_in_header_in_docs_subpage(
             selenium, browser_id, "API", endpoint.name
         )
-        assert_active_sidebar_link_in_docs_subpage(
+        assert_active_sidebar_link_on_open_docs_page(
             selenium, browser_id, "API", endpoint.label
         )
         assert_expanded_folders_in_sidebar_in_docs_subpage(
@@ -178,7 +178,7 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(
         assert_user_sees_name_in_header_in_docs_subpage(
             selenium, browser_id, "API", endpoint.name
         )
-        assert_active_sidebar_link_in_docs_subpage(
+        assert_active_sidebar_link_on_open_docs_page(
             selenium, browser_id, "API", endpoint.label
         )
         assert_expanded_folders_in_sidebar_in_docs_subpage(
@@ -200,5 +200,5 @@ def assert_user_sees_name_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, name: str, subpage: str
 ) -> None:
     assert_user_sees_name_in_header_in_docs_subpage(selenium, browser_id, subpage, name)
-    assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, subpage, name)
+    assert_active_sidebar_link_on_open_docs_page(selenium, browser_id, subpage, name)
     assert_title_contains(selenium, browser_id, f"{name} | Onedata Docs")

@@ -23,19 +23,15 @@ from tests.gui.utils.core.web_elements import (
 
 
 class QoSValueOption(PageObject):
+    value_name = id = Label(".item-name")
+
     @property
     def label(self) -> str:
         return self.web_elem.text
 
     @property
-    def value_name(self) -> str:
-        return self.label.rsplit(f" {CONFLICT_NAME_SEPARATOR}")[0]
-
-    id = value_name
-
-    @property
     def qualifier(self) -> str | None:
-        parts = self.label.rsplit(f" {CONFLICT_NAME_SEPARATOR}")
+        parts = self.label.rsplit(" " + CONFLICT_NAME_SEPARATOR)
         return parts[1] if len(parts) == 2 else None
 
 

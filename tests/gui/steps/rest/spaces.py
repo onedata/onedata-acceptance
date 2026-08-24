@@ -107,7 +107,6 @@ def get_space_ids_supported_by_storage(
     ):
         # The space may disappear between listing it and fetching its details.
         with suppress(HTTPNotFound):
-            # suppress ignores the code after ignored exception occurred
             space_details = get_space_details(
                 provider_hostname, onepanel_username, onepanel_password, space_id
             )

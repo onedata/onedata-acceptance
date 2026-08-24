@@ -288,13 +288,13 @@ def wait_for_data_discovery_query_result(
 
     def query_returns_expected_result(_: object) -> bool:
         _click_button_on_data_disc_page(selenium, browser_id, "Query")
-        WebDriverWait(
+
+        return WebDriverWait(
             driver,
             1,
             poll_frequency=0.1,
             ignored_exceptions=(AssertionError,),
         ).until(result_is_expected)
-        return True
 
     WebDriverWait(
         driver,

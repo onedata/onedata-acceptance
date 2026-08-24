@@ -70,15 +70,15 @@ def get_documentation_page(
     return getattr(Homepage(selenium[browser_id]), transform(subpage))
 
 
-def assert_active_sidebar_link_in_docs_subpage(
+def assert_active_sidebar_link_on_open_docs_page(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, link: str
 ) -> None:
     page = get_documentation_page(selenium, browser_id, subpage)
-    assert_active_sidebar_link(page, link)
+    _assert_active_sidebar_link_on_page(page, link)
 
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_active_sidebar_link(page: DocumentationPage, link: str) -> None:
+def _assert_active_sidebar_link_on_page(page: DocumentationPage, link: str) -> None:
     active_links = page.sidebar.get_active_rows_names()
     assert (
         len(active_links) == 1

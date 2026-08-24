@@ -440,6 +440,45 @@ def transform(val: str, strip_char: Optional[str] = None) -> str:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 
+def assert_each_event_is_gathered(
+    events: list[str],
+    gathered_events: list[str],
+    option: str,
+) -> None:
+    for event in events:
+        assert event in gathered_events, (
+            f'No gathered event with {option} "{event}" was found. '
+            f"Gathered {option}s: {gathered_events}"
+        )
+
+
+def is_event_gathered_with_lambda(
+    event: str, lambda_name: str, gathered_events: list[str]
+) -> bool:
+    for gathered_event in gathered_events:
+        if event in gathered_event and lambda_name in gathered_event:
+            return True
+    return False
+
+
+def assert_each_event_is_gathered_with_lambda(
+    events: list[str],
+    lambda_name: str,
+    gathered_events: list[str],
+    option: str,
+) -> None:
+    for event in events:
+        is_event_gathered = is_event_gathered_with_lambda(
+            event, lambda_name, gathered_events
+        )
+
+        assert is_event_gathered, (
+            f'No gathered event with {option} containing "{event}" '
+            f'and lambda name "{lambda_name}" was found. '
+            f"Gathered {option}s: {gathered_events}"
+        )
+
+
 def sort_json_keys(obj: JsonValue) -> JsonValue:
     if isinstance(obj, dict):
         items = list(obj.items())
