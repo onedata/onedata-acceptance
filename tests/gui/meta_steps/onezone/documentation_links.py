@@ -8,13 +8,23 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
-from tests.gui.utils import Homepage, Modals, Popups
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
+from tests.gui.steps.common.url import (
+    close_current_tab,
+    switch_to_first_tab,
+    switch_to_last_tab,
 )
-from tests.gui.utils.homepage.documentation import DocumentationPage, EndpointInfo
+from tests.gui.steps.onezone.documentation import (
+    assert_active_chapter_tab_in_documentation_subpage,
+    assert_active_sidebar_endpoint_in_api_subpage,
+    assert_active_sidebar_link_in_docs_subpage,
+    assert_expanded_folders_in_sidebar_in_documentation_subpage,
+    assert_user_sees_name_in_header_in_documentation_subpage,
+    choose_rest_api_command_from_dropdown,
+    click_operations_dropdown_in_api_modal,
+    click_rest_api_documentation_link,
+    get_rest_api_commands_from_dropdown,
+)
+from tests.gui.utils.homepage.api import EndpointInfo
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -114,88 +124,22 @@ FILE_DETAILS_ENDPOINTS = {
 }
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_active_sidebar_link_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: str, subpage: str, link: str
+def assert_endpoint_details_in_api_subpage(
+    selenium: SeleniumDrivers, browser_id: str, endpoint: EndpointInfo
 ) -> None:
-    driver = selenium[browser_id]
-    # inherits from DocumentationPage
-    subpage = transform(subpage)
-    page: DocumentationPage = getattr(Homepage(driver), subpage)
-    active_links = page.sidebar.get_active_rows_names()
-    assert (
-        len(active_links) == 1
-    ), f"Expected only one active link, but found {len(active_links)}"
-    active_link = active_links[0]
-    assert (
-        active_link == link
-    ), f"Expected active link: {link}, but found: {active_link}"
-
-
-@wt(
-    parsers.re(
-        r'user of (?P<browser_id>.*?) sees "(?P<chapter>.*?)" active chapter'
-        r' in "(?P<subpage>Docs|API)" subpage in documentation'
+    assert_title_contains(selenium, browser_id, f"{endpoint.name} | API Reference")
+    assert_active_chapter_tab_in_documentation_subpage(
+        selenium, browser_id, "API", endpoint.chapter
     )
-)
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_active_chapter_tab_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: str, subpage: str, chapter: str
-) -> None:
-    driver = selenium[browser_id]
-    subpage = transform(subpage)
-    page: DocumentationPage = getattr(Homepage(driver), subpage)
-    active_tabs = page.chapters.get_active_chapter_tabs_names()
-    assert (
-        len(active_tabs) == 1
-    ), f"Expected only one active chapter tab, but found {len(active_tabs)}"
-    active_tab = active_tabs[0]
-    assert (
-        active_tab == chapter
-    ), f"Expected active chapter tab: {chapter}, but found: {active_tab}"
-
-
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_user_sees_name_in_header_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: str, subpage: str, name: str
-) -> None:
-    driver = selenium[browser_id]
-    subpage = transform(subpage)
-    page: DocumentationPage = getattr(Homepage(driver), subpage)
-    assert (
-        page.current_header == name
-    ), f"Expected header: {name}, but found header: {page.current_header}"
-
-
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_docs_title_contains(
-    selenium: SeleniumDrivers, browser_id: str, text: str
-) -> None:
-    assert_title_contains(selenium, browser_id, text)
-
-
-@wt(
-    parsers.re(
-        rf"user of (?P<browser_id>.*?) sees that "
-        rf"(?P<folders>{ELEMENTS_SEQUENCE_PATTERN}) sidebar folder(s are|"
-        r' is) expanded in "(?P<subpage>Docs|API)" subpage in documentation'
-    ),
-    converters={
-        "folders": parse_elements_sequence,
-    },
-)
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_expanded_folders_in_sidebar_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: str, subpage: str, folders: list[str]
-) -> None:
-    driver = selenium[browser_id]
-    expected_folders = set(folders)
-    subpage = transform(subpage)
-    page: DocumentationPage = getattr(Homepage(driver), subpage)
-    found_folders = set(page.sidebar.get_expanded_folders_names())
-    assert (
-        found_folders == expected_folders
-    ), f"Expected folders: {expected_folders}, but found folders {found_folders}"
+    assert_user_sees_name_in_header_in_documentation_subpage(
+        selenium, browser_id, "API", endpoint.name
+    )
+    assert_active_sidebar_endpoint_in_api_subpage(
+        selenium, browser_id, endpoint.name, endpoint.method
+    )
+    assert_expanded_folders_in_sidebar_in_documentation_subpage(
+        selenium, browser_id, "API", [endpoint.category]
+    )
 
 
 @wt(
@@ -204,7 +148,7 @@ def assert_expanded_folders_in_sidebar_in_docs_subpage(
         " correctly for each selected operation in file details API section"
     )
 )
-def assert_all_links_to_rest_api_docs_works_in_file_details(
+def assert_all_links_to_rest_api_documentation_work_in_file_details(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
@@ -218,26 +162,9 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
         modal.rest_api_documentation.click()
         driver.switch_to.window(driver.window_handles[-1])
         endpoint = FILE_DETAILS_ENDPOINTS[command]
-        assert_docs_title_contains(
-            selenium, browser_id, f"{endpoint.name} | API Reference"
-        )
-        assert_active_chapter_tab_in_docs_subpage(
-            selenium, browser_id, "API", endpoint.chapter
-        )
-        assert_user_sees_name_in_header_in_docs_subpage(
-            selenium, browser_id, "API", endpoint.name
-        )
-        assert_active_sidebar_link_in_docs_subpage(
-            selenium, browser_id, "API", endpoint.label
-        )
-        assert_expanded_folders_in_sidebar_in_docs_subpage(
-            selenium,
-            browser_id,
-            "API",
-            [endpoint.category],
-        )
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])
+        assert_endpoint_details_in_api_subpage(selenium, browser_id, endpoint)
+        close_current_tab(selenium, browser_id)
+        switch_to_first_tab(selenium, browser_id)
         switch_to_iframe(selenium, browser_id)
         modal.operations.click()
 
@@ -248,7 +175,7 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
         " correctly for each selected operation in space menu API section"
     )
 )
-def assert_all_links_to_rest_api_docs_works_in_space_menu(
+def assert_all_links_to_rest_api_documentation_work_in_space_menu(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
@@ -262,36 +189,23 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(
         modal.rest_api_documentation.click()
         driver.switch_to.window(driver.window_handles[-1])
         endpoint = SPACE_ENDPOINTS[command]
-        assert_docs_title_contains(
-            selenium, browser_id, f"{endpoint.name} | API Reference"
-        )
-        assert_active_chapter_tab_in_docs_subpage(
-            selenium, browser_id, "API", endpoint.chapter
-        )
-        assert_user_sees_name_in_header_in_docs_subpage(
-            selenium, browser_id, "API", endpoint.name
-        )
-        assert_active_sidebar_link_in_docs_subpage(
-            selenium, browser_id, "API", endpoint.label
-        )
-        assert_expanded_folders_in_sidebar_in_docs_subpage(
-            selenium, browser_id, "API", [endpoint.category]
-        )
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])
-        modal.operations.click()
+        assert_endpoint_details_in_api_subpage(selenium, browser_id, endpoint)
+        close_current_tab(selenium, browser_id)
+        switch_to_first_tab(selenium, browser_id)
+        click_operations_dropdown_in_api_modal(selenium, browser_id, modal_name)
 
 
 @wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*?) sees that page title, header and"
-        r' active sidebar link contain "(?P<name>.*?)" name in "(?P<subpage>Docs|API)"'
-        r" subpage in documentation"
+    parsers.parse(
+        "user of {browser_id} sees that page title, header and active sidebar link "
+        'contain "{name}" name in "Docs" subpage in documentation'
     )
 )
 def assert_user_sees_name_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: str, name: str, subpage: str
+    selenium: SeleniumDrivers, browser_id: str, name: str
 ) -> None:
-    assert_user_sees_name_in_header_in_docs_subpage(selenium, browser_id, subpage, name)
-    assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, subpage, name)
-    assert_docs_title_contains(selenium, browser_id, f"{name} | Onedata Docs")
+    assert_user_sees_name_in_header_in_documentation_subpage(
+        selenium, browser_id, "Docs", name
+    )
+    assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, name)
+    assert_title_contains(selenium, browser_id, f"{name} | Onedata Docs")

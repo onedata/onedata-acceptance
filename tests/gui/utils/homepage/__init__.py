@@ -10,9 +10,9 @@ from typing import Literal
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.core.web_elements import WebElementsSequence
+from tests.gui.utils.homepage.api import APIPage
+from tests.gui.utils.homepage.docs import DocsPage
 from tests.gui.utils.homepage.documentation import (
-    APIPage,
-    DocsPage,
     HowItWorksPage,
     QuickStartPage,
 )
