@@ -163,11 +163,15 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
 
 @repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
 def switch_to_iframe(
-    selenium: SeleniumDrivers, browser_id: str, _selector: Optional[str] = None
+    selenium: SeleniumDrivers, browser_id: str, selector: Optional[str] = None
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    iframe = driver.find_element(By.TAG_NAME, "iframe")
+
+    if selector:
+        iframe = driver.find_element(By.CSS_SELECTOR, selector)
+    else:
+        iframe = driver.find_element(By.TAG_NAME, "iframe")
     driver.switch_to.frame(iframe)
 
 
