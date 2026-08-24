@@ -16,6 +16,7 @@ from itertools import islice
 from time import sleep
 from typing import Literal, Optional, TypeVar, cast, overload
 
+from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
@@ -32,7 +33,7 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.type_definitions import (
     VisibilityCondition,
     WebElementOrCssLocator,
@@ -303,6 +304,18 @@ def wait_for_visible_element_using_getter(
 
     return WebDriverWait(driver, timeout=timeout).until(
         partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
+    )
+
+
+def wait_for_file_to_download(
+    driver: WebDriver,
+    downloaded_file: LocalPath,
+    file_name: str,
+    timeout: float = WAIT_NORMAL_DOWNLOAD,
+) -> None:
+    WebDriverWait(driver, timeout).until(
+        lambda _: downloaded_file.isfile(),
+        message=f"File {file_name} did not finish downloading",
     )
 
 

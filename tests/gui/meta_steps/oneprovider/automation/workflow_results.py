@@ -11,9 +11,7 @@ import time
 
 from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_NORMAL_DOWNLOAD
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -40,7 +38,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     MetadataTab,
 )
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.generic import parse_elements_sequence, wait_for_file_to_download
 from tests.gui.utils.oneprovider.automation import WorkflowVisualiser
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -160,13 +158,7 @@ def count_checksums_for_file(
     )
 
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
-    WebDriverWait(
-        selenium[browser_id],
-        WAIT_NORMAL_DOWNLOAD,
-    ).until(
-        lambda _: downloaded_file.isfile(),
-        message=f"File {file_name} did not finish downloading",
-    )
+    wait_for_file_to_download(selenium[browser_id], downloaded_file, file_name)
 
     tmp_memory["checksums_" + file_name] = count_checksums_for_downloaded_file(
         downloaded_file, checksum_list
