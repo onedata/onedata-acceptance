@@ -4,7 +4,6 @@ __author__ = "Michal Dronka"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import (
@@ -27,11 +26,55 @@ from tests.gui.steps.oneprovider.qos import (
     click_enter_as_text_link,
     confirm_entering_text,
     delete_all_qualities_of_service,
+    open_qos_values_dropdown,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.type_definitions import SeleniumDrivers
+from tests.gui.utils import Popups
+from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.qos import (
+    QoSValueOption,
+)
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} chooses value of "{item}" at '
+        '"{provider}" in "Add QoS condition" popup'
+    )
+)
+def choose_value_of_item_at_provider_in_add_cond_popup(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    item: str,
+    provider: str,
+    hosts: Hosts,
+) -> None:
+    provider_name = hosts[provider]["name"]
+    driver = selenium[browser_id]
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
+    open_qos_values_dropdown(popup)
+    options = Popups(driver).power_select.items_as(QoSValueOption)
+    QoSValueOption.choose(options, item, provider_name)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} chooses value of "
+        '"{provider}" provider in "Add QoS condition" popup'
+    )
+)
+def choose_value_of_provider_item_in_add_cond_popup(
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
+    provider_name = hosts[provider]["name"]
+    driver = selenium[browser_id]
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
+    open_qos_values_dropdown(popup)
+
+    options = Popups(driver).power_select.items_as(QoSValueOption)
+    QoSValueOption.choose(options, provider_name)
 
 
 def _add_qos_requirement_in_modal(

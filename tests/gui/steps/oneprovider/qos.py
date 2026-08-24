@@ -370,26 +370,9 @@ def choose_property_in_add_condition_popup(
     popup.choose_property(property_name)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} chooses value of "{item}" at '
-        '"{provider}" in "Add QoS condition" popup'
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def choose_value_of_item_at_provider_in_add_cond_popup(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    item: str,
-    provider: str,
-    hosts: Hosts,
-) -> None:
-    provider_name = hosts[provider]["name"]
-    driver = selenium[browser_id]
+def open_qos_values_dropdown(driver: WebDriver) -> None:
     popup = Popups(driver).get_query_builder_not_hidden_popup()
-    popup.qos_values_choice()
-    separator = PROVIDER_PREFIX_CHAR
-    Popups(driver).power_select.choose_item(f"{item} {separator}{provider_name}")
+    popup.expand_values()
 
 
 @wt(
@@ -408,7 +391,7 @@ def assert_list_of_providers_in_add_cond_popup(
 
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
-    popup.qos_values_choice()
+    popup.expand_values()
     separator = f" {PROVIDER_PREFIX_CHAR}"
     actual = [v.text.split(separator)[0] for v in Popups(driver).power_select.items]
     compare_lists(expected, actual)
@@ -435,26 +418,9 @@ def assert_list_of_storages_in_add_cond_popup(
 
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
-    popup.qos_values_choice()
+    popup.expand_values()
     actual = [v.text for v in Popups(driver).power_select.items]
     compare_lists(expected, actual)
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} chooses value of "
-        '"{provider}" provider in "Add QoS condition" popup'
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def choose_value_of_provider_item_in_add_cond_popup(
-    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
-) -> None:
-    provider_name = hosts[provider]["name"]
-    driver = selenium[browser_id]
-    popup = Popups(driver).get_query_builder_not_hidden_popup()
-    popup.qos_values_choice()
-    Popups(driver).power_select.choose_item_with_id(f"{provider_name}")
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" in "Add QoS condition" popup'))

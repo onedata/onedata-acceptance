@@ -7,9 +7,11 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, WebItemsSequence
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.utils.utils import repeat_failed
 
 
 class Property(PageObject):
@@ -38,8 +40,9 @@ class ExpressionBuilderPopup(PageObject):
     values = WebItemsSequence(
         ".comparator-value-editor .ember-power-select-option", cls=Item
     )
-    values_choice = Button(".comparator-value-editor .ember-basic-dropdown-trigger")
-    qos_values_choice = Button(".comparator-value-editor .ember-basic-dropdown-trigger")
+
+    _dropdown_trigger_css_sel = ".comparator-value-editor .ember-basic-dropdown-trigger"
+    values_choice = Button(_dropdown_trigger_css_sel)
 
     value = Input(".comparator-value")
     add_button = Button(".accept-condition")
@@ -69,8 +72,14 @@ class ExpressionBuilderPopup(PageObject):
                 return
         raise PageObjectNotFoundError(f"There is no comparator {comparator_name}")
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def expand_values(self) -> None:
-        self.values_choice()
+        if not self.is_values_dropdown_expanded():
+            self.values_choice.click()
+            assert self.is_values_dropdown_expanded(), "Values dropdown did not open"
+
+    def is_values_dropdown_expanded(self) -> bool:
+        return self.values_choice.web_elem.get_attribute("aria-expanded") == "true"
 
     def choose_value(self, value_name: str) -> None:
         self.expand_values()

@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.common.exceptions import JavascriptException
 
+from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.query_builder import QueryBuilder
 from tests.gui.utils.core.base import PageObject
@@ -19,6 +20,44 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+
+
+class QoSValueOption(PageObject):
+    value_name = id = Label(".item-name")
+
+    @property
+    def label(self) -> str:
+        return self.web_elem.text
+
+    @property
+    def qualifier(self) -> str | None:
+        parts = self.label.rsplit(" " + CONFLICT_NAME_SEPARATOR)
+        return parts[1] if len(parts) == 2 else None
+
+    @staticmethod
+    def choose(
+        options: list["QoSValueOption"],
+        expected_value_name: str,
+        expected_provider_name: str | None = None,
+    ) -> None:
+        for option in options:
+            provider_matches = (
+                expected_provider_name is None
+                or option.qualifier == expected_provider_name
+            )
+            if option.value_name == expected_value_name and provider_matches:
+                option.click()
+                return
+
+        provider_description = (
+            f' at provider "{expected_provider_name}"'
+            if expected_provider_name is not None
+            else ""
+        )
+        raise PageObjectNotFoundError(
+            f'QoS value "{expected_value_name}"{provider_description} not found'
+        )
 
 
 class Requirement(PageObject):
