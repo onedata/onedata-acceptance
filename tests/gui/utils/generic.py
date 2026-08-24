@@ -474,7 +474,7 @@ def are_events_gathered_together(
     return False
 
 
-def assert_each_event_is_gathered_with_another_event(
+def assert_events_are_gathered_with_event(
     events: list[str],
     other_event: str,
     gathered_events: list[str],
