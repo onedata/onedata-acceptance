@@ -64,29 +64,29 @@ def click_rest_api_documentation_link(
 
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def get_documentation_page(
+def get_documentation_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str
 ) -> DocumentationPage:
     return getattr(Homepage(selenium[browser_id]), transform(subpage))
 
 
-def assert_active_sidebar_link_on_open_docs_page(
-    selenium: SeleniumDrivers, browser_id: str, subpage: str, link: str
+def assert_sidebar_link_is_active_in_documentation_subpage(
+    selenium: SeleniumDrivers, browser_id: str, subpage: str, expected_link: str
 ) -> None:
-    page = get_documentation_page(selenium, browser_id, subpage)
-    _assert_active_sidebar_link_on_page(page, link)
+    page = get_documentation_subpage(selenium, browser_id, subpage)
+    _assert_sidebar_link_is_active(page, expected_link)
 
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def _assert_active_sidebar_link_on_page(page: DocumentationPage, link: str) -> None:
+def _assert_sidebar_link_is_active(page: DocumentationPage, expected_link: str) -> None:
     active_links = page.sidebar.get_active_rows_names()
     assert (
         len(active_links) == 1
     ), f"Expected only one active link, but found {len(active_links)}"
     active_link = active_links[0]
     assert (
-        active_link == link
-    ), f"Expected active link: {link}, but found: {active_link}"
+        active_link == expected_link
+    ), f"Expected active link: {expected_link}, but found: {active_link}"
 
 
 @wt(
@@ -99,7 +99,7 @@ def _assert_active_sidebar_link_on_page(page: DocumentationPage, link: str) -> N
 def assert_active_chapter_tab_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, chapter: str
 ) -> None:
-    page = get_documentation_page(selenium, browser_id, subpage)
+    page = get_documentation_subpage(selenium, browser_id, subpage)
     active_tabs = page.chapters.get_active_chapter_tabs_names()
     assert (
         len(active_tabs) == 1
@@ -114,7 +114,7 @@ def assert_active_chapter_tab_in_docs_subpage(
 def assert_user_sees_name_in_header_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, name: str
 ) -> None:
-    page = get_documentation_page(selenium, browser_id, subpage)
+    page = get_documentation_subpage(selenium, browser_id, subpage)
     current_header = page.current_header
     assert (
         current_header == name
@@ -135,7 +135,7 @@ def assert_user_sees_name_in_header_in_docs_subpage(
 def assert_expanded_folders_in_sidebar_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, folders: list[str]
 ) -> None:
-    page = get_documentation_page(selenium, browser_id, subpage)
+    page = get_documentation_subpage(selenium, browser_id, subpage)
     expected_folders = set(folders)
     found_folders = set(page.sidebar.get_expanded_folders_names())
     assert (

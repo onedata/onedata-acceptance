@@ -16,7 +16,7 @@ from tests.gui.utils.common.modals.workflows_modals.pods_activity import (
 )
 from tests.gui.utils.generic import (
     assert_each_event_is_gathered,
-    assert_each_event_is_gathered_with_lambda,
+    assert_each_event_is_gathered_with_another_event,
 )
 from tests.utils.utils import repeat_failed
 
@@ -70,7 +70,7 @@ def wait_for_events_in_pods_activity_modal(
     gathered_events = gather_events_list(modal, driver, option)
 
     if lambda_name:
-        assert_each_event_is_gathered_with_lambda(
+        assert_each_event_is_gathered_with_another_event(
             events, lambda_name, gathered_events, option
         )
     else:

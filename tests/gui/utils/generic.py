@@ -465,29 +465,29 @@ def assert_each_event_is_gathered(
         )
 
 
-def is_event_gathered_with_lambda(
-    event: str, lambda_name: str, gathered_events: list[str]
+def are_events_gathered_together(
+    first_event: str, second_event: str, gathered_events: list[str]
 ) -> bool:
     for gathered_event in gathered_events:
-        if event in gathered_event and lambda_name in gathered_event:
+        if first_event in gathered_event and second_event in gathered_event:
             return True
     return False
 
 
-def assert_each_event_is_gathered_with_lambda(
+def assert_each_event_is_gathered_with_another_event(
     events: list[str],
-    lambda_name: str,
+    other_event: str,
     gathered_events: list[str],
     option: str,
 ) -> None:
     for event in events:
-        is_event_gathered = is_event_gathered_with_lambda(
-            event, lambda_name, gathered_events
+        events_are_gathered_together = are_events_gathered_together(
+            event, other_event, gathered_events
         )
 
-        assert is_event_gathered, (
+        assert events_are_gathered_together, (
             f'No gathered event with {option} containing "{event}" '
-            f'and lambda name "{lambda_name}" was found. '
+            f'and event "{other_event}" was found. '
             f"Gathered {option}s: {gathered_events}"
         )
 
