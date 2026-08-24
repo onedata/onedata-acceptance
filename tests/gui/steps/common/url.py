@@ -394,6 +394,10 @@ def switch_to_first_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver.switch_to.window(driver.window_handles[0])
 
 
+def close_current_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
+    selenium[browser_id].close()
+
+
 @wt(parsers.parse('user of {browser_id} sees image named "{image_name}" in browser'))
 def assert_image_in_browser(
     browser_id: str, selenium: SeleniumDrivers, image_name: str

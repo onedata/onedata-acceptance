@@ -27,14 +27,6 @@ from tests.gui.steps.onezone.documentation import (
 from tests.gui.utils.homepage.api import EndpointInfo
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
-
-# The docs timeout needs to be higher than the standard WAIT_FRONTEND,
-# because opening the docs page is a resource-consuming operation.
-# Additionally, waiting for the headers to expand or for the desired section
-# to become active also takes some time.
-DEFAULT_DOCS_TIMEOUT = 30
-
 
 SPACE_ENDPOINTS = {
     "Get space details": EndpointInfo.space("GET", "Get space details"),
@@ -151,22 +143,19 @@ def assert_endpoint_details_in_api_subpage(
 def assert_all_links_to_rest_api_documentation_work_in_file_details(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    driver = selenium[browser_id]
-    modal = Modals(driver).details_modal.api
-    modal.operations.click()
-    popup = Popups(driver).power_select
-    commands = [item.text.split("\n")[0] for item in popup.items]
+    modal_name = "details_modal"
+    click_operations_dropdown_in_api_modal(selenium, browser_id, modal_name)
+    commands = get_rest_api_commands_from_dropdown(selenium, browser_id)
     for command in commands:
-        modal = Modals(driver).details_modal.api
-        Popups(driver).power_select.choose_item(f"{command}\nREST")
-        modal.rest_api_documentation.click()
-        driver.switch_to.window(driver.window_handles[-1])
+        choose_rest_api_command_from_dropdown(selenium, browser_id, command)
+        click_rest_api_documentation_link(selenium, browser_id, modal_name)
+        switch_to_last_tab(selenium, browser_id)
         endpoint = FILE_DETAILS_ENDPOINTS[command]
         assert_endpoint_details_in_api_subpage(selenium, browser_id, endpoint)
         close_current_tab(selenium, browser_id)
         switch_to_first_tab(selenium, browser_id)
         switch_to_iframe(selenium, browser_id)
-        modal.operations.click()
+        click_operations_dropdown_in_api_modal(selenium, browser_id, modal_name)
 
 
 @wt(
@@ -178,16 +167,13 @@ def assert_all_links_to_rest_api_documentation_work_in_file_details(
 def assert_all_links_to_rest_api_documentation_work_in_space_menu(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    driver = selenium[browser_id]
-    modal = Modals(driver).rest_api.api
-    modal.operations.click()
-    popup = Popups(driver).power_select
-    commands = [item.text.split("\n")[0] for item in popup.items]
+    modal_name = "rest_api"
+    click_operations_dropdown_in_api_modal(selenium, browser_id, modal_name)
+    commands = get_rest_api_commands_from_dropdown(selenium, browser_id)
     for command in commands:
-        modal = Modals(driver).rest_api.api
-        Popups(driver).power_select.choose_item(f"{command}\nREST")
-        modal.rest_api_documentation.click()
-        driver.switch_to.window(driver.window_handles[-1])
+        choose_rest_api_command_from_dropdown(selenium, browser_id, command)
+        click_rest_api_documentation_link(selenium, browser_id, modal_name)
+        switch_to_last_tab(selenium, browser_id)
         endpoint = SPACE_ENDPOINTS[command]
         assert_endpoint_details_in_api_subpage(selenium, browser_id, endpoint)
         close_current_tab(selenium, browser_id)
