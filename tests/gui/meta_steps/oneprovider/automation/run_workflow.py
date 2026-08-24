@@ -11,6 +11,10 @@ import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.conftest import (
+    WAIT_EXTENDED_WORKFLOW_EXECUTION,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+)
 from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
@@ -37,7 +41,6 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    WorkflowExecutionWaitDuration,
     parse_elements_sequence,
     parse_seq,
     transform,
@@ -220,7 +223,7 @@ def wait_for_workflows_in_automation_subpage_extended_time(
         selenium,
         browser_id,
         option,
-        wait_duration=WorkflowExecutionWaitDuration.EXTENDED,
+        timeout=WAIT_EXTENDED_WORKFLOW_EXECUTION,
     )
 
 
@@ -237,9 +240,7 @@ def _wait_for_workflows_in_automation_subpage(
     browser_id: str,
     option: str,
     *,
-    wait_duration: WorkflowExecutionWaitDuration = (
-        WorkflowExecutionWaitDuration.NORMAL
-    ),
+    timeout: float = WAIT_NORMAL_WORKFLOW_EXECUTION,
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     if option == "start":
@@ -252,7 +253,7 @@ def _wait_for_workflows_in_automation_subpage(
     wait_until_workflow_executions_list_is_empty(
         page,
         err,
-        timeout=wait_duration.value,
+        timeout=timeout,
     )
 
 
