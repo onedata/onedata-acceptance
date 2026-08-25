@@ -39,4 +39,4 @@ class BaseDocumentationPage(PageObject):
     def __getitem__(self, item: str) -> PageObject:
         if hasattr(self, "elements_list"):
             return self.elements_list[item]
-        raise ValueError("there is not elements_list member in class instance")
+        raise AttributeError("there is not elements_list member in class instance")
