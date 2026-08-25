@@ -19,7 +19,6 @@ from tests.gui.utils.generic import click_on_web_elem, transform
 
 
 class BrowserRow(PageObject):
-
     name = id = Label(".file-name-inner", scroll=False)
     clickable_field = WebElement(".file-name", scroll=False)
     menu_button = Button(".file-row-actions-trigger", scroll=False)

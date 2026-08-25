@@ -59,9 +59,7 @@ def get_item_name_from_path(
     option_in_space: str,
     item_browser: str,
 ) -> str:
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space_name, option_in_space
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space_name, option_in_space)
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, item_browser)
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path, item_browser)
     return path.split("/")[-1]
@@ -69,8 +67,7 @@ def get_item_name_from_path(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} creates dataset{option}for item "
-        '"{item_name}" in "{space_name}"'
+        'user of {browser_id} creates dataset{option}for item "{item_name}" in "{space_name}"'
     )
 )
 def create_dataset(
@@ -110,9 +107,7 @@ def create_dataset(
         )
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_data_row_menu
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_data_row_menu)
     click_modal_button(selenium, browser_id, create_button, option_in_data_row_menu)
     flags = [item.replace("_protection", "") for item in get_flags(option)]
     for flag in flags:
@@ -138,12 +133,8 @@ def fail_to_create_dataset_in_op_gui(
         tmp_memory,
     )
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_data_row_menu
-    )
-    fail_to_click_button_in_modal(
-        browser_id, create_button, option_in_data_row_menu, selenium
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_data_row_menu)
+    fail_to_click_button_in_modal(browser_id, create_button, option_in_data_row_menu, selenium)
 
 
 def assert_top_level_dataset_in_space_in_op_gui(
@@ -201,9 +192,7 @@ def remove_dataset_in_op_gui(
         tmp_memory,
         item_browser=item_browser,
     )
-    click_menu_for_elem_in_browser(
-        browser_id, item_name, tmp_memory, which_browser=item_browser
-    )
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(
         selenium,
         browser_id,
@@ -263,14 +252,10 @@ def check_effective_protection_flags_for_file_in_op_gui(
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory, item_name)
     item_name = item_name.split("/")[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_data_row_menu
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_data_row_menu)
     flags = [item.replace("_protection", "") for item in get_flags(option)]
     for flag in flags:
-        check_effective_protection_flag(
-            browser_id, selenium, flag, item_name, tmp_memory
-        )
+        check_effective_protection_flag(browser_id, selenium, flag, item_name, tmp_memory)
 
 
 def check_effective_protection_flag(
@@ -284,9 +269,7 @@ def check_effective_protection_flag(
         assert_general_toggle_checked_for_ancestors(browser_id, selenium, kind)
     except AssertionError:
         status_type = kind + " protected"
-        assert_status_tag_for_file_in_browser(
-            browser_id, status_type, item_name, tmp_memory
-        )
+        assert_status_tag_for_file_in_browser(browser_id, status_type, item_name, tmp_memory)
 
 
 def set_protection_flags_for_dataset_in_op_gui(
@@ -317,9 +300,7 @@ def set_protection_flags_for_dataset_in_op_gui(
     )
     item_name = item_name.split("/")[-1]
 
-    click_menu_for_elem_in_browser(
-        browser_id, item_name, tmp_memory, which_browser=item_browser
-    )
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(
         selenium,
         browser_id,
@@ -353,9 +334,7 @@ def detach_dataset_in_op_gui(
         tmp_memory,
         item_browser=item_browser,
     )
-    click_menu_for_elem_in_browser(
-        browser_id, item_name, tmp_memory, which_browser=item_browser
-    )
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(
         selenium,
         browser_id,
@@ -425,9 +404,7 @@ def reattach_dataset_in_op_gui(
         tmp_memory,
         item_browser=item_browser,
     )
-    click_menu_for_elem_in_browser(
-        browser_id, item_name, tmp_memory, which_browser=item_browser
-    )
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(
         selenium,
         browser_id,

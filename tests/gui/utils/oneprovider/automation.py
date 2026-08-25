@@ -110,9 +110,7 @@ class WorkflowLane(Element):
     name_web_elem = WebElement(".lane-name")
     lane_web_elem = WebElement(".draggable-lane")
     status = Label(".visible-run-status-label")
-    parallel_boxes = WebItemsSequence(
-        ".workflow-visualiser-parallel-box ", cls=ParallelBox
-    )
+    parallel_boxes = WebItemsSequence(".workflow-visualiser-parallel-box ", cls=ParallelBox)
     latest_run_menu = Button(".lane-run-actions-trigger .menu-toggle-frame")
     run_indicators = WebItemsSequence(".run-indicators-item", cls=RunIndicator)
 
@@ -146,12 +144,8 @@ class WorkflowVisualiser(PageObject):
         ".workflow-visualiser-stores-list .tag-item",
         cls=WorkflowVisualiserStore,
     )
-    pause = NamedButton(
-        ".pause-resume-atm-workflow-execution-action-trigger", text="Pause"
-    )
-    resume = NamedButton(
-        ".pause-resume-atm-workflow-execution-action-trigger", text="Resume"
-    )
+    pause = NamedButton(".pause-resume-atm-workflow-execution-action-trigger", text="Pause")
+    resume = NamedButton(".pause-resume-atm-workflow-execution-action-trigger", text="Resume")
     cancel = Button(".cancel-atm-workflow-execution-action-trigger")
     audit_log = NamedButton(".btn", text="Audit log")
 

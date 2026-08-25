@@ -65,11 +65,7 @@ def _register_group_finalizer(
     )
 
 
-@given(
-    parsers.parse(
-        'initial groups configuration in "{service}" Onezone service:\n{config}'
-    )
-)
+@given(parsers.parse('initial groups configuration in "{service}" Onezone service:\n{config}'))
 def groups_creation_step(
     config: str,
     service: str,
@@ -198,9 +194,7 @@ def _groups_creation(
 
             child_id = groups[child_group]
 
-            _add_child_group(
-                zone_hostname, admin_credentials, group_id, child_id, privileges
-            )
+            _add_child_group(zone_hostname, admin_credentials, group_id, child_id, privileges)
 
 
 def _unpack_member_entry(entry: MemberEntry) -> tuple[str, list[str] | None]:
@@ -276,9 +270,7 @@ def _add_child_group(
     )
 
 
-def _get_group_id(
-    hosts: HostsConfig, users: Users, user: str, group_name: str
-) -> str | None:
+def _get_group_id(hosts: HostsConfig, users: Users, user: str, group_name: str) -> str | None:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     groups_id_list = get_group_id_list(user, users, zone_hostname)
@@ -300,9 +292,7 @@ def _get_group_id(
         "{user} before definition in next steps"
     )
 )
-def remove_group_in_onezone(
-    hosts: HostsConfig, users: Users, user: str, group_name: str
-) -> None:
+def remove_group_in_onezone(hosts: HostsConfig, users: Users, user: str, group_name: str) -> None:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     group_id = _get_group_id(hosts, users, user, group_name)
@@ -317,8 +307,7 @@ def remove_group_in_onezone(
 
 @given(
     parsers.parse(
-        "there is no groups in Onezone page used by {user} before "
-        "definition in next steps"
+        "there is no groups in Onezone page used by {user} before definition in next steps"
     )
 )
 def remove_all_groups_rest(user: str, hosts: HostsConfig, users: Users) -> None:
@@ -330,9 +319,7 @@ def remove_all_groups_rest(user: str, hosts: HostsConfig, users: Users) -> None:
         _try_to_remove_group(group, zone_hostname, user, users)
 
 
-def _try_to_remove_group(
-    group_id: str, zone_hostname: str, user: str, users: Users
-) -> None:
+def _try_to_remove_group(group_id: str, zone_hostname: str, user: str, users: Users) -> None:
     try:
         http_delete(
             ip=zone_hostname,

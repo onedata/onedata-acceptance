@@ -48,25 +48,15 @@ def assert_files_list_on_data_disc(selenium: SeleniumDrivers, browser_id: str) -
     assert len(DataDiscovery(selenium[browser_id]).results_list), msg
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees public data discovery page with no harvested data"
-    )
-)
-def assert_empty_data_discovery_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+@wt(parsers.parse("user of {browser_id} sees public data discovery page with no harvested data"))
+def assert_empty_data_discovery_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     button_name = "Query"
 
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
     wt_click_button_on_data_disc_page(selenium, browser_id, button_name)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees "{error_msg}" alert on Data discovery page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees "{error_msg}" alert on Data discovery page'))
 @repeat_failed(timeout=WAIT_BACKEND * 9, interval=10)
 def assert_alert_text_on_data_disc_page(
     selenium: SeleniumDrivers, browser_id: str, error_msg: str
@@ -75,11 +65,7 @@ def assert_alert_text_on_data_disc_page(
     assert error_msg == DataDiscovery(selenium[browser_id]).error_message, msg
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees "{error_msg}" alert on empty Data discovery page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees "{error_msg}" alert on empty Data discovery page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def see_alert_on_data_discovery_page(
     selenium: SeleniumDrivers, browser_id: str, error_msg: str
@@ -89,25 +75,15 @@ def see_alert_on_data_discovery_page(
 
 
 @wt(parsers.parse("user of {browser_id} sees Data Discovery page with Ecrin GUI"))
-@wt(
-    parsers.parse("user of {browser_id} sees public data discovery page with Ecrin GUI")
-)
+@wt(parsers.parse("user of {browser_id} sees public data discovery page with Ecrin GUI"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_data_discovery_page_ecrin(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def assert_data_discovery_page_ecrin(selenium: SeleniumDrivers, browser_id: str) -> None:
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
     driver = selenium[browser_id]
-    assert (
-        DataDiscovery(driver).ecrin_gui_app_logo == "MDR"
-    ), "Ecrin GUI not loaded in given time"
+    assert DataDiscovery(driver).ecrin_gui_app_logo == "MDR", "Ecrin GUI not loaded in given time"
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on add query block icon in data discovery page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on add query block icon in data discovery page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def start_query_block(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
@@ -116,8 +92,7 @@ def start_query_block(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on add another query block icon"
-        " in data discovery page"
+        "user of {browser_id} clicks on add another query block icon in data discovery page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -133,19 +108,13 @@ def start_another_query_block(selenium: SeleniumDrivers, browser_id: str) -> Non
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_query_block_no(
-    selenium: SeleniumDrivers, browser_id: str, number: str
-) -> None:
+def start_query_block_no(selenium: SeleniumDrivers, browser_id: str, number: str) -> None:
     driver = selenium[browser_id]
     no = int(number.split()[0])
     DataDiscovery(driver).query_builder.another_block_buttons[no - 1].click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on condition properties expander in query builder"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on condition properties expander in query builder"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_condition_properties_list(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
@@ -155,8 +124,7 @@ def open_condition_properties_list(selenium: SeleniumDrivers, browser_id: str) -
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {properties_list:ElementsSequence} on "
-        "condition properties list",
+        "user of {browser_id} sees {properties_list:ElementsSequence} on condition properties list",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
@@ -167,15 +135,14 @@ def assert_properties_on_condition_properties_list(
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     for property_name in properties_list:
-        assert query_builder_popup.assert_property(
-            property_name
-        ), f"{property_name} property not found in condition properties list"
+        assert query_builder_popup.assert_property(property_name), (
+            f"{property_name} property not found in condition properties list"
+        )
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{property_name}" property '
-        "for a query in query builder popup"
+        'user of {browser_id} chooses "{property_name}" property for a query in query builder popup'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -189,8 +156,7 @@ def choose_property_for_query(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{comparator}" from '
-        "comparators list in query builder popup"
+        'user of {browser_id} chooses "{comparator}" from comparators list in query builder popup'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -202,15 +168,9 @@ def choose_comparator_in_query_builder(
     query_builder_popup.choose_comparator(comparator)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} writes "{value}" to value input in query builder popup'
-    )
-)
+@wt(parsers.parse('user of {browser_id} writes "{value}" to value input in query builder popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_value_in_query_builder(
-    selenium: SeleniumDrivers, browser_id: str, value: str
-) -> None:
+def write_value_in_query_builder(selenium: SeleniumDrivers, browser_id: str, value: str) -> None:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.value = value
@@ -218,14 +178,11 @@ def write_value_in_query_builder(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{value}" from property values '
-        "list in query builder popup"
+        'user of {browser_id} chooses "{value}" from property values list in query builder popup'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_value_in_query_builder(
-    selenium: SeleniumDrivers, browser_id: str, value: str
-) -> None:
+def choose_value_in_query_builder(selenium: SeleniumDrivers, browser_id: str, value: str) -> None:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.choose_value(value)
@@ -233,19 +190,13 @@ def choose_value_in_query_builder(
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" button in query builder popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_button_in_query_builder(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_add_button_in_query_builder(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.add_button()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks {operator} operator in query builder popup"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks {operator} operator in query builder popup"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_operator_in_query_builder(
     selenium: SeleniumDrivers, browser_id: str, operator: str
@@ -255,11 +206,7 @@ def click_operator_in_query_builder(
     getattr(query_builder, f"{operator.lower()}_operator")()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "{button_name}" button on Data discovery page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "{button_name}" button on Data discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_button_on_data_disc_page(
     selenium: SeleniumDrivers, browser_id: str, button_name: str
@@ -319,8 +266,7 @@ def open_next_data_disc_page(selenium: SeleniumDrivers, browser_id: str) -> None
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{parameter}" sorting '
-        "{item} on data discovery page"
+        'user of {browser_id} chooses "{parameter}" sorting {item} on data discovery page'
     )
 )
 def choose_sorting_parameter_or_order(

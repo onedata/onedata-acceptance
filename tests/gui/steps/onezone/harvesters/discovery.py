@@ -17,11 +17,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on {button_name} button in discovery sidebar"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on {button_name} button in discovery sidebar"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_discovery_on_left_sidebar_menu(
     selenium: SeleniumDrivers, browser_id: str, button_name: str
@@ -33,9 +29,7 @@ def click_button_on_discovery_on_left_sidebar_menu(
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in discovery page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_button_in_discovery_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_create_button_in_discovery_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).discovery.create_button()
 
@@ -90,9 +84,7 @@ def click_on_option_in_harvester_menu(
     page.menu[option]()
 
 
-@wt(
-    parsers.parse('user of {browser_id} types "{text}" to rename harvester input field')
-)
+@wt(parsers.parse('user of {browser_id} types "{text}" to rename harvester input field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_rename_input_field_in_discovery_page(
     selenium: SeleniumDrivers, browser_id: str, text: str
@@ -104,9 +96,7 @@ def type_text_to_rename_input_field_in_discovery_page(
 
 @wt(parsers.parse("user of {browser_id} confirms harvester rename using button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_harvester_rename_using_button(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def confirm_harvester_rename_using_button(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).discovery.rename_button()
 
@@ -156,8 +146,7 @@ def see_insufficient_permissions_alert_on_discovery_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} types "{text}" to {input_name} input '
-        "field in discovery page"
+        'user of {browser_id} types "{text}" to {input_name} input field in discovery page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -185,11 +174,7 @@ def type_endpoint_to_input_field_in_discovery_page(
     _enter_text(input_field, text)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks {button_name} button in harvester spaces page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks {button_name} button in harvester spaces page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_harvester_spaces_page(
     selenium: SeleniumDrivers, browser_id: str, button_name: str
@@ -201,8 +186,7 @@ def click_button_in_harvester_spaces_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{element_name}" from dropdown'
-        " in add {element} modal"
+        'user of {browser_id} chooses "{element_name}" from dropdown in add {element} modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)
@@ -226,9 +210,7 @@ def assert_space_has_appeared_in_discovery_page(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    assert (
-        space_name in OZLoggedIn(driver).discovery.spaces_list
-    ), f'space "{space_name}" not found'
+    assert space_name in OZLoggedIn(driver).discovery.spaces_list, f'space "{space_name}" not found'
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

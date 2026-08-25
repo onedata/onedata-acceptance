@@ -18,9 +18,7 @@ from kubernetes import client, config  # pylint: disable=import-error
 
 type Command = list[str]
 type CommandResult = str | int
-type YamlValue = Optional[
-    str | int | float | bool | list["YamlValue"] | dict[str, "YamlValue"]
-]
+type YamlValue = Optional[str | int | float | bool | list["YamlValue"] | dict[str, "YamlValue"]]
 type YamlObject = dict[str, YamlValue]
 
 
@@ -80,9 +78,7 @@ def run_onenv_command(
 
     if args:
         cmd.extend(args)
-    return run_command(
-        cmd, fail_with_error=fail_with_error, return_output=return_output, cwd=cwd
-    )
+    return run_command(cmd, fail_with_error=fail_with_error, return_output=return_output, cwd=cwd)
 
 
 @overload
@@ -218,9 +214,7 @@ def helm_init_cmd(client_only: Optional[bool] = None) -> Command:
 
 def get_kube_client() -> client.CoreV1Api:
     urllib3.disable_warnings()
-    config.load_kube_config(
-        config_file=os.path.join(os.path.expanduser("~"), ".kube", "config")
-    )
+    config.load_kube_config(config_file=os.path.join(os.path.expanduser("~"), ".kube", "config"))
     kube = client.CoreV1Api()
     return kube
 
@@ -279,7 +273,7 @@ def list_pods() -> list[client.V1Pod]:
 def match_pods(substring: str) -> list[client.V1Pod]:
     pods_list = list_pods()
     # Accept dashes as wildcard characters
-    pattern = f".*{substring.replace("-", ".*")}.*"
+    pattern = f".*{substring.replace('-', '.*')}.*"
     return list(filter(lambda pod: re.match(pattern, get_name(pod)), pods_list))
 
 

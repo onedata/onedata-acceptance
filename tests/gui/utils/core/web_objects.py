@@ -30,10 +30,7 @@ class ButtonPageObject(PageObject):
         self.click()
 
     def is_enabled(self) -> bool:
-        return (
-            self.web_elem.is_enabled()
-            and "disabled" not in self.web_elem.get_attribute("class")
-        )
+        return self.web_elem.is_enabled() and "disabled" not in self.web_elem.get_attribute("class")
 
     def is_active(self) -> bool:
         return "active" in self.web_elem.get_attribute("class")
@@ -51,7 +48,6 @@ class ButtonWithTextPageObject(ButtonPageObject):
 
 
 class PageObjectsSequence:
-
     def __init__(
         self,
         driver: WebDriver,
@@ -77,9 +73,7 @@ class PageObjectsSequence:
         return (self.cls(self.driver, item, self.parent) for item in self.items)
 
     def __reversed__(self) -> Iterator[PageObject]:
-        return (
-            self.cls(self.driver, item, self.parent) for item in reversed(self.items)
-        )
+        return (self.cls(self.driver, item, self.parent) for item in reversed(self.items))
 
     def __getitem__(self, sel: int | str) -> PageObject:
         if isinstance(sel, int):

@@ -63,9 +63,9 @@ def assert_file_symlink_value(
         path_splitted = target_path.split("/")
         cut_path = "/".join(path_splitted[1:])
 
-        assert (
-            cut_path == path2
-        ), f"given path: {path2} not equal to target path from endpoint: {cut_path}"
+        assert cut_path == path2, (
+            f"given path: {path2} not equal to target path from endpoint: {cut_path}"
+        )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -94,12 +94,9 @@ def assert_file_hardlinks(
         user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
         file_id = _lookup_file_id(f"{space}/{file_path}", user_client_op)
         actual_hardlinks = get_file_hardlinks_rest(users, user, hosts, host, file_id)
-        expected_ids = [
-            _lookup_file_id(f"{space}/{path}", user_client_op) for path in paths_list
-        ]
+        expected_ids = [_lookup_file_id(f"{space}/{path}", user_client_op) for path in paths_list]
         assert set(actual_hardlinks) == set(expected_ids), (
-            "The IDs of hardlinks from endpoint are not the same as IDs of provided"
-            " files"
+            "The IDs of hardlinks from endpoint are not the same as IDs of provided files"
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -145,9 +142,7 @@ def create_file_symlink(
         target_path = f"{space_prefix}/{file_name}"
 
         destination_dir_id = _lookup_file_id(f"{space}/{parent_path}", user_client_op)
-        create_symlink_rest(
-            users, user, hosts, host, destination_dir_id, target_path, file_name
-        )
+        create_symlink_rest(users, user, hosts, host, destination_dir_id, target_path, file_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -276,9 +271,9 @@ def assert_hardlink_between_files_rest(
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_id1 = _lookup_file_id(f"{space}/{file_path}", user_client_op)
     file_id2 = _lookup_file_id(f"{space}/{hardlink_path}", user_client_op)
-    assert check_for_hardlink_between_files_rest(
-        users, user, hosts, host, file_id1, file_id2
-    ), f"file: {hardlink_path} is not a hardlink to file: {file_path}"
+    assert check_for_hardlink_between_files_rest(users, user, hosts, host, file_id1, file_id2), (
+        f"file: {hardlink_path} is not a hardlink to file: {file_path}"
+    )
 
 
 @wt(
@@ -298,9 +293,7 @@ def assert_hardlink_between_files_oneclient(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_hardlink_between_files(
-            user, oneclient_host, users, file_path1, file_path2, request
-        )
+        assert_hardlink_between_files(user, oneclient_host, users, file_path1, file_path2, request)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -322,8 +315,6 @@ def assert_file_is_symlink_and_where_it_points_oneclient(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_symlink_of_file(
-            user, oneclient_host, users, symlink_path, file_path, request
-        )
+        assert_symlink_of_file(user, oneclient_host, users, symlink_path, file_path, request)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

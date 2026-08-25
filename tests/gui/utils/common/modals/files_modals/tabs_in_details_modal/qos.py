@@ -38,17 +38,13 @@ class QoSValueOption(PageObject):
     ) -> None:
         for option in options:
             # when qualifier(provider name) is not given this condition is always True
-            qualifier_matches = (
-                expected_qualifier is None or option.qualifier == expected_qualifier
-            )
+            qualifier_matches = expected_qualifier is None or option.qualifier == expected_qualifier
             if option.value_name == expected_value_name and qualifier_matches:
                 option.click()
                 return
 
         qualifier_description = (
-            f' at provider "{expected_qualifier}"'
-            if expected_qualifier is not None
-            else ""
+            f' at provider "{expected_qualifier}"' if expected_qualifier is not None else ""
         )
         raise PageObjectNotFoundError(
             f'QoS value "{expected_value_name}"{qualifier_description} not found'
@@ -106,8 +102,7 @@ class QoSTab(Modal):
     def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
-                "document.querySelector('.perfect-scrollbar-element"
-                ".ps--active-y').scrollTo(0, 0)"
+                "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
             )
         except JavascriptException as e:
             raise AssertionError(

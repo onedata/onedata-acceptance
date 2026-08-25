@@ -93,9 +93,7 @@ def copy_support_token_from_add_support_page(
     clipboard: Clipboard,
     tmp_memory: TmpMemory,
 ) -> None:
-    click_copy_button_on_request_support_page(
-        selenium, browser_id, displays, clipboard, tmp_memory
-    )
+    click_copy_button_on_request_support_page(selenium, browser_id, displays, clipboard, tmp_memory)
     notify_visible_with_text(
         selenium,
         browser_id,
@@ -131,11 +129,7 @@ def create_spaces_in_oz_using_gui(
         spaces[space_name] = clipboard.paste(display=displays[user])
 
 
-@wt(
-    parsers.parse(
-        'user of {user} sends support token for "{space_name}" to user of {browser_id}'
-    )
-)
+@wt(parsers.parse('user of {user} sends support token for "{space_name}" to user of {browser_id}'))
 def send_support_token_in_oz_using_gui(
     selenium: SeleniumDrivers,
     user: str,
@@ -153,9 +147,7 @@ def send_support_token_in_oz_using_gui(
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, where)
     click_get_support_button_on_providers_page(selenium, user)
     copy_token(selenium, user)
-    send_copied_item_to_other_users(
-        user, item_type, [browser_id], tmp_memory, displays, clipboard
-    )
+    send_copied_item_to_other_users(user, item_type, [browser_id], tmp_memory, displays, clipboard)
 
 
 @wt(
@@ -182,9 +174,7 @@ def leave_spaces_in_oz_using_gui(
     for space_name in space_names:
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where, space_name)
         click_on_option_in_space_menu(selenium, user, space_name, option)
-        click_confirm_or_cancel_button_on_leave_space_page(
-            selenium, user, confirmation_button
-        )
+        click_confirm_or_cancel_button_on_leave_space_page(selenium, user, confirmation_button)
 
 
 @wt(
@@ -225,13 +215,9 @@ def rename_spaces_in_oz_using_gui(
     option_in_submenu = "overview"
 
     for space_name, new_space_name in zip(space_list, new_names_list):
-        click_on_option_of_space_on_left_sidebar_menu(
-            selenium, user, space_name, option_in_submenu
-        )
+        click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option_in_submenu)
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where, space_name)
-        type_space_name_on_rename_space_input_on_overview_page(
-            selenium, user, new_space_name
-        )
+        type_space_name_on_rename_space_input_on_overview_page(selenium, user, new_space_name)
         confirm_rename_the_space(selenium, user, option)
 
 
@@ -244,9 +230,7 @@ def remove_provider_support_for_space_in_oz_using_gui(
     confirmation_button = "Cease support"
     provider_name = "oneprovider-1"
 
-    wt_click_on_subitem_for_item(
-        selenium, [user], sidebar, record, provider_name, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, [user], sidebar, record, provider_name, hosts)
     wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user)
@@ -272,9 +256,7 @@ def invite_other_users_to_space_using_gui(
     modal = "Invite using token"
 
     click_element_on_lists_on_left_sidebar_menu(selenium, user, option, space_name)
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, option_in_space
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option_in_space)
     click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
     close_alert_popup_if_present(selenium[user], AlertPopup.SUCCESSFULLY_COPIED)
@@ -300,21 +282,15 @@ def request_space_support_using_gui(
 ) -> None:
     click_on_option_in_the_sidebar(selenium, user, "Data")
     click_element_on_lists_on_left_sidebar_menu(selenium, user, "spaces", space_name)
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, "Providers"
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, "Providers")
     click_get_support_button_on_providers_page(selenium, user)
-    click_copy_button_on_request_support_page(
-        selenium, user, displays, clipboard, tmp_memory
-    )
+    click_copy_button_on_request_support_page(selenium, user, displays, clipboard, tmp_memory)
     notify_visible_with_text(
         selenium,
         user,
         AlertPopup.SUCCESSFULLY_COPIED,
     )
-    send_copied_item_to_other_users(
-        user, "token", [receiver], tmp_memory, displays, clipboard
-    )
+    send_copied_item_to_other_users(user, "token", [receiver], tmp_memory, displays, clipboard)
 
 
 def join_space_in_oz_using_gui(
@@ -404,20 +380,12 @@ def assert_space_is_supported_by_provider_in_oz_gui(
 ) -> None:
     click_on_option_in_the_sidebar(selenium, user, "Data")
     click_element_on_lists_on_left_sidebar_menu(selenium, user, "Spaces", space_name)
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, "Providers"
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, "Providers")
     assert_providers_list_contains_provider(selenium, user, provider_name, hosts)
 
 
-@given(
-    parsers.parse(
-        'there is no "{space_name}" space in Onezone used by user of {browser_id}'
-    )
-)
-def leave_space_in_onezone(
-    selenium: SeleniumDrivers, browser_id: str, space_name: str
-) -> None:
+@given(parsers.parse('there is no "{space_name}" space in Onezone used by user of {browser_id}'))
+def leave_space_in_onezone(selenium: SeleniumDrivers, browser_id: str, space_name: str) -> None:
     option = "Data"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
@@ -434,19 +402,13 @@ def leave_space_in_onezone(
 
 @given(parsers.parse("{user} user does not have access to any space"))
 @given(
-    parsers.parse(
-        "{user} user does not have access to any space other than defined in next steps"
-    )
+    parsers.parse("{user} user does not have access to any space other than defined in next steps")
 )
-def g_leave_user_spaces_in_onezone_using_rest(
-    hosts: Hosts, users: Users, user: str
-) -> None:
+def g_leave_user_spaces_in_onezone_using_rest(hosts: Hosts, users: Users, user: str) -> None:
     leave_user_spaces_in_onezone_using_rest(hosts, users, user)
 
 
-def leave_user_spaces_in_onezone_using_rest(
-    hosts: Hosts, users: Users, user: str
-) -> None:
+def leave_user_spaces_in_onezone_using_rest(hosts: Hosts, users: Users, user: str) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
     user_spaces = get_user_spaces(zone_hostname, user, users)
     for space_id in user_spaces:
@@ -475,17 +437,13 @@ def add_harvester_to_existing_space(
 
     click_on_option_in_the_sidebar(selenium, browser_id, panel_name)
 
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space_name, option
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space_name, option)
 
     click_button_in_space_harvesters_page(selenium, browser_id, button_name)
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
-    choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, harvester_name
-    )
+    choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, harvester_name)
     click_modal_button(selenium, browser_id, button_in_modal, modal)
 
 
@@ -508,9 +466,7 @@ def add_group_to_space_or_group(
     modal = "Add one of groups"
     member = "groups"
     button_in_modal = "Add"
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, option, where_name
-    )
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, where_name)
     if where == "space":
         click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, where_name, option_in_function
@@ -541,23 +497,15 @@ def copy_user_space_invite_token(
     button = "Invite user using token"
     modal = "Invite using token"
 
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, option, space_name
-    )
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space_name, option_in_space
-    )
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, space_name)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space_name, option_in_space)
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
     close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
     close_modal(selenium, browser_id, modal)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} copies command "{command}" from "REST API" modal'
-    )
-)
+@wt(parsers.parse('user of {browser_id} copies command "{command}" from "REST API" modal'))
 def copy_command_from_rest_api_modal(
     selenium: SeleniumDrivers, browser_id: str, command: str
 ) -> None:
@@ -571,13 +519,10 @@ def copy_command_from_rest_api_modal(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} opens "{space_name}" space on the '
-        "spaces list in the sidebar"
+        'user of {browser_id} opens "{space_name}" space on the spaces list in the sidebar'
     )
 )
-def open_space_in_spaces_list(
-    selenium: SeleniumDrivers, browser_id: str, space_name: str
-) -> None:
+def open_space_in_spaces_list(selenium: SeleniumDrivers, browser_id: str, space_name: str) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data
     seen_spaces = set()
@@ -597,9 +542,7 @@ def open_space_in_spaces_list(
             space.click()
             return
 
-        stop_scrolling_flag = not any(
-            el not in seen_spaces for el in currently_seen_names
-        )
+        stop_scrolling_flag = not any(el not in seen_spaces for el in currently_seen_names)
         seen_spaces.update(currently_seen_names)
         driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1].web_elem)
 
@@ -612,14 +555,10 @@ def open_space_in_spaces_list(
         "spaces list in the sidebar"
     )
 )
-def assert_opened_space(
-    selenium: SeleniumDrivers, browser_id: str, space_name: str
-) -> None:
+def assert_opened_space(selenium: SeleniumDrivers, browser_id: str, space_name: str) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data
-    vis_spaces = get_visible_items_list(
-        page, items_type=ListElement.SPACES, main_field="name"
-    )
+    vis_spaces = get_visible_items_list(page, items_type=ListElement.SPACES, main_field="name")
 
     def get_opened_spaces_with_name(space_name: str) -> list[NamedElement]:
         return [space for space in vis_spaces if space.name == space_name]

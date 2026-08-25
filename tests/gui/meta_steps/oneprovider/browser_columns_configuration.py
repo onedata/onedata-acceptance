@@ -116,9 +116,7 @@ def change_visibility_for_browser_columns(
     column_names = get_column_names_from_configure_columns_menu(driver)
     for column_name in column_names:
         if column_name.lower() in parsed_columns:
-            set_column_visibility_in_configure_columns_menu(
-                driver, column_name, res == "enables"
-            )
+            set_column_visibility_in_configure_columns_menu(driver, column_name, res == "enables")
 
     # hide columns menu popup
     click_configure_columns_button(browser)
@@ -142,9 +140,7 @@ def remove_column(
     browser = tmp_memory[browser_id][transform(which_browser)]
     click_configure_columns_button(browser)
 
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
+    wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
 
     current_column = get_column_from_configure_columns_menu(driver, name)
     current_column.hover_to_button_and_click("remove", driver)
@@ -175,9 +171,7 @@ def modify_props_of_xattr_column_in_columns_menu(
     browser = tmp_memory[browser_id][transform(which_browser)]
 
     click_configure_columns_button(browser)
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
+    wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
 
     current_xattr_column = get_column_from_configure_columns_menu(driver, name)
 
@@ -234,9 +228,7 @@ def modify_json_column_in_columns_menu(
     browser = tmp_memory[browser_id][transform(which_browser)]
 
     click_configure_columns_button(browser)
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
+    wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
 
     current_column = get_column_from_configure_columns_menu(driver, col_name)
 
@@ -246,9 +238,7 @@ def modify_json_column_in_columns_menu(
     config_dict = dict(yaml.load(config, yaml.Loader).items())
 
     if "mode" in config_dict:
-        getattr(
-            modify_json_column.choose_mode, transform(config_dict["mode"].lower())
-        ).click()
+        getattr(modify_json_column.choose_mode, transform(config_dict["mode"].lower())).click()
     if "label" in config_dict:
         modify_json_column.column_label.clear()
         modify_json_column.column_label.send_keys(config_dict["label"])
@@ -295,9 +285,9 @@ def assert_json_column_content(
     expected_value = sort_json_from_string(value)
     copied = json.loads(copied.replace("\n", ""))
 
-    assert (
-        copied == expected_value
-    ), f"Copied value: {copied} is not equal to expected value: {expected_value}"
+    assert copied == expected_value, (
+        f"Copied value: {copied} is not equal to expected value: {expected_value}"
+    )
 
 
 @wt(

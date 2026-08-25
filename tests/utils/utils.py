@@ -52,9 +52,7 @@ def assert_(expression: Callable[..., object], *args: object, **kwargs: object) 
     assert assert_result
 
 
-def assert_false(
-    expression: Callable[..., object], *args: object, **kwargs: object
-) -> None:
+def assert_false(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
     assert_result = expression(*args, **kwargs)
     assert not assert_result
 
@@ -67,9 +65,7 @@ def get_fun_name(fun: str) -> Optional[str]:
     return None
 
 
-def assert_expected_failure(
-    fun: Callable[..., object], *args: object, **kwargs: object
-) -> None:
+def assert_expected_failure(fun: Callable[..., object], *args: object, **kwargs: object) -> None:
     with pytest.raises(OSError):
         fun(*args, **kwargs)
 

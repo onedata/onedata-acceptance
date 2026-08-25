@@ -31,24 +31,19 @@ def assert_metadata_in_op_rest(
     if tab_name.lower() == "xattrs":
         attribute, val = val.split("=")
         assert attribute in metadata, f"{path} has no {attribute} {tab_name} metadata"
-        assert (
-            val == metadata[attribute]
-        ), f"{path} has no {attribute} = {val} {tab_name}"
+        assert val == metadata[attribute], f"{path} has no {attribute} = {val} {tab_name}"
     else:
         metadata = metadata[f"onedata_{tab_name.lower()}"]
         if "onedata_base64" in metadata:
-
             metadata = metadata["onedata_base64"]
             metadata = base64.b64decode(metadata.encode("ascii")).decode("ascii")
 
         if tab_name.lower() == "json":
-            assert val == json.dumps(
-                metadata
-            ), f'{path} has no {val} {tab_name} metadata but "{metadata}"'
+            assert val == json.dumps(metadata), (
+                f'{path} has no {val} {tab_name} metadata but "{metadata}"'
+            )
         else:
-            assert (
-                val == metadata
-            ), f'{path} has no {val} {tab_name} metadata but "{metadata}"'
+            assert val == metadata, f'{path} has no {val} {tab_name} metadata but "{metadata}"'
 
 
 def set_metadata_in_op_rest(
@@ -113,8 +108,8 @@ def assert_no_such_metadata_in_op_rest(
         if tab_name.lower() == "json":
             expected_metadata = json.loads(val)
             for key in expected_metadata:
-                assert (
-                    key not in metadata or metadata[key] != expected_metadata[key]
-                ), f"There is {expected_metadata} {tab_name} metadata"
+                assert key not in metadata or metadata[key] != expected_metadata[key], (
+                    f"There is {expected_metadata} {tab_name} metadata"
+                )
         else:
             assert val != metadata, f"There is {val} {tab_name} metadata"

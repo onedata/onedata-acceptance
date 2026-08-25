@@ -62,9 +62,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         self.last_event_id: Optional[str] = None
         self.first_event_id: Optional[str] = None
 
-        self.changed_or_created_events: asyncio.Queue[dict[str, FileAttrs]] = (
-            asyncio.Queue()
-        )
+        self.changed_or_created_events: asyncio.Queue[dict[str, FileAttrs]] = asyncio.Queue()
         self.heartbeat_events: asyncio.Queue[tuple[str, float]] = asyncio.Queue()
 
         self.backoff: int = INITIAL_BACKOFF_TIMEOUT
@@ -94,9 +92,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
                 except asyncio.CancelledError:
                     print("Cancelled during backoff sleep, shutting down")
                     break
-                self.backoff = min(
-                    self.backoff * BACKOFF_INCREASE_FACTOR, MAX_BACKOFF_TIMEOUT
-                )
+                self.backoff = min(self.backoff * BACKOFF_INCREASE_FACTOR, MAX_BACKOFF_TIMEOUT)
 
         # clean up data structures to allow reusing this object after reconnection
         self.clean()
@@ -259,7 +255,6 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
 
 
 class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
-
     def __init__(
         self,
         oneprovider_authority: str,
@@ -291,9 +286,7 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
         attributes: FileAttrs,
         cached_attrs: FileAttrs,
     ) -> None:
-        await self.updated_file_attrs.put(
-            {file_id: get_updated_attrs(attributes, cached_attrs)}
-        )
+        await self.updated_file_attrs.put({file_id: get_updated_attrs(attributes, cached_attrs)})
 
     async def on_file_deleted(self, file_id: str, parent_file_id: str) -> None:
         await self.deleted_file_ids.put(file_id)

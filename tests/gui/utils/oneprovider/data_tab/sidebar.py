@@ -28,9 +28,7 @@ from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceSelector
 
 class DataTabSidebar(PageObject):
     space_selector = WebItem(".data-spaces-select", cls=SpaceSelector)
-    _root_dir = WebElementsSequence(
-        ".data-files-tree ul:not(.dropdown-menu) li:not(.clickable)"
-    )
+    _root_dir = WebElementsSequence(".data-files-tree ul:not(.dropdown-menu) li:not(.clickable)")
 
     def __init__(
         self,
@@ -81,9 +79,7 @@ class DirectoryTree(PageObject, ExpandableMixin):
     _toggle = WebElement(".item-icon .one-icon")
     _header = WebElement(".secondary-sidebar-item.dir-item")
     _click_area = WebElement(".secondary-sidebar-item.dir-item .item-click-area")
-    _header_label = WebElement(
-        ".secondary-sidebar-item.dir-item .truncate-secondary-sidebar-item"
-    )
+    _header_label = WebElement(".secondary-sidebar-item.dir-item .truncate-secondary-sidebar-item")
 
     def __init__(
         self,
@@ -125,6 +121,4 @@ class DirectoryTree(PageObject, ExpandableMixin):
 
     @property
     def displayed_name_width(self) -> int:
-        return self.driver.execute_script(
-            "return $(arguments[0]).width();", self._header_label
-        )
+        return self.driver.execute_script("return $(arguments[0]).width();", self._header_label)

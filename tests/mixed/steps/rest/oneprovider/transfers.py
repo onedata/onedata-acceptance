@@ -71,9 +71,7 @@ def assert_recent_transfer_details_rest(
     spaces: IdMap,
     config: str,
 ) -> None:
-    transfer_status = get_recent_transfer_status_rest(
-        user, users, host, hosts, spaces[space]
-    )
+    transfer_status = get_recent_transfer_status_rest(user, users, host, hosts, spaces[space])
     details = cast(Mapping[str, str], yaml.load(config, yaml.Loader))
     error_message = "expected {} to be {} but got {}"
     for k, v in details.items():
@@ -95,9 +93,7 @@ def assert_recent_transfer_details_rest(
                 k, v, transfer_status["transferStatus"]
             )
         if k == "type":
-            assert transfer_status[k] == v, error_message.format(
-                k, v, transfer_status[k]
-            )
+            assert transfer_status[k] == v, error_message.format(k, v, transfer_status[k])
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)
@@ -109,12 +105,9 @@ def assert_recent_transfer_finished_rest(
     spaces: IdMap,
     space: str,
 ) -> None:
-    transfer_status = get_recent_transfer_status_rest(
-        user, users, host, hosts, spaces[space]
-    )
+    transfer_status = get_recent_transfer_status_rest(user, users, host, hosts, spaces[space])
     finished_statutes = ["skipped", "completed", "cancelled", "failed"]
     error_message = (
-        f"transfer status {transfer_status['transferStatus']} is not in one of finished"
-        " states"
+        f"transfer status {transfer_status['transferStatus']} is not in one of finished states"
     )
     assert transfer_status["transferStatus"] in finished_statutes, error_message

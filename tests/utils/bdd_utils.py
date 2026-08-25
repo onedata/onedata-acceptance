@@ -57,10 +57,7 @@ def _get_runtime_cast_target(ann: object) -> Optional[type]:
     if (
         ann is Any
         or is_typeddict(ann)
-        or (
-            getattr(ann, "_is_protocol", False)
-            and not getattr(ann, "_is_runtime_protocol", False)
-        )
+        or (getattr(ann, "_is_protocol", False) and not getattr(ann, "_is_runtime_protocol", False))
     ):
         return None
 

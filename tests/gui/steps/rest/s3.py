@@ -57,11 +57,7 @@ def _raise_for_bucket_status(response: requests.Response) -> None:
         ) from ex
 
 
-@wt(
-    parsers.parse(
-        "using REST, user {user} sees that status of OneS3 of {provider} is ok"
-    )
-)
+@wt(parsers.parse("using REST, user {user} sees that status of OneS3 of {provider} is ok"))
 def assert_provider_ones3_status_ok(provider: str, hosts: Hosts) -> None:
     status = get_provider_ones3_status(hosts[provider]["hostname"])
     error_message = f"Status of OneS3 is {status['isOk']}"
@@ -89,14 +85,7 @@ def create_canonical_request(
     payload_hash: str,
 ) -> str:
     canonical_headers = "".join(f"{k}:{v}\n" for k, v in sorted(headers.items()))
-    return (
-        f"{method}\n"
-        f"{uri}\n"
-        f"{query_string}\n"
-        f"{canonical_headers}\n"
-        f"{signed_headers}\n"
-        f"{payload_hash}"
-    )
+    return f"{method}\n{uri}\n{query_string}\n{canonical_headers}\n{signed_headers}\n{payload_hash}"
 
 
 def create_string_to_sign(
@@ -104,12 +93,7 @@ def create_string_to_sign(
     credential_scope: str,
     hashed_canonical_request: str,
 ) -> str:
-    return (
-        "AWS4-HMAC-SHA256\n"
-        f"{date_stamp}\n"
-        f"{credential_scope}\n"
-        f"{hashed_canonical_request}"
-    )
+    return f"AWS4-HMAC-SHA256\n{date_stamp}\n{credential_scope}\n{hashed_canonical_request}"
 
 
 def create_authorization_header(
@@ -142,17 +126,11 @@ def s3_authorization(
         signed_headers,
         payload_hash,
     )
-    hashed_canonical_request = hashlib.sha256(
-        canonical_request.encode("utf-8")
-    ).hexdigest()
+    hashed_canonical_request = hashlib.sha256(canonical_request.encode("utf-8")).hexdigest()
     credential_scope = f"{date_stamp}/eu-central-1/s3/aws4_request"
-    string_to_sign = create_string_to_sign(
-        amz_date, credential_scope, hashed_canonical_request
-    )
+    string_to_sign = create_string_to_sign(amz_date, credential_scope, hashed_canonical_request)
     signing_key = get_signature_key(SECRET_KEY, date_stamp)
-    signature = hmac.new(
-        signing_key, string_to_sign.encode("utf-8"), hashlib.sha256
-    ).hexdigest()
+    signature = hmac.new(signing_key, string_to_sign.encode("utf-8"), hashlib.sha256).hexdigest()
 
     authorization_header = create_authorization_header(
         ACCESS_KEY, credential_scope, signed_headers, signature
@@ -267,6 +245,4 @@ def copy_item_s3_bucket(
     displays: dict[str, str],
 ) -> None:
     path = clipboard.paste(display=displays[browser_id])
-    copy_item_between_buckets(
-        dst_bucket, f"{src_bucket}{path}/999999", f"{path[1::]}/999999"
-    )
+    copy_item_between_buckets(dst_bucket, f"{src_bucket}{path}/999999", f"{path[1::]}/999999")

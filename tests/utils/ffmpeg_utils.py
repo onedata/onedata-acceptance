@@ -228,10 +228,7 @@ def _overlay_streams(tags: list[str], offsets: Iterator[Offset]) -> tuple[str, s
     base_fmt = "base{num}"
 
     formats = chain(repeat(overlay_fmt, len(tags) - 1), [last_overlay_fmt])
-    bases = (
-        (base_fmt.format(num=num), base_fmt.format(num=num + 1))
-        for num in range(len(tags))
-    )
+    bases = ((base_fmt.format(num=num), base_fmt.format(num=num + 1)) for num in range(len(tags)))
     offsets = iter(offsets)
 
     return (
@@ -246,9 +243,7 @@ def _overlay_streams(tags: list[str], offsets: Iterator[Offset]) -> tuple[str, s
 def _tag_streams(input_streams_num: int) -> tuple[str, list[str]]:
     tags = [f"v{num}" for num in range(input_streams_num)]
     fmt = "[{stream}:v] setpts=PTS-STARTPTS [{tag}]"
-    tagged_streams = ";".join(
-        fmt.format(stream=i, tag=tag) for i, tag in enumerate(tags)
-    )
+    tagged_streams = ";".join(fmt.format(stream=i, tag=tag) for i, tag in enumerate(tags))
     return tagged_streams, tags
 
 

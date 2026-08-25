@@ -24,9 +24,9 @@ def assert_provider_has_name_and_hostname_in_oz_rest(
     for pid in providers:
         provider = provider_api.get_provider_details(pid)
         if provider.name == provider_name:
-            assert (
-                provider.domain == domain
-            ), f"Provider has domain {provider.domain} instead of {domain}"
+            assert provider.domain == domain, (
+                f"Provider has domain {provider.domain} instead of {domain}"
+            )
             break
     else:
         raise AssertionError(f'Couldn\'t find provider named "{provider_name}"')

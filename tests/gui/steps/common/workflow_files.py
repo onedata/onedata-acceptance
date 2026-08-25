@@ -33,9 +33,7 @@ def check_using_all_workflows() -> None:
     for directory_path, _, files in os.walk(TESTS_DIR):
         for file in files:
             used_workflows.update(
-                check_names_in_file(
-                    os.path.join(directory_path, file), workflows_names_set
-                )
+                check_names_in_file(os.path.join(directory_path, file), workflows_names_set)
             )
     error_message = (
         "there are workflows not included in tests: "

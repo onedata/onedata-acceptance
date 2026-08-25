@@ -20,16 +20,12 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse("user of {browser_id} clicks on logout button in main menu"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_user_account_btn_panel(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def wt_click_on_user_account_btn_panel(selenium: SeleniumDrivers, browser_id: str) -> None:
     sleep(1)
     OnePage(selenium[browser_id]).logout.click()
 
 
-@wt(
-    parsers.parse("user of {browser_id} clicks on {btn} button in user account popover")
-)
+@wt(parsers.parse("user of {browser_id} clicks on {btn} button in user account popover"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_option_in_user_account_popover(
     selenium: SeleniumDrivers, browser_id: str, btn: str
@@ -74,22 +70,14 @@ def wt_type_text_to_in_box_in_chpasswd_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_confirm_btn_in_chpasswd_form(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def wt_click_confirm_btn_in_chpasswd_form(selenium: SeleniumDrivers, browser_id: str) -> None:
     form = OnePage(selenium[browser_id]).content.account_management.chpasswd_form
     form.confirm_password_change()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on {btn} button in account management page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on {btn} button in account management page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_account_management(
     selenium: SeleniumDrivers, browser_id: str, btn: str
 ) -> None:
-    getattr(
-        OnePage(selenium[browser_id]).content.account_management, transform(btn)
-    ).click()
+    getattr(OnePage(selenium[browser_id]).content.account_management, transform(btn)).click()

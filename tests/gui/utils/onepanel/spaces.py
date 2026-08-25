@@ -40,9 +40,7 @@ DEFAULT_IMPORT_STRATEGY_CONFIG = {
 
 
 class StorageImportConfiguration(PageObject):
-    modes = WebItemsSequence(
-        ".field-mode-mode label.clickable", cls=ButtonWithTextPageObject
-    )
+    modes = WebItemsSequence(".field-mode-mode label.clickable", cls=ButtonWithTextPageObject)
     max_depth = Input(".field-generic-maxDepth")
     synchronize_acl = Toggle(".toggle-field-generic-syncAcl")
     detect_modifications = Toggle(".toggle-field-generic-detectModifications")
@@ -59,9 +57,7 @@ class SpaceSupportForm(PageObject):
     storage_selector = DropdownSelector(".ember-basic-dropdown-trigger")
     token = Input("input.field-main-token")
     size = Input("input.field-main-size")
-    units = WebItemsSequence(
-        ".field-main-sizeUnit label.clickable", cls=ButtonWithTextPageObject
-    )
+    units = WebItemsSequence(".field-main-sizeUnit label.clickable", cls=ButtonWithTextPageObject)
     import_storage_data = Toggle(".toggle-field-main-importEnabled")
 
     storage_import_configuration = WebItem(
@@ -89,8 +85,7 @@ class SpaceInfo(PageObject):
         items = elem.find_elements(By.CSS_SELECTOR, "strong, .one-label")
         items.pop(0)  # pop redundant "Storage import:" label
         return {
-            attribute.text.strip(":"): val.text
-            for attribute, val in zip(items[::2], items[1::2])
+            attribute.text.strip(":"): val.text for attribute, val in zip(items[::2], items[1::2])
         }
 
 
@@ -111,15 +106,9 @@ class SyncChart(PageObject):
 
     save_configuration = Button(".btn-primary")
 
-    _inserted = WebElementsSequence(
-        ".storage-import-chart-operations g.ct-series-0 line"
-    )
-    _updated = WebElementsSequence(
-        ".storage-import-chart-operations g.ct-series-1 line"
-    )
-    _deleted = WebElementsSequence(
-        ".storage-import-chart-operations g.ct-series-2 line"
-    )
+    _inserted = WebElementsSequence(".storage-import-chart-operations g.ct-series-0 line")
+    _updated = WebElementsSequence(".storage-import-chart-operations g.ct-series-1 line")
+    _deleted = WebElementsSequence(".storage-import-chart-operations g.ct-series-2 line")
 
     def start_scan_is_green(self) -> bool:
         return "btn-success" in self.start_scan.web_elem.get_attribute("class")
@@ -171,9 +160,7 @@ class SelectiveCleaningRecord(PageObject):
     checkbox = Toggle(".toggle-column")
     value_input = Input(".condition-number-input")
     dropdown_button = Button(".ember-power-select-trigger")
-    dropdown = WebItemsSequence(
-        "li.ember-power-select-option", cls=ButtonWithTextPageObject
-    )
+    dropdown = WebItemsSequence("li.ember-power-select-option", cls=ButtonWithTextPageObject)
     value_limit = Label(".ember-power-select-selected-item")
 
 
@@ -216,9 +203,7 @@ class SpaceRecord(PageObject, ExpandableMixin):
     _toggle = WebElement(".one-collapsible-list-item-header")
 
     def is_expanded(self) -> bool:
-        return bool(
-            re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
-        )
+        return bool(re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class")))
 
     def expand_menu(self) -> None:
         self.toolbar.click()
@@ -235,9 +220,7 @@ class Space(PageObject):
 
 
 class SpacesContentPage(PageObject):
-    spaces = WebItemsSequence(
-        "ul.one-collapsible-list .cluster-spaces-table-item", cls=SpaceRecord
-    )
+    spaces = WebItemsSequence("ul.one-collapsible-list .cluster-spaces-table-item", cls=SpaceRecord)
     support_space = NamedButton(".btn-support-space", text="Support space")
     form = WebItem(
         # A hack to use storage import form in existing space support with
@@ -245,7 +228,5 @@ class SpacesContentPage(PageObject):
         ".support-space-form > form, .storage-import-form > form",
         cls=SpaceSupportForm,
     )
-    cancel_supporting_space = NamedButton(
-        ".btn-support-space", text="Cancel supporting space"
-    )
+    cancel_supporting_space = NamedButton(".btn-support-space", text="Cancel supporting space")
     space = WebItem(".content-clusters-spaces", cls=Space)

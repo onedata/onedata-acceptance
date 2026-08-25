@@ -127,17 +127,13 @@ def wt_open_onedata_service_page(
 
 @wt(parsers.re(r"user of (?P<browser_id>.+) should be redirected to (?P<page>.+) page"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_being_redirected_to_page(
-    page: str, selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def assert_being_redirected_to_page(page: str, selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     match = re.match(r"https?://.*?(/#)?(/.*)", driver.current_url)
     if match is None:
         raise ValueError(f"Cannot parse current URL: {driver.current_url}")
     curr_page = match.group(2)
-    assert (
-        curr_page == page
-    ), f"currently on {curr_page} page instead of expected {page}"
+    assert curr_page == page, f"currently on {curr_page} page instead of expected {page}"
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.+) changes the relative URL to (?P<path>.+)"))
@@ -152,18 +148,12 @@ def change_relative_url(selenium: SeleniumDrivers, browser_id: str, path: str) -
         r"application path to plain (?P<path>.+)"
     )
 )
-def change_application_path(
-    selenium: SeleniumDrivers, browser_id: str, path: str
-) -> None:
+def change_application_path(selenium: SeleniumDrivers, browser_id: str, path: str) -> None:
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group("base_url") + "/#" + path)
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) sees that (?:url|URL) matches: (?P<path>.+)"
-    )
-)
+@wt(parsers.re(r"user of (?P<browser_id>.+?) sees that (?:url|URL) matches: (?P<path>.+)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_url_matching(selenium: SeleniumDrivers, browser_id: str, path: str) -> None:
     driver = selenium[browser_id]
@@ -285,8 +275,7 @@ def open_site_url(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} opens URL received from user of "
-        "{browser2_id} without waiting"
+        "user of {browser_id} opens URL received from user of {browser2_id} without waiting"
     )
 )
 def open_received_url_without_waiting(
@@ -321,9 +310,7 @@ def cp_part_of_url(
     )
 )
 @wt(
-    parsers.re(
-        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) refreshes site"
-    ),
+    parsers.re(rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) refreshes site"),
     converters={
         "browser_id_list": parse_elements_sequence,
     },
@@ -342,9 +329,7 @@ def refresh_site(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
         "browser_id_list": parse_elements_sequence,
     },
 )
-def refresh_site_and_wait(
-    selenium: SeleniumDrivers, browser_id_list: list[str]
-) -> None:
+def refresh_site_and_wait(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
     for browser_id in browser_id_list:
         selenium[browser_id].refresh()
     for browser_id in browser_id_list:
@@ -359,9 +344,7 @@ def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def wait_till_main_content_loaded(driver: WebDriver) -> None:
-    elems = driver.find_elements(
-        By.CSS_SELECTOR, ".main-menu-content li.main-menu-item"
-    )
+    elems = driver.find_elements(By.CSS_SELECTOR, ".main-menu-content li.main-menu-item")
     assert len(elems) > 0, "did not manage to load main page"
 
 
@@ -384,11 +367,7 @@ def switch_to_last_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver.switch_to.window(driver.window_handles[-1])
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} switches to the previously opened tab in the web browser"
-    )
-)
+@wt(parsers.parse("user of {browser_id} switches to the previously opened tab in the web browser"))
 def switch_to_first_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.window(driver.window_handles[0])
@@ -399,9 +378,7 @@ def close_current_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 
 @wt(parsers.parse('user of {browser_id} sees image named "{image_name}" in browser'))
-def assert_image_in_browser(
-    browser_id: str, selenium: SeleniumDrivers, image_name: str
-) -> None:
+def assert_image_in_browser(browser_id: str, selenium: SeleniumDrivers, image_name: str) -> None:
     driver = selenium[browser_id]
     url = driver.find_elements(By.TAG_NAME, "img")[0].get_attribute("src")
     err_msg = f"{image_name} is not visible in browser"

@@ -128,12 +128,8 @@ ClientConfig = TypedDict(
 
 
 class Client:
-    def __init__(
-        self, rpyc_connection: RpycConnectionLike, timeout: Optional[int] = 40
-    ) -> None:
-        self._id = "".join(
-            random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
-        )
+    def __init__(self, rpyc_connection: RpycConnectionLike, timeout: Optional[int] = 40) -> None:
+        self._id = "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         self._mount_path = os.path.join(ONECLIENT_MOUNT_DIR, self._id)
         self.rpyc_connection = rpyc_connection
         self.timeout = timeout if timeout is not None else 40
@@ -252,9 +248,7 @@ class Client:
         onerror: Optional[Callable[..., object]] = None,
     ) -> None:
         if recursive and force:
-            self.rpyc_connection.modules.shutil.rmtree(
-                path, ignore_errors=True, onerror=onerror
-            )
+            self.rpyc_connection.modules.shutil.rmtree(path, ignore_errors=True, onerror=onerror)
         elif recursive:
             self.rpyc_connection.modules.shutil.rmtree(path, onerror=onerror)
         else:
@@ -267,9 +261,7 @@ class Client:
         else:
             self.rpyc_connection.modules.os.rmdir(dir_path)
 
-    def mkdir(
-        self, dir_path: str, recursive: bool = False, exist_ok: bool = False
-    ) -> None:
+    def mkdir(self, dir_path: str, recursive: bool = False, exist_ok: bool = False) -> None:
         if recursive or exist_ok:
             self.rpyc_connection.modules.os.makedirs(dir_path, exist_ok=exist_ok)
         else:
@@ -455,7 +447,7 @@ class Client:
                 print(proc.stderr.read().decode())
         if retries > 0:
             if verbose:
-                print(f"Command {" ".join(cmd)} failed. Retries left: {retries}")
+                print(f"Command {' '.join(cmd)} failed. Retries left: {retries}")
             if on_retry:
                 on_retry()
             time.sleep(retry_sleep)
@@ -479,17 +471,12 @@ def user_home_dir(user: str = "root") -> str:
     return os.path.join("/home", user)
 
 
-def get_client_conf(
-    client_id: str, client_host_alias: str, env_desc: EnvDesc
-) -> ClientConfig:
+def get_client_conf(client_id: str, client_host_alias: str, env_desc: EnvDesc) -> ClientConfig:
     client_host_mapping = cast(Mapping[str, object], env_desc.get("oneclient") or {})
-    client_host_conf = cast(
-        Mapping[str, object], client_host_mapping.get(client_host_alias) or {}
-    )
+    client_host_conf = cast(Mapping[str, object], client_host_mapping.get(client_host_alias) or {})
     client_conf = cast(
         ClientConfig,
-        cast(Mapping[str, object], client_host_conf.get("clients") or {}).get(client_id)
-        or {},
+        cast(Mapping[str, object], client_host_conf.get("clients") or {}).get(client_id) or {},
     )
     client_conf["id"] = client_id
     return client_conf

@@ -79,9 +79,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
     browser = tmp_memory[browser_id][transform(which_browser)]
 
     click_configure_columns_button(browser)
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
+    wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
 
     new_column_button = Popups(driver).configure_columns_menu.new_column_button
     wait_for_item_to_appear(new_column_button.web_elem)
@@ -220,9 +218,7 @@ def create_json_column_in_columns_menu(
     browser = tmp_memory[browser_id][transform(which_browser)]
 
     click_configure_columns_button(browser)
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
+    wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
 
     columns_menu = Popups(driver).configure_columns_menu
     columns_menu.new_column_button.click()

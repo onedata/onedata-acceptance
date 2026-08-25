@@ -33,9 +33,7 @@ from tests.utils.bdd_utils import parsers, wt
         'finish execution in modal "Function pods activity"'
     )
 )
-def wait_for_ongoing_pods_to_be_terminated(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def wait_for_ongoing_pods_to_be_terminated(selenium: SeleniumDrivers, browser_id: str) -> None:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     wait_until_all_pods_are_terminated_in_pods_activity_modal(driver)
@@ -54,16 +52,13 @@ def assert_lambda_name_in_tab_name(
     modal = get_modal(selenium[browser_id], "Function pods activity", PodsActivity)
     change_tab_in_pods_activity_modal(modal, tab)
     pod_name = modal.pods_list[0].pod_name
-    error_message = (
-        f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
-    )
+    error_message = f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
     assert lambda_name in pod_name, error_message
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on first pod in tab "{tab}" '
-        'in modal "Function pods activity"'
+        'user of {browser_id} clicks on first pod in tab "{tab}" in modal "Function pods activity"'
     )
 )
 def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> None:
@@ -76,8 +71,7 @@ def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on first terminated pod in "
-        'modal "Function pods activity"'
+        'user of {browser_id} clicks on first terminated pod in modal "Function pods activity"'
     )
 )
 def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: str) -> None:
@@ -101,9 +95,7 @@ def assert_events_in_pods_monitor(
 
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    events_list = [
-        event for event in yaml.load(events, yaml.Loader) if "+" not in event
-    ]
+    events_list = [event for event in yaml.load(events, yaml.Loader) if "+" not in event]
     wait_for_events_in_pods_activity_modal(driver, events_list, option)
 
 
@@ -139,9 +131,7 @@ def get_lambda_name(events: str) -> str:
     for event in events_list:
         if "+" in event:
             lambda_name = (
-                event.replace("message that contains: ", "")
-                .replace('"', "")
-                .split(" + ")[0]
+                event.replace("message that contains: ", "").replace('"', "").split(" + ")[0]
             )
             return lambda_name
     raise ValueError("lambda name not found")
@@ -181,9 +171,7 @@ def checks_events_for_task(
     assert_events_in_pods_monitor(selenium, browser_id, events, option)
     lambda_name = get_lambda_name(events)
 
-    assert_events_containing_lambda_name(
-        selenium, browser_id, events, option, lambda_name
-    )
+    assert_events_containing_lambda_name(selenium, browser_id, events, option, lambda_name)
     click_modal_button(selenium, browser_id, button, modal)
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, close)
 
@@ -222,9 +210,7 @@ def check_number_of_events(
 ) -> None:
     driver = selenium[browser_id]
     actual_num = int(
-        get_modal(
-            driver, "Function pods activity", PodsActivity
-        ).get_number_of_data_rows(driver)
+        get_modal(driver, "Function pods activity", PodsActivity).get_number_of_data_rows(driver)
     )
     expected_num = int(exp_num)
     error_message = (

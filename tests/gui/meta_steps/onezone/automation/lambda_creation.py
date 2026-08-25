@@ -50,14 +50,8 @@ from tests.utils.bdd_utils import parsers, wt
 ALL_LAMBDA_NAMES = []
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} creates lambda with following configuration:\n{config}"
-    )
-)
-def create_lambda_manually(
-    browser_id: str, config: str, selenium: SeleniumDrivers
-) -> None:
+@wt(parsers.parse("user of {browser_id} creates lambda with following configuration:\n{config}"))
+def create_lambda_manually(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
     """Create lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -94,9 +88,7 @@ def create_lambda_manually(
     _create_lambda_manually(browser_id, config, selenium)
 
 
-def _create_lambda_manually(
-    browser_id: str, config: str, selenium: SeleniumDrivers
-) -> None:
+def _create_lambda_manually(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
 
     button = "Add new lambda"
     name_field = "lambda name"
@@ -123,15 +115,11 @@ def _create_lambda_manually(
     click_add_new_button_in_menu_bar(selenium, browser_id, button)
     write_text_into_lambda_form(selenium, browser_id, name, name_field)
     write_text_into_lambda_form(selenium, browser_id, docker_image, docker_field)
-    switch_toggle_in_lambda_form(
-        selenium, browser_id, read_only_option, read_only_toggle
-    )
-    switch_toggle_in_lambda_form(
-        selenium, browser_id, mount_space_option, mount_space_toggle
-    )
+    switch_toggle_in_lambda_form(selenium, browser_id, read_only_option, read_only_toggle)
+    switch_toggle_in_lambda_form(selenium, browser_id, mount_space_option, mount_space_toggle)
 
     def ordinal(n: int) -> str:
-        return f"{n}{'tsnrhtdd'[(n // 10 % 10 != 1) * (n % 10 < 4) * n % 10:: 4]}"
+        return f"{n}{'tsnrhtdd'[(n // 10 % 10 != 1) * (n % 10 < 4) * n % 10 :: 4]}"
 
     if configuration_parameters:
         for i, config_param in enumerate(configuration_parameters):
@@ -257,9 +245,7 @@ def add_parameter_into_lambda_form(
 ) -> None:
     click_add_parameter_button_in_lambda_form(selenium, browser_id, option)
     enter_parameter_name_in_lambda_form(selenium, browser_id, option, ordinal, name)
-    select_parameter_type_in_lambda_form(
-        selenium, browser_id, option, ordinal, param_type
-    )
+    select_parameter_type_in_lambda_form(selenium, browser_id, option, ordinal, param_type)
 
 
 @wt(
@@ -317,9 +303,7 @@ def upload_all_lambda_dumps_from_automation_examples(
 ) -> None:
     global ALL_LAMBDA_NAMES
     ALL_LAMBDA_NAMES = [
-        f
-        for f in os.listdir(upload_lambda_path(None))
-        if os.path.isdir(upload_lambda_path(f))
+        f for f in os.listdir(upload_lambda_path(None)) if os.path.isdir(upload_lambda_path(f))
     ]
     for lambda_name in ALL_LAMBDA_NAMES:
         _upload_lambda_dump_from_automation_examples(
@@ -350,17 +334,16 @@ def _upload_lambda_dump_from_automation_examples(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} downloads and removes "
-        'each lambda from "{inventory}" inventory'
+        'user of {browser_id} downloads and removes each lambda from "{inventory}" inventory'
     )
 )
 def download_and_remove_all_lambda_dumps_from_inventory(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
-        visible_lambda_name = get_lambda_dump(lamda_name)["revision"][
-            "atmLambdaRevision"
-        ]["_data"]["name"]
+        visible_lambda_name = get_lambda_dump(lamda_name)["revision"]["atmLambdaRevision"]["_data"][
+            "name"
+        ]
         download_and_remove_lambda_dump_from_inventory(
             selenium,
             browser_id,
@@ -402,9 +385,7 @@ def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(
     browser_id: str, tmpdir: LocalPath
 ) -> None:
     for lamda_name in ALL_LAMBDA_NAMES:
-        assert_downloaded_and_uploaded_lambda_dumps_the_same(
-            browser_id, lamda_name, tmpdir
-        )
+        assert_downloaded_and_uploaded_lambda_dumps_the_same(browser_id, lamda_name, tmpdir)
 
 
 def assert_downloaded_and_uploaded_lambda_dumps_the_same(
@@ -424,9 +405,7 @@ def assert_downloaded_and_uploaded_lambda_dumps_the_same(
         uploaded_dump["revision"]["atmLambdaRevision"]["_data"].pop("checksum")
     except KeyError:
         pass
-    error_message = (
-        f"Lambda dumps differ, uploaded: {uploaded_dump}, downloaded: {downloaded_dump}"
-    )
+    error_message = f"Lambda dumps differ, uploaded: {uploaded_dump}, downloaded: {downloaded_dump}"
     # test may start failing, because correct order in dicts is not guaranteed
     # in order to fix implement keys sorting
     assert downloaded_dump == uploaded_dump, error_message

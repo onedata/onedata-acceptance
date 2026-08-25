@@ -46,17 +46,11 @@ def assert_copied_token_match_displayed_one(
 ) -> None:
     displayed_token = tmp_memory[browser_id]["token"]
     copied_token = clipboard.paste(display=displays[browser_id])
-    error_message = (
-        f"Displayed token: {displayed_token} does not match copied one: {copied_token}"
-    )
+    error_message = f"Displayed token: {displayed_token} does not match copied one: {copied_token}"
     assert copied_token == displayed_token, error_message
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that copied token does not match displayed one"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that copied token does not match displayed one"))
 def assert_copied_token_does_not_match_displayed_one(
     browser_id: str,
     tmp_memory: TmpMemory,

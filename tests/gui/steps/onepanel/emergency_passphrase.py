@@ -16,11 +16,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on {button} button on emergency passphrase page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on {button} button on emergency passphrase page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_emergency_passphrase_page(
     selenium: SeleniumDrivers, browser_id: str, button: str

@@ -16,11 +16,7 @@ class Options(PageObject):
     name = id = Label(".one-label")
 
     def get_state(self) -> str:
-        return (
-            "disabled"
-            if "disabled" in self.web_elem.get_attribute("class")
-            else "enabled"
-        )
+        return "disabled" if "disabled" in self.web_elem.get_attribute("class") else "enabled"
 
 
 class ArchiveRowMenu(PageObject):

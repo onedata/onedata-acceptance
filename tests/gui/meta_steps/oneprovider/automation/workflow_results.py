@@ -80,9 +80,7 @@ def open_modal_and_get_store_content(
 ) -> str:
     page.stores_list[store_name].click()
     modal = Modals(driver).store_details
-    store_value = get_store_content(
-        modal, store_type, index, clipboard, displays, browser_id
-    )
+    store_value = get_store_content(modal, store_type, index, clipboard, displays, browser_id)
     modal.close()
 
     return store_value
@@ -197,9 +195,7 @@ def assert_checksums_are_the_same(
     # checksums needs to be counted in advance using
     # count_checksums_for_file function
     counted_checksum = tmp_memory["checksums_" + file_name]
-    click_on_status_tag_for_file_in_file_browser(
-        browser_id, status_type, file_name, tmp_memory
-    )
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type, file_name, tmp_memory)
     metadata_modal = Modals(selenium[browser_id]).details_modal.metadata
     workflow_checksum = checksums_counted_in_workflow(metadata_modal)
 
@@ -238,9 +234,7 @@ def count_checksums_and_compare_them(
         checksum_list,
         selenium,
     )
-    assert_checksums_are_the_same(
-        browser_id, checksum_list, file_name, tmp_memory, selenium
-    )
+    assert_checksums_are_the_same(browser_id, checksum_list, file_name, tmp_memory, selenium)
 
 
 @wt(
@@ -263,13 +257,9 @@ def assert_status_of_task_is_one_of_two(
     close = "closes"
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
     try:
-        assert_task_status_in_parallel_box(
-            selenium, browser_id, ordinal, lane, task, status1
-        )
+        assert_task_status_in_parallel_box(selenium, browser_id, ordinal, lane, task, status1)
     except AssertionError:
-        assert_task_status_in_parallel_box(
-            selenium, browser_id, ordinal, lane, task, status2
-        )
+        assert_task_status_in_parallel_box(selenium, browser_id, ordinal, lane, task, status2)
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, close)
 
 
@@ -292,9 +282,7 @@ def assert_status_of_task(
     close = "closes"
 
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
-    assert_task_status_in_parallel_box(
-        selenium, browser_id, ordinal, lane, task, expected_status
-    )
+    assert_task_status_in_parallel_box(selenium, browser_id, ordinal, lane, task, expected_status)
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, close)
 
 

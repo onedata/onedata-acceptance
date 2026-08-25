@@ -28,9 +28,7 @@ class ProvidersPage(SidebarPanelPage):
     panel_name = "providers"
 
     _popover = WebElement(".webui-popover .provider-place-drop")
-    providers_list = WebItemsSequence(
-        ".sidebar-providers li.one-list-item.clickable", cls=Provider
-    )
+    providers_list = WebItemsSequence(".sidebar-providers li.one-list-item.clickable", cls=Provider)
     icons = WebItemsSequence(".provider-place", cls=Icon)
     map_point = Button('.one-map-container .jvectormap-container path[data-code="RO"]')
 

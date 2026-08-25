@@ -16,14 +16,10 @@ from .toolbar import DataTopToolBar
 
 
 class DataTab(PageObject):
-    toolbar = WebItem(
-        "header nav.navbar ul.data-files-list-toolbar", cls=DataTopToolBar
-    )
+    toolbar = WebItem("header nav.navbar ul.data-files-list-toolbar", cls=DataTopToolBar)
     breadcrumbs = Breadcrumbs(".secondary-top-bar .file-breadcrumbs-list")
     file_browser = FileBrowser(".lower-main-content .data-files-list")
-    file_uploader = WebItem(
-        "#main-content + .file-upload .file-upload", cls=FileUploader
-    )
+    file_uploader = WebItem("#main-content + .file-upload .file-upload", cls=FileUploader)
     _sidebar = WebElementsSequence(
         ".lower-main-content nav.secondary-sidebar, #data-sidebar-resize-handler"
     )
@@ -31,6 +27,4 @@ class DataTab(PageObject):
     @property
     def sidebar(self) -> DataTabSidebar:
         sidebar_, resize_handler = self._sidebar
-        return DataTabSidebar(
-            self.web_elem, sidebar_, self, resize_handler=resize_handler
-        )
+        return DataTabSidebar(self.web_elem, sidebar_, self, resize_handler=resize_handler)

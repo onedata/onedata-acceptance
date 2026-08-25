@@ -53,28 +53,20 @@ def change_public_share_to_home_cwd_using_breadcrumbs(
     public_share(selenium[browser_id]).breadcrumbs.home.click()
 
 
-def _change_iframe_for_public_share_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def _change_iframe_for_public_share_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     iframe = driver.find_element(By.TAG_NAME, "iframe")
     driver.switch_to.frame(iframe)
 
 
-@wt(
-    parsers.parse('user of {browser_id} sees that public share is named "{share_name}"')
-)
+@wt(parsers.parse('user of {browser_id} sees that public share is named "{share_name}"'))
 @repeat_failed(timeout=WAIT_BACKEND, interval=0.5)
-def assert_public_share_named(
-    selenium: SeleniumDrivers, browser_id: str, share_name: str
-) -> None:
+def assert_public_share_named(selenium: SeleniumDrivers, browser_id: str, share_name: str) -> None:
     _change_iframe_for_public_share_page(selenium, browser_id)
     displayed_name = public_share(selenium[browser_id]).share_name
     assert displayed_name == share_name, (
-        "displayed public share name "
-        f'is "{displayed_name}" instead of '
-        f'expected "{share_name}"'
+        f'displayed public share name is "{displayed_name}" instead of expected "{share_name}"'
     )
 
 
@@ -85,22 +77,14 @@ def assert_public_share_named(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def is_public_share_cwd_correct(
-    selenium: SeleniumDrivers, browser_id: str, cwd: str
-) -> None:
+def is_public_share_cwd_correct(selenium: SeleniumDrivers, browser_id: str, cwd: str) -> None:
     displayed_cwd = public_share(selenium[browser_id]).breadcrumbs.pwd()
     assert displayed_cwd == cwd, (
-        "displayed share cwd in file browser"
-        f" is {displayed_cwd} "
-        f"instead of expected {cwd}"
+        f"displayed share cwd in file browser is {displayed_cwd} instead of expected {cwd}"
     )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees share's file browser on share's public interface"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees share's file browser on share's public interface"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_file_browser_in_public_share(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
@@ -111,27 +95,22 @@ def assert_file_browser_in_public_share(
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def no_public_share_view(
-    selenium: SeleniumDrivers, browser_id: str, error_msg: str
-) -> None:
+def no_public_share_view(selenium: SeleniumDrivers, browser_id: str, error_msg: str) -> None:
     error_msg = error_msg.upper()
     driver = selenium[browser_id]
 
-    assert (
-        error_msg == public_share(driver).share_not_found
-    ), f"displayed error msg does not contain {error_msg}"
+    assert error_msg == public_share(driver).share_not_found, (
+        f"displayed error msg does not contain {error_msg}"
+    )
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{description}" description '
-        "on share's public interface"
+        'user of {browser_id} sees "{description}" description on share\'s public interface'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_proper_description(
-    selenium: SeleniumDrivers, browser_id: str, description: str
-) -> None:
+def assert_proper_description(selenium: SeleniumDrivers, browser_id: str, description: str) -> None:
     driver = selenium[browser_id]
     _change_iframe_for_public_share_page(selenium, browser_id)
 
@@ -142,8 +121,7 @@ def assert_proper_description(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{message}" '
-        "instead of file browser on share's public interface"
+        'user of {browser_id} sees "{message}" instead of file browser on share\'s public interface'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -158,21 +136,17 @@ def assert_message_no_file_browser(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks share link type selector "
-        "on share's public interface"
+        "user of {browser_id} clicks share link type selector on share's public interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_public_share_link_type_selector(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_public_share_link_type_selector(selenium: SeleniumDrivers, browser_id: str) -> None:
     public_share(selenium[browser_id]).link_type_selector()
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{url_type}" share link type '
-        "on share's public interface"
+        'user of {browser_id} chooses "{url_type}" share link type on share\'s public interface'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -184,11 +158,7 @@ def choose_public_share_link_type(
     getattr(type_popup, transform(url_type))()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} copies share REST endpoint on share's public interface"
-    )
-)
+@wt(parsers.parse("user of {browser_id} copies share REST endpoint on share's public interface"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_public_share_link(selenium: SeleniumDrivers, browser_id: str) -> None:
     public_share(selenium[browser_id]).copy_icon()
@@ -201,9 +171,7 @@ def copy_public_share_link(selenium: SeleniumDrivers, browser_id: str) -> None:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_tab_in_public_share(
-    selenium: SeleniumDrivers, browser_id: str, tab: str
-) -> None:
+def open_tab_in_public_share(selenium: SeleniumDrivers, browser_id: str, tab: str) -> None:
     tab = transform(tab) + "_tab"
     driver = selenium[browser_id]
     _change_iframe_for_public_share_page(selenium, browser_id)
@@ -217,9 +185,7 @@ def open_tab_in_public_share(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_tab_in_public_share(
-    selenium: SeleniumDrivers, browser_id: str, tab_name: str
-) -> None:
+def assert_tab_in_public_share(selenium: SeleniumDrivers, browser_id: str, tab_name: str) -> None:
     tab_name = transform(tab_name)
     driver = selenium[browser_id]
     _change_iframe_for_public_share_page(selenium, browser_id)
@@ -269,9 +235,7 @@ def assert_data_in_dublin_core_metadata(
     dublin_core = public_share(driver).dublin_core_metadata_data
 
     for item in data:
-        check_item_presence_in_dublin_core_metadata(
-            selenium[browser_id], item, dublin_core
-        )
+        check_item_presence_in_dublin_core_metadata(selenium[browser_id], item, dublin_core)
 
 
 @wt(
@@ -295,9 +259,7 @@ def copy_link_in_shares_interface(browser_id: str, selenium: SeleniumDrivers) ->
         "data": parse_elements_sequence,
     },
 )
-def assert_xml_data_in_shares(
-    selenium: SeleniumDrivers, browser_id: str, data: list[str]
-) -> None:
+def assert_xml_data_in_shares(selenium: SeleniumDrivers, browser_id: str, data: list[str]) -> None:
     driver = selenium[browser_id]
     xml_data = public_share(driver).xml_data_dublin_core
     for item in data:

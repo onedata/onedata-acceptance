@@ -38,8 +38,7 @@ class _Breadcrumbs(PageObject):
             path_parts = path.split("/")
             breadcrumbs = self._breadcrumbs
             assert len(path_parts) <= len(breadcrumbs), (
-                f"specified path {path_parts} exceeded one displayed in breadcrumbs"
-                f" {self}"
+                f"specified path {path_parts} exceeded one displayed in breadcrumbs {self}"
             )
 
             i = None
@@ -61,17 +60,13 @@ class _Breadcrumbs(PageObject):
                 for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs_name)):
                     if i == 0:
                         continue
-                    assert dir1 == dir2, error_message.format(
-                        dir=dir1, idx=i, item=self
-                    )
+                    assert dir1 == dir2, error_message.format(dir=dir1, idx=i, item=self)
                 breadcrumbs[breadcrumbs_name.index(dir2) - 1].click()
             else:
                 for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs)):
                     if i == 0:
                         continue
-                    assert dir1 == dir2.text, error_message.format(
-                        dir=dir1, idx=i, item=self
-                    )
+                    assert dir1 == dir2.text, error_message.format(dir=dir1, idx=i, item=self)
                 assert dir2 is not None
                 dir2.click()
 

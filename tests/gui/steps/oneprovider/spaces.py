@@ -14,11 +14,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} selects "{space_name}" from spaces sidebar list'
-    )
-)
+@wt(parsers.parse('user of {browser_id} selects "{space_name}" from spaces sidebar list'))
 def select_space_from_sidebar_list(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
@@ -35,11 +31,7 @@ def select_space_from_sidebar_list(
 def click_settings_icon_for_space(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
-    (
-        OPLoggedIn(selenium[browser_id])
-        .spaces.sidebar.spaces[space_name]
-        .settings.expand()
-    )
+    (OPLoggedIn(selenium[browser_id]).spaces.sidebar.spaces[space_name].settings.expand())
 
 
 @wt(
@@ -76,6 +68,4 @@ def assert_item_appeared_in_spaces_perm_table(
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()
-        raise AssertionError(
-            f'no {caption} named "{name}" found in spaces permission table'
-        )
+        raise AssertionError(f'no {caption} named "{name}" found in spaces permission table')

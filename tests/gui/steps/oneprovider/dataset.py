@@ -36,20 +36,14 @@ def assert_general_toggle_checked_for_ancestors(
     driver = selenium[browser_id]
     protection_kind = f"ancestor_{kind}_protection"
     toggle = getattr(Modals(driver).datasets, protection_kind)
-    assert (
-        toggle.is_checked()
-    ), f"{kind} write protection toggle is unchecked in ancestor dataset menu"
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} expands Ancestor datasets row in Datasets modal"
+    assert toggle.is_checked(), (
+        f"{kind} write protection toggle is unchecked in ancestor dataset menu"
     )
-)
+
+
+@wt(parsers.parse("user of {browser_id} expands Ancestor datasets row in Datasets modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_dataset_modal(
-    browser_id: str, selenium: SeleniumDrivers
-) -> None:
+def click_on_option_in_dataset_modal(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     Modals(driver).datasets.ancestor_option.click()
 
@@ -90,8 +84,7 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} checks {toggle_type} write protection"
-        " toggle in {modal_name} modal"
+        "user of {browser_id} checks {toggle_type} write protection toggle in {modal_name} modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -143,11 +136,7 @@ def see_protected_tag_label_in_dataset_modal(
         assert text in Modals(driver).datasets.data_protected_label, error
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on dataset for "{name}" in dataset browser'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on dataset for "{name}" in dataset browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_dataset(browser_id: str, tmp_memory: TmpMemory, name: str) -> None:
     browser = tmp_memory[browser_id][transform(DATASET_BROWSER)]
@@ -162,14 +151,10 @@ def click_on_dataset(browser_id: str, tmp_memory: TmpMemory, name: str) -> None:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_path_to_root_file(
-    browser_id: str, tmp_memory: TmpMemory, path: str, name: str
-) -> None:
+def assert_path_to_root_file(browser_id: str, tmp_memory: TmpMemory, path: str, name: str) -> None:
     browser = tmp_memory[browser_id][transform(DATASET_BROWSER)]
     path_to_root = browser.data[name].path_to_root_file
-    error_message = (
-        f'Path to root: "{path_to_root} does not match expected path: "{path}"'
-    )
+    error_message = f'Path to root: "{path_to_root} does not match expected path: "{path}"'
     assert path == path_to_root, error_message
 
 
@@ -201,8 +186,7 @@ def assert_one_of_two_dataset_has_deleted_root(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees two same root file paths "
-        '"{path}" for datasets named "{name}"'
+        'user of {browser_id} sees two same root file paths "{path}" for datasets named "{name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -215,19 +199,13 @@ def assert_two_identical_root_file_paths(
         if dataset.name == name:
             paths.append(dataset.path_to_root_file)
 
-    assert (
-        len(paths) == 2 and paths[0] == paths[1]
-    ), f'"{paths[0]}" and "{paths[1]}" should be identical'
-    assert (
-        paths[0] == path
-    ), f'"{paths[0]}" match "{path[1]}" but does not match expected "{path}"'
-
-
-@wt(
-    parsers.parse(
-        'user of {browser_id} fails to click on "{button}" button in modal "{modal}"'
+    assert len(paths) == 2 and paths[0] == paths[1], (
+        f'"{paths[0]}" and "{paths[1]}" should be identical'
     )
-)
+    assert paths[0] == path, f'"{paths[0]}" match "{path[1]}" but does not match expected "{path}"'
+
+
+@wt(parsers.parse('user of {browser_id} fails to click on "{button}" button in modal "{modal}"'))
 def fail_to_click_button_in_modal(
     browser_id: str, button: str, modal: str, selenium: SeleniumDrivers
 ) -> None:
@@ -259,9 +237,7 @@ def click_protection_toggle_in_ancestor_list(
     )
     toggle.check()
     if toggle.is_unchecked():
-        raise AssertionError(
-            f'Cannot check {toggle_type} on "{name}" write protection toggle'
-        )
+        raise AssertionError(f'Cannot check {toggle_type} on "{name}" write protection toggle')
 
 
 @wt(parsers.parse("user of {browser_id} clicks on archives tab in datasets modal"))

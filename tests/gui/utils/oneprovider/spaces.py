@@ -17,9 +17,7 @@ from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 
 
 class SettingDropdown(PageObject, ExpandableMixin):
-    options = WebItemsSequence(
-        "ul.dropdown-menu-list li.clickable", cls=ButtonWithTextPageObject
-    )
+    options = WebItemsSequence("ul.dropdown-menu-list li.clickable", cls=ButtonWithTextPageObject)
     _toggle = WebElement('.dropdown-toggle[data-toggle="dropdown"]')
 
 
@@ -49,15 +47,11 @@ class PermissionTableRow(PageObject):
 
 
 class PermissionTable(PageObject):
-    users = groups = WebItemsSequence(
-        "tbody .permissions-table-row", cls=PermissionTableRow
-    )
+    users = groups = WebItemsSequence("tbody .permissions-table-row", cls=PermissionTableRow)
     save = Button("button.btn-save")
     discard = Button("button.btn-discard")
 
 
 class SpacesContentPage(PageObject):
     sidebar = WebItem(".secondary-sidebar", cls=SpacesSidebar)
-    permission_table = WebItem(
-        "#content-scroll .permissions-table", cls=PermissionTable
-    )
+    permission_table = WebItem("#content-scroll .permissions-table", cls=PermissionTable)

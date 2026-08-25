@@ -290,9 +290,7 @@ def get_store_schema_id_of_workflow(store_name: str, workflow_name: str) -> str:
     for store in stores:
         if store["_data"]["name"] == store_name:
             return store["_data"]["id"]
-    raise AssertionError(
-        f"did not find store {store_name} in workflow dump {workflow_name}"
-    )
+    raise AssertionError(f"did not find store {store_name} in workflow dump {workflow_name}")
 
 
 def get_revision_num_of_workflow(workflow_name: str) -> int:
@@ -337,10 +335,7 @@ def wt_execute_workflow_rest(
                         el[key2] = _lookup_file_id(path, client)
 
     rev_num = get_revision_num_of_workflow(workflow_name)
-    content = {
-        get_store_schema_id_of_workflow(key, workflow_name): content[key]
-        for key in content
-    }
+    content = {get_store_schema_id_of_workflow(key, workflow_name): content[key] for key in content}
     wid = execute_workflow_rest(
         user,
         users,
@@ -357,11 +352,7 @@ def wt_execute_workflow_rest(
     workflow_executions[wid] = {workflow_name: []}
 
 
-@wt(
-    parsers.parse(
-        'using REST, {user} pauses execution of "{workflow_name}" workflow in {host}'
-    )
-)
+@wt(parsers.parse('using REST, {user} pauses execution of "{workflow_name}" workflow in {host}'))
 def pause_workflow_rest(
     user: str,
     users: Users,
@@ -376,11 +367,7 @@ def pause_workflow_rest(
     workflow_execution_api.pause_workflow_execution(wid)
 
 
-@wt(
-    parsers.parse(
-        'using REST, {user} resumes execution of "{workflow_name}" workflow in {host}'
-    )
-)
+@wt(parsers.parse('using REST, {user} resumes execution of "{workflow_name}" workflow in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def resume_workflow_rest(
     user: str,
@@ -396,11 +383,7 @@ def resume_workflow_rest(
     workflow_execution_api.resume_workflow_execution(wid)
 
 
-@wt(
-    parsers.parse(
-        'using REST, {user} cancels execution of "{workflow_name}" workflow in {host}'
-    )
-)
+@wt(parsers.parse('using REST, {user} cancels execution of "{workflow_name}" workflow in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def cancel_workflow_rest(
     user: str,
@@ -416,11 +399,7 @@ def cancel_workflow_rest(
     workflow_execution_api.cancel_workflow_execution(wid)
 
 
-@wt(
-    parsers.parse(
-        'using REST, {user} deletes execution of "{workflow_name}" workflow in {host}'
-    )
-)
+@wt(parsers.parse('using REST, {user} deletes execution of "{workflow_name}" workflow in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def delete_workflow_rest(
     user: str,
@@ -438,8 +417,7 @@ def delete_workflow_rest(
 
 @wt(
     parsers.parse(
-        "using REST, {user} fails to resume execution of "
-        '"{workflow_name}" workflow in {host}'
+        'using REST, {user} fails to resume execution of "{workflow_name}" workflow in {host}'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -452,9 +430,7 @@ def fail_to_resume_workflow_rest(
     workflow_executions: WorkflowExecutions,
 ) -> None:
     try:
-        resume_workflow_rest(
-            user, users, hosts, host, workflow_name, workflow_executions
-        )
+        resume_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions)
         raise AssertionError("Resuming workflow execution should have failed")
     except ApiException as e:
         if e.status == 400:
@@ -464,8 +440,7 @@ def fail_to_resume_workflow_rest(
 
 @wt(
     parsers.parse(
-        "using REST, {user} forces continue execution of "
-        '"{workflow_name}" workflow in {host}'
+        'using REST, {user} forces continue execution of "{workflow_name}" workflow in {host}'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -634,8 +609,7 @@ def execute_part_of_the_workflows(
                     continue
                 # map store name into store_id
                 content = {
-                    get_store_schema_id_of_workflow(key, path): content[key]
-                    for key in content
+                    get_store_schema_id_of_workflow(key, path): content[key] for key in content
                 }
                 rev_num = get_revision_num_of_workflow(path)
                 wid = execute_workflow_rest(
@@ -663,9 +637,7 @@ def check_to_run_workflow(
 ) -> bool:
     if archive_types is None:
         return workflow_name != "bagit-uploader"
-    return (
-        workflow_name == "bagit-uploader" and file_name in BAGIT_ARCHIVES[archive_types]
-    )
+    return workflow_name == "bagit-uploader" and file_name in BAGIT_ARCHIVES[archive_types]
 
 
 def execute_workflow_rest(
@@ -690,9 +662,7 @@ def execute_workflow_rest(
         "storeInitialContentOverlay": stores_content,
         "loglevel": loglevel,
     }
-    wid = workflow_execution_api.schedule_workflow_execution(
-        data
-    ).atm_workflow_execution_id
+    wid = workflow_execution_api.schedule_workflow_execution(data).atm_workflow_execution_id
     return wid
 
 
@@ -769,13 +739,10 @@ def assert_empty_workflow_phase(
     workflow_executions: WorkflowExecutions,
     phase: str,
 ) -> None:
-    executions = list_workflow_executions(
-        user, users, host, hosts, space, spaces, phase=phase
-    )
+    executions = list_workflow_executions(user, users, host, hosts, space, spaces, phase=phase)
     if any(executions):
         raise AssertionError(
-            f"workflows {[workflow_executions[wid] for wid in executions]} "
-            f"are in {phase} state"
+            f"workflows {[workflow_executions[wid] for wid in executions]} are in {phase} state"
         )
 
 
@@ -802,9 +769,7 @@ def assert_num_workflow_executions_in_phase(
     num: str,
 ) -> None:
     expected_num = int(num)
-    executions = list_workflow_executions(
-        user, users, host, hosts, space, spaces, phase=phase
-    )
+    executions = list_workflow_executions(user, users, host, hosts, space, spaces, phase=phase)
     if len(executions) != expected_num:
         raise AssertionError(
             f"Expected {num} of workflows executions to be in "
@@ -812,11 +777,7 @@ def assert_num_workflow_executions_in_phase(
         )
 
 
-@wt(
-    parsers.parse(
-        "using REST, {user} sees successful execution of all workflows in {host}"
-    )
-)
+@wt(parsers.parse("using REST, {user} sees successful execution of all workflows in {host}"))
 def assert_successful_workflow_executions(
     user: str,
     users: Users,
@@ -917,9 +878,7 @@ def assert_workflow_execution_details(
         elif "$(resolve_inventory_id" in val:
             val = val.replace("$(resolve_inventory_id ", "").replace(")", "")
             val = inventories[val]
-        error_message = (
-            f"Value of {key} is expected to be {val}, but got {details[key]}"
-        )
+        error_message = f"Value of {key} is expected to be {val}, but got {details[key]}"
         assert details[key] == val, error_message
 
 
@@ -971,18 +930,14 @@ def fail_to_get_workflow_execution_details(
     try:
         wid = get_workflow_execution_id(workflow_name, workflow_executions)
         _ = get_workflow_execution_details(user, users, host, hosts, wid)
-        raise AssertionError(
-            "Expected to get error 404 workflow not found, but succeed"
-        )
+        raise AssertionError("Expected to get error 404 workflow not found, but succeed")
     except HTTPNotFound as e:
         if e.status_code == 404:
             return
         raise
 
 
-def get_workflow_execution_id(
-    workflow_name: str, workflow_executions: WorkflowExecutions
-) -> str:
+def get_workflow_execution_id(workflow_name: str, workflow_executions: WorkflowExecutions) -> str:
     return [
         wid
         for wid in workflow_executions.keys()
@@ -1004,9 +959,7 @@ def get_workflow_execution_details(
     response = http_get(
         ip=provider_hostname,
         port=OP_REST_PORT,
-        path=get_provider_rest_path(
-            "automation", "execution", "workflows", workflow_execution_id
-        ),
+        path=get_provider_rest_path("automation", "execution", "workflows", workflow_execution_id),
         headers={"X-Auth-Token": users[user].token},
     ).json()
 

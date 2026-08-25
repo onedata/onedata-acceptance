@@ -38,9 +38,7 @@ CREATE_INDEX_TOGGLES = {
 }
 
 
-@wt(
-    parsers.parse('user of {browser_id} clicks "{text}" in harvester indices page menu')
-)
+@wt(parsers.parse('user of {browser_id} clicks "{text}" in harvester indices page menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_member_menu_option_in_harvester_indices_page(
     selenium: SeleniumDrivers, browser_id: str, text: str
@@ -50,11 +48,7 @@ def click_on_member_menu_option_in_harvester_indices_page(
     Popups(driver).menu_popup_with_text.menu[text]()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} types "{index_name}" to name input field in indices page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} types "{index_name}" to name input field in indices page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_index_name_to_input_field_in_indices_page(
     selenium: SeleniumDrivers, browser_id: str, index_name: str
@@ -65,18 +59,12 @@ def type_index_name_to_input_field_in_indices_page(
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in indices page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_button_in_indices_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_create_button_in_indices_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).discovery.indices_page.create_button()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that "{index_name}" has appeared on the indices list'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that "{index_name}" has appeared on the indices list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_index_has_appeared_in_indices_page(
     selenium: SeleniumDrivers, browser_id: str, index_name: str
@@ -86,11 +74,7 @@ def assert_index_has_appeared_in_indices_page(
     assert index_name in indices_list, f'index "{index_name}" not found'
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} expands "{index_name}" index record in indices page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} expands "{index_name}" index record in indices page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_index_record_in_indices_page(
     selenium: SeleniumDrivers, browser_id: str, index_name: str | int
@@ -102,8 +86,7 @@ def expand_index_record_in_indices_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "Used by GUI" tag on '
-        '"{index}" index record in indices page'
+        'user of {browser_id} sees "Used by GUI" tag on "{index}" index record in indices page'
     )
 )
 def assert_used_by_gui_tag_on_indices_page(
@@ -111,15 +94,14 @@ def assert_used_by_gui_tag_on_indices_page(
 ) -> None:
     driver = selenium[browser_id]
     indices_list = OZLoggedIn(driver).discovery.indices_page.indices_list
-    assert indices_list[
-        index
-    ].is_used_by_gui_tag_visible(), f"Used by GUI tag is not visible for {index}"
+    assert indices_list[index].is_used_by_gui_tag_visible(), (
+        f"Used by GUI tag is not visible for {index}"
+    )
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees 100% progress for "
-        'all spaces in "{index_name}" index harvesting'
+        'user of {browser_id} sees 100% progress for all spaces in "{index_name}" index harvesting'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
@@ -132,9 +114,9 @@ def assert_progress_in_harvesting(
     progress_values = indices_list[index_name].progress_values
 
     for progress in progress_values:
-        assert (
-            progress.progress_value == value
-        ), f'Harvesting process did not finished for "{progress.space}"'
+        assert progress.progress_value == value, (
+            f'Harvesting process did not finished for "{progress.space}"'
+        )
 
 
 @wt(
@@ -180,8 +162,7 @@ def change_indices_on_gui_plugin_tab(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} does not see "{name}" in'
-        " results list on data discovery page"
+        'user of {browser_id} does not see "{name}" in results list on data discovery page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -210,9 +191,7 @@ def results_list_to_list_with_dictionaries(
     return results
 
 
-def text_in_result_list(
-    key: str, value: str, results_list: Iterable[WebElement]
-) -> None:
+def text_in_result_list(key: str, value: str, results_list: Iterable[WebElement]) -> None:
     results = results_list_to_list_with_dictionaries(results_list)
     for item in results:
         if value == item.get(key):
@@ -248,11 +227,7 @@ def assert_rejection_reason_on_data_discovery_page(
     text_in_result_list(key, info, results_list)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees archives ID in results list on data discovery page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees archives ID in results list on data discovery page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_id_on_data_discovery_page(
     selenium: SeleniumDrivers,
@@ -280,20 +255,13 @@ def assert_creation_time_on_data_discovery_page(
     created_at = tmp_memory["created_at"]
     created_at = datetime.strptime(created_at, "%d %b %Y %H:%M").timestamp()
     driver = selenium[browser_id]
-    timestamp = float(
-        DataDiscovery(driver).results_list[2].text.split(",")[0].split(": ")[2]
-    )
-    error_message = (
-        "archive creation time is not compatible with creation time on archives page"
-    )
+    timestamp = float(DataDiscovery(driver).results_list[2].text.split(",")[0].split(": ")[2])
+    error_message = "archive creation time is not compatible with creation time on archives page"
     assert (created_at - 60) < timestamp < (created_at + 60), error_message
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees {text}: {info}"
-        " in results list on data discovery page"
-    )
+    parsers.parse("user of {browser_id} sees {text}: {info} in results list on data discovery page")
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_info_on_data_discovery_page(

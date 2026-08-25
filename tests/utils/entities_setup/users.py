@@ -53,9 +53,7 @@ UserOptions = TypedDict(
 UserConfigEntry = str | dict[str, UserOptions]
 
 
-@given(
-    parsers.parse('initial users configuration in "{host}" Onezone service:\n{config}')
-)
+@given(parsers.parse('initial users configuration in "{host}" Onezone service:\n{config}'))
 def users_creation_with_cleanup_step(
     host: str,
     config: str,
@@ -83,8 +81,7 @@ def users_creation_with_cleanup_step(
 
 @given(
     parsers.parse(
-        'initial user for future delete configuration in "{host}" '
-        "Onezone service:\n{config}"
+        'initial user for future delete configuration in "{host}" Onezone service:\n{config}'
     )
 )
 def users_creation_step(
@@ -211,9 +208,7 @@ def _create_user(
         # this error appear when trying to create user with name that already exist
         # (possible remnants from previous tests)
         if rm_users:
-            _remove_remnant_user(
-                username, zone_hostname, onepanel_credentials, admin_credentials
-            )
+            _remove_remnant_user(username, zone_hostname, onepanel_credentials, admin_credentials)
             return _create_new_user(
                 zone_hostname,
                 onepanel_credentials,
@@ -303,9 +298,7 @@ def _cleanup_users(
     ignore_http_exceptions: bool = False,
 ) -> None:
     for user_credentials in users_db.values():
-        _rm_user(
-            zone_hostname, admin_credentials, user_credentials, ignore_http_exceptions
-        )
+        _rm_user(zone_hostname, admin_credentials, user_credentials, ignore_http_exceptions)
 
 
 def _rm_user(
@@ -320,9 +313,7 @@ def _rm_user(
 
 
 @repeat_failed(attempts=5)
-def _rm_zone_user(
-    zone_hostname: str, admin_credentials: CredentialsLike, user_id: str
-) -> None:
+def _rm_zone_user(zone_hostname: str, admin_credentials: CredentialsLike, user_id: str) -> None:
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
 

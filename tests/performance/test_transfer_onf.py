@@ -36,7 +36,6 @@ LOGGING_INTERVAL = 30
 
 
 class TestTransferOnf(AbstractPerformanceTest):
-
     @performance(
         default_config={
             "repeats": REPEATS,
@@ -52,9 +51,7 @@ class TestTransferOnf(AbstractPerformanceTest):
                     "unit": "int",
                 },
             },
-            "description": (
-                "Testing transfer on the fly with concurrent copying of files"
-            ),
+            "description": ("Testing transfer on the fly with concurrent copying of files"),
         },
         configs=generate_configs(
             {"files_number": [10000], "files_size": [20480], "threads_num": [10]},
@@ -100,9 +97,7 @@ class TestTransferOnf(AbstractPerformanceTest):
 ################################################################################
 
 
-def _create_files(
-    client: Client, files_num: int, file_size: int, dir_path: str
-) -> None:
+def _create_files(client: Client, files_num: int, file_size: int, dir_path: str) -> None:
     flushed_print("\t\tStarted creation of {} files".format(files_num))
     for i in range(files_num):
         if i % 100 == 0:
@@ -118,9 +113,7 @@ def _execute_test(
     dir_path: str,
 ) -> list[Result]:
     avg_work = files_number // threads_num
-    intervals = chain(
-        repeat(avg_work, threads_num - 1), [avg_work + files_number % threads_num]
-    )
+    intervals = chain(repeat(avg_work, threads_num - 1), [avg_work + files_number % threads_num])
     i = 0
     workers = []
     queue: ExceptionQueue = Queue()
@@ -136,9 +129,7 @@ def _execute_test(
         worker.start()
 
     flushed_print(
-        "\t\tStarted {} workers with avg {} file copying task each".format(
-            len(workers), avg_work
-        )
+        "\t\tStarted {} workers with avg {} file copying task each".format(len(workers), avg_work)
     )
 
     while workers:
@@ -162,17 +153,13 @@ def _execute_test(
         Result(
             "[{} threads] {} files copied".format(threads_num, files_number),
             end - start,
-            "{} files copying time using oneclient with {}MB size".format(
-                files_number, file_size
-            ),
+            "{} files copying time using oneclient with {}MB size".format(files_number, file_size),
             "seconds",
         )
     ]
 
 
-def _copy_files(
-    client: Client, start: int, end: int, dir_path: str, queue: ExceptionQueue
-) -> None:
+def _copy_files(client: Client, start: int, end: int, dir_path: str, queue: ExceptionQueue) -> None:
     try:
         for i in range(start, end):
             src_file = os.path.join(dir_path, "file{}".format(i))

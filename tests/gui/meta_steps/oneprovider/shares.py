@@ -83,16 +83,8 @@ from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} creates "{share_name}" share of "{item_name}" file'
-    )
-)
-@wt(
-    parsers.parse(
-        'user of {browser_id} creates "{share_name}" share of "{item_name}" directory'
-    )
-)
+@wt(parsers.parse('user of {browser_id} creates "{share_name}" share of "{item_name}" file'))
+@wt(parsers.parse('user of {browser_id} creates "{share_name}" share of "{item_name}" directory'))
 def create_share(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -128,18 +120,14 @@ def open_single_share_view_by_modal(
     items_browser = transform(WhichBrowser.SHARES_FILE_BROWSER.value)
     status_type = "shared"
 
-    click_on_status_tag_for_file_in_file_browser(
-        browser_id, status_type, item_name, tmp_memory
-    )
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type, item_name, tmp_memory)
     click_share_details_link_in_shares_panel(selenium, browser_id, share_name)
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, items_browser)
     is_selected_share_named(selenium, browser_id, share_name)
 
 
 @wt(parsers.parse('user of {browser_id} creates another share named "{share_name}"'))
-def create_another_share(
-    selenium: SeleniumDrivers, browser_id: str, share_name: str
-) -> None:
+def create_another_share(selenium: SeleniumDrivers, browser_id: str, share_name: str) -> None:
     button = "Create another share"
     modal_name = "Shares"
     create_button = "Create"
@@ -150,9 +138,7 @@ def create_another_share(
 
 
 @wt(parsers.parse("user of {browser_id} removes current share"))
-def remove_current_share(
-    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
-) -> None:
+def remove_current_share(selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory) -> None:
     option = "Remove"
     modal_name = "Remove share"
     button = "Remove"
@@ -170,9 +156,7 @@ def open_shares_view_of_given_space(
     option = "Shares, Public Data"
     items_browser = "shares_browser"
 
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space_name, option
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space_name, option)
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, items_browser)
 
 
@@ -221,11 +205,7 @@ def hand_share_url_to_another_user(
     click_modal_button(selenium, browser_id, button, modal_name)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} copies share URL of "{share_name}" share of "{item_name}"'
-    )
-)
+@wt(parsers.parse('user of {browser_id} copies share URL of "{share_name}" share of "{item_name}"'))
 def copy_url_of_share(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -236,17 +216,12 @@ def copy_url_of_share(
     icon_name = "copy"
     status_type = "shared"
 
-    click_on_status_tag_for_file_in_file_browser(
-        browser_id, status_type, item_name, tmp_memory
-    )
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type, item_name, tmp_memory)
     click_icon_in_share_directory_modal(selenium, browser_id, share_name, icon_name)
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} renames current share to "
-        '"{new_name}" in single share view'
-    )
+    parsers.parse('user of {browser_id} renames current share to "{new_name}" in single share view')
 )
 def rename_share_from_single_view(
     selenium: SeleniumDrivers, browser_id: str, new_name: str, tmp_memory: TmpMemory
@@ -316,17 +291,12 @@ def add_description_to_share_on_private_interface(
 ) -> None:
     open_tab_in_public_share(selenium, browser_id, "Description")
     click_button_in_description_form(browser_id, selenium, "Create description")
-    write_description_in_description_form(
-        browser_id, description, "description field", selenium
-    )
+    write_description_in_description_form(browser_id, description, "description field", selenium)
     click_button_in_description_form(browser_id, selenium, "Save")
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} fills the input fields of Dublin "
-        "Core form with:\n{config}"
-    )
+    parsers.parse("user of {browser_id} fills the input fields of Dublin Core form with:\n{config}")
 )
 def fill_inputs_in_dublin_core_metadata_form(
     selenium: SeleniumDrivers, browser_id: str, config: str
@@ -364,16 +334,12 @@ def fill_inputs_in_dublin_core_metadata_form(
         if not isinstance(value, list):  # single string value
             write_input_in_form_in_shares_interface(browser_id, value, option, selenium)
         else:
-            write_input_in_form_in_shares_interface(
-                browser_id, value[0], option, selenium
-            )
+            write_input_in_form_in_shares_interface(browser_id, value[0], option, selenium)
             for val in value[1:]:
                 click_button_in_form_in_shares_interface(
                     browser_id, f"Add another {option}", selenium
                 )
-                write_input_in_form_in_shares_interface(
-                    browser_id, val, option, selenium
-                )
+                write_input_in_form_in_shares_interface(browser_id, val, option, selenium)
 
 
 @wt(
@@ -440,8 +406,7 @@ def send_public_handle_link_to_user(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} fills text section fields of EDM "
-        "metadata form with:\n{config}"
+        "user of {browser_id} fills text section fields of EDM metadata form with:\n{config}"
     )
 )
 def fill_inputs_in_edm_metadata_form(
@@ -484,9 +449,7 @@ def fill_inputs_in_edm_metadata_form(
     for field_name, value in parsed_config.items():
         field_name = field_name.lower()
         if not is_name_in_initial_form_fields(field_name, "edm"):
-            add_property_to_edm_form_in_shares_interface(
-                browser_id, selenium, field_name
-            )
+            add_property_to_edm_form_in_shares_interface(browser_id, selenium, field_name)
 
         if is_metadata_field_option_selectable_edm(
             field_name
@@ -611,9 +574,9 @@ def assert_xml_data_in_edm_form_in_shares_interface(
 
     for elem in data:
         elem_for_search = resolve_xml_tag_for_et_search(elem, metadata_type)
-        assert (
-            root.find(f".//{elem_for_search}") is not None
-        ), f"Node with name: {elem} was not found in XML data"
+        assert root.find(f".//{elem_for_search}") is not None, (
+            f"Node with name: {elem} was not found in XML data"
+        )
 
 
 @wt(
@@ -675,6 +638,4 @@ def assert_xml_node_value(
     elem = root.find(f".//{tag_for_search}")
     assert elem is not None, f"Node with tag: {tag} was not found in XML data"
 
-    assert (
-        elem.text == text
-    ), f"Value of XML node: {elem.text} does not match expected: {text}"
+    assert elem.text == text, f"Value of XML node: {elem.text} does not match expected: {text}"

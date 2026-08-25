@@ -76,11 +76,7 @@ class Browser(ABC, PageObject):
     def get_field_value_from_visible_rows(
         elements_list: Iterable[BrowserRow], main_field: str = "name"
     ) -> list[str]:
-        return [
-            getattr(row, main_field)
-            for row in elements_list
-            if getattr(row, main_field)
-        ]
+        return [getattr(row, main_field) for row in elements_list if getattr(row, main_field)]
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS
 
@@ -89,9 +85,7 @@ class Browser(ABC, PageObject):
         action.click(self.header).perform()
 
     def click_on_background(self) -> None:
-        ActionChains(self.driver).move_to_element_with_offset(
-            self.header, 0, 0
-        ).click().perform()
+        ActionChains(self.driver).move_to_element_with_offset(self.header, 0, 0).click().perform()
 
     # SCROLLING FUNCTIONS
 
@@ -102,8 +96,7 @@ class Browser(ABC, PageObject):
     def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
-                "document.querySelector('.perfect-scrollbar-element."
-                "ps--active-y').scrollTo(0, 0)"
+                "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
             )
         except JavascriptException:
             pass
@@ -113,9 +106,7 @@ class Browser(ABC, PageObject):
             "arguments[0].scrollTo(arguments[1]);", self.web_elem, self._bottom
         )
 
-    def scroll_to_number_file(
-        self, driver: WebDriver, number: int, browser: "Browser"
-    ) -> None:
+    def scroll_to_number_file(self, driver: WebDriver, number: int, browser: "Browser") -> None:
         selector = browser.get_css_selector() + " " + f".data-row:nth-of-type({number})"
         scroll_to_css_selector(driver, selector)
 

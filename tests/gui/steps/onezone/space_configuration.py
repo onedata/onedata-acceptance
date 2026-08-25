@@ -29,13 +29,9 @@ def assert_advertise_in_marketplace_toggle(
     page = OZLoggedIn(driver).data.configuration_page
 
     if "not" in checked:
-        assert (
-            page.advertise_toggle.is_unchecked()
-        ), "Space is advertised in marketplace"
+        assert page.advertise_toggle.is_unchecked(), "Space is advertised in marketplace"
     else:
-        assert (
-            page.advertise_toggle.is_checked()
-        ), "Space is not advertised in marketplace"
+        assert page.advertise_toggle.is_checked(), "Space is not advertised in marketplace"
 
 
 @wt(
@@ -55,14 +51,11 @@ def advertise_space_on_space_configuration_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "View in Marketplace" link on '
-        "space configuration page"
+        'user of {browser_id} clicks "View in Marketplace" link on space configuration page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_space_configuration_page(
-    browser_id: str, selenium: SeleniumDrivers
-) -> None:
+def click_button_on_space_configuration_page(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.configuration_page
     page.marketplace_link.click()
@@ -155,11 +148,7 @@ def add_tags_in_space_configuration_tab(
         page.space_tags_editor.save_button.click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees "{label_info}" header label in configuration space'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees "{label_info}" header label in configuration space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_header_info_in_space_configuration(
     selenium: SeleniumDrivers, browser_id: str, label_info: str
@@ -167,9 +156,7 @@ def check_header_info_in_space_configuration(
     driver = selenium[browser_id]
     configuration_page = OZLoggedIn(driver).data.configuration_page
     header_label_message = configuration_page.header_label_warning
-    error_message = (
-        f"expected {label_info} header label instead of {header_label_message}"
-    )
+    error_message = f"expected {label_info} header label instead of {header_label_message}"
     assert header_label_message == str(label_info), error_message
 
 

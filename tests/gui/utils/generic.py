@@ -112,11 +112,7 @@ def parse_seq(
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
-    return [
-        default(el.strip().strip('"'))
-        for el in seq.strip("[]").split(separator)
-        if el != ""
-    ]
+    return [default(el.strip().strip('"')) for el in seq.strip("[]").split(separator) if el != ""]
 
 
 # An empty sequence, e.g. []
@@ -230,9 +226,7 @@ def strip_path(path_string: str, separator: str = "/") -> str:
      paths rendered
     in DOM which contains `\\n` characters in `innerText`.
     """
-    return separator.join(
-        [path_item.strip() for path_item in path_string.split(separator)]
-    )
+    return separator.join([path_item.strip() for path_item in path_string.split(separator)])
 
 
 @contextmanager
@@ -253,13 +247,9 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
         yield item, next_item
 
 
-def is_element_with_selector_visible_on_page(
-    driver: WebDriver, css_selector: str
-) -> bool:
+def is_element_with_selector_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
     try:
-        return bool(
-            visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
-        )
+        return bool(visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver))
     except NoSuchElementException:
         return False
 
@@ -323,11 +313,7 @@ def get_element_css_classes_when_visible(
     driver: WebDriver, web_elem: WebElement, timeout: float = WAIT_FRONTEND // 4
 ) -> list[str]:
     def get_element_classes(driver: WebDriver) -> list[str] | None:
-        return (
-            web_elem.get_attribute("class").split()
-            if visibility_of(web_elem)(driver)
-            else None
-        )
+        return web_elem.get_attribute("class").split() if visibility_of(web_elem)(driver) else None
 
     return WebDriverWait(
         driver,
@@ -372,9 +358,7 @@ def find_web_elem_with_text(
             return item
     if callable(error_message):
         error_message = error_message()
-    raise NoSuchElementException(
-        f'Css element with "{text}" text not found. {error_message}'
-    )
+    raise NoSuchElementException(f'Css element with "{text}" text not found. {error_message}')
 
 
 def click_on_web_elem(
@@ -423,9 +407,7 @@ def suppress(*exceptions: type[BaseException]) -> Iterator[None]:
 
 
 @contextmanager
-def rm_css_cls(
-    driver: WebDriver, web_elem: WebElement, css_cls: str
-) -> Iterator[WebElement]:
+def rm_css_cls(driver: WebDriver, web_elem: WebElement, css_cls: str) -> Iterator[WebElement]:
     driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
     yield web_elem
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)

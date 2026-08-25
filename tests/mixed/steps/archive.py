@@ -216,9 +216,7 @@ def remove_archive_in_op(
             option,
         )
     elif client_lower == "rest":
-        remove_archive_in_op_rest(
-            user, users, hosts, host, description, tmp_memory, option
-        )
+        remove_archive_in_op_rest(user, users, hosts, host, description, tmp_memory, option)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -415,9 +413,7 @@ def recall_archive_for_archive_in_op(
 
     client_lower = client.lower()
     if client_lower == "web gui":
-        recall_archive_for_archive_in_op_gui(
-            user, description, tmp_memory, selenium, target_name
-        )
+        recall_archive_for_archive_in_op_gui(user, description, tmp_memory, selenium, target_name)
     elif client_lower == "rest":
         recall_archive_for_archive_in_op_rest(
             user,
@@ -489,9 +485,7 @@ def assert_progress_of_recall_in_op(
 ) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
-        assert_progress_of_recall_in_op_rest(
-            user, name, space_name, host, hosts, users, config
-        )
+        assert_progress_of_recall_in_op_rest(user, name, space_name, host, hosts, users, config)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -516,8 +510,6 @@ def cancel_archive_for_archive_in_op(
 ) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
-        cancel_archive_for_archive_in_op_rest(
-            user, users, hosts, host, space_name, target_name
-        )
+        cancel_archive_for_archive_in_op_rest(user, users, hosts, host, space_name, target_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")

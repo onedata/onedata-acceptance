@@ -155,13 +155,9 @@ def scroll_to_bottom_of_the_table(driver: WebDriver) -> int:
         if count == 0:
             return count
         # Scroll to last
-        driver.execute_script(
-            "arguments[0].scrollIntoView();", get_last_item_in_table(driver)
-        )
+        driver.execute_script("arguments[0].scrollIntoView();", get_last_item_in_table(driver))
         try:
-            WebDriverWait(driver, 2).until(
-                lambda d: get_last_item_number_in_table(d) > count
-            )
+            WebDriverWait(driver, 2).until(lambda d: get_last_item_number_in_table(d) > count)
         except TimeoutException:
             break
     return count
@@ -205,8 +201,7 @@ def assert_logs_order_with_optional_logs(
     for expected_log in logs_expected_list:
         if severity[expected_log] == "Required":
             assert idx < n and expected_log == logs_actual[idx], (
-                f"expected logs: {logs_expected_list}\n"
-                f"do not match actual logs: {logs_actual}"
+                f"expected logs: {logs_expected_list}\ndo not match actual logs: {logs_actual}"
             )
             idx += 1
         if severity[expected_log] == "Optional":
@@ -228,9 +223,7 @@ def scroll_and_get_columns(
         visible_names = visible_elems[main_column]
 
         modal.scroll_by_press_space()
-        stop_scrolling_flag = not any(
-            name not in checked_names for name in visible_names
-        )
+        stop_scrolling_flag = not any(name not in checked_names for name in visible_names)
         checked_names.update(visible_names)
     return list(checked_names)
 
@@ -294,17 +287,13 @@ def wait_for_element_to_appear(
     timeout: float = WAIT_FRONTEND,
 ) -> bool:
     """Return whether the element appeared before the timeout."""
-    web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(
-        web_elem_or_selector
-    )
-    visibility_condition: VisibilityCondition = get_visibility_condition(
-        web_elem_or_locator
-    )
+    web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(web_elem_or_selector)
+    visibility_condition: VisibilityCondition = get_visibility_condition(web_elem_or_locator)
     try:
         # selenium function visibility_of does not ignore StaleElementReferenceException
-        WebDriverWait(
-            driver, timeout, ignored_exceptions=[StaleElementReferenceException]
-        ).until(visibility_condition)
+        WebDriverWait(driver, timeout, ignored_exceptions=[StaleElementReferenceException]).until(
+            visibility_condition
+        )
     except TimeoutException:
         return False
     return True

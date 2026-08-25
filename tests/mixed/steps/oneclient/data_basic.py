@@ -89,9 +89,7 @@ def mount_new_oneclient_result(
     if result == "succeeds":
         mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
     else:
-        mount_new_oneclient_with_token_fail(
-            user, hosts, users, env_desc, tmp_memory, client=client
-        )
+        mount_new_oneclient_with_token_fail(user, hosts, users, env_desc, tmp_memory, client=client)
 
 
 def create_dir_in_op_oneclient(
@@ -135,15 +133,11 @@ def create_file_in_op_oneclient_with_tokens(
 
         if result == "succeeds":
             oneclient_host = change_client_name_to_hostname(client_lower)
-            create_file_in_op_oneclient(
-                user, full_path, users, result, oneclient_host, request
-            )
+            create_file_in_op_oneclient(user, full_path, users, result, oneclient_host, request)
     except AssertionError as e:
         if result == "fails":
             oneclient_host = change_client_name_to_hostname(client_lower)
-            create_file_in_op_oneclient(
-                user, full_path, users, result, oneclient_host, request
-            )
+            create_file_in_op_oneclient(user, full_path, users, result, oneclient_host, request)
         else:
             raise e
 
@@ -260,9 +254,7 @@ def compare_file_time_with_copied_time_in_op_oneclient(
     time_name2: str,
     comparator: str,
 ) -> None:
-    time1 = get_time_for_file_in_op_oneclient(
-        users, user, client_node, time_name1, file
-    )
+    time1 = get_time_for_file_in_op_oneclient(users, user, client_node, time_name1, file)
     error_message = (
         f"Time comparison failed. \nTime1: {time_name1} = {time1} \n"
         f"Time2: {time_name2} = {time2} \nComparator: {comparator}"
@@ -365,18 +357,12 @@ def assert_metadata_in_op_oneclient(
         attribute, val = attribute_value.split("=")
         multi_file_steps.check_string_xattr(user, path, attribute, val, host, users)
     elif attr_type.lower() == "json":
-        multi_file_steps.check_json_xattr(
-            user, path, "onedata_json", attribute_value, host, users
-        )
+        multi_file_steps.check_json_xattr(user, path, "onedata_json", attribute_value, host, users)
     else:
-        multi_file_steps.check_string_xattr(
-            user, path, "onedata_rdf", attribute_value, host, users
-        )
+        multi_file_steps.check_string_xattr(user, path, "onedata_rdf", attribute_value, host, users)
 
 
-def remove_all_metadata_in_op_oneclient(
-    user: str, users: Users, host: str, path: str
-) -> None:
+def remove_all_metadata_in_op_oneclient(user: str, users: Users, host: str, path: str) -> None:
     multi_file_steps.remove_xattr(user, path, "onedata_rdf", host, users)
     multi_file_steps.remove_xattr(user, path, "onedata_json", host, users)
     multi_file_steps.remove_all_xattr(user, path, host, users)
@@ -400,8 +386,7 @@ def assert_no_such_metadata_in_op_oneclient(
             actual_metadata = cast(Mapping[str, JsonValue], json.loads(metadata_value))
             for key in expected_metadata:
                 assert (
-                    key not in actual_metadata
-                    or actual_metadata[key] != expected_metadata[key]
+                    key not in actual_metadata or actual_metadata[key] != expected_metadata[key]
                 ), f"There is {expected_metadata} {tab_name} metadata"
         else:
             assert val != metadata_value, f"There is {val} {tab_name} metadata"
@@ -450,9 +435,7 @@ def grant_acl_privileges_in_op_oneclient(
     multi_file_steps.set_xattr(user, path, "cdmi_acl", json.dumps(acl), host, users)
 
 
-def remove_file_in_op_oneclient(
-    user: str, path: str, host: str, users: Users, res: str
-) -> None:
+def remove_file_in_op_oneclient(user: str, path: str, host: str, users: Users, res: str) -> None:
     if res == "fails":
         multi_file_steps.delete_file_fail(user, path, host, users)
     else:
@@ -474,9 +457,7 @@ def given_mount_new_oneclient_with_token(
     mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
 
 
-def check_file_is_of_type_oc(
-    file: str, file_type: str, user: str, users: Users, host: str
-) -> bool:
+def check_file_is_of_type_oc(file: str, file_type: str, user: str, users: Users, host: str) -> bool:
     try:
         multi_file_steps.check_type_impl(user, file, file_type, host, users)
     except AssertionError:

@@ -60,8 +60,7 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} chooses value of "
-        '"{provider}" provider in "Add QoS condition" popup'
+        'user of {browser_id} chooses value of "{provider}" provider in "Add QoS condition" popup'
     )
 )
 def choose_value_of_provider_item_in_add_cond_popup(
@@ -98,9 +97,7 @@ def _add_qos_requirement_in_modal(
     assert_tab_in_modal(selenium, browser_id, "QoS", details_modal)
     click_panel_button(selenium, browser_id, add_button, panel)
     click_enter_as_text_link(selenium, browser_id)
-    write_name_into_text_field_in_panel(
-        selenium, browser_id, expression, panel, expression_field
-    )
+    write_name_into_text_field_in_panel(selenium, browser_id, expression, panel, expression_field)
     confirm_entering_text(selenium, browser_id)
     if replicas_number != 1:
         write_name_into_text_field_in_panel(
@@ -205,9 +202,7 @@ def add_no_id_qos_requirement_in_modal(
     clipboard: Clipboard,
     displays: dict[str, str],
 ) -> None:
-    expression = r"anyStorage \ storageId=" + clipboard.paste(
-        display=displays[browser_id]
-    )
+    expression = r"anyStorage \ storageId=" + clipboard.paste(display=displays[browser_id])
     replicas_number = 1
 
     _add_qos_requirement_in_modal(
@@ -230,16 +225,12 @@ def assert_qos_file_status_in_op_gui(
 ) -> None:
     option_of_space = "Files"
     status_type = "QoS"
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, option_of_space
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option_of_space)
     assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
     if option == "has some":
         assert_status_tag_for_file_in_browser(user, status_type, file_name, tmp_memory)
     else:
-        assert_not_status_tag_for_file_in_browser(
-            user, status_type, file_name, tmp_memory
-        )
+        assert_not_status_tag_for_file_in_browser(user, status_type, file_name, tmp_memory)
 
 
 def delete_qos_requirement_in_op_gui(
@@ -255,8 +246,6 @@ def delete_qos_requirement_in_op_gui(
     modal = "Details modal"
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option1)
     assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
-    click_on_status_tag_for_file_in_file_browser(
-        user, status_type, file_name, tmp_memory
-    )
+    click_on_status_tag_for_file_in_file_browser(user, status_type, file_name, tmp_memory)
     delete_all_qualities_of_service(selenium, user)
     click_modal_button(selenium, user, button, modal)

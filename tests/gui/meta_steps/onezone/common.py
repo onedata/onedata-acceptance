@@ -298,9 +298,7 @@ def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None
 
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone Emergency panel"))
-def logout_from_onezone_emergency_panel(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def logout_from_onezone_emergency_panel(selenium: SeleniumDrivers, browser_id: str) -> None:
     open_manage_account_page(selenium, browser_id)
     click_emergency_panel_logout(selenium, browser_id)
 
@@ -342,8 +340,7 @@ def change_password(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} logins as "{username}" without closing '
-        "authentication info alert"
+        'user of {browser_id} logins as "{username}" without closing authentication info alert'
     )
 )
 def wt_sign_in_to_onezone_without_closing_auth_info_alert(

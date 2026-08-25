@@ -50,15 +50,9 @@ def wt_expand_oz_panel(
         _expand_oz_panel(selenium[browser_id], panel_name)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees alert with title "{title}" on Onezone page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees alert with title "{title}" on Onezone page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_alert_with_title_in_oz(
-    selenium: SeleniumDrivers, browser_id: str, title: str
-) -> None:
+def assert_alert_with_title_in_oz(selenium: SeleniumDrivers, browser_id: str, title: str) -> None:
     driver = selenium[browser_id]
     alert = OZLoggedIn(driver).provider_alert_message
     error_message = f"expected alert: {title}, found: {alert}"
@@ -116,9 +110,7 @@ def assert_there_is_item_with_known_name_in_oz_panel_list(
     item_name = hosts[item_name]["name"]
     panel = getattr(OZLoggedIn(driver), oz_panel)
     items = getattr(panel, f"{item_type}s")
-    assert (
-        item_name in items
-    ), f'no {item_type} named "{item_name}" found in {oz_panel} oz panel'
+    assert item_name in items, f'no {item_type} named "{item_name}" found in {oz_panel} oz panel'
 
 
 @wt(
@@ -174,9 +166,7 @@ def assert_there_is_item_named_in_oz_panel_list(
     driver = selenium[browser_id]
     panel = getattr(OZLoggedIn(driver), oz_panel)
     items = getattr(panel, f"{item_type}s")
-    assert (
-        item_name in items
-    ), f'no {item_type} named "{item_name}" found in {oz_panel} oz panel'
+    assert item_name in items, f'no {item_type} named "{item_name}" found in {oz_panel} oz panel'
 
 
 @wt(
@@ -236,8 +226,7 @@ def assert_there_is_no_item_named_in_oz_panel_list(
     panel = getattr(OZLoggedIn(driver), oz_panel)
     items = {item.name for item in getattr(panel, f"{item_type}s")}
     assert item_name not in items, (
-        f'{item_type} named "{item_name}" found in {oz_panel} oz panel while it'
-        " should not be found"
+        f'{item_type} named "{item_name}" found in {oz_panel} oz panel while it should not be found'
     )
 
 
@@ -329,8 +318,7 @@ def assert_number_of_items_match_items_counter(
     counter = int(getattr(item, f"{counter_type}s_count"))
 
     error_message = (
-        "{type}s counter number {counter} does not match displayed "
-        "number of {type}s {list_len}"
+        "{type}s counter number {counter} does not match displayed number of {type}s {list_len}"
     )
     assert counter == subitems.count(), error_message.format(
         type=counter_type, counter=counter, list_len=subitems.count()
@@ -409,6 +397,6 @@ def assert_item_in_submenu_of_item_in_oz_panel(
     items = getattr(panel, f"{item_type}s")
     item = items[item_name]
     subitems = getattr(item, f"{subitem_type}s")
-    assert (
-        subitem_name in subitems
-    ), f'no "{subitem_name}" found in subitems of "{item_name}" in {oz_panel}'
+    assert subitem_name in subitems, (
+        f'no "{subitem_name}" found in subitems of "{item_name}" in {oz_panel}'
+    )

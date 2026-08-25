@@ -47,9 +47,7 @@ def write_text(user: str, text: str, file: str, client_node: str, users: Users) 
         r"(?P<file>.*) on (?P<client_node>.*)"
     )
 )
-def write_opened(
-    user: str, text: str, file: str, client_node: str, users: Users
-) -> None:
+def write_opened(user: str, text: str, file: str, client_node: str, users: Users) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
@@ -88,9 +86,7 @@ def write_at_offset(
         r"on (?P<client_node>.*)"
     )
 )
-def write_text_fail(
-    user: str, text: str, file: str, client_node: str, users: Users
-) -> None:
+def write_text_fail(user: str, text: str, file: str, client_node: str, users: Users) -> None:
     write_text_base(user, text, file, client_node, users, should_fail=True)
 
 
@@ -154,9 +150,9 @@ def read_text(user: str, text: str, file: str, client_node: str, users: Users) -
 
     def condition() -> None:
         _read_text = client.read(file_path)
-        assert (
-            _read_text == text
-        ), f"Read {_read_text!r} instead of expected {text} on {client_node}"
+        assert _read_text == text, (
+            f"Read {_read_text!r} instead of expected {text} on {client_node}"
+        )
 
     assert_(client.perform, condition)
 
@@ -167,18 +163,14 @@ def read_text(user: str, text: str, file: str, client_node: str, users: Users) -
         r"opened file (?P<file>.*) on (?P<client_node>.*)"
     )
 )
-def read_opened(
-    user: str, text: str, file: str, client_node: str, users: Users
-) -> None:
+def read_opened(user: str, text: str, file: str, client_node: str, users: Users) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]
 
     def condition() -> None:
         client.seek(client.absolute_path(file), 0)
         _read_text = client.read_from_opened_file(client.absolute_path(file))
-        assert (
-            _read_text == text
-        ), f"Read {_read_text} instead of expected {text} on {client_node}"
+        assert _read_text == text, f"Read {_read_text} instead of expected {text} on {client_node}"
 
     assert_(client.perform, condition)
 
@@ -200,11 +192,7 @@ def cannot_read(user: str, file: str, client_node: str, users: Users) -> None:
     assert_(client.perform, condition)
 
 
-@when(
-    parsers.re(
-        r'(?P<user>\w+) appends "(?P<text>.*)" to (?P<file>.*) on (?P<client_node>.*)'
-    )
-)
+@when(parsers.re(r'(?P<user>\w+) appends "(?P<text>.*)" to (?P<file>.*) on (?P<client_node>.*)'))
 def append(user: str, text: str, file: str, client_node: str, users: Users) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]
@@ -222,9 +210,7 @@ def append(user: str, text: str, file: str, client_node: str, users: Users) -> N
         r"in (?P<file>.*) on (?P<client_node>.*)"
     )
 )
-def replace(
-    user: str, text1: str, text2: str, file: str, client_node: str, users: Users
-) -> None:
+def replace(user: str, text1: str, text2: str, file: str, client_node: str, users: Users) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
@@ -242,9 +228,7 @@ def replace(
         r"(?P<path>.*) on (?P<client_node>.*)"
     )
 )
-def copy_reg_file(
-    user: str, file: str, path: str, client_node: str, users: Users
-) -> None:
+def copy_reg_file(user: str, file: str, path: str, client_node: str, users: Users) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]
     src_path = client.absolute_path(file)
@@ -294,9 +278,7 @@ def do_truncate_base(
         r"on (?P<client_node>.*)"
     )
 )
-def do_truncate(
-    user: str, file: str, new_size: str, client_node: str, users: Users
-) -> None:
+def do_truncate(user: str, file: str, new_size: str, client_node: str, users: Users) -> None:
     do_truncate_base(user, file, new_size, client_node, users)
 
 
@@ -306,9 +288,7 @@ def do_truncate(
         r"bytes on (?P<client_node>.*)"
     )
 )
-def do_truncate_fail(
-    user: str, file: str, new_size: str, client_node: str, users: Users
-) -> None:
+def do_truncate_fail(user: str, file: str, new_size: str, client_node: str, users: Users) -> None:
     do_truncate_base(user, file, new_size, client_node, users, should_fail=True)
 
 
@@ -370,9 +350,7 @@ def close_file(user: str, file: str, client_node: str, users: Users) -> None:
         r"offset (?P<offset>.*) on (?P<client_node>.*)"
     )
 )
-def set_file_position(
-    user: str, file: str, offset: str, client_node: str, users: Users
-) -> None:
+def set_file_position(user: str, file: str, offset: str, client_node: str, users: Users) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)

@@ -187,9 +187,7 @@ def delete_file_json_metadata(provider_host: str, token: str, file_id: str) -> R
     return res
 
 
-def set_file_rdf_metadata(
-    provider_host: str, token: str, file_id: str, data: str
-) -> Response:
+def set_file_rdf_metadata(provider_host: str, token: str, file_id: str, data: str) -> Response:
     res = http_put(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -319,9 +317,7 @@ def create_archive(
     return res.json()
 
 
-def get_archive_information(
-    provider_host: str, token: str, archive_id: str
-) -> JsonObject:
+def get_archive_information(provider_host: str, token: str, archive_id: str) -> JsonObject:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -337,9 +333,7 @@ def get_archive_information(
 
 
 def create_share(provider_host: str, token: str, file_id: str, name: str) -> str:
-    prov_version = int(
-        json_str(get_provider_configuration(provider_host)["version"]).split(".")[0]
-    )
+    prov_version = int(json_str(get_provider_configuration(provider_host)["version"]).split(".")[0])
     res = http_post(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -395,13 +389,9 @@ def list_handle_services(zone_host: str, token: str) -> JsonObject:
 
 
 def register_handle(zone_host: str, token: str, share_id: str) -> Response:
-    handle_services = json_list(
-        list_handle_services(zone_host, token)["handle_services"]
-    )
+    handle_services = json_list(list_handle_services(zone_host, token)["handle_services"])
     handle_service_id = json_str(handle_services[0])
-    EXAMPLE_HANDLE_METADATA.update(
-        {"handleServiceId": handle_service_id, "resourceId": share_id}
-    )
+    EXAMPLE_HANDLE_METADATA.update({"handleServiceId": handle_service_id, "resourceId": share_id})
     res = http_post(
         ip=zone_host,
         port=OZ_REST_PORT,
@@ -487,9 +477,7 @@ def query_view(
     return res.json()
 
 
-def get_view(
-    provider_host: str, token: str, space_id: str, view_name: str
-) -> JsonObject:
+def get_view(provider_host: str, token: str, space_id: str, view_name: str) -> JsonObject:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,

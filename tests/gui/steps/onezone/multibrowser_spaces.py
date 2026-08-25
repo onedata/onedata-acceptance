@@ -18,8 +18,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sends invitation {item_type} to"
-        ' "{browser_list:ElementsSequence}"',
+        'user of {browser_id} sends invitation {item_type} to "{browser_list:ElementsSequence}"',
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
@@ -37,11 +36,7 @@ def send_invitation_token_to_browser(
         tmp_memory[browser]["mailbox"][item_type.lower()] = item
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "{group_name}" on the groups list in the sidebar'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "{group_name}" on the groups list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_group_on_groups_on_left_sidebar_menu(
     selenium: SeleniumDrivers, browser_id: str, group_name: str

@@ -149,9 +149,7 @@ class UpgradeTestsController:
     def add_test(self, test: UpgradeTest) -> None:
         req_prov_version = test.get_required_min_prov_version()
         if req_prov_version is not None:
-            if req_prov_version <= get_major_prov_version(
-                self.hosts["oneprovider-1"]["hostname"]
-            ):
+            if req_prov_version <= get_major_prov_version(self.hosts["oneprovider-1"]["hostname"]):
                 self.__tests_list.append(test)
         else:
             self.__tests_list.append(test)
@@ -190,9 +188,7 @@ class UpgradeTestsController:
 
     def run_tests(self) -> None:
         admin_user = self.users["admin"]
-        self.initial_prov_version = get_prov_version(
-            self.hosts["oneprovider-1"]["hostname"]
-        )
+        self.initial_prov_version = get_prov_version(self.hosts["oneprovider-1"]["hostname"])
         for test in self.__tests_list:
             try:
                 self.__run_setup(test)
@@ -237,9 +233,7 @@ class UpgradeTestsController:
 
     def __run_setup(self, test: UpgradeTest) -> None:
         test.run_setup()
-        export_logs(
-            self.request, self.env["env_description_abs_path"], "before_upgrade"
-        )
+        export_logs(self.request, self.env["env_description_abs_path"], "before_upgrade")
 
     def __run_verify(self, test: UpgradeTest) -> None:
         test.run_verify()

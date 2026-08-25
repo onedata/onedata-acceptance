@@ -91,9 +91,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def read_from_file(
-        self, path: str, read_range: Optional[tuple[int, int]] = None
-    ) -> bytes:
+    def read_from_file(self, path: str, read_range: Optional[tuple[int, int]] = None) -> bytes:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         headers = {}

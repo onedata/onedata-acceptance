@@ -92,9 +92,7 @@ def see_groups_using_rest(
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     for group_name in group_list:
-        assert get_group(
-            group_name, user_client
-        ), f"There is no group named {group_name}"
+        assert get_group(group_name, user_client), f"There is no group named {group_name}"
 
 
 @wt(
@@ -368,9 +366,7 @@ def assert_subgroups_using_rest(
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     subgroups = group_api.list_child_groups(get_group(parent, user_client).group_id)
-    subgroups_names = [
-        group.name for group in [group_api.get_group(g) for g in subgroups.groups]
-    ]
+    subgroups_names = [group.name for group in [group_api.get_group(g) for g in subgroups.groups]]
     for child in group_list:
         assert child in subgroups_names
 
@@ -422,8 +418,6 @@ def fail_to_see_subgroups_using_rest(
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     subgroups = group_api.list_child_groups(get_group(parent, user_client).group_id)
-    subgroups_names = [
-        group.name for group in [group_api.get_group(g) for g in subgroups.groups]
-    ]
+    subgroups_names = [group.name for group in [group_api.get_group(g) for g in subgroups.groups]]
     for child in group_list:
         assert child not in subgroups_names

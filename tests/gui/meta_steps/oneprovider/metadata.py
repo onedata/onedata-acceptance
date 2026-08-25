@@ -51,9 +51,7 @@ from tests.utils.bdd_utils import parsers, wt
         r'key "(?P<key_name>.*?)" and value "(?P<value>.*?)"'
     )
 )
-def add_xattr_entry(
-    selenium: SeleniumDrivers, browser_id: str, key_name: str, value: str
-) -> None:
+def add_xattr_entry(selenium: SeleniumDrivers, browser_id: str, key_name: str, value: str) -> None:
     type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, key_name)
     type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, value, key_name)
 
@@ -151,9 +149,7 @@ def set_metadata_in_op_gui(
     if tab_name == "xattrs":
         attribute, val = val.split("=")
         type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, attribute)
-        type_text_to_val_of_attr_in_new_xattr_entry(
-            selenium, browser_id, val, attribute
-        )
+        type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, val, attribute)
     else:
         click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
         type_text_to_metadata_textarea(selenium, browser_id, val, tab_name)
@@ -304,11 +300,7 @@ def click_save_button_metadata(selenium: SeleniumDrivers, browser_id: str) -> No
         pass
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that there is no metadata in metadata panel"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that there is no metadata in metadata panel"))
 def assert_no_metadata_in_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     panel = "Metadata"
 

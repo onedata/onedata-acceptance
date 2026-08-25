@@ -84,10 +84,7 @@ def create_instances_of_webdriver(
                     assert_driver_working_properly(browser)
                     break
                 except (WebDriverException, HTTPError) as e:
-                    print(
-                        f"failed to start webdriver instance at attempt: {i + 1} "
-                        f"due to:\n {e}"
-                    )
+                    print(f"failed to start webdriver instance at attempt: {i + 1} due to:\n {e}")
                     if i == 4:
                         raise e
                     time.sleep(2)

@@ -105,15 +105,9 @@ class AlertPopups:
 
 class Popups:
     toolbar = WebItem(".webui-popover.in ul.dropdown-menu", cls=ToolbarPopup)
-    deregister_provider = WebItem(
-        ".popover-deregister-provider", cls=DeregisterProvider
-    )
-    user_account_menu = WebItem(
-        ".webui-popover-content .user-account-menu", cls=UserAccountPopup
-    )
-    upload_presenter = WebItemsSequence(
-        ".hidden-xs .up-single-upload", cls=UploadPresenter
-    )
+    deregister_provider = WebItem(".popover-deregister-provider", cls=DeregisterProvider)
+    user_account_menu = WebItem(".webui-popover-content .user-account-menu", cls=UserAccountPopup)
+    upload_presenter = WebItemsSequence(".hidden-xs .up-single-upload", cls=UploadPresenter)
     menu_popup = WebItem("#webuiPopover1", cls=MenuPopupWithLabel)
     menu_popup_with_label = WebItem(".webui-popover.in", cls=MenuPopupWithLabel)
     menu_popup_with_text = WebItem(".webui-popover.in", cls=MenuPopupWithText)
@@ -132,27 +126,19 @@ class Popups:
         ".webui-popover-qos-expression-info-list", cls=MatchingStoragesPopup
     )
     cookies = WebItem(".cookies-consent", cls=Cookies)
-    group_hierarchy_menu = WebItem(
-        ".group-actions.one-webui-popover", cls=GroupHierarchyMenu
-    )
+    group_hierarchy_menu = WebItem(".group-actions.one-webui-popover", cls=GroupHierarchyMenu)
     relation_menu = WebItem(".line-actions.one-webui-popover", cls=GroupHierarchyMenu)
 
     membership_relation_menu = WebItem(
         ".relation-actions.one-webui-popover", cls=MembershipRelationMenu
     )
 
-    provider_details = WebItem(
-        ".webui-popover-content .provider-info-content", cls=ProviderDetails
-    )
-    provider_map_popover = WebItem(
-        ".webui-popover .provider-place-drop", cls=ProviderMapPopover
-    )
+    provider_details = WebItem(".webui-popover-content .provider-info-content", cls=ProviderDetails)
+    provider_map_popover = WebItem(".webui-popover .provider-place-drop", cls=ProviderMapPopover)
     dropdown = DropdownSelector(".ember-basic-dropdown-content")
     migrate_dropdown = MigrateDropdownSelector(".ember-basic-dropdown-content")
     data_row_menu = WebItem(".file-actions.dropdown-menu", cls=DataRowMenu)
-    dataset_row_menu = WebItem(
-        ".left-bottom .file-actions.dropdown-menu", cls=DataRowMenu
-    )
+    dataset_row_menu = WebItem(".left-bottom .file-actions.dropdown-menu", cls=DataRowMenu)
     archive_row_menu = WebItem(
         ".in.webui-popover .dropdown-menu",
         cls=ArchiveRowMenu,

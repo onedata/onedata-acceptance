@@ -60,8 +60,7 @@ def _check_files_tree(
 ) -> None:
     children = ls_fun(parent.path)
     error_message = (
-        f"expected item {parent.path} to have children {parent.get_items()} but got"
-        f" {children}"
+        f"expected item {parent.path} to have children {parent.get_items()} but got {children}"
     )
     assert set(parent.get_items()) == set(children), error_message
     for child in parent.nodes:
@@ -174,16 +173,12 @@ def assert_ace(
     keys = ACL_MASK[item_type].keys()
     set_privileges = [ACL_MASK[item_type][key] for key in keys if mask & key == key]
     set_privileges.sort()
-    assert ace["identifier"].startswith(
-        name
-    ), f"Identifier in {entry_number} ACE is not {name}"
+    assert ace["identifier"].startswith(name), f"Identifier in {entry_number} ACE is not {name}"
     assert ace["acetype"] == ace_type, f"Type in {entry_number} ACE is not {ace_type}"
-    assert (
-        ace["aceflags"] == ace_flags
-    ), f"{entry_number} ACE is set for {'group' if ace_flags else 'user'}"
-    assert set_privileges == sorted(
-        privileges
-    ), f"Privileges in {entry_number} ACE are not correct"
+    assert ace["aceflags"] == ace_flags, (
+        f"{entry_number} ACE is set for {'group' if ace_flags else 'user'}"
+    )
+    assert set_privileges == sorted(privileges), f"Privileges in {entry_number} ACE are not correct"
 
 
 def get_acl_metadata(

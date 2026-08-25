@@ -40,17 +40,11 @@ class EventRecord(PageObject):
 class PodsActivity(Modal):
     tabs = WebItemsSequence(".pods-filter-btn-group .btn-sm", cls=FilterTab)
 
-    pods_list = WebItemsSequence(
-        ".pods-table-section .pods-table-pod-row", cls=PodsRecordStatus
-    )
+    pods_list = WebItemsSequence(".pods-table-section .pods-table-pod-row", cls=PodsRecordStatus)
 
-    events_list = WebItemsSequence(
-        ".events-table-section .audit-log-table-entry", cls=EventRecord
-    )
+    events_list = WebItemsSequence(".events-table-section .audit-log-table-entry", cls=EventRecord)
 
-    events_list_scrollbar = WebElement(
-        ".events-table-section .perfect-scrollbar-element"
-    )
+    events_list_scrollbar = WebElement(".events-table-section .perfect-scrollbar-element")
     x = Button(".close")
 
     def __str__(self) -> str:
@@ -62,9 +56,7 @@ class PodsActivity(Modal):
         css_selector = "." + css_selector
         return css_selector
 
-    def get_elem_by_data_row_id(
-        self, number: int, driver: WebDriver, option: str
-    ) -> str:
+    def get_elem_by_data_row_id(self, number: int, driver: WebDriver, option: str) -> str:
         selector = f'{self.get_css_selector()} [data-row-id="{number}"]'
         elem_sel = f".event-{option}"
         scroll_to_css_selector(driver, selector)

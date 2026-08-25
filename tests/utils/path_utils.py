@@ -34,7 +34,7 @@ def config_file(relative_file_path: str) -> str:
     caller_mod_file_path = caller_mod.__file__
     if caller_mod_file_path is None:
         raise AttributeError(f"Module {caller_mod.__name__} has no __file__ attribute")
-    return f"{caller_mod_file_path.rstrip(".py")}_data/{relative_file_path}"
+    return f"{caller_mod_file_path.rstrip('.py')}_data/{relative_file_path}"
 
 
 def get_file_name(file_path: str) -> str:
@@ -166,8 +166,7 @@ def build_test_dir_name(node: TestNodeLike, max_length: int = 180) -> str:
 
     if len(test_dir_name) > max_length:
         print(
-            "Applying extra shortening, because test dir name is still too long:"
-            f" {test_dir_name}"
+            f"Applying extra shortening, because test dir name is still too long: {test_dir_name}"
         )
         test_dir_name = test_dir_name[:max_length]
 

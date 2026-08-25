@@ -95,9 +95,7 @@ def assert_qos_file_status_in_op(
             option,
         )
     elif client_lower == "rest":
-        assert_qos_file_status_in_op_rest(
-            user, users, hosts, host, space_name, file_name, option
-        )
+        assert_qos_file_status_in_op_rest(user, users, hosts, host, space_name, file_name, option)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -131,8 +129,6 @@ def delete_qos_requirement_in_op(
             tmp_memory,
         )
     elif client_lower == "rest":
-        delete_qos_requirement_in_op_rest(
-            user, users, hosts, host, space_name, file_name
-        )
+        delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name, file_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")

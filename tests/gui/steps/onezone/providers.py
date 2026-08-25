@@ -109,9 +109,9 @@ def assert_provider_hostname_matches_known_domain(
     driver = selenium[browser_id]
     displayed_domain = Popups(driver).provider_map_popover.provider_hostname
     domain = hosts[host]["hostname"]
-    assert (
-        displayed_domain == domain
-    ), f"displayed {displayed_domain} provider hostname instead of expected {domain}"
+    assert displayed_domain == domain, (
+        f"displayed {displayed_domain} provider hostname instead of expected {domain}"
+    )
 
 
 @wt(
@@ -138,8 +138,7 @@ def assert_provider_hostname_matches_test_hostname(
     _click_copy_hostname(driver)
     displayed_domain = clipboard.paste(display=displays[browser_id])
     assert displayed_domain == expected_domain, (
-        f"displayed {displayed_domain} provider hostname instead of expected"
-        f" {expected_domain}"
+        f"displayed {displayed_domain} provider hostname instead of expected {expected_domain}"
     )
 
 
@@ -154,9 +153,7 @@ def _click_copy_hostname(driver: WebDriver) -> None:
         r"popover on Onezone world map"
     )
 )
-def assert_no_provider_popup_on_world_map(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def assert_no_provider_popup_on_world_map(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     try:
         Popups(driver).provider_map_popover
@@ -190,9 +187,7 @@ def g_click_on_provider_in_go_to_your_files_oz_panel(
     providers: list[str],
     hosts: Hosts,
 ) -> None:
-    for browser_id, provider in zip_longest(
-        browser_id_list, providers, fillvalue=providers[-1]
-    ):
+    for browser_id, provider in zip_longest(browser_id_list, providers, fillvalue=providers[-1]):
         provider_name = hosts[provider]["name"]
         OZLoggedIn(selenium[browser_id]).data.providers[provider_name].click()
 
@@ -226,24 +221,17 @@ def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that there is no provider "
-        'in "GO TO YOUR FILES" Onezone panel'
+        'user of {browser_id} sees that there is no provider in "GO TO YOUR FILES" Onezone panel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_list_of_providers_is_empty(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def assert_list_of_providers_is_empty(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     count = OZLoggedIn(driver).data.providers.count()
     assert count == 0, f"Providers count is {count} instead of expected 0"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that provider "{provider}" in Onezone is working'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that provider "{provider}" in Onezone is working'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_working_in_oz_panel(
     selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
@@ -266,19 +254,13 @@ def click_on_provider_in_providers_sidebar_with_provider_name(
     OZLoggedIn(driver).providers.providers_list[provider_name]()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on provider "{provider}" in providers sidebar'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on provider "{provider}" in providers sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_provider_in_data_sidebar(
     selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
 ) -> None:
     provider = hosts[provider]["name"]
-    click_on_provider_in_providers_sidebar_with_provider_name(
-        selenium, browser_id, provider
-    )
+    click_on_provider_in_providers_sidebar_with_provider_name(selenium, browser_id, provider)
 
 
 @wt(
@@ -294,9 +276,7 @@ def assert_provider_is_not_in_providers_list_in_data_sidebar(
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     providers_list = OZLoggedIn(driver).providers.providers_list
-    assert (
-        provider not in providers_list
-    ), f"{provider} is in providers list in data sidebar"
+    assert provider not in providers_list, f"{provider} is in providers list in data sidebar"
 
 
 @wt(
@@ -315,8 +295,7 @@ def click_on_visit_provider_in_provider_popover(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{space_name}" is '
-        "on the spaces list on provider popover"
+        'user of {browser_id} sees "{space_name}" is on the spaces list on provider popover'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -343,15 +322,12 @@ def assert_number_of_supported_spaces_in_data_sidebar(
     supported_spaces_number = (
         OZLoggedIn(driver).providers.providers_list[provider].supported_spaces_number
     )
-    assert (
-        number == supported_spaces_number
-    ), f"number of supported spaces is not equal {number}"
+    assert number == supported_spaces_number, f"number of supported spaces is not equal {number}"
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that length of spaces list on "
-        "provider popover is {number}"
+        "user of {browser_id} sees that length of spaces list on provider popover is {number}"
     )
 )
 def assert_len_of_spaces_list_in_provider_popover(
@@ -359,9 +335,7 @@ def assert_len_of_spaces_list_in_provider_popover(
 ) -> None:
     driver = selenium[browser_id]
     spaces_list = Popups(driver).provider_map_popover.spaces_list
-    assert int(number) == len(
-        spaces_list
-    ), f"number of supported spaces is not equal {number}"
+    assert int(number) == len(spaces_list), f"number of supported spaces is not equal {number}"
 
 
 @wt(
@@ -406,8 +380,7 @@ def click_on_cease_support_in_menu_of_provider_on_providers_list(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} waits until provider "{provider_name}" '
-        "goes offline on providers map"
+        'user of {browser_id} waits until provider "{provider_name}" goes offline on providers map'
     )
 )
 def wait_until_provider_goes_offline_by_gui(
@@ -426,14 +399,11 @@ def wait_until_provider_goes_offline_by_gui(
         time.sleep(0.5)
         if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_OFFLINE:
             raise TimeoutError(
-                "Provider did not go offline within "
-                f"{TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s."
+                f"Provider did not go offline within {TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s."
             )
 
 
-def wait_until_provider_goes_online_by_rest(
-    hosts: Hosts, provider_name: str, users: Users
-) -> None:
+def wait_until_provider_goes_online_by_rest(hosts: Hosts, provider_name: str, users: Users) -> None:
     user = "admin"
     provider_hostname = hosts[provider_name]["hostname"]
     start = time.time()
@@ -459,9 +429,7 @@ def wait_until_provider_goes_online_by_rest(
     )
 
 
-def _start_and_wait_for_providers(
-    hosts: Hosts, provider_list: list[str], users: Users
-) -> None:
+def _start_and_wait_for_providers(hosts: Hosts, provider_list: list[str], users: Users) -> None:
     start_providers(hosts, provider_list)
     for provider in provider_list:
         wait_until_provider_goes_online_by_rest(hosts, provider, users)
@@ -476,9 +444,7 @@ def _start_and_wait_for_providers(
         "provider_list": parse_elements_sequence,
     },
 )
-def wt_stop_providers(
-    provider_list: list[str], hosts: Hosts, users: Users
-) -> Iterator[None]:
+def wt_stop_providers(provider_list: list[str], hosts: Hosts, users: Users) -> Iterator[None]:
     _stop_providers(hosts, provider_list)
     yield
     _start_and_wait_for_providers(hosts, provider_list, users)

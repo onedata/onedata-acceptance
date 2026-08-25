@@ -64,9 +64,7 @@ def write_input_in_form_in_shares_interface(
     browser_id: str, text: str, which_input: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    private_share(driver).dublin_core_metadata_form.write_to_last_input(
-        driver, text, which_input
-    )
+    private_share(driver).dublin_core_metadata_form.write_to_last_input(driver, text, which_input)
 
 
 @wt(
@@ -96,15 +94,9 @@ def click_button_in_description_form(
     getattr(private_share(driver).description_form, transform(button))()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that link on share\'s private interface is "{link}"'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that link on share\'s private interface is "{link}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_link_on_shares_interface(
-    browser_id: str, link: str, selenium: SeleniumDrivers
-) -> None:
+def assert_link_on_shares_interface(browser_id: str, link: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     error_message = f'Link on share\'s private interface is not "{link}"'
     assert private_share(driver).link_name == link, error_message
@@ -123,24 +115,16 @@ def write_description_in_description_form(
     setattr(private_share(driver).description_form, transform(where), text)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that share in private view is named "{share_name}"'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that share in private view is named "{share_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)
-def assert_private_share_named(
-    selenium: SeleniumDrivers, browser_id: str, share_name: str
-) -> None:
+def assert_private_share_named(selenium: SeleniumDrivers, browser_id: str, share_name: str) -> None:
     driver = selenium[browser_id]
     # because label with share name lies beyond iframe we need to change
     # to default content
     driver.switch_to.default_content()
     displayed_name = private_share(driver).share_name
     assert displayed_name == share_name, (
-        "displayed private share name "
-        f'is "{displayed_name}" instead of '
-        f'expected "{share_name}"'
+        f'displayed private share name is "{displayed_name}" instead of expected "{share_name}"'
     )
 
 
@@ -244,9 +228,7 @@ def _open_section_dropdown_and_choose(
         item_dropdown.click()
     except (ElementClickInterceptedException, ElementNotInteractableException):
         # fallback: scroll to center and try again
-        driver.execute_script(
-            "arguments[0].scrollIntoView({block: 'center'});", item_dropdown
-        )
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", item_dropdown)
         item_dropdown.click()
 
     if is_group:
@@ -317,8 +299,7 @@ def assert_nth_val_edm_form_in_shares_interface(
             if idx == 0:
                 item_value = item.value.text
                 error_message = (
-                    f"Expected value: {expected_value} but got {item_value} for item"
-                    f" {section_name}"
+                    f"Expected value: {expected_value} but got {item_value} for item {section_name}"
                 )
                 assert item_value == expected_value, error_message
                 return
@@ -364,14 +345,11 @@ def assert_warning_message_in_shares_page(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees there is no warning alert in "
-        "share's private interface"
+        "user of {browser_id} sees there is no warning alert in share's private interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_warning_message_in_shares_page(
-    browser_id: str, selenium: SeleniumDrivers
-) -> None:
+def assert_no_warning_message_in_shares_page(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     try:
         warning = private_share(driver).alert_warning

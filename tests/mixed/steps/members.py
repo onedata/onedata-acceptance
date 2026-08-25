@@ -204,9 +204,7 @@ def add_group_to_space_in_oz(
             where,
         )
     elif client_lower == "rest":
-        add_group_to_space_using_rest(
-            user, users, hosts, host, group_name, spaces, space_name
-        )
+        add_group_to_space_using_rest(user, users, hosts, host, group_name, spaces, space_name)
 
     else:
         raise NoSuchClientException(f"Client: {client} not found")
@@ -235,9 +233,7 @@ def assert_group_in_space_in_oz(
     if client_lower == "web gui":
         assert_group_in_space_using_op_gui(selenium, user, space_name, group_name)
     elif client_lower == "rest":
-        assert_group_in_space_using_rest(
-            user, users, hosts, host, group_name, spaces, space_name
-        )
+        assert_group_in_space_using_rest(user, users, hosts, host, group_name, spaces, space_name)
 
     else:
         raise NoSuchClientException(f"Client: {client} not found")

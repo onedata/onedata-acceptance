@@ -61,9 +61,7 @@ class MenuItem(PageObject):
 class GroupsPage(SidebarPanelPage):
     panel_name = "groups"
 
-    groups_list = WebItemsSequence(
-        ".sidebar-groups .one-list>.one-list-item.clickable", cls=Group
-    )
+    groups_list = WebItemsSequence(".sidebar-groups .one-list>.one-list-item.clickable", cls=Group)
     groups_headers_list = WebItemsSequence(
         ".sidebar-groups .one-list>.one-list-item.clickable", cls=GroupHeader
     )

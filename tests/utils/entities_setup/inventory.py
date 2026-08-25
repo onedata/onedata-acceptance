@@ -40,9 +40,7 @@ class CredentialsLike(Protocol):
 
 
 @given(
-    parsers.parse(
-        'initial inventories configuration in "{zone_name}" Onezone service:\n{config}'
-    )
+    parsers.parse('initial inventories configuration in "{zone_name}" Onezone service:\n{config}')
 )
 def inventories_creation(
     config: str,
@@ -87,9 +85,7 @@ def inventories_creation(
         inventory2:
             owner: user2
     """
-    _inventories_creation(
-        config, hosts, users, zone_name, admin_credentials, groups, inventories
-    )
+    _inventories_creation(config, hosts, users, zone_name, admin_credentials, groups, inventories)
 
 
 def _inventories_creation(
@@ -137,9 +133,7 @@ def _unpack_member_entry(entry: MemberEntry) -> tuple[str, Optional[list[str]]]:
     return name, options["privileges"]
 
 
-def _create_inventory(
-    zone_hostname: str, owner: CredentialsLike, inventory_name: str
-) -> str:
+def _create_inventory(zone_hostname: str, owner: CredentialsLike, inventory_name: str) -> str:
     inventory_properties = json.dumps({"name": inventory_name})
 
     response = http_post(

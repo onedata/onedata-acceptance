@@ -108,11 +108,7 @@ def start_observing_file_events(
     tmp_memory["monitor"] = monitor
 
 
-@wt(
-    parsers.parse(
-        'user {user} can see new file event about "{path}" in space "{space}" in {host}'
-    )
-)
+@wt(parsers.parse('user {user} can see new file event about "{path}" in space "{space}" in {host}'))
 def wt_assert_new_file_event_in_observed_directory(
     user: str,
     users: Users,
@@ -124,9 +120,7 @@ def wt_assert_new_file_event_in_observed_directory(
     async_loop_in_thread: asyncio.AbstractEventLoop,
 ) -> None:
     provider_hostname = hosts[host]["hostname"]
-    file_id = get_file_id_cached(
-        f"{space}/{path}", provider_hostname, users[user].token
-    )
+    file_id = get_file_id_cached(f"{space}/{path}", provider_hostname, users[user].token)
     assert_file_action_in_observed_directory(
         tmp_memory, async_loop_in_thread, ObservedFileAction.CREATION, file_id
     )
@@ -134,8 +128,7 @@ def wt_assert_new_file_event_in_observed_directory(
 
 @wt(
     parsers.parse(
-        'user {user} can see deleted file event about "{path}" in '
-        'space "{space}" in {host}'
+        'user {user} can see deleted file event about "{path}" in space "{space}" in {host}'
     )
 )
 def wt_assert_deleted_file_event_in_observed_directory(
@@ -149,19 +142,13 @@ def wt_assert_deleted_file_event_in_observed_directory(
     async_loop_in_thread: asyncio.AbstractEventLoop,
 ) -> None:
     provider_hostname = hosts[host]["hostname"]
-    file_id = get_file_id_cached(
-        f"{space}/{path}", provider_hostname, users[user].token
-    )
+    file_id = get_file_id_cached(f"{space}/{path}", provider_hostname, users[user].token)
     assert_file_action_in_observed_directory(
         tmp_memory, async_loop_in_thread, ObservedFileAction.DELETION, file_id
     )
 
 
-@wt(
-    parsers.parse(
-        "user {user} can see that the heartbeat event has just arrived in {host}"
-    )
-)
+@wt(parsers.parse("user {user} can see that the heartbeat event has just arrived in {host}"))
 def assert_new_heartbeat_event(
     tmp_memory: TmpMemory, async_loop_in_thread: asyncio.AbstractEventLoop
 ) -> None:
@@ -210,9 +197,7 @@ def wt_assert_updated_file_events_in_observed_directory(
         else:
             expected_attrs[item] = None
     provider_hostname = hosts[host]["hostname"]
-    file_id = get_file_id_cached(
-        f"{space}/{path}", provider_hostname, users[user].token
-    )
+    file_id = get_file_id_cached(f"{space}/{path}", provider_hostname, users[user].token)
     assert_file_actions_in_observed_directory(
         tmp_memory,
         async_loop_in_thread,
@@ -253,8 +238,7 @@ def assert_file_actions_in_observed_directory(
                 return
         except TimeoutError as e:
             raise AssertionError(
-                f"{file_action} file actions about {expected_attrs_keys - found} not"
-                " found"
+                f"{file_action} file actions about {expected_attrs_keys - found} not found"
             ) from e
 
 
@@ -273,9 +257,7 @@ def assert_file_action_in_observed_directory(
             if result == expected_result:
                 return
         except TimeoutError as e:
-            raise AssertionError(
-                f"{file_action} file action {expected_result} not found"
-            ) from e
+            raise AssertionError(f"{file_action} file action {expected_result} not found") from e
 
 
 def get_file_action_in_observed_directory(
@@ -286,22 +268,16 @@ def get_file_action_in_observed_directory(
     monitor = tmp_memory["monitor"]
     coroutine: Coroutine[object, object, EventResult]
     if file_action == ObservedFileAction.CREATION:
-        coroutine = cast(
-            Coroutine[object, object, EventResult], monitor.created_file_ids.get()
-        )
+        coroutine = cast(Coroutine[object, object, EventResult], monitor.created_file_ids.get())
     elif file_action == ObservedFileAction.DELETION:
-        coroutine = cast(
-            Coroutine[object, object, EventResult], monitor.deleted_file_ids.get()
-        )
+        coroutine = cast(Coroutine[object, object, EventResult], monitor.deleted_file_ids.get())
     elif file_action == ObservedFileAction.CHANGED_OR_CREATED:
         coroutine = cast(
             Coroutine[object, object, EventResult],
             monitor.changed_or_created_events.get(),
         )
     elif file_action == ObservedFileAction.HEARTBEAT:
-        coroutine = cast(
-            Coroutine[object, object, EventResult], monitor.heartbeat_events.get()
-        )
+        coroutine = cast(Coroutine[object, object, EventResult], monitor.heartbeat_events.get())
     else:
         raise AssertionError(f"file action: {file_action} not found")
 
@@ -323,11 +299,7 @@ def disconnect_from_sse_stream(
     stop_last_file_monitor(monitors, async_loop_in_thread)
 
 
-@wt(
-    parsers.parse(
-        "user {user} reconnects to SSE Stream starting from first captured event id"
-    )
-)
+@wt(parsers.parse("user {user} reconnects to SSE Stream starting from first captured event id"))
 def reconnect_to_sse_stream(
     monitors: list[MonitorEntry], async_loop_in_thread: asyncio.AbstractEventLoop
 ) -> None:

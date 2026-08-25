@@ -298,9 +298,7 @@ def assert_archive_in_op_gui(
             tmp_memory,
             item_browser=ARCHIVE_BROWSER,
         )
-        click_and_press_enter_on_archive(
-            browser_id, tmp_memory, description, ARCHIVE_BROWSER
-        )
+        click_and_press_enter_on_archive(browser_id, tmp_memory, description, ARCHIVE_BROWSER)
         assert_browser_in_tab_in_op(
             selenium,
             browser_id,
@@ -405,9 +403,7 @@ def assert_archive_with_option_in_op_gui(
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
-    assert_tag_for_archive_in_archive_browser(
-        browser_id, tag_type, tmp_memory, description
-    )
+    assert_tag_for_archive_in_archive_browser(browser_id, tag_type, tmp_memory, description)
 
 
 def assert_number_of_archive_in_op_gui(
@@ -443,8 +439,7 @@ def assert_number_of_archive_in_op_gui(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} can see {number} of archives in"
-        " {which_browser:WhichBrowser}",
+        "user of {browser_id} can see {number} of archives in {which_browser:WhichBrowser}",
         extra_types={"WhichBrowser": WhichBrowser},
     )
 )
@@ -507,9 +502,7 @@ def assert_archive_callback_in_op_gui(
     info = f"{option} callback URL"
     button_name = "X"
     click_menu_for_archive(browser_id, tmp_memory, description, selenium)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_menu, ARCHIVE_BROWSER)
     assert_archive_info_in_properties_modal(selenium, browser_id, expected, info)
     click_modal_button(selenium, browser_id, button_name, modal)
 
@@ -526,12 +519,8 @@ def recall_archive_for_archive_in_op_gui(
     name_textfield = "target name input"
     button_name = "Recall"
     click_menu_for_archive(browser_id, tmp_memory, description, selenium)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
-    )
-    write_name_into_text_field_in_modal(
-        selenium, browser_id, name, modal_name, name_textfield
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_menu, ARCHIVE_BROWSER)
+    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name, name_textfield)
     click_modal_button(selenium, browser_id, button_name, modal_name)
 
 
@@ -543,9 +532,7 @@ def recalled_archive_details_in_op_gui(
     selenium: SeleniumDrivers,
 ) -> None:
     status_type = "recalled"
-    click_on_status_tag_for_file_in_file_browser(
-        browser_id, status_type, item_name, tmp_memory
-    )
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type, item_name, tmp_memory)
 
     for key, expected_value in data.items():
         if key == "time":
@@ -589,14 +576,9 @@ def recalled_archive_details_in_op_gui(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that current size statistics "
-        "are as follow:\n{config}"
-    )
+    parsers.parse("user of {browser_id} sees that current size statistics are as follow:\n{config}")
 )
-def check_size_stats_for_archive(
-    selenium: SeleniumDrivers, browser_id: str, config: str
-) -> None:
+def check_size_stats_for_archive(selenium: SeleniumDrivers, browser_id: str, config: str) -> None:
     """Check size stats in directory details according to given config.
 
     Config format given in yaml is as follows:
@@ -608,15 +590,12 @@ def check_size_stats_for_archive(
 
     size_statistics = yaml.load(config, yaml.Loader)
     for stat_type, expected_value in size_statistics.items():
-        check_size_statistic_in_dir_details(
-            selenium, browser_id, stat_type, expected_value
-        )
+        check_size_statistic_in_dir_details(selenium, browser_id, stat_type, expected_value)
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that size statistics for "
-        "{provider} are as follow:\n{config}"
+        "user of {browser_id} sees that size statistics for {provider} are as follow:\n{config}"
     )
 )
 def check_size_stats_for_archive_per_provider(
@@ -648,6 +627,4 @@ def check_size_stats_for_archive_per_provider(
                 [expected_value],
             )
         else:
-            check_content_for_provider(
-                selenium, hosts, browser_id, provider, expected_value
-            )
+            check_content_for_provider(selenium, hosts, browser_id, provider, expected_value)

@@ -37,8 +37,7 @@ def assert_space_name_for_share_matches_expected(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees share name "{share_name}" in the '
-        "shares list in the sidebar"
+        'user of {browser_id} sees share name "{share_name}" in the shares list in the sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

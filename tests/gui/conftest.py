@@ -270,7 +270,7 @@ def clipboard() -> Clipboard:
 
 @fixture(scope="session")
 def base_url(hosts: Hosts, maybe_start_env: object) -> str:
-    return f'https://{hosts["onezone"]["hostname"]}'
+    return f"https://{hosts['onezone']['hostname']}"
 
 
 @fixture(scope="function", autouse=True)

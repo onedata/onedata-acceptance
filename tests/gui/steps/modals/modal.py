@@ -76,22 +76,16 @@ def cp_token_from_add_storage_modal(browser_id: str, tmp_memory: TmpMemory) -> N
 
 @wt(parsers.parse('user of {browser_id} generate another token in "Add storage" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def gen_another_token_in_add_storage_modal(
-    browser_id: str, tmp_memory: TmpMemory
-) -> None:
+def gen_another_token_in_add_storage_modal(browser_id: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
     modal.generate_token()
 
 
 @wt(parsers.parse('user of {browser_id} sees non-empty token in "Add storage" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_non_empty_token_in_add_storage_modal(
-    browser_id: str, tmp_memory: TmpMemory
-) -> None:
+def assert_non_empty_token_in_add_storage_modal(browser_id: str, tmp_memory: TmpMemory) -> None:
     token = tmp_memory[browser_id]["window"]["modal"].token
-    assert (
-        len(token) > 0
-    ), "expected token in Add storage modal, but token field is empty"
+    assert len(token) > 0, "expected token in Add storage modal, but token field is empty"
     tmp_memory[browser_id]["token"] = token
 
 
@@ -128,15 +122,11 @@ def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
             "function pods activity",
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
-            modals = driver.find_elements(
-                By.CSS_SELECTOR, ".modal, .modal .modal-header h1"
-            )
+            modals = driver.find_elements(By.CSS_SELECTOR, ".modal, .modal .modal-header h1")
         elif "leave this space" in modal_name:
             modals = driver.find_elements(By.CSS_SELECTOR, ".modal.in, .modal.in h1")
         else:
-            modals = driver.find_elements(
-                By.CSS_SELECTOR, ".modal.in, .modal.in .modal-title"
-            )
+            modals = driver.find_elements(By.CSS_SELECTOR, ".modal.in, .modal.in .modal-title")
 
         for name, modal in zip(modals[1::2], modals[::2]):
             if name.text.lower() == modal_name.lower():
@@ -169,11 +159,7 @@ def check_warning_modal(selenium: SeleniumDrivers, browser_id: str) -> bool:
     return True
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that "{modal_name}" modal has not appeared'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that "{modal_name}" modal has not appeared'))
 def assert_modal_does_not_appear(
     selenium: SeleniumDrivers, browser_id: str, modal_name: str, tmp_memory: TmpMemory
 ) -> None:
@@ -185,9 +171,7 @@ def assert_modal_does_not_appear(
         pass
 
 
-@given(
-    parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared')
-)
+@given(parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared'))
 @wt(
     parsers.re(
         r"(using web GUI, )?user of (?P<browser_id>.*) sees that "
@@ -201,9 +185,7 @@ def wt_wait_for_modal_to_appear(
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
 
 
-@given(
-    parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared')
-)
+@given(parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared'))
 def g_wait_for_modal_to_appear(
     selenium: SeleniumDrivers, browser_id: str, modal_name: str, tmp_memory: TmpMemory
 ) -> None:
@@ -211,9 +193,7 @@ def g_wait_for_modal_to_appear(
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
 
 
-def _wait_for_modal_to_disappear(
-    driver: WebDriver, browser_id: str, tmp_memory: TmpMemory
-) -> None:
+def _wait_for_modal_to_disappear(driver: WebDriver, browser_id: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
     WebDriverWait(driver, WAIT_BACKEND).until_not(
         lambda _: not staleness_of(modal) or modal.is_displayed(),
@@ -297,8 +277,7 @@ def wt_click_on_confirmation_btn_in_modal(
 
 @given(
     parsers.parse(
-        'user of {browser_id} clicked "{button_name}" '
-        "confirmation button in displayed modal"
+        'user of {browser_id} clicked "{button_name}" confirmation button in displayed modal'
     )
 )
 def g_click_on_confirmation_btn_in_modal(
@@ -308,23 +287,15 @@ def g_click_on_confirmation_btn_in_modal(
     _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that message displayed in modal matches: {regexp}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that message displayed in modal matches: {regexp}"))
 def is_modal_msg_matching(browser_id: str, regexp: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
     msg = modal.find_element(By.CSS_SELECTOR, ".modal-body .message-text").text
-    assert re.match(
-        regexp, msg
-    ), f"mag displayed in modal: {msg} does not match {regexp}"
+    assert re.match(regexp, msg), f"mag displayed in modal: {msg} does not match {regexp}"
 
 
 @wt(parsers.parse("user of {browser_id} sees non-empty token in active modal"))
-def get_token_from_modal(
-    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
-) -> None:
+def get_token_from_modal(selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory) -> None:
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]["window"]["modal"]
     token_box = modal.find_element(By.CSS_SELECTOR, "input[readonly]")
@@ -341,9 +312,7 @@ def get_token_from_modal(
         r"((?P<in_type>.*?) )?input box in active modal"
     )
 )
-def activate_input_box_in_modal(
-    browser_id: str, in_type: str, tmp_memory: TmpMemory
-) -> None:
+def activate_input_box_in_modal(browser_id: str, in_type: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
     css_path = f"input#{in_type_to_id[in_type]}" if in_type else "input"
     in_box = modal.find_element(By.CSS_SELECTOR, css_path)
@@ -369,14 +338,8 @@ def click_on_button_in_active_modal(
     click_on_btn(driver, button, f"{option} btn for displayed modal disabled")
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that "{text}" option in modal is not selected'
-    )
-)
-def assert_modal_option_is_not_selected(
-    browser_id: str, text: str, tmp_memory: TmpMemory
-) -> None:
+@wt(parsers.parse('user of {browser_id} sees that "{text}" option in modal is not selected'))
+def assert_modal_option_is_not_selected(browser_id: str, text: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
     options = modal.find_elements(
         By.CSS_SELECTOR, ".one-option-button, .one-option-button .oneicon"
@@ -389,14 +352,9 @@ def assert_modal_option_is_not_selected(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that "{btn_name}" item '
-        "displayed in modal is disabled"
-    )
+    parsers.parse('user of {browser_id} sees that "{btn_name}" item displayed in modal is disabled')
 )
-def assert_btn_in_modal_is_disabled(
-    browser_id: str, btn_name: str, tmp_memory: TmpMemory
-) -> None:
+def assert_btn_in_modal_is_disabled(browser_id: str, btn_name: str, tmp_memory: TmpMemory) -> None:
     button_name = btn_name.lower()
     modal = tmp_memory[browser_id]["window"]["modal"]
     buttons = modal.find_elements(By.CSS_SELECTOR, "button")
@@ -409,9 +367,7 @@ def assert_btn_in_modal_is_disabled(
 
 
 @wt(parsers.parse('user of {browser_id} selects "{text}" option in displayed modal'))
-def select_option_with_text_in_modal(
-    browser_id: str, text: str, tmp_memory: TmpMemory
-) -> None:
+def select_option_with_text_in_modal(browser_id: str, text: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
     options = modal.find_elements(
         By.CSS_SELECTOR, ".one-option-button, .one-option-button .oneicon"
@@ -423,14 +379,8 @@ def select_option_with_text_in_modal(
                 checkbox.click()
 
 
-@wt(
-    parsers.parse(
-        'user of browser sees that "{btn_name}" item displayed in modal is enabled'
-    )
-)
-def assert_btn_in_modal_is_enabled(
-    browser_id: str, btn_name: str, tmp_memory: TmpMemory
-) -> None:
+@wt(parsers.parse('user of browser sees that "{btn_name}" item displayed in modal is enabled'))
+def assert_btn_in_modal_is_enabled(browser_id: str, btn_name: str, tmp_memory: TmpMemory) -> None:
     button_name = btn_name.lower()
     modal = tmp_memory[browser_id]["window"]["modal"]
     buttons = modal.find_elements_by(By.CSS_SELECTOR, "button")
@@ -494,19 +444,13 @@ def click_panel_button(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_panel_question_icon(
-    selenium: SeleniumDrivers, browser_id: str, panel_name: str
-) -> None:
+def click_panel_question_icon(selenium: SeleniumDrivers, browser_id: str, panel_name: str) -> None:
     panel_name = "qos" if panel_name == "Quality of Service" else panel_name
     tab = getattr(Modals(selenium[browser_id]).details_modal, transform(panel_name))
     getattr(tab, "question_icon").click()
 
 
-@wt(
-    parsers.re(
-        r'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" link in info popup'
-    )
-)
+@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" link in info popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_popup_link(selenium: SeleniumDrivers, browser_id: str, link: str) -> None:
     link = "documentation_link" if "documentation" in link else link
@@ -532,8 +476,7 @@ def assert_there_is_no_button_in_panel(
     try:
         getattr(modal, transform(button))
         raise AssertionError(
-            f'There is a "{button}" button visible in {panel_name}'
-            " panel when it shouldn't be"
+            f'There is a "{button}" button visible in {panel_name} panel when it shouldn\'t be'
         )
     except NoSuchElementException:
         pass
@@ -554,9 +497,7 @@ def click_modal_button(
     button = button.replace(".", "")
     getattr(modal, transform(button)).click()
     if modal_attribute_name == "create_group" and transform(button) == "create":
-        close_alert_popup_if_present(
-            selenium[browser_id], popup=CreatedItemAlertPopup.GROUP
-        )
+        close_alert_popup_if_present(selenium[browser_id], popup=CreatedItemAlertPopup.GROUP)
 
 
 @wt(
@@ -569,9 +510,7 @@ def click_modal_button(
 def click_modal_link(
     selenium: SeleniumDrivers, browser_id: str, link: str, modal_name: str
 ) -> None:
-    modal = getattr(
-        Modals(selenium[browser_id]), resolve_modal_attribute_name(modal_name)
-    )
+    modal = getattr(Modals(selenium[browser_id]), resolve_modal_attribute_name(modal_name))
     getattr(modal, transform(link)).click()
 
 
@@ -609,9 +548,7 @@ def write_name_into_text_field_in_panel(
     if name_textfield == "":
         name_textfield = "input name"
     driver = selenium[browser_id]
-    modal = getattr(
-        Modals(driver).details_modal, resolve_modal_attribute_name(panel_name)
-    )
+    modal = getattr(Modals(driver).details_modal, resolve_modal_attribute_name(panel_name))
     setattr(modal, transform(name_textfield), item_name)
 
 
@@ -681,9 +618,7 @@ def look_for_tab_name(navigation: PageObjectsSequence, name: str) -> str:
     raise ValueError(f"tab {name} not found")
 
 
-def _assert_number_of_shares_in_modal(
-    number: int, links: PageObjectsSequence, info: str
-) -> bool:
+def _assert_number_of_shares_in_modal(number: int, links: PageObjectsSequence, info: str) -> bool:
     return str(number) in info and len(links) == number
 
 
@@ -726,11 +661,7 @@ def click_icon_in_share_directory_modal(
     icon.click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that error modal with text "{text}" appeared'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that error modal with text "{text}" appeared'))
 @repeat_failed(timeout=WAIT_BACKEND * 6)
 def assert_error_modal_with_text_appeared(
     selenium: SeleniumDrivers, browser_id: str, text: str
@@ -783,16 +714,13 @@ def close_first_modal_if_present(driver: WebDriver) -> None:
 
 @wt(parsers.parse("user of {browser_id} clicks copy command icon in REST API modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_copy_icon_in_rest_api_modal(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_copy_icon_in_rest_api_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     Modals(selenium[browser_id]).rest_api_modal.copy_command_button()
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{option}" in {dropdown_name} '
-        'in modal "{modal_name}"'
+        'user of {browser_id} chooses "{option}" in {dropdown_name} in modal "{modal_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -829,9 +757,7 @@ def assert_path_where_symbolic_link_points(
     modal_page = getattr(Modals(driver), modal)
     path = modal_page.path.replace("\n", "")
 
-    assert (
-        expected_path == path
-    ), f"Expected path: {expected_path} does not match path: {path}"
+    assert expected_path == path, f"Expected path: {expected_path} does not match path: {path}"
 
 
 @wt(
@@ -861,25 +787,15 @@ def switch_toggle_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_checkbox_in_advertise_space_modal(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def check_checkbox_in_advertise_space_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).advertise_space_in_the_marketplace
     modal.checkbox.click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} closes by pressing "{button}" "{warning_label}" warning'
-    )
-)
-@wt(
-    parsers.parse('user of {browser_id} clicks "{button}" on "{warning_label}" warning')
-)
+@wt(parsers.parse('user of {browser_id} closes by pressing "{button}" "{warning_label}" warning'))
+@wt(parsers.parse('user of {browser_id} clicks "{button}" on "{warning_label}" warning'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_warning(
-    selenium: SeleniumDrivers, browser_id: str, button: str
-) -> None:
+def click_button_on_warning(selenium: SeleniumDrivers, browser_id: str, button: str) -> None:
     driver = selenium[browser_id]
     getattr(Modals(driver).warning_info, transform(button))()

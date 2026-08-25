@@ -27,12 +27,8 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
-RegionCaveat = TypedDict(
-    "RegionCaveat", {"allow": bool, "region codes": list[str]}, total=False
-)
-CountryCaveat = TypedDict(
-    "CountryCaveat", {"allow": bool, "country codes": list[str]}, total=False
-)
+RegionCaveat = TypedDict("RegionCaveat", {"allow": bool, "region codes": list[str]}, total=False)
+CountryCaveat = TypedDict("CountryCaveat", {"allow": bool, "country codes": list[str]}, total=False)
 ConsumerCaveatConfig = TypedDict(
     "ConsumerCaveatConfig", {"type": str, "by": str, "consumer name": str}
 )
@@ -43,9 +39,7 @@ class PathCaveatConfig(TypedDict):
     path: str
 
 
-ExpirationCaveat = TypedDict(
-    "ExpirationCaveat", {"after": int, "set": bool}, total=False
-)
+ExpirationCaveat = TypedDict("ExpirationCaveat", {"after": int, "set": bool}, total=False)
 
 
 TokenCaveats = TypedDict(
@@ -288,11 +282,7 @@ class CaveatField(PageObject):
                     value = users[value].user_id
                 elif consumer_type == "group":
                     value = groups[value]
-            if (
-                consumer_type == "oneprovider"
-                and method == "name"
-                and "Any" not in value
-            ):
+            if consumer_type == "oneprovider" and method == "name" and "Any" not in value:
                 value = hosts[value]["name"]
             self.set_consumer_in_consumer_caveat(
                 selenium, browser_id, popups, consumer_type, method, value
@@ -334,9 +324,7 @@ class CaveatField(PageObject):
         service_cav = service_caveats.get("Service", [])
         service_onepanel_cav = service_caveats.get("Service Onepanel", [])
         for service in service_cav:
-            self.set_service_in_service_caveat(
-                selenium, browser_id, popups, "Service", service
-            )
+            self.set_service_in_service_caveat(selenium, browser_id, popups, "Service", service)
         for service in service_onepanel_cav:
             self.set_service_in_service_caveat(
                 selenium, browser_id, popups, "Service Onepanel", service
@@ -404,9 +392,7 @@ class CaveatField(PageObject):
     # assertions
 
     # expiration caveat
-    def assert_expiration_caveat(
-        self, exp_caveat: ExpirationCaveat, tmp_memory: TmpMemory
-    ) -> None:
+    def assert_expiration_caveat(self, exp_caveat: ExpirationCaveat, tmp_memory: TmpMemory) -> None:
         value_set = exp_caveat.get("set", False)
         if value_set:
             expected_time = tmp_memory.get("expire_time", None)
@@ -427,9 +413,7 @@ class CaveatField(PageObject):
             self.assert_region_in_region_caveat(region)
 
     def assert_region_in_region_caveat(self, region: str) -> None:
-        assert (
-            region in self.tags
-        ), f"{region} should be amongst region caveats but is not"
+        assert region in self.tags, f"{region} should be amongst region caveats but is not"
 
     # country caveat
     def assert_country_caveats(self, country_caveat: CountryCaveat) -> None:
@@ -441,9 +425,7 @@ class CaveatField(PageObject):
             self.assert_region_in_region_caveat(country)
 
     def assert_country_in_country_caveat(self, country: str) -> None:
-        assert (
-            country in self.tags
-        ), f"{country} should be amongst country caveats but is not"
+        assert country in self.tags, f"{country} should be amongst country caveats but is not"
 
     # asn caveat
     def assert_asn_caveats(self, asn_list: Iterable[int]) -> None:
@@ -486,11 +468,7 @@ class CaveatField(PageObject):
                     value = users[value].user_id
                 elif consumer_type == "group":
                     value = groups[value]
-            if (
-                consumer_type == "oneprovider"
-                and method == "name"
-                and "Any" not in value
-            ):
+            if consumer_type == "oneprovider" and method == "name" and "Any" not in value:
                 value = hosts[value]["name"]
             self.assert_consumer_in_consumer_caveat(consumer_type, method, value)
 
@@ -501,9 +479,9 @@ class CaveatField(PageObject):
             tag = self.tags[value]
         else:
             tag = self.tags["ID: " + value]
-        assert tag.is_icon_type(
-            consumer_type
-        ), f"Consumer caveat for {value} is not {consumer_type}"
+        assert tag.is_icon_type(consumer_type), (
+            f"Consumer caveat for {value} is not {consumer_type}"
+        )
 
     # service caveat
     def assert_service_caveats(self, services: Iterable[str]) -> None:
@@ -512,9 +490,7 @@ class CaveatField(PageObject):
             self.assert_ip_in_ip_caveats(service)
 
     def assert_service_in_service_caveat(self, service: str) -> None:
-        assert (
-            service in self.tags
-        ), f"{service} should be amongst services caveats but is not"
+        assert service in self.tags, f"{service} should be amongst services caveats but is not"
 
     # interface caveat
     def assert_interface_caveat(self, interface: str) -> None:
@@ -533,9 +509,9 @@ class CaveatField(PageObject):
         space = path_caveat["space"]
         path = path_caveat["path"]
         entry = self.path_entries[space]
-        assert (
-            entry.path == path
-        ), f"Invalid path: {space} {path}. Actual: {entry.space_name} {entry.path}"
+        assert entry.path == path, (
+            f"Invalid path: {space} {path}. Actual: {entry.space_name} {entry.path}"
+        )
 
     # object id caveat
     def assert_object_id_caveats(self, ids: Iterable[str]) -> None:
@@ -543,6 +519,4 @@ class CaveatField(PageObject):
             self.assert_object_id_caveat(object_id)
 
     def assert_object_id_caveat(self, object_id: str) -> None:
-        assert (
-            object_id in self.object_id_entries
-        ), f"Object id {object_id} not in object ids"
+        assert object_id in self.object_id_entries, f"Object id {object_id} not in object ids"

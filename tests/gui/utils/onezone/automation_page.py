@@ -32,9 +32,7 @@ class Inventory(Element):
 
 
 class AutomationDetailsPage(PageObject):
-    upload_json = NamedButton(
-        ".upload-atm-workflow-schema-action-trigger", text="Upload (json)"
-    )
+    upload_json = NamedButton(".upload-atm-workflow-schema-action-trigger", text="Upload (json)")
     add_new_workflow = NamedButton(".btn", text="Add new workflow")
 
     add_new_lambda = NamedButton(".btn", text="Add new lambda")

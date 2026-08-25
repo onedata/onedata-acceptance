@@ -48,14 +48,12 @@ def performance(
             env_desc: EnvDesc,
         ) -> None:
             test_case_name = test_function.__name__
-            test_case_report = TestCaseReport(
-                test_case_name, default_config["description"]
-            )
+            test_case_report = TestCaseReport(test_case_name, default_config["description"])
             failed = False
             error_msg = ""
 
             for config_name, config in configs.items():
-                flushed_print(f"Running {config["description"]}")
+                flushed_print(f"Running {config['description']}")
 
                 merged_config = update_dict(default_config, config)
                 config_report = ConfigReport(
@@ -92,9 +90,7 @@ def performance(
                         test_results = ensure_list(
                             cast(Optional[Result | list[Result]], test_results)
                         )
-                        test_result_report.add_single_test_results(
-                            test_results, repeats
-                        )
+                        test_result_report.add_single_test_results(test_results, repeats)
                         successful_repeats += 1
                     finally:
                         repeats += 1
@@ -116,9 +112,7 @@ def performance(
 
                 test_case_report.add_to_report("configs", config_report)
 
-                if not is_success_rate_satisfied(
-                    successful_repeats, failed_repeats, succes_rate
-                ):
+                if not is_success_rate_satisfied(successful_repeats, failed_repeats, succes_rate):
                     error_msg = (
                         f"Test suite: {suite_report.name} failed because of too "
                         f"many failures: {failed_repeats}"
@@ -172,9 +166,7 @@ class EnvironmentReport(Report):
 
 
 class SuiteReport(Report):
-    def __init__(
-        self, name: str, description: str, copyright_: str, authors: list[str]
-    ) -> None:
+    def __init__(self, name: str, description: str, copyright_: str, authors: list[str]) -> None:
         Report.__init__(self, name)
         self.add_to_report("name", name)
         self.add_to_report("description", description)
@@ -209,9 +201,7 @@ class ConfigReport(Report):
 
 
 class Result:
-    def __init__(
-        self, name: str, value: int | float, description: str, unit: str = ""
-    ) -> None:
+    def __init__(self, name: str, value: int | float, description: str, unit: str = "") -> None:
         self.name = name
         self.value = value
         self.description = description
@@ -219,7 +209,6 @@ class Result:
 
 
 class ResultReport:
-
     def __init__(self) -> None:
         self.details: dict | list[dict] = {}
         self.summary: dict | list[dict] = {}
@@ -237,9 +226,7 @@ class ResultReport:
         self.summary = dict_to_list(self.summary)
         self.average = dict_to_list(self.average)
 
-    def add_single_test_results(
-        self, test_results: Iterable[Result], repeat: int
-    ) -> None:
+    def add_single_test_results(self, test_results: Iterable[Result], repeat: int) -> None:
         assert isinstance(self.details, dict)
         for test_result in test_results:
             if test_result.name not in self.details:
@@ -282,7 +269,6 @@ def update_dict(base: Mapping, updating: Mapping) -> dict:
             and isinstance(updating[key], dict)
             and isinstance(new_dict[key], dict)
         ):
-
             new_dict[key] = update_dict(new_dict[key], updating[key])
         else:
             new_dict[key] = updating[key]
@@ -306,9 +292,7 @@ def ensure_list(elem: Optional[Result | list[Result]]) -> list[Result]:
     return elem
 
 
-def generate_configs(
-    params: Mapping[str, list[object]], description_skeleton: str
-) -> dict:
+def generate_configs(params: Mapping[str, list[object]], description_skeleton: str) -> dict:
     """This function generates all combinations of given parameters. Format of
     returned value is appropriate for @performance decorator
     :param description_skeleton: skeleton of config description, it will be
@@ -327,9 +311,7 @@ def generate_configs(
         description = description_skeleton.format(**new_params)
         for key, value in new_params.items():
             new_params[key] = {"value": value}
-        configs[conf_name].update(
-            {"parameters": new_params, "description": description}
-        )
+        configs[conf_name].update({"parameters": new_params, "description": description})
     return configs
 
 

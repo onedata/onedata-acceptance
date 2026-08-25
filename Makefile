@@ -87,7 +87,7 @@ endif
 .PHONY: test_oneclient, test_oneclient_pkg, test_oneclient_src
 .PHONY: test_performance, test_performance_pkg, test_performance_src
 .PHONY: test_upgrade
-.PHONY: format
+.PHONY: format format-check black-check static-analysis type-check
 
 test_gui:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
@@ -160,7 +160,7 @@ codetag-tracker:
 ## Formatting
 ##
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v12"
+STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v13"
 UID := $(shell id -u)
 GID := $(shell id -g)
 
@@ -179,13 +179,15 @@ ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/
 
 
 format:
-	$(docker_run) isort $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) --settings-file tests/configs/.pyproject.toml
-	$(docker_run) black $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) --config tests/configs/.pyproject.toml
+	$(docker_run) ruff check --config /tmp/ruff.toml --no-cache --select I --fix $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
+	$(docker_run) ruff format --config /tmp/ruff.toml --no-cache $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
 
 
-black-check:
-	$(docker_run) black $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) --check --config tests/configs/.pyproject.toml || \
-	 (echo "Code failed Black format checking. Please run 'make format' before commiting your changes. "; exit 1)
+format-check:
+	$(docker_run) ruff format --config /tmp/ruff.toml --no-cache --check $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) || \
+	 (echo "Code failed Ruff format checking. Please run 'make format' before committing your changes. "; exit 1)
+
+black-check: format-check
 
 
 ##
@@ -193,9 +195,9 @@ black-check:
 ##
 
 static-analysis:
-	$(docker_run) pylint $(ALL_FILES) --output-format=colorized --rcfile=tests/configs/.pylintrc
-	$(docker_run) pylint $(ALL_CONFTEST_FILES) --output-format=colorized \
-	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc
+	$(docker_run) ruff check --config /tmp/ruff.toml --no-cache $(ALL_FILES)
+	$(docker_run) ruff check --config /tmp/ruff.toml --no-cache \
+	--ignore=ARG,PLC0415,SLF001 $(ALL_CONFTEST_FILES)
 
 type-check:
 	$(docker_run) mypy $(ALL_FILES) $(ALL_CONFTEST_FILES) --config-file=tests/configs/.pyproject.toml

@@ -41,7 +41,6 @@ TEXT = "asd"
 
 
 class TestConcurrentFilesCreation(AbstractPerformanceTest):
-
     @performance(
         default_config={
             "repeats": REPEATS,
@@ -90,9 +89,7 @@ class TestConcurrentFilesCreation(AbstractPerformanceTest):
             directory=client_directio.absolute_path("space1")
         )
 
-        dir_path_proxy = client_proxy.mkdtemp(
-            directory=client_proxy.absolute_path("space1")
-        )
+        dir_path_proxy = client_proxy.mkdtemp(directory=client_proxy.absolute_path("space1"))
         dir_path_host = client_proxy.mkdtemp(directory=user_home_dir(user_proxy))
 
         test_result1 = _execute_test(
@@ -146,18 +143,14 @@ def _execute_test(
     description: str,
 ) -> list[Result]:
     avg_work = files_number // threads_num
-    intervals = chain(
-        repeat(avg_work, threads_num - 1), [avg_work + files_number % threads_num]
-    )
+    intervals = chain(repeat(avg_work, threads_num - 1), [avg_work + files_number % threads_num])
     i = 0
     workers = []
     queue: ExceptionQueue = Queue()
     for interval in intervals:
         j = i + interval
         workers.append(
-            Thread(
-                target=_create_files, args=(client, i, j, empty_files, dir_path, queue)
-            )
+            Thread(target=_create_files, args=(client, i, j, empty_files, dir_path, queue))
         )
         i = j
 
@@ -168,9 +161,7 @@ def _execute_test(
         worker.start()
 
     flushed_print(
-        "\t\tStarted {} workers with avg {} file creation task each".format(
-            len(workers), avg_work
-        )
+        "\t\tStarted {} workers with avg {} file creation task each".format(len(workers), avg_work)
     )
 
     while workers:
@@ -192,9 +183,7 @@ def _execute_test(
 
     return [
         Result(
-            "[{}; {} threads] {} files creation".format(
-                description, threads_num, files_number
-            ),
+            "[{}; {} threads] {} files creation".format(description, threads_num, files_number),
             end - start,
             "{} files creation time using oneclient with {} content".format(
                 files_number, ("no" if empty_files else "some")

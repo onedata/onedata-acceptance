@@ -128,7 +128,6 @@ def create_spaces_in_oz(
             ),
         )
     elif client.lower() == "web gui":
-
         create_spaces_in_oz_using_gui(
             selenium,
             user,
@@ -163,12 +162,8 @@ def leave_spaces_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
-        leave_spaces_in_oz_using_rest(
-            user, _as_space_users(users), host, hosts, space_list, spaces
-        )
+        leave_spaces_in_oz_using_rest(user, _as_space_users(users), host, hosts, space_list, spaces)
     elif client.lower() == "web gui":
-
         leave_spaces_in_oz_using_gui(selenium, user, space_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -199,7 +194,6 @@ def rename_spaces_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         rename_spaces_in_oz_using_rest(
             user,
             _as_space_users(users),
@@ -210,7 +204,6 @@ def rename_spaces_in_oz(
             spaces,
         )
     elif client.lower() == "web gui":
-
         rename_spaces_in_oz_using_gui(selenium, user, space_list, new_names_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -247,7 +240,6 @@ def remove_spaces_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         remove_spaces_in_oz_using_rest(
             user, _as_space_users(users), host, hosts, space_list, spaces
         )
@@ -278,7 +270,6 @@ def delete_users_from_space_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         delete_users_from_space_in_oz_using_rest(
             user_list, _as_member_users(users), host, hosts, space_name, spaces, user
         )
@@ -308,7 +299,6 @@ def add_users_to_space_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         add_users_to_space_in_oz_using_rest(
             user_list, _as_member_users(users), host, hosts, space_name, spaces, user
         )
@@ -337,7 +327,6 @@ def remove_provider_support_for_space_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         remove_provider_support_for_space_in_oz_using_rest(
             user,
             _as_space_users(users),
@@ -349,10 +338,7 @@ def remove_provider_support_for_space_in_oz(
             _as_credentials(admin_credentials),
         )
     elif client.lower() == "web gui":
-
-        remove_provider_support_for_space_in_oz_using_gui(
-            selenium, user, space_name, hosts
-        )
+        remove_provider_support_for_space_in_oz_using_gui(selenium, user, space_name, hosts)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -382,7 +368,6 @@ def invite_other_users_to_space(
 ) -> None:
 
     if client.lower() == "rest":
-
         for invited_user in user_list:
             invite_other_users_to_space_using_rest(
                 user,
@@ -396,7 +381,6 @@ def invite_other_users_to_space(
             )
 
     elif client.lower() == "web gui":
-
         invite_other_users_to_space_using_gui(
             selenium,
             user,
@@ -431,12 +415,10 @@ def join_space_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         join_space_in_oz_using_rest(
             user_list, _as_space_users(users), host, hosts, item_name, tmp_memory
         )
     elif client.lower() == "web gui":
-
         join_space_in_oz_using_gui(selenium, user_list, tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -463,10 +445,8 @@ def assert_there_are_spaces_in_oz(
 ) -> None:
 
     if client.lower() == "web gui":
-
         assert_spaces_have_appeared_in_oz_gui(selenium, user, space_list)
     elif client.lower() == "rest":
-
         assert_spaces_have_appeared_in_oz_rest(
             user, _as_space_users(users), hosts, host, space_list
         )
@@ -496,12 +476,10 @@ def assert_there_are_no_spaces_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         assert_there_are_no_spaces_in_oz_rest(
             user, _as_space_users(users), host, hosts, space_list, spaces
         )
     elif client.lower() == "web gui":
-
         assert_there_are_no_spaces_in_oz_gui(selenium, user, space_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -533,7 +511,6 @@ def assert_spaces_have_been_renamed_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         assert_spaces_have_been_renamed_in_oz_rest(
             user,
             _as_space_users(users),
@@ -544,10 +521,7 @@ def assert_spaces_have_been_renamed_in_oz(
             spaces,
         )
     elif client.lower() == "web gui":
-
-        assert_spaces_have_been_renamed_in_oz_gui(
-            selenium, user, space_list, new_names_list
-        )
+        assert_spaces_have_been_renamed_in_oz_gui(selenium, user, space_list, new_names_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -577,7 +551,6 @@ def assert_there_is_no_provider_for_space_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         assert_there_is_no_provider_for_space_in_oz_rest(
             user,
             _as_space_users(users),
@@ -589,7 +562,6 @@ def assert_there_is_no_provider_for_space_in_oz(
             _as_credentials(admin_credentials),
         )
     elif client.lower() == "web gui":
-
         assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -618,12 +590,10 @@ def assert_user_is_member_of_space(
 ) -> None:
 
     if client.lower() == "rest":
-
         assert_user_is_member_of_space_rest(
             space_name, spaces, user, _as_member_users(users), user_list, host, hosts
         )
     elif client.lower() == "web gui":
-
         assert_user_is_member_of_space_gui(selenium, user, space_name, user_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -650,7 +620,6 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
     provider_name = hosts[provider_name]["name"]
 
     if client.lower() == "rest":
-
         assert_provider_has_name_and_hostname_in_oz_rest(
             user,
             _as_provider_users(users),
@@ -660,7 +629,6 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
             hosts[provider]["hostname"],
         )
     elif client.lower() == "web gui":
-
         assert_provider_has_name_and_hostname_in_oz_gui(
             selenium, user, provider_name, provider, hosts
         )
@@ -668,11 +636,7 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
         raise NoSuchClientException(f"Client: {client} not found.")
 
 
-@wt(
-    parsers.parse(
-        'using {client}, {user} sees spaces "{expected_spaces}" in mount point'
-    )
-)
+@wt(parsers.parse('using {client}, {user} sees spaces "{expected_spaces}" in mount point'))
 def assert_spaces_in_mount_point(
     client: str, user: str, users: Users, expected_spaces: str
 ) -> None:
@@ -717,9 +681,7 @@ def assert_spaces_with_ids_in_mount_point(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        user_client = login_to_oz(
-            user, users[user].password, hosts[zone_name]["hostname"]
-        )
+        user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
 
         user_api = UserApi(user_client)
         user_spaces = user_api.list_user_spaces().spaces

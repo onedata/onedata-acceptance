@@ -92,23 +92,17 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last: datetime | int, index: int = 0) -> None:
-        rows_of_columns: dict[str, list[str]] = modal.get_visible_rows_of_columns(
-            [column_name]
-        )
+        rows_of_columns: dict[str, list[str]] = modal.get_visible_rows_of_columns([column_name])
         currents = rows_of_columns[column_name][index:]
         for current in currents:
             if column_name == "time":
-                current_time = datetime.strptime(
-                    current + "000", "%d %b %Y %H:%M:%S.%f"
-                )
+                current_time = datetime.strptime(current + "000", "%d %b %Y %H:%M:%S.%f")
                 error_message = f"time {current_time} following {last} is not smaller"
                 assert current_time <= cast(datetime, last), error_message
                 last = current_time
             elif column_name == "time_taken":
                 current_duration = parse_time(current)
-                error_message = (
-                    f"time {current_duration} following {last} is not smaller"
-                )
+                error_message = f"time {current_duration} following {last} is not smaller"
                 assert current_duration <= cast(int | float, last), error_message
                 last = cast(int, current_duration)
 
@@ -122,9 +116,7 @@ def assert_decreasing_creation_times_in_archives_audit_log(
         "file_ in archive audit log"
     )
 )
-def assert_ascending_file_or_dir_names(
-    browser_id: str, selenium: SeleniumDrivers
-) -> None:
+def assert_ascending_file_or_dir_names(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     start_value = -1
@@ -162,17 +154,15 @@ def assert_n_logs_about_archivisation_finished(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index: int = 0) -> None:
-        visible_events: list[str] = modal.get_visible_rows_of_single_column("event")[
-            index:
-        ]
+        visible_events: list[str] = modal.get_visible_rows_of_single_column("event")[index:]
         for event in visible_events:
             error_message = f"visible event {event} is not expected"
             assert event in expected_events, error_message
 
     checked_elems = _scroll_and_check_condition(browser_id, selenium, condition)
-    assert (
-        len(checked_elems) == expected_number
-    ), f"there are {len(checked_elems)} items instead of {number} in archive audit log"
+    assert len(checked_elems) == expected_number, (
+        f"there are {len(checked_elems)} items instead of {number} in archive audit log"
+    )
 
 
 def _scroll_and_check_condition(
@@ -236,19 +226,11 @@ def _check_entries_in_archive_audit_log(
     visible_logs = modal.data_row
     data = yaml.load(config, yaml.Loader)
     for item in data.keys():
-        error_message = (
-            f"there is no visible log: {item}: {data[item]} in archive audit log"
-        )
-        assert (
-            item in visible_logs and data[item] == visible_logs[item].event
-        ), error_message
+        error_message = f"there is no visible log: {item}: {data[item]} in archive audit log"
+        assert item in visible_logs and data[item] == visible_logs[item].event, error_message
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on item "{item_name}" in archive audit log'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on item "{item_name}" in archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_item_in_archive_audit_log(
     browser_id: str, item_name: str | int, selenium: SeleniumDrivers
@@ -260,8 +242,7 @@ def click_on_item_in_archive_audit_log(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on item "{file_name}" using '
-        "scroll in archive audit log"
+        'user of {browser_id} clicks on item "{file_name}" using scroll in archive audit log'
     )
 )
 def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
@@ -296,16 +277,13 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
 
 
 @wt(parsers.parse("user of {browser_id} clicks on top item in archive audit log"))
-def click_on_top_item_in_archive_audit_log(
-    browser_id: str, selenium: SeleniumDrivers
-) -> None:
+def click_on_top_item_in_archive_audit_log(browser_id: str, selenium: SeleniumDrivers) -> None:
     click_on_item_in_archive_audit_log(browser_id, 0, selenium)
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that exactly {number} items "
-        "are visible in archive audit log"
+        "user of {browser_id} sees that exactly {number} items are visible in archive audit log"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -313,20 +291,17 @@ def assert_number_of_items_in_archive_audit_log(
     browser_id: str, number: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    visible_items: list[str] = Modals(
-        driver
-    ).archive_audit_log.get_visible_rows_of_single_column("file")
+    visible_items: list[str] = Modals(driver).archive_audit_log.get_visible_rows_of_single_column(
+        "file"
+    )
     assert int(number) == len(visible_items), (
-        f"there are {len(visible_items)} "
-        f"items visible instead of {number} "
-        "in archive audit log"
+        f"there are {len(visible_items)} items visible instead of {number} in archive audit log"
     )
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees message "{message}" at field '
-        '"{field_name}" in archive audit log'
+        'user of {browser_id} sees message "{message}" at field "{field_name}" in archive audit log'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -336,9 +311,9 @@ def assert_message_at_field_in_archive_audit_log(
     driver = selenium[browser_id]
     modal = Modals(driver).audit_log_entry_details
     visible_message = getattr(modal, transform(field_name))
-    assert (
-        visible_message == message
-    ), f"expected {message} instead of {visible_message} message, at field {field_name}"
+    assert visible_message == message, (
+        f"expected {message} instead of {visible_message} message, at field {field_name}"
+    )
 
 
 @wt(
@@ -421,8 +396,7 @@ def assert_pattern_at_field_in_archive_audit_log(
         raise AssertionError("Empty pattern, unknown this message type")
     pattern = patterns[mes_type]
     error_message = (
-        f"message at field is {visible_message}, which does not"
-        f" correspond to the type {mes_type}"
+        f"message at field is {visible_message}, which does not correspond to the type {mes_type}"
     )
     assert pattern.fullmatch(visible_message), error_message
 
@@ -454,9 +428,7 @@ def click_on_field_in_details_archive_audit_log(
 
 @wt(parsers.parse("user of {browser_id} scrolls to top in archive audit log"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def scroll_to_top_in_archive_audit_log(
-    browser_id: str, selenium: SeleniumDrivers
-) -> None:
+def scroll_to_top_in_archive_audit_log(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     modal.scroll_to_top()
@@ -481,9 +453,9 @@ def assert_archived_file_path_and_archive_name(
     details_file_path = "/".join(details_file_path[1:])
     # Depending on window size, could be without [1:], if archive name is not present
 
-    assert (
-        path == details_file_path
-    ), f"given path: {path} is different than actual file path: {details_file_path}"
+    assert path == details_file_path, (
+        f"given path: {path} is different than actual file path: {details_file_path}"
+    )
 
     modal = Modals(driver).archive_audit_log
     assert modal.archive_name == details_archive_name, (
@@ -508,11 +480,9 @@ def assert_unique_hashes_and_number_of_logs(
     for log in logs:
         if log.file == file_name:
             log_hash = log.duplicated_name_hash
-            assert (
-                log_hash not in hashes
-            ), f"There are at least two identical hashes: {log_hash}"
+            assert log_hash not in hashes, f"There are at least two identical hashes: {log_hash}"
             hashes.append(log_hash)
 
-    assert len(hashes) == int(
-        number
-    ), f"Expected number of logs: {number} is different than actual: {len(hashes)}"
+    assert len(hashes) == int(number), (
+        f"Expected number of logs: {number} is different than actual: {len(hashes)}"
+    )

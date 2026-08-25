@@ -61,11 +61,7 @@ SELECTABLE_FIELDS = {
 
 
 def register_namespace_by_metadata_type(metadata_type: str) -> None:
-    namespaces = (
-        NAMESPACES_OPENAIRE
-        if metadata_type.lower() == "openaire"
-        else NAMESPACES_DATACITE
-    )
+    namespaces = NAMESPACES_OPENAIRE if metadata_type.lower() == "openaire" else NAMESPACES_DATACITE
     for prefix, uri in namespaces.items():
         ET.register_namespace(prefix, uri)
 

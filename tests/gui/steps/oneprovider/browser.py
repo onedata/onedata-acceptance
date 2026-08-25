@@ -63,25 +63,21 @@ def get_column_names_from_configure_columns_menu(driver: WebDriver) -> list[str]
     return [column.name for column in menu.columns]
 
 
-def get_column_from_configure_columns_menu(
-    driver: WebDriver, column_name: str
-) -> ColumnOption:
+def get_column_from_configure_columns_menu(driver: WebDriver, column_name: str) -> ColumnOption:
     menu_getter = lambda driver: Popups(driver).configure_columns_menu
     menu = wait_for_visible_element_using_getter(driver, menu_getter)
     return menu.columns[column_name]
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_column_visibility(
-    column: ColumnOption, column_name: str, visible: bool
-) -> None:
+def change_column_visibility(column: ColumnOption, column_name: str, visible: bool) -> None:
     if visible:
         column.select()
     else:
         column.unselect()
     assert column.is_selected() == visible, (
         f'column "{column_name}" is '
-        f'{"not " if visible else ""}selected after changing its visibility'
+        f"{'not ' if visible else ''}selected after changing its visibility"
     )
 
 
@@ -195,9 +191,7 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
     which_browser: str = "file browser",
 ) -> None:
     driver = selenium[browser_id]
-    breadcrumbs = getattr(
-        OPLoggedIn(driver), transform(which_browser)
-    ).breadcrumbs.pwd()
+    breadcrumbs = getattr(OPLoggedIn(driver), transform(which_browser)).breadcrumbs.pwd()
 
     if which_browser == "archive file browser":
         breadcrumbs = re.split("/", breadcrumbs, 2)[-1]
@@ -206,11 +200,7 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
     assert path == breadcrumbs, f"expected breadcrumbs {path}; displayed: {breadcrumbs}"
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on menu on breadcrumbs in {which_browser}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on menu on breadcrumbs in {which_browser}"))
 def wt_click_on_breadcrumbs_menu(
     selenium: SeleniumDrivers, browser_id: str, which_browser: str
 ) -> None:
@@ -292,11 +282,7 @@ def wt_assert_items_presence_in_browser(
     tmp_memory: TmpMemory,
     which_browser: WhichBrowser | str,
 ) -> None:
-    browser_name = (
-        which_browser.value
-        if isinstance(which_browser, WhichBrowser)
-        else which_browser
-    )
+    browser_name = which_browser.value if isinstance(which_browser, WhichBrowser) else which_browser
     assert_items_presence_in_browser(
         selenium, browser_id, item_list, tmp_memory, which_browser=browser_name
     )
@@ -401,9 +387,7 @@ def assert_items_absence_in_browser(
 ) -> None:
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
     for item_name in item_list:
-        assert (
-            item_name not in data
-        ), f'found "{item_name}" in browser, while it should not'
+        assert item_name not in data, f'found "{item_name}" in browser, while it should not'
 
 
 @wt(
@@ -436,8 +420,7 @@ def assert_num_of_files_are_displayed_in_browser(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {status_type} "
-        'status tag for "{item_name}" in {which_browser}'
+        'user of {browser_id} sees {status_type} status tag for "{item_name}" in {which_browser}'
     )
 )
 def wt_assert_status_tag_for_file_in_browser(
@@ -508,8 +491,7 @@ def assert_status_tag_text_for_file_in_browser(
     browser = tmp_memory[browser_id][transform(which_browser)]
     actual_text = browser.data[item_name].get_tag_text(transform(status_type))
     error_message = (
-        f"{status_type} tag for {item_name} in browser has text "
-        f"{actual_text} not {text}"
+        f"{status_type} tag for {item_name} in browser has text {actual_text} not {text}"
     )
     assert actual_text == text, error_message
 
@@ -546,15 +528,12 @@ def assert_not_status_tag_for_file_in_browser(
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser)]
     error_message = (
-        f"{status_type} tag for {item_name} in {which_browser} visible, "
-        "while should not be"
+        f"{status_type} tag for {item_name} in {which_browser} visible, while should not be"
     )
     assert not browser.data[item_name].is_tag_visible(status_type), error_message
 
 
-def _choose_menu(
-    selenium: SeleniumDrivers, browser_id: str, which_browser: str
-) -> RowMenu:
+def _choose_menu(selenium: SeleniumDrivers, browser_id: str, which_browser: str) -> RowMenu:
     if which_browser in ["archive browser", "dataset archive browser"]:
         return Popups(selenium[browser_id]).archive_row_menu
     if which_browser == "dataset browser":
@@ -603,20 +582,14 @@ def assert_option_state_in_data_row_menu(
     option_state: str,
     which_browser: str,
 ) -> None:
-    error_message = (
-        f"{option} option is not {option_state} in opened item menu in file browser"
-    )
+    error_message = f"{option} option is not {option_state} in opened item menu in file browser"
 
     menu = _choose_menu(selenium, browser_id, which_browser)
     menu_option = menu.return_option(option)
     assert menu_option.get_state() == option_state, error_message
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on {state} view mode on {which} browser page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on {state} view mode on {which} browser page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_state_view_mode_tab(
     browser_id: str,
@@ -649,9 +622,7 @@ def click_on_state_view_mode_tab(
 def wt_click_menu_for_elem_in_browser(
     browser_id: str, item_name: str, tmp_memory: TmpMemory, which_browser: str
 ) -> None:
-    click_menu_for_elem_in_browser(
-        browser_id, item_name, tmp_memory, which_browser=which_browser
-    )
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=which_browser)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -717,8 +688,7 @@ def assert_value_in_column_for_item(
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], transform(option))
     error_message = (
-        f"displayed {option} {item_elem} for {item_name} does not "
-        f"match expected {value}"
+        f"displayed {option} {item_elem} for {item_name} does not match expected {value}"
     )
 
     assert value == item_elem, error_message
@@ -766,14 +736,10 @@ def assert_value_in_xattr_or_json_column_for_item(
         expected_value = value
 
     if res == "has":
-        error_message = (
-            error_message_prefix + f" does not match expected {expected_value}"
-        )
+        error_message = error_message_prefix + f" does not match expected {expected_value}"
         assert expected_value == item_elem, error_message
     else:
-        error_message = (
-            error_message_prefix + f" is not supposed to be equal to {expected_value}"
-        )
+        error_message = error_message_prefix + f" is not supposed to be equal to {expected_value}"
         assert expected_value != item_elem, error_message
 
 
@@ -849,9 +815,7 @@ def compare_value_in_column_for_item(
     old_value = tmp_memory["columns-content"][item_name]
     new_value = datetime.strptime(new_value, "%d %b %Y %H:%M:%S")
     old_value = datetime.strptime(old_value, "%d %b %Y %H:%M:%S")
-    error_message = (
-        f"visible date time: {new_value} is not more current than {old_value}"
-    )
+    error_message = f"visible date time: {new_value} is not more current than {old_value}"
     assert new_value > old_value, error_message
 
 
@@ -883,11 +847,7 @@ def assert_visible_columns_in_browser(
             raise AssertionError(f"column {column} is not visible in {which_browser}")
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} does not see button "{button}" in {which_browser}'
-    )
-)
+@wt(parsers.parse('user of {browser_id} does not see button "{button}" in {which_browser}'))
 def assert_button_not_visible_in_browser(
     browser_id: str, tmp_memory: TmpMemory, button: str, which_browser: str
 ) -> None:

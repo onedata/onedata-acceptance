@@ -30,15 +30,9 @@ from tests.utils.utils import repeat_failed
 
 
 @given(
-    parsers.parse(
-        "using {client}, {user} creates token with following configuration:\n{config}"
-    )
+    parsers.parse("using {client}, {user} creates token with following configuration:\n{config}")
 )
-@wt(
-    parsers.parse(
-        "using {client}, {user} creates token with following configuration:\n{config}"
-    )
-)
+@wt(parsers.parse("using {client}, {user} creates token with following configuration:\n{config}"))
 def create_token(
     client: str,
     user: str,
@@ -83,8 +77,7 @@ def create_token(
 
 @wt(
     parsers.parse(
-        "using {client}, {user} sees that created token "
-        "configuration is as following:\n{config}"
+        "using {client}, {user} sees that created token configuration is as following:\n{config}"
     )
 )
 def assert_token(
@@ -138,11 +131,7 @@ def copy_token_if_gui(
 
 
 @wt(parsers.parse('using {client}, {user} copies created token named "{token_name}"'))
-@wt(
-    parsers.parse(
-        'if {client} is web gui, {user} copies created token named "{token_name}"'
-    )
-)
+@wt(parsers.parse('if {client} is web gui, {user} copies created token named "{token_name}"'))
 def copy_named_token_if_gui(
     selenium: SeleniumDrivers,
     client: str,
@@ -202,8 +191,7 @@ def revoke_token_in_oz(
 
 @wt(
     parsers.parse(
-        "using {client}, {user} successfully joins space {"
-        "space_name} with received token"
+        "using {client}, {user} successfully joins space {space_name} with received token"
     )
 )
 def join_space_with_token(

@@ -74,9 +74,7 @@ def create_workflow_using_gui(
     selenium: SeleniumDrivers, browser_id: str, workflow_name: str
 ) -> None:
     click_add_new_button_in_menu_bar(selenium, browser_id, "Add new workflow")
-    write_text_into_workflow_name_on_main_workflows_page(
-        selenium, browser_id, workflow_name
-    )
+    write_text_into_workflow_name_on_main_workflows_page(selenium, browser_id, workflow_name)
 
     confirm_workflow_creation(selenium, browser_id)
 
@@ -120,9 +118,7 @@ def given_upload_workflow_from_automation_examples(
     workflow: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    upload_workflow_from_automation_examples(
-        selenium, browser_id, inventory, workflow, tmp_memory
-    )
+    upload_workflow_from_automation_examples(selenium, browser_id, inventory, workflow, tmp_memory)
 
 
 @wt(
@@ -138,9 +134,7 @@ def upload_workflow_from_automation_examples(
     workflow: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    _upload_workflow_from_automation_examples(
-        selenium, browser_id, inventory, workflow, tmp_memory
-    )
+    _upload_workflow_from_automation_examples(selenium, browser_id, inventory, workflow, tmp_memory)
 
 
 @wt(
@@ -253,9 +247,7 @@ def _execute_workflow_with_input_config(
     driver = selenium[browser_id]
 
     try:
-        click_element_on_lists_on_left_sidebar_menu(
-            selenium, browser_id, "spaces", space
-        )
+        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, "spaces", space)
     except IndexError:
         pass
     except (
@@ -264,9 +256,7 @@ def _execute_workflow_with_input_config(
         PageObjectNotFoundError,
     ):
         driver.switch_to.default_content()
-        click_element_on_lists_on_left_sidebar_menu(
-            selenium, browser_id, "spaces", space
-        )
+        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, "spaces", space)
 
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space, "Automation Workflows"
@@ -376,9 +366,7 @@ def execute_workflow(
     driver = selenium[browser_id]
 
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, spaces, space)
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, automation_workflows
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space, automation_workflows)
     click_button_in_navigation_tab(selenium, browser_id, tab_name)
     choose_workflow_revision_to_run(selenium, browser_id, ordinal, workflow)
     # wait a moment for workflow revision to open

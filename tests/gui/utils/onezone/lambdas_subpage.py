@@ -77,7 +77,5 @@ class Lambda(Element):
 
 
 class LambdasPage(PageObject):
-    lambdas_list = WebItemsSequence(
-        ".atm-lambdas-list .atm-lambdas-list-entry", cls=Lambda
-    )
+    lambdas_list = WebItemsSequence(".atm-lambdas-list .atm-lambdas-list-entry", cls=Lambda)
     form = WebItem(".atm-lambda-form ", cls=LambdaAddForm)

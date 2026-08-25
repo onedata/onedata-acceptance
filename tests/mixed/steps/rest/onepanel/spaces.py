@@ -43,14 +43,10 @@ def revoke_space_support_in_op_panel_using_rest(
     onepanel_credentials: CredentialsLike,
     zone_host: str = "onezone",
 ) -> None:
-    user_client_op = login_to_panel(
-        user, users[user].password, hosts[provider_host]["hostname"]
-    )
+    user_client_op = login_to_panel(user, users[user].password, hosts[provider_host]["hostname"])
     if user == onepanel_credentials.username:
         user = admin_credentials.username
-    user_client_oz = login_to_oz(
-        user, users[user].password, hosts[zone_host]["hostname"]
-    )
+    user_client_oz = login_to_oz(user, users[user].password, hosts[zone_host]["hostname"])
 
     space_api = SpaceSupportApi(user_client_op)
     space = get_space_with_name(user_client_oz, space_name)
@@ -65,9 +61,7 @@ def support_space_in_op_panel_using_rest(
     tmp_memory: TmpMemory,
     config: str,
 ) -> None:
-    user_client = login_to_panel(
-        user, users[user].password, hosts[provider_host]["hostname"]
-    )
+    user_client = login_to_panel(user, users[user].password, hosts[provider_host]["hostname"])
 
     spaces_api = SpaceSupportApi(user_client)
     storages_api = StoragesApi(user_client)
@@ -124,14 +118,10 @@ def configure_sync_parameters_for_space_in_op_panel_rest(
     onepanel_credentials: CredentialsLike,
     admin_credentials: CredentialsLike,
 ) -> None:
-    user_client_op = login_to_panel(
-        user, users[user].password, hosts[provider_host]["hostname"]
-    )
+    user_client_op = login_to_panel(user, users[user].password, hosts[provider_host]["hostname"])
     if user == onepanel_credentials.username:
         user = admin_credentials.username
-    user_client_oz = login_to_oz(
-        user, users[user].password, hosts["onezone"]["hostname"]
-    )
+    user_client_oz = login_to_oz(user, users[user].password, hosts["onezone"]["hostname"])
 
     space_api = SpaceSupportApi(user_client_op)
     options = yaml.load(conf, yaml.Loader)
@@ -143,9 +133,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(
 
     max_depth = options.get("max depth", space_details.max_depth)
     continuous_scan = options.get("continuous scan", space_details.continuous_scan)
-    modifications = options.get(
-        "detect modifications", space_details.detect_modifications
-    )
+    modifications = options.get("detect modifications", space_details.detect_modifications)
     deletions = options.get("detect deletions", space_details.detect_deletions)
     interval = options.get("scan interval [s]", space_details.scan_interval)
     sync_acl = options.get("synchronize ACL", space_details.sync_acl)
@@ -159,9 +147,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(
         detect_deletions=deletions,
     )
 
-    space_modify_rq = SpaceModifyRequest(
-        auto_storage_import_config=auto_storage_import_config
-    )
+    space_modify_rq = SpaceModifyRequest(auto_storage_import_config=auto_storage_import_config)
 
     space = get_space_with_name(user_client_oz, space_name)
     space_api.modify_space(space.space_id, space_modify_rq)
@@ -179,14 +165,10 @@ def assert_proper_space_configuration_in_op_panel_rest(
     admin_credentials: CredentialsLike,
     zone_host: str = "onezone",
 ) -> None:
-    user_client_op = login_to_panel(
-        user, users[user].password, hosts[provider_host]["hostname"]
-    )
+    user_client_op = login_to_panel(user, users[user].password, hosts[provider_host]["hostname"])
     if user == onepanel_credentials.username:
         user = admin_credentials.username
-    user_client_oz = login_to_oz(
-        user, users[user].password, hosts[zone_host]["hostname"]
-    )
+    user_client_oz = login_to_oz(user, users[user].password, hosts[zone_host]["hostname"])
 
     space_api = SpaceSupportApi(user_client_op)
     space = get_space_with_name(user_client_oz, space_name)

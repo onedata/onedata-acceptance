@@ -226,22 +226,14 @@ def write_text_into_workflow_name_on_main_workflows_page(
     page.workflows_page.workflow_creator.workflow_name.value = text
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} confirms creating new workflow using "Create" button'
-    )
-)
+@wt(parsers.parse('user of {browser_id} confirms creating new workflow using "Create" button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_workflow_creation(selenium: SeleniumDrivers, browser_id: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     page.workflows_page.workflow_creator.create_button.click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "Add store" button in workflow visualizer'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "Add store" button in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_store_button(selenium: SeleniumDrivers, browser_id: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
@@ -250,14 +242,11 @@ def click_add_store_button(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{store_name}" in the stores '
-        "list in workflow visualizer"
+        'user of {browser_id} sees "{store_name}" in the stores list in workflow visualizer'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_store_in_store_list(
-    selenium: SeleniumDrivers, browser_id: str, store_name: str
-) -> None:
+def assert_store_in_store_list(selenium: SeleniumDrivers, browser_id: str, store_name: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     stores_list = page.workflows_page.workflow_visualiser.stores_list
 
@@ -284,9 +273,7 @@ def click_add_lane_button_in_workflow_visualizer(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
-@wt(
-    parsers.parse('user of {browser_id} sees "{lane_name}" lane in workflow visualizer')
-)
+@wt(parsers.parse('user of {browser_id} sees "{lane_name}" lane in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_lane_in_workflow_visualizer(
     selenium: SeleniumDrivers, browser_id: str, lane_name: str
@@ -304,9 +291,7 @@ def assert_lane_in_workflow_visualizer(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_parallel_box_to_lane(
-    selenium: SeleniumDrivers, browser_id: str, lane_name: str
-) -> None:
+def add_parallel_box_to_lane(selenium: SeleniumDrivers, browser_id: str, lane_name: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     workflow_visualiser = page.workflows_page.workflow_visualiser
     workflow_visualiser.workflow_lanes[lane_name].add_parallel_box_button.click()
@@ -390,11 +375,7 @@ def click_option_in_task_menu_button(
     Popups(driver).menu_popup_with_label.menu[option].click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} writes "{text}" in name textfield of selected workflow'
-    )
-)
+@wt(parsers.parse('user of {browser_id} writes "{text}" in name textfield of selected workflow'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def insert_text_in_textfield_of_workflow(
     selenium: SeleniumDrivers, browser_id: str, text: str
@@ -405,14 +386,12 @@ def insert_text_in_textfield_of_workflow(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} confirms edition of selected workflow "
-        'details using "Save" button'
+        'user of {browser_id} confirms edition of selected workflow details using "Save" button'
     )
 )
 @wt(
     parsers.parse(
-        "user of {browser_id} saves workflow edition by clicking "
-        '"Save" button from menu bar'
+        'user of {browser_id} saves workflow edition by clicking "Save" button from menu bar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -22,12 +22,8 @@ from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
-@wt(
-    parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}")
-)
-def configure_space_manually(
-    browser_id: str, config: str, selenium: SeleniumDrivers
-) -> None:
+@wt(parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}"))
+def configure_space_manually(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as follows:
@@ -58,8 +54,7 @@ def configure_space_manually(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} provides space configuration without "
-        "saving as follows:\n{config}"
+        "user of {browser_id} provides space configuration without saving as follows:\n{config}"
     )
 )
 def configure_space_manually_without_saving(
@@ -190,9 +185,7 @@ def _assert_space_in_marketplace_with_config(
     )
 
     if tags:
-        assert_elements_list_in_space_marketplace(
-            selenium, browser_id, space_name, "tag", tags
-        )
+        assert_elements_list_in_space_marketplace(selenium, browser_id, space_name, "tag", tags)
 
     assert_element_in_space_marketplace(
         selenium,

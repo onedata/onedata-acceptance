@@ -30,9 +30,7 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def _login_using_basic_auth(
-    login_page: LoginPage, username: str, password: str
-) -> None:
+def _login_using_basic_auth(login_page: LoginPage, username: str, password: str) -> None:
     login_page.username = username
     login_page.password = password
     login_page.sign_in()
@@ -51,9 +49,7 @@ def _login_using_passphrase(login_page: LoginPage, password: str) -> None:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_sign_in_to_emergency_interface(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_sign_in_to_emergency_interface(selenium: SeleniumDrivers, browser_id: str) -> None:
     LoginPage(selenium[browser_id]).sign_in_to_emergency_interface()
 
 
@@ -150,19 +146,15 @@ def press_sign_in_btn_on_login_page(selenium: SeleniumDrivers, browser_id: str) 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) is logged in (?P<service>.*) service"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_logged_in_service(
-    selenium: SeleniumDrivers, browser_id: str, service: str
-) -> None:
+def assert_logged_in_service(selenium: SeleniumDrivers, browser_id: str, service: str) -> None:
     logged_in_service = OnePage(selenium[browser_id]).service
-    assert (
-        service.lower() in logged_in_service.lower()
-    ), f"logged in {logged_in_service} instead of {service}"
+    assert service.lower() in logged_in_service.lower(), (
+        f"logged in {logged_in_service} instead of {service}"
+    )
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) successfully signs in to (?P<service>.*)"))
-def wt_assert_successful_login(
-    selenium: SeleniumDrivers, browser_id: str, service: str
-) -> None:
+def wt_assert_successful_login(selenium: SeleniumDrivers, browser_id: str, service: str) -> None:
     driver = selenium[browser_id]
     sign_in_getter = lambda driver: LoginPage(driver).sign_in
     sign_in = wait_for_visible_element_using_getter(driver, sign_in_getter)
@@ -178,9 +170,7 @@ def wt_assert_successful_login(
         r" credentials"
     )
 )
-def wt_assert_failed_login_credentials(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def wt_assert_failed_login_credentials(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     sign_in_getter = lambda driver: LoginPage(driver).sign_in
     wait_for_visible_element_using_getter(driver, sign_in_getter).click()
@@ -200,25 +190,18 @@ def wt_assert_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _assert_error_message_about_credentials(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    assert LoginPage(
-        selenium[browser_id]
-    ).error_message, "no err msg about invalid credentials found"
+def _assert_error_message_about_credentials(selenium: SeleniumDrivers, browser_id: str) -> None:
+    assert LoginPage(selenium[browser_id]).error_message, (
+        "no err msg about invalid credentials found"
+    )
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees sign in notification message: "
-        '"{text}" in the login page'
+        'user of {browser_id} sees sign in notification message: "{text}" in the login page'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_sign_in_notification(
-    text: str, selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def assert_sign_in_notification(text: str, selenium: SeleniumDrivers, browser_id: str) -> None:
     error_message = "sign in notification message is not as expected"
-    assert (
-        LoginPage(selenium[browser_id]).login_notification_message.text == text
-    ), error_message
+    assert LoginPage(selenium[browser_id]).login_notification_message.text == text, error_message

@@ -39,8 +39,9 @@ class _Chunk(PageObject):
             return [(chunk[0] * file_size, chunk[1] * file_size) for chunk in chunks]
         else:
             raise ValueError(
-                "{} is not filled correctly: some columns "
-                "are not filled with one color".format(self)
+                "{} is not filled correctly: some columns are not filled with one color".format(
+                    self
+                )
             )
 
 
@@ -53,9 +54,7 @@ class _DataDistributionRecord(PageObject):
     size_label = Label(".size-label")
 
     def __str__(self) -> str:
-        return 'provider record for "{item}" in {parent}'.format(
-            item=self.name, parent=self.parent
-        )
+        return 'provider record for "{item}" in {parent}'.format(item=self.name, parent=self.parent)
 
 
 class MigrationRecord(PageObject):
@@ -75,14 +74,10 @@ class MigrationRecord(PageObject):
 
 class DataDistributionTab(Modal):
     file_name = Label(".file-name")
-    providers = WebItemsSequence(
-        ".oneproviders-distribution-item", cls=_DataDistributionRecord
-    )
+    providers = WebItemsSequence(".oneproviders-distribution-item", cls=_DataDistributionRecord)
     migrate = WebItem(".destination-oneprovider-selector", cls=MigrationRecord)
     see_history_btn = NamedButton(".link-to-transfers", text="see history")
-    see_ongoing_transfers = NamedButton(
-        ".link-to-transfers", text="see ongoing transfers"
-    )
+    see_ongoing_transfers = NamedButton(".link-to-transfers", text="see ongoing transfers")
 
     def __str__(self) -> str:
         return 'Data distribution modal for "{}"'.format(self.file_name)

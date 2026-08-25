@@ -56,11 +56,7 @@ def multi_mount(
         )
 
 
-@then(
-    parsers.re(
-        r"(?P<spaces>.*) are mounted for (?P<user_name>\w+) on (?P<client_nodes>.*)"
-    )
-)
+@then(parsers.re(r"(?P<spaces>.*) are mounted for (?P<user_name>\w+) on (?P<client_nodes>.*)"))
 def check_spaces(spaces: str, user_name: str, client_nodes: str, users: Users) -> None:
     expected_spaces = list_parser(spaces)
     client_node_names = list_parser(client_nodes)

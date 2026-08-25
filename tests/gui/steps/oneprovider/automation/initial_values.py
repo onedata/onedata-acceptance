@@ -45,22 +45,16 @@ def choose_range_as_initial_workflow_value(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_if_select_files_modal_disappeared(
-    driver: WebDriver, files: str | list[str]
-) -> None:
+def check_if_select_files_modal_disappeared(driver: WebDriver, files: str | list[str]) -> None:
     try:
         Modals(driver).select_files  # pylint: disable=expression-not-assigned
-        raise AssertionError(
-            f"Files: {files} as initial value for workflow was not selected"
-        )
+        raise AssertionError(f"Files: {files} as initial value for workflow was not selected")
     except NoSuchElementException:
         pass
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_files_modal(
-    driver: WebDriver, store_name: Optional[str] = None
-) -> None:
+def open_select_initial_files_modal(driver: WebDriver, store_name: Optional[str] = None) -> None:
     option = "Select/upload file"
 
     click_input_link_in_automation_page(driver, store_name)
@@ -74,11 +68,7 @@ def open_select_initial_files_modal(
     Modals(driver).select_files  # pylint: disable=expression-not-assigned
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "Add groups..." link in "{store_name}" store'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "Add groups..." link in "{store_name}" store'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_groups_modal(
     selenium: SeleniumDrivers, browser_id: str, store_name: str
@@ -98,9 +88,7 @@ def open_select_initial_groups_modal(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_groups_from_select_groups_modal(
-    driver: WebDriver, group_list: str | list[str]
-) -> None:
+def select_groups_from_select_groups_modal(driver: WebDriver, group_list: str | list[str]) -> None:
     if isinstance(group_list, str):
         parsed_list = parse_seq(group_list)
     else:
@@ -138,9 +126,7 @@ def get_initial_value_store(driver: WebDriver, store_name: str) -> InitialValueS
     raise ValueError()
 
 
-def click_input_link_in_automation_page(
-    driver: WebDriver, store_name: Optional[str]
-) -> None:
+def click_input_link_in_automation_page(driver: WebDriver, store_name: Optional[str]) -> None:
     if store_name:
         store = get_initial_value_store(driver, store_name)
         store.input_link.click()
@@ -161,9 +147,7 @@ def get_data_type_in_initial_value_store(driver: WebDriver, store_name: str) -> 
     return store.data_type
 
 
-def get_data_type_of_array_initial_value_store(
-    driver: WebDriver, store_name: str
-) -> str:
+def get_data_type_of_array_initial_value_store(driver: WebDriver, store_name: str) -> str:
     store = get_initial_value_store(driver, store_name)
     link_name = store.input_link.web_elem.text
 

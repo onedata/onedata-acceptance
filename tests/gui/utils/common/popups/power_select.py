@@ -68,12 +68,8 @@ class PowerSelect(PageObject):
     def choose_item(self, property_name: str, require_full_match: bool = True) -> None:
         self._choose_items(property_name, self.items, "", require_full_match)
 
-    def choose_group(
-        self, property_name: str, require_full_match: bool = False
-    ) -> None:
-        self._choose_items(
-            property_name, self.item_groups, "item group: ", require_full_match
-        )
+    def choose_group(self, property_name: str, require_full_match: bool = False) -> None:
+        self._choose_items(property_name, self.item_groups, "item group: ", require_full_match)
 
     def __str__(self) -> str:
         return "Power select options"

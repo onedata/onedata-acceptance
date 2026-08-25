@@ -92,38 +92,24 @@ def setup_shares_handles(tests_controller: UpgradeTestsControllerLike) -> None:
     dir_path = os.path.join(space_path, "dir1_shared")
     file_path = os.path.join(dir_path, "file1_shared")
     client.create_file(os.path.join(dir_path, "file1_shared"))
-    file_id = lookup_file_id(
-        "space_posix/dir1_shared/file1_shared", provider_host, token
-    )
+    file_id = lookup_file_id("space_posix/dir1_shared/file1_shared", provider_host, token)
     client.write("abc123", file_path)
 
-    SHARE_NAME_TO_ID["file1_shared"] = create_share(
-        provider_host, token, file_id, "file1_shared"
-    )
+    SHARE_NAME_TO_ID["file1_shared"] = create_share(provider_host, token, file_id, "file1_shared")
     file_id = lookup_file_id("space_posix/dir1_shared", provider_host, token)
-    SHARE_NAME_TO_ID["dir1_shared"] = create_share(
-        provider_host, token, file_id, "dir1_shared"
-    )
+    SHARE_NAME_TO_ID["dir1_shared"] = create_share(provider_host, token, file_id, "dir1_shared")
 
     res = register_handle(zone_host, admin_token, SHARE_NAME_TO_ID["dir1_shared"])
     HANDLE_NAME_TO_ID["handle"] = res.headers["location"].split("/")[-1]
     wait_for_handle_registration(provider_host, token, SHARE_NAME_TO_ID["dir1_shared"])
 
-    RESULTS["handle_details"] = get_handle(
-        zone_host, admin_token, HANDLE_NAME_TO_ID["handle"]
-    )
-    share_details = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
-    )
+    RESULTS["handle_details"] = get_handle(zone_host, admin_token, HANDLE_NAME_TO_ID["handle"])
+    share_details = get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir1_shared"])
     RESULTS["share_details"] = share_details
     share_root_dir_id = json_str(
-        get_share_info(provider_host, token, SHARE_NAME_TO_ID["file1_shared"])[
-            "rootFileId"
-        ]
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["file1_shared"])["rootFileId"]
     )
-    RESULTS["share_content"] = download_file_content(
-        provider_host, token, share_root_dir_id
-    )
+    RESULTS["share_content"] = download_file_content(provider_host, token, share_root_dir_id)
 
 
 def verify_shares_handles(tests_controller: UpgradeTestsControllerLike) -> None:
@@ -135,30 +121,22 @@ def verify_shares_handles(tests_controller: UpgradeTestsControllerLike) -> None:
     handle_details = get_handle(zone_host, admin_token, HANDLE_NAME_TO_ID["handle"])
     compare_handle_details(RESULTS["handle_details"], handle_details, tests_controller)
 
-    share_details = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
-    )
+    share_details = get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir1_shared"])
     compare_share_details(RESULTS["share_details"], share_details)
 
     share_root_dir_id = json_str(
-        get_share_info(provider_host, token, SHARE_NAME_TO_ID["file1_shared"])[
-            "rootFileId"
-        ]
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["file1_shared"])["rootFileId"]
     )
     assert RESULTS["share_content"] == download_file_content(
         provider_host, token, share_root_dir_id
     )
 
-    share_details = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
-    )
+    share_details = get_share_info(provider_host, token, SHARE_NAME_TO_ID["file1_shared"])
     assert share_details["name"] == "file1_shared"
     assert share_details["shareId"] == SHARE_NAME_TO_ID["file1_shared"]
     assert share_details["rootFileType"] == "REG"
 
-    share_details = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
-    )
+    share_details = get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir1_shared"])
     assert share_details["name"] == "dir1_shared"
     assert share_details["shareId"] == SHARE_NAME_TO_ID["dir1_shared"]
     assert share_details["rootFileType"] == "DIR"
@@ -177,9 +155,7 @@ def setup_datasets_and_archives(tests_controller: UpgradeTestsControllerLike) ->
     ARCHIVE_NAME_TO_ID["archive"] = json_str(
         create_archive(provider_host, token, dataset_id, "test")["archiveId"]
     )
-    wait_for_preserved_archive_state(
-        provider_host, token, ARCHIVE_NAME_TO_ID["archive"]
-    )
+    wait_for_preserved_archive_state(provider_host, token, ARCHIVE_NAME_TO_ID["archive"])
     root_dir_id = json_str(
         get_archive_information(provider_host, token, ARCHIVE_NAME_TO_ID["archive"])[
             "rootDirectoryId"
@@ -191,22 +167,18 @@ def setup_datasets_and_archives(tests_controller: UpgradeTestsControllerLike) ->
     create_additional_content_in_dir(client, "space_posix", "dir2_datasets")
 
     archive_config: JsonPayload = {
-        "config": {
-            "incremental": {"enabled": True, "basedOn": ARCHIVE_NAME_TO_ID["archive"]}
-        }
+        "config": {"incremental": {"enabled": True, "basedOn": ARCHIVE_NAME_TO_ID["archive"]}}
     }
     ARCHIVE_NAME_TO_ID["archive_incremental"] = json_str(
-        create_archive(provider_host, token, dataset_id, "test", archive_config)[
-            "archiveId"
-        ]
+        create_archive(provider_host, token, dataset_id, "test", archive_config)["archiveId"]
     )
     wait_for_preserved_archive_state(
         provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
     )
     root_dir_id = json_str(
-        get_archive_information(
-            provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
-        )["rootDirectoryId"]
+        get_archive_information(provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"])[
+            "rootDirectoryId"
+        ]
     )
     archive_inc_content = download_file_content(provider_host, token, root_dir_id)
     unpack_tarball_from_payload(archive_inc_content, "downloaded_archive_inc_s")
@@ -225,15 +197,13 @@ def verify_datasets_and_archives(tests_controller: UpgradeTestsControllerLike) -
     unpack_tarball_from_payload(archive_content, "downloaded_archive_v")
 
     root_dir_id = json_str(
-        get_archive_information(
-            provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
-        )["rootDirectoryId"]
+        get_archive_information(provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"])[
+            "rootDirectoryId"
+        ]
     )
     archive_inc_content = download_file_content(provider_host, token, root_dir_id)
     unpack_tarball_from_payload(archive_inc_content, "downloaded_archive_inc_v")
-    compare_downloaded_dirs_content(
-        "downloaded_archive_inc_s", "downloaded_archive_inc_v"
-    )
+    compare_downloaded_dirs_content("downloaded_archive_inc_s", "downloaded_archive_inc_v")
     compare_downloaded_dirs_content("downloaded_archive_s", "downloaded_archive_v")
 
 
@@ -247,15 +217,11 @@ def setup_all_functionalities(tests_controller: UpgradeTestsControllerLike) -> N
     create_dir_with_example_content(client, "space_posix", "dir3_shared")
 
     file_id = lookup_file_id("space_posix/dir3_shared", provider_host, token)
-    SHARE_NAME_TO_ID["dir3_shared"] = create_share(
-        provider_host, token, file_id, "dir3_shared"
-    )
+    SHARE_NAME_TO_ID["dir3_shared"] = create_share(provider_host, token, file_id, "dir3_shared")
     _ = register_handle(zone_host, admin_token, SHARE_NAME_TO_ID["dir3_shared"])
 
     dataset_id = json_str(establish_dataset(provider_host, token, file_id)["datasetId"])
-    archive_id = json_str(
-        create_archive(provider_host, token, dataset_id, "test")["archiveId"]
-    )
+    archive_id = json_str(create_archive(provider_host, token, dataset_id, "test")["archiveId"])
     wait_for_preserved_archive_state(provider_host, token, archive_id)
 
     create_additional_content_in_dir(client, "space_posix", "dir3_shared")
@@ -264,9 +230,7 @@ def setup_all_functionalities(tests_controller: UpgradeTestsControllerLike) -> N
         "config": {"incremental": {"enabled": True, "basedOn": archive_id}}
     }
     archive_inc_id = json_str(
-        create_archive(provider_host, token, dataset_id, "test", archive_config)[
-            "archiveId"
-        ]
+        create_archive(provider_host, token, dataset_id, "test", archive_config)["archiveId"]
     )
     wait_for_preserved_archive_state(provider_host, token, archive_inc_id)
     root_dir_id = json_str(
@@ -275,22 +239,18 @@ def setup_all_functionalities(tests_controller: UpgradeTestsControllerLike) -> N
     SHARE_NAME_TO_ID["dir3_archive_incremental"] = create_share(
         provider_host, token, root_dir_id, "dir3_archive_incremental"
     )
-    _ = register_handle(
-        zone_host, admin_token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
-    )
+    _ = register_handle(zone_host, admin_token, SHARE_NAME_TO_ID["dir3_archive_incremental"])
 
     share_root_dir_id = json_str(
-        get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir3_shared"])[
-            "rootFileId"
-        ]
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir3_shared"])["rootFileId"]
     )
     share_content = download_file_content(provider_host, token, share_root_dir_id)
     unpack_tarball_from_payload(share_content, "downloaded_dir3_shared_s")
 
     share_root_dir_id = json_str(
-        get_share_info(
-            provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
-        )["rootFileId"]
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"])[
+            "rootFileId"
+        ]
     )
     share_content = download_file_content(provider_host, token, share_root_dir_id)
     unpack_tarball_from_payload(share_content, "downloaded_dir3_archive_incremental_s")
@@ -301,33 +261,27 @@ def verify_all_functionalities(tests_controller: UpgradeTestsControllerLike) -> 
     token = tests_controller.users["user1"].token
 
     share_root_dir_id = json_str(
-        get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir3_shared"])[
-            "rootFileId"
-        ]
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir3_shared"])["rootFileId"]
     )
     share_content = download_file_content(provider_host, token, share_root_dir_id)
     unpack_tarball_from_payload(share_content, "downloaded_dir3_shared_v")
 
     share_root_dir_id = json_str(
-        get_share_info(
-            provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
-        )["rootFileId"]
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"])[
+            "rootFileId"
+        ]
     )
     share_content = download_file_content(provider_host, token, share_root_dir_id)
     unpack_tarball_from_payload(share_content, "downloaded_dir3_archive_incremental_v")
 
-    compare_downloaded_dirs_content(
-        "downloaded_dir3_shared_s", "downloaded_dir3_shared_v"
-    )
+    compare_downloaded_dirs_content("downloaded_dir3_shared_s", "downloaded_dir3_shared_v")
     compare_downloaded_dirs_content(
         "downloaded_dir3_archive_incremental_s", "downloaded_dir3_archive_incremental_v"
     )
 
     archive_name = os.listdir("downloaded_dir3_archive_incremental_s")[0]
     path1 = os.path.join("downloaded_dir3_shared_s", "dir3_shared")
-    path2 = os.path.join(
-        "downloaded_dir3_archive_incremental_s", archive_name, "dir3_shared"
-    )
+    path2 = os.path.join("downloaded_dir3_archive_incremental_s", archive_name, "dir3_shared")
 
     compare_downloaded_dirs_content(path1, path2)
 
@@ -342,9 +296,7 @@ def compare_downloaded_dirs_content(path1: str, path2: str) -> None:
 
     if comp_res.diff_files:
         for file in comp_res.diff_files:
-            msg = get_files_content(
-                os.path.join(path1, file), os.path.join(path2, file)
-            )
+            msg = get_files_content(os.path.join(path1, file), os.path.join(path2, file))
             comp_report.append(msg)
     comp_report_str = "\n".join(comp_report)
     # assert differences in common files
@@ -384,9 +336,7 @@ def wait_for_handle_registration(provider_host: str, token: str, share_id: str) 
     assert res["handleId"] is not None
 
 
-def create_dir_with_example_content(
-    client: OneClientLike, space_name: str, dir_name: str
-) -> None:
+def create_dir_with_example_content(client: OneClientLike, space_name: str, dir_name: str) -> None:
     space_path = client.absolute_path(space_name)
     dir_path = os.path.join(space_path, dir_name)
     client.mkdir(dir_path)
@@ -398,9 +348,7 @@ def create_dir_with_example_content(
     client.write("abc3", os.path.join(dir_path, "file3"))
 
 
-def create_additional_content_in_dir(
-    client: OneClientLike, space_name: str, dir_name: str
-) -> None:
+def create_additional_content_in_dir(client: OneClientLike, space_name: str, dir_name: str) -> None:
     space_path = client.absolute_path(space_name)
     dir_path = os.path.join(space_path, dir_name)
     client.create_file(os.path.join(dir_path, "file4"))
@@ -416,18 +364,14 @@ def wait_for_synced_file_content(
     provider_host: str, path: str, token: str, expected_content: str
 ) -> None:
     file_id = lookup_file_id(path, provider_host, token)
-    actual_content = str(
-        download_file_content(provider_host, token, file_id), encoding="utf-8"
+    actual_content = str(download_file_content(provider_host, token, file_id), encoding="utf-8")
+    assert actual_content == expected_content, (
+        f"expected content: {expected_content} but got {actual_content}"
     )
-    assert (
-        actual_content == expected_content
-    ), f"expected content: {expected_content} but got {actual_content}"
 
 
 @repeat_failed(timeout=60)
-def wait_for_preserved_archive_state(
-    provider_host: str, token: str, archive_id: str
-) -> None:
+def wait_for_preserved_archive_state(provider_host: str, token: str, archive_id: str) -> None:
     archive_state = get_archive_information(provider_host, token, archive_id)["state"]
     err_msg = f"archive {archive_id} is not in preserved state but in {archive_state}"
     assert archive_state == "preserved", err_msg
@@ -439,10 +383,7 @@ def compare_share_details(details_s: JsonObject, details_v: JsonObject) -> None:
     _ = details_v.pop("fileType") if "fileType" in details_v else None
     _ = details_s.pop("rootFileType") if "rootFileType" in details_s else None
     _ = details_v.pop("rootFileType") if "rootFileType" in details_v else None
-    err_msg = (
-        f"Share details on setup:\n{details_s}\nis different than on"
-        f" verify:\n{details_v}"
-    )
+    err_msg = f"Share details on setup:\n{details_s}\nis different than on verify:\n{details_v}"
     assert details_s == details_v, err_msg
 
 
@@ -486,10 +427,7 @@ def compare_handle_details(
     ):
         details_v.update({"metadataSchema": "oai_dc"})
 
-    err_msg = (
-        f"Handle details on setup:\n{details_s}\nis different than on"
-        f" verify:\n{details_v}"
-    )
+    err_msg = f"Handle details on setup:\n{details_s}\nis different than on verify:\n{details_v}"
     assert details_s == details_v, err_msg
 
 

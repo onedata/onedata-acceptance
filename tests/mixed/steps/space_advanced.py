@@ -23,11 +23,7 @@ from tests.utils.entities_setup.spaces import (
 from tests.utils.user_utils import User, Users
 
 
-@wt(
-    parsers.parse(
-        'using REST, {user} creates {number} spaces in "{zone_host}" Onezone service'
-    )
-)
+@wt(parsers.parse('using REST, {user} creates {number} spaces in "{zone_host}" Onezone service'))
 def create_n_spaces_without_support(
     zone_host: str,
     users: Users,
@@ -74,9 +70,7 @@ def create_n_spaces_with_shares(
     host = "oneprovider-1"
     zone_hostname = hosts[zone_host]["hostname"]
     users_to_add: list[str] = []
-    providers: list[ProviderEntry] = [
-        {"oneprovider-1": {"storage": "posix", "size": 1000000}}
-    ]
+    providers: list[ProviderEntry] = [{"oneprovider-1": {"storage": "posix", "size": 1000000}}]
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
     for i in range(int(number)):
@@ -101,6 +95,4 @@ def create_n_spaces_with_shares(
         )
         file_path = f"{space_name}/file{i}"
         create_empty_file(file_path, users, user, host, hosts)
-        create_share_using_rest(
-            file_path, host, user, f"share{i}", hosts, users, shares
-        )
+        create_share_using_rest(file_path, host, user, f"share{i}", hosts, users, shares)

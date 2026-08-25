@@ -72,9 +72,7 @@ class _FileBrowser(Browser):
 
     @contextmanager
     def select_files(self) -> Iterator[FileSelector]:
-        ctrl_or_cmd_key = (
-            Keys.COMMAND if get_system() == "Darwin" else Keys.LEFT_CONTROL
-        )
+        ctrl_or_cmd_key = Keys.COMMAND if get_system() == "Darwin" else Keys.LEFT_CONTROL
 
         action = ActionChains(self.driver)
 

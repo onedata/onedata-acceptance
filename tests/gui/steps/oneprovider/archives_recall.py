@@ -31,11 +31,7 @@ def get_archive_recall_information_property_without_whitespace(
     return re.sub(r"\s*", "", getattr(modal, property_name))
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees {info}: "{text}" in archive recall information modal'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees {info}: "{text}" in archive recall information modal'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_info_in_archive_recall_information_modal(
     selenium: SeleniumDrivers, browser_id: str, info: str, text: str
@@ -54,15 +50,13 @@ def assert_info_in_archive_recall_information_modal(
         )
     else:
         assert text.lower() in information.lower().replace("\n", ""), (
-            f"{info}: {text} does not match {information} in archive recall "
-            "information modal"
+            f"{info}: {text} does not match {information} in archive recall information modal"
         )
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} fails to see statistics of {info} "
-        "in archive recall information modal"
+        "user of {browser_id} fails to see statistics of {info} in archive recall information modal"
     )
 )
 def fail_to_see_recalled_data_statistics(
@@ -77,8 +71,7 @@ def fail_to_see_recalled_data_statistics(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} waits for status "{status}" in archive '
-        "recall information modal"
+        'user of {browser_id} waits for status "{status}" in archive recall information modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -147,20 +140,14 @@ def assert_not_all_files_were_recalled(
         recalled = int(recalled_text)
         all_data = int(all_data_text)
 
-    assert (
-        recalled < all_data
-    ), f"Number of recalled {kind} is not smaller than all {kind}: {data_info!r}"
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that number of items failed is greater than 0"
+    assert recalled < all_data, (
+        f"Number of recalled {kind} is not smaller than all {kind}: {data_info!r}"
     )
-)
+
+
+@wt(parsers.parse("user of {browser_id} sees that number of items failed is greater than 0"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_item_greater_than_zero(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def assert_number_of_item_greater_than_zero(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     items_failed = Modals(driver).archive_recall_information.items_failed
     try:
@@ -170,11 +157,7 @@ def assert_number_of_item_greater_than_zero(
     assert number > 0, "Zero items failed"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} chooses "{option}" in dropdown menu in modal "{modal}"'
-    )
-)
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(
     selenium: SeleniumDrivers, browser_id: str, option: str, modal: str
@@ -187,15 +170,10 @@ def choose_option_in_dropdown_menu_in_modal(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} waits for recalled status tag for "
-        '"{name}" in file browser'
-    )
+    parsers.parse('user of {browser_id} waits for recalled status tag for "{name}" in file browser')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_recalled_status_tag(
-    browser_id: str, name: str, tmp_memory: TmpMemory
-) -> None:
+def wait_for_recalled_status_tag(browser_id: str, name: str, tmp_memory: TmpMemory) -> None:
     status_type = "recalled"
     browser = tmp_memory[browser_id]["file_browser"]
 
@@ -213,9 +191,7 @@ def wait_for_recalled_status_tag(
         "which is equal to number of items failed in status tab"
     )
 )
-def assert_number_of_entries_in_archive_recall(
-    browser_id: str, selenium: SeleniumDrivers
-) -> None:
+def assert_number_of_entries_in_archive_recall(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
     items_failed = modal.items_failed
@@ -261,19 +237,16 @@ def assert_entries_with_file_names_in_archive_recall(
     modal.move_to_error_logs_table(driver)
 
     def condition(index: int = 0) -> None:
-        new_entries_names: List[str] = modal.get_visible_rows_of_single_column(
-            "source_file"
-        )[index:]
+        new_entries_names: List[str] = modal.get_visible_rows_of_single_column("source_file")[
+            index:
+        ]
         for entry_name in new_entries_names:
             file_name_p_, file_name_s_ = file_name.rsplit(".", 1)
             file_name_p_ = file_name_p_.split("(")[0]
             error_message = (
-                f"file name {entry_name} does not match name or name "
-                f"duplicated of {file_name}"
+                f"file name {entry_name} does not match name or name duplicated of {file_name}"
             )
-            assert (
-                file_name_p == file_name_p_ and file_name_s == file_name_s_
-            ), error_message
+            assert file_name_p == file_name_p_ and file_name_s == file_name_s_, error_message
 
     _scroll_and_check_condition(browser_id, selenium, condition)
 
@@ -295,15 +268,12 @@ def assert_entries_with_error_messages_in_archive_recall(
     modal.move_to_error_logs_table(driver)
 
     def condition(index: int = 0) -> None:
-        new_entries_mes: List[str] = modal.get_visible_rows_of_single_column(
-            "error_message"
-        )
+        new_entries_mes: List[str] = modal.get_visible_rows_of_single_column("error_message")
 
         new_entries_mes = new_entries_mes[index:]
         for entry_mes in new_entries_mes:
             error_message = (
-                f"There is visible error message {entry_mes}, but "
-                f"expected message is {message}"
+                f"There is visible error message {entry_mes}, but expected message is {message}"
             )
             assert entry_mes == message, error_message
 
@@ -337,15 +307,9 @@ def _scroll_and_check_condition(
     return detected_entries
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} scrolls to the top in archive recall information"
-    )
-)
+@wt(parsers.parse("user of {browser_id} scrolls to the top in archive recall information"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def scroll_to_top_in_archive_recall_information(
-    browser_id: str, selenium: SeleniumDrivers
-) -> None:
+def scroll_to_top_in_archive_recall_information(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
     modal.scroll_to_top()

@@ -21,7 +21,6 @@ from tests.mixed.type_definitions import (
 
 
 class ExampleWorkflowExecutionInitialStoreContent:
-
     def __init__(
         self,
         resolve_file_id: ResolveId,
@@ -34,22 +33,16 @@ class ExampleWorkflowExecutionInitialStoreContent:
 
     @staticmethod
     def gather_input_files(workflow: str) -> InputFiles:
-        return [
-            f
-            for f in os.listdir(upload_workflow_path(workflow))
-            if f != workflow + ".json"
-        ]
+        return [f for f in os.listdir(upload_workflow_path(workflow)) if f != workflow + ".json"]
 
     def bagit_uploader(
         self, input_file: Optional[InputFiles] = None, dest_dir: str = "space1/dir1"
     ) -> ExecutionResult:
-        input_files = (
-            self.gather_input_files("bagit-uploader") if not input_file else input_file
-        )
+        input_files = self.gather_input_files("bagit-uploader") if not input_file else input_file
         for file in input_files:
             path = upload_workflow_path("bagit-uploader") + "/" + file
             self.upload_file(path, file)
-        file_paths = [f'{dest_dir.split("/")[0]}/{file}' for file in input_files]
+        file_paths = [f"{dest_dir.split('/')[0]}/{file}" for file in input_files]
 
         return [
             {
@@ -63,34 +56,28 @@ class ExampleWorkflowExecutionInitialStoreContent:
         self, input_file: Optional[InputFiles] = None, space: str = "space1"
     ) -> ExecutionResult:
         input_files = (
-            self.gather_input_files("detect-file-formats")
-            if not input_file
-            else input_file
+            self.gather_input_files("detect-file-formats") if not input_file else input_file
         )
         for file in input_files:
             path = upload_workflow_path("detect-file-formats") + "/" + file
             self.upload_file(path, file)
         file_paths = [f"{space}/{file}" for file in input_files]
         return [
-            {"input-files": [{"fileId": self.resolve_file_id(path)}]}
-            for path in file_paths
+            {"input-files": [{"fileId": self.resolve_file_id(path)}]} for path in file_paths
         ], input_files
 
     def detect_file_mime_formats(
         self, input_file: Optional[InputFiles] = None, space: str = "space1"
     ) -> ExecutionResult:
         input_files = (
-            self.gather_input_files("detect-file-mime-formats")
-            if not input_file
-            else input_file
+            self.gather_input_files("detect-file-mime-formats") if not input_file else input_file
         )
         for file in input_files:
             path = upload_workflow_path("detect-file-mime-formats") + "/" + file
             self.upload_file(path, file)
         file_paths = [f"{space}/{file}" for file in input_files]
         return [
-            {"input-files": [{"fileId": self.resolve_file_id(path)}]}
-            for path in file_paths
+            {"input-files": [{"fileId": self.resolve_file_id(path)}]} for path in file_paths
         ], input_files
 
     def download_files(
@@ -98,13 +85,11 @@ class ExampleWorkflowExecutionInitialStoreContent:
         input_file: Optional[InputFiles] = None,
         destination: str = "space1/dir1",
     ) -> ExecutionResult:
-        input_files = (
-            self.gather_input_files("download-files") if not input_file else input_file
-        )
+        input_files = self.gather_input_files("download-files") if not input_file else input_file
         for file in input_files:
             path = upload_workflow_path("download-files") + "/" + file
             self.upload_file(path, file)
-        file_paths = [f'{destination.split("/")[0]}/{file}' for file in input_files]
+        file_paths = [f"{destination.split('/')[0]}/{file}" for file in input_files]
         return [
             {
                 "fetch-files": [{"fileId": self.resolve_file_id(path)}],
@@ -113,24 +98,14 @@ class ExampleWorkflowExecutionInitialStoreContent:
             for path in file_paths
         ], input_files
 
-    def calculate_checksums_mounted(
-        self, input_file: str = "space1/file1"
-    ) -> ExecutionResult:
-        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
-            input_file
-        ]
+    def calculate_checksums_mounted(self, input_file: str = "space1/file1") -> ExecutionResult:
+        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
-    def calculate_checksums_rest(
-        self, input_file: str = "space1/file1"
-    ) -> ExecutionResult:
-        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
-            input_file
-        ]
+    def calculate_checksums_rest(self, input_file: str = "space1/file1") -> ExecutionResult:
+        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
     def demo(self, input_file: str = "space1/dir1") -> ExecutionResult:
-        return [{"input_files": [{"fileId": self.resolve_file_id(input_file)}]}], [
-            input_file
-        ]
+        return [{"input_files": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
     def echo(self, input_file: str = "space1/file1") -> ExecutionResult:
         return [{"input": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
@@ -157,15 +132,12 @@ class ExampleWorkflowExecutionInitialStoreContent:
     def annotate_images(
         self, input_file: Optional[InputFiles] = None, space: str = "space1"
     ) -> ExecutionResult:
-        input_files = (
-            self.gather_input_files("annotate-images") if not input_file else input_file
-        )
+        input_files = self.gather_input_files("annotate-images") if not input_file else input_file
         for file in input_files:
             path = upload_workflow_path("annotate-images") + "/" + file
             self.upload_file(path, file)
         file_paths = [f"{space}/{file}" for file in input_files]
 
         return [
-            {"Files to process": [{"fileId": self.resolve_file_id(path)}]}
-            for path in file_paths
+            {"Files to process": [{"fileId": self.resolve_file_id(path)}]} for path in file_paths
         ], [file_paths]

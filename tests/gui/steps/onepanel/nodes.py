@@ -56,8 +56,7 @@ def wt_assert_options_cannot_be_changed_for_host_in_nodes(
 ) -> None:
     option_names = [transform(option) for option in options]
     error_message = (
-        f"{{}} can be changed for {host_pattern} in Nodes page in Onepanel, "
-        "while it should not be"
+        f"{{}} can be changed for {host_pattern} in Nodes page in Onepanel, while it should not be"
     )
     for host in Onepanel(selenium[browser_id]).content.nodes.hosts:
         if re.match(host_pattern, host.name):

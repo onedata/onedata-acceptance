@@ -26,11 +26,7 @@ from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.utils import repeat_failed
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} {action} Public toggle on harvester configuration page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} {action} Public toggle on harvester configuration page"))
 def check_public_toggle_on_harvester_config_page(
     selenium: SeleniumDrivers, browser_id: str, action: str
 ) -> None:
@@ -44,8 +40,7 @@ def check_public_toggle_on_harvester_config_page(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that Public toggle is {checked} "
-        "on harvester configuration page"
+        "user of {browser_id} sees that Public toggle is {checked} on harvester configuration page"
     )
 )
 def assert_public_toggle_on_harvester_config_page(
@@ -65,11 +60,7 @@ def copy_public_harvester_url(selenium: SeleniumDrivers, browser_id: str) -> Non
     OZLoggedIn(driver).discovery.configuration_page.general_tab.copy_public_url()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on {tab_name} tab on harvester configuration page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on {tab_name} tab on harvester configuration page"))
 def click_on_tab_of_harvester_config_page(
     selenium: SeleniumDrivers, browser_id: str, tab_name: str
 ) -> None:
@@ -80,8 +71,7 @@ def click_on_tab_of_harvester_config_page(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} chooses {plugin} GUI plugin "
-        "from local directory to be uploaded"
+        "user of {browser_id} chooses {plugin} GUI plugin from local directory to be uploaded"
     )
 )
 def upload_discovery_gui_plugin(
@@ -114,20 +104,16 @@ def click_button_in_tab_of_harvester_config_page(
 def wait_until_plugin_upload_finish(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).discovery.configuration_page.gui_plugin_tab
-    assert (
-        page.gui_status == "uploaded"
-    ), "GUI plugin upload not finished until given time"
+    assert page.gui_status == "uploaded", "GUI plugin upload not finished until given time"
 
 
 @wt(parsers.parse("user of {browser_id} sees that GUI plugin version is {version}"))
-def assert_plugin_version(
-    selenium: SeleniumDrivers, browser_id: str, version: str
-) -> None:
+def assert_plugin_version(selenium: SeleniumDrivers, browser_id: str, version: str) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).discovery.configuration_page.gui_plugin_tab
-    assert (
-        page.version == version
-    ), f"Actual plugin version is {page.version} when expected {version}"
+    assert page.version == version, (
+        f"Actual plugin version is {page.version} when expected {version}"
+    )
 
 
 @wt(
@@ -146,28 +132,20 @@ def assert_plugin_index_value(
     page = OZLoggedIn(driver).discovery.configuration_page.gui_plugin_tab
     actual_index_value = page.indices[plugin_index].harvester_index
     assert actual_index_value == harvester_index, (
-        f"Actual {plugin_index} "
-        "index value is "
-        f"{actual_index_value} "
-        "when expected "
-        f"{harvester_index}"
+        f"Actual {plugin_index} index value is {actual_index_value} when expected {harvester_index}"
     )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that injected configuration is: {configuration}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that injected configuration is: {configuration}"))
 def assert_plugin_injected_config(
     selenium: SeleniumDrivers, browser_id: str, configuration: str
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).discovery.configuration_page.gui_plugin_tab
     actual_conf = f"{{{page.injected_config}}}"
-    assert (
-        actual_conf == configuration
-    ), f"Actual injected plugin config is {actual_conf} when expected {configuration}"
+    assert actual_conf == configuration, (
+        f"Actual injected plugin config is {actual_conf} when expected {configuration}"
+    )
 
 
 @wt(parsers.parse("elasticsearch plugin stops working"))
@@ -206,8 +184,7 @@ def set_elasticsearch_replicas_number(hosts: Hosts) -> requests.Response:
             time.sleep(0.5)
     else:
         raise AssertionError(
-            "Did not manage to connect to elasticsearch ip:"
-            f" {hosts['elasticsearch']['ip']}"
+            f"Did not manage to connect to elasticsearch ip: {hosts['elasticsearch']['ip']}"
         )
     response.raise_for_status()
     return response

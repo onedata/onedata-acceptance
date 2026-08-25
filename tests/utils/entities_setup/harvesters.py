@@ -74,7 +74,7 @@ def create_harvesters_rest(
     owner = users[user]
     owner_password = owner.password
     plugin = "elasticsearch_harvesting_backend"
-    endpoint = f'{hosts["elasticsearch"]["name"]}:{ELASTICSEARCH_PORT}'
+    endpoint = f"{hosts['elasticsearch']['name']}:{ELASTICSEARCH_PORT}"
 
     for harvester in harvesters_list:
         harvester_id = _create_harvester(
@@ -93,9 +93,7 @@ def create_harvesters_rest(
             harvester_id,
         )
         harvesters[harvester] = harvester_id
-        _create_harvester_gui_index(
-            zone_hostname, owner.username, owner_password, harvester_id
-        )
+        _create_harvester_gui_index(zone_hostname, owner.username, owner_password, harvester_id)
 
 
 def _create_harvester(
@@ -172,9 +170,7 @@ def g_add_space_to_harvester(
     username: str,
     users: Users,
 ) -> None:
-    add_space_to_harvester(
-        space_list, harvester_name, spaces, harvesters, hosts, username, users
-    )
+    add_space_to_harvester(space_list, harvester_name, spaces, harvesters, hosts, username, users)
 
 
 @wt(
@@ -194,9 +190,7 @@ def wt_add_space_to_harvester(
     username: str,
     users: Users,
 ) -> None:
-    add_space_to_harvester(
-        space_list, harvester_name, spaces, harvesters, hosts, username, users
-    )
+    add_space_to_harvester(space_list, harvester_name, spaces, harvesters, hosts, username, users)
 
 
 def add_space_to_harvester(
@@ -209,9 +203,7 @@ def add_space_to_harvester(
     users: Users,
 ) -> None:
     for space in space_list:
-        _add_space_to_harvester(
-            space, harvester_name, spaces, harvesters, hosts, username, users
-        )
+        _add_space_to_harvester(space, harvester_name, spaces, harvesters, hosts, username, users)
 
 
 def _add_space_to_harvester(

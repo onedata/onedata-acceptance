@@ -16,12 +16,8 @@ class SymbolicLinkDetailsModal(Modal):
     owner = Label(".file-info-row-owner .property-value")
     close = Button(".close")
     symbolic_link_name = Button(".file-info-row-name .property-value .clipboard-btn")
-    symbolic_link_location = Button(
-        ".file-info-row-path .property-value .clipboard-btn"
-    )
-    symbolic_link_target_path = Button(
-        ".file-info-row-target-path .property-value .clipboard-btn"
-    )
+    symbolic_link_location = Button(".file-info-row-path .property-value .clipboard-btn")
+    symbolic_link_target_path = Button(".file-info-row-target-path .property-value .clipboard-btn")
 
     def __str__(self) -> str:
         return "Symbolic link details modal"

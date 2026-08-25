@@ -132,9 +132,7 @@ def _go_to_storage_view_in_clusters(
         click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
         click_on_record_in_clusters_menu(selenium, browser_id, provider_name, hosts)
 
-    wt_click_on_subitem_for_item(
-        selenium, [browser_id], sidebar, sub_item, provider_name, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, [browser_id], sidebar, sub_item, provider_name, hosts)
 
 
 def _add_storage_in_op_panel_using_gui(
@@ -210,9 +208,7 @@ def safely_create_storage_rest(
 
 
 @given(
-    parsers.parse(
-        'there is no "{storage_name}" storage in "{provider}" Oneprovider panel service'
-    )
+    parsers.parse('there is no "{storage_name}" storage in "{provider}" Oneprovider panel service')
 )
 def remove_all_storages_named(
     storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
@@ -226,9 +222,7 @@ def remove_all_storages_named(
 def remove_storage_in_op_panel_rest(
     onepanel_credentials: User, hosts: Hosts, provider: str, name: str
 ) -> None:
-    remove_multiple_storages_in_op_panel_using_rest(
-        name, provider, hosts, onepanel_credentials
-    )
+    remove_multiple_storages_in_op_panel_using_rest(name, provider, hosts, onepanel_credentials)
 
 
 def get_first_storage_id_by_name(
@@ -284,9 +278,7 @@ def add_key_value_in_storage_page(
 
 
 @wt(parsers.parse("user of {browser_id} deletes additional param in storage edit page"))
-def delete_additional_param_in_storage_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def delete_additional_param_in_storage_page(selenium: SeleniumDrivers, browser_id: str) -> None:
 
     delete_additional_param_in_posix_storage_edit_page(selenium, browser_id)
     save_changes_in_posix_storage_edit_page(selenium, browser_id)
@@ -345,19 +337,11 @@ def _try_confirm_changes_in_modify_storage_modal(
     try:
         click_modal_button(selenium, browser_id, checkbox, modal)
         click_modal_button(selenium, browser_id, button, modal)
-        wait_for_named_modal_to_disappear(
-            selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5
-        )
+        wait_for_named_modal_to_disappear(selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5)
     except NoSuchElementException:
         pass
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} confirms committed changes in modal "Modify Storage"'
-    )
-)
-def confirm_changes_in_modify_storage_modal(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+@wt(parsers.parse('user of {browser_id} confirms committed changes in modal "Modify Storage"'))
+def confirm_changes_in_modify_storage_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)

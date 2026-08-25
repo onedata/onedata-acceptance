@@ -15,15 +15,9 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "{button}" button on cluster members page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button on cluster members page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_btn_on_members_panel(
-    selenium: SeleniumDrivers, browser_id: str, button: str
-) -> None:
+def click_btn_on_members_panel(selenium: SeleniumDrivers, browser_id: str, button: str) -> None:
     driver = selenium[browser_id]
     interface = Onepanel(driver).content.members_emergency_interface
     getattr(interface, transform(button)).click()

@@ -41,11 +41,7 @@ class OnedataUserMapping(TypedDict):
     storageUser: StorageUser
 
 
-@wt(
-    parsers.parse(
-        "LUMA local feed mappings are created with following configuration:\n{config}"
-    )
-)
+@wt(parsers.parse("LUMA local feed mappings are created with following configuration:\n{config}"))
 def wt_create_luma_mappings(
     config: str,
     users: Users,
@@ -148,9 +144,7 @@ def set_user_luma_local_feed_mappings(
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
     user_id = users[user].user_id
-    mapping_scheme = _set_onedata_user_mapping(
-        storage_type, user_id, storage_uid, display_uid
-    )
+    mapping_scheme = _set_onedata_user_mapping(storage_type, user_id, storage_uid, display_uid)
 
     http_post(
         ip=provider_hostname,
@@ -277,9 +271,7 @@ def create_imported_storage_luma_mappings_lf(
     onepanel_credentials: User,
     users: Users,
 ) -> None:
-    storage_id = get_first_storage_id_by_name(
-        storage, provider, hosts, onepanel_credentials
-    )
+    storage_id = get_first_storage_id_by_name(storage, provider, hosts, onepanel_credentials)
 
     mappings = zip(uid_list, user_list)
     for uid, user in mappings:

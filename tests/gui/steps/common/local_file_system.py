@@ -109,9 +109,7 @@ def _mkfile(file_: LocalPath, file_content: Optional[str] = None) -> None:
 
 
 @given(
-    parsers.parse(
-        "user of {browser_id} downloads {file_url} as {file_name} to local file system"
-    )
+    parsers.parse("user of {browser_id} downloads {file_url} as {file_name} to local file system")
 )
 def download_file_to_local_file_system(
     browser_id: str, file_url: str, file_name: str, tmpdir: LocalPath
@@ -147,9 +145,7 @@ def create_file_on_local_file_system(
 
 @wt(parsers.parse('user of {browser_id} removes "{path}" from local file system'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def remove_file_from_local_file_system(
-    browser_id: str, path: str, tmpdir: LocalPath
-) -> None:
+def remove_file_from_local_file_system(browser_id: str, path: str, tmpdir: LocalPath) -> None:
     home_dir = tmpdir.join(browser_id)
 
     cmd = ["rm", home_dir + path]

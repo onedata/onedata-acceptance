@@ -116,12 +116,8 @@ def pytest_addoption(parser: Parser) -> None:
     )
 
     parser.addoption("--oz-image", action="store", help="onezone imageto use in tests")
-    parser.addoption(
-        "--op-image", action="store", help="oneprovider imageto use in tests"
-    )
-    parser.addoption(
-        "--oc-image", action="store", help="oneclient imageto use in tests"
-    )
+    parser.addoption("--op-image", action="store", help="oneprovider imageto use in tests")
+    parser.addoption("--oc-image", action="store", help="oneclient imageto use in tests")
     parser.addoption(
         "--rest-cli-image",
         action="store",
@@ -223,11 +219,8 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
     env_file = metafunc.config.getoption("env_file")
 
     if test_type == "upgrade":
-
         if not env_file:
-            raise pytest.UsageError(
-                "In upgrade tests --env-file option must be provided"
-            )
+            raise pytest.UsageError("In upgrade tests --env-file option must be provided")
 
         with open(env_file, "r") as f:
             test_config = yaml.load(f, yaml.Loader)
@@ -270,7 +263,6 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     normal_items = []
 
     for item in items:
-
         if item.name.split("[")[0] in scenarios_to_rerun:
             item.add_marker(pytest.mark.flaky(reruns=3, reruns_delay=1))
 
@@ -319,9 +311,7 @@ def onepanel_credentials(
     hosts: Hosts,
     emergency_passphrase: str,
 ) -> User:
-    creds = users["onepanel"] = User(
-        hosts["onezone"]["hostname"], "onepanel", emergency_passphrase
-    )
+    creds = users["onepanel"] = User(hosts["onezone"]["hostname"], "onepanel", emergency_passphrase)
     return creds
 
 
@@ -536,9 +526,7 @@ def factory(
     fun: FactoryFunction[FactoryParams, FactoryResult],
 ) -> FactoryCallable[FactoryParams, FactoryResult]:
     if "get_instance" in dir(fun):
-        raise AttributeError(
-            f'object {fun.__name__} already has "get_instance" attribute'
-        )
+        raise AttributeError(f'object {fun.__name__} already has "get_instance" attribute')
     setattr(fun, "get_instance", fun)
     return cast(FactoryCallable[FactoryParams, FactoryResult], fun)
 
@@ -564,9 +552,7 @@ def get_log_dir_path(
             if env_description_abs_path is None:
                 raise AttributeError
             feature_name = request.module.__name__.split(".")[-1]
-            test_path = os.path.join(
-                get_file_name(env_description_abs_path), feature_name
-            )
+            test_path = os.path.join(get_file_name(env_description_abs_path), feature_name)
         except AttributeError:
             test_path = "test"
         logdir_path = make_logdir(logdir_path, test_path)
@@ -673,9 +659,7 @@ def _gather_screenshot(
     pytest_html = item.config.pluginmanager.getplugin("html")
     if pytest_html is not None:
         # add screenshot to the html report
-        extras.append(
-            pytest_html.extras.image(screenshot, f"{browser_name} Screenshot")
-        )
+        extras.append(pytest_html.extras.image(screenshot, f"{browser_name} Screenshot"))
 
 
 def _gather_html(
@@ -722,9 +706,7 @@ def _gather_logs(
 
         if pytest_html is not None:
             extras.append(
-                pytest_html.extras.text(
-                    format_log(log), f"{browser_name} {log_name.title()} Log"
-                )
+                pytest_html.extras.text(format_log(log), f"{browser_name} {log_name.title()} Log")
             )
 
 
@@ -735,7 +717,6 @@ def _gather_movie(item: pytest.Item, report: TestReport, extras: list[object]) -
     log_dir = os.path.dirname(item.config.option.htmlpath)
     pytest_html = item.config.pluginmanager.getplugin("html")
     for movie_path in getattr(item, "_movies", []):
-
         src_attrs = {
             "src": os.path.relpath(movie_path, log_dir),
             "type": "video/mp4",
@@ -760,9 +741,7 @@ def _gather_movie(item: pytest.Item, report: TestReport, extras: list[object]) -
 
 
 def format_timestamp(timestamp: int) -> str:
-    return datetime.fromtimestamp(timestamp / 1000.0, timezone.utc).strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
+    return datetime.fromtimestamp(timestamp / 1000.0, timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def format_log(log: list[LogEntry]) -> str:
@@ -861,9 +840,7 @@ def start_test_env(
         patch_dir_path = PATCHES_DIR[get_test_type(request)]
         patch_path = os.path.join(patch_dir_path, patch)
 
-    result = start_environment(
-        scenario_path, request, hosts, patch_path, users, test_config
-    )
+    result = start_environment(scenario_path, request, hosts, patch_path, users, test_config)
     if result != "ok":
         previous_env["started"] = False
         handle_env_init_error(request, env_description_abs_path, "Environment error")

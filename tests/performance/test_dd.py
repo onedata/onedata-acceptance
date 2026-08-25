@@ -32,7 +32,6 @@ SYSBENCH_OUTPUT_PATTERN = re.compile(SYSBENCH_OUTPUT_REGEX, re.MULTILINE)
 
 
 class Testdd(AbstractPerformanceTest):
-
     @performance(
         default_config={
             "repeats": REPEATS,
@@ -72,9 +71,7 @@ class Testdd(AbstractPerformanceTest):
             directory=client_directio.absolute_path("space1")
         )
 
-        test_file_proxy = client_proxy.mkstemp(
-            directory=client_proxy.absolute_path("space1")
-        )
+        test_file_proxy = client_proxy.mkstemp(directory=client_proxy.absolute_path("space1"))
         test_file_host = client_proxy.mkstemp(directory=user_home_dir(user_proxy))
 
         test_result1 = execute_dd_test(

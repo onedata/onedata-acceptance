@@ -76,9 +76,7 @@ def open_permission_modal(
     option = "Permissions"
     modal_name = "Details modal"
 
-    _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, browser_id, path, space, tmp_memory
-    )
+    _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path, space, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, option, modal_name)
 
@@ -290,9 +288,7 @@ def grant_acl_privileges_in_op_gui(
     option_in_submenu = "Files"
     _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, space)
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, option_in_submenu
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space, option_in_submenu)
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
     if isinstance(item_list, str):
         item_list = parse_elements_sequence(item_list)
@@ -399,9 +395,7 @@ def assert_user_id_in_ace_in_op_gui(
     )
     visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num, numerals)
     user_id = users[name].user_id
-    error_message = (
-        f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
-    )
+    error_message = f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
     assert visible_id == user_id, error_message
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
@@ -471,6 +465,6 @@ def assert_warning_in_details_modal_in_edit_permimssions_tab(
     driver = selenium[browser_id]
     acl = Modals(driver).details_modal.edit_permissions.acl
     warn_priv = acl.limited_privileges_warning
-    assert (
-        text == warn_priv.text
-    ), f"Warning from modal: {warn_priv.text} is not equal to given: {text}"
+    assert text == warn_priv.text, (
+        f"Warning from modal: {warn_priv.text} is not equal to given: {text}"
+    )

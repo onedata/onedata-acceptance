@@ -38,7 +38,6 @@ TEXT = "asd"
 
 
 class TestFilesCreation(AbstractPerformanceTest):
-
     @performance(
         default_config={
             "repeats": REPEATS,
@@ -54,9 +53,7 @@ class TestFilesCreation(AbstractPerformanceTest):
         },
         configs=generate_configs(
             {"files_number": [5000], "empty_files": [True, False]},
-            "FILE CREATION TEST -- "
-            "Files number: {files_number} "
-            "Empty files: {empty_files}",
+            "FILE CREATION TEST -- Files number: {files_number} Empty files: {empty_files}",
         ),
     )
     def test_files_creation(
@@ -81,9 +78,7 @@ class TestFilesCreation(AbstractPerformanceTest):
             directory=client_directio.absolute_path("space1")
         )
 
-        dir_path_proxy = client_proxy.mkdtemp(
-            directory=client_proxy.absolute_path("space1")
-        )
+        dir_path_proxy = client_proxy.mkdtemp(directory=client_proxy.absolute_path("space1"))
         dir_path_host = client_proxy.mkdtemp(directory=user_home_dir(user_proxy))
 
         test_result1 = execute_file_creation_test(
@@ -99,9 +94,7 @@ class TestFilesCreation(AbstractPerformanceTest):
         # removal of entire directory tree can take several minutes, so as to
         # evade connection timeout while removing everything at once,
         # rm files one at time instead
-        teardown_after_file_creation_test(
-            client_directio, files_number, dir_path_directio
-        )
+        teardown_after_file_creation_test(client_directio, files_number, dir_path_directio)
         teardown_after_file_creation_test(client_proxy, files_number, dir_path_proxy)
         teardown_after_file_creation_test(client_proxy, files_number, dir_path_host)
 
@@ -146,9 +139,7 @@ def execute_file_creation_test(
     ]
 
 
-def teardown_after_file_creation_test(
-    client: Client, files_number: int, dir_path: str
-) -> None:
+def teardown_after_file_creation_test(client: Client, files_number: int, dir_path: str) -> None:
     logging_time = time.time() + LOGGING_INTERVAL
     for i in range(files_number):
         client.rm(os.path.join(dir_path, "file{}".format(i)))

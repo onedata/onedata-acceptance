@@ -23,7 +23,6 @@ SUCCESS_RATE = 100
 
 
 class TestSysbench(AbstractPerformanceTest):
-
     @performance(
         default_config={
             "repeats": REPEATS,
@@ -106,9 +105,7 @@ class TestSysbench(AbstractPerformanceTest):
             directory=client_directio.absolute_path("space1")
         )
 
-        dir_path_proxy = client_proxy.mkdtemp(
-            directory=client_proxy.absolute_path("space1")
-        )
+        dir_path_proxy = client_proxy.mkdtemp(directory=client_proxy.absolute_path("space1"))
 
         print(
             "\n################################## DIRECT-IO client (%s)"

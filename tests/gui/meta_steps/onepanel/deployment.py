@@ -76,9 +76,7 @@ def _setup_step1(
     step = "step 1"
     btn = "Deploy"
 
-    wt_check_host_options_list_in_deployment_step1(
-        selenium, browser_id, options, host_pattern
-    )
+    wt_check_host_options_list_in_deployment_step1(selenium, browser_id, options, host_pattern)
     if "onezone" in host_pattern:
         zone_for_name, zone_for_domain = _parse_zone_data(
             config["zone name"], config["zone domain"]
@@ -145,8 +143,7 @@ def _setup_onezone_in_step1(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} performs DNS check in deployment "
-        "setup DNS step and proceeds"
+        "user of {browser_id} performs DNS check in deployment setup DNS step and proceeds"
     )
 )
 def setup_dns(selenium: SeleniumDrivers, browser_id: str) -> None:
@@ -193,9 +190,7 @@ def enable_provider_cluster_registration_for_user(
         "deployment process in Onepanel with following config:\n{config}"
     )
 )
-def setup_step2(
-    selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, config: str
-) -> None:
+def setup_step2(selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, config: str) -> None:
     """
     provider: provider_name
     request a subdomain: True/False
@@ -212,9 +207,7 @@ def _setup_step2(
     configuration: str,
 ) -> None:
     config = yaml.load(configuration, yaml.Loader)
-    provider_for_name, provider_for_domain = _parse_provider(
-        config["name"], config["domain"]
-    )
+    provider_for_name, provider_for_domain = _parse_provider(config["name"], config["domain"])
     request_a_subdomain = config.get("request a subdomain", False)
     email = config["email"]
     step = "step 2"
@@ -247,9 +240,7 @@ def _setup_step2(
     )
 
     email_input_box = "admin email"
-    wt_type_text_to_in_box_in_deployment_step(
-        selenium, browser_id, email, email_input_box, step
-    )
+    wt_type_text_to_in_box_in_deployment_step(selenium, browser_id, email, email_input_box, step)
 
     register_button = "Register"
     wt_click_on_btn_in_deployment_step(selenium, browser_id, register_button, step)
@@ -275,9 +266,7 @@ def _parse_provider(provider_name: str, provider_domain: str) -> Tuple[str, str]
         "process in Onepanel with following config:\n{config}"
     )
 )
-def add_storage_in_step5(
-    selenium: SeleniumDrivers, browser_id: str, config: str
-) -> None:
+def add_storage_in_step5(selenium: SeleniumDrivers, browser_id: str, config: str) -> None:
     """
     storage type: type of storage
     storage name: name of storage
@@ -285,17 +274,13 @@ def add_storage_in_step5(
     _add_storage_in_step5(selenium, browser_id, config)
 
 
-def _add_storage_in_step5(
-    selenium: SeleniumDrivers, browser_id: str, configuration: str
-) -> None:
+def _add_storage_in_step5(selenium: SeleniumDrivers, browser_id: str, configuration: str) -> None:
     config = yaml.load(configuration, yaml.Loader)
     storage_type = config["storage type"]
     name = config["name"]
     name_box = "Storage name"
 
     wt_select_storage_type_in_deployment_step5(selenium, browser_id, storage_type)
-    wt_type_text_to_in_box_in_deployment_step5(
-        selenium, browser_id, name, storage_type, name_box
-    )
+    wt_type_text_to_in_box_in_deployment_step5(selenium, browser_id, name, storage_type, name_box)
     wt_click_on_add_btn_in_storage_add_form(selenium, browser_id)
     notify_visible_with_text(selenium, browser_id, AlertPopup.STORAGE_ADDED)

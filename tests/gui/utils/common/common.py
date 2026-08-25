@@ -122,9 +122,7 @@ class _DropdownSelector(PageObject, ExpandableMixin):
 
 class _MigrateDropdownSelector(PageObject, ExpandableMixin):
     selected = Label(".ember-power-select-trigger")
-    providers_list = WebItemsSequence(
-        "ul li .oneprovider-name", cls=ButtonWithTextPageObject
-    )
+    providers_list = WebItemsSequence("ul li .oneprovider-name", cls=ButtonWithTextPageObject)
     _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
 
 

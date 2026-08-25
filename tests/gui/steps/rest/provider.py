@@ -129,7 +129,7 @@ def start_stop_provider_service_node(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path("provider", service.value, host)
-        + f"?started={"true" if start else "false"}",
+        + f"?started={'true' if start else 'false'}",
         auth=(onepanel_username, onepanel_password),
     )
     return res
