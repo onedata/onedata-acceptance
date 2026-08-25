@@ -25,52 +25,32 @@ from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 
 class QoSValueOption(PageObject):
     value_name = id = Label(".item-name")
-
-    @property
-    def label(self) -> str:
-        return self.web_elem.text
-
-    @property
-    def qualifier(self) -> str | None:
-        parts = self.label.rsplit(" " + CONFLICT_NAME_SEPARATOR)
-        return parts[1] if len(parts) == 2 else None
+    qualifier = Label(".conflict-label")
+    label = Label(".storage-option-storage-line")
 
     @staticmethod
-    def choose(
+    def choose_value_from_list(
         options: list["QoSValueOption"],
         expected_value_name: str,
-        expected_provider_name: str | None = None,
+        expected_qualifier: str | None = None,
     ) -> None:
         for option in options:
-            provider_matches = (
-                expected_provider_name is None
-                or option.qualifier == expected_provider_name
+            # when qualifier(provider name) is not given this condition is always True
+            qualifier_matches = (
+                expected_qualifier is None or option.qualifier == expected_qualifier
             )
-            if option.value_name == expected_value_name and provider_matches:
+            if option.value_name == expected_value_name and qualifier_matches:
                 option.click()
                 return
 
-        provider_description = (
-            f' at provider "{expected_provider_name}"'
-            if expected_provider_name is not None
+        qualifier_description = (
+            f' at provider "{expected_qualifier}"'
+            if expected_qualifier is not None
             else ""
         )
         raise PageObjectNotFoundError(
-            f'QoS value "{expected_value_name}"{provider_description} not found'
+            f'QoS value "{expected_value_name}"{qualifier_description} not found'
         )
-
-
-class QoSValueOption(PageObject):
-    value_name = id = Label(".item-name")
-
-    @property
-    def label(self) -> str:
-        return self.web_elem.text
-
-    @property
-    def qualifier(self) -> str | None:
-        parts = self.label.rsplit(" " + CONFLICT_NAME_SEPARATOR)
-        return parts[1] if len(parts) == 2 else None
 
 
 class Requirement(PageObject):

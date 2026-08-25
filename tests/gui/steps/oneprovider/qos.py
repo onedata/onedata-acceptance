@@ -22,7 +22,6 @@ from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.qos import
     QoSValueOption,
 )
 from tests.gui.utils.core import scroll_to_css_selector_bottom
-from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -374,7 +373,7 @@ def choose_property_in_add_condition_popup(
     popup.choose_property(property_name)
 
 
-def open_qos_values_dropdown(driver: WebDriver) -> None:
+def expand_qos_values_in_query_builder(driver: WebDriver) -> None:
     popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.expand_values()
 

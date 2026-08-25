@@ -26,7 +26,7 @@ from tests.gui.steps.oneprovider.qos import (
     click_enter_as_text_link,
     confirm_entering_text,
     delete_all_qualities_of_service,
-    open_qos_values_dropdown,
+    expand_qos_values_in_query_builder,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
@@ -53,10 +53,9 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
 ) -> None:
     provider_name = hosts[provider]["name"]
     driver = selenium[browser_id]
-    popup = Popups(driver).get_query_builder_not_hidden_popup()
-    open_qos_values_dropdown(popup)
+    expand_qos_values_in_query_builder(driver)
     options = Popups(driver).power_select.items_as(QoSValueOption)
-    QoSValueOption.choose(options, item, provider_name)
+    QoSValueOption.choose_value_from_list(options, item, provider_name)
 
 
 @wt(
@@ -70,11 +69,10 @@ def choose_value_of_provider_item_in_add_cond_popup(
 ) -> None:
     provider_name = hosts[provider]["name"]
     driver = selenium[browser_id]
-    popup = Popups(driver).get_query_builder_not_hidden_popup()
-    open_qos_values_dropdown(popup)
+    expand_qos_values_in_query_builder(driver)
 
     options = Popups(driver).power_select.items_as(QoSValueOption)
-    QoSValueOption.choose(options, provider_name)
+    QoSValueOption.choose_value_from_list(options, provider_name)
 
 
 def _add_qos_requirement_in_modal(
