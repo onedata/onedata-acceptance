@@ -44,8 +44,3 @@ class Homepage:
     @property
     def docs(self) -> DocsPage:
         return DocsPage(self.web_elem, self.web_elem, parent=self)
-
-
-class RestApiCommand(PageObject):
-    command_title = Label(".api-command-title")
-    command_type = Label(".api-command-type")
