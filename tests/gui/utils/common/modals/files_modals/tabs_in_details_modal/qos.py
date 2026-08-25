@@ -60,6 +60,19 @@ class QoSValueOption(PageObject):
         )
 
 
+class QoSValueOption(PageObject):
+    value_name = id = Label(".item-name")
+
+    @property
+    def label(self) -> str:
+        return self.web_elem.text
+
+    @property
+    def qualifier(self) -> str | None:
+        parts = self.label.rsplit(" " + CONFLICT_NAME_SEPARATOR)
+        return parts[1] if len(parts) == 2 else None
+
+
 class Requirement(PageObject):
     delete = Button(".remove-qos-trigger")
     fulfilled = Label(".qos-status-fulfilled")

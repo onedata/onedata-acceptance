@@ -11,7 +11,6 @@ from selenium.common.exceptions import (
     NoSuchElementException,
 )
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_filebrowser,
     open_modal_for_file_browser_item,
@@ -44,7 +43,6 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -53,7 +51,6 @@ from tests.utils.utils import repeat_failed
         r'key "(?P<key_name>.*?)" and value "(?P<value>.*?)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_xattr_entry(
     selenium: SeleniumDrivers, browser_id: str, key_name: str, value: str
 ) -> None:
@@ -74,7 +71,6 @@ def get_modal_name_from_item_name(item_name: str) -> str:
         r'for "(?P<item_name>.*?)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_json_rdf_metadata_for_item(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -103,7 +99,6 @@ def add_json_rdf_metadata_for_item(
         r'tab for "(?P<item_name>.*?)"(?P<dir> directory|)'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def open_json_rdf_metadata_for_item(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -126,7 +121,6 @@ def open_json_rdf_metadata_for_item(
         r' in "(?P<space>.*)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def set_metadata_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -186,7 +180,6 @@ def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: str) -
         r'metadata: "(?P<val>.*)" in "(?P<space>.*)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_metadata_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,

@@ -16,12 +16,12 @@ from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
 )
-from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import (
     assert_lambda_exists,
+    click_on_lambda_menu,
+    click_on_popup_in_lambda_menu,
     click_option_in_revision_menu_button,
     go_to_inventory_subpage,
     has_downloaded_workflow_file_content,
@@ -30,7 +30,10 @@ from tests.gui.steps.onezone.automation.automation_basic import (
 )
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar,
+    click_add_parameter_button_in_lambda_form,
     confirm_lambda_creation_or_edition,
+    enter_parameter_name_in_lambda_form,
+    select_parameter_type_in_lambda_form,
     switch_toggle_in_lambda_form,
     write_text_into_lambda_form,
 )
@@ -43,7 +46,6 @@ from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 ALL_LAMBDA_NAMES = []
 
@@ -173,7 +175,6 @@ def _create_lambda_manually(
         '"{docker_image}" docker image in "{inventory}" inventory'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_lambda_using_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -246,7 +247,6 @@ def change_parameter_type_in_lambda_form(
         r'of "(?P<param_type>.*)" type'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_parameter_into_lambda_form(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -255,22 +255,11 @@ def add_parameter_into_lambda_form(
     param_type: str,
     ordinal: str,
 ) -> None:
-    driver = selenium[browser_id]
-    page = OZLoggedIn(driver).automation.lambdas_page.form
-
-    subpage = getattr(page, transform(option))
-    subpage.add_button()
-    ordinal = "1st" if not ordinal else ordinal
-    bracket_name = "bracket_" + ordinal.strip()
-    object_bracket = getattr(subpage, bracket_name)
-
-    name_input = object_bracket.name
-    css_selector = "#" + name_input.web_elem.get_attribute("id")
-    scroll_to_css_selector(driver, css_selector)
-    name_input.value = name
-
-    object_bracket.type_dropdown.click()
-    Popups(driver).power_select.choose_item(param_type)
+    click_add_parameter_button_in_lambda_form(selenium, browser_id, option)
+    enter_parameter_name_in_lambda_form(selenium, browser_id, option, ordinal, name)
+    select_parameter_type_in_lambda_form(
+        selenium, browser_id, option, ordinal, param_type
+    )
 
 
 @wt(
@@ -398,20 +387,9 @@ def download_and_remove_lambda_dump_from_inventory(
     )
 
     click_on_lambda_menu(driver, lambda_name)
-    click_on_option_in_lambda_menu(driver, option_unlink)
+    click_on_popup_in_lambda_menu(driver, option_unlink)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal, tmp_memory)
     click_modal_button(selenium, browser_id, option_unlink, modal)
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_lambda_menu(driver: WebDriver, lambda_name: str) -> None:
-    page = OZLoggedIn(driver).automation
-    page.lambdas_page.lambdas_list[lambda_name].lambda_menu.click()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_lambda_menu(driver: WebDriver, option: str) -> None:
-    Popups(driver).menu_popup_with_label.menu[option].click()
 
 
 @wt(

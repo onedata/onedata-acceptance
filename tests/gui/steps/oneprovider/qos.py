@@ -18,7 +18,11 @@ from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
+from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.qos import (
+    QoSValueOption,
+)
 from tests.gui.utils.core import scroll_to_css_selector_bottom
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -392,8 +396,8 @@ def assert_list_of_providers_in_add_cond_popup(
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.expand_values()
-    separator = f" {PROVIDER_PREFIX_CHAR}"
-    actual = [v.text.split(separator)[0] for v in Popups(driver).power_select.items]
+    options = Popups(driver).power_select.items_as(QoSValueOption)
+    actual = [option.value_name for option in options]
     compare_lists(expected, actual)
 
 
@@ -419,7 +423,8 @@ def assert_list_of_storages_in_add_cond_popup(
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.expand_values()
-    actual = [v.text for v in Popups(driver).power_select.items]
+    options = Popups(driver).power_select.items_as(QoSValueOption)
+    actual = [option.label for option in options]
     compare_lists(expected, actual)
 
 

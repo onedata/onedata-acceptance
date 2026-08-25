@@ -84,6 +84,17 @@ def click_on_option_in_group_menu_and_get_group(
     return group
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_confirmation_button_to_rename_group(group: Group) -> None:
+    group.edit_box.confirm()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def input_new_group_name_into_rename_group_inpux_box(group: Group, text: str) -> None:
+    group.edit_box.value = text
+    assert group.edit_box.value == text, "Failed to write new group name to input box"
+
+
 @wt(
     parsers.re(
         rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) "

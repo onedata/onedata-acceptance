@@ -14,6 +14,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneprovider.automation import InitialValueStore
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -94,6 +95,17 @@ def open_select_initial_groups_modal(
     time.sleep(1)
     # check if modal opened
     Modals(driver).select_groups  # pylint: disable=expression-not-assigned
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_groups_from_select_groups_modal(
+    driver: WebDriver, group_list: str | list[str]
+) -> None:
+    if isinstance(group_list, str):
+        parsed_list = parse_seq(group_list)
+    else:
+        parsed_list = group_list
+    Modals(driver).select_groups.select(parsed_list)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

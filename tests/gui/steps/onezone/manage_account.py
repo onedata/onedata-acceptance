@@ -17,6 +17,13 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_manage_account_page(selenium: SeleniumDrivers, browser_id: str) -> None:
+    oz_page = OZLoggedIn(selenium[browser_id])
+    oz_page.open_panel(ManageAccountPage)
+    oz_page.expand_panel_if_needed()
+
+
 @wt(
     parsers.parse(
         "user of {browser_id} expands account settings dropdown in the sidebar"
@@ -47,6 +54,53 @@ def click_on_option_in_account_settings_in_oz(
     if option == "Manage account":
         oz_page.open_panel(ManageAccountPage)
     Popups(driver).user_account_menu.options[option].click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_emergency_panel_logout(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    button = OZLoggedIn(driver).profile.logout.web_elem
+    ActionChains(driver).move_to_element(button).click(button).perform()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def start_username_change(selenium: SeleniumDrivers, browser_id: str) -> None:
+    OZLoggedIn(selenium[browser_id]).profile.rename_username()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def enter_new_username(
+    selenium: SeleniumDrivers, browser_id: str, new_username: str
+) -> None:
+    OZLoggedIn(selenium[browser_id]).profile.edit_user_name_box.value = new_username
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def confirm_username_change(selenium: SeleniumDrivers, browser_id: str) -> None:
+    OZLoggedIn(selenium[browser_id]).profile.edit_user_name_box.confirm.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_edit_password_form(selenium: SeleniumDrivers, browser_id: str) -> None:
+    OZLoggedIn(selenium[browser_id]).profile.rename_password()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def enter_password_change_values(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    current_password: str,
+    new_password: str,
+) -> None:
+    profile = OZLoggedIn(selenium[browser_id]).profile
+    profile.current_password_box = current_password
+    profile.type_new_password_box = new_password
+    profile.retype_new_password_box = new_password
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def confirm_password_change(selenium: SeleniumDrivers, browser_id: str) -> None:
+    OZLoggedIn(selenium[browser_id]).profile.change_password.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on menu button on Profile page"))

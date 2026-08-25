@@ -18,6 +18,13 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_provider_name_from_provider_panel(
+    selenium: SeleniumDrivers, browser_id: str
+) -> str:
+    return Onepanel(selenium[browser_id]).content.provider.details.provider_name
+
+
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that (?P<attribute>ID|"

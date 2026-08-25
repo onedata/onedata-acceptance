@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import re
 import time
 from collections.abc import Callable
 from datetime import datetime
@@ -20,6 +21,14 @@ from tests.gui.utils.generic import transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_archive_recall_information_property_without_whitespace(
+    selenium: SeleniumDrivers, browser_id: str, property_name: str
+) -> str:
+    modal = Modals(selenium[browser_id]).archive_recall_information
+    return re.sub(r"\s*", "", getattr(modal, property_name))
 
 
 @wt(

@@ -105,13 +105,26 @@ def get_space_ids_supported_by_storage(
     for space_id in get_supported_space_ids(
         provider_hostname, onepanel_username, onepanel_password
     ):
-        space_details = get_space_details(
-            provider_hostname, onepanel_username, onepanel_password, space_id
-        )
-        if space_details["storageId"] == storage_id:
-            matching_space_ids.append(space_id)
+        # The space may disappear between listing it and fetching its details.
+        with suppress(HTTPNotFound):
+            space_details = get_space_details(
+                provider_hostname, onepanel_username, onepanel_password, space_id
+            )
+            if space_details["storageId"] == storage_id:
+                matching_space_ids.append(space_id)
 
     return matching_space_ids
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_no_space_supports_using_rest(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+) -> None:
+    assert not get_supported_space_ids(
+        provider_hostname, onepanel_username, onepanel_password
+    )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

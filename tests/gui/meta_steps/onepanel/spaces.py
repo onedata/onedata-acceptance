@@ -10,7 +10,6 @@ import time
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.gui.steps.common.miscellaneous import (
     wait_until_scanning_is_finished_in_storage_import_tab,
@@ -25,6 +24,7 @@ from tests.gui.steps.onepanel.spaces import (
     click_on_navigation_tab_in_space,
     click_start_scan_button_in_storage_import_tab,
     confirm_quota_value_change,
+    get_spaces_list_from_spaces_page,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
@@ -58,7 +58,6 @@ from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -327,7 +326,6 @@ def assert_proper_space_configuration_in_op_panel_gui(
         "there are no spaces supported in Onepanel used by user of {browser_id}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def revoke_all_space_supports(
     selenium: SeleniumDrivers, browser_id: str, hosts: Hosts
 ) -> None:
@@ -347,7 +345,7 @@ def revoke_all_space_supports(
     )
     # wait for load spaces list
     time.sleep(1)
-    spaces_list = Onepanel(selenium[browser_id]).content.spaces.spaces
+    spaces_list = get_spaces_list_from_spaces_page(selenium, browser_id)
 
     while len(spaces_list) > 0:
         space = spaces_list[0]
@@ -357,12 +355,11 @@ def revoke_all_space_supports(
         wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
         # wait for update spaces list
         time.sleep(1)
-        spaces_list = Onepanel(selenium[browser_id]).content.spaces.spaces
+        spaces_list = get_spaces_list_from_spaces_page(selenium, browser_id)
     selenium[browser_id].refresh()
 
 
 @given(parsers.parse("there are no spaces supported by {provider_host} in Onepanel"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def g_revoke_all_space_supports_using_rest(
     hosts: Hosts, users: Users, provider_host: str
 ) -> None:
@@ -377,7 +374,6 @@ def g_revoke_all_space_supports_using_rest(
         "in auto-cleaning tab in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def set_quota_in_auto_cleaning(
     selenium: SeleniumDrivers, browser_id: str, quota: str, value: str
 ) -> None:

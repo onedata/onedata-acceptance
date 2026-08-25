@@ -16,6 +16,7 @@ from itertools import islice
 from time import sleep
 from typing import Literal, Optional, TypeVar, cast, overload
 
+from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
@@ -32,7 +33,7 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.type_definitions import (
     VisibilityCondition,
     WebElementOrCssLocator,
@@ -306,6 +307,18 @@ def wait_for_visible_element_using_getter(
     )
 
 
+def wait_for_file_to_download(
+    driver: WebDriver,
+    downloaded_file: LocalPath,
+    file_name: str,
+    timeout: float = WAIT_NORMAL_DOWNLOAD,
+) -> None:
+    WebDriverWait(driver, timeout).until(
+        lambda _: downloaded_file.isfile(),
+        message=f"File {file_name} did not finish downloading",
+    )
+
+
 def get_element_css_classes_when_visible(
     driver: WebDriver, web_elem: WebElement, timeout: float = WAIT_FRONTEND // 4
 ) -> list[str]:
@@ -438,6 +451,45 @@ def redirect_display(new_display: str) -> Iterator[None]:
 
 def transform(val: str, strip_char: Optional[str] = None) -> str:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
+
+
+def assert_each_event_is_gathered(
+    events: list[str],
+    gathered_events: list[str],
+    option: str,
+) -> None:
+    for event in events:
+        assert event in gathered_events, (
+            f'No gathered event with {option} "{event}" was found. '
+            f"Gathered {option}s: {gathered_events}"
+        )
+
+
+def are_events_gathered_together(
+    first_event: str, second_event: str, gathered_events: list[str]
+) -> bool:
+    for gathered_event in gathered_events:
+        if first_event in gathered_event and second_event in gathered_event:
+            return True
+    return False
+
+
+def assert_events_are_gathered_with_event(
+    events: list[str],
+    other_event: str,
+    gathered_events: list[str],
+    option: str,
+) -> None:
+    for event in events:
+        events_are_gathered_together = are_events_gathered_together(
+            event, other_event, gathered_events
+        )
+
+        assert events_are_gathered_together, (
+            f'No gathered event with {option} containing "{event}" '
+            f'and event "{other_event}" was found. '
+            f"Gathered {option}s: {gathered_events}"
+        )
 
 
 def sort_json_keys(obj: JsonValue) -> JsonValue:

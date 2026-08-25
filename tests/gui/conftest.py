@@ -67,6 +67,13 @@ DRIVER_CREATION_RETRIES = 5
 # use when waiting for normal download to finish
 WAIT_NORMAL_DOWNLOAD = 10
 
+# use when waiting for workflow executions to finish
+WAIT_NORMAL_WORKFLOW_EXECUTION = 360
+WAIT_EXTENDED_WORKFLOW_EXECUTION = 1500
+
+# use when waiting for pods to terminate
+WAIT_PODS_TERMINATION = 180
+
 
 # ============================================================================
 # PYTEST CONFIGURATION

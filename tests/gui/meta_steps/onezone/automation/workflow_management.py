@@ -17,7 +17,6 @@ from selenium.common.exceptions import (
     NoSuchElementException,
 )
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,
     choose_file_as_initial_workflow_value_for_store,
@@ -68,11 +67,9 @@ from tests.gui.utils.oneprovider.automation import NumberInput
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_workflow_using_gui(
     selenium: SeleniumDrivers, browser_id: str, workflow_name: str
 ) -> None:

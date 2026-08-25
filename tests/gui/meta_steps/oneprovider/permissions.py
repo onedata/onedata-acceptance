@@ -8,9 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import Optional
 
 from selenium.common.exceptions import ElementNotInteractableException
-from selenium.webdriver.common.by import By
 
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
     assert_browser_in_tab_in_op,
@@ -25,6 +23,7 @@ from tests.gui.steps.modals.modal import (
     check_warning_modal,
     click_modal_button,
     click_panel_button,
+    close_first_modal_if_present,
 )
 from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
 from tests.gui.steps.oneprovider.data_tab import (
@@ -64,7 +63,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 def open_permission_modal(
@@ -115,7 +113,6 @@ def _assert_posix_permissions(
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -124,9 +121,7 @@ def assert_posix_permissions_in_op_gui(
     perm: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    driver = selenium[browser_id]
-    if driver.find_elements(By.CSS_SELECTOR, ".modal.in .modal-dialog"):
-        Modals(driver).details_modal.x()
+    close_first_modal_if_present(selenium[browser_id])
 
     _assert_posix_permissions(
         selenium,

@@ -16,7 +16,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import (
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+)
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
     switch_to_iframe,
@@ -52,6 +56,18 @@ def switch_to_automation_page(
 ) -> WorkflowExecutionPage:
     switch_to_iframe(selenium, browser_id)
     return OPLoggedIn(selenium[browser_id]).automation_page
+
+
+def wait_until_workflow_executions_list_is_empty(
+    page: WorkflowExecutionPage,
+    error_message: str,
+    timeout: float = WAIT_NORMAL_WORKFLOW_EXECUTION,
+) -> None:
+    @repeat_failed(timeout=timeout, interval=1)
+    def assert_workflow_executions_list_is_empty() -> None:
+        assert len(page.workflow_executions_list) == 0, error_message
+
+    assert_workflow_executions_list_is_empty()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -12,7 +12,6 @@ import time
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
@@ -37,6 +36,7 @@ from tests.gui.steps.oneprovider.archives import (
 )
 from tests.gui.steps.oneprovider.archives_recall import (
     assert_recall_duration_in_archive_recall_information_modal,
+    get_archive_recall_information_property_without_whitespace,
 )
 from tests.gui.steps.oneprovider.browser import (
     assert_items_presence_in_browser,
@@ -56,11 +56,10 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Modals, OPLoggedIn
+from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import ListElement, WhichBrowser, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 OPTION_IN_SPACE = "Datasets, Archives"
 DATASET_BROWSER = "dataset browser"
@@ -75,7 +74,6 @@ ARCHIVE_FILE_BROWSER = "archive file browser"
         "configuration:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive(
     browser_id: str,
     selenium: SeleniumDrivers,
@@ -126,7 +124,6 @@ def create_archive(
         " {follow_symbolic_links}:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive_with_follow_symbolic_link(
     browser_id: str,
     selenium: SeleniumDrivers,
@@ -246,7 +243,6 @@ def _create_archive(
         )
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def copy_archive_id_to_tmp_memory(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -539,7 +535,6 @@ def recall_archive_for_archive_in_op_gui(
     click_modal_button(selenium, browser_id, button_name, modal_name)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(
     browser_id: str,
     item_name: str,
@@ -551,7 +546,6 @@ def recalled_archive_details_in_op_gui(
     click_on_status_tag_for_file_in_file_browser(
         browser_id, status_type, item_name, tmp_memory
     )
-    recall_modal = Modals(selenium[browser_id]).archive_recall_information
 
     for key, expected_value in data.items():
         if key == "time":
@@ -570,7 +564,9 @@ def recalled_archive_details_in_op_gui(
                 selenium, browser_id, start, stop
             )
         else:
-            value = re.sub(r"\s*", "", getattr(recall_modal, key))
+            value = get_archive_recall_information_property_without_whitespace(
+                selenium, browser_id, key
+            )
             expected_value = re.sub(r"\s*", "", expected_value)
             error_message = (
                 f'{key} for archive recall "{item_name}" is {value} '

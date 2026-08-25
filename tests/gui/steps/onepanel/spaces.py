@@ -30,6 +30,7 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import (
     implicit_wait,
     parse_elements_sequence,
@@ -39,6 +40,13 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_spaces_list_from_spaces_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> PageObjectsSequence:
+    return Onepanel(selenium[browser_id]).content.spaces.spaces
 
 
 @wt(

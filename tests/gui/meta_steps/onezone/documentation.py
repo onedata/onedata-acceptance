@@ -1,197 +1,165 @@
-"""This module contains gherkin steps to run acceptance tests featuring
-operations on links to documentation and checking documentation site content.
-"""
+"""Steps for interacting with Onedata documentation pages."""
 
-__author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
+__author__ = "Mateusz Zajac, Jakub Karczewski"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
-from tests.gui.steps.common.url import (
-    close_current_tab,
-    switch_to_first_tab,
-    switch_to_last_tab,
+from tests.gui.utils import Homepage, Modals, Popups
+from tests.gui.utils.common.modals.files_modals.details_modal import ApiTab
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
 )
-from tests.gui.steps.onezone.documentation import (
-    assert_active_chapter_tab_in_documentation_subpage,
-    assert_active_sidebar_endpoint_in_api_subpage,
-    assert_active_sidebar_link_in_docs_subpage,
-    assert_expanded_folders_in_sidebar_in_documentation_subpage,
-    assert_user_sees_name_in_header_in_documentation_subpage,
-    choose_rest_api_command_from_dropdown,
-    click_operations_dropdown_in_api_modal,
-    click_rest_api_documentation_link,
-    get_rest_api_commands_from_dropdown,
-)
-from tests.gui.utils.homepage.api import EndpointInfo
+from tests.gui.utils.homepage.api import GuiRestCommand
+from tests.gui.utils.homepage.documentation import DocumentationPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
 
-SPACE_ENDPOINTS = {
-    "Get space details": EndpointInfo.space("GET", "Get space details"),
-    "List all space privileges": EndpointInfo.space("GET", "List all space privileges"),
-    "List direct space users": EndpointInfo.space("GET", "List space users"),
-    "List effective space users": EndpointInfo.space(
-        "GET", "List effective space users"
-    ),
-    "Get effective space user details": EndpointInfo.space(
-        "GET", "Get effective space user details"
-    ),
-    "List user's direct space privileges": EndpointInfo.space(
-        "GET", "List user's space privileges"
-    ),
-    "List user's effective space privileges": EndpointInfo.space(
-        "GET", "List effective user's space privileges"
-    ),
-    "Update user's space privileges": EndpointInfo.space(
-        "PATCH", "Update user's space privileges"
-    ),
-    "List direct space groups": EndpointInfo.space("GET", "List space groups"),
-    "List effective space groups": EndpointInfo.space(
-        "GET", "List effective space groups"
-    ),
-    "Get effective space group details": EndpointInfo.space(
-        "GET", "Get effective space group details"
-    ),
-    "List group's direct space privileges": EndpointInfo.space(
-        "GET", "List group's space privileges"
-    ),
-    "List group's effective space privileges": EndpointInfo.space(
-        "GET", "List effective group's space privileges"
-    ),
-    "Update group's space privileges": EndpointInfo.space(
-        "PATCH",
-        "Update group privileges to space",
-    ),
-    "List space shares": EndpointInfo.space("GET", "List space shares"),
-}
-
-FILE_DETAILS_ENDPOINTS = {
-    "Download directory (tar)": EndpointInfo.file_details(
-        "GET", "Download file content", "Basic File Operations"
-    ),
-    "List directory files and subdirectories": EndpointInfo.file_details(
-        "GET", "List directory files and subdirectories", "Basic File Operations"
-    ),
-    "Create file in directory": EndpointInfo.file_details(
-        "POST", "Create file in directory", "Basic File Operations"
-    ),
-    "Remove file": EndpointInfo.file_details(
-        "DELETE", "Remove file", "Basic File Operations"
-    ),
-    "Get attributes": EndpointInfo.file_details(
-        "GET", "Get file attributes", "Basic File Operations"
-    ),
-    "Get JSON metadata": EndpointInfo.file_details(
-        "GET", "Get file JSON metadata", "Custom File Metadata"
-    ),
-    "Set JSON metadata": EndpointInfo.file_details(
-        "PUT", "Set file JSON metadata", "Custom File Metadata"
-    ),
-    "Remove JSON metadata": EndpointInfo.file_details(
-        "DELETE", "Remove file JSON metadata", "Custom File Metadata"
-    ),
-    "Get RDF metadata": EndpointInfo.file_details(
-        "GET", "Get file RDF metadata", "Custom File Metadata"
-    ),
-    "Set RDF metadata": EndpointInfo.file_details(
-        "PUT", "Set file RDF metadata", "Custom File Metadata"
-    ),
-    "Remove RDF metadata": EndpointInfo.file_details(
-        "DELETE", "Remove file RDF metadata", "Custom File Metadata"
-    ),
-    "Get extended attributes (xattrs)": EndpointInfo.file_details(
-        "GET", "Get file extended attributes", "Custom File Metadata"
-    ),
-    "Set extended attribute (xattr)": EndpointInfo.file_details(
-        "PUT", "Set file extended attribute", "Custom File Metadata"
-    ),
-    "Remove extended attributes (xattrs)": EndpointInfo.file_details(
-        "DELETE", "Remove file extended attributes", "Custom File Metadata"
-    ),
-    "Get data distribution": EndpointInfo.file_details(
-        "GET", "Get data distribution", "Data Distribution"
-    ),
-}
+DEFAULT_DOCUMENTATION_TIMEOUT = 30
 
 
-def assert_endpoint_details_in_api_subpage(
-    selenium: SeleniumDrivers, browser_id: str, endpoint: EndpointInfo
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def _get_api_tab(driver: WebDriver, modal_name: str) -> ApiTab:
+    return getattr(Modals(driver), modal_name).api
+
+
+def click_operations_dropdown_in_api_modal(
+    selenium: SeleniumDrivers, browser_id: str, modal_name: str
 ) -> None:
-    assert_title_contains(selenium, browser_id, f"{endpoint.name} | API Reference")
-    assert_active_chapter_tab_in_documentation_subpage(
-        selenium, browser_id, "API", endpoint.chapter
-    )
-    assert_user_sees_name_in_header_in_documentation_subpage(
-        selenium, browser_id, "API", endpoint.name
-    )
-    assert_active_sidebar_endpoint_in_api_subpage(
-        selenium, browser_id, endpoint.name, endpoint.method
-    )
-    assert_expanded_folders_in_sidebar_in_documentation_subpage(
-        selenium, browser_id, "API", [endpoint.category]
-    )
+    _get_api_tab(selenium[browser_id], modal_name).operations.click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that all links to REST API documentation works"
-        " correctly for each selected operation in file details API section"
-    )
-)
-def assert_all_links_to_rest_api_documentation_work_in_file_details(
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def get_rest_api_commands_from_dropdown(
     selenium: SeleniumDrivers, browser_id: str
+) -> list[str]:
+    command_items = Popups(selenium[browser_id]).power_select.items_as(GuiRestCommand)
+    commands = [
+        item.endpoint_title for item in command_items if item.endpoint_method == "REST"
+    ]
+    assert commands, "No REST API commands found in operations dropdown"
+    return commands
+
+
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def choose_rest_api_command_from_dropdown(
+    selenium: SeleniumDrivers, browser_id: str, command: str
 ) -> None:
-    modal_name = "details_modal"
-    click_operations_dropdown_in_api_modal(selenium, browser_id, modal_name)
-    commands = get_rest_api_commands_from_dropdown(selenium, browser_id)
-    for command in commands:
-        choose_rest_api_command_from_dropdown(selenium, browser_id, command)
-        click_rest_api_documentation_link(selenium, browser_id, modal_name)
-        switch_to_last_tab(selenium, browser_id)
-        endpoint = FILE_DETAILS_ENDPOINTS[command]
-        assert_endpoint_details_in_api_subpage(selenium, browser_id, endpoint)
-        close_current_tab(selenium, browser_id)
-        switch_to_first_tab(selenium, browser_id)
-        switch_to_iframe(selenium, browser_id)
-        click_operations_dropdown_in_api_modal(selenium, browser_id, modal_name)
+    command_items = Popups(selenium[browser_id]).power_select.items_as(GuiRestCommand)
+    for item in command_items:
+        if item.endpoint_title == command and item.endpoint_method == "REST":
+            item.click()
+            return
+    raise AssertionError(f'REST API command "{command}" not found')
+
+
+def click_rest_api_documentation_link(
+    selenium: SeleniumDrivers, browser_id: str, modal_name: str
+) -> None:
+    _get_api_tab(selenium[browser_id], modal_name).rest_api_documentation.click()
+
+
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def get_documentation_page(
+    selenium: SeleniumDrivers, browser_id: str, subpage: str
+) -> DocumentationPage:
+    return getattr(Homepage(selenium[browser_id]), transform(subpage))
+
+
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_active_sidebar_link_in_docs_subpage(
+    selenium: SeleniumDrivers, browser_id: str, link: str
+) -> None:
+    page = get_documentation_page(selenium, browser_id, "Docs")
+    active_links = page.sidebar.get_active_rows_names()
+    assert (
+        len(active_links) == 1
+    ), f"Expected only one active link, but found {len(active_links)}"
+    active_link = active_links[0]
+    assert (
+        active_link == link
+    ), f"Expected active link: {link}, but found: {active_link}"
+
+
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_active_sidebar_endpoint_in_api_subpage(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    endpoint_title: str,
+    endpoint_method: str,
+) -> None:
+    page = get_documentation_page(selenium, browser_id, "API")
+    active_endpoints = page.sidebar.get_active_endpoints()
+    assert (
+        len(active_endpoints) == 1
+    ), f"Expected only one active endpoint, but found {len(active_endpoints)}"
+    active_endpoint = active_endpoints[0]
+    assert active_endpoint.endpoint_title == endpoint_title, (
+        f"Expected active endpoint title: {endpoint_title}, "
+        f"but found: {active_endpoint.endpoint_title}"
+    )
+    assert active_endpoint.endpoint_method == endpoint_method, (
+        f"Expected active endpoint method: {endpoint_method}, "
+        f"but found: {active_endpoint.endpoint_method}"
+    )
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that all links to REST API documentation works"
-        " correctly for each selected operation in space menu API section"
+    parsers.re(
+        r'user of (?P<browser_id>.*?) sees "(?P<chapter>.*?)" active chapter'
+        r' in "(?P<subpage>Docs|API)" subpage in documentation'
     )
 )
-def assert_all_links_to_rest_api_documentation_work_in_space_menu(
-    selenium: SeleniumDrivers, browser_id: str
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_active_chapter_tab_in_documentation_subpage(
+    selenium: SeleniumDrivers, browser_id: str, subpage: str, chapter: str
 ) -> None:
-    modal_name = "rest_api"
-    click_operations_dropdown_in_api_modal(selenium, browser_id, modal_name)
-    commands = get_rest_api_commands_from_dropdown(selenium, browser_id)
-    for command in commands:
-        choose_rest_api_command_from_dropdown(selenium, browser_id, command)
-        click_rest_api_documentation_link(selenium, browser_id, modal_name)
-        switch_to_last_tab(selenium, browser_id)
-        endpoint = SPACE_ENDPOINTS[command]
-        assert_endpoint_details_in_api_subpage(selenium, browser_id, endpoint)
-        close_current_tab(selenium, browser_id)
-        switch_to_first_tab(selenium, browser_id)
-        click_operations_dropdown_in_api_modal(selenium, browser_id, modal_name)
+    page = get_documentation_page(selenium, browser_id, subpage)
+    active_tabs = page.chapters.get_active_chapter_tabs_names()
+    assert (
+        len(active_tabs) == 1
+    ), f"Expected only one active chapter tab, but found {len(active_tabs)}"
+    active_tab = active_tabs[0]
+    assert (
+        active_tab == chapter
+    ), f"Expected active chapter tab: {chapter}, but found: {active_tab}"
+
+
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_user_sees_name_in_header_in_documentation_subpage(
+    selenium: SeleniumDrivers, browser_id: str, subpage: str, name: str
+) -> None:
+    page = get_documentation_page(selenium, browser_id, subpage)
+    current_header = page.current_header
+    assert (
+        current_header == name
+    ), f"Expected header: {name}, but found header: {current_header}"
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that page title, header and active sidebar link "
-        'contain "{name}" name in "Docs" subpage in documentation'
-    )
+    parsers.re(
+        rf"user of (?P<browser_id>.*?) sees that "
+        rf"(?P<folders>{ELEMENTS_SEQUENCE_PATTERN}) sidebar folder(s are|"
+        r' is) expanded in "(?P<subpage>Docs|API)" subpage in documentation'
+    ),
+    converters={
+        "folders": parse_elements_sequence,
+    },
 )
-def assert_user_sees_name_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: str, name: str
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_expanded_folders_in_sidebar_in_documentation_subpage(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    subpage: str,
+    folders: list[str],
 ) -> None:
-    assert_user_sees_name_in_header_in_documentation_subpage(
-        selenium, browser_id, "Docs", name
-    )
-    assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, name)
-    assert_title_contains(selenium, browser_id, f"{name} | Onedata Docs")
+    page = get_documentation_page(selenium, browser_id, subpage)
+    expected_folders = set(folders)
+    found_folders = set(page.sidebar.get_expanded_folders_names())
+    assert (
+        found_folders == expected_folders
+    ), f"Expected folders: {expected_folders}, but found folders {found_folders}"

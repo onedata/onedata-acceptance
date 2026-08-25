@@ -7,17 +7,40 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections.abc import Iterable
 
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebElementsSequence
-from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.core.web_objects import (
+    PageObjectNotFoundError,
+    PageObjectsSequence,
+)
 
 
 class PowerSelect(PageObject):
-    items = WebElementsSequence(".ember-power-select-option")
+    _items = WebElementsSequence(".ember-power-select-option")
     item_groups = WebElementsSequence(".ember-power-select-group")
+
+    def __init__(
+        self,
+        driver: WebDriver,
+        web_elem: WebElement,
+        parent: object | None = None,
+        item_cls: type[PageObject] | None = None,
+        name: str = "",
+    ) -> None:
+        super().__init__(driver, web_elem, parent, name=name)
+        self.item_cls = item_cls
+
+    @property
+    def items(self) -> list[WebElement] | PageObjectsSequence:
+        if self.item_cls is None:
+            return self._items
+        return self.items_as(self.item_cls)
+
+    def items_as(self, item_cls: type[PageObject]) -> PageObjectsSequence:
+        return PageObjectsSequence(self.driver, self._items, item_cls, self)
 
     def _choose_items(
         self,
@@ -51,14 +74,6 @@ class PowerSelect(PageObject):
         self._choose_items(
             property_name, self.item_groups, "item group: ", require_full_match
         )
-
-    def choose_item_with_id(self, property_name: str) -> None:
-        separator = CONFLICT_NAME_SEPARATOR
-        for item in self.items:
-            if item.text.split(separator)[0].strip() == property_name:
-                item.click()
-                return
-        raise PageObjectNotFoundError(f"{property_name} not found in popup menu")
 
     def __str__(self) -> str:
         return "Power select options"
