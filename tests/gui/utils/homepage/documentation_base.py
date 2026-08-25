@@ -1,4 +1,4 @@
-"""Shared utils for documentation pages of Onedata homepage."""
+"""Shared base objects for documentation pages of Onedata homepage."""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
@@ -17,7 +17,7 @@ class ExpandedFolder(PageObject):
     toggle = WebItem(".folder-toggle", cls=ButtonWithTextPageObject)
 
 
-class DocumentationSidebar(PageObject):
+class BaseDocumentationSidebar(PageObject):
     expanded_folders = WebItemsSequence(".sidebar-folder.expanded", cls=ExpandedFolder)
 
     def get_expanded_folders_names(self) -> list[str]:
@@ -31,20 +31,12 @@ class Chapters(PageObject):
         return [tab.text for tab in self.tabs if tab.is_active()]
 
 
-class DocumentationPage(PageObject):
+class BaseDocumentationPage(PageObject):
     current_header = Label(".docs-main-content h1")
-    sidebar = WebItem(".sidebar-root-list", cls=DocumentationSidebar)
+    sidebar = WebItem(".sidebar-root-list", cls=BaseDocumentationSidebar)
     chapters = WebItem(".docs-tabs-row", cls=Chapters)
 
     def __getitem__(self, item: str) -> PageObject:
         if hasattr(self, "elements_list"):
             return self.elements_list[item]
         raise ValueError("there is not elements_list member in class instance")
-
-
-class HowItWorksPage(PageObject):
-    pass
-
-
-class QuickStartPage(PageObject):
-    pass

@@ -14,7 +14,7 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.gui.utils.homepage.api import GuiRestCommand
-from tests.gui.utils.homepage.documentation import DocumentationPage
+from tests.gui.utils.homepage.documentation_base import BaseDocumentationPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -66,7 +66,7 @@ def click_rest_api_documentation_link(
 @repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
 def get_documentation_page(
     selenium: SeleniumDrivers, browser_id: str, subpage: str
-) -> DocumentationPage:
+) -> BaseDocumentationPage:
     return getattr(Homepage(selenium[browser_id]), transform(subpage))
 
 

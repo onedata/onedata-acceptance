@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from dataclasses import dataclass
+from typing import Self
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -13,9 +14,9 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.homepage.documentation import (
-    DocumentationPage,
-    DocumentationSidebar,
+from tests.gui.utils.homepage.documentation_base import (
+    BaseDocumentationPage,
+    BaseDocumentationSidebar,
 )
 
 
@@ -27,12 +28,22 @@ class EndpointInfo:
     chapter: str
 
     @classmethod
-    def space(cls, method: str, name: str) -> "EndpointInfo":
-        return cls(method, name, "Space", "Onezone REST API")
+    def space(cls, method: str, name: str) -> Self:
+        return cls(
+            method=method,
+            name=name,
+            category="Space",
+            chapter="Onezone REST API",
+        )
 
     @classmethod
-    def file_details(cls, method: str, name: str, category: str) -> "EndpointInfo":
-        return cls(method, name, category, "Oneprovider REST API")
+    def file_details(cls, method: str, name: str, category: str) -> Self:
+        return cls(
+            method=method,
+            name=name,
+            category=category,
+            chapter="Oneprovider REST API",
+        )
 
 
 class GuiRestCommand(PageObject):
@@ -45,12 +56,12 @@ class WebRestCommand(ButtonWithTextPageObject):
     endpoint_method = Label(".method-badge")
 
 
-class ApiSidebar(DocumentationSidebar):
+class ApiSidebar(BaseDocumentationSidebar):
     endpoint_rows = WebItemsSequence("a", cls=WebRestCommand)
 
     def get_active_endpoints(self) -> list[WebRestCommand]:
         return [endpoint for endpoint in self.endpoint_rows if endpoint.is_active()]
 
 
-class APIPage(DocumentationPage):
+class APIPage(BaseDocumentationPage):
     sidebar = WebItem(".sidebar-root-list", cls=ApiSidebar)

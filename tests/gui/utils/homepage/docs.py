@@ -9,18 +9,18 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.homepage.documentation import (
-    DocumentationPage,
-    DocumentationSidebar,
+from tests.gui.utils.homepage.documentation_base import (
+    BaseDocumentationPage,
+    BaseDocumentationSidebar,
 )
 
 
-class DocsSidebar(DocumentationSidebar):
+class DocsSidebar(BaseDocumentationSidebar):
     category_rows = WebItemsSequence("a", cls=ButtonWithTextPageObject)
 
     def get_active_rows_names(self) -> list[str]:
         return [row.text for row in self.category_rows if row.is_active()]
 
 
-class DocsPage(DocumentationPage):
+class DocsPage(BaseDocumentationPage):
     sidebar = WebItem(".sidebar-root-list", cls=DocsSidebar)

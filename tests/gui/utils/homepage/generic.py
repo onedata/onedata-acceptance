@@ -4,9 +4,11 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Final
+
 from tests.gui.utils.homepage.api import EndpointInfo
 
-SPACE_ENDPOINTS = {
+SPACE_ENDPOINTS: Final[dict[str, EndpointInfo]] = {
     "Get space details": EndpointInfo.space("GET", "Get space details"),
     "List all space privileges": EndpointInfo.space("GET", "List all space privileges"),
     "List direct space users": EndpointInfo.space("GET", "List space users"),
@@ -45,7 +47,7 @@ SPACE_ENDPOINTS = {
     "List space shares": EndpointInfo.space("GET", "List space shares"),
 }
 
-FILE_DETAILS_ENDPOINTS = {
+FILE_DETAILS_ENDPOINTS: Final[dict[str, EndpointInfo]] = {
     "Download directory (tar)": EndpointInfo.file_details(
         "GET", "Download file content", "Basic File Operations"
     ),
