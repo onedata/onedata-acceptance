@@ -63,7 +63,7 @@ from tests.gui.steps.onezone.tokens import (
     wt_click_on_btn_for_oz_token,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import is_element_with_selector_visible_on_page
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
@@ -600,10 +600,10 @@ def _set_tokens_caveats(
         caveat.set_expiration_caveat(expiration_caveat, tmp_memory)
     if region_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "region")
-        caveat.set_region_caveats(selenium, browser_id, region_caveats, Popups)
+        caveat.set_region_caveats(selenium, browser_id, region_caveats)
     if country_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "country")
-        caveat.set_country_caveats(selenium, browser_id, country_caveats, Popups)
+        caveat.set_country_caveats(selenium, browser_id, country_caveats)
     if asn_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "asn")
         caveat.set_asn_caveats(selenium, browser_id, asn_caveats)
@@ -612,19 +612,19 @@ def _set_tokens_caveats(
         caveat.set_ip_caveats(selenium, browser_id, ip_caveats)
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "consumer")
+        create_token_page = OZLoggedIn(selenium[browser_id]).tokens.create_token_page
         caveat.set_consumer_caveats(
             selenium,
             browser_id,
-            Popups,
             consumer_caveats,
             users,
             groups,
             hosts,
-            OZLoggedIn,
+            create_token_page,
         )
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "service")
-        caveat.set_service_caveats(selenium, browser_id, service_caveats, Popups)
+        caveat.set_service_caveats(selenium, browser_id, service_caveats)
     if interface_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, "interface")
         caveat.set_interface_caveat(interface_caveat)

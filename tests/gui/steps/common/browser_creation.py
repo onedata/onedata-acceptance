@@ -19,7 +19,11 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
 from urllib3.exceptions import HTTPError
 
-from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
+from tests.gui.conftest import (
+    DRIVER_CREATION_RETRIES,
+    SCREEN_PARAMETERS,
+    SELENIUM_IMPLICIT_WAIT,
+)
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
@@ -47,8 +51,6 @@ def create_instances_of_webdriver(
     tmp_memory: TmpMemory,
     driver_type: str,
     xvfb: list[str],
-    screen_width: int,
-    screen_height: int,
     displays: dict[str, str],
     capabilities: JsonObject,
 ) -> None:
@@ -92,7 +94,11 @@ def create_instances_of_webdriver(
                         raise e
                     time.sleep(2)
 
-            _config_driver(browser, screen_width, screen_height)
+            _config_driver(
+                browser,
+                SCREEN_PARAMETERS["width"],
+                SCREEN_PARAMETERS["height"],
+            )
 
         displays[browser_id] = display
         selenium[browser_id] = browser

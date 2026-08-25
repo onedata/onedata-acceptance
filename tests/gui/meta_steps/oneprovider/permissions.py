@@ -351,7 +351,6 @@ def assert_ace_in_op_gui(
     space: str,
     path: str,
     tmp_memory: TmpMemory,
-    numerals: dict[str, int],
 ) -> None:
     modal_name = "Details modal"
     close_button = "X"
@@ -364,8 +363,8 @@ def assert_ace_in_op_gui(
         "acl",
     )
     if acl_type != "unknown":
-        assert_acl_subject(selenium, browser_id, num, numerals, acl_type, name)
-        assert_set_acl_privileges(selenium, browser_id, num, numerals, privileges)
+        assert_acl_subject(selenium, browser_id, num, acl_type, name)
+        assert_set_acl_privileges(selenium, browser_id, num, privileges)
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
@@ -384,7 +383,6 @@ def assert_user_id_in_ace_in_op_gui(
     space: str,
     path: str,
     tmp_memory: TmpMemory,
-    numerals: dict[str, int],
     users: Users,
 ) -> None:
     modal_name = "Details modal"
@@ -397,7 +395,7 @@ def assert_user_id_in_ace_in_op_gui(
         tmp_memory,
         "acl",
     )
-    visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num, numerals)
+    visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num)
     user_id = users[name].user_id
     error_message = (
         f"id in acl entry: {visible_id} differs from actual user id: {user_id}"

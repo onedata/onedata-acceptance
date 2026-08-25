@@ -78,8 +78,6 @@ def login_using_gui(
     xvfb: list[str],
     driver_type: str,
     displays: dict[str, str],
-    screen_width: int,
-    screen_height: int,
     hosts: Hosts,
     users: Users,
     browser_id_list: list[str],
@@ -95,8 +93,6 @@ def login_using_gui(
         tmp_memory,
         driver_type,
         xvfb,
-        screen_width,
-        screen_height,
         displays,
         capabilities,
     )
