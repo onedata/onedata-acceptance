@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Sequence
+
 from selenium.common.exceptions import JavascriptException
 
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
@@ -20,19 +22,37 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 
 
 class QoSValueOption(PageObject):
     value_name = id = Label(".item-name")
+    qualifier = Label(".conflict-label")
+    label = Label(".storage-option-storage-line")
 
-    @property
-    def label(self) -> str:
-        return self.web_elem.text
+    @staticmethod
+    def choose_value(
+        options: Sequence["QoSValueOption"],
+        expected_value_name: str,
+        expected_qualifier: str | None = None,
+    ) -> None:
+        for option in options:
+            # when qualifier(provider name) is not given this condition is always True
+            qualifier_matches = (
+                expected_qualifier is None or option.qualifier == expected_qualifier
+            )
+            if option.value_name == expected_value_name and qualifier_matches:
+                option.click()
+                return
 
-    @property
-    def qualifier(self) -> str | None:
-        parts = self.label.rsplit(" " + CONFLICT_NAME_SEPARATOR)
-        return parts[1] if len(parts) == 2 else None
+        qualifier_description = (
+            f' at provider "{expected_qualifier}"'
+            if expected_qualifier is not None
+            else ""
+        )
+        raise PageObjectNotFoundError(
+            f'QoS value "{expected_value_name}"{qualifier_description} not found'
+        )
 
 
 class Requirement(PageObject):
