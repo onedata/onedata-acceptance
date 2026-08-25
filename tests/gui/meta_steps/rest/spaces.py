@@ -8,6 +8,7 @@ from contextlib import suppress
 
 from tests.gui.steps.rest.spaces import (
     assert_no_space_supports_for_storage_using_rest,
+    assert_no_space_supports_using_rest,
     get_space_ids_supported_by_storage,
     get_supported_space_ids,
     revoke_space_support_using_rest,
@@ -23,11 +24,14 @@ def revoke_all_space_supports_using_rest(
     for space_id in get_supported_space_ids(
         provider_hostname, onepanel_username, onepanel_password
     ):
-        revoke_space_support_using_rest(
-            provider_hostname, onepanel_username, onepanel_password, space_id
-        )
+        # TODO: VFS-13774 Replace with HTTPNotFound once Onepanel returns 404
+        # for revoked space support instead of 500 when space does not exist
+        with suppress(HTTPServerError):
+            revoke_space_support_using_rest(
+                provider_hostname, onepanel_username, onepanel_password, space_id
+            )
 
-    assert not get_supported_space_ids(
+    assert_no_space_supports_using_rest(
         provider_hostname, onepanel_username, onepanel_password
     )
 

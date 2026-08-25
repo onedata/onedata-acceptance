@@ -23,6 +23,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import click_on_web_elem, transform
@@ -48,6 +49,7 @@ def resolve_modal_attribute_name(modal_name: str) -> str:
         "file_details": "details_modal",
         "directory_details": "details_modal",
         "share": "share",
+        "function_pods_activity": "pods_activity",
     }
     for k, v in s.items():
         if k in modal_name:
@@ -123,6 +125,7 @@ def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
             "create",
             "unlink",
             "download",
+            "function pods activity",
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(
@@ -145,6 +148,11 @@ def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
         lambda _: _find(),
         message=f"waiting for {modal_name:s} modal to appear",
     )
+
+
+def get_modal[T: Modal](driver: WebDriver, modal_name: str, modal_type: type[T]) -> T:
+    modal_web_elem = _find_modal(driver, modal_name)
+    return modal_type(driver, modal_web_elem)
 
 
 def _wait_for_modal_to_appear(
@@ -762,6 +770,15 @@ def close_modal(selenium: SeleniumDrivers, browser_id: str, modal: str) -> None:
         return
 
     wait_for_named_modal_to_disappear(selenium, browser_id, modal)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def close_first_modal_if_present(driver: WebDriver) -> None:
+    modal_dialogs = driver.find_elements(By.CSS_SELECTOR, ".modal.in .modal-dialog")
+    if not modal_dialogs:
+        return
+
+    modal_dialogs[0].find_element(By.CSS_SELECTOR, ".close").click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks copy command icon in REST API modal"))

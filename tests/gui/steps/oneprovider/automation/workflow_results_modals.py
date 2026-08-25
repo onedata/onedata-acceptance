@@ -169,6 +169,19 @@ def click_on_task_audit_log(task: Task) -> None:
     task.audit_log()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_log_in_workflow_audit_log(
+    driver: WebDriver, severity: str, source: str
+) -> None:
+    modal = Modals(driver).audit_log
+    if severity in ["Error", "Debug"]:
+        modal.logs_entry[severity].click()
+    elif source == "user":
+        modal.user_log.click()
+    else:
+        modal.logs_entry[0].click()
+
+
 def get_modal_and_logs_for_task(
     path: str, task: Task, driver: WebDriver
 ) -> tuple[AuditLog, PageObjectsSequence]:

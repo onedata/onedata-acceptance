@@ -76,6 +76,25 @@ def _find_members_page(driver: WebDriver, where: str) -> MembersPage:
     return tab.members_page
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_membership_access_denied_message_and_bulk_edit_button(
+    selenium: SeleniumDrivers, browser_id: str, expected_message: str
+) -> None:
+    members_page = _find_members_page(selenium[browser_id], "group")
+    message_groups = members_page.lack_groups_view_privileges.text
+    message_users = members_page.lack_users_view_privileges.text
+    bulk_edit_button = members_page.bulk_edit_button
+
+    error_message = (
+        "The message about lack of privileges to view membership is not visible"
+    )
+    assert message_groups == expected_message, f"{error_message} for groups"
+    assert message_users == expected_message, f"{error_message} for users"
+    assert (
+        not bulk_edit_button.is_enabled()
+    ), "Bulk edit button is supposed to be disabled"
+
+
 def _change_membership_to_name(membership_type: str, subject_type: str) -> str:
     if not subject_type.endswith("s"):
         subject_type += "s"

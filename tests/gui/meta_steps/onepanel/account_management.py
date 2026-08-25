@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.login import (
     press_sign_in_btn_on_login_page,
     wt_assert_login_page,
@@ -31,7 +30,6 @@ from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 def change_user_password_in_oz_panel_using_gui(
@@ -76,7 +74,6 @@ def log_out_from_oz_panel_gui(username: str, selenium: SeleniumDrivers) -> None:
         "on emergency passphrase page"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_passphrase(
     selenium: SeleniumDrivers,
     browser_id: str,

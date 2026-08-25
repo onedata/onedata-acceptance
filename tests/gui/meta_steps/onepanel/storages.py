@@ -56,7 +56,6 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_post
 from tests.utils.user_utils import User
-from tests.utils.utils import repeat_failed
 
 
 def _register_storage_finalizer(
@@ -239,7 +238,6 @@ def get_first_storage_id_by_name(
     return ids[0]
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def _add_storage_in_op_panel_using_rest(
     config: str,
     storage_name: str,

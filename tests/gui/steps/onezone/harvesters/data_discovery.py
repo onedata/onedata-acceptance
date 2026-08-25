@@ -6,6 +6,10 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Callable
+
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -34,7 +38,7 @@ def assert_data_discovery_page(selenium: SeleniumDrivers, browser_id: str) -> No
 def _wait_for_files_list(selenium: SeleniumDrivers, browser_id: str) -> None:
     button_name = "Query"
 
-    click_button_on_data_disc_page(selenium, browser_id, button_name)
+    wt_click_button_on_data_disc_page(selenium, browser_id, button_name)
     assert_files_list_on_data_disc(selenium, browser_id)
 
 
@@ -55,7 +59,7 @@ def assert_empty_data_discovery_page(
     button_name = "Query"
 
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
-    click_button_on_data_disc_page(selenium, browser_id, button_name)
+    wt_click_button_on_data_disc_page(selenium, browser_id, button_name)
 
 
 @wt(
@@ -257,12 +261,47 @@ def click_operator_in_query_builder(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_data_disc_page(
+def wt_click_button_on_data_disc_page(
+    selenium: SeleniumDrivers, browser_id: str, button_name: str
+) -> None:
+    _click_button_on_data_disc_page(selenium, browser_id, button_name)
+
+
+def _click_button_on_data_disc_page(
     selenium: SeleniumDrivers, browser_id: str, button_name: str
 ) -> None:
     driver = selenium[browser_id]
     page = DataDiscovery(driver)
     getattr(page, f"{transform(button_name)}_button")()
+
+
+def wait_for_data_discovery_query_result(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    assert_result: Callable[[], None],
+) -> None:
+    driver = selenium[browser_id]
+
+    def result_is_expected(_: object) -> bool:
+        assert_result()
+        return True
+
+    def query_returns_expected_result(_: object) -> bool:
+        _click_button_on_data_disc_page(selenium, browser_id, "Query")
+
+        return WebDriverWait(
+            driver,
+            1,
+            poll_frequency=0.1,
+            ignored_exceptions=(AssertionError,),
+        ).until(result_is_expected)
+
+    WebDriverWait(
+        driver,
+        WAIT_BACKEND * 4,
+        poll_frequency=1,
+        ignored_exceptions=(TimeoutException,),
+    ).until(query_returns_expected_result)
 
 
 @wt(parsers.parse("user of {browser_id} sees that paging is set for {number} pages"))

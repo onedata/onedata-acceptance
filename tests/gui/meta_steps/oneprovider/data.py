@@ -16,7 +16,6 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import navigate_to_tab_in_op_using_gui
 from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_labeled_menu
@@ -52,6 +51,7 @@ from tests.gui.steps.oneprovider.data_tab import (
     click_choose_other_oneprovider_on_file_browser,
     click_file_browser_button,
     expand_size_statistics_for_providers,
+    go_one_back_using_breadcrumbs_in_data_tab_in_op,
     has_downloaded_file_content,
     upload_file_to_cwd_in_file_browser,
     upload_file_to_cwd_in_file_browser_no_waiting,
@@ -77,19 +77,17 @@ from tests.gui.type_definitions import DataDirectoryContent as DirectoryContent
 from tests.gui.type_definitions import (
     TmpMemory,
 )
-from tests.gui.utils import Modals, OPLoggedIn
+from tests.gui.utils import Modals
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,
     parse_elements_sequence,
-    transform,
 )
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(
@@ -652,7 +650,6 @@ def upload_file_to_op_gui(
         check_error_in_upload_presenter(selenium, browser_id)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_mtime_not_earlier_than_op_gui(
     path: str,
     mtime: str,
@@ -703,7 +700,6 @@ def go_to_path_(
     )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_path(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -721,11 +717,9 @@ def go_to_path(
     for directory in path_list:
         # go back
         if directory == "..":
-            breadcrumbs = getattr(
-                OPLoggedIn(selenium[browser_id]), transform(which_browser)
-            ).breadcrumbs
-            breadcrumbs = breadcrumbs.breadcrumbs
-            breadcrumbs[len(breadcrumbs) - 2].click()
+            go_one_back_using_breadcrumbs_in_data_tab_in_op(
+                selenium, browser_id, which_browser
+            )
         elif directory != "":
             click_and_press_enter_on_item_in_browser(
                 selenium,
@@ -1149,8 +1143,8 @@ def copy_object_id_to_tmp_memory(
         'content of downloaded file is equal to: "{content}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_and_press_enter_with_content_check(
+    selenium: SeleniumDrivers,
     browser_id: str,
     item_name: str,
     content: str,
@@ -1158,9 +1152,9 @@ def click_and_press_enter_with_content_check(
     tmp_memory: TmpMemory,
     which_browser: str,
 ) -> None:
-    which_browser = transform(which_browser)
-    browser = tmp_memory[browser_id][which_browser]
-    browser.data[item_name].click_and_enter()
+    click_and_press_enter_on_item_in_browser(
+        selenium, browser_id, item_name, tmp_memory, which_browser
+    )
     has_downloaded_file_content(browser_id, item_name, content, tmpdir)
 
 

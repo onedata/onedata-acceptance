@@ -28,10 +28,12 @@ from tests.gui.steps.modals.modal import (
 from tests.gui.steps.onezone.groups import (
     assert_group_exists,
     click_create_group_button_in_panel,
+    click_on_confirmation_button_to_rename_group,
     click_on_option_in_group_menu_and_get_group,
     confirm_name_input_on_main_groups_page,
     go_to_group_subpage,
     input_name_into_input_box_on_main_groups_page,
+    input_new_group_name_into_rename_group_inpux_box,
     press_enter_on_active_element,
 )
 from tests.gui.steps.onezone.members import (
@@ -55,16 +57,6 @@ from tests.utils.entities_setup.groups import (
 from tests.utils.entities_setup.users import CredentialsLike
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_confirmation_button_to_rename_group(group: Group) -> None:
-    group.edit_box.confirm()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def input_new_group_name_into_rename_group_inpux_box(group: Group, text: str) -> None:
-    group.edit_box.value = text
 
 
 def get_group_and_click_menu_button(
@@ -94,7 +86,6 @@ def click_menu_button_for_group(
         'to "{new_group_name}" using {confirm_type} to confirm'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def rename_group(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -111,7 +102,6 @@ def rename_group(
 
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def leave_group(selenium: SeleniumDrivers, browser_id: str, group: str) -> None:
     option = "Leave"
     modal = "LEAVE GROUP"
@@ -145,7 +135,6 @@ def leave_user_groups_in_onezone_using_rest(
         extra_types={"ElementsSequence": parse_elements_sequence},
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_group(
     selenium: SeleniumDrivers, browser_id: str, group_list: list[str]
 ) -> None:
@@ -234,7 +223,6 @@ def rename_groups_using_op_gui(
         rename_group(selenium, user, group, new_name, confirm_type)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_see_groups_using_op_gui(
     selenium: SeleniumDrivers, user: str, group_list: list[str]
 ) -> None:
@@ -284,7 +272,6 @@ def fail_to_see_subgroups_using_op_gui(
         )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def _create_group_token(
     selenium: SeleniumDrivers,
     user: str,

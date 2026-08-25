@@ -413,6 +413,17 @@ def click_option_in_revision_menu_button(
     Popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_lambda_menu(driver: WebDriver, lambda_name: str) -> None:
+    page = OZLoggedIn(driver).automation
+    page.lambdas_page.lambdas_list[lambda_name].lambda_menu.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_popup_in_lambda_menu(driver: WebDriver, option: str) -> None:
+    Popups(driver).menu_popup_with_label.menu[option].click()
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} clicks on "{option}" button in '

@@ -7,21 +7,19 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-import time
+from functools import partial
 from typing import cast
 
 import yaml
 
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
-    click_button_on_data_disc_page,
+    wait_for_data_discovery_query_result,
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils.onezone.data_discovery_page import ResultSample
 from tests.type_definitions import JsonObject, JsonValue, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -36,15 +34,20 @@ from tests.utils.utils import repeat_failed
         "data discovery page:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND * 4, interval=2)
 def assert_data_discovery_files(
     selenium: SeleniumDrivers, browser_id: str, config: str, spaces: dict[str, str]
 ) -> None:
-    button_name = "Query"
-
-    click_button_on_data_disc_page(selenium, browser_id, button_name)
-    time.sleep(1)
-    assert_files(selenium, browser_id, config, spaces)
+    wait_for_data_discovery_query_result(
+        selenium,
+        browser_id,
+        partial(
+            assert_files,
+            selenium=selenium,
+            browser_id=browser_id,
+            config=config,
+            spaces=spaces,
+        ),
+    )
 
 
 def assert_files(
@@ -161,7 +164,6 @@ def assert_not_files_properties(
         "data discovery page:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def see_files_with_order(
     selenium: SeleniumDrivers, browser_id: str, config: str
 ) -> None:
@@ -185,7 +187,6 @@ def go_to_source_of_file(
 
 
 @wt(parsers.parse("user of {browser_id} sees {number} files on data discovery page"))
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_files_on_data_disc(
     selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:
