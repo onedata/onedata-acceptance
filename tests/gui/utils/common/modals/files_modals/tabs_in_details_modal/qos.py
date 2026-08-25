@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Sequence
+
 from selenium.common.exceptions import JavascriptException
 
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
@@ -29,8 +31,8 @@ class QoSValueOption(PageObject):
     label = Label(".storage-option-storage-line")
 
     @staticmethod
-    def choose_value_from_list(
-        options: list["QoSValueOption"],
+    def choose_value(
+        options: Sequence["QoSValueOption"],
         expected_value_name: str,
         expected_qualifier: str | None = None,
     ) -> None:

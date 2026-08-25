@@ -55,7 +55,7 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
     driver = selenium[browser_id]
     expand_qos_values_in_query_builder(driver)
     options = Popups(driver).power_select.items_as(QoSValueOption)
-    QoSValueOption.choose_value_from_list(options, item, provider_name)
+    QoSValueOption.choose_value(options, item, provider_name)
 
 
 @wt(
@@ -72,7 +72,7 @@ def choose_value_of_provider_item_in_add_cond_popup(
     expand_qos_values_in_query_builder(driver)
 
     options = Popups(driver).power_select.items_as(QoSValueOption)
-    QoSValueOption.choose_value_from_list(options, provider_name)
+    QoSValueOption.choose_value(options, provider_name)
 
 
 def _add_qos_requirement_in_modal(
