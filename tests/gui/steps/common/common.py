@@ -44,13 +44,13 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.gui.utils.oneprovider.browser import Browser
-from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.gui.utils.onezone.generic_page import VisibleElementsMixin
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page: GenericPage | Browser,
+    page: VisibleElementsMixin | Browser,
     selenium: dict[str, WebDriver],
     browser_id: str,
     number: int,
@@ -84,7 +84,7 @@ def assert_n_items_in_items_list(
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_visible_items_list(
-    page: GenericPage | Browser,
+    page: VisibleElementsMixin | Browser,
     items_type: ListElement,
     main_field: str = "name",
 ) -> Sequence[NamedElement]:
@@ -112,9 +112,9 @@ def _get_page_name_by_elements_list_name(element: ListElement) -> str:
 
 def _get_page_by_elements_list_name(
     element: ListElement, driver: WebDriver
-) -> GenericPage:
+) -> VisibleElementsMixin:
     if element in [ListElement.WORKFLOWS, ListElement.LAMBDAS]:
-        return getattr(OZLoggedIn.automation, f"{element.value}_page")
+        return getattr(OZLoggedIn(driver).automation, f"{element.value}_page")
 
     page_name = _get_page_name_by_elements_list_name(element)
     return getattr(OZLoggedIn(driver), page_name)

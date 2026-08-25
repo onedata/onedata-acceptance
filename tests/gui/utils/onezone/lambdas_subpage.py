@@ -15,7 +15,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import InputBox
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import Element, VisibleElementsMixin
 
 
 class FileAttr(PageObject):
@@ -76,7 +76,7 @@ class Lambda(Element):
     )
 
 
-class LambdasPage(GenericPage):
+class LambdasPage(VisibleElementsMixin, PageObject):
     lambdas_list = WebItemsSequence(
         ".atm-lambdas-list .atm-lambdas-list-entry", cls=Lambda
     )

@@ -27,16 +27,18 @@ class GenericPageMeta(PageObjectMeta, ABCMeta):
     pass  # this class is needed to avoid metaclass conflict between PageObjectMeta and ABCMeta
 
 
-class GenericPage(PageObject, metaclass=GenericPageMeta):
-    name = id = Label(".row-heading .col-title")
-    get_started = NamedButton(".btn-default", text="Get started")
-
+class VisibleElementsMixin:
     @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_elements_list(
         elements_list: Iterable[Element], main_field: str = "name"
     ) -> list[Element]:
         return [element for element in elements_list if getattr(element, main_field)]
+
+
+class GenericPage(VisibleElementsMixin, PageObject, metaclass=GenericPageMeta):
+    name = id = Label(".row-heading .col-title")
+    get_started = NamedButton(".btn-default", text="Get started")
 
 
 class SidebarPanelPage(GenericPage):
