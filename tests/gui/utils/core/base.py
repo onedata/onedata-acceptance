@@ -1,7 +1,7 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Optional, cast
+from typing import Any, Optional, cast
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -118,6 +118,17 @@ class PageObject(AbstractPageObject):
             self.driver,
             self._click_area,
             lambda: f"cannot click on {self}",
+        )
+
+
+class NamedElement(PageObject):
+    """Base class for page objects representing elements with a name."""
+
+    name: str
+
+    def __getattr__(self, name: str) -> Any:
+        raise AttributeError(
+            f"{type(self).__name__!r} object has no attribute {name!r}"
         )
 
 

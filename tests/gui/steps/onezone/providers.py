@@ -42,7 +42,7 @@ def open_provider_popover_on_world_map(
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ProvidersPage)
-    oz_page.providers[provider_name]()
+    oz_page.providers.providers_list[provider_name].web_elem.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

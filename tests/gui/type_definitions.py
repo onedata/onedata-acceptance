@@ -22,13 +22,6 @@ class Clickable(Protocol):
     def click(self) -> None: ...
 
 
-class NamedElement(Protocol):
-    name: str
-    web_elem: WebElement
-
-    def __getattr__(self, name: str) -> Any: ...
-
-
 type TmpMemory = defaultdict[str, dict[str, Any]]
 
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]

@@ -8,7 +8,7 @@ import re
 import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
-from typing import Any, cast
+from typing import Any
 
 from selenium.common.exceptions import (
     StaleElementReferenceException,
@@ -23,7 +23,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import (
     Clickable,
-    NamedElement,
     VisibilityCondition,
     WebElementOrCssLocator,
     WebElementOrSelector,
@@ -37,6 +36,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
     ArchiveRecallInformation,
 )
 from tests.gui.utils.common.popups.generic import AlertPopupType
+from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.generic import (
     ListElement,
     get_visibility_condition,
@@ -84,19 +84,15 @@ def assert_n_items_in_items_list(
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_visible_items_list(
-    page: GenericPage | Browser, items_type: ListElement, main_field: str = "name"
+    page: GenericPage | Browser,
+    items_type: ListElement,
+    main_field: str = "name",
 ) -> Sequence[NamedElement]:
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
     if isinstance(page, Browser):
-        return cast(
-            Sequence[NamedElement],
-            page.get_visible_file_rows(elements_list, main_field),
-        )
-    return cast(
-        Sequence[NamedElement],
-        page.get_visible_elements_list(elements_list, main_field),
-    )
+        return page.get_visible_file_rows(elements_list, main_field)
+    return page.get_visible_elements_list(elements_list, main_field)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -104,14 +100,24 @@ def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page(where: str, driver: WebDriver) -> Any:
-    if where == "shares":
-        return OZLoggedIn(driver).shares
-    if where == "groups":
-        return OZLoggedIn(driver).groups
-    if where == "spaces":
-        return OZLoggedIn(driver).data
-    raise AssertionError(f"page {where} not found")
+def _get_page_name_by_elements_list_name(element: ListElement) -> str:
+    if element in [ListElement.SPACES, ListElement.SPACES_HEADERS]:
+        return "data"
+    if element is ListElement.GROUPS_HEADERS:
+        return "groups"
+    if element is ListElement.SHARES_SIDEBAR:
+        return "shares"
+    return element.value
+
+
+def _get_page_by_elements_list_name(
+    element: ListElement, driver: WebDriver
+) -> GenericPage:
+    if element in [ListElement.WORKFLOWS, ListElement.LAMBDAS]:
+        return getattr(OZLoggedIn.automation, f"{element.value}_page")
+
+    page_name = _get_page_name_by_elements_list_name(element)
+    return getattr(OZLoggedIn(driver), page_name)
 
 
 @wt(
@@ -133,7 +139,7 @@ def wt_assert_n_items_in_items_list(
     list_type: ListElement,
 ) -> None:
     driver = selenium[browser_id]
-    page = _get_page(list_type.value, driver)
+    page = _get_page_by_elements_list_name(list_type, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 

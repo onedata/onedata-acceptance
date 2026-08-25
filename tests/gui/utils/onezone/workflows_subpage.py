@@ -18,7 +18,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import EditBox, InputBox
-from tests.gui.utils.onezone.generic_page import Element
+from tests.gui.utils.onezone.generic_page import Element, GenericPage
 
 
 class Task(Element):
@@ -138,7 +138,7 @@ class WorkflowCreator(PageObject):
     create_button = NamedButton(".btn-primary", text="Create")
 
 
-class WorkflowsPage(PageObject):
+class WorkflowsPage(GenericPage):
     workflows_list = WebItemsSequence(
         ".atm-workflow-schemas-list .atm-workflow-schemas-list-entry",
         cls=Workflow,
