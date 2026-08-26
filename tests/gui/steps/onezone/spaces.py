@@ -471,12 +471,11 @@ def hover_provider_on_the_map_on_data_page(
         r"(?P<space_name>.*) space (?P<page>overview|providers) data page"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_the_map_on_data_page(
     selenium: SeleniumDrivers, browser_id: str, page: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver).data, _get_subpage_name(page)).map.click()
+    getattr(OZLoggedIn(driver).data, _get_subpage_name(page)).map.web_elem.click()
 
 
 @wt(
