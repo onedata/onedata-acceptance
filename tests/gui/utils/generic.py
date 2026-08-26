@@ -166,9 +166,10 @@ INDEXED_PATH_PART_PATTERN = re.compile(r"(?P<prefix>.+)_(?P<idx>\d+)")
 
 
 class IndexedPathSequence(TypedDict):
-    first_idx: int
-    last_idx: int
-    prefix: str
+    first_idx: int | None
+    last_idx: int | None
+    prefix: str | None
+    file_name: str
 
 
 def parse_and_validate_indices(
@@ -207,6 +208,7 @@ def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
     path_parts = sequence.split("/")
     if path_parts.count("...") > 1:
         raise ValueError(f"Invalid indexed path sequence: {sequence}")
+    file_name = path_parts.pop()
 
     if "..." in path_parts:
         ellipsis_idx = path_parts.index("...")
@@ -223,7 +225,12 @@ def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
         if group
     ]
     if not parsed_groups:
-        raise ValueError(f"Invalid indexed path sequence: {sequence}")
+        return {
+            "first_idx": None,
+            "last_idx": None,
+            "prefix": None,
+            "file_name": file_name,
+        }
 
     first_prefix, first_idx = parsed_groups[0]
     _, last_idx = parsed_groups[-1]
@@ -236,6 +243,7 @@ def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
         "first_idx": first_idx,
         "last_idx": last_idx,
         "prefix": first_prefix,
+        "file_name": file_name,
     }
 
 

@@ -480,7 +480,7 @@ def assert_archived_file_path_and_archive_name(
 
     # Example shortened path:
     # 'long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\nlong-directory_19\n/\nvery-long-file_20'
-    details_file_path = modal_details.file_path.replace("\n", "")
+    details_file_path = modal_details.file_path.text.replace("\n", "")
 
     # Depending on window size, the archive name may not be present.
     if separator in details_file_path:
