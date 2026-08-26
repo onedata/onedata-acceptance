@@ -43,7 +43,7 @@ class Browser(ABC, PageObject):
     browser_msg_header = Label(".content-info-content-container h1")
     breadcrumbs = Breadcrumbs(".fb-breadcrumbs")
     refresh_button = Button(".toolbar-buttons .file-action-refresh")
-    jump_input = Input(".jump-input")
+    jump_input = Input(".jump-input", scroll=False)
     configure_columns = Button(".columns-configuration-button")
     empty_dir_msg = Label(".empty-dir-text")
     error_msg = Label(".error-dir-text")
