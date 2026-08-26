@@ -593,7 +593,7 @@ def open_space_in_spaces_list(
             space = [space for space in new_spaces if space.name == space_name][0]
             driver.execute_script(
                 "arguments[0].scrollIntoView();",
-                space.clickable_field,
+                space.web_elem,
             )
             space.click()
             return
