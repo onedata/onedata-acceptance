@@ -20,7 +20,7 @@ def breakpoint_with_paused_website(driver: WebDriver) -> None:
                 debugger;
             }, 0);
             """)
-        breakpoint()  # pylint: disable=forgotten-debug-statement
+        breakpoint()  # noqa: T100  # pylint: disable=forgotten-debug-statement
     finally:
         try:
             driver.execute_cdp_cmd("Debugger.resume", {})

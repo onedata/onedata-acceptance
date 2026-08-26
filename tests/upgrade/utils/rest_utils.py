@@ -50,7 +50,7 @@ EXAMPLE_HANDLE_METADATA = {
     "metadataPrefix": "oai_dc",
     "metadata": (
         """<?xml version="1.0" encoding="utf-8"?>
-<metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:title>Test dataset</dc:title>
     <dc:creator>Jane Doe</dc:creator>

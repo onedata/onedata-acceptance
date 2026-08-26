@@ -57,7 +57,7 @@ from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
 from tests.utils.user_utils import User, Users
 
-html.__tagspec__.update({x: 1 for x in ("video", "source")})
+html.__tagspec__.update(dict.fromkeys(("video", "source"), 1))
 VIDEO_ATTRS = {
     "controls": "",
     "poster": "",
@@ -146,9 +146,9 @@ def pytest_addoption(parser: Parser) -> None:
         default="regular",
         help="""Determines how files in a test are created:
                     * regular - a file is created as standard regular file (default);
-                    * hardlink - a file is created as a hardlink to a 
+                    * hardlink - a file is created as a hardlink to a
                     regular file in a space, all created files are hardlinks to a different file;
-                    * symlink - a file is created as a symlink to a 
+                    * symlink - a file is created as a symlink to a
                     regular file in a space, all created files are symlinks to a different file""",
     )
 

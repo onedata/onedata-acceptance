@@ -104,15 +104,18 @@ def parse_seq[T](
     seq: str,
     pattern: str | None = None,
     separator: str | None = None,
-    default: Callable[[str], T] = cast(Callable[[str], T], str),
+    default: Callable[[str], T] | None = None,
 ) -> list[T]:
     """Parses regex-matched or separator-delimited values into a list,
     e.g. '["1", "2"]', '"1"', '1,2', or '1'.
     """
+    item_parser = cast(Callable[[str], T], str) if default is None else default
     if pattern is not None:
-        return [default(el.group()) for el in re.finditer(pattern, seq)]
+        return [item_parser(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
-    return [default(el.strip().strip('"')) for el in seq.strip("[]").split(separator) if el != ""]
+    return [
+        item_parser(el.strip().strip('"')) for el in seq.strip("[]").split(separator) if el != ""
+    ]
 
 
 # An empty sequence, e.g. []

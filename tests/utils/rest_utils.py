@@ -256,7 +256,7 @@ def http_request(  # pylint: disable=inconsistent-return-statements
             |  __  |  | |     | |  |  ___/        | |      / /\ \ | |    | |            |  __  | |  | | . ` | | |_ |  | | | |
             | |  | |  | |     | |  | |            | |____ / ____ \| |____| |____        | |  | | |__| | |\  | |__| |  |_|_|_|
             |_|  |_|  |_|     |_|  |_|             \_____/_/    \_\______|______|       |_|  |_|\____/|_| \_|\_____/  (_|_|_)
-            """)
+            """)  # noqa: E501, W291 - preserve the diagnostic ASCII banner
             traceback.print_stack()
             print("Test will freeze to allow debugging!")
             while True:
