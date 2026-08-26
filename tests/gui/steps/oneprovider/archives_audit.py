@@ -19,6 +19,7 @@ from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
+    IndexedPathSequence,
     indexed_path_sequences_equal,
     parse_elements_sequence,
     parse_indexed_path_sequence,
@@ -466,13 +467,14 @@ def scroll_to_top_in_archive_audit_log(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that path in Entry Details in archive audit log is:"
-        ' "{path}" and displayed archive name is correct'
+        "user of {browser_id} sees that path in Entry Details in archive audit log "
+        "matches the following parameters and displayed archive name is correct:\n"
+        "{config}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archived_file_path_and_archive_name(
-    browser_id: str, selenium: SeleniumDrivers, path: str
+    browser_id: str, selenium: SeleniumDrivers, config: str
 ) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
@@ -498,11 +500,12 @@ def assert_archived_file_path_and_archive_name(
         path_without_archive_name = details_file_path
 
     details_path_params = parse_indexed_path_sequence(path_without_archive_name)
-    expected_path_params = parse_indexed_path_sequence(path)
+    expected_path_config = yaml.load(config, yaml.Loader)
+    expected_path_params = IndexedPathSequence.from_yaml_dict(expected_path_config)
 
     assert indexed_path_sequences_equal(details_path_params, expected_path_params), (
-        f"given path: {path_without_archive_name} is different than actual file path:"
-        f" {path}"
+        f"path parameters shown in audit log entry details: {details_path_params} "
+        f"do not match expected parameters: {expected_path_params}"
     )
 
 

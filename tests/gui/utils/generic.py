@@ -10,11 +10,12 @@ import os
 import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
+from dataclasses import dataclass
 from enum import Enum
 from functools import partial
 from itertools import islice
 from time import sleep
-from typing import Literal, Optional, TypedDict, TypeVar, cast, overload
+from typing import Literal, Optional, Self, TypeVar, cast, overload
 
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
@@ -165,27 +166,37 @@ def parse_elements_sequence(value: str) -> list[str]:
 INDEXED_PATH_PART_PATTERN = re.compile(r"(?P<prefix>.+)_(?P<idx>\d+)")
 
 
-class IndexedPathSequence(TypedDict):
+@dataclass(frozen=True)
+class IndexedPathSequence:
     first_idx: int | None
     last_idx: int | None
     prefix: str | None
     file_name: str
 
+    @classmethod
+    def from_yaml_dict(cls, config: dict[str, str]) -> Self:
+        return cls(
+            first_idx=int(config["First directory index"]),
+            last_idx=int(config["Last directory index"]),
+            prefix=config["Directory prefix"],
+            file_name=config["File name"],
+        )
+
 
 def indexed_path_sequences_equal(
     first: IndexedPathSequence, second: IndexedPathSequence
 ) -> bool:
-    if first["file_name"] != second["file_name"]:
+    if first.file_name != second.file_name:
         return False
 
-    first_indices = (first["first_idx"], first["last_idx"])
-    second_indices = (second["first_idx"], second["last_idx"])
+    first_indices = (first.first_idx, first.last_idx)
+    second_indices = (second.first_idx, second.last_idx)
     if all(idx is None for idx in first_indices) or all(
         idx is None for idx in second_indices
     ):
         return True
 
-    if first["prefix"] != second["prefix"]:
+    if first.prefix != second.prefix:
         return False
 
     return all(
@@ -253,13 +264,15 @@ def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
             if not parsed_groups[0]:
                 prefix, last_idx = parsed_groups[1]
             else:
-                prefix, first_idx = parsed_groups[0]
-        return {
-            "first_idx": first_idx,
-            "last_idx": last_idx,
-            "prefix": prefix,
-            "file_name": file_name,
-        }
+                # The path expands from the right first and then alternates sides,
+                # so a non-empty left group can never have an empty right group.
+                raise ValueError(f"Invalid indexed path sequence: {sequence}")
+        return IndexedPathSequence(
+            first_idx=first_idx,
+            last_idx=last_idx,
+            prefix=prefix,
+            file_name=file_name,
+        )
 
     first_prefix, first_idx = parsed_groups[0]
     last_prefix, last_idx = parsed_groups[1]
@@ -268,12 +281,12 @@ def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
     if first_prefix != last_prefix:
         raise ValueError(f"Invalid indexed path sequence: {sequence}")
 
-    return {
-        "first_idx": first_idx,
-        "last_idx": last_idx,
-        "prefix": first_prefix,
-        "file_name": file_name,
-    }
+    return IndexedPathSequence(
+        first_idx=first_idx,
+        last_idx=last_idx,
+        prefix=first_prefix,
+        file_name=file_name,
+    )
 
 
 def upload_file_path(file_name: str) -> str:
