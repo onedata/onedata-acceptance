@@ -6,14 +6,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItem, WebItemsSequence
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import GenericPage, LabeledElement
 
 
-class Provider(Element):
+class Provider(LabeledElement):
     id = name = Label(".item-name")
 
 
-class UploadedObject(Element):
+class UploadedObject(LabeledElement):
     id = name = Label(".upload-object-link")
 
 

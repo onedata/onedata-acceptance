@@ -18,7 +18,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import InputBox
-from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import LabeledElement, SidebarPanelPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
@@ -122,7 +122,7 @@ class ConfigurationPage(PageObject):
     gui_plugin_button = NamedButton(".nav-link", text="GUI plugin")
 
 
-class Harvester(Element):
+class Harvester(LabeledElement):
     menu_button = Button(".collapsible-toolbar-toggle")
 
     spaces = NamedButton(".one-list-level-2 .item-header", text="Spaces")

@@ -17,14 +17,18 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import EditBox, InputBox
-from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import (
+    LabeledElement,
+    SidebarPanelPage,
+    get_visible_elements_list,
+)
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.utils.utils import element_has_class
 
 from .hierarchy_subpage import GroupHierarchyPage
 
 
-class Group(Element):
+class Group(LabeledElement):
     name = id = Label(".item-name", scroll=False)
     menu = Button(".collapsible-toolbar-toggle", scroll=False)
     members = NamedButton(".one-list-level-2 .item-header", text="Members")
@@ -38,7 +42,7 @@ class Group(Element):
         return None
 
 
-class GroupHeader(Element):
+class GroupHeader(LabeledElement):
     name = id = Label(".item-name", scroll=False)
     menu = Button(".collapsible-toolbar-toggle", scroll=False)
 
@@ -87,7 +91,7 @@ class GroupsPage(SidebarPanelPage):
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
 
     def get_visible_active_group_name(self) -> Optional[str]:
-        groups = self.get_visible_elements_list(self.groups_list)
+        groups = get_visible_elements_list(self.groups_list)
         for group in groups:
             if element_has_class(group.web_elem, "active"):
                 return group.name

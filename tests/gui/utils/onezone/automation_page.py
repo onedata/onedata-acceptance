@@ -16,13 +16,13 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.generic import rm_css_cls
 from tests.gui.utils.onezone.common import EditBox, InputBox
-from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import LabeledElement, SidebarPanelPage
 from tests.gui.utils.onezone.lambdas_subpage import LambdasPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.gui.utils.onezone.workflows_subpage import WorkflowsPage
 
 
-class Inventory(Element):
+class Inventory(LabeledElement):
     name = id = Label(".item-name")
     menu = Button(".atm-inventory-menu-trigger")
     workflows = NamedButton(".one-list-level-2 .item-header", text="Workflows")

@@ -15,7 +15,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import InputBox
-from tests.gui.utils.onezone.generic_page import Element, VisibleElementsMixin
+from tests.gui.utils.onezone.generic_page import LabeledElement, ListPage
 
 
 class FileAttr(PageObject):
@@ -57,7 +57,7 @@ class LambdaAddForm(PageObject):
     create_button = Button(".btn-primary")
 
 
-class Revision(Element):
+class Revision(LabeledElement):
     number = id = Label(".revision-number")
     name = Label(".name")
     menu_button = Button(".one-menu-toggle")
@@ -65,7 +65,7 @@ class Revision(Element):
     add_to_workflow = Button(".add-to-workflow-action-trigger")
 
 
-class Lambda(Element):
+class Lambda(LabeledElement):
     name = id = Label(".lambda-name")
     lambda_menu = Button(".atm-lambda-actions-trigger.one-menu-toggle")
     menu_button = Button(".one-menu-toggle")
@@ -76,7 +76,7 @@ class Lambda(Element):
     )
 
 
-class LambdasPage(VisibleElementsMixin, PageObject):
+class LambdasPage(ListPage):
     lambdas_list = WebItemsSequence(
         ".atm-lambdas-list .atm-lambdas-list-entry", cls=Lambda
     )

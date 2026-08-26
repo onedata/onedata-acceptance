@@ -12,12 +12,12 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element
+from tests.gui.utils.onezone.generic_page import LabeledElement
 
 from ..modal import Modal
 
 
-class ParentDatasetItem(Element):
+class ParentDatasetItem(LabeledElement):
     name = id = Label(".file-path")
     metadata_protection_toggle = Toggle(".metadata-flag-toggle")
     data_protection_toggle = Toggle(".data-flag-toggle")

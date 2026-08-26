@@ -24,7 +24,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element
+from tests.gui.utils.onezone.generic_page import LabeledElement
 
 
 class ExecutionRecord(PageObject):
@@ -40,12 +40,12 @@ class ExecutionRecord(PageObject):
         return f"Workflow row {self.name} in {self.parent}"
 
 
-class Revision(Element):
+class Revision(LabeledElement):
     number = id = Label(".revision-number")
     name = Label(".description")
 
 
-class Workflow(Element):
+class Workflow(LabeledElement):
     name = id = Label(".workflow-schema-name")
 
     show_revisions_button = Button(".expand-button")
@@ -54,11 +54,11 @@ class Workflow(Element):
     )
 
 
-class NavigationTab(Element):
+class NavigationTab(LabeledElement):
     name = id = Label(".tab-name")
 
 
-class Task(Element):
+class Task(LabeledElement):
     name = id = Label(".task-name")
     name_web_elem = WebElement(".task-name")
     drag_handle = WebElement(".task-drag-handle")
@@ -92,7 +92,7 @@ class Task(Element):
             ).click()
 
 
-class ParallelBox(Element):
+class ParallelBox(LabeledElement):
     task_list = WebItemsSequence(".box-elements .workflow-visualiser-task", cls=Task)
 
     def scroll_to_bottom_of_task_in_parallel_box(self, task_id: str) -> None:
@@ -100,12 +100,12 @@ class ParallelBox(Element):
         scroll_to_css_selector(self.driver, box_sel)
 
 
-class RunIndicator(Element):
+class RunIndicator(LabeledElement):
     number = id = Label(".run-number")
     origin_run_number = Label(".origin-run-number")
 
 
-class WorkflowLane(Element):
+class WorkflowLane(LabeledElement):
     name = id = Label(".lane-name")
     name_web_elem = WebElement(".lane-name")
     lane_web_elem = WebElement(".draggable-lane")
@@ -123,11 +123,11 @@ class WorkflowLane(Element):
         scroll_to_css_selector_bottom(self.driver, box_sel)
 
 
-class WorkflowVisualiserStore(Element):
+class WorkflowVisualiserStore(LabeledElement):
     name = id = Label(".store-name")
 
 
-class InitialValueStore(Element):
+class InitialValueStore(LabeledElement):
     name = id = Label(".control-label")
     input_link = Button(".editor-box-content .action-link")
     data_type = Label(".data-spec-type")

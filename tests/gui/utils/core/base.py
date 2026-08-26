@@ -127,9 +127,7 @@ class NamedElement(PageObject):
     name: str
 
     def __getattr__(self, name: str) -> Any:
-        raise AttributeError(
-            f"{type(self).__name__!r} object has no attribute {name!r}"
-        )
+        pass
 
 
 class ExpandableMixin:

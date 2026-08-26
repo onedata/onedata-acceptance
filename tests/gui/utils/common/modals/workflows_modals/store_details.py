@@ -15,12 +15,12 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element
+from tests.gui.utils.onezone.generic_page import LabeledElement
 
 from ..modal import Modal
 
 
-class FilterTab(Element):
+class FilterTab(LabeledElement):
     name = id = Label(".column-name")
 
 

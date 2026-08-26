@@ -18,10 +18,10 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element
+from tests.gui.utils.onezone.generic_page import LabeledElement
 
 
-class FilterTab(Element):
+class FilterTab(LabeledElement):
     name = id = Label(".text")
 
 

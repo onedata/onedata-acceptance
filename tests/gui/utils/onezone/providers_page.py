@@ -11,16 +11,16 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import LabeledElement, SidebarPanelPage
 
 
-class Provider(Element):
+class Provider(LabeledElement):
     support_size = Label(".status-toolbar .outer-text")
     supported_spaces_number = Label(".status-toolbar .oneicon-space .inner-text")
     home_icon = WebElement(".status-toolbar-icon:first-of-type span")
 
 
-class Icon(Element):
+class Icon(LabeledElement):
     name = id = icon = Button(".circle")
 
 

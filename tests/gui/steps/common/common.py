@@ -44,13 +44,13 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.gui.utils.oneprovider.browser import Browser
-from tests.gui.utils.onezone.generic_page import VisibleElementsMixin
+from tests.gui.utils.onezone.generic_page import ListPage, get_visible_elements_list
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page: VisibleElementsMixin | Browser,
+    page: ListPage | Browser,
     selenium: dict[str, WebDriver],
     browser_id: str,
     number: int,
@@ -84,7 +84,7 @@ def assert_n_items_in_items_list(
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_visible_items_list(
-    page: VisibleElementsMixin | Browser,
+    page: ListPage | Browser,
     items_type: ListElement,
     main_field: str = "name",
 ) -> Sequence[NamedElement]:
@@ -92,7 +92,7 @@ def get_visible_items_list(
     elements_list = getattr(page, f"{items_type_str}_list")
     if isinstance(page, Browser):
         return page.get_visible_file_rows(elements_list, main_field)
-    return page.get_visible_elements_list(elements_list, main_field)
+    return get_visible_elements_list(elements_list, main_field)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -100,24 +100,35 @@ def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page_name_by_elements_list_name(element: ListElement) -> str:
-    if element in [ListElement.SPACES, ListElement.SPACES_HEADERS]:
-        return "data"
-    if element is ListElement.GROUPS_HEADERS:
-        return "groups"
-    if element is ListElement.SHARES_SIDEBAR:
-        return "shares"
-    return element.value
+_PAGE_NAME_BY_LIST_ELEMENT: dict[ListElement, str] = {
+    ListElement.SPACES: "data",
+    ListElement.SPACES_HEADERS: "data",
+    ListElement.GROUPS_HEADERS: "groups",
+    ListElement.SHARES_SIDEBAR: "shares",
+}
 
 
-def _get_page_by_elements_list_name(
-    element: ListElement, driver: WebDriver
-) -> VisibleElementsMixin:
-    if element in [ListElement.WORKFLOWS, ListElement.LAMBDAS]:
-        return getattr(OZLoggedIn(driver).automation, f"{element.value}_page")
+def _get_page_name_for_list(list_element: ListElement) -> str:
+    return _PAGE_NAME_BY_LIST_ELEMENT.get(
+        list_element,
+        list_element.value,
+    )
 
-    page_name = _get_page_name_by_elements_list_name(element)
-    return getattr(OZLoggedIn(driver), page_name)
+
+def _get_page_for_list(
+    list_element: ListElement,
+    driver: WebDriver,
+) -> ListPage:
+    oz = OZLoggedIn(driver)
+
+    if list_element in (ListElement.WORKFLOWS, ListElement.LAMBDAS):
+        return getattr(
+            oz.automation,
+            f"{list_element.value}_page",
+        )
+
+    page_name = _get_page_name_for_list(list_element)
+    return getattr(oz, page_name)
 
 
 @wt(
@@ -139,7 +150,7 @@ def wt_assert_n_items_in_items_list(
     list_type: ListElement,
 ) -> None:
     driver = selenium[browser_id]
-    page = _get_page_by_elements_list_name(list_type, driver)
+    page = _get_page_for_list(list_type, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 
