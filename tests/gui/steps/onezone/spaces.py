@@ -475,7 +475,7 @@ def click_the_map_on_data_page(
     selenium: SeleniumDrivers, browser_id: str, page: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver).data, _get_subpage_name(page)).map()
+    getattr(OZLoggedIn(driver).data, _get_subpage_name(page)).map.click()
 
 
 @wt(
