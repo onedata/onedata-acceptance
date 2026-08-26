@@ -39,6 +39,7 @@ from tests.gui.utils.common.popups.generic import AlertPopupType
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.generic import (
     ListElement,
+    ListItemMainField,
     get_visibility_condition,
     get_web_elem_or_locator,
     transform,
@@ -55,7 +56,7 @@ def assert_n_items_in_items_list(
     browser_id: str,
     number: int,
     items_type: ListElement,
-    main_field: str,
+    main_field: ListItemMainField,
 ) -> None:
     driver = selenium[browser_id]
     seen_items = set()
@@ -86,7 +87,7 @@ def assert_n_items_in_items_list(
 def get_visible_items_list(
     page: ListPage | Browser,
     items_type: ListElement,
-    main_field: str = "name",
+    main_field: ListItemMainField = "name",
 ) -> Sequence[NamedElement]:
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")

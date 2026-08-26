@@ -24,6 +24,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.generic import ListItemMainField
 from tests.utils.utils import repeat_failed
 
 from ..core import scroll_to_css_selector
@@ -67,14 +68,16 @@ class Browser(ABC, PageObject):
     @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_file_rows(
-        elements_list: Iterable[BrowserRow], main_field: str = "name"
+        elements_list: Iterable[BrowserRow],
+        main_field: ListItemMainField = "name",
     ) -> list[BrowserRow]:
         return [row for row in elements_list if getattr(row, main_field)]
 
     @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_field_value_from_visible_rows(
-        elements_list: Iterable[BrowserRow], main_field: str = "name"
+        elements_list: Iterable[BrowserRow],
+        main_field: ListItemMainField = "name",
     ) -> list[str]:
         return [
             getattr(row, main_field)

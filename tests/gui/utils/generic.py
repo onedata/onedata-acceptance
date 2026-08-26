@@ -610,6 +610,9 @@ class ListElement(Enum):
     WORKFLOWS = "workflows"
 
 
+ListItemMainField = Literal["name", "description"]
+
+
 PageName = Literal[
     "data",
     "shares",
