@@ -194,10 +194,7 @@ def assert_two_identical_root_file_paths(
     browser_id: str, tmp_memory: TmpMemory, name: str, path: str
 ) -> None:
     browser = tmp_memory[browser_id][transform(DATASET_BROWSER)]
-    paths = []
-    for dataset in browser.data:
-        if dataset.name == name:
-            paths.append(dataset.path_to_root_file)
+    paths = [dataset.path_to_root_file for dataset in browser.data if dataset.name == name]
 
     assert len(paths) == 2 and paths[0] == paths[1], (
         f'"{paths[0]}" and "{paths[1]}" should be identical'

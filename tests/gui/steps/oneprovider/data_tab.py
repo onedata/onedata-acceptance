@@ -780,8 +780,7 @@ def check_current_provider_in_space(selenium: SeleniumDrivers, browser_id: str) 
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
-    current_provider = OZLoggedIn(driver).data.current_provider
-    return current_provider
+    return OZLoggedIn(driver).data.current_provider
 
 
 def _assert_current_provider_in_space(

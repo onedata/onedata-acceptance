@@ -136,15 +136,15 @@ def execute_dd_test(
 
     return [
         Result(
-            "write_throughput_{}".format(description),
+            f"write_throughput_{description}",
             write_throughput,
-            "Throughput of write operation in case of {}".format(description),
+            f"Throughput of write operation in case of {description}",
             "MB/s",
         ),
         Result(
-            "read_throughput_{}".format(description),
+            f"read_throughput_{description}",
             read_throughput,
-            "Throughput of read operation in case of {}".format(description),
+            f"Throughput of read operation in case of {description}",
             "MB/s",
         ),
     ]

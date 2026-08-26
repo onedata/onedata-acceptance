@@ -323,11 +323,10 @@ def get_files_content(path1: str, path2: str) -> str:
         data1 = file.read()
     with open(path2, "r") as file:
         data2 = file.read()
-    msg = (
+    return (
         f"Content of {path1}:\n{data1}\nLength: {len(data1)}.\n"
         f"Content of {path2}:\n{data2}\nLength: {len(data2)}."
     )
-    return msg
 
 
 @repeat_failed(timeout=30)
@@ -437,8 +436,8 @@ def assert_xmls_equal(e1: str, e2: str) -> None:
     """
     r1 = ET.fromstring(ET.canonicalize(e1))
     r2 = ET.fromstring(ET.canonicalize(e2))
-    r1_list = [el for el in r1]  # pylint: disable=unnecessary-comprehension
-    r2_list = [el for el in r2]  # pylint: disable=unnecessary-comprehension
+    r1_list = list(r1)  # pylint: disable=unnecessary-comprehension
+    r2_list = list(r2)  # pylint: disable=unnecessary-comprehension
     r1_sorted = sorted(r1_list, key=lambda x: (x.tag, x.text, x.attrib))
     r2_sorted = sorted(r2_list, key=lambda x: (x.tag, x.text, x.attrib))
 

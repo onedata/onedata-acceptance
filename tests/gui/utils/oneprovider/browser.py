@@ -133,5 +133,4 @@ class Browser(ABC, PageObject):
     def get_css_selector(self) -> str:
         css_selector = self.web_elem.get_attribute("class")
         css_selector = css_selector.replace(" ", ".")
-        css_selector = "." + css_selector
-        return css_selector
+        return "." + css_selector

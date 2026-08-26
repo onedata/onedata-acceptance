@@ -153,11 +153,10 @@ def see_items_in_op_oneclient(
                 multi_dir_steps.cannot_list_dir(user, full_path, host, users)
             else:
                 multi_dir_steps.list_dir(user, full_path, host, users)
+        elif result == "fails":
+            multi_file_steps.stat_absent(user, space, item, host, users)
         else:
-            if result == "fails":
-                multi_file_steps.stat_absent(user, space, item, host, users)
-            else:
-                multi_file_steps.stat_present(user, space, item, host, users)
+            multi_file_steps.stat_present(user, space, item, host, users)
 
 
 def assert_num_of_files_in_path_in_op_oneclient(
@@ -239,8 +238,7 @@ def get_time_for_file_in_op_oneclient(
     attribute = time_attr(time_name)
     file_path = client.absolute_path(file)
     stat_result = client.stat(file_path)
-    file_time = getattr(stat_result, attribute)
-    return file_time
+    return getattr(stat_result, attribute)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

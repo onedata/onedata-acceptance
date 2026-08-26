@@ -139,7 +139,7 @@ class Report:
             self.report[self.name][key] = value
 
     def add_nested_report(self, key: str, value: Report) -> None:
-        if value.name not in self.report[self.name][key].keys():
+        if value.name not in self.report[self.name][key]:
             self.report[self.name][key][value.name] = value.report[value.name]
         else:
             self.report[self.name][key][value.name] = update_dict(
@@ -261,12 +261,8 @@ class ResultReport:
 
 def update_dict(base: Mapping, updating: Mapping) -> dict:
     new_dict = dict(base)
-    for key in updating.keys():
-        if (
-            key in base.keys()
-            and isinstance(updating[key], dict)
-            and isinstance(new_dict[key], dict)
-        ):
+    for key in updating:
+        if key in base and isinstance(updating[key], dict) and isinstance(new_dict[key], dict):
             new_dict[key] = update_dict(new_dict[key], updating[key])
         else:
             new_dict[key] = updating[key]
@@ -275,7 +271,7 @@ def update_dict(base: Mapping, updating: Mapping) -> dict:
 
 def dict_to_list(dict_: Mapping[str, dict]) -> list[dict]:
     list_ = []
-    for key in dict_.keys():
+    for key in dict_:
         new_elem = dict_[key]
         new_elem["name"] = key
         list_.append(new_elem)

@@ -130,10 +130,7 @@ def get_lambda_name(events: str) -> str:
     events_list = yaml.load(events, yaml.Loader)
     for event in events_list:
         if "+" in event:
-            lambda_name = (
-                event.replace("message that contains: ", "").replace('"', "").split(" + ")[0]
-            )
-            return lambda_name
+            return event.replace("message that contains: ", "").replace('"', "").split(" + ")[0]
     raise ValueError("lambda name not found")
 
 

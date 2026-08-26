@@ -20,7 +20,7 @@ class Node:
         self.path = self.parent.get_path() + self.name
 
     def get_items(self) -> list[str]:
-        return list(map(lambda x: getattr(x, "name"), self.nodes))
+        return [x.name for x in self.nodes]
 
     def get_path(self) -> str:
         if self.path == "":

@@ -203,7 +203,7 @@ def change_parameter_type_in_lambda_form(
     page = OZLoggedIn(driver).automation.lambdas_page.form
     subpage = getattr(page, transform(option))
 
-    ordinal = "1st" if not ordinal else ordinal
+    ordinal = ordinal if ordinal else "1st"
     bracket_name = "bracket_" + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
     css_selector = "#" + object_bracket.name.web_elem.get_attribute("id")
@@ -262,7 +262,7 @@ def modify_parameter_in_lambda_form(
     page = OZLoggedIn(driver).automation.lambdas_page.form
     data = yaml.load(config, yaml.Loader)
     subpage = page.argument
-    ordinal = "1st" if not ordinal else ordinal
+    ordinal = ordinal if ordinal else "1st"
     bracket_name = "bracket_" + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
     object_bracket.settings()

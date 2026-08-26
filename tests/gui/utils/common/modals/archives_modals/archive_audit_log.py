@@ -76,7 +76,7 @@ class ArchiveAuditLog(Modal):
                 column_values[column].append(param)
 
             try:
-                name_hash = getattr(row, "duplicated_name_hash")
+                name_hash = row.duplicated_name_hash
             except NoSuchElementException:
                 name_hash = ""
 

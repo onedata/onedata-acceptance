@@ -103,10 +103,7 @@ class PageObjectsSequence:
         return len(self)
 
     def index(self, item_for_idx: object) -> int | None:
-        if isinstance(item_for_idx, self.cls):
-            item_searched = item_for_idx.id
-        else:
-            item_searched = item_for_idx
+        item_searched = item_for_idx.id if isinstance(item_for_idx, self.cls) else item_for_idx
 
         for i, item in enumerate(self):
             if item.id == item_searched:

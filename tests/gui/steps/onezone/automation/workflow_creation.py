@@ -35,7 +35,7 @@ def _get_parameter_from_lambda_form(
 ) -> LambdaParameter:
     form = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
     parameters = getattr(form, transform(option))
-    ordinal = "1st" if not ordinal else ordinal
+    ordinal = ordinal if ordinal else "1st"
     return getattr(parameters, "bracket_" + ordinal.strip())
 
 
@@ -112,7 +112,7 @@ def write_text_into_lambda_form(
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     label = getattr(page.lambdas_page.form, transform(text_field))
-    setattr(label, "value", text)
+    label.value = text
 
 
 @wt(

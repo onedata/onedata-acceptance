@@ -374,10 +374,7 @@ def _add_user_to_space(
     user_id: str,
     privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"operation": "set", "privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"operation": "set", "privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,
@@ -420,10 +417,7 @@ def _add_group_to_space(
     group_id: str,
     privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"operation": "set", "privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"operation": "set", "privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,
@@ -514,13 +508,12 @@ def wait_for_storage_details(
     onepanel_username: str,
     onepanel_password: str,
 ) -> requests.Response:
-    storage_details = http_get(
+    return http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path("provider", "storages", storage_id),
         auth=(onepanel_username, onepanel_password),
     )
-    return storage_details
 
 
 @repeat_failed(attempts=10, interval=5)
@@ -529,13 +522,12 @@ def wait_for_storages_id(
     onepanel_username: str,
     onepanel_password: str,
 ) -> requests.Response:
-    storages_id = http_get(
+    return http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path("provider", "storages"),
         auth=(onepanel_username, onepanel_password),
     )
-    return storages_id
 
 
 def _get_storage_id(

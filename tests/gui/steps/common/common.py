@@ -204,9 +204,8 @@ def assert_logs_order_with_optional_logs(
                 f"expected logs: {logs_expected_list}\ndo not match actual logs: {logs_actual}"
             )
             idx += 1
-        if severity[expected_log] == "Optional":
-            if idx < n and expected_log == logs_actual[idx]:
-                idx += 1
+        if severity[expected_log] == "Optional" and idx < n and expected_log == logs_actual[idx]:
+            idx += 1
 
 
 def scroll_and_get_columns(

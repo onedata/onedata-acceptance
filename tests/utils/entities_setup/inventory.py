@@ -154,10 +154,7 @@ def _add_user_to_inventory(
     user_id: str,
     privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,
@@ -178,10 +175,7 @@ def _add_group_to_inventory(
     group_id: str,
     privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,

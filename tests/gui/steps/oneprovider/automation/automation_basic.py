@@ -160,10 +160,9 @@ def search_for_lane_status(
         if found_lane == lane_name:
             if box_number is not None:
                 return workflow_visualiser.workflow_lanes[i].parallel_boxes[box_number]
-            status = driver.find_element(
+            return driver.find_element(
                 By.CSS_SELECTOR, f"#{lane_id} .visible-run-status-label"
             ).text
-            return status
         try:
             page.workflow_visualiser.right_arrow_scroll.click()
         except (ElementNotInteractableException, NoSuchElementException):
@@ -226,13 +225,12 @@ def click_on_task_in_lane(
         assert not check_if_task_is_opened(task), (
             f"Failed to close {task_name} task in parallel box"
         )
-    else:
-        if not check_if_task_is_opened(task):
-            if len(parallel_box.task_list) > 1:
-                scroll_to_css_selector(driver, f"#{task_id}")
-            # wait a moment for scroll
-            time.sleep(1)
-            task.click_on_drag_handle()
+    elif not check_if_task_is_opened(task):
+        if len(parallel_box.task_list) > 1:
+            scroll_to_css_selector(driver, f"#{task_id}")
+        # wait a moment for scroll
+        time.sleep(1)
+        task.click_on_drag_handle()
 
 
 @wt(

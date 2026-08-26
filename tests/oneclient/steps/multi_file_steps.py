@@ -118,8 +118,7 @@ def create_target_file(
         random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
     )
     target_file_path = os.path.join(space, dir_name, file_name_hash)
-    target_file_path = client.absolute_path(target_file_path)
-    return target_file_path
+    return client.absolute_path(target_file_path)
 
 
 @wt(parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*) on (?P<client_node>.*)"))
@@ -466,10 +465,7 @@ def check_type_impl(
         raise ValueError(f"unknown file type {file_type}")
 
     def condition() -> None:
-        if follow_symlinks:
-            stat_result = client.stat(file_path)
-        else:
-            stat_result = client.lstat(file_path)
+        stat_result = client.stat(file_path) if follow_symlinks else client.lstat(file_path)
         assert getattr(stat_lib, stat_method)(stat_result.st_mode)
 
     assert_(client.perform, condition)
@@ -735,10 +731,7 @@ def set_xattr(user: str, file: str, name: str, value: str, client_node: str, use
     file_path = client.absolute_path(file)
 
     def condition() -> None:
-        if isinstance(value, str):
-            value_bytes = value.encode("utf-8")
-        else:
-            value_bytes = value
+        value_bytes = value.encode("utf-8") if isinstance(value, str) else value
 
         client.setxattr(file_path, name, value_bytes)
 
@@ -833,10 +826,7 @@ def check_string_xattr(
 
     def condition() -> None:
         xattr_value: bytes = client.getxattr(file_path, name)
-        if isinstance(value, str):
-            value_utf = value.encode("utf-8")
-        else:
-            value_utf = value
+        value_utf = value.encode("utf-8") if isinstance(value, str) else value
         assert xattr_value == value_utf
 
     assert_(client.perform, condition)
@@ -899,8 +889,7 @@ def get_metadata(user: str, path: str, client_node: str, users: Users) -> Mappin
     client = user_obj.clients[client_node]
     file_path = client.absolute_path(path)
 
-    xattr_value = client.get_all_xattr(file_path)
-    return xattr_value
+    return client.get_all_xattr(file_path)
 
 
 @wt(

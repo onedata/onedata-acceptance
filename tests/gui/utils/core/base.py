@@ -53,7 +53,7 @@ class PageObjectMeta(ABCMeta):
         for key, val in cls_dict.items():
             if isinstance(val, AbstractWebElement) and val.name in ("id", ""):
                 val.name = key
-        super(PageObjectMeta, cls).__init__(cls_name, bases, cls_dict)
+        super().__init__(cls_name, bases, cls_dict)
 
 
 class AbstractPageObject:

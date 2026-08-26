@@ -72,8 +72,7 @@ def get_signature_key(key: str, date_stamp: str) -> bytes:
     k_date = sign(("AWS4" + key).encode("utf-8"), date_stamp)
     k_region = sign(k_date, "eu-central-1")
     k_service = sign(k_region, "s3")
-    k_signing = sign(k_service, "aws4_request")
-    return k_signing
+    return sign(k_service, "aws4_request")
 
 
 def create_canonical_request(
@@ -132,10 +131,7 @@ def s3_authorization(
     signing_key = get_signature_key(SECRET_KEY, date_stamp)
     signature = hmac.new(signing_key, string_to_sign.encode("utf-8"), hashlib.sha256).hexdigest()
 
-    authorization_header = create_authorization_header(
-        ACCESS_KEY, credential_scope, signed_headers, signature
-    )
-    return authorization_header
+    return create_authorization_header(ACCESS_KEY, credential_scope, signed_headers, signature)
 
 
 def create_bucket(bucket_name: str) -> None:

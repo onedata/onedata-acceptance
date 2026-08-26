@@ -37,7 +37,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
     def bagit_uploader(
         self, input_file: InputFiles | None = None, dest_dir: str = "space1/dir1"
     ) -> ExecutionResult:
-        input_files = self.gather_input_files("bagit-uploader") if not input_file else input_file
+        input_files = input_file if input_file else self.gather_input_files("bagit-uploader")
         for file in input_files:
             path = upload_workflow_path("bagit-uploader") + "/" + file
             self.upload_file(path, file)
@@ -54,9 +54,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
     def detect_file_formats(
         self, input_file: InputFiles | None = None, space: str = "space1"
     ) -> ExecutionResult:
-        input_files = (
-            self.gather_input_files("detect-file-formats") if not input_file else input_file
-        )
+        input_files = input_file if input_file else self.gather_input_files("detect-file-formats")
         for file in input_files:
             path = upload_workflow_path("detect-file-formats") + "/" + file
             self.upload_file(path, file)
@@ -69,7 +67,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         self, input_file: InputFiles | None = None, space: str = "space1"
     ) -> ExecutionResult:
         input_files = (
-            self.gather_input_files("detect-file-mime-formats") if not input_file else input_file
+            input_file if input_file else self.gather_input_files("detect-file-mime-formats")
         )
         for file in input_files:
             path = upload_workflow_path("detect-file-mime-formats") + "/" + file
@@ -84,7 +82,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         input_file: InputFiles | None = None,
         destination: str = "space1/dir1",
     ) -> ExecutionResult:
-        input_files = self.gather_input_files("download-files") if not input_file else input_file
+        input_files = input_file if input_file else self.gather_input_files("download-files")
         for file in input_files:
             path = upload_workflow_path("download-files") + "/" + file
             self.upload_file(path, file)
@@ -131,7 +129,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
     def annotate_images(
         self, input_file: InputFiles | None = None, space: str = "space1"
     ) -> ExecutionResult:
-        input_files = self.gather_input_files("annotate-images") if not input_file else input_file
+        input_files = input_file if input_file else self.gather_input_files("annotate-images")
         for file in input_files:
             path = upload_workflow_path("annotate-images") + "/" + file
             self.upload_file(path, file)

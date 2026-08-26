@@ -135,11 +135,11 @@ def get_all_spaces_details(
 
 
 def get_providers_ips(hosts: Mapping[str, Mapping[str, str]]) -> list[str]:
-    providers_ips = []
-    for service in hosts.values():
-        if "service_type" in service.keys() and service["service_type"] == "oneprovider":
-            providers_ips.append(service["ip"])
-    return providers_ips
+    return [
+        service["ip"]
+        for service in hosts.values()
+        if "service_type" in service and service["service_type"] == "oneprovider"
+    ]
 
 
 def add_mapping(

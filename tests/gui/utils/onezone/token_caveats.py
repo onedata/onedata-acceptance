@@ -374,7 +374,7 @@ class CaveatField(PageObject):
         space = path_caveat["space"]
         path = path_caveat["path"]
         self.add_item()
-        if not self.item_label == space:
+        if self.item_label != space:
             self.expander()
             if hasattr(self, "options"):
                 self.options[space]()
@@ -461,10 +461,7 @@ class CaveatField(PageObject):
     ) -> None:
         for consumer in consumer_caveats:
             consumer_type = consumer["type"]
-            if creation:
-                method = "name"
-            else:
-                method = consumer["by"]
+            method = "name" if creation else consumer["by"]
             value = consumer["consumer name"]
             if method == "id":
                 if consumer_type == "user":
@@ -478,10 +475,7 @@ class CaveatField(PageObject):
     def assert_consumer_in_consumer_caveat(
         self, consumer_type: str, method: str, value: str
     ) -> None:
-        if method == "name":
-            tag = self.tags[value]
-        else:
-            tag = self.tags["ID: " + value]
+        tag = self.tags[value] if method == "name" else self.tags["ID: " + value]
         assert tag.is_icon_type(consumer_type), (
             f"Consumer caveat for {value} is not {consumer_type}"
         )

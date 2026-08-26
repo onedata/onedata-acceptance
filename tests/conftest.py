@@ -475,7 +475,7 @@ def driver(request: pytest.FixtureRequest) -> WebDriverFactory:
         web_driver = driver_factory.get_instance()
         if event_listener_cls and not isinstance(web_driver, EventFiringWebDriver):
             web_driver = EventFiringWebDriver(web_driver, event_listener_cls())
-        setattr(request.node, "_driver", web_driver)
+        request.node._driver = web_driver
         request.addfinalizer(web_driver.quit)
         return web_driver
 
@@ -527,7 +527,7 @@ def factory(
 ) -> FactoryCallable[FactoryParams, FactoryResult]:
     if "get_instance" in dir(fun):
         raise AttributeError(f'object {fun.__name__} already has "get_instance" attribute')
-    setattr(fun, "get_instance", fun)
+    fun.get_instance = fun
     return cast(FactoryCallable[FactoryParams, FactoryResult], fun)
 
 
@@ -865,8 +865,7 @@ def env_description_abs_path(
     Fixture env_description_abs_path returns absolute path to env_description_file.
     """
     env_dir = ENV_DIRS.get(get_test_type(request))
-    absolute_path = absolute_path_to_env_file(env_dir, env_description_file)
-    return absolute_path
+    return absolute_path_to_env_file(env_dir, env_description_file)
 
 
 @pytest.fixture(scope="session")
@@ -972,7 +971,7 @@ def xfail_by_env(request: pytest.FixtureRequest, env_description_file: str) -> N
 def select_browser(selenium: SeleniumFixtureState, browser_id: str) -> WebDriver:
     browser = cast(WebDriver, selenium[browser_id])
     request = cast(pytest.FixtureRequest, selenium["request"])
-    setattr(request.node, "_driver", browser)
+    request.node._driver = browser
     return browser
 
 

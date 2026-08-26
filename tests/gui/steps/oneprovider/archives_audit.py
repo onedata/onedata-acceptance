@@ -225,7 +225,7 @@ def _check_entries_in_archive_audit_log(
     modal = Modals(driver).archive_audit_log
     visible_logs = modal.data_row
     data = yaml.load(config, yaml.Loader)
-    for item in data.keys():
+    for item in data:
         error_message = f"there is no visible log: {item}: {data[item]} in archive audit log"
         assert item in visible_logs and data[item] == visible_logs[item].event, error_message
 
@@ -360,7 +360,7 @@ def _check_details_for_archived_item(
 ) -> None:
     data = yaml.load(config, yaml.Loader)
 
-    for field in data.keys():
+    for field in data:
         if isinstance(data[field], dict):
             mes_type = data[field]["type"]
             assert_pattern_at_field_in_archive_audit_log(

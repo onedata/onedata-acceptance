@@ -149,7 +149,7 @@ def get_directory_size_statistics(
 def set_file_json_metadata(
     provider_host: str, token: str, file_id: str, data: JsonPayload
 ) -> Response:
-    res = http_put(
+    return http_put(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "json"),
@@ -159,11 +159,10 @@ def set_file_json_metadata(
         },
         data=json.dumps(data),
     )
-    return res
 
 
 def get_file_json_metadata(provider_host: str, token: str, file_id: str) -> Response:
-    res = http_get(
+    return http_get(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "json"),
@@ -171,11 +170,10 @@ def get_file_json_metadata(provider_host: str, token: str, file_id: str) -> Resp
             "X-Auth-Token": token,
         },
     )
-    return res
 
 
 def delete_file_json_metadata(provider_host: str, token: str, file_id: str) -> Response:
-    res = http_delete(
+    return http_delete(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "json"),
@@ -183,11 +181,10 @@ def delete_file_json_metadata(provider_host: str, token: str, file_id: str) -> R
             "X-Auth-Token": token,
         },
     )
-    return res
 
 
 def set_file_rdf_metadata(provider_host: str, token: str, file_id: str, data: str) -> Response:
-    res = http_put(
+    return http_put(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "rdf"),
@@ -197,11 +194,10 @@ def set_file_rdf_metadata(provider_host: str, token: str, file_id: str, data: st
         },
         data=data,
     )
-    return res
 
 
 def get_file_rdf_metadata(provider_host: str, token: str, file_id: str) -> Response:
-    res = http_get(
+    return http_get(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "rdf"),
@@ -209,11 +205,10 @@ def get_file_rdf_metadata(provider_host: str, token: str, file_id: str) -> Respo
             "X-Auth-Token": token,
         },
     )
-    return res
 
 
 def delete_file_rdf_metadata(provider_host: str, token: str, file_id: str) -> Response:
-    res = http_delete(
+    return http_delete(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "rdf"),
@@ -221,13 +216,12 @@ def delete_file_rdf_metadata(provider_host: str, token: str, file_id: str) -> Re
             "X-Auth-Token": token,
         },
     )
-    return res
 
 
 def set_file_extended_attribute(
     provider_host: str, token: str, file_id: str, data: JsonPayload
 ) -> Response:
-    res = http_put(
+    return http_put(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "xattrs"),
@@ -237,13 +231,12 @@ def set_file_extended_attribute(
         },
         data=json.dumps(data),
     )
-    return res
 
 
 def get_file_extended_attributes(
     provider_host: str, token: str, file_id: str, attribute: str | None = None
 ) -> Response:
-    res = http_get(
+    return http_get(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "xattrs"),
@@ -252,14 +245,13 @@ def get_file_extended_attributes(
             "X-Auth-Token": token,
         },
     )
-    return res
 
 
 def delete_file_extended_attributes(
     provider_host: str, token: str, file_id: str, keys: Iterable[str]
 ) -> Response:
     data = {"keys": list(keys)}
-    res = http_delete(
+    return http_delete(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "xattrs"),
@@ -269,7 +261,6 @@ def delete_file_extended_attributes(
         },
         data=json.dumps(data),
     )
-    return res
 
 
 # Datasets amd Archives
@@ -391,7 +382,7 @@ def register_handle(zone_host: str, token: str, share_id: str) -> Response:
     handle_services = json_list(list_handle_services(zone_host, token)["handle_services"])
     handle_service_id = json_str(handle_services[0])
     EXAMPLE_HANDLE_METADATA.update({"handleServiceId": handle_service_id, "resourceId": share_id})
-    res = http_post(
+    return http_post(
         ip=zone_host,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("handles"),
@@ -401,7 +392,6 @@ def register_handle(zone_host: str, token: str, share_id: str) -> Response:
         },
         data=json.dumps(EXAMPLE_HANDLE_METADATA),
     )
-    return res
 
 
 def get_handle(zone_host: str, token: str, handle_id: str) -> JsonObject:
@@ -433,7 +423,7 @@ def create_view(
         query_params.update({"providers[]": providers})
     if spatial:
         query_params.update({"spatial": "true"})
-    res = http_put(
+    return http_put(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("spaces", space_id, "views", view_name),
@@ -444,7 +434,6 @@ def create_view(
         data=data,
         params=query_params,
     )
-    return res
 
 
 def query_view(
@@ -491,7 +480,7 @@ def get_view(provider_host: str, token: str, space_id: str, view_name: str) -> J
 def update_view_reduce_function(
     provider_host: str, token: str, space_id: str, view_name: str, data: str
 ) -> Response:
-    res = http_put(
+    return http_put(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("spaces", space_id, "views", view_name, "reduce"),
@@ -501,7 +490,6 @@ def update_view_reduce_function(
         },
         data=data,
     )
-    return res
 
 
 # Provider
@@ -525,7 +513,7 @@ def subscribe_to_file_changes(
 ) -> Response:
     query_params = {"last_seq": 0, "timeout": 1000}
 
-    res = http_post(
+    return http_post(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("changes", "metadata", space_id),
@@ -537,7 +525,6 @@ def subscribe_to_file_changes(
         stream=stream,
         params=query_params,
     )
-    return res
 
 
 # Onepanel
@@ -546,7 +533,7 @@ def subscribe_to_file_changes(
 def configure_file_popularity_mechanism_in_the_space(
     provider_host: str, token: str, space_id: str, data: JsonPayload
 ) -> Response:
-    res = http_patch(
+    return http_patch(
         ip=provider_host,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path(
@@ -558,4 +545,3 @@ def configure_file_popularity_mechanism_in_the_space(
         },
         data=json.dumps(data),
     )
-    return res

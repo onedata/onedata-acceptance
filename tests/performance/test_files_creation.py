@@ -120,16 +120,16 @@ def execute_file_creation_test(
 
     fun = client.create_file if empty_files else partial(client.write, text=TEXT)
     for i in range(files_number):
-        fun(file_path=os.path.join(dir_path, "file{}".format(i)))
+        fun(file_path=os.path.join(dir_path, f"file{i}"))
         if time.time() >= logging_time:
-            flushed_print("\t\t\tCreated {}nth file".format(i))
+            flushed_print(f"\t\t\tCreated {i}nth file")
             logging_time = time.time() + LOGGING_INTERVAL
 
     end = time.time()
 
     return [
         Result(
-            "[{}] {} files creation".format(description, files_number),
+            f"[{description}] {files_number} files creation",
             end - start,
             "{} files creation time using oneclient with {} content".format(
                 files_number, ("no" if empty_files else "some")
@@ -142,7 +142,7 @@ def execute_file_creation_test(
 def teardown_after_file_creation_test(client: Client, files_number: int, dir_path: str) -> None:
     logging_time = time.time() + LOGGING_INTERVAL
     for i in range(files_number):
-        client.rm(os.path.join(dir_path, "file{}".format(i)))
+        client.rm(os.path.join(dir_path, f"file{i}"))
         if time.time() >= logging_time:
-            flushed_print("\t\t\tDeleted {}nth file".format(i))
+            flushed_print(f"\t\t\tDeleted {i}nth file")
             logging_time = time.time() + LOGGING_INTERVAL

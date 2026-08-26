@@ -125,14 +125,13 @@ def start_stop_provider_service_node(
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
-    res = http_patch(
+    return http_patch(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path("provider", service.value, host)
         + f"?started={'true' if start else 'false'}",
         auth=(onepanel_username, onepanel_password),
     )
-    return res
 
 
 def modify_gui_setting_message(
@@ -146,7 +145,7 @@ def modify_gui_setting_message(
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
-    res = http_patch(
+    return http_patch(
         ip=zone_hostname,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path(
@@ -162,4 +161,3 @@ def modify_gui_setting_message(
             }
         ),
     )
-    return res

@@ -89,10 +89,7 @@ def open_select_initial_groups_modal(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_groups_from_select_groups_modal(driver: WebDriver, group_list: str | list[str]) -> None:
-    if isinstance(group_list, str):
-        parsed_list = parse_seq(group_list)
-    else:
-        parsed_list = group_list
+    parsed_list = parse_seq(group_list) if isinstance(group_list, str) else group_list
     Modals(driver).select_groups.select(parsed_list)
 
 
@@ -123,7 +120,7 @@ def get_initial_value_store(driver: WebDriver, store_name: str) -> InitialValueS
         return initial_value_stores[store_name + ":"]
     if store_name + ": " in initial_value_stores:
         return initial_value_stores[store_name + ": "]
-    raise ValueError()
+    raise ValueError
 
 
 def click_input_link_in_automation_page(driver: WebDriver, store_name: str | None) -> None:

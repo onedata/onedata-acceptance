@@ -53,16 +53,14 @@ class PodsActivity(Modal):
     def get_css_selector(self) -> str:
         css_selector = self.web_elem.get_attribute("class")
         css_selector = re.sub(r"\s+", ".", css_selector.strip())
-        css_selector = "." + css_selector
-        return css_selector
+        return "." + css_selector
 
     def get_elem_by_data_row_id(self, number: int, driver: WebDriver, option: str) -> str:
         selector = f'{self.get_css_selector()} [data-row-id="{number}"]'
         elem_sel = f".event-{option}"
         scroll_to_css_selector(driver, selector)
         row = driver.find_elements(By.CSS_SELECTOR, selector)[0]
-        elem_in_row = row.find_elements(By.CSS_SELECTOR, elem_sel)[0].text
-        return elem_in_row
+        return row.find_elements(By.CSS_SELECTOR, elem_sel)[0].text
 
     def get_number_of_data_rows(self, driver: WebDriver) -> str:
         element = driver.find_elements(By.CSS_SELECTOR, ".audit-log-table-entry")[0]

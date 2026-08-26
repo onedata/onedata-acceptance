@@ -71,10 +71,7 @@ def run_onenv_command(
     cwd: str | None = "one-env",
     onenv_path: str = "./onenv",
 ) -> CommandResult:
-    if sudo:
-        cmd = ["sudo", onenv_path, command]
-    else:
-        cmd = [onenv_path, command]
+    cmd = ["sudo", onenv_path, command] if sudo else [onenv_path, command]
 
     if args:
         cmd.extend(args)
@@ -155,7 +152,7 @@ def client_alias_to_pod_mapping() -> dict[str, str]:
         prov_clients_mapping[provider_alias].append(client_pod)
 
     i = 1
-    for prov_alias in sorted(list(prov_clients_mapping.keys())):
+    for prov_alias in sorted(prov_clients_mapping.keys()):
         client_pods = sorted(prov_clients_mapping[prov_alias], key=get_name)
         for pod in client_pods:
             key = f"oneclient-{i}"
@@ -215,8 +212,7 @@ def helm_init_cmd(client_only: bool | None = None) -> Command:
 def get_kube_client() -> client.CoreV1Api:
     urllib3.disable_warnings()
     config.load_kube_config(config_file=os.path.join(os.path.expanduser("~"), ".kube", "config"))
-    kube = client.CoreV1Api()
-    return kube
+    return client.CoreV1Api()
 
 
 def list_pods_and_jobs() -> list[client.V1Pod]:

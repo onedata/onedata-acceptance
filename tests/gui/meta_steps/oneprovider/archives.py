@@ -209,10 +209,9 @@ def _create_archive(
         if create_nested_archives:
             option = "create_nested_archives"
             check_toggle_in_create_archive_modal(browser_id, selenium, option)
-        if incremental:
-            if incremental["enabled"]:
-                option = "incremental"
-                check_toggle_in_create_archive_modal(browser_id, selenium, option)
+        if incremental and incremental["enabled"]:
+            option = "incremental"
+            check_toggle_in_create_archive_modal(browser_id, selenium, option)
         if include_dip:
             option = "include_dip"
             check_toggle_in_create_archive_modal(browser_id, selenium, option)

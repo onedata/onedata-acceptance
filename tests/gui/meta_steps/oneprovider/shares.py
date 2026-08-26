@@ -474,27 +474,24 @@ def fill_inputs_in_edm_metadata_form(
                     requires_group_selection=True,
                 )
 
-        else:
-            if isinstance(value, list):
-                for i, val in enumerate(value):
-                    if i > 0:
-                        # if it's not the first value for given field,
-                        # we need to click "Add another ..." button before writing value
-                        add_property_to_edm_form_in_shares_interface(
-                            browser_id, selenium, field_name
-                        )
-                    write_to_nth_input_in_edm_form_in_shares_interface(
-                        browser_id,
-                        val,
-                        field_name,
-                        selenium,
-                        num_to_ordinal(i),
-                        numerals,
-                    )
-            else:
+        elif isinstance(value, list):
+            for i, val in enumerate(value):
+                if i > 0:
+                    # if it's not the first value for given field,
+                    # we need to click "Add another ..." button before writing value
+                    add_property_to_edm_form_in_shares_interface(browser_id, selenium, field_name)
                 write_to_nth_input_in_edm_form_in_shares_interface(
-                    browser_id, value, field_name, selenium, "first", numerals
+                    browser_id,
+                    val,
+                    field_name,
+                    selenium,
+                    num_to_ordinal(i),
+                    numerals,
                 )
+        else:
+            write_to_nth_input_in_edm_form_in_shares_interface(
+                browser_id, value, field_name, selenium, "first", numerals
+            )
 
 
 @wt(
@@ -519,21 +516,20 @@ def assert_properties_in_edm_metadata_form(
             assert_val_edm_form_in_shares_interface(
                 browser_id, value, field_name, selenium, numerals
             )
-        else:
-            if isinstance(value, list):
-                for i, val in enumerate(value):
-                    assert_nth_val_edm_form_in_shares_interface(
-                        browser_id,
-                        val,
-                        field_name,
-                        selenium,
-                        num_to_ordinal(i),
-                        numerals,
-                    )
-            else:
+        elif isinstance(value, list):
+            for i, val in enumerate(value):
                 assert_nth_val_edm_form_in_shares_interface(
-                    browser_id, value, field_name, selenium, "first", numerals
+                    browser_id,
+                    val,
+                    field_name,
+                    selenium,
+                    num_to_ordinal(i),
+                    numerals,
                 )
+        else:
+            assert_nth_val_edm_form_in_shares_interface(
+                browser_id, value, field_name, selenium, "first", numerals
+            )
 
 
 @wt(

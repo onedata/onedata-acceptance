@@ -614,10 +614,7 @@ def assert_contents_downloaded_tar_file(
                 name = item
                 content = None
 
-            if path == "":
-                item_path = name
-            else:
-                item_path = path + "/" + name
+            item_path = name if path == "" else path + "/" + name
 
             configured_dir_contents[item_path] = str(content)
             if name.startswith("dir") or name.startswith("archive"):

@@ -154,9 +154,7 @@ def _wait_for_modal_to_appear(
 
 def check_warning_modal(selenium: SeleniumDrivers, browser_id: str) -> bool:
     driver = selenium[browser_id]
-    if not driver.find_elements(By.CSS_SELECTOR, ".question-modal"):
-        return False
-    return True
+    return bool(driver.find_elements(By.CSS_SELECTOR, ".question-modal"))
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{modal_name}" modal has not appeared'))
@@ -447,7 +445,7 @@ def click_panel_button(
 def click_panel_question_icon(selenium: SeleniumDrivers, browser_id: str, panel_name: str) -> None:
     panel_name = "qos" if panel_name == "Quality of Service" else panel_name
     tab = getattr(Modals(selenium[browser_id]).details_modal, transform(panel_name))
-    getattr(tab, "question_icon").click()
+    tab.question_icon.click()
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" link in info popup'))

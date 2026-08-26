@@ -145,9 +145,7 @@ def assert_element_is_member_of_parent_in_memberships(
     def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
             return True
-        if member_index == 0:
-            return True
-        return False
+        return member_index == 0
 
     if not search_for_members(driver, records, member_name, parent_name, fun):
         raise AssertionError(

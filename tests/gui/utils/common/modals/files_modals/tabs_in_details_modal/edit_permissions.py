@@ -26,12 +26,10 @@ class ACLPermissionType(PageObject):
 
     def is_checked(self) -> bool:
         classes = self.checkbox.get_attribute("class")
-        if "checked" in classes:
-            return True
-        return False
+        return "checked" in classes
 
     def __str__(self) -> str:
-        return "permission type option {} in {}".format(self.name, self.parent)
+        return f"permission type option {self.name} in {self.parent}"
 
 
 class PosixPermissionList(PageObject):
@@ -47,7 +45,7 @@ class POSIX(PageObject):
     )
 
     def __str__(self) -> str:
-        return "POSIX permission in {}".format(self.parent)
+        return f"POSIX permission in {self.parent}"
 
 
 class AclPermission(PageObject):
@@ -100,10 +98,9 @@ class MemberAclPermission(PageObject):
         classes = self._subject_type.get_attribute("class")
         if "oneicon-user" in classes:
             return "user"
-        elif "oneicon-group" in classes:
+        if "oneicon-group" in classes:
             return "group"
-        else:
-            return None
+        return None
 
     def is_allow_option_checked(self) -> bool:
         return "active" in self.allow_option.get_attribute("class")

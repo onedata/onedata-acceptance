@@ -202,13 +202,12 @@ def assert_metadata_in_op_gui(
     )
     if res == "fails":
         _assert_metadata_loading_alert(selenium, browser_id)
+    elif tab_name == "xattrs":
+        attribute, val = val.split("=")
+        assert_there_is_such_xattr_meta_record(selenium, browser_id, attribute, val)
     else:
-        if tab_name == "xattrs":
-            attribute, val = val.split("=")
-            assert_there_is_such_xattr_meta_record(selenium, browser_id, attribute, val)
-        else:
-            click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
-            assert_textarea_contains_record(selenium, browser_id, val, tab_name)
+        click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
+        assert_textarea_contains_record(selenium, browser_id, val, tab_name)
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 

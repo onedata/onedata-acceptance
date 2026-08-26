@@ -238,7 +238,4 @@ def create_path_for_item_in_space_with_alias(
 
 def check_whether_space_names_repeats_for_alias(alias: str, space_aliases: SpaceAliases) -> bool:
     space_name = space_aliases[alias]["name"]
-    for k, v in space_aliases.items():
-        if k != alias and v["name"] == space_name:
-            return True
-    return False
+    return any(k != alias and v["name"] == space_name for k, v in space_aliases.items())

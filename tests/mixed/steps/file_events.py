@@ -192,8 +192,7 @@ def wt_assert_updated_file_events_in_observed_directory(
     expected_attrs = {}
     for item in expected_data:
         if isinstance(item, dict):
-            for attr_name, attribute_value in item.items():
-                expected_attrs[attr_name] = attribute_value
+            expected_attrs.update(item)
         else:
             expected_attrs[item] = None
     provider_hostname = hosts[host]["hostname"]

@@ -124,7 +124,7 @@ def _assert_unexpected_properties_of_files(
             for sub_item in cast(JsonObject, item[1]).items():
                 _assert_unexpected_xattr(sub_item, actual)
         else:
-            assert not (f"{item[0].lower()}: {str(item[1]).lower()}" in actual.lower()), (
+            assert f"{item[0].lower()}: {str(item[1]).lower()}" not in actual.lower(), (
                 f"{item[0]}: {item[1]} in {actual}"
             )
 

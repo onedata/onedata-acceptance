@@ -662,8 +662,7 @@ def execute_workflow_rest(
         "storeInitialContentOverlay": stores_content,
         "loglevel": loglevel,
     }
-    wid = workflow_execution_api.schedule_workflow_execution(data).atm_workflow_execution_id
-    return wid
+    return workflow_execution_api.schedule_workflow_execution(data).atm_workflow_execution_id
 
 
 def get_group_id(groups: IdMap, group: str) -> str:
@@ -786,7 +785,7 @@ def assert_successful_workflow_executions(
     workflow_executions: WorkflowExecutions,
 ) -> None:
     error_messages = []
-    for wid in workflow_executions.keys():
+    for wid in workflow_executions:
         mes = get_workflow_execution_details(
             user, users, host, hosts, wid, details=["name", "status"]
         )
@@ -820,7 +819,7 @@ def assert_num_workflow_executions_in_status(
 ) -> None:
     expected_num = int(num)
     executions = []
-    for wid in workflow_executions.keys():
+    for wid in workflow_executions:
         mes = get_workflow_execution_details(
             user, users, host, hosts, wid, details=["name", "status"]
         )
@@ -938,11 +937,7 @@ def fail_to_get_workflow_execution_details(
 
 
 def get_workflow_execution_id(workflow_name: str, workflow_executions: WorkflowExecutions) -> str:
-    return [
-        wid
-        for wid in workflow_executions.keys()
-        if workflow_name in workflow_executions[wid].keys()
-    ][0]
+    return [wid for wid in workflow_executions if workflow_name in workflow_executions[wid]][0]
 
 
 def get_workflow_execution_details(

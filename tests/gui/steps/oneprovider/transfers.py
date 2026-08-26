@@ -325,7 +325,7 @@ def fail_to_click_option_in_data_distribution_popup(
 @repeat_failed(interval=1, timeout=90)
 def assert_see_history_btn_shown(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    button = getattr(Modals(driver).details_modal.data_distribution, "see_history_btn")
+    button = Modals(driver).details_modal.data_distribution.see_history_btn
     assert button.is_displayed(), 'Button "see history" not found in data distribution modal'
 
 
@@ -406,7 +406,7 @@ def assert_visible_columns_in_transfers(
 ) -> None:
     transfers = OPLoggedIn(selenium[browser_id]).transfers
     transfers_columns = transfers.column_headers
-    transfers_columns = list(map(lambda x: x.name.lower(), transfers_columns))
+    transfers_columns = [x.name.lower() for x in transfers_columns]
     error_message = (
         "there is different number of columns visible: "
         f"{len(transfers_columns)} than expected: {len(columns)}, in "

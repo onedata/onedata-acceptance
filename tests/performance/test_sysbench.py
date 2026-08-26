@@ -387,32 +387,18 @@ def sysbench_command(
     directory: str,
 ) -> str:
 
-    cmd = (
-        "cd {dir} && "
+    return (
+        f"cd {directory} && "
         "sysbench "
-        "--threads={threads} "
-        "--file-total-size={total_size}M "
-        "--file-num={file_number} "
-        "--file-test-mode={mode} "
-        "--validate={validate} "
-        "--events={events} "
-        "--report-interval={report_interval} "
-        "--time={time} "
-        "--file-block-size={file_block_size}K "
+        f"--threads={threads} "
+        f"--file-total-size={total_size}M "
+        f"--file-num={file_number} "
+        f"--file-test-mode={mode} "
+        f"--validate={validate} "
+        f"--events={events} "
+        f"--report-interval={report_interval} "
+        f"--time={time} "
+        f"--file-block-size={file_block_size}K "
         "fileio "
-        "{type}"
-    ).format(
-        dir=directory,
-        threads=threads,
-        total_size=total_size,
-        file_number=file_number,
-        mode=mode,
-        validate=validate,
-        events=events,
-        report_interval=report_interval,
-        time=time,
-        file_block_size=file_block_size,
-        type=operation,
+        f"{operation}"
     )
-
-    return cmd

@@ -136,7 +136,7 @@ def wt_enter_password_of_user(
     selenium: SeleniumDrivers, browser_id: str, username: str, users: Users
 ) -> None:
     password = users[username].password
-    setattr(LoginPage(selenium[browser_id]), "password", password)
+    LoginPage(selenium[browser_id]).password = password
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

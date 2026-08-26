@@ -142,10 +142,7 @@ class Client:
         gdb: bool = False,
         additional_opts: list[str] | None = None,
     ) -> CommandResult:
-        if mode and "proxy" in mode:
-            mode_flag = "--force-proxy-io"
-        else:
-            mode_flag = "--force-direct-io"
+        mode_flag = "--force-proxy-io" if mode and "proxy" in mode else "--force-direct-io"
         if additional_opts is None:
             additional_opts = ["--message-trace-log"]
 
@@ -167,9 +164,7 @@ class Client:
                 + [self._mount_path]
             )
 
-        ret = self.run_cmd(cmd, verbose=True)
-
-        return ret
+        return self.run_cmd(cmd, verbose=True)
 
     def unmount(self) -> None:
         print(f"\nUnmounting client from {self._mount_path}\n")
@@ -193,10 +188,7 @@ class Client:
         while not condition_satisfied and timeout >= 0:
             try:
                 result = condition()
-                if result is None:
-                    condition_satisfied = True
-                else:
-                    condition_satisfied = bool(result)
+                condition_satisfied = True if result is None else bool(result)
             except:  # pylint: disable=bare-except
                 condition_satisfied = False
                 if timeout == 0:
@@ -300,8 +292,7 @@ class Client:
 
     def read(self, file_path: str, mode: str = "r") -> str | bytes:
         with self.rpyc_connection.builtins.open(file_path, mode) as f:
-            read_text = f.read()
-        return read_text
+            return f.read()
 
     def open_file(self, file: str, mode: str = "w+") -> IO:
         return self.rpyc_connection.builtins.open(file, mode)

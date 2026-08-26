@@ -835,7 +835,7 @@ def assert_visible_columns_in_browser(
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser_columns = browser.column_headers
-    browser_columns = list(map(lambda x: x.name.lower(), browser_columns))
+    browser_columns = [x.name.lower() for x in browser_columns]
     error_message = (
         "there is different number of columns visible: "
         f"{len(browser_columns)} than expected: {len(columns)}, in "

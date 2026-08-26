@@ -247,11 +247,10 @@ def process_whole_nested_expression(expression: str, hosts: Hosts, users: Users)
         "oneprovider-1",
         f"{provider1_name} {id_separator}{provider1_id}",
     )
-    plain_exp = plain_exp.replace(
+    return plain_exp.replace(
         "oneprovider-2",
         f"{provider2_name} {id_separator}{provider2_id}",
     )
-    return plain_exp
 
 
 @wt(parsers.parse("user of {browser_id} sees nested QoS requirement in QoS panel:\n{expression}"))
@@ -506,7 +505,7 @@ def assert_qos_status_in_browser(
 
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
-    visible_status = getattr(browser.data[item_name], "qos_status")
+    visible_status = browser.data[item_name].qos_status
     error_message = f"status {status} for item {item_name} is not displayed in {which_browser}"
     if status.lower() == "impossible":
         assert "qos-status-impossible" in visible_status.get_attribute("class"), error_message
@@ -525,4 +524,4 @@ def click_qos_status_in_browser(
 ) -> None:
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
-    getattr(browser.data[item_name], "qos_status").click()
+    browser.data[item_name].qos_status.click()

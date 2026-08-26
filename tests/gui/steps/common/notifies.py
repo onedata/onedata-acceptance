@@ -57,11 +57,7 @@ def capture_matching_popup(
         except (NoSuchElementException, StaleElementReferenceException):
             continue
 
-    for captured_popup in seen_popups:
-        if regexp.match(captured_popup.message):
-            return True
-
-    return False
+    return any(regexp.match(captured_popup.message) for captured_popup in seen_popups)
 
 
 @wt(

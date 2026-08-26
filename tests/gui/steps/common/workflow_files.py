@@ -28,7 +28,7 @@ def gather_workflows_names() -> None:
 def check_using_all_workflows() -> None:
     workflows_names = WORKFLOWS_NAMES
     # remove extension
-    workflows_names_set = set(map(lambda x: x.split(".")[0], workflows_names))
+    workflows_names_set = {x.split(".")[0] for x in workflows_names}
     used_workflows = set()
     for directory_path, _, files in os.walk(TESTS_DIR):
         for file in files:
@@ -48,6 +48,6 @@ def check_names_in_file(path: str, names: set[str]) -> set[str]:
         lines = f.readlines()
         for line in lines:
             words = line.split(" ")
-            words_set = set(map(lambda x: x.replace('"', ""), words))
+            words_set = {x.replace('"', "") for x in words}
             detected_names.update(words_set.intersection(names))
     return detected_names

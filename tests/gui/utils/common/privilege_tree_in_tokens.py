@@ -72,11 +72,10 @@ class PrivilegeRow(PageObject):
                     driver.find_element(By.CSS_SELECTOR, "." + elem_class).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
+        elif granted:
+            self.activate()
         else:
-            if granted:
-                self.activate()
-            else:
-                self.deactivate()
+            self.deactivate()
 
 
 class PrivilegeGroup(PageObject):

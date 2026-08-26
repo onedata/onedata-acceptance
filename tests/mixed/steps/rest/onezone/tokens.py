@@ -254,9 +254,9 @@ def set_consumer_caveat(
     groups: GroupMap,
     users: Users,
 ) -> None:
-    consumer_list = []
-    for consumer in caveat:
-        consumer_list.append(set_consumer_in_consumer_caveat(consumer, groups, users))
+    consumer_list = [
+        set_consumer_in_consumer_caveat(consumer, groups, users) for consumer in caveat
+    ]
     _token_caveats(token_config).append({"type": "consumer", "whitelist": consumer_list})
 
 
@@ -309,9 +309,7 @@ def set_readonly_caveat(token_config: TokenConfig) -> None:
 def set_path_caveat(
     token_config: TokenConfig, paths: list[Mapping[str, str]], spaces: SpaceMap
 ) -> None:
-    whitelist = []
-    for path in paths:
-        whitelist.append(decode_path(path, spaces))
+    whitelist = [decode_path(path, spaces) for path in paths]
     _token_caveats(token_config).append({"type": "data.path", "whitelist": whitelist})
 
 
@@ -613,14 +611,14 @@ privileges_translation = {
 
 def assert_token_privileges(privileges: ConfigMap, response: NamedTokenLike) -> None:
     actual_privs = response.metadata.privileges
-    expected_privs = []
+    expected_privs: list[str] = []
     for priv_group, priv_group_items in privileges.items():
         sub_privs = cast(
             Mapping[str, bool], cast(ConfigMap, priv_group_items)["privilege subtypes"]
         )
-        for priv in sub_privs:
-            if sub_privs[priv]:
-                expected_privs.append(privileges_translation[priv_group][priv])
+        expected_privs.extend(
+            privileges_translation[priv_group][priv] for priv in sub_privs if sub_privs[priv]
+        )
 
     for priv in expected_privs:
         assert priv in actual_privs, f"{priv} not in {actual_privs}"

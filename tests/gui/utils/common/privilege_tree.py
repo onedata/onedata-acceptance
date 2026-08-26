@@ -83,11 +83,10 @@ class PrivilegeRow(PageObject):
                     driver.find_element(By.CSS_SELECTOR, "#" + elem_id).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
+        elif granted:
+            self.activate()
         else:
-            if granted:
-                self.activate()
-            else:
-                self.deactivate()
+            self.deactivate()
         if granted:
             return self.toggle.is_checked()
         return self.toggle.is_unchecked()
@@ -179,11 +178,10 @@ class PrivilegeGroup(PageObject):
                         driver.find_element(By.CSS_SELECTOR, "#" + elem_id).click()
                     except ElementNotInteractableException:
                         self.toggle.click()
+        elif granted:
+            self.activate()
         else:
-            if granted:
-                self.activate()
-            else:
-                self.deactivate()
+            self.deactivate()
         if granted:
             return self.toggle.is_checked()
         return self.toggle.is_unchecked()

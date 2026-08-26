@@ -275,7 +275,7 @@ def get_store_audit_log(
     tmp_memory: TmpMemory,
     store_key: str,
 ) -> AuditLogContent:
-    if store_key not in tmp_memory.keys():
+    if store_key not in tmp_memory:
         assert_audit_log_in_store(
             browser_id,
             selenium,
@@ -1004,7 +1004,7 @@ def assert_exception_in_element_content_in_task_audit_log(
 ) -> None:
     file_name = file_name.replace('"', "")
     expected_data = tmp_memory["exceptions"][file_name]
-    expected_data = list(map(lambda x: x.lower(), expected_data))
+    expected_data = [x.lower() for x in expected_data]
     assert_element_content_in_task_audit_log(
         expected_data,
         element,
@@ -1040,8 +1040,8 @@ def assert_element_content_in_task_audit_log(
     link = "Audit log"
     close = "closes"
     if isinstance(expected_data, list):
-        expected_data = list(map(lambda x: x.replace('"', ""), expected_data))
-        expected_data = list(map(lambda x: x.replace("\\n", "\n"), expected_data))
+        expected_data = [x.replace('"', "") for x in expected_data]
+        expected_data = [x.replace("\\n", "\n") for x in expected_data]
     else:
         expected_data = expected_data.replace('"', "")
         expected_data = expected_data.replace("\\n", "\n")
@@ -1265,10 +1265,7 @@ def assert_workflow_audit_log_contains_entry(
 
 
 def _assert_all_items_in_json(item_list: list[str], data: AuditLogContent) -> bool:
-    for item in item_list:
-        if not data.get(item, False):
-            return False
-    return True
+    return all(data.get(item, False) for item in item_list)
 
 
 @wt(
@@ -1299,5 +1296,4 @@ def _get_workflow_audit_log(
     modal.download_as_json()
     wait_for_file_with_unknown_name_to_download(n_files_before_download, path)
     file_name = os.listdir(path)[-1]
-    file_path = tmpdir.join(browser_id, "download", file_name)
-    return file_path
+    return tmpdir.join(browser_id, "download", file_name)

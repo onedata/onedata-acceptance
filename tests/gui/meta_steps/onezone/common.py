@@ -284,9 +284,8 @@ def search_for_members(
         if member_name in relations and parent_name in relations:
             member_index = relations.index(member_name)
             parent_index = relations.index(parent_name)
-            if member_index + 1 == parent_index:
-                if fun(record, member_index):
-                    return True
+            if member_index + 1 == parent_index and fun(record, member_index):
+                return True
     return False
 
 

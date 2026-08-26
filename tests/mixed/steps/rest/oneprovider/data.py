@@ -60,8 +60,7 @@ def _as_basic_hosts(hosts: Hosts) -> HostsConfig:
 
 def _lookup_file_id(path: str, user_client_op: ApiClient) -> str:
     resolve_file_path_api = FilePathResolutionApi(user_client_op)
-    file_id = resolve_file_path_api.lookup_file_id(path).file_id
-    return file_id
+    return resolve_file_path_api.lookup_file_id(path).file_id
 
 
 def _read_file(path: str, user: str, users: Users, provider: str, hosts: Hosts) -> str:
@@ -560,8 +559,7 @@ def get_space_details_rest(
 ) -> Space:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_op)
-    space_details = space_api.get_space(space_id)
-    return space_details
+    return space_api.get_space(space_id)
 
 
 def get_share_details_rest(
@@ -569,8 +567,7 @@ def get_share_details_rest(
 ) -> Share:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     share_api = ShareApi(user_client_op)
-    share_details = share_api.get_share(share_id)
-    return share_details
+    return share_api.get_share(share_id)
 
 
 def create_share_rest(
@@ -578,8 +575,7 @@ def create_share_rest(
 ) -> InlineResponse2015:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     share_api = ShareApi(user_client_op)
-    share_id = share_api.create_share(data={"name": name, "rootFileId": file_id})
-    return share_id
+    return share_api.create_share(data={"name": name, "rootFileId": file_id})
 
 
 def remove_file_by_id_rest(users: Users, user: str, hosts: Hosts, host: str, file_id: str) -> None:
@@ -599,8 +595,7 @@ def get_file_hardlinks_rest(
 ) -> list[str]:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
-    list_hardlinks = file_api.get_file_hardlinks(file_id)
-    return list_hardlinks
+    return file_api.get_file_hardlinks(file_id)
 
 
 def get_file_symlink_value_rest(
@@ -608,8 +603,7 @@ def get_file_symlink_value_rest(
 ) -> str:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
-    symlink_val = file_api.get_symlink_value(file_id)
-    return symlink_val
+    return file_api.get_symlink_value(file_id)
 
 
 def check_for_hardlink_between_files_rest(

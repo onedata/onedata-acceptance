@@ -114,9 +114,8 @@ class OZLoggedIn:
 
         if page_cls is UploadsPage:
             self.uploads_web_elem.click()
-        elif issubclass(page_cls, SidebarPanelPage):
-            if not self.is_panel_selected(panel_name):
-                self.click_on_sidebar_menu_panel(panel_name)
+        elif issubclass(page_cls, SidebarPanelPage) and not self.is_panel_selected(panel_name):
+            self.click_on_sidebar_menu_panel(panel_name)
 
     @property
     def data(self) -> DataPage:

@@ -53,7 +53,7 @@ def get_store_details_json(
     store_type: str,
 ) -> dict[str, object]:
     page = get_op_workflow_visualizer_page(driver)
-    store_details = json.loads(
+    return json.loads(
         open_modal_and_get_store_content(
             browser_id,
             driver,
@@ -64,8 +64,6 @@ def get_store_details_json(
             store_type,
         )
     )
-
-    return store_details
 
 
 def open_modal_and_get_store_content(

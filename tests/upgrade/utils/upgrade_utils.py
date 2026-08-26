@@ -203,7 +203,7 @@ class UpgradeTestsController:
         time.sleep(10)
         self.__unmount_clients()
         for service_name in ["onezone", "oneprovider", "oneclient"]:
-            if service_name in self.test_config["targetVersions"].keys():
+            if service_name in self.test_config["targetVersions"]:
                 upgrade_service(
                     service_name,
                     admin_user,
@@ -268,7 +268,7 @@ def upgrade_service(
     version_spec: VersionSpec,
     prev_version_spec: VersionSpec,
 ) -> None:
-    for service in hosts.keys():
+    for service in hosts:
         if service.startswith(service_name):
             pod_name = hosts[service]["pod_name"]
             run_upgrade_command(pod_name, service_name, version_spec, prev_version_spec)
@@ -301,8 +301,7 @@ def prepare_sources_upgrade_command(version_spec: VersionSpec) -> list[str]:
     if not is_upgrade_from_sources(version_spec):
         return []
     components = ["--sources-path", "."]
-    for component in version_spec["sources"]["components"]:
-        components.append(f"--{component}")
+    components.extend(f"--{component}" for component in version_spec["sources"]["components"])
     return components
 
 

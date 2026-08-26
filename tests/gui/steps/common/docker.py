@@ -148,8 +148,7 @@ def _docker_cat(path: str, hosts: Hosts) -> bytes:
         "cat",
         path,
     ]
-    output = subprocess.check_output(cmd)
-    return output
+    return subprocess.check_output(cmd)
 
 
 def _docker_ls(path: str, hosts: Hosts) -> bytes:
@@ -161,8 +160,7 @@ def _docker_ls(path: str, hosts: Hosts) -> bytes:
         "-a",
         path,
     ]
-    output = subprocess.check_output(cmd)
-    return output
+    return subprocess.check_output(cmd)
 
 
 def _docker_mkdir(path: str, hosts: Hosts) -> None:
