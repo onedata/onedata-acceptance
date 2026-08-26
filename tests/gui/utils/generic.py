@@ -14,7 +14,7 @@ from enum import Enum
 from functools import partial
 from itertools import islice
 from time import sleep
-from typing import Literal, Optional, TypeVar, cast, overload
+from typing import Literal, Optional, TypedDict, TypeVar, cast, overload
 
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
@@ -160,6 +160,83 @@ def parse_elements_sequence(value: str) -> list[str]:
     if re.fullmatch(ELEMENTS_SEQUENCE_PATTERN, value) is None:
         raise ValueError(f"Invalid elements sequence: {value!r}")
     return parse_seq(value)
+
+
+INDEXED_PATH_PART_PATTERN = re.compile(r"(?P<prefix>.+)_(?P<idx>\d+)")
+
+
+class IndexedPathSequence(TypedDict):
+    first_idx: int
+    last_idx: int
+    prefix: str
+
+
+def parse_and_validate_indices(
+    matches: list[re.Match[str]], sequence: str
+) -> list[int]:
+    indices = [int(match.group("idx")) for match in matches]
+    # we assume the indices are in increasing order with difference=1
+    if any(indices[i] + 1 != indices[i + 1] for i in range(len(indices) - 1)):
+        raise ValueError(f"Invalid indexed path sequence: {sequence}")
+
+    return indices
+
+
+def parse_indexed_path_parts(path_parts: list[str], sequence: str) -> tuple[str, int]:
+    matches: list[re.Match[str]] = []
+
+    for part in path_parts:
+        match = INDEXED_PATH_PART_PATTERN.fullmatch(part)
+        if match is None:
+            raise ValueError(f"Invalid indexed path sequence: {sequence}")
+        matches.append(match)
+
+    prefix = matches[0].group("prefix")
+
+    # all other prefixes must be the same
+    if any(match.group("prefix") != prefix for match in matches):
+        raise ValueError(f"Invalid indexed path sequence: {sequence}")
+
+    indices = parse_and_validate_indices(matches, sequence)
+    return prefix, indices[-1]
+
+
+# return common prefix and first and last index of an indexed
+# path sequence, that may contain '...' inside
+def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
+    path_parts = sequence.split("/")
+    if path_parts.count("...") > 1:
+        raise ValueError(f"Invalid indexed path sequence: {sequence}")
+
+    if "..." in path_parts:
+        ellipsis_idx = path_parts.index("...")
+        path_parts_groups = [
+            path_parts[:ellipsis_idx],
+            path_parts[ellipsis_idx + 1 :],
+        ]
+    else:
+        path_parts_groups = [path_parts]
+
+    parsed_groups: list[tuple[str, int]] = [
+        parse_indexed_path_parts(group, sequence)
+        for group in path_parts_groups
+        if group
+    ]
+    if not parsed_groups:
+        raise ValueError(f"Invalid indexed path sequence: {sequence}")
+
+    first_prefix, first_idx = parsed_groups[0]
+    _, last_idx = parsed_groups[-1]
+
+    # Groups may have different prefixes despite each group being internally consistent.
+    if any(group_prefix != first_prefix for group_prefix, _ in parsed_groups):
+        raise ValueError(f"Invalid indexed path sequence: {sequence}")
+
+    return {
+        "first_idx": first_idx,
+        "last_idx": last_idx,
+        "prefix": first_prefix,
+    }
 
 
 def upload_file_path(file_name: str) -> str:

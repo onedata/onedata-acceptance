@@ -20,6 +20,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
+    parse_indexed_path_sequence,
     transform,
 )
 from tests.type_definitions import SeleniumDrivers
@@ -473,22 +474,34 @@ def assert_archived_file_path_and_archive_name(
     browser_id: str, selenium: SeleniumDrivers, path: str
 ) -> None:
     driver = selenium[browser_id]
-    modal_details = Modals(driver).audit_log_entry_details
-
-    details_file_path = modal_details.file_path.text.replace("\n", "").split("/")
-    details_archive_name = details_file_path[0].split("›")[1]
-    # Depending on window size, name of archive may not be present and it raises exception
-    details_file_path = "/".join(details_file_path[1:])
-    # Depending on window size, could be without [1:], if archive name is not present
-
-    assert (
-        path == details_file_path
-    ), f"given path: {path} is different than actual file path: {details_file_path}"
-
     modal = Modals(driver).archive_audit_log
-    assert modal.archive_name == details_archive_name, (
-        f"name of archive in archive audit log modal: {modal.archive_name} is different"
-        f" than shown in audit log entry details:  {details_archive_name}"
+    modal_details = Modals(driver).audit_log_entry_details
+    separator = "›"
+
+    # Example shortened path:
+    # 'long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\nlong-directory_19\n/\nvery-long-file_20'
+    details_file_path = modal_details.file_path.replace("\n", "")
+
+    # Depending on window size, the archive name may not be present.
+    if separator in details_file_path:
+        splitted_file_path = details_file_path.split("/")
+        details_archive_info = splitted_file_path[0]
+
+        details_archive_name = details_archive_info.partition(separator)[2]
+        assert modal.archive_name == details_archive_name, (
+            f"name of archive in archive audit log modal: {modal.archive_name} is"
+            f" different than shown in audit log entry details:  {details_archive_name}"
+        )
+        path_without_archive_name = "/".join(splitted_file_path[1:])
+    else:
+        path_without_archive_name = details_file_path
+
+    details_path_params = parse_indexed_path_sequence(path_without_archive_name)
+    expected_path_params = parse_indexed_path_sequence(path)
+
+    assert details_path_params == expected_path_params, (
+        f"given path: {path_without_archive_name} is different than actual file path:"
+        f" {path}"
     )
 
 
