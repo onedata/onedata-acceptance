@@ -6,6 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import os
 import time
@@ -820,14 +821,10 @@ def assert_content_of_store(
                 clipboard,
                 displays,
             )
-    try:
-        modal.close()
-    except (
-        StaleElementReferenceException,
-        NoSuchElementException,
-        ElementNotInteractableException,
+    with contextlib.suppress(
+        StaleElementReferenceException, NoSuchElementException, ElementNotInteractableException
     ):
-        pass
+        modal.close()
 
 
 def compare_to_expected_if_elem_exist_audit_log(

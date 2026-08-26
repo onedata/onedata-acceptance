@@ -6,6 +6,7 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
 from typing import cast
 
@@ -1021,10 +1022,8 @@ def check_element_in_members_subpage(
         except NoSuchElementException as exc:
             raise AssertionError(error_message) from exc
     else:
-        try:
+        with contextlib.suppress(NoSuchElementException):
             assert member_name not in member_list, f"{member_name} {member_type}"
-        except NoSuchElementException:
-            pass
 
 
 @wt(

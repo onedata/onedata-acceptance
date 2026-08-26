@@ -6,6 +6,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
+
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -77,13 +79,11 @@ class ArchiveRecallInformation(Modal):
         ActionChains(driver).move_to_element(self.error_log_table).perform()
 
     def scroll_to_top(self) -> None:
-        try:
+        with contextlib.suppress(JavascriptException):
             self.driver.execute_script(
                 "document.querySelector('.infinite-scroll-table "
                 ".table-scrollable-container').scrollTo(0,0)"
             )
-        except JavascriptException:
-            pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_rows_of_columns(

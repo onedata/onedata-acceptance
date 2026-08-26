@@ -6,8 +6,10 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
+from contextlib import suppress
 
 from _pytest._py.path import LocalPath
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -439,10 +441,8 @@ def click_on_option_of_inventory_on_left_sidebar_menu(
 
 
 def try_to_close_workflow_creation_popup(driver: WebDriver) -> None:
-    try:
+    with suppress(WebDriverException):
         Popups(driver).workflow_creation_alert.close()
-    except Exception:  # pylint: disable=broad-exception-caught
-        pass
 
 
 @wt(parsers.parse("user of {browser_id} sees that workflow editor appeared"))

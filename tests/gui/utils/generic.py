@@ -398,14 +398,6 @@ def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> No
 
 
 @contextmanager
-def suppress(*exceptions: type[BaseException]) -> Iterator[None]:
-    try:
-        yield
-    except exceptions:
-        pass
-
-
-@contextmanager
 def rm_css_cls(driver: WebDriver, web_elem: WebElement, css_cls: str) -> Iterator[WebElement]:
     driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
     yield web_elem

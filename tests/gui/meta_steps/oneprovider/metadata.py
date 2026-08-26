@@ -4,6 +4,7 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
 
 from selenium.common.exceptions import (
@@ -293,10 +294,8 @@ def remove_all_metadata_in_op_gui(
 def click_save_button_metadata(selenium: SeleniumDrivers, browser_id: str) -> None:
     button = "Save"
     panel = "Metadata"
-    try:
+    with contextlib.suppress(ElementNotInteractableException, NoSuchElementException):
         click_panel_button(selenium, browser_id, button, panel)
-    except (ElementNotInteractableException, NoSuchElementException):
-        pass
 
 
 @wt(parsers.parse("user of {browser_id} sees that there is no metadata in metadata panel"))

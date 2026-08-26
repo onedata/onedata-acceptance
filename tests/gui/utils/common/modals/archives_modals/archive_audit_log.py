@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import contextlib
 import time
 from typing import cast
 
@@ -48,15 +49,13 @@ class ArchiveAuditLog(Modal):
         action.key_down(Keys.SPACE).perform()
 
     def scroll_to_top(self) -> None:
-        try:
+        with contextlib.suppress(JavascriptException):
             self.driver.execute_script(
                 "document.querySelector("
                 "'.audit-log-browser "
                 ".table-scrollable-container')"
                 ".scrollTo(0, 0)"
             )
-        except JavascriptException:
-            pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_rows_of_columns(

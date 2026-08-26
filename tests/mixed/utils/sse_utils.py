@@ -82,7 +82,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
                 await self._consume_stream(reconnect=bool(self.last_event_id))
             except asyncio.CancelledError:
                 break
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
                 if loop.is_closed() or not loop.is_running():
                     print("Loop is closed, breaking run()")
                     break

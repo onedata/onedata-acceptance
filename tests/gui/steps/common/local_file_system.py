@@ -11,6 +11,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import stat
 import subprocess
+from contextlib import suppress
 from typing import cast
 
 import requests
@@ -20,7 +21,6 @@ from _pytest._py.path import LocalPath
 from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.type_definitions import LocalDirectoryContent as DirectoryContent
-from tests.gui.utils.generic import suppress
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

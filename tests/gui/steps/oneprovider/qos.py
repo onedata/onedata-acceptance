@@ -222,7 +222,7 @@ def assert_expression_in_qos_panel(
         if expression_in_modal == ready_expression:
             assert True
             return
-    assert False, f'Not found "{expression}" QoS requirement in modal "Quality of Service"'
+    raise AssertionError(f'Not found "{expression}" QoS requirement in modal "Quality of Service"')
 
 
 def process_whole_nested_expression(expression: str, hosts: Hosts, users: Users) -> str:
@@ -271,7 +271,9 @@ def assert_nested_expression_in_qos_panel(
         if expression_in_modal == ready_expression:
             assert True
             return
-    assert False, f'Not found "{ready_expression}" QoS requirement in modal "Quality of Service"'
+    raise AssertionError(
+        f'Not found "{ready_expression}" QoS requirement in modal "Quality of Service"'
+    )
 
 
 @wt(parsers.parse("user of {browser_id} doesn't see any QoS requirement in QoS panel"))
@@ -285,7 +287,7 @@ def assert_no_expression_in_qualities_of_service_modal(
     except NoSuchElementException:
         assert True
     else:
-        assert False, 'Found QoS requirement in modal "Quality of Service"'
+        raise AssertionError('Found QoS requirement in modal "Quality of Service"')
 
 
 @wt(parsers.parse('user of {browser_id} clicks "enter as text" label in QoS panel'))

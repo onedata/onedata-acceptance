@@ -361,8 +361,8 @@ def append_to_file_in_op_rest(
     metadata = client.read_metadata(path)["metadata"]
     try:
         file_size = int(metadata["cdmi_size"])
-    except KeyError:
-        assert False, f"File {path} has no size metadata"
+    except KeyError as exc:
+        raise AssertionError(f"File {path} has no size metadata") from exc
     else:
         client.write_to_file(path, text, file_size)
 
@@ -419,8 +419,8 @@ def assert_posix_permissions_in_op_rest(
     file_attrs = file_api.get_attrs(file_id, data={"attributes": ["posix_permissions"]})
     try:
         file_perms = int(file_attrs.posix_permissions) % 1000
-    except KeyError:
-        assert False, f"File {path} has no mode metadata"
+    except KeyError as exc:
+        raise AssertionError(f"File {path} has no mode metadata") from exc
 
     assert file_perms == int(perms), (
         f"Expected file POSIX permissions for {path} to be {perms} but got {file_perms}"

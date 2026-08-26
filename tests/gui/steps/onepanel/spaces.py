@@ -702,7 +702,7 @@ def see_released_size_in_cleaning_report(
         if released_size == size:
             return
     error_message = f"released size: {released_size}  is not expected size: {size}"
-    assert False, error_message
+    raise AssertionError(error_message)
 
 
 def toggle_in_storage_import_configuration_is_enabled(

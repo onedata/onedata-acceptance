@@ -6,6 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import os
 import time
@@ -395,10 +396,8 @@ def assert_downloaded_and_uploaded_lambda_dumps_the_same(
     # remove keys
     downloaded_dump.pop("originalAtmLambdaId")
     uploaded_dump.pop("originalAtmLambdaId")
-    try:
+    with contextlib.suppress(KeyError):
         uploaded_dump["revision"]["atmLambdaRevision"]["_data"].pop("checksum")
-    except KeyError:
-        pass
     error_message = f"Lambda dumps differ, uploaded: {uploaded_dump}, downloaded: {downloaded_dump}"
     # test may start failing, because correct order in dicts is not guaranteed
     # in order to fix implement keys sorting

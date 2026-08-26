@@ -6,6 +6,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 from abc import ABC
 from collections.abc import Iterable
 from typing import ClassVar
@@ -94,12 +95,10 @@ class Browser(ABC, PageObject):
         action.key_down(Keys.DOWN).key_down(Keys.DOWN).perform()
 
     def scroll_to_top(self) -> None:
-        try:
+        with contextlib.suppress(JavascriptException):
             self.driver.execute_script(
                 "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
             )
-        except JavascriptException:
-            pass
 
     def scroll_to_bottom(self) -> None:
         self.driver.execute_script(

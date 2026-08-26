@@ -6,6 +6,7 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import re
 
@@ -147,10 +148,8 @@ def _add_storage_in_op_panel_using_gui(
     mount_point_option = "mount point"
     options = yaml.load(config, yaml.Loader)
 
-    try:
+    with contextlib.suppress(ElementNotInteractableException, NoSuchElementException):
         wt_click_on_btn_in_content(selenium, [browser_id], btn, content)
-    except (ElementNotInteractableException, NoSuchElementException):
-        pass
 
     storage_type = options["storage type"]
     wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id, storage_type)

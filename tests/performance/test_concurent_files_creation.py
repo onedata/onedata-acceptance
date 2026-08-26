@@ -203,7 +203,7 @@ def _create_files(
     try:
         for i in range(start, end):
             fun(file_path=os.path.join(dir_path, f"file{i}"))
-    except Exception as ex:
+    except Exception as ex:  # noqa: BLE001 - transport worker failures to the parent thread
         queue.put(ex)
 
 

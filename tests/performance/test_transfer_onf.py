@@ -163,7 +163,7 @@ def _copy_files(client: Client, start: int, end: int, dir_path: str, queue: Exce
             src_file = os.path.join(dir_path, f"file{i}")
             dst_file = os.path.join(dir_path, f"file{i}.bak")
             client.cp(src_file, dst_file)
-    except Exception as ex:
+    except Exception as ex:  # noqa: BLE001 - transport worker failures to the parent thread
         queue.put(ex)
 
 

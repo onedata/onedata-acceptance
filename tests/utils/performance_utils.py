@@ -82,7 +82,7 @@ def performance(
                             env_desc,
                             merged_config.get("parameters", {}),
                         )
-                    except Exception as e:  # pylint: disable=broad-exception-caught
+                    except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
                         flushed_print("\t\tTestcase failed beceause of: " + str(e))
                         failed_repeats += 1
                         failed_details[str(repeats)] = str(e)

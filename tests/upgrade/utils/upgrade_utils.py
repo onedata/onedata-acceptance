@@ -192,7 +192,7 @@ class UpgradeTestsController:
         for test in self.__tests_list:
             try:
                 self.__run_setup(test)
-            except Exception:
+            except Exception:  # noqa: BLE001 - record any setup failure and continue the suite
                 self.__test_results[test.get_name()] = format_failed_test_results(
                     "SETUP", traceback.format_exc(), test
                 )
@@ -220,7 +220,7 @@ class UpgradeTestsController:
                 continue
             try:
                 self.__run_verify(test)
-            except Exception:
+            except Exception:  # noqa: BLE001 - record any verification failure
                 self.__test_results[test.get_name()] = format_failed_test_results(
                     "VERIFY", traceback.format_exc(), test
                 )

@@ -4,6 +4,7 @@ __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 from collections.abc import Callable, Mapping, MutableMapping
 from typing import NotRequired, Protocol, TypedDict, cast
@@ -314,15 +315,13 @@ def remove_all_groups_rest(user: str, hosts: HostsConfig, users: Users) -> None:
 
 
 def _try_to_remove_group(group_id: str, zone_hostname: str, user: str, users: Users) -> None:
-    try:
+    with contextlib.suppress(HTTPForbidden):
         http_delete(
             ip=zone_hostname,
             port=OZ_REST_PORT,
             path=get_zone_rest_path("groups", group_id),
             auth=(user, users[user].password),
         )
-    except HTTPForbidden:
-        pass
 
 
 def get_group_id_list(user: str, users: Users, zone_hostname: str) -> list[str]:

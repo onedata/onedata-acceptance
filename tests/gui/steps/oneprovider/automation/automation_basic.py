@@ -5,6 +5,7 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
 from typing import overload
 
@@ -163,10 +164,8 @@ def search_for_lane_status(
             return driver.find_element(
                 By.CSS_SELECTOR, f"#{lane_id} .visible-run-status-label"
             ).text
-        try:
+        with contextlib.suppress(ElementNotInteractableException, NoSuchElementException):
             page.workflow_visualiser.right_arrow_scroll.click()
-        except (ElementNotInteractableException, NoSuchElementException):
-            pass
     raise ValueError(f"lane {lane_name} found")
 
 

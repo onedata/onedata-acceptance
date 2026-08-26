@@ -6,6 +6,7 @@ __author__ = "Michal Cwiertnia, Michal Stanisz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
 
 from selenium.common.exceptions import (
@@ -390,14 +391,10 @@ def leave_space_in_onezone(selenium: SeleniumDrivers, browser_id: str, space_nam
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     time.sleep(2)
-    try:
-        leave_spaces_in_oz_using_gui(selenium, browser_id, [space_name])
-    except (
-        ElementNotInteractableException,
-        NoSuchElementException,
-        PageObjectNotFoundError,
+    with contextlib.suppress(
+        ElementNotInteractableException, NoSuchElementException, PageObjectNotFoundError
     ):
-        pass
+        leave_spaces_in_oz_using_gui(selenium, browser_id, [space_name])
 
 
 @given(parsers.parse("{user} user does not have access to any space"))

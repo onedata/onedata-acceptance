@@ -321,9 +321,9 @@ def assert_set_acl_privileges(
     is_allow_checked = perm.is_allow_option_checked()
     if options[0] in ["allow", "deny"]:
         if "deny" in options and is_allow_checked:
-            assert False, 'Checked permissions type should be "deny" not "allow"'
-        elif "allow" in options and not is_allow_checked:
-            assert False, 'Checked permissions type should be "allow" not "deny"'
+            raise AssertionError('Checked permissions type should be "deny" not "allow"')
+        if "allow" in options and not is_allow_checked:
+            raise AssertionError('Checked permissions type should be "allow" not "deny"')
         options.pop(0)
 
     for option in options:

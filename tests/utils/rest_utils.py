@@ -247,8 +247,8 @@ def http_request(  # pylint: disable=inconsistent-return-statements
             if i == retries - 1:
                 raise e
             time.sleep(5.0)
-        # pylint: disable=line-too-long,duplicate-except
-        except (ConnectTimeout, ReadTimeout, HTTPServiceUnavailable):
+        # pylint: disable=line-too-long
+        except (ConnectTimeout, ReadTimeout):
             print(r"""
              _    _ _______ _______ _____           _____          _      _              _    _ _    _ _   _  _____    _ _ _ 
             | |  | |__   __|__   __|  __ \         / ____|   /\   | |    | |            | |  | | |  | | \ | |/ ____|  | | | |

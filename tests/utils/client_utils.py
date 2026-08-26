@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2016-2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import contextlib
 import hashlib
 import os
 import random
@@ -189,7 +190,7 @@ class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
             try:
                 result = condition()
                 condition_satisfied = True if result is None else bool(result)
-            except:  # pylint: disable=bare-except
+            except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
                 condition_satisfied = False
                 if timeout == 0:
                     log_exception()
@@ -331,10 +332,8 @@ class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
 
     def clear_xattr(self, file: str) -> None:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
-        try:
+        with contextlib.suppress(KeyError):
             xattrs.clear()
-        except KeyError:
-            pass
 
     def execute(self, command: Command, output: bool = False) -> int | bytes:
         if output:

@@ -4,6 +4,7 @@ __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import time
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
@@ -884,15 +885,13 @@ def _rm_all_spaces_for_user(zone_hostname: str, owner_username: str, owner_passw
     spaces_id_list = _get_users_space_id_list(zone_hostname, owner_username, owner_password)
 
     for space_id in spaces_id_list:
-        try:
+        with contextlib.suppress(HTTPForbidden):
             http_delete(
                 ip=zone_hostname,
                 port=OZ_REST_PORT,
                 path=get_zone_rest_path("spaces", space_id),
                 auth=(owner_username, owner_password),
             )
-        except HTTPForbidden:
-            pass
 
 
 def _rm_all_spaces_for_users_list(zone_hostname: str, users_db: Users) -> None:

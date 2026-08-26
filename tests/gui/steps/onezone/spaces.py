@@ -159,7 +159,7 @@ def assert_no_provider_for_space(
     except (NoSuchElementException, PageObjectNotFoundError):
         pass
     else:
-        assert False, f'provider "{provider}" found on space "{space_name}" providers list'
+        raise AssertionError(f'provider "{provider}" found on space "{space_name}" providers list')
 
 
 @wt(
