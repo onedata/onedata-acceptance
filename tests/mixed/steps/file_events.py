@@ -38,6 +38,7 @@ class ObservedFileAction(Enum):
 
 DEFAULT_FILE_EVENT_TIMEOUT: int = 30
 NUMBER_OF_EVENTS_TO_LOOK_BACK: int = 10
+MAX_HEARTBEAT_AGE_SECONDS: int = 10
 
 
 class SpaceFilesMonitorFactory(Protocol):
@@ -159,7 +160,7 @@ def assert_new_heartbeat_event(
             )
             heartbeat = cast(tuple[str, float], result)
             # event came in last 10s
-            if time.time() - heartbeat[1] < 10:
+            if time.time() - heartbeat[1] < MAX_HEARTBEAT_AGE_SECONDS:
                 return
         except TimeoutError as e:
             raise AssertionError("heartbeat event not found") from e
@@ -214,7 +215,7 @@ def assert_file_actions_in_observed_directory(
     file_action: ObservedFileAction,
 ) -> None:
     found: set[str] = set()
-    expected_attrs_keys = set(expected_attrs.keys())
+    expected_attrs_keys = set(expected_attrs)
 
     # look for an event in previous events
     for _ in range(NUMBER_OF_EVENTS_TO_LOOK_BACK):
@@ -222,23 +223,28 @@ def assert_file_actions_in_observed_directory(
             result = get_file_action_in_observed_directory(
                 tmp_memory, async_loop_in_thread, file_action
             )
-            changed_files = cast(dict[str, FileAttrs], result)
-            if file_id not in changed_files:
-                continue
-            attributes = changed_files[file_id]
-            for attribute in attributes:
-                if attribute in expected_attrs_keys:
-                    if expected_attrs[attribute] is not None:
-                        if attributes[attribute] == expected_attrs[attribute]:
-                            found.add(attribute)
-                    else:
-                        found.add(attribute)
-            if found == expected_attrs_keys:
-                return
         except TimeoutError as e:
             raise AssertionError(
                 f"{file_action} file actions about {expected_attrs_keys - found} not found"
             ) from e
+
+        changed_files = cast(dict[str, FileAttrs], result)
+        attributes = changed_files.get(file_id)
+        if attributes is None:
+            continue
+
+        found.update(_find_matching_attributes(attributes, expected_attrs))
+        if found == expected_attrs_keys:
+            return
+
+
+def _find_matching_attributes(attributes: FileAttrs, expected_attrs: ExpectedAttrs) -> set[str]:
+    return {
+        attribute
+        for attribute, expected_value in expected_attrs.items()
+        if attribute in attributes
+        and (expected_value is None or attributes[attribute] == expected_value)
+    }
 
 
 def assert_file_action_in_observed_directory(

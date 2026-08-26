@@ -64,8 +64,9 @@ def get_column_names_from_configure_columns_menu(driver: WebDriver) -> list[str]
 
 
 def get_column_from_configure_columns_menu(driver: WebDriver, column_name: str) -> ColumnOption:
-    menu_getter = lambda driver: Popups(driver).configure_columns_menu
-    menu = wait_for_visible_element_using_getter(driver, menu_getter)
+    menu = wait_for_visible_element_using_getter(
+        driver, lambda current_driver: Popups(current_driver).configure_columns_menu
+    )
     return menu.columns[column_name]
 
 

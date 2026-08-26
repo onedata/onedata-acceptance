@@ -7,8 +7,10 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import cast
 
 import yaml
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
@@ -25,7 +27,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.onezone.automation_page import AutomationPage
-from tests.type_definitions import SeleniumDrivers
+from tests.type_definitions import JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -200,58 +202,86 @@ def modify_task_results(
     config: str,
     option: str,
 ) -> None:
-    conf_param_option = "configuration parameters"
-    data = yaml.load(config, yaml.Loader)
-    results_conf = data.get("results", False)
-    lambda_conf = data.get("lambda", False)
-    configuration_parameters = data.get(conf_param_option, False)
-    button = "Modify"
-    task_option = "task"
+    data = cast(JsonObject, yaml.load(config, yaml.Loader))
+    driver, page = _open_task_form(selenium, browser_id, lane, task)
+    _change_task_lambda_revision(page, driver, cast(list[JsonObject], data.get("lambda", [])))
+    _modify_task_result_mappings(
+        page,
+        driver,
+        cast(list[dict[str, str]], data.get("results", [])),
+        option,
+    )
+    _modify_task_configuration_parameters(
+        selenium,
+        browser_id,
+        cast(dict[str, JsonObject], data.get("configuration parameters", {})),
+    )
+    confirm_lambda_creation_or_edition(selenium, browser_id, "task")
 
+
+def _open_task_form(
+    selenium: SeleniumDrivers, browser_id: str, lane: str, task: str
+) -> tuple[WebDriver, AutomationPage]:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(AutomationPage)
     page = oz_page.automation
     lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
     lane_obj.parallel_box.task_list[task].menu_button()
-    Popups(driver).menu_popup_with_label.menu[button]()
+    Popups(driver).menu_popup_with_label.menu["Modify"]()
     # wait for task form to open
     time.sleep(1)
+    return driver, page
 
-    if lambda_conf:
-        revision = from_ordinal_number_to_int(lambda_conf[0]["revision"])
-        page.workflows_page.task_form.lambda_revision.click()
-        Popups(driver).power_select.choose_item(str(revision))
 
-    if results_conf:
-        for res in results_conf:
-            [(res_name, new_res)] = res.items()
-            try:
-                result = page.workflows_page.task_form.results[res_name]
-            except PageObjectNotFoundError:
-                result = page.workflows_page.task_form.results[res_name + ":"]
-            if option == "adding":
-                result.add_mapping()
-            element = result.target_store_dropdown[-1]
-            driver.execute_script("arguments[0].scrollIntoView();", element)
-            result.target_store_dropdown[-1].click()
-            Popups(driver).power_select.choose_item(new_res)
+def _change_task_lambda_revision(
+    page: AutomationPage, driver: WebDriver, lambda_config: list[JsonObject]
+) -> None:
+    if not lambda_config:
+        return
 
-    if configuration_parameters:
-        for param_name, param in configuration_parameters.items():
-            choose_option_in_dropdown_menu_in_task_page(
-                selenium,
-                browser_id,
-                param["value builder"],
-                param_name,
-                conf_param_option,
-            )
-            write_text_into_editor_bracket(
-                selenium,
-                browser_id,
-                param["value"],
-                param_name,
-                conf_param_option,
-            )
+    revision = from_ordinal_number_to_int(cast(str, lambda_config[0]["revision"]))
+    page.workflows_page.task_form.lambda_revision.click()
+    Popups(driver).power_select.choose_item(str(revision))
 
-    confirm_lambda_creation_or_edition(selenium, browser_id, task_option)
+
+def _modify_task_result_mappings(
+    page: AutomationPage,
+    driver: WebDriver,
+    result_mappings: list[dict[str, str]],
+    option: str,
+) -> None:
+    for result_mapping in result_mappings:
+        [(result_name, target_store)] = result_mapping.items()
+        try:
+            result = page.workflows_page.task_form.results[result_name]
+        except PageObjectNotFoundError:
+            result = page.workflows_page.task_form.results[result_name + ":"]
+        if option == "adding":
+            result.add_mapping()
+        element = result.target_store_dropdown[-1]
+        driver.execute_script("arguments[0].scrollIntoView();", element)
+        result.target_store_dropdown[-1].click()
+        Popups(driver).power_select.choose_item(target_store)
+
+
+def _modify_task_configuration_parameters(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    parameters: dict[str, JsonObject],
+) -> None:
+    for parameter_name, parameter in parameters.items():
+        choose_option_in_dropdown_menu_in_task_page(
+            selenium,
+            browser_id,
+            cast(str, parameter["value builder"]),
+            parameter_name,
+            "configuration parameters",
+        )
+        write_text_into_editor_bracket(
+            selenium,
+            browser_id,
+            cast(str, parameter["value"]),
+            parameter_name,
+            "configuration parameters",
+        )

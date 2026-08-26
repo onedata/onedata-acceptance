@@ -30,7 +30,7 @@ from .uploads_page import UploadsPage
 PageT = TypeVar("PageT", bound=GenericPage)
 
 
-class OZLoggedIn:
+class OZLoggedIn:  # noqa: PLR0904 - page façade exposes navigation entry points
     _panel_id_by_page_class: ClassVar[dict[type[SidebarPanelPage], int]] = {
         DataPage: 0,
         SharesPage: 1,

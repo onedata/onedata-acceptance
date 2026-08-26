@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping
+from http import HTTPStatus
 from typing import cast
 
 import yaml
@@ -167,7 +168,7 @@ def fail_to_set_privileges_using_rest(
             "privileges"
         )
     except ApiException as err:
-        if err.status == 403:
+        if err.status == HTTPStatus.FORBIDDEN:
             pass
 
 
@@ -216,7 +217,7 @@ def fail_to_create_invitation_in_space_using_rest(
             " should not, because of lack in privileges"
         )
     except ApiException as err:
-        if err.status == 403:
+        if err.status == HTTPStatus.FORBIDDEN:
             pass
 
 

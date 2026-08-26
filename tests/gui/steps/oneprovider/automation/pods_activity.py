@@ -51,10 +51,7 @@ def click_on_first_pod_in_pods_activity_modal(modal: PodsActivity) -> None:
 
 def gather_events_list(modal: PodsActivity, driver: WebDriver, option: str) -> list[str]:
     number = int(modal.get_number_of_data_rows(driver))
-    get_event = lambda i: modal.get_elem_by_data_row_id(  # pylint: disable=unnecessary-lambda-assignment
-        i, driver, option
-    )
-    return [get_event(i) for i in range(number, -1, -1)]
+    return [modal.get_elem_by_data_row_id(i, driver, option) for i in range(number, -1, -1)]
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

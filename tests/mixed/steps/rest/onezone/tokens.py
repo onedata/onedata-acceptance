@@ -132,12 +132,23 @@ def _create_token_with_config(
     zone_name: str,
 ) -> None:
     data = cast(ConfigMap, yaml.load(config, yaml.Loader))
+    name, token_config = _build_token_config(data, groups, users, spaces, tmp_memory)
+
+    user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
+    response = TokenApi(user_client).create_named_token_for_current_user(data=token_config)
+    tmp_memory[user]["token"] = response.token
+    tokens[name] = {"token_id": response.token_id, "token": response.token}
+
+
+def _build_token_config(
+    data: ConfigMap,
+    groups: GroupMap,
+    users: Users,
+    spaces: SpaceMap,
+    tmp_memory: TmpMemory,
+) -> tuple[str, TokenConfig]:
     name = cast(str, data["name"])
     token_type = cast(str, data["type"])
-    usage_limit = data.get("usage limit", False)
-    caveats = data.get("caveats", False)
-    privileges = data.get("privileges", False)
-
     token_variant: dict[str, TokenValue] = {}
     token_type_config: dict[str, TokenValue] = {f"{token_type}Token": token_variant}
     token_config: TokenConfig = {
@@ -145,38 +156,41 @@ def _create_token_with_config(
         "type": token_type_config,
     }
     if token_type == "invite":
-        invite_type = cast(str, data["invite type"])
-        invite_target = cast(str | None, data.get("invite target"))
+        _configure_invite_token(token_variant, data, spaces)
 
-        invite_type_rest = translation_dict[invite_type]["type"]
-
-        token_variant["inviteType"] = invite_type_rest
-        if invite_target:
-            target = translation_dict[invite_type]["target"]
-            if "space" in invite_target:
-                invite_target = spaces[invite_target]
-            token_variant[target] = invite_target
-
+    usage_limit = data.get("usage limit", False)
     if usage_limit:
         token_config["usageLimit"] = usage_limit
+
+    caveats = data.get("caveats", False)
     if caveats:
         parse_token_caveats(
             cast(ConfigMap, caveats), token_config, groups, users, spaces, tmp_memory
         )
+
+    privileges = data.get("privileges", False)
     if privileges:
         grant: list[str] = []
         revoke: list[str] = []
         translate_privileges(cast(Mapping[str, PrivilegeGroupConfig], privileges), grant, revoke)
         grant.sort()
         token_config["privileges"] = grant
+    return name, token_config
 
-    user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
-    token_api = TokenApi(user_client)
-    response = token_api.create_named_token_for_current_user(data=token_config)
-    token = response.token
-    token_id = response.token_id
-    tmp_memory[user]["token"] = token
-    tokens[name] = {"token_id": token_id, "token": token}
+
+def _configure_invite_token(
+    token_variant: dict[str, TokenValue], data: ConfigMap, spaces: SpaceMap
+) -> None:
+    invite_type = cast(str, data["invite type"])
+    invite_target = cast(str | None, data.get("invite target"))
+    token_variant["inviteType"] = translation_dict[invite_type]["type"]
+    if not invite_target:
+        return
+
+    target = translation_dict[invite_type]["target"]
+    if "space" in invite_target:
+        invite_target = spaces[invite_target]
+    token_variant[target] = invite_target
 
 
 def parse_token_caveats(

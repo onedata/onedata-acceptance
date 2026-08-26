@@ -25,6 +25,7 @@ from tests.utils.rest_utils import (
 from tests.utils.utils import repeat_failed
 
 DEFAULT_REST_QUERY_TIMEOUT = 60
+ROOT_FILE_ID_MIN_PROVIDER_VERSION = 21
 
 JsonList = list[JsonObject]
 JsonPayload = Mapping[str, JsonValue]
@@ -335,7 +336,9 @@ def create_share(provider_host: str, token: str, file_id: str, name: str) -> str
         data=json.dumps(
             {
                 "name": name,
-                "rootFileId" if prov_version >= 21 else "fileId": file_id,
+                "rootFileId"
+                if prov_version >= ROOT_FILE_ID_MIN_PROVIDER_VERSION
+                else "fileId": file_id,
             }
         ),
     )

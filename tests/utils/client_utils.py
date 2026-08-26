@@ -74,7 +74,7 @@ class ProcessProxy(Protocol):
 class SubprocessProxy(Protocol):
     def check_output(self, command: Command) -> bytes: ...
     def call(self, command: Command) -> int: ...
-    def Popen(  # pylint: disable=invalid-name
+    def Popen(  # noqa: N802  # pylint: disable=invalid-name
         self,
         command: Command,
         stdout: int,
@@ -127,7 +127,7 @@ ClientConfig = TypedDict(
 )
 
 
-class Client:
+class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
     def __init__(self, rpyc_connection: RpycConnectionLike, timeout: int | None = 40) -> None:
         self._id = "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         self._mount_path = os.path.join(ONECLIENT_MOUNT_DIR, self._id)

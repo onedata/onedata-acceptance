@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 import traceback
 from collections.abc import Callable, Mapping
+from http import HTTPStatus
 from itertools import chain
 
 import requests
@@ -239,7 +240,7 @@ def http_request(  # pylint: disable=inconsistent-return-statements
                 params=params,
                 stream=stream,
             )
-            if 200 <= response.status_code < 300:
+            if HTTPStatus.OK <= response.status_code < HTTPStatus.MULTIPLE_CHOICES:
                 return response
             raise_http_exception(response)
         except HTTPServiceUnavailable as e:

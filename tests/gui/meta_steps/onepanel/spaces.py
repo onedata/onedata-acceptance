@@ -69,8 +69,10 @@ from tests.utils.user_utils import Users
 def support_space_using_form(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     # Getter avoids raising NoSuchElementException before the wait starts.
-    support_space_getter = lambda driver: Onepanel(driver).content.spaces.form.support_space
-    support_space_btn = wait_for_visible_element_using_getter(driver, support_space_getter)
+    support_space_btn = wait_for_visible_element_using_getter(
+        driver,
+        lambda current_driver: Onepanel(current_driver).content.spaces.form.support_space,
+    )
     click_on_btn_in_space_support_form(selenium, browser_id)
     wait_for_item_to_disappear(support_space_btn.web_elem, driver)
     notify_visible_with_text(

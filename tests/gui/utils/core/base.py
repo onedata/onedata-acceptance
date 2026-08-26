@@ -128,7 +128,7 @@ class ExpandableMixin:
 
     def is_expanded(self) -> bool:
         aria_expanded = self._toggle.get_attribute("aria-expanded")
-        return bool(aria_expanded and "true" == aria_expanded)
+        return bool(aria_expanded and aria_expanded == "true")
 
     def expand(self) -> None:
         if not self.is_expanded():

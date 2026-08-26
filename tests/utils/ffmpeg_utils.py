@@ -26,6 +26,7 @@ from _pytest.reports import TestReport
 FfmpegProcess = sp.Popen[str]
 MoviePaths = list[str]
 Offset = tuple[int, int]
+MAX_RECORDING_FILE_NAME_LENGTH = 180
 
 
 class FfmpegDetails(TypedDict, total=False):
@@ -99,8 +100,12 @@ class RecorderManager:
             # add timestamp to video name
             file_name = f"{self.request.node.name}.{int(time.time())}"
 
-            # for len(file_name) > 180 ffmpeg is not starting
-            file_name = file_name[:180] if len(file_name) > 180 else file_name
+            # ffmpeg does not start when the output name exceeds its limit.
+            file_name = (
+                file_name[:MAX_RECORDING_FILE_NAME_LENGTH]
+                if len(file_name) > MAX_RECORDING_FILE_NAME_LENGTH
+                else file_name
+            )
 
             # if there is '/' in file name ffmpeg is not starting
             file_name = file_name.replace("/", "_")

@@ -1,3 +1,4 @@
+# ruff: noqa: N803 - boto3 keyword names are part of the external API
 """Low-level OneS3 helpers using the boto3 library."""
 
 __author__ = "Wojciech Szmelich"
@@ -5,6 +6,7 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
+from http import HTTPStatus
 from typing import Protocol, TypedDict, cast
 
 import boto3  # pylint: disable=import-error
@@ -91,7 +93,7 @@ def list_buckets(s3: S3Client) -> list[str]:
 
 
 def does_bucket_exist(s3: S3Client, bucket_name: str) -> bool:
-    return s3.head_bucket(Bucket=bucket_name)["ResponseMetadata"]["HTTPStatusCode"] == 200
+    return s3.head_bucket(Bucket=bucket_name)["ResponseMetadata"]["HTTPStatusCode"] == HTTPStatus.OK
 
 
 def download_file_from_bucket(

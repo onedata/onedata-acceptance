@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from collections.abc import Mapping, MutableMapping
+from http import HTTPStatus
 from typing import NotRequired, Protocol, TypedDict, cast
 
 import yaml
@@ -95,7 +96,7 @@ def create_archive_in_op_rest(
             _ = archive_api.create_archive(data).archive_id
             raise AssertionError("function: create_archive worked but it should not")
         except OPException as err:
-            if err.status == 400:
+            if err.status == HTTPStatus.BAD_REQUEST:
                 pass
             else:
                 raise OPException from err
@@ -198,7 +199,7 @@ def remove_archive_in_op_rest(
             archive_api.delete_archive(archive_id)
             raise AssertionError("removing archive worked but it should not")
         except OPException as err:
-            if err.status == 400:
+            if err.status == HTTPStatus.BAD_REQUEST:
                 pass
             else:
                 raise OPException from err

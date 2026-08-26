@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import Protocol
+from typing import Protocol, cast
 
 import yaml
 from onepanel_client import (
@@ -22,6 +22,7 @@ from onepanel_client import (
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
+from tests.mixed.type_definitions import ConfigMap
 from tests.mixed.utils.common import login_to_oz, login_to_panel
 from tests.type_definitions import Hosts
 from tests.utils.user_utils import Users
@@ -66,46 +67,44 @@ def support_space_in_op_panel_using_rest(
     spaces_api = SpaceSupportApi(user_client)
     storages_api = StoragesApi(user_client)
 
-    options = yaml.load(config, yaml.Loader)
-
-    storage_import_options = options.get("storage import", None)
-    if storage_import_options:
-        max_depth = storage_import_options.get("max depth", None)
-        continuous_scan = storage_import_options.get("continuous scan", True)
-        modifications = storage_import_options.get("detect modifications", True)
-        deletions = storage_import_options.get("detect deletions", True)
-        interval = storage_import_options.get("scan interval [s]", 60)
-        sync_acl = storage_import_options.get("synchronize ACL", False)
-
-        storage_import = StorageImport(
-            mode="auto",
-            auto_storage_import_config=AutoStorageImportConfig(
-                max_depth=max_depth,
-                sync_acl=sync_acl,
-                continuous_scan=continuous_scan,
-                scan_interval=interval,
-                detect_modifications=modifications,
-                detect_deletions=deletions,
-            ),
-        )
-    else:
-        storage_import = None
-
-    storages = storages_api.get_storages().ids
+    options = cast(ConfigMap, yaml.load(config, yaml.Loader))
+    storage_import = _build_storage_import(options)
     storage_name = re.sub(r" \(.*\)", "", options["storage"])
-    for storage_id in storages:
+    storage_id = _find_storage_id(storages_api, storage_name)
+    space_support_request = SpaceSupportRequest(
+        token=tmp_memory[user]["mailbox"]["token"],
+        size=options["size"],
+        storage_id=storage_id,
+        storage_import=storage_import,
+    )
+    spaces_api.support_space(space_support_request)
+
+
+def _build_storage_import(options: ConfigMap) -> StorageImport | None:
+    storage_import_options = options.get("storage import")
+    if not storage_import_options:
+        return None
+
+    import_options = cast(ConfigMap, storage_import_options)
+    return StorageImport(
+        mode="auto",
+        auto_storage_import_config=AutoStorageImportConfig(
+            max_depth=import_options.get("max depth"),
+            sync_acl=import_options.get("synchronize ACL", False),
+            continuous_scan=import_options.get("continuous scan", True),
+            scan_interval=import_options.get("scan interval [s]", 60),
+            detect_modifications=import_options.get("detect modifications", True),
+            detect_deletions=import_options.get("detect deletions", True),
+        ),
+    )
+
+
+def _find_storage_id(storages_api: StoragesApi, storage_name: str) -> str:
+    for storage_id in storages_api.get_storages().ids:
         storage = storages_api.get_storage_details(storage_id)
         if storage.name == storage_name:
-            space_support_rq = SpaceSupportRequest(
-                token=tmp_memory[user]["mailbox"]["token"],
-                size=options["size"],
-                storage_id=storage_id,
-                storage_import=storage_import,
-            )
-            spaces_api.support_space(space_support_rq)
-            break
-    else:
-        raise ValueError(f'No storage named "{storage_name}"')
+            return cast(str, storage_id)
+    raise ValueError(f'No storage named "{storage_name}"')
 
 
 def configure_sync_parameters_for_space_in_op_panel_rest(

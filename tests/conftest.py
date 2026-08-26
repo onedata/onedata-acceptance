@@ -475,7 +475,7 @@ def driver(request: pytest.FixtureRequest) -> WebDriverFactory:
         web_driver = driver_factory.get_instance()
         if event_listener_cls and not isinstance(web_driver, EventFiringWebDriver):
             web_driver = EventFiringWebDriver(web_driver, event_listener_cls())
-        request.node._driver = web_driver
+        request.node._driver = web_driver  # noqa: SLF001 - pytest-selenium node contract
         request.addfinalizer(web_driver.quit)
         return web_driver
 
@@ -971,7 +971,7 @@ def xfail_by_env(request: pytest.FixtureRequest, env_description_file: str) -> N
 def select_browser(selenium: SeleniumFixtureState, browser_id: str) -> WebDriver:
     browser = cast(WebDriver, selenium[browser_id])
     request = cast(pytest.FixtureRequest, selenium["request"])
-    request.node._driver = browser
+    request.node._driver = browser  # noqa: SLF001 - pytest-selenium node contract
     return browser
 
 

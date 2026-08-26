@@ -72,7 +72,7 @@ class TestFilesCreation(AbstractPerformanceTest):
 
         for client in (client_directio, client_proxy):
             conn = client.rpyc_connection
-            conn._config["sync_request_timeout"] = RPYC_TIMEOUT
+            conn._config["sync_request_timeout"] = RPYC_TIMEOUT  # noqa: SLF001
 
         dir_path_directio = client_directio.mkdtemp(
             directory=client_directio.absolute_path("space1")

@@ -26,6 +26,8 @@ from tests.gui.utils.common.modals.workflows_modals.pods_activity import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
+EVENT_COUNT_TOLERANCE = 3
+
 
 @wt(
     parsers.parse(
@@ -214,7 +216,7 @@ def check_number_of_events(
         f'numer of events on "Pods activity" ({actual_num}) for task '
         f'"{task}" is not about {expected_num}'
     )
-    assert abs(actual_num - expected_num) <= 3, error_message
+    assert abs(actual_num - expected_num) <= EVENT_COUNT_TOLERANCE, error_message
 
 
 @wt(

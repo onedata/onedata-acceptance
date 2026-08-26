@@ -36,6 +36,8 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
 from tests.utils.utils import repeat_failed
 
+MIN_CLUSTER_HOST_ROWS = 2
+
 
 @given(
     parsers.re(
@@ -177,7 +179,7 @@ def wt_click_on_btn_in_deployment_step(
             selector = driver.find_elements(
                 By.CSS_SELECTOR, ".cluster-host-table .cluster-host-table-row"
             )
-            if len(selector) < 2:
+            if len(selector) < MIN_CLUSTER_HOST_ROWS:
                 time.sleep(1)
             else:
                 break

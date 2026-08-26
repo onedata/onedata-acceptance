@@ -57,6 +57,8 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_post
 from tests.utils.user_utils import User
 
+REQUIRED_POSIX_STORAGE_PARAMS_COUNT = 2
+
 
 def _register_storage_finalizer(
     request: pytest.FixtureRequest,
@@ -295,7 +297,8 @@ def _delete_all_additional_params_in_storage_page(
         click_modify_storage_in_onepanel(selenium, browser_id, name)
         driver = selenium[browser_id]
         storage = Onepanel(driver).content.storages.storages["posix"]
-        if storage.edit_form.posix_editor.params.get_key_values_count() == 2:
+        key_values_count = storage.edit_form.posix_editor.params.get_key_values_count()
+        if key_values_count == REQUIRED_POSIX_STORAGE_PARAMS_COUNT:
             deleted = True
         if not deleted:
             delete_additional_param_in_posix_storage_edit_page(selenium, browser_id)

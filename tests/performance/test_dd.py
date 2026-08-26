@@ -207,9 +207,9 @@ def convert_size(value: int | float, prefix: str, convert_to_prefix: str) -> flo
     return value * factor
 
 
-def is_SI_prefix(prefix: str) -> bool:
+def is_SI_prefix(prefix: str) -> bool:  # noqa: N802 - SI is the domain-standard acronym
     return prefix.endswith("B")
 
 
-def SI_prefix_to_default(prefix: str) -> str:
+def SI_prefix_to_default(prefix: str) -> str:  # noqa: N802 - SI is the domain-standard acronym
     return prefix.upper().strip("B")

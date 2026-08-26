@@ -4,6 +4,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from http import HTTPStatus
 from typing import NotRequired, TypedDict, cast
 
 import yaml
@@ -58,7 +59,7 @@ def fail_to_create_dataset_in_op_rest(
         create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, option)
         raise AssertionError("function: establish_dataset worked but it should not")
     except OPException as err:
-        if err.status == 400:
+        if err.status == HTTPStatus.BAD_REQUEST:
             pass
         else:
             raise OPException from err

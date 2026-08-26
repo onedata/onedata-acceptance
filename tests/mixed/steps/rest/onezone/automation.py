@@ -8,6 +8,7 @@ import json
 import os
 from collections.abc import Mapping
 from functools import partial
+from http import HTTPStatus
 from typing import Protocol, TypedDict, cast
 
 import yaml
@@ -433,7 +434,7 @@ def fail_to_resume_workflow_rest(
         resume_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions)
         raise AssertionError("Resuming workflow execution should have failed")
     except ApiException as e:
-        if e.status == 400:
+        if e.status == HTTPStatus.BAD_REQUEST:
             return
         raise
 
@@ -937,7 +938,7 @@ def fail_to_get_workflow_execution_details(
         _ = get_workflow_execution_details(user, users, host, hosts, wid)
         raise AssertionError("Expected to get error 404 workflow not found, but succeed")
     except HTTPNotFound as e:
-        if e.status_code == 404:
+        if e.status_code == HTTPStatus.NOT_FOUND:
             return
         raise
 

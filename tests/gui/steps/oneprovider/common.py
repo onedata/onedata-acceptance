@@ -35,7 +35,7 @@ def _wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: li
             found = parse_url(d.current_url).group("where")
         except AttributeError as exc:
             raise AssertionError("no access part found in url") from exc
-        if "opw" != found.lower():
+        if found.lower() != "opw":
             raise AssertionError(f"expected opw as access part in url instead got: {found}")
 
     time.sleep(12)

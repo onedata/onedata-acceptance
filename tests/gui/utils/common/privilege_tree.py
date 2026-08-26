@@ -31,6 +31,8 @@ from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.utils import repeat_failed
 
+PRIVILEGE_ROW_LOOKUP_ATTEMPTS = 10
+
 
 class PrivilegeRow(PageObject):
     name = id = Label(".priv")
@@ -329,7 +331,7 @@ class PrivilegeTree(PageObject):
         privilege_row: PrivilegeGroup | None = None
         # Tolerate loading of privileges table
         privilege_row_try = 0
-        while privilege_row is None and privilege_row_try < 10:
+        while privilege_row is None and privilege_row_try < PRIVILEGE_ROW_LOOKUP_ATTEMPTS:
             try:
                 privilege_row = self.privilege_groups[name]
             except PageObjectNotFoundError:

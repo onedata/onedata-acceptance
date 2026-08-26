@@ -99,7 +99,7 @@ class ObjectIdEntry(PageObject):
     name = id = Label(".text-like-field")
 
 
-class CaveatField(PageObject):
+class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat operations
     name = id = Label(".control-label")
     toggle = Toggle(".one-way-toggle")
 

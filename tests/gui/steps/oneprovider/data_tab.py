@@ -209,7 +209,7 @@ def assert_absence_of_path_in_dir_tree(
     driver = selenium[browser_id]
     curr_dir = OPLoggedIn(driver).data.sidebar.root_dir
     with pytest.raises(PageObjectNotFoundError):
-        for directory in (dir for dir in path.split("/") if dir != ""):
+        for directory in (path_part for path_part in path.split("/") if path_part != ""):
             curr_dir = curr_dir[directory]
 
 
@@ -337,7 +337,7 @@ def check_displayed_dir_name_len_in_dir_tree(
     driver = selenium[browser_id]
     cwd = OPLoggedIn(driver).data.sidebar.root_dir
     cwd.click()
-    for directory in (dir for dir in path.split("/") if dir != ""):
+    for directory in (path_part for path_part in path.split("/") if path_part != ""):
         cwd = cwd[directory]
 
     tmp_memory[browser_id][path] = cwd.displayed_name_width
@@ -356,7 +356,7 @@ def assert_diff_in_len_of_dir_name_before_and_now(
     driver = selenium[browser_id]
     cwd = OPLoggedIn(driver).data.sidebar.root_dir
     cwd.click()
-    for directory in (dir for dir in path.split("/") if dir != ""):
+    for directory in (path_part for path_part in path.split("/") if path_part != ""):
         cwd = cwd[directory]
 
     prev_len = tmp_memory[browser_id][path]

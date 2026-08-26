@@ -59,15 +59,15 @@ class ArchiveRecallInformation(Modal):
     def __str__(self) -> str:
         return "Archive recall information"
 
-    def get_progress_info(self, type: str) -> tuple[str, str]:
+    def get_progress_info(self, progress_type: str) -> tuple[str, str]:
         """Returns a tuple with (currnet_value, total_value) for progress info.
         Return values are in string, because they can contain size with units, eg.
         ("3 B", "40 KiB").
 
-        :param str type: one of values that are in "<current> / <total>" format,
-                         eg. "files_recalled" or "data_recalled"
+        :param str progress_type: one of values that are in "<current> / <total>"
+                                  format, eg. "files_recalled" or "data_recalled"
         """
-        return ArchiveRecallInformation.parse_progress(getattr(self, type))
+        return ArchiveRecallInformation.parse_progress(getattr(self, progress_type))
 
     def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)

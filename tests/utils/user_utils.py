@@ -161,7 +161,7 @@ class User:  # pylint: disable=too-many-instance-attributes
 
         # change timeout for rpyc to avoid AsyncResultTimeout in performance tests on bamboo
         # pylint: disable=protected-access
-        rpyc_connection._config["sync_request_timeout"] = 300
+        rpyc_connection._config["sync_request_timeout"] = 300  # noqa: SLF001
 
         print(
             f"rpyc server for user '{self.username}' on client host '{client_host}'"

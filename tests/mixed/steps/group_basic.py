@@ -79,12 +79,13 @@ def create_groups(
     request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
 ) -> None:
-    register_finalizer = lambda group_id: _register_group_finalizer(
-        request,
-        hosts[host]["hostname"],
-        admin_credentials,
-        group_id,
-    )
+    def register_finalizer(group_id: str) -> None:
+        _register_group_finalizer(
+            request,
+            hosts[host]["hostname"],
+            admin_credentials,
+            group_id,
+        )
 
     if client.lower() == "rest":
         create_groups_using_rest(user, users, hosts, group_list, register_finalizer, host)

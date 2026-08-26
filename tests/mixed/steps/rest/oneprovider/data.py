@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Iterable, Mapping
 from datetime import datetime
 from functools import partial
+from http import HTTPStatus
 from typing import cast
 
 import pytest
@@ -615,7 +616,7 @@ def check_for_hardlink_between_files_rest(
         file_api.test_for_hardlink_between_files(hardlink_id, file_id)
         return True
     except OPException as e:
-        if e.status != 404:
+        if e.status != HTTPStatus.NOT_FOUND:
             raise e
         return False
 

@@ -189,31 +189,39 @@ def choose_properties_to_filter(selenium: SeleniumDrivers, browser_id: str, conf
 def _parse_data(data: list[JsonValue], selenium: SeleniumDrivers, browser_id: str) -> None:
     page = DataDiscovery(selenium[browser_id])
     for item in data:
-        if isinstance(item, dict):
-            if [*item][0] == "__onedata":
-                page.filter_properties_tree.tree_nodes["__onedata"].expander()
-                attributes = cast(list[JsonValue], item["__onedata"])
-                for attribute in attributes:
-                    if isinstance(attribute, dict):
-                        if [*attribute][0] == "xattrs":
-                            node = page.filter_properties_tree.tree_nodes[
-                                "__onedata"
-                            ].onedata_tree_nodes["xattrs"]
-                            node.expander()
-                            nodes = node.xattrs_tree_nodes
-                            for property_name in cast(list[str], attribute["xattrs"]):
-                                nodes[property_name].checkbox.click()
-                        else:
-                            raise ValueError(f"Do not support {attribute}")
-                    else:
-                        nodes = page.filter_properties_tree.tree_nodes[
-                            "__onedata"
-                        ].onedata_tree_nodes
-                        nodes[attribute].checkbox.click()
-            else:
-                raise ValueError(f"Do not support {item}")
-        else:
-            page.filter_properties_tree.tree_nodes[item].checkbox.click()
+        _select_filter_property(page, item)
+
+
+def _select_filter_property(page: DataDiscovery, item: JsonValue) -> None:
+    if isinstance(item, str):
+        page.filter_properties_tree.tree_nodes[item].checkbox.click()
+        return
+
+    if not isinstance(item, dict) or set(item) != {"__onedata"}:
+        raise ValueError(f"Do not support {item}")
+
+    page.filter_properties_tree.tree_nodes["__onedata"].expander()
+    attributes = cast(list[JsonValue], item["__onedata"])
+    for attribute in attributes:
+        _select_onedata_attribute(page, attribute)
+
+
+def _select_onedata_attribute(page: DataDiscovery, attribute: JsonValue) -> None:
+    onedata_node = page.filter_properties_tree.tree_nodes["__onedata"]
+    nodes = onedata_node.onedata_tree_nodes
+
+    if isinstance(attribute, str):
+        nodes[attribute].checkbox.click()
+        return
+
+    if not isinstance(attribute, dict) or set(attribute) != {"xattrs"}:
+        raise ValueError(f"Do not support {attribute}")
+
+    xattrs_node = nodes["xattrs"]
+    xattrs_node.expander()
+    property_names = cast(list[str], attribute["xattrs"])
+    for property_name in property_names:
+        xattrs_node.xattrs_tree_nodes[property_name].checkbox.click()
 
 
 @wt(

@@ -19,6 +19,7 @@ from tests.utils.bdd_utils import given, parsers, wt
 
 PROVIDER_CONTAINER_NAME = "oneprovider-1"
 MOUNT_POINT = "/volumes/posix"
+ACCOUNT_ALREADY_EXISTS_EXIT_CODE = 9
 
 
 @given(parsers.parse("there is following users configuration in storage's mount point:\n{config}"))
@@ -42,7 +43,7 @@ def _docker_configure_users(config: str, hosts: Hosts) -> None:
             docker_create_group(group, gid, hosts)
         except subprocess.CalledProcessError as e:
             # if group exists
-            if e.returncode == 9:
+            if e.returncode == ACCOUNT_ALREADY_EXISTS_EXIT_CODE:
                 pass
             else:
                 raise e
@@ -52,7 +53,7 @@ def _docker_configure_users(config: str, hosts: Hosts) -> None:
                 docker_create_user_with_group(user, uid, group, hosts)
             except subprocess.CalledProcessError as e:
                 # if user exists
-                if e.returncode == 9:
+                if e.returncode == ACCOUNT_ALREADY_EXISTS_EXIT_CODE:
                     pass
                 else:
                     raise e

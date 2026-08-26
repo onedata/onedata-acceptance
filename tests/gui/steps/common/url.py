@@ -30,6 +30,7 @@ from tests.utils.utils import repeat_failed
 
 HOST_PATTERN = rf"(?:{'|'.join(pattern.value for pattern in HostPattern)})"
 HOST_ELEMENT_PATTERN = rf'(?:{HOST_PATTERN}|"{HOST_PATTERN}")'
+MIN_RESOURCE_ID_LENGTH = 10
 
 HOSTS_SEQUENCE_PATTERN = (
     rf"(?:"
@@ -298,7 +299,9 @@ def cp_part_of_url(
 ) -> None:
     driver = selenium[browser_id]
     item_value = parse_url(driver.current_url).group("id")
-    assert len(item_value) > 10, f"did not manage to get resource ID, got: {item_value}"
+    assert len(item_value) > MIN_RESOURCE_ID_LENGTH, (
+        f"did not manage to get resource ID, got: {item_value}"
+    )
     clipboard.copy(
         item_value,
         display=displays[browser_id],

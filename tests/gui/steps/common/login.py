@@ -157,8 +157,9 @@ def assert_logged_in_service(selenium: SeleniumDrivers, browser_id: str, service
 @wt(parsers.re(r"user of (?P<browser_id>.*) successfully signs in to (?P<service>.*)"))
 def wt_assert_successful_login(selenium: SeleniumDrivers, browser_id: str, service: str) -> None:
     driver = selenium[browser_id]
-    sign_in_getter = lambda driver: LoginPage(driver).sign_in
-    sign_in = wait_for_visible_element_using_getter(driver, sign_in_getter)
+    sign_in = wait_for_visible_element_using_getter(
+        driver, lambda current_driver: LoginPage(current_driver).sign_in
+    )
     sign_in.click()
     wait_for_item_to_disappear(sign_in.web_elem, driver)
     assert_main_page_loaded(selenium, browser_id)
@@ -173,8 +174,9 @@ def wt_assert_successful_login(selenium: SeleniumDrivers, browser_id: str, servi
 )
 def wt_assert_failed_login_credentials(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    sign_in_getter = lambda driver: LoginPage(driver).sign_in
-    wait_for_visible_element_using_getter(driver, sign_in_getter).click()
+    wait_for_visible_element_using_getter(
+        driver, lambda current_driver: LoginPage(current_driver).sign_in
+    ).click()
     _assert_error_message_about_credentials(selenium, browser_id)
 
 

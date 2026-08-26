@@ -21,6 +21,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 DATASET_BROWSER = "dataset browser"
+EXPECTED_DUPLICATE_PATHS_COUNT = 2
 
 
 @wt(
@@ -196,7 +197,7 @@ def assert_two_identical_root_file_paths(
     browser = tmp_memory[browser_id][transform(DATASET_BROWSER)]
     paths = [dataset.path_to_root_file for dataset in browser.data if dataset.name == name]
 
-    assert len(paths) == 2 and paths[0] == paths[1], (
+    assert len(paths) == EXPECTED_DUPLICATE_PATHS_COUNT and paths[0] == paths[1], (
         f'"{paths[0]}" and "{paths[1]}" should be identical'
     )
     assert paths[0] == path, f'"{paths[0]}" match "{path[1]}" but does not match expected "{path}"'

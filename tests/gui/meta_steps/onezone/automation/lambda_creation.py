@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import os
 import time
+from typing import cast
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -43,11 +44,13 @@ from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import transform, upload_lambda_path
-from tests.type_definitions import SeleniumDrivers
+from tests.type_definitions import JsonObject, SeleniumDrivers
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 
-ALL_LAMBDA_NAMES = []
+ALL_LAMBDA_NAMES: list[str] = []
+ORDINAL_SUFFIXES = "tsnrhtdd"
+ORDINAL_SUFFIX_COUNT = 4
 
 
 @wt(parsers.parse("user of {browser_id} creates lambda with following configuration:\n{config}"))
@@ -89,72 +92,61 @@ def create_lambda_manually(browser_id: str, config: str, selenium: SeleniumDrive
 
 
 def _create_lambda_manually(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
+    data = cast(JsonObject, yaml.load(config, yaml.Loader))
+    _fill_lambda_basic_fields(selenium, browser_id, data)
+    _add_lambda_parameters(
+        selenium,
+        browser_id,
+        cast(list[JsonObject], data.get("configuration parameters", [])),
+        "configuration parameters",
+    )
+    _add_lambda_parameters(
+        selenium,
+        browser_id,
+        cast(list[JsonObject], data.get("arguments", [])),
+        "argument",
+    )
+    _add_lambda_parameters(
+        selenium,
+        browser_id,
+        cast(list[JsonObject], data.get("results", [])),
+        "result",
+    )
+    confirm_lambda_creation_or_edition(selenium, browser_id, "lambda")
 
-    button = "Add new lambda"
-    name_field = "lambda name"
-    docker_field = "docker image"
-    read_only_toggle = "Read only"
-    mount_space_toggle = "Mount space"
-    argument_option = "argument"
-    conf_param_option = "configuration parameters"
-    result_option = "result"
-    option = "lambda"
 
-    data = yaml.load(config, yaml.Loader)
-    name = data["name"]
-    docker_image = data["docker image"]
-    read_only = data.get("read-only", True)
-    mount_space = data.get("mount space", True)
-    arguments = data.get("arguments", False)
-    results = data.get("results", False)
-    configuration_parameters = data.get("configuration parameters", False)
+def _fill_lambda_basic_fields(selenium: SeleniumDrivers, browser_id: str, data: JsonObject) -> None:
+    click_add_new_button_in_menu_bar(selenium, browser_id, "Add new lambda")
+    write_text_into_lambda_form(selenium, browser_id, cast(str, data["name"]), "lambda name")
+    write_text_into_lambda_form(
+        selenium, browser_id, cast(str, data["docker image"]), "docker image"
+    )
+    read_only_option = "checks" if data.get("read-only", True) else "unchecks"
+    mount_space_option = "checks" if data.get("mount space", True) else "unchecks"
+    switch_toggle_in_lambda_form(selenium, browser_id, read_only_option, "Read only")
+    switch_toggle_in_lambda_form(selenium, browser_id, mount_space_option, "Mount space")
 
-    read_only_option = "checks" if read_only else "unchecks"
-    mount_space_option = "checks" if mount_space else "unchecks"
 
-    click_add_new_button_in_menu_bar(selenium, browser_id, button)
-    write_text_into_lambda_form(selenium, browser_id, name, name_field)
-    write_text_into_lambda_form(selenium, browser_id, docker_image, docker_field)
-    switch_toggle_in_lambda_form(selenium, browser_id, read_only_option, read_only_toggle)
-    switch_toggle_in_lambda_form(selenium, browser_id, mount_space_option, mount_space_toggle)
+def _add_lambda_parameters(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    parameters: list[JsonObject],
+    parameter_option: str,
+) -> None:
+    for index, parameter in enumerate(parameters, start=1):
+        add_parameter_into_lambda_form(
+            selenium,
+            browser_id,
+            parameter_option,
+            cast(str, parameter["name"]),
+            cast(str, parameter["type"]),
+            _ordinal(index),
+        )
 
-    def ordinal(n: int) -> str:
-        return f"{n}{'tsnrhtdd'[(n // 10 % 10 != 1) * (n % 10 < 4) * n % 10 :: 4]}"
 
-    if configuration_parameters:
-        for i, config_param in enumerate(configuration_parameters):
-            add_parameter_into_lambda_form(
-                selenium,
-                browser_id,
-                conf_param_option,
-                config_param["name"],
-                config_param["type"],
-                ordinal(i + 1),
-            )
-
-    if arguments:
-        for i, args in enumerate(arguments):
-            add_parameter_into_lambda_form(
-                selenium,
-                browser_id,
-                argument_option,
-                args["name"],
-                args["type"],
-                ordinal(i + 1),
-            )
-
-    if results:
-        for i, res in enumerate(results):
-            add_parameter_into_lambda_form(
-                selenium,
-                browser_id,
-                result_option,
-                res["name"],
-                res["type"],
-                ordinal(i + 1),
-            )
-
-    confirm_lambda_creation_or_edition(selenium, browser_id, option)
+def _ordinal(number: int) -> str:
+    suffix_index = (number // 10 % 10 != 1) * (number % 10 < ORDINAL_SUFFIX_COUNT) * number % 10
+    return f"{number}{ORDINAL_SUFFIXES[suffix_index::ORDINAL_SUFFIX_COUNT]}"
 
 
 @wt(
@@ -301,10 +293,10 @@ def upload_all_lambda_dumps_from_automation_examples(
     inventory: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    global ALL_LAMBDA_NAMES
-    ALL_LAMBDA_NAMES = [
+    ALL_LAMBDA_NAMES.clear()
+    ALL_LAMBDA_NAMES.extend(
         f for f in os.listdir(upload_lambda_path(None)) if os.path.isdir(upload_lambda_path(f))
-    ]
+    )
     for lambda_name in ALL_LAMBDA_NAMES:
         _upload_lambda_dump_from_automation_examples(
             selenium,

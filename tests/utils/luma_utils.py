@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import hashlib
 import json
 from collections.abc import Callable, Mapping
+from http import HTTPStatus
 from typing import NamedTuple
 
 import requests
@@ -95,7 +96,7 @@ def get_local_feed_luma_storages(
                 headers={"X-Auth-Token": admin_user.token},
             )
             loaded_response = json.loads(response.content)
-            if "lumaFeed" in loaded_response and "local" == loaded_response["lumaFeed"]:
+            if "lumaFeed" in loaded_response and loaded_response["lumaFeed"] == "local":
                 storages.append(StorageDetails(storage_id, provider_ip))
 
     return storages
@@ -170,7 +171,7 @@ def add_mapping(
                 "Content-Type": "application/json",
             },
         )
-        assert 204 == response.status_code
+        assert response.status_code == HTTPStatus.NO_CONTENT
     except HTTPConflict:
         # luma mapping for this entity was already added
         pass

@@ -12,16 +12,16 @@ from tests.utils.bdd_utils import parsers, wt
 
 WORKFLOW_DIR = "automation-examples/workflows"
 TESTS_DIR = "tests/gui/features"
-WORKFLOWS_NAMES = []
+WORKFLOWS_NAMES: list[str] = []
 
 
 @wt(parsers.parse("workflows from automation-examples are gathered"))
 def gather_workflows_names() -> None:
-    global WORKFLOWS_NAMES
     workflows_names: list[str] = []
     for _, _, files in os.walk(WORKFLOW_DIR):
         workflows_names.extend(filter(lambda x: x.endswith(".json"), files))
-    WORKFLOWS_NAMES = workflows_names
+    WORKFLOWS_NAMES.clear()
+    WORKFLOWS_NAMES.extend(workflows_names)
 
 
 @wt(parsers.parse("all gathered workflows are used in acceptance tests"))
