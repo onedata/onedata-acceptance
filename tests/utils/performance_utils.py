@@ -38,7 +38,7 @@ def performance(
 
     def wrap(test_function: Callable[..., object]) -> Callable[..., object]:
 
-        def wrapped_test_function(  # pylint: disable=unused-argument
+        def wrapped_test_function(
             self: object,
             clients: object,  # noqa: ARG001 - pytest fixture contract
             suite_report: Report,
@@ -82,7 +82,7 @@ def performance(
                             env_desc,
                             merged_config.get("parameters", {}),
                         )
-                    except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
+                    except Exception as e:  # noqa: BLE001 - record each test failure
                         flushed_print("\t\tTestcase failed beceause of: " + str(e))
                         failed_repeats += 1
                         failed_details[str(repeats)] = str(e)

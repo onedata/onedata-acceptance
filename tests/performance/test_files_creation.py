@@ -2,8 +2,6 @@
 testing creation of 10000 files.
 """
 
-# pylint: disable=consider-using-f-string,protected-access
-
 __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -72,7 +70,9 @@ class TestFilesCreation(AbstractPerformanceTest):
 
         for client in (client_directio, client_proxy):
             conn = client.rpyc_connection
-            conn._config["sync_request_timeout"] = RPYC_TIMEOUT  # noqa: SLF001
+            conn._config["sync_request_timeout"] = (  # noqa: SLF001 - RPyC exposes timeouts through this configuration mapping
+                RPYC_TIMEOUT
+            )
 
         dir_path_directio = client_directio.mkdtemp(
             directory=client_directio.absolute_path("space1")

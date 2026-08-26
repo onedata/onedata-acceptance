@@ -9,9 +9,9 @@ import os
 from http import HTTPStatus
 from typing import Protocol, TypedDict, cast
 
-import boto3  # pylint: disable=import-error
+import boto3
 from _pytest._py.path import LocalPath
-from botocore.config import Config  # pylint: disable=import-error
+from botocore.config import Config
 
 from tests import ONES3_PORT
 from tests.gui.type_definitions import TmpMemory

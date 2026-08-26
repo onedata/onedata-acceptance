@@ -436,8 +436,8 @@ def assert_xmls_equal(e1: str, e2: str) -> None:
     """
     r1 = ET.fromstring(ET.canonicalize(e1))
     r2 = ET.fromstring(ET.canonicalize(e2))
-    r1_list = list(r1)  # pylint: disable=unnecessary-comprehension
-    r2_list = list(r2)  # pylint: disable=unnecessary-comprehension
+    r1_list = list(r1)
+    r2_list = list(r2)
     r1_sorted = sorted(r1_list, key=lambda x: (x.tag, x.text, x.attrib))
     r2_sorted = sorted(r2_list, key=lambda x: (x.tag, x.text, x.attrib))
 

@@ -114,7 +114,6 @@ SPACE_NAME = "space_views"
 RESULTS: dict[str, JsonList | str] = {}
 
 
-# pylint: disable=too-many-statements
 def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]:
     return [
         UpgradeTest(
@@ -135,7 +134,6 @@ def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]
     ]
 
 
-# pylint: disable=too-many-statements
 def setup_views(tests_controller: UpgradeTestsControllerLike) -> None:
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]

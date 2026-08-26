@@ -75,7 +75,7 @@ class ProcessProxy(Protocol):
 class SubprocessProxy(Protocol):
     def check_output(self, command: Command) -> bytes: ...
     def call(self, command: Command) -> int: ...
-    def Popen(  # noqa: N802  # pylint: disable=invalid-name
+    def Popen(  # noqa: N802 - protocol mirrors subprocess.Popen
         self,
         command: Command,
         stdout: int,
@@ -190,7 +190,7 @@ class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
             try:
                 result = condition()
                 condition_satisfied = True if result is None else bool(result)
-            except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
+            except Exception:  # noqa: BLE001 - retry arbitrary callback failures
                 condition_satisfied = False
                 if timeout == 0:
                     log_exception()

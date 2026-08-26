@@ -5,7 +5,6 @@ multiclient environment.
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
-# pylint: disable=cell-var-from-loop, deprecated-method
 
 import errno
 import os.path

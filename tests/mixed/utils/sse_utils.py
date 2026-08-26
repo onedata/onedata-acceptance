@@ -12,8 +12,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Final, NotRequired, TypedDict, cast
 
-from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
-from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
+from aiohttp_sse_client import client as sse_client
+from aiohttp_sse_client.client import MessageEvent
 
 from tests.mixed.type_definitions import FileAttrs
 
@@ -39,7 +39,7 @@ class SSEEvent(Enum):
     DELETED = "deleted"
 
 
-class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attributes
+class SpaceFilesMonitorClient(ABC):
     def __init__(
         self,
         oneprovider_authority: str,
@@ -82,7 +82,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
                 await self._consume_stream(reconnect=bool(self.last_event_id))
             except asyncio.CancelledError:
                 break
-            except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
+            except Exception as e:  # noqa: BLE001 - reconnect after any stream failure
                 if loop.is_closed() or not loop.is_running():
                     print("Loop is closed, breaking run()")
                     break

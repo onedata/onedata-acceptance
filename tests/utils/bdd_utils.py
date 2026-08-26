@@ -1,7 +1,5 @@
 """This module provides utility functions for bdd tests."""
 
-# pylint: disable=invalid-name,redefined-outer-name
-
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -175,7 +173,6 @@ def _create_decorator(
     return cast(StepDecorator, decorator)
 
 
-# pylint: disable=line-too-long
 scenarios_to_rerun = {
     "test_user_resume_workflow_execution_after_pausing_execution_of_created_workflow_while_lane_had_preparing_status",
     "test_user_sees_status_cancelled_in_lane1_and_unscheduled_in_lane2_after_cancelling_execution_of_uploaded_workflowwithsleeptwolanes_workflow",

@@ -15,7 +15,7 @@ from types import ModuleType
 from typing import ParamSpec, TypeVar, cast
 
 import pytest
-from decorator import decorator  # pylint: disable=import-error
+from decorator import decorator
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 P = ParamSpec("P")
@@ -44,7 +44,7 @@ def assert_generic(
     if should_fail:
         assert_false(expression, *args, **kwargs)
     else:
-        assert_(expression, *args, **kwargs)  # pylint: disable=deprecated-method
+        assert_(expression, *args, **kwargs)
 
 
 def assert_(expression: Callable[..., object], *args: object, **kwargs: object) -> None:

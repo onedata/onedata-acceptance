@@ -200,7 +200,7 @@ def register_prov_using_register_btn(selenium: SeleniumDrivers, browser_id: str)
     while time.time() - start_time < max_time:
         try_click_without_throwing_error(
             # Keep descriptor lookup inside the retry and exception-suppression boundary.
-            lambda: step.register.click(),  # noqa: PLW0108
+            lambda: step.register.click(),  # noqa: PLW0108 - defer lookup until retry
             timeout=1,
         )
         if _check_error_modal_appeared_or_registration_finished(driver):

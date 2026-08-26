@@ -1,7 +1,5 @@
 """This module contains performance tests of oneclient using sysbench benchmark."""
 
-# pylint: disable=consider-using-f-string,unused-argument
-
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"

@@ -26,9 +26,7 @@ def start_session(
         cmd.extend(["-screen", str(screen), whd])
 
     with open(os.devnull, "w", encoding="utf-8") as dev_null:
-        proc = sp.Popen(  # pylint: disable=consider-using-with
-            cmd, stdout=dev_null, stderr=dev_null, close_fds=True
-        )
+        proc = sp.Popen(cmd, stdout=dev_null, stderr=dev_null, close_fds=True)
 
     # let Xvfb start
     time.sleep(0.5)

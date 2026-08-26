@@ -13,7 +13,6 @@ from typing import Protocol, TypedDict, TypeGuard, cast
 import pytest
 from packaging.version import Version
 
-# pylint: disable=import-error,no-name-in-module
 from bamboos.docker.environment.docker import pull_image_with_retries
 from bamboos.docker.images_branch_config import resolve_image
 from tests.conftest import export_logs
@@ -118,7 +117,6 @@ class UpgradeTest:
         print(f'\nVerify for test "{self.__name}" finished\n')
 
 
-# pylint: disable=too-many-instance-attributes,broad-exception-caught
 class UpgradeTestsController:
     def __init__(
         self,

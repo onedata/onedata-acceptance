@@ -107,7 +107,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
     def echo(self, input_file: str = "space1/file1") -> ExecutionResult:
         return [{"input": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
-    def initialize_eureka3D_project(  # noqa: N802  # pylint: disable=invalid-name
+    def initialize_eureka3D_project(  # noqa: N802 - method name matches the external workflow identifier
         self,
         parent_directory: str = "space1/dir1",
         project_name: str = "hello",

@@ -54,7 +54,7 @@ def start_recording(
             os.remove(path)
 
     with open(os.devnull, "w", encoding="utf-8") as dev_null:
-        proc = sp.Popen(  # pylint: disable=consider-using-with
+        proc = sp.Popen(
             cmd,
             stdin=sp.PIPE,
             stdout=dev_null,
@@ -125,7 +125,7 @@ class RecorderManager:
             )
             self.ffmpeg_details["proc"] = ffmpeg_proc
             self.ffmpeg_details["movies"] = movies
-            self.request.node._movies = movies  # noqa: SLF001
+            self.request.node._movies = movies  # noqa: SLF001 - pytest node stores recording artifacts
 
     def handle_stop_recording(self, status: TestReport) -> None:
         recording = self.request.config.getoption("--xvfb-recording")

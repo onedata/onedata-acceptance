@@ -11,7 +11,7 @@ import os
 from collections.abc import Mapping
 from typing import cast
 
-import rpyc  # pylint: disable=import-error
+import rpyc
 
 from tests import HTTP_PORT, OZ_REST_PORT
 from tests.type_definitions import EnvDesc
@@ -32,7 +32,7 @@ BAD_TOKEN = "bad token"
 CORRECT_TOKEN = "token"
 
 
-class User:  # pylint: disable=too-many-instance-attributes
+class User:
     def __init__(
         self,
         zone_hostname: str,
@@ -160,8 +160,9 @@ class User:  # pylint: disable=too-many-instance-attributes
         rpyc_connection = self._connect_to_rpyc(client_host_ip, port)
 
         # change timeout for rpyc to avoid AsyncResultTimeout in performance tests on bamboo
-        # pylint: disable=protected-access
-        rpyc_connection._config["sync_request_timeout"] = 300  # noqa: SLF001
+        rpyc_connection._config["sync_request_timeout"] = (  # noqa: SLF001 - RPyC exposes timeouts through this configuration mapping
+            300
+        )
 
         print(
             f"rpyc server for user '{self.username}' on client host '{client_host}'"

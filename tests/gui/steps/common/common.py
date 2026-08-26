@@ -314,9 +314,7 @@ def click_close_button_and_wait_to_disappear(
     web_elem_or_locator: WebElementOrCssLocator,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    try_click_without_throwing_error(
-        lambda: get_close_button(driver).click()  # pylint: disable=unnecessary-lambda
-    )
+    try_click_without_throwing_error(lambda: get_close_button(driver).click())
     WebDriverWait(driver, WAIT_FRONTEND).until(
         invisibility_of_element(web_elem_or_locator),
         message="Popup or modal is still visible",

@@ -1,7 +1,5 @@
 """This module contains performance tests of dd operation in oneclient."""
 
-# pylint: disable=consider-using-f-string,invalid-name
-
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"

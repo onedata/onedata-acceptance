@@ -22,7 +22,7 @@ import yaml
 from _pytest.config.argparsing import Parser
 from _pytest.python import Metafunc
 from _pytest.reports import TestReport
-from py.xml import html  # pylint: disable=import-error, no-name-in-module
+from py.xml import html
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import Chrome
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -317,7 +317,7 @@ def onepanel_credentials(
 
 @pytest.fixture(autouse=True)
 def emergency_passphrase(
-    users: Users,  # noqa: ARG001 - fixture dependency controls setup order
+    users: Users,
     hosts: Hosts,
 ) -> str:
     zone_pod_name = hosts["onezone"]["pod_name"]
@@ -475,7 +475,7 @@ def driver(request: pytest.FixtureRequest) -> WebDriverFactory:
         web_driver = driver_factory.get_instance()
         if event_listener_cls and not isinstance(web_driver, EventFiringWebDriver):
             web_driver = EventFiringWebDriver(web_driver, event_listener_cls())
-        request.node._driver = web_driver  # noqa: SLF001 - pytest-selenium node contract
+        request.node._driver = web_driver
         request.addfinalizer(web_driver.quit)
         return web_driver
 
@@ -625,7 +625,7 @@ def pytest_runtest_makereport(
 
 def _gather_url(
     item: pytest.Item,
-    report: TestReport,  # noqa: ARG001 - keep capture-helper signatures uniform
+    report: TestReport,
     driver: WebDriver,
     summary: list[str],
     extras: list[object],
@@ -645,7 +645,7 @@ def _gather_url(
 
 def _gather_screenshot(
     item: pytest.Item,
-    report: TestReport,  # noqa: ARG001 - keep capture-helper signatures uniform
+    report: TestReport,
     driver: WebDriver,
     summary: list[str],
     extras: list[object],
@@ -664,7 +664,7 @@ def _gather_screenshot(
 
 def _gather_html(
     item: pytest.Item,
-    report: TestReport,  # noqa: ARG001 - keep capture-helper signatures uniform
+    report: TestReport,
     driver: WebDriver,
     summary: list[str],
     extras: list[object],
@@ -683,7 +683,7 @@ def _gather_html(
 
 def _gather_logs(
     item: pytest.Item,
-    report: TestReport,  # noqa: ARG001 - keep capture-helper signatures uniform
+    report: TestReport,
     driver: WebDriver,
     summary: list[str],
     extras: list[object],
@@ -971,7 +971,7 @@ def xfail_by_env(request: pytest.FixtureRequest, env_description_file: str) -> N
 def select_browser(selenium: SeleniumFixtureState, browser_id: str) -> WebDriver:
     browser = cast(WebDriver, selenium[browser_id])
     request = cast(pytest.FixtureRequest, selenium["request"])
-    request.node._driver = browser  # noqa: SLF001 - pytest-selenium node contract
+    request.node._driver = browser
     return browser
 
 

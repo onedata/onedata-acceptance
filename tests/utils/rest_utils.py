@@ -204,7 +204,7 @@ def http_patch(
     )
 
 
-def http_request(  # pylint: disable=inconsistent-return-statements
+def http_request(
     http_method: HttpMethod,
     ip: str,
     port: int,
@@ -247,7 +247,6 @@ def http_request(  # pylint: disable=inconsistent-return-statements
             if i == retries - 1:
                 raise e
             time.sleep(5.0)
-        # pylint: disable=line-too-long
         except (ConnectTimeout, ReadTimeout):
             print(r"""
              _    _ _______ _______ _____           _____          _      _              _    _ _    _ _   _  _____    _ _ _ 

@@ -14,7 +14,7 @@ from typing import Literal, cast, overload
 
 import urllib3
 import yaml
-from kubernetes import client, config  # pylint: disable=import-error
+from kubernetes import client, config
 
 type Command = list[str]
 type CommandResult = str | int

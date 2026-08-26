@@ -178,7 +178,7 @@ def purge_spaces(client: Client) -> None:
 
 
 def pytest_bdd_before_scenario(
-    request: pytest.FixtureRequest,  # noqa: ARG001 - pytest-bdd hook contract
+    request: pytest.FixtureRequest,
     feature: Feature,
     scenario: Scenario,
 ) -> None:
@@ -189,9 +189,9 @@ def pytest_bdd_before_scenario(
 
 
 def pytest_bdd_before_step_call(
-    request: pytest.FixtureRequest,  # noqa: ARG001 - pytest-bdd hook contract
-    feature: Feature,  # noqa: ARG001 - pytest-bdd hook contract
-    scenario: Scenario,  # noqa: ARG001 - pytest-bdd hook contract
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
     step: Step,
     step_func: Callable[..., object],
     step_func_args: dict[str, object],
@@ -200,20 +200,20 @@ def pytest_bdd_before_step_call(
 
 
 def pytest_bdd_step_error(
-    request: pytest.FixtureRequest,  # noqa: ARG001 - pytest-bdd hook contract
-    feature: Feature,  # noqa: ARG001 - pytest-bdd hook contract
-    scenario: Scenario,  # noqa: ARG001 - pytest-bdd hook contract
-    step: Step,  # noqa: ARG001 - pytest-bdd hook contract
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
+    step: Step,
     step_func: Callable[..., object],
     step_func_args: dict[str, object],
-    exception: BaseException,  # noqa: ARG001 - pytest-bdd hook contract
+    exception: BaseException,
 ) -> None:
     print("--- STEP FAILED\n")
 
 
 def pytest_bdd_after_scenario(
-    request: pytest.FixtureRequest,  # noqa: ARG001 - pytest-bdd hook contract
-    feature: Feature,  # noqa: ARG001 - pytest-bdd hook contract
-    scenario: Scenario,  # noqa: ARG001 - pytest-bdd hook contract
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
 ) -> None:
     print("=================================================================\n")

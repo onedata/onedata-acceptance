@@ -2,8 +2,6 @@
 using REST API.
 """
 
-# pylint: disable=wrong-import-position, unused-argument
-
 __author__ = "Bartek Kryza"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
