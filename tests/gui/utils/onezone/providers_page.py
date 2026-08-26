@@ -5,6 +5,11 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
+
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
@@ -12,6 +17,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.generic_page import LabeledElement, SidebarPanelPage
+from tests.utils.utils import element_has_class
 
 
 class Provider(LabeledElement):
@@ -35,4 +41,8 @@ class ProvidersPage(SidebarPanelPage):
     map_point = Button('.one-map-container .jvectormap-container path[data-code="RO"]')
 
     def is_working(self) -> bool:
-        return "online" in self._popover.get_attribute("class")
+        try:
+            popover = self._popover
+            return bool(popover and element_has_class(popover, "online"))
+        except (NoSuchElementException, StaleElementReferenceException):
+            return False

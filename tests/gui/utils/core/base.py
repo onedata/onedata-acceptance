@@ -1,7 +1,7 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Any, Optional, cast
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -126,8 +126,9 @@ class NamedElement(PageObject):
 
     name: str
 
-    def __getattr__(self, name: str) -> Any:
-        pass
+    if TYPE_CHECKING:
+
+        def __getattr__(self, name: str) -> Any: ...
 
 
 class ExpandableMixin:
