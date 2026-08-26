@@ -258,7 +258,7 @@ def wt_await_finish_of_cluster_deployment(
     limit = time.time() + timeout
     while time.time() < limit:
         try:
-            Modals(driver).cluster_deployment
+            _ = Modals(driver).cluster_deployment
         except NoSuchElementException:
             break
         else:

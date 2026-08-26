@@ -40,7 +40,7 @@ class Index(PageObject):
 
     def is_used_by_gui_tag_visible(self) -> bool:
         try:
-            self.used_by_gui_tag
+            _ = self.used_by_gui_tag
         except NoSuchElementException:
             return False
         return True

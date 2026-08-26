@@ -156,7 +156,7 @@ def _click_copy_hostname(driver: WebDriver) -> None:
 def assert_no_provider_popup_on_world_map(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     try:
-        Popups(driver).provider_map_popover
+        _ = Popups(driver).provider_map_popover
     except NoSuchElementException:
         pass
     else:

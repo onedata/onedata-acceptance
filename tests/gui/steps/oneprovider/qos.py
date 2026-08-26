@@ -281,7 +281,7 @@ def assert_no_expression_in_qualities_of_service_modal(
 ) -> None:
     driver = selenium[browser_id]
     try:
-        Modals(driver).details_modal.qos.requirements
+        _ = Modals(driver).details_modal.qos.requirements
     except NoSuchElementException:
         assert True
     else:

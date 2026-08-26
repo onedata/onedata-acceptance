@@ -352,7 +352,7 @@ def sysbench(
     file_block_size: int,
     operation: str,
     client: Client,
-    user: str,
+    user: str,  # noqa: ARG001 - keep sysbench helper signatures uniform
     directory: str,
     output: bool = False,
 ) -> CommandResult:

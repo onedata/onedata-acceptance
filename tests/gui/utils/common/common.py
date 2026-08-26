@@ -99,7 +99,7 @@ class _Toggle(PageObject):
 
     def is_enabled(self) -> bool:
         try:
-            self._lock
+            _ = self._lock
         except NoSuchElementException:
             return True
         return False

@@ -13,7 +13,7 @@ import warnings
 from collections import defaultdict
 from collections.abc import Generator
 from copy import deepcopy
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import cast
 
@@ -317,7 +317,7 @@ def onepanel_credentials(
 
 @pytest.fixture(autouse=True)
 def emergency_passphrase(
-    users: Users,
+    users: Users,  # noqa: ARG001 - fixture dependency controls setup order
     hosts: Hosts,
 ) -> str:
     zone_pod_name = hosts["onezone"]["pod_name"]
@@ -625,7 +625,7 @@ def pytest_runtest_makereport(
 
 def _gather_url(
     item: pytest.Item,
-    report: TestReport,
+    report: TestReport,  # noqa: ARG001 - keep capture-helper signatures uniform
     driver: WebDriver,
     summary: list[str],
     extras: list[object],
@@ -645,7 +645,7 @@ def _gather_url(
 
 def _gather_screenshot(
     item: pytest.Item,
-    report: TestReport,
+    report: TestReport,  # noqa: ARG001 - keep capture-helper signatures uniform
     driver: WebDriver,
     summary: list[str],
     extras: list[object],
@@ -664,7 +664,7 @@ def _gather_screenshot(
 
 def _gather_html(
     item: pytest.Item,
-    report: TestReport,
+    report: TestReport,  # noqa: ARG001 - keep capture-helper signatures uniform
     driver: WebDriver,
     summary: list[str],
     extras: list[object],
@@ -683,7 +683,7 @@ def _gather_html(
 
 def _gather_logs(
     item: pytest.Item,
-    report: TestReport,
+    report: TestReport,  # noqa: ARG001 - keep capture-helper signatures uniform
     driver: WebDriver,
     summary: list[str],
     extras: list[object],

@@ -84,7 +84,7 @@ def create_dataset(
     close_button = "X"
 
     try:
-        OPLoggedIn(selenium[browser_id]).file_browser.breadcrumbs
+        _ = OPLoggedIn(selenium[browser_id]).file_browser.breadcrumbs
     except NoSuchElementException:
         go_to_and_assert_browser(
             selenium,

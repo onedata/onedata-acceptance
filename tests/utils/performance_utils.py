@@ -40,9 +40,9 @@ def performance(
 
         def wrapped_test_function(  # pylint: disable=unused-argument
             self: object,
-            clients: object,
+            clients: object,  # noqa: ARG001 - pytest fixture contract
             suite_report: Report,
-            request: object,
+            request: object,  # noqa: ARG001 - pytest fixture contract
             hosts: object,
             users: dict,
             env_desc: EnvDesc,

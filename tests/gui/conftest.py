@@ -25,9 +25,9 @@ from selenium import webdriver
 from tests import LOGDIRS
 from tests.conftest import export_logs, get_log_dir_path
 from tests.gui.sse_fixtures import (
-    async_loop_in_thread,
-    monitors,
-    space_files_monitor_factory,
+    async_loop_in_thread,  # noqa: F401 - register fixture
+    monitors,  # noqa: F401 - register fixtures
+    space_files_monitor_factory,  # noqa: F401 - register fixture
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
@@ -246,7 +246,6 @@ def displays() -> dict[str, str]:
 @fixture(scope="session")
 def clipboard() -> Clipboard:
     """utility simulating os clipboard"""
-    from collections import namedtuple
     from platform import system as get_system
 
     def copy(text: str, display: str) -> None:

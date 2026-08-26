@@ -14,7 +14,6 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
-    NamedButton,
     WebElement,
     WebItem,
     WebItemsSequence,

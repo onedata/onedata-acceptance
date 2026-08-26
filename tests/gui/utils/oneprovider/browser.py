@@ -125,7 +125,7 @@ class Browser(ABC, PageObject):
 
     def is_empty(self) -> bool:
         try:
-            self._empty_dir_icon
+            _ = self._empty_dir_icon
         except NoSuchElementException:
             return False
         return True

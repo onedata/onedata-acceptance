@@ -47,7 +47,7 @@ def choose_range_as_initial_workflow_value(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_if_select_files_modal_disappeared(driver: WebDriver, files: str | list[str]) -> None:
     try:
-        Modals(driver).select_files  # pylint: disable=expression-not-assigned
+        _ = Modals(driver).select_files
         raise AssertionError(f"Files: {files} as initial value for workflow was not selected")
     except NoSuchElementException:
         pass
@@ -65,7 +65,7 @@ def open_select_initial_files_modal(driver: WebDriver, store_name: str | None = 
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    Modals(driver).select_files  # pylint: disable=expression-not-assigned
+    _ = Modals(driver).select_files
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Add groups..." link in "{store_name}" store'))
@@ -84,7 +84,7 @@ def open_select_initial_groups_modal(
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    Modals(driver).select_groups  # pylint: disable=expression-not-assigned
+    _ = Modals(driver).select_groups
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -101,7 +101,7 @@ def open_select_initial_datasets_modal(driver: WebDriver) -> None:
     Popups(driver).workflow_dataset_initial_value.menu[option].click()
     time.sleep(1)
     # check if modal opened
-    Modals(driver).select_dataset  # pylint: disable=expression-not-assigned
+    _ = Modals(driver).select_dataset
 
 
 def get_select_option_from_initial_value_popup(

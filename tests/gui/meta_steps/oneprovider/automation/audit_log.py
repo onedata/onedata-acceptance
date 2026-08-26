@@ -975,7 +975,7 @@ def assert_content_of_user_task_audit_log(
     time.sleep(1)
     modal = Modals(driver).audit_log
     try:
-        modal.user_log  # pylint: disable=pointless-statement
+        _ = modal.user_log
         raise AssertionError(
             f'Audit log in task "{task_name}" in lane "{lane_name}" contains user\'s entry'
         )

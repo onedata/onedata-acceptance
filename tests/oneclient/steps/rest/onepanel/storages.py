@@ -25,8 +25,8 @@ from tests.utils.user_utils import User
 
 
 def modify_storage_parameters(
-    user: str,
-    provider: str,
+    user: str,  # noqa: ARG001 - keep shared storage-step call signature
+    provider: str,  # noqa: ARG001 - keep shared storage-step call signature
     storage_id: str,
     storage_name: str,
     params: dict[str, str],

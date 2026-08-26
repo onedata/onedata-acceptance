@@ -20,7 +20,7 @@ from tests.utils.utils import repeat_failed
 class Element(PageObject):
     name = id = Label(".one-label")
 
-    def __call__(self, *args: object, **kwargs: object) -> None:
+    def __call__(self, *_args: object, **_kwargs: object) -> None:
         self.web_elem.click()
 
 

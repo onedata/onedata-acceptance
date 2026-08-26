@@ -365,7 +365,7 @@ class PrivilegeTree(PageObject):
     def wait_for_load_privileges(self) -> None:
         for _ in range(50):
             try:
-                self.spinner  # pylint: disable=pointless-statement
+                _ = self.spinner
                 time.sleep(0.1)
             except NoSuchElementException:
                 return

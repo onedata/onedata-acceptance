@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.web_elements import Button, Label, NamedButton
+from tests.gui.utils.core.web_elements import Button, Label
 from tests.gui.utils.generic import transform
 
 
