@@ -11,7 +11,6 @@ import re
 import time
 from collections.abc import Callable
 from datetime import datetime
-from typing import List
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import parse_size
@@ -237,7 +236,7 @@ def assert_entries_with_file_names_in_archive_recall(
     modal.move_to_error_logs_table(driver)
 
     def condition(index: int = 0) -> None:
-        new_entries_names: List[str] = modal.get_visible_rows_of_single_column("source_file")[
+        new_entries_names: list[str] = modal.get_visible_rows_of_single_column("source_file")[
             index:
         ]
         for entry_name in new_entries_names:
@@ -268,7 +267,7 @@ def assert_entries_with_error_messages_in_archive_recall(
     modal.move_to_error_logs_table(driver)
 
     def condition(index: int = 0) -> None:
-        new_entries_mes: List[str] = modal.get_visible_rows_of_single_column("error_message")
+        new_entries_mes: list[str] = modal.get_visible_rows_of_single_column("error_message")
 
         new_entries_mes = new_entries_mes[index:]
         for entry_mes in new_entries_mes:
@@ -288,7 +287,7 @@ def _scroll_and_check_condition(
 ) -> list[str]:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
-    new_entries: List[str] = modal.get_visible_rows_of_single_column("source_file")
+    new_entries: list[str] = modal.get_visible_rows_of_single_column("source_file")
     detected_entries = []
     detected_entries.extend(new_entries)
     index = 0

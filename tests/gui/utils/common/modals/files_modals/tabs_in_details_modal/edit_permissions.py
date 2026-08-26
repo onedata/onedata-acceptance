@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Optional
-
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups import MenuPopupWithLabel
@@ -98,7 +96,7 @@ class MemberAclPermission(PageObject):
     def expand(self) -> None:
         self.click()
 
-    def subject_type(self) -> Optional[str]:
+    def subject_type(self) -> str | None:
         classes = self._subject_type.get_attribute("class")
         if "oneicon-user" in classes:
             return "user"

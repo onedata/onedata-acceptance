@@ -6,7 +6,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Optional, cast
+from typing import cast
 
 from oneprovider_client.rest import ApiException
 
@@ -257,7 +257,7 @@ def try_to_move_special_dir_by_id(
     hosts: Hosts,
     host: str,
     dir_id: str,
-    error_message: Optional[str] = None,
+    error_message: str | None = None,
 ) -> None:
     if client.lower() == "rest":
         try:

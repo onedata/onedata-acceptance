@@ -11,7 +11,8 @@ import os
 import re
 import subprocess as sp
 from collections import defaultdict
-from typing import TYPE_CHECKING, Generator, cast
+from typing import TYPE_CHECKING, cast
+from collections.abc import Generator
 
 import pytest
 from _pytest._py.path import LocalPath

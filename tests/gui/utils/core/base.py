@@ -1,7 +1,7 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Optional, cast
+from typing import cast
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -63,7 +63,7 @@ class AbstractPageObject:
         self,
         driver: WebDriver,
         web_elem: SeleniumWebElement,
-        parent: Optional[object] = None,
+        parent: object | None = None,
         name: str = "",
     ) -> None:
         self.driver = driver
@@ -97,7 +97,7 @@ class PageObject(AbstractPageObject):
         self,
         driver: WebDriver,
         web_elem: SeleniumWebElement,
-        parent: Optional[object] = None,
+        parent: object | None = None,
         **kwargs: object,
     ) -> None:
         super().__init__(driver, web_elem, parent, **kwargs)  # type: ignore[arg-type]

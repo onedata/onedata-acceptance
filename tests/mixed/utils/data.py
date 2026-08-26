@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Iterable, Mapping
-from typing import Optional, Protocol
+from typing import Protocol
 
 import pytest
 import yaml
@@ -29,7 +29,7 @@ from tests.utils.user_utils import Users
 
 class FileTreeNode(Protocol):
     path: str
-    content: Optional[str | int]
+    content: str | int | None
 
     @property
     def nodes(self) -> Iterable[FileTreeNode]: ...

@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Iterable, Mapping
 from datetime import datetime
 from functools import partial
-from typing import Optional, cast
+from typing import cast
 
 import pytest
 import yaml
@@ -151,8 +151,8 @@ def create_file_in_op_rest(
     hosts: Hosts,
     path: str,
     result: str,
-    access_token: Optional[str] = None,
-    identity_token: Optional[str] = None,
+    access_token: str | None = None,
+    identity_token: str | None = None,
 ) -> None:
     client = login_to_cdmi(
         user,

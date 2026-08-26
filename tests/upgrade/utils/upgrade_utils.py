@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 import traceback
 from collections.abc import Callable, Iterable, Mapping
-from typing import Optional, Protocol, TypedDict, TypeGuard, cast
+from typing import Protocol, TypedDict, TypeGuard, cast
 
 import pytest
 from packaging.version import Version
@@ -94,7 +94,7 @@ class UpgradeTest:
         name: str,
         setup: TestCallback,
         verify: TestCallback,
-        min_prov_version: Optional[int] = None,
+        min_prov_version: int | None = None,
     ) -> None:
         self.__name = name
         self.__setup = setup  # function executed before any upgrade is performed
@@ -104,7 +104,7 @@ class UpgradeTest:
     def get_name(self) -> str:
         return self.__name
 
-    def get_required_min_prov_version(self) -> Optional[int]:
+    def get_required_min_prov_version(self) -> int | None:
         return self.__min_prov_version
 
     def run_setup(self) -> None:

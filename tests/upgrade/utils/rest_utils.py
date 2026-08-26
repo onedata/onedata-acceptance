@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Iterable, Mapping
-from typing import Optional
 
 from requests import Response
 
@@ -242,7 +241,7 @@ def set_file_extended_attribute(
 
 
 def get_file_extended_attributes(
-    provider_host: str, token: str, file_id: str, attribute: Optional[str] = None
+    provider_host: str, token: str, file_id: str, attribute: str | None = None
 ) -> Response:
     res = http_get(
         ip=provider_host,
@@ -296,7 +295,7 @@ def create_archive(
     token: str,
     dataset_id: str,
     description: str,
-    config: Optional[JsonPayload] = None,
+    config: JsonPayload | None = None,
 ) -> JsonObject:
     data: JsonObject = {
         "datasetId": dataset_id,
@@ -427,7 +426,7 @@ def create_view(
     view_name: str,
     data: str,
     spatial: bool = False,
-    providers: Optional[list[str]] = None,
+    providers: list[str] | None = None,
 ) -> Response:
     query_params: dict[str, str | list[str]] = {}
     if providers:
@@ -454,8 +453,8 @@ def query_view(
     space_id: str,
     view_name: str,
     spatial: bool = False,
-    start_range: Optional[str] = None,
-    end_range: Optional[str] = None,
+    start_range: str | None = None,
+    end_range: str | None = None,
 ) -> JsonList:
     if spatial:
         query_params = {

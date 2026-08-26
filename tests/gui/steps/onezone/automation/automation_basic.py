@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
-from typing import Optional
 
 from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -360,7 +359,7 @@ def click_option_in_revision_menu_button(
     option: str,
     object_name: str,
     page: str,
-    ordinal: Optional[str] = None,
+    ordinal: str | None = None,
 ) -> None:
     item = get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name)
     if ordinal is None:

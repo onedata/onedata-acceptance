@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import os
-from typing import Optional
 
 from tests.gui.utils.generic import upload_workflow_path
 from tests.mixed.type_definitions import (
@@ -25,7 +24,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         self,
         resolve_file_id: ResolveId,
         upload_file: UploadFile,
-        resolve_group_id: Optional[ResolveId] = None,
+        resolve_group_id: ResolveId | None = None,
     ) -> None:
         self.resolve_file_id = resolve_file_id
         self.upload_file = upload_file
@@ -36,7 +35,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         return [f for f in os.listdir(upload_workflow_path(workflow)) if f != workflow + ".json"]
 
     def bagit_uploader(
-        self, input_file: Optional[InputFiles] = None, dest_dir: str = "space1/dir1"
+        self, input_file: InputFiles | None = None, dest_dir: str = "space1/dir1"
     ) -> ExecutionResult:
         input_files = self.gather_input_files("bagit-uploader") if not input_file else input_file
         for file in input_files:
@@ -53,7 +52,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ], input_files
 
     def detect_file_formats(
-        self, input_file: Optional[InputFiles] = None, space: str = "space1"
+        self, input_file: InputFiles | None = None, space: str = "space1"
     ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("detect-file-formats") if not input_file else input_file
@@ -67,7 +66,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ], input_files
 
     def detect_file_mime_formats(
-        self, input_file: Optional[InputFiles] = None, space: str = "space1"
+        self, input_file: InputFiles | None = None, space: str = "space1"
     ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("detect-file-mime-formats") if not input_file else input_file
@@ -82,7 +81,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
 
     def download_files(
         self,
-        input_file: Optional[InputFiles] = None,
+        input_file: InputFiles | None = None,
         destination: str = "space1/dir1",
     ) -> ExecutionResult:
         input_files = self.gather_input_files("download-files") if not input_file else input_file
@@ -130,7 +129,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         return [{"input-store": {"name": name}}], []
 
     def annotate_images(
-        self, input_file: Optional[InputFiles] = None, space: str = "space1"
+        self, input_file: InputFiles | None = None, space: str = "space1"
     ) -> ExecutionResult:
         input_files = self.gather_input_files("annotate-images") if not input_file else input_file
         for file in input_files:

@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping
-from typing import Optional, cast
+from typing import cast
 
 import yaml
 from oneprovider_client import TransferApi
@@ -29,8 +29,8 @@ def create_transfer_rest(
     hosts: Hosts,
     transfer_type: str,
     path: str,
-    replicating_provider: Optional[str] = None,
-    evicting_provider: Optional[str] = None,
+    replicating_provider: str | None = None,
+    evicting_provider: str | None = None,
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     transfer_api = TransferApi(client)

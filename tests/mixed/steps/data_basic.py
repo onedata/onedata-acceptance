@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import re
 from collections.abc import Mapping
-from typing import Optional, cast
+from typing import cast
 
 import pytest
 from _pytest._py.path import LocalPath
@@ -664,7 +664,7 @@ def rename_item_in_op_using_token(
 def see_num_of_items_in_op(
     client: str,
     user: str,
-    num: Optional[str],
+    num: str | None,
     space: str,
     host: str,
     users: Users,

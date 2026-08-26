@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import subprocess as sp
 from collections.abc import Mapping
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -112,8 +112,8 @@ def login_to_cdmi(
     username: str,
     users: Mapping[str, TokenUserLike],
     host: str,
-    access_token: Optional[str] = None,
-    identity_token: Optional[str] = None,
+    access_token: str | None = None,
+    identity_token: str | None = None,
 ) -> ApiClient_CDMI:
 
     configuration = Conf_CDMI()
@@ -136,7 +136,7 @@ def login_to_provider(
     username: str,
     users: Mapping[str, TokenUserLike],
     host: str,
-    access_token: Optional[str] = None,
+    access_token: str | None = None,
 ) -> ApiClient_provider:
 
     header_value = access_token if access_token else users[username].token
@@ -166,7 +166,7 @@ def execute_copied_curl_command(
     displays: dict[str, str],
     clipboard: Clipboard,
     tmp_memory: TmpMemory,
-    config: Optional[Mapping[str, str]] = None,
+    config: Mapping[str, str] | None = None,
 ) -> None:
     _execute_curl_command(
         clipboard.paste(display=displays[browser_id]),
@@ -178,9 +178,9 @@ def execute_copied_curl_command(
 def _execute_curl_command(
     command: str,
     tmp_memory: TmpMemory,
-    config: Optional[Mapping[str, str]],
-    flags: Optional[list[str]] = None,
-    file_out: Optional[str | LocalPath] = None,
+    config: Mapping[str, str] | None,
+    flags: list[str] | None = None,
+    file_out: str | LocalPath | None = None,
 ) -> None:
     cmd = (
         replace_vars_in_cmd_if_exist(command, config=config)
@@ -223,7 +223,7 @@ def execute_copied_curl_command_with_env_vars(
     execute_copied_curl_command(browser_id, displays, clipboard, tmp_memory, config=resolved_config)
 
 
-def replace_vars_in_cmd_if_exist(cmd: str, config: Optional[Mapping[str, str]] = None) -> str:
+def replace_vars_in_cmd_if_exist(cmd: str, config: Mapping[str, str] | None = None) -> str:
     if config is None:
         return cmd
     new_cmd = cmd
@@ -369,10 +369,10 @@ def download_using_curl_with_forward(
     displays: dict[str, str],
     tmpdir: LocalPath,
     browsers_to_users: Mapping[str, str],
-    file_out: Optional[str],
+    file_out: str | None,
 ) -> None:
     download_link = clipboard.paste(display=displays[browser_id])
-    output_path: Optional[str | LocalPath] = file_out
+    output_path: str | LocalPath | None = file_out
     if file_out is not None:
         output_path = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
 

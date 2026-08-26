@@ -6,7 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Optional, overload
+from typing import overload
 
 from selenium.common.exceptions import (
     ElementNotInteractableException,
@@ -148,7 +148,7 @@ def search_for_lane_status(
     driver: WebDriver,
     page: WorkflowExecutionPage,
     lane_name: str,
-    box_number: Optional[int] = None,
+    box_number: int | None = None,
 ) -> str | ParallelBox:
     workflow_visualiser = page.workflow_visualiser
     number_of_lanes = len(workflow_visualiser.workflow_lanes)

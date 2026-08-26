@@ -12,7 +12,7 @@ import os
 import subprocess
 import time
 from collections.abc import Mapping, Sequence
-from typing import NotRequired, Optional, Protocol, TypedDict, cast
+from typing import NotRequired, Protocol, TypedDict, cast
 
 from tests.gui.utils.generic import (
     upload_file_path,
@@ -88,7 +88,7 @@ def make_arg_list(arg: str) -> str:
     return "[" + arg + "]"
 
 
-def execute_command(cmd: Command, error: Optional[str] = None, should_fail: bool = False) -> bytes:
+def execute_command(cmd: Command, error: str | None = None, should_fail: bool = False) -> bytes:
     with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         output, err = process.communicate()
         proc_returncode = process.returncode

@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Optional, cast
+from typing import cast
 
 from selenium.common.exceptions import JavascriptException, NoSuchElementException
 from selenium.webdriver import ActionChains
@@ -60,7 +60,7 @@ class ArchiveAuditLog(Modal):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_rows_of_columns(
-        self, column_names: Optional[list[str]] = None
+        self, column_names: list[str] | None = None
     ) -> dict[str, list[str]]:
 
         temp_columns = list(set((column_names or []) + ["file"]))

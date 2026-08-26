@@ -6,7 +6,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Optional, Protocol, cast
+from typing import Protocol, cast
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -54,7 +54,7 @@ def check_if_select_files_modal_disappeared(driver: WebDriver, files: str | list
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_files_modal(driver: WebDriver, store_name: Optional[str] = None) -> None:
+def open_select_initial_files_modal(driver: WebDriver, store_name: str | None = None) -> None:
     option = "Select/upload file"
 
     click_input_link_in_automation_page(driver, store_name)
@@ -126,7 +126,7 @@ def get_initial_value_store(driver: WebDriver, store_name: str) -> InitialValueS
     raise ValueError()
 
 
-def click_input_link_in_automation_page(driver: WebDriver, store_name: Optional[str]) -> None:
+def click_input_link_in_automation_page(driver: WebDriver, store_name: str | None) -> None:
     if store_name:
         store = get_initial_value_store(driver, store_name)
         store.input_link.click()

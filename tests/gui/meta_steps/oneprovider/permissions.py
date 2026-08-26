@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Optional
-
 from selenium.common.exceptions import ElementNotInteractableException
 
 from tests.gui.meta_steps.oneprovider.data import (
@@ -214,7 +212,7 @@ def _set_acl_privileges_for_selected(
     tmp_memory: TmpMemory,
     privileges: str,
     name: str,
-    path: Optional[str] = None,
+    path: str | None = None,
 ) -> None:
     option = "Permissions"
     modal_name = "Details modal"

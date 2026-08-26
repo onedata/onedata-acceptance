@@ -3,7 +3,6 @@ using REST API.
 """
 
 # pylint: disable=wrong-import-position, unused-argument
-from __future__ import absolute_import
 
 __author__ = "Bartek Kryza"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"

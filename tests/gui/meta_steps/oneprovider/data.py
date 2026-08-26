@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from pathlib import Path
-from typing import Optional
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -1000,9 +999,9 @@ def _create_link_in_file_browser(
     tmp_memory: TmpMemory,
     option: str,
     button: str,
-    path: Optional[str] = None,
+    path: str | None = None,
     go_to_file_browser: bool = True,
-    new_name: Optional[str] = None,
+    new_name: str | None = None,
 ) -> None:
     if go_to_file_browser:
         go_to_filebrowser(selenium, browser_id, tmp_memory, space)

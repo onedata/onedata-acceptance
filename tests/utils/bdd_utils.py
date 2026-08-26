@@ -13,7 +13,6 @@ from types import NoneType, UnionType
 from typing import (
     Any,
     Literal,
-    Optional,
     Protocol,
     TypeAliasType,
     Union,
@@ -50,7 +49,7 @@ class StepDecorator(Protocol):
     ) -> StepFunction[params, return_type]: ...
 
 
-def _get_runtime_cast_target(ann: object) -> Optional[type]:
+def _get_runtime_cast_target(ann: object) -> type | None:
     while isinstance(ann, TypeAliasType):
         ann = ann.__value__
 
@@ -77,10 +76,10 @@ def _get_runtime_cast_target(ann: object) -> Optional[type]:
 
 def given(
     name: object,
-    fixture: Optional[object] = None,
-    converters: Optional[Converters] = None,
+    fixture: object | None = None,
+    converters: Converters | None = None,
     scope: str = "function",
-    target_fixture: Optional[str] = None,
+    target_fixture: str | None = None,
 ) -> StepDecorator:
     wrappers = [
         sanitize_arguments,
@@ -90,17 +89,17 @@ def given(
     return _create_decorator(given, wrappers)
 
 
-def when(name: object, converters: Optional[Converters] = None) -> StepDecorator:
+def when(name: object, converters: Converters | None = None) -> StepDecorator:
     wrappers = [sanitize_arguments, pytest_bdd_when(name, converters, stacklevel=2)]
     return _create_decorator(when, wrappers)
 
 
-def then(name: object, converters: Optional[Converters] = None) -> StepDecorator:
+def then(name: object, converters: Converters | None = None) -> StepDecorator:
     wrappers = [sanitize_arguments, pytest_bdd_then(name, converters, stacklevel=2)]
     return _create_decorator(then, wrappers)
 
 
-def wt(name: object, converters: Optional[Converters] = None) -> StepDecorator:
+def wt(name: object, converters: Converters | None = None) -> StepDecorator:
     wrappers = [
         sanitize_arguments,
         pytest_bdd_when(name, converters, stacklevel=2),

@@ -10,7 +10,7 @@ import os
 import re
 import subprocess as sp
 import sys
-from typing import Literal, Optional, cast, overload
+from typing import Literal, cast, overload
 
 import urllib3
 import yaml
@@ -18,7 +18,7 @@ from kubernetes import client, config  # pylint: disable=import-error
 
 type Command = list[str]
 type CommandResult = str | int
-type YamlValue = Optional[str | int | float | bool | list["YamlValue"] | dict[str, "YamlValue"]]
+type YamlValue = str | int | float | bool | list["YamlValue"] | dict[str, "YamlValue"] | None
 type YamlObject = dict[str, YamlValue]
 
 
@@ -29,11 +29,11 @@ class OnenvError(BaseException):
 @overload
 def run_onenv_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: Literal[True] = True,
-    cwd: Optional[str] = "one-env",
+    cwd: str | None = "one-env",
     onenv_path: str = "./onenv",
 ) -> str: ...
 
@@ -41,11 +41,11 @@ def run_onenv_command(
 @overload
 def run_onenv_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: Literal[False] = False,
-    cwd: Optional[str] = "one-env",
+    cwd: str | None = "one-env",
     onenv_path: str = "./onenv",
 ) -> int: ...
 
@@ -53,22 +53,22 @@ def run_onenv_command(
 @overload
 def run_onenv_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: bool = True,
-    cwd: Optional[str] = "one-env",
+    cwd: str | None = "one-env",
     onenv_path: str = "./onenv",
 ) -> CommandResult: ...
 
 
 def run_onenv_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: bool = True,
-    cwd: Optional[str] = "one-env",
+    cwd: str | None = "one-env",
     onenv_path: str = "./onenv",
 ) -> CommandResult:
     if sudo:
@@ -86,7 +86,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: Literal[True] = True,
-    cwd: Optional[str] = None,
+    cwd: str | None = None,
     verbose: bool = True,
 ) -> str: ...
 
@@ -96,7 +96,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: Literal[False] = False,
-    cwd: Optional[str] = None,
+    cwd: str | None = None,
     verbose: bool = True,
 ) -> int: ...
 
@@ -106,7 +106,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: bool = True,
-    cwd: Optional[str] = None,
+    cwd: str | None = None,
     verbose: bool = True,
 ) -> CommandResult: ...
 
@@ -115,7 +115,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: bool = True,
-    cwd: Optional[str] = None,
+    cwd: str | None = None,
     verbose: bool = True,
 ) -> CommandResult:
     if verbose:
@@ -178,16 +178,16 @@ def service_name_to_alias_mapping(name: str) -> str:
     ][0]
 
 
-def get_service_type(pod: client.V1Pod) -> Optional[str]:
+def get_service_type(pod: client.V1Pod) -> str | None:
     # returns SERVICE_ONEZONE | SERVICE_ONEPROVIDER
     return pod.metadata.labels.get("component")
 
 
-def get_client_provider_host(pod: client.V1Pod) -> Optional[str]:
+def get_client_provider_host(pod: client.V1Pod) -> str | None:
     return get_env_variable(pod, "ONECLIENT_PROVIDER_HOST")
 
 
-def get_env_variable(pod: client.V1Pod, env_name: str) -> Optional[str]:
+def get_env_variable(pod: client.V1Pod, env_name: str) -> str | None:
     envs = get_env_variables(pod)
     for env in envs:
         if env.name == env_name:
@@ -203,7 +203,7 @@ def init_helm() -> None:
     sp.call(helm_init_cmd(client_only=True))
 
 
-def helm_init_cmd(client_only: Optional[bool] = None) -> Command:
+def helm_init_cmd(client_only: bool | None = None) -> Command:
     cmd = ["helm", "init"]
 
     if client_only:
@@ -230,7 +230,7 @@ def cmd_exec(
     command: str | list[str],
     interactive: bool = False,
     tty: bool = False,
-    container: Optional[str] = None,
+    container: str | None = None,
 ) -> Command:
     cmd = ["kubectl", "--namespace", get_current_namespace(), "exec"]
 

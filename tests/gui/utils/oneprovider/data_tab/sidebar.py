@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from collections.abc import Iterator
-from typing import Optional
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -34,7 +33,7 @@ class DataTabSidebar(PageObject):
         self,
         driver: WebDriver,
         web_elem: SeleniumWebElement,
-        parent: Optional[object] = None,
+        parent: object | None = None,
         *,
         resize_handler: SeleniumWebElement,
     ) -> None:
@@ -85,7 +84,7 @@ class DirectoryTree(PageObject, ExpandableMixin):
         self,
         driver: WebDriver,
         web_elem: SeleniumWebElement,
-        parent: Optional[object] = None,
+        parent: object | None = None,
         *,
         children: SeleniumWebElement,
     ) -> None:

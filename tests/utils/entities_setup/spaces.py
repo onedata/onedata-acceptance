@@ -6,9 +6,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
-from collections.abc import Mapping, MutableMapping, Sequence
+from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from functools import cache
-from typing import Callable, Protocol, TypedDict, cast
+from typing import Protocol, TypedDict, cast
 
 import pytest
 import requests
@@ -90,17 +90,14 @@ StorageConfig = TypedDict(
 )
 
 
-SpaceDescription = TypedDict(
-    "SpaceDescription",
-    {
-        "owner": str,
-        "users": list[MemberEntry],
-        "groups": list[MemberEntry],
-        "providers": list[ProviderEntry],
-        "storage": StorageConfig,
-    },
-    total=False,
-)
+class SpaceDescription(TypedDict, total=False):
+    owner: str
+    users: list[MemberEntry]
+    groups: list[MemberEntry]
+    providers: list[ProviderEntry]
+    storage: StorageConfig
+
+
 type SpacesConfig = Mapping[str, SpaceDescription]
 type SpaceFinalizerRegistrar = Callable[[str], None]
 

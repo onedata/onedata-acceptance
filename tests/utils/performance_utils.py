@@ -10,7 +10,7 @@ import itertools
 import sys
 import time
 from collections.abc import Callable, Iterable, Mapping
-from typing import Optional, cast
+from typing import cast
 
 import pytest
 
@@ -87,9 +87,7 @@ def performance(
                         failed_repeats += 1
                         failed_details[str(repeats)] = str(e)
                     else:
-                        test_results = ensure_list(
-                            cast(Optional[Result | list[Result]], test_results)
-                        )
+                        test_results = ensure_list(cast(Result | list[Result] | None, test_results))
                         test_result_report.add_single_test_results(test_results, repeats)
                         successful_repeats += 1
                     finally:
@@ -140,7 +138,7 @@ class Report:
         else:
             self.report[self.name][key] = value
 
-    def add_nested_report(self, key: str, value: "Report") -> None:
+    def add_nested_report(self, key: str, value: Report) -> None:
         if value.name not in self.report[self.name][key].keys():
             self.report[self.name][key][value.name] = value.report[value.name]
         else:
@@ -284,7 +282,7 @@ def dict_to_list(dict_: Mapping[str, dict]) -> list[dict]:
     return list_
 
 
-def ensure_list(elem: Optional[Result | list[Result]]) -> list[Result]:
+def ensure_list(elem: Result | list[Result] | None) -> list[Result]:
     if not elem:
         return []
     if not isinstance(elem, list):

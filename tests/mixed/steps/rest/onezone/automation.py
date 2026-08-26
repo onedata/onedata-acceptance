@@ -8,7 +8,7 @@ import json
 import os
 from collections.abc import Mapping
 from functools import partial
-from typing import Optional, Protocol, TypedDict, cast
+from typing import Protocol, TypedDict, cast
 
 import yaml
 from oneprovider_client.rest import ApiException
@@ -586,7 +586,7 @@ def execute_part_of_the_workflows(
     groups: IdMap,
     workflow_executions: WorkflowExecutions,
     tmp_memory: TmpMemory,
-    archive_types: Optional[str],
+    archive_types: str | None,
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
@@ -633,7 +633,7 @@ def execute_part_of_the_workflows(
 
 
 def check_to_run_workflow(
-    workflow_name: str, file_name: str | list[str], archive_types: Optional[str]
+    workflow_name: str, file_name: str | list[str], archive_types: str | None
 ) -> bool:
     if archive_types is None:
         return workflow_name != "bagit-uploader"
@@ -951,7 +951,7 @@ def get_workflow_execution_details(
     host: str,
     hosts: Hosts,
     workflow_execution_id: str,
-    details: Optional[list[str]] = None,
+    details: list[str] | None = None,
 ) -> JsonObject:
     provider_hostname = hosts[host]["hostname"]
     # calling using swagger api does not work, because

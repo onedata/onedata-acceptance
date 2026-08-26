@@ -11,7 +11,7 @@ import re
 import subprocess as sp
 import time
 from collections.abc import Mapping
-from typing import Literal, Optional, Required, TypedDict, cast, overload
+from typing import Literal, Required, TypedDict, cast, overload
 
 import pytest
 import requests
@@ -51,19 +51,14 @@ ENV_READY_TIMEOUT_SECONDS = 300
 type StringMapping = Mapping[str, str]
 
 
-PodConfig = TypedDict(
-    "PodConfig",
-    {
-        "name": str,
-        "ip": str,
-        "domain": str,
-        "hostname": str,
-        "container_id": str,
-        "service_type": str,
-        "provider_host": str,
-    },
-    total=False,
-)
+class PodConfig(TypedDict, total=False):
+    name: str
+    ip: str
+    domain: str
+    hostname: str
+    container_id: str
+    service_type: str
+    provider_host: str
 
 
 class DeploymentStatus(TypedDict, total=False):
@@ -112,9 +107,9 @@ def start_environment(
     scenario_path: str,
     request: pytest.FixtureRequest,
     hosts: Hosts,
-    patch_path: Optional[str],
+    patch_path: str | None,
     users: Users,
-    test_config: Optional[JsonObject],
+    test_config: JsonObject | None,
 ) -> str | OnenvError:
     attempts = 0
     local = request.config.getoption("--local")
@@ -349,7 +344,7 @@ def parse_wait_args(request: pytest.FixtureRequest) -> list[str]:
     return wait_args
 
 
-def parse_up_args(request: pytest.FixtureRequest, test_config: Optional[JsonObject]) -> list[str]:
+def parse_up_args(request: pytest.FixtureRequest, test_config: JsonObject | None) -> list[str]:
     up_args = []
 
     option_values = [
@@ -572,7 +567,7 @@ def add_etc_hosts_entries(service_ip: str, service_host: str) -> None:
 @overload
 def run_kubectl_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     return_output: Literal[True] = True,
     verbose: bool = True,
@@ -582,7 +577,7 @@ def run_kubectl_command(
 @overload
 def run_kubectl_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     return_output: Literal[False] = False,
     verbose: bool = True,
@@ -591,7 +586,7 @@ def run_kubectl_command(
 
 def run_kubectl_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     return_output: bool = True,
     verbose: bool = True,

@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os.path
 import subprocess
-from typing import Optional
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -92,7 +91,7 @@ def _docker_cp(
     browser_id: str,
     src_path: str,
     hosts: Hosts,
-    dst_path: Optional[str] = None,
+    dst_path: str | None = None,
 ) -> None:
     src_path = os.path.join(str(tmpdir), browser_id, src_path)
     if dst_path:

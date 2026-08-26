@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping, MutableMapping
-from typing import NotRequired, Optional, Protocol, TypedDict, cast
+from typing import NotRequired, Protocol, TypedDict, cast
 
 import yaml
 
@@ -126,7 +126,7 @@ def _inventories_creation(
             )
 
 
-def _unpack_member_entry(entry: MemberEntry) -> tuple[str, Optional[list[str]]]:
+def _unpack_member_entry(entry: MemberEntry) -> tuple[str, list[str] | None]:
     if isinstance(entry, str):
         return entry, None
     [(name, options)] = entry.items()
@@ -152,7 +152,7 @@ def _add_user_to_inventory(
     admin_credentials: CredentialsLike,
     inventory_id: str,
     user_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})
@@ -176,7 +176,7 @@ def _add_group_to_inventory(
     admin_credentials: CredentialsLike,
     inventory_id: str,
     group_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})

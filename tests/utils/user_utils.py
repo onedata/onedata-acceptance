@@ -9,7 +9,7 @@ import hashlib
 import json
 import os
 from collections.abc import Mapping
-from typing import Optional, cast
+from typing import cast
 
 import rpyc  # pylint: disable=import-error
 
@@ -38,12 +38,12 @@ class User:  # pylint: disable=too-many-instance-attributes
         zone_hostname: str,
         username: str,
         password: str,
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
     ) -> None:
         self.username = username
         self.password = password
         self._user_id = user_id
-        self._token: Optional[str] = None
+        self._token: str | None = None
         self.idps: list[str] = []
         self.keycloak_name = ""
         self.zone_hostname = zone_hostname
@@ -86,8 +86,8 @@ class User:  # pylint: disable=too-many-instance-attributes
         hosts: Mapping[str, Mapping[str, str]],
         env_desc: EnvDesc,
         token: str = CORRECT_TOKEN,
-        opts: Optional[list[str]] = None,
-    ) -> Optional[Client]:
+        opts: list[str] | None = None,
+    ) -> Client | None:
         rpyc_connection = self.get_rpyc_connection(hosts[client_host_alias])
         client_conf = get_client_conf(client_id, client_host_alias, env_desc)
         client_key = str(client_conf["id"])

@@ -10,7 +10,7 @@ import tarfile
 import time
 from collections.abc import Mapping
 from datetime import datetime
-from typing import Optional, Protocol
+from typing import Protocol
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -597,7 +597,7 @@ def assert_contents_downloaded_tar_file(
     displays: dict[str, str],
     name: str,
 ) -> None:
-    configured_dir_contents: dict[str, Optional[str]] = {}
+    configured_dir_contents: dict[str, str | None] = {}
     if name == "archive":
         name = f"archive_{clipboard.paste(display=displays[browser_id])}.tar"
         contents = contents.replace("archive", name.split(".", maxsplit=1)[0])

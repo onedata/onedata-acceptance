@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Optional, cast
+from typing import cast
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -208,7 +208,7 @@ def register_prov_using_register_btn(selenium: SeleniumDrivers, browser_id: str)
 
 def _check_error_modal_appeared_or_registration_finished(
     driver: WebDriver,
-) -> Optional[bool]:
+) -> bool | None:
     error_modal_css_selector = ".alert-global.modal.in .modal-dialog"
     sidebar_css_selector = ".one-sidebar.sidebar-clusters"
 

@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Sequence
+from collections.abc import Sequence
 
 from selenium.common.exceptions import JavascriptException
 

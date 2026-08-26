@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import Optional
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -205,7 +204,7 @@ class SpaceProvidersHeader(PageObject):
     providers_tab = WebElementsSequence(".provider-online")
     overview_tab = WebElement(".item-overview")
 
-    def get_current_active_tab(self) -> Optional[str]:
+    def get_current_active_tab(self) -> str | None:
         for tab in self.providers_tab + [self.overview_tab]:
             if "active" in tab.get_attribute("class"):
                 return tab.text

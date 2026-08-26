@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import base64
 import time
 from collections.abc import Mapping
-from typing import Optional, Protocol, cast
+from typing import Protocol, cast
 
 import yaml
 from onezone_client import TokenApi
@@ -146,7 +146,7 @@ def _create_token_with_config(
     }
     if token_type == "invite":
         invite_type = cast(str, data["invite type"])
-        invite_target = cast(Optional[str], data.get("invite target"))
+        invite_target = cast(str | None, data.get("invite target"))
 
         invite_type_rest = translation_dict[invite_type]["type"]
 

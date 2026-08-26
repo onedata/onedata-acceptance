@@ -12,8 +12,8 @@ import stat as stat_lib
 import string
 import subprocess
 import time
-from collections.abc import Callable
-from typing import IO, Mapping, Optional, Protocol, TypedDict, cast
+from collections.abc import Callable, Mapping
+from typing import IO, Protocol, TypedDict, cast
 
 from tests.type_definitions import EnvDesc
 from tests.utils import ONECLIENT_LOGS_DIR, ONECLIENT_MOUNT_DIR
@@ -21,7 +21,7 @@ from tests.utils.path_utils import escape_path
 from tests.utils.utils import log_exception
 
 type Command = str | list[str]
-type Condition = Callable[[], Optional[bool]]
+type Condition = Callable[[], bool | None]
 type XattrValue = str | bytes
 
 
@@ -48,7 +48,7 @@ class OsProxy(Protocol):
     def mknod(self, path: str, mode: int) -> None: ...
     def link(self, src: str, dest: str) -> None: ...
     def symlink(self, src: str, dest: str) -> None: ...
-    def utime(self, path: str, times: Optional[tuple[float, float]]) -> None: ...
+    def utime(self, path: str, times: tuple[float, float] | None) -> None: ...
 
 
 class ShutilProxy(Protocol):
@@ -57,7 +57,7 @@ class ShutilProxy(Protocol):
         self,
         path: str,
         ignore_errors: bool = ...,
-        onerror: Optional[Callable[..., object]] = ...,
+        onerror: Callable[..., object] | None = ...,
     ) -> None: ...
     def copytree(self, src: str, dest: str) -> str: ...
     def copy(self, src: str, dest: str) -> str: ...
@@ -84,8 +84,8 @@ class SubprocessProxy(Protocol):
 
 
 class TempfileProxy(Protocol):
-    def mkstemp(self, **kwargs: Optional[str]) -> tuple[int, str]: ...
-    def mkdtemp(self, **kwargs: Optional[str]) -> str: ...
+    def mkstemp(self, **kwargs: str | None) -> tuple[int, str]: ...
+    def mkdtemp(self, **kwargs: str | None) -> str: ...
 
 
 class XattrsProxy(Protocol):
@@ -118,7 +118,7 @@ class RpycConnectionLike(Protocol):
     _config: dict[str, object]
 
 
-type CommandResult = Optional[int | str]
+type CommandResult = int | str | None
 
 ClientConfig = TypedDict(
     "ClientConfig",
@@ -128,7 +128,7 @@ ClientConfig = TypedDict(
 
 
 class Client:
-    def __init__(self, rpyc_connection: RpycConnectionLike, timeout: Optional[int] = 40) -> None:
+    def __init__(self, rpyc_connection: RpycConnectionLike, timeout: int | None = 40) -> None:
         self._id = "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         self._mount_path = os.path.join(ONECLIENT_MOUNT_DIR, self._id)
         self.rpyc_connection = rpyc_connection
@@ -138,9 +138,9 @@ class Client:
 
     def mount(
         self,
-        mode: Optional[str],
+        mode: str | None,
         gdb: bool = False,
-        additional_opts: Optional[list[str]] = None,
+        additional_opts: list[str] | None = None,
     ) -> CommandResult:
         if mode and "proxy" in mode:
             mode_flag = "--force-proxy-io"
@@ -182,7 +182,7 @@ class Client:
     def absolute_path(self, path: str) -> str:
         return os.path.join(self._mount_path, path)
 
-    def perform(self, condition: Condition, timeout: Optional[int] = None) -> bool:
+    def perform(self, condition: Condition, timeout: int | None = None) -> bool:
         if timeout is None:
             timeout = self.timeout
         return self._repeat_until(condition, timeout)
@@ -245,7 +245,7 @@ class Client:
         path: str,
         recursive: bool = False,
         force: bool = False,
-        onerror: Optional[Callable[..., object]] = None,
+        onerror: Callable[..., object] | None = None,
     ) -> None:
         if recursive and force:
             self.rpyc_connection.modules.shutil.rmtree(path, ignore_errors=True, onerror=onerror)
@@ -356,11 +356,11 @@ class Client:
             m.update(f.read().encode("utf-8"))
         return m.hexdigest()
 
-    def mkstemp(self, directory: Optional[str] = None) -> str:
+    def mkstemp(self, directory: str | None = None) -> str:
         _handle, abs_path = self.rpyc_connection.modules.tempfile.mkstemp(dir=directory)
         return abs_path
 
-    def mkdtemp(self, directory: Optional[str] = None) -> str:
+    def mkdtemp(self, directory: str | None = None) -> str:
         return self.rpyc_connection.modules.tempfile.mkdtemp(dir=directory)
 
     def replace_pattern(
@@ -405,7 +405,7 @@ class Client:
         error: bool = False,
         retries: int = 0,
         retry_sleep: int | float = 8,
-        on_retry: Optional[Callable[[], None]] = None,
+        on_retry: Callable[[], None] | None = None,
         verbose: bool = False,
     ) -> CommandResult:
         """Run command on oneself docker using rpyc

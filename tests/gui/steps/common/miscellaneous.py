@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import os
 import subprocess
-from typing import Optional
 
 import yaml
 from selenium.common.exceptions import NoSuchElementException
@@ -148,7 +147,7 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
 
 @repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
 def switch_to_iframe(
-    selenium: SeleniumDrivers, browser_id: str, selector: Optional[str] = None
+    selenium: SeleniumDrivers, browser_id: str, selector: str | None = None
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()

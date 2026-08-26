@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Tuple
 
 import yaml
 
@@ -94,7 +93,7 @@ def _setup_step1(
         wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step)
 
 
-def _parse_zone_data(zone_name: str, zone_domain: str) -> Tuple[str, str]:
+def _parse_zone_data(zone_name: str, zone_domain: str) -> tuple[str, str]:
     match_name = re.match(r"/name of (.+)/", zone_name)
     if match_name is None:
         raise ValueError(f"Cannot parse zone name from: {zone_name}")
@@ -246,7 +245,7 @@ def _setup_step2(
     wt_click_on_btn_in_deployment_step(selenium, browser_id, register_button, step)
 
 
-def _parse_provider(provider_name: str, provider_domain: str) -> Tuple[str, str]:
+def _parse_provider(provider_name: str, provider_domain: str) -> tuple[str, str]:
     match_name = re.match(r"/name of (.+)/", provider_name)
     if match_name is None:
         raise ValueError(f"Cannot parse provider name from: {provider_name}")

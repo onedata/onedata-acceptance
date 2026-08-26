@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Optional
 
 from selenium.common.exceptions import (
     ElementNotInteractableException,
@@ -329,7 +328,7 @@ class PrivilegeTree(PageObject):
         with_scroll: bool = False,
     ) -> bool:
         driver = selenium[browser_id]
-        privilege_row: Optional[PrivilegeGroup] = None
+        privilege_row: PrivilegeGroup | None = None
         # Tolerate loading of privileges table
         privilege_row_try = 0
         while privilege_row is None and privilege_row_try < 10:

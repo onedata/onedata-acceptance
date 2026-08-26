@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Optional
 
 import yaml
 
@@ -408,7 +407,7 @@ def _create_token_of_type(
     selenium: SeleniumDrivers,
     browser_id: str,
     token_type: str,
-    iteration: Optional[int] = None,
+    iteration: int | None = None,
 ) -> None:
     token_name = f"{token_type}_token"
     if iteration:

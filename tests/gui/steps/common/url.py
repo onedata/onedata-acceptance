@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import Union
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -67,7 +66,7 @@ def open_onedata_service_page(
         if host == "emergency interface of Onepanel":
             host = "oneprovider-1 provider panel"
         host_parts = host.lower().split()
-        node_number: Union[int, str]
+        node_number: int | str
 
         if "node" in host_parts[0]:
             node_number = int(host_parts[0][-1])

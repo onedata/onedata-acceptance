@@ -1,7 +1,6 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from collections.abc import Iterator, Sequence
-from typing import Optional
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -53,20 +52,20 @@ class PageObjectsSequence:
         driver: WebDriver,
         items: Sequence[SeleniumWebElement],
         cls: type[PageObject],
-        parent: Optional[object] = None,
+        parent: object | None = None,
     ) -> None:
         self.driver = driver
         self.items = items
         self.cls = cls
         self.parent = parent
 
-    def _getitem_by_id(self, sel: object) -> Optional[PageObject]:
+    def _getitem_by_id(self, sel: object) -> PageObject | None:
         for item in self:
             if item.id == sel:
                 return item
         return None
 
-    def _getitem_by_idx(self, idx: int) -> Optional[SeleniumWebElement]:
+    def _getitem_by_idx(self, idx: int) -> SeleniumWebElement | None:
         return nth(self.items, idx) if idx < len(self) else None
 
     def __iter__(self) -> Iterator[PageObject]:
@@ -103,7 +102,7 @@ class PageObjectsSequence:
     def count(self) -> int:
         return len(self)
 
-    def index(self, item_for_idx: object) -> Optional[int]:
+    def index(self, item_for_idx: object) -> int | None:
         if isinstance(item_for_idx, self.cls):
             item_searched = item_for_idx.id
         else:

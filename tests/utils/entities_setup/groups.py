@@ -5,8 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
-from collections.abc import Mapping, MutableMapping
-from typing import Callable, NotRequired, Protocol, TypedDict, cast
+from collections.abc import Callable, Mapping, MutableMapping
+from typing import NotRequired, Protocol, TypedDict, cast
 
 import pytest
 import yaml

@@ -12,7 +12,7 @@ import traceback
 from collections.abc import Callable, Sequence
 from time import sleep, time
 from types import ModuleType
-from typing import Optional, ParamSpec, TypeVar, cast
+from typing import ParamSpec, TypeVar, cast
 
 import pytest
 from decorator import decorator  # pylint: disable=import-error
@@ -57,7 +57,7 @@ def assert_false(expression: Callable[..., object], *args: object, **kwargs: obj
     assert not assert_result
 
 
-def get_fun_name(fun: str) -> Optional[str]:
+def get_fun_name(fun: str) -> str | None:
     if "method" in fun:
         return fun.split("method ")[1].split(" ")[0]
     if "function" in fun:
@@ -72,7 +72,7 @@ def assert_expected_failure(fun: Callable[..., object], *args: object, **kwargs:
 
 def repeat_failed(
     attempts: int = 10,
-    timeout: Optional[float] = None,
+    timeout: float | None = None,
     interval: float = 0.1,
     exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
@@ -119,7 +119,7 @@ def get_authors(mod: ModuleType) -> list[str]:
     return re.split(r"\s*,\s*", author)
 
 
-def get_suite_description(mod: ModuleType) -> Optional[str]:
+def get_suite_description(mod: ModuleType) -> str | None:
     return mod.__doc__
 
 

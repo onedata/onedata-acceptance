@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from abc import ABC
 from collections.abc import Iterable
-from typing import ClassVar, Optional
+from typing import ClassVar
 
 from selenium.common.exceptions import JavascriptException, NoSuchElementException
 from selenium.webdriver import ActionChains
@@ -32,8 +32,8 @@ from .browser_row import BrowserRow
 
 
 class Browser(ABC, PageObject):
-    row_cls: ClassVar[Optional[type[BrowserRow]]] = None
-    column_header_cls: ClassVar[Optional[type[PageObject]]] = None
+    row_cls: ClassVar[type[BrowserRow] | None] = None
+    column_header_cls: ClassVar[type[PageObject] | None] = None
     data: ClassVar[WebItemsSequence]
     column_headers: ClassVar[WebItemsSequence]
     files_list: ClassVar[WebItemsSequence]

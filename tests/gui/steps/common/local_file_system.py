@@ -11,7 +11,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import stat
 import subprocess
-from typing import Optional, cast
+from typing import cast
 
 import requests
 import yaml
@@ -61,7 +61,7 @@ def create_dir_tree_structure_on_local_fs(structure: str, tmpdir: LocalPath) -> 
         _mkdirs(home_dir, home_dir_content)
 
 
-def _mkdirs(cwd: LocalPath, dir_content: Optional[DirectoryContent] = None) -> None:
+def _mkdirs(cwd: LocalPath, dir_content: DirectoryContent | None = None) -> None:
     if not dir_content:
         return
 
@@ -100,7 +100,7 @@ def specify_size(size_string: str) -> int:
         return int(size) * unit_dict[unit]
 
 
-def _mkfile(file_: LocalPath, file_content: Optional[str] = None) -> None:
+def _mkfile(file_: LocalPath, file_content: str | None = None) -> None:
     if not file_content:
         file_content = "1" * 10
 

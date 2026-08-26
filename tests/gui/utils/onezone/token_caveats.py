@@ -5,8 +5,9 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from collections.abc import Callable, Iterable
 from datetime import datetime, timedelta
-from typing import Callable, Iterable, Protocol, TypedDict
+from typing import Protocol, TypedDict
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -39,7 +40,9 @@ class PathCaveatConfig(TypedDict):
     path: str
 
 
-ExpirationCaveat = TypedDict("ExpirationCaveat", {"after": int, "set": bool}, total=False)
+class ExpirationCaveat(TypedDict, total=False):
+    after: int
+    set: bool
 
 
 TokenCaveats = TypedDict(

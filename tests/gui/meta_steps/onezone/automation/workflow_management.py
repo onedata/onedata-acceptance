@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 from ast import literal_eval
-from typing import Optional, cast
+from typing import cast
 
 import yaml
 from selenium.common.exceptions import (
@@ -167,7 +167,7 @@ def _upload_workflow_from_automation_examples(
     inventory: str,
     workflow: str,
     tmp_memory: TmpMemory,
-    method: Optional[str] = None,
+    method: str | None = None,
 ) -> None:
     subpage = "workflows"
     modal = "Upload workflow"

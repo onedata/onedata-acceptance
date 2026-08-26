@@ -14,7 +14,7 @@ from enum import Enum
 from functools import partial
 from itertools import islice
 from time import sleep
-from typing import Literal, Optional, TypeVar, cast, overload
+from typing import Literal, TypeVar, cast, overload
 
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
@@ -76,34 +76,34 @@ def go_to_relative_url(selenium: WebDriver, relative_url: str) -> None:
 @overload
 def parse_seq(
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: str | None = None,
+    separator: str | None = None,
 ) -> list[str]: ...
 
 
 @overload
-def parse_seq(
+def parse_seq[T](
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: str | None = None,
+    separator: str | None = None,
     *,
     default: Callable[[str], T],
 ) -> list[T]: ...
 
 
 @overload
-def parse_seq(
+def parse_seq[T](
     seq: str,
-    pattern: Optional[str],
-    separator: Optional[str],
+    pattern: str | None,
+    separator: str | None,
     default: Callable[[str], T],
 ) -> list[T]: ...
 
 
-def parse_seq(
+def parse_seq[T](
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: str | None = None,
+    separator: str | None = None,
     default: Callable[[str], T] = cast(Callable[[str], T], str),
 ) -> list[T]:
     """Parses regex-matched or separator-delimited values into a list,
@@ -169,7 +169,7 @@ def upload_file_path(file_name: str) -> str:
     )
 
 
-def upload_workflow_path(workflow_name: Optional[str] = None) -> str:
+def upload_workflow_path(workflow_name: str | None = None) -> str:
     """Resolve an absolute path for workflow file with name workflow_name
     stored in automation-examples submodule
     """
@@ -195,7 +195,7 @@ def upload_workflow_path(workflow_name: Optional[str] = None) -> str:
     )
 
 
-def upload_lambda_path(lambda_name: Optional[str]) -> str:
+def upload_lambda_path(lambda_name: str | None) -> str:
     """Resolve an absolute path for lambda dump file with name lambda_name
     stored in automation-examples submodule
     """
@@ -240,7 +240,7 @@ def implicit_wait(
         driver.implicitly_wait(prev_timeout)
 
 
-def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
+def iter_ahead[T](iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
     read_ahead = iter(iterable)
     next(read_ahead, None)
     for item, next_item in zip(iterable, read_ahead):
@@ -413,7 +413,7 @@ def rm_css_cls(driver: WebDriver, web_elem: WebElement, css_cls: str) -> Iterato
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)
 
 
-def nth(seq: Iterable[T], idx: int) -> Optional[T]:
+def nth[T](seq: Iterable[T], idx: int) -> T | None:
     return next(islice(seq, idx, None), None)
 
 
@@ -431,7 +431,7 @@ def redirect_display(new_display: str) -> Iterator[None]:
             del os.environ["DISPLAY"]
 
 
-def transform(val: str, strip_char: Optional[str] = None) -> str:
+def transform(val: str, strip_char: str | None = None) -> str:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 

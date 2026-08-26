@@ -9,7 +9,7 @@ import re
 import time
 from collections.abc import Callable, Collection, Sequence
 from datetime import datetime
-from typing import Optional, Protocol
+from typing import Protocol
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -397,7 +397,7 @@ def assert_items_absence_in_browser(
     )
 )
 def assert_num_of_files_are_displayed_in_browser_(
-    browser_id: str, num: Optional[str], tmp_memory: TmpMemory, which_browser: str
+    browser_id: str, num: str | None, tmp_memory: TmpMemory, which_browser: str
 ) -> None:
     expected_num = 1 if num is None else int(num)
     assert_num_of_files_are_displayed_in_browser(
