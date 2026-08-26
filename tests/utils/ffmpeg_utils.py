@@ -52,7 +52,7 @@ def start_recording(
         with _suppress(OSError, errnos=(errno.ENOENT, errno.ENAMETOOLONG)):
             os.remove(path)
 
-    with open(os.devnull, "w") as dev_null:
+    with open(os.devnull, "w", encoding="utf-8") as dev_null:
         proc = sp.Popen(  # pylint: disable=consider-using-with
             cmd,
             stdin=sp.PIPE,
@@ -136,7 +136,7 @@ class RecorderManager:
                 for movie in self.ffmpeg_details["movies"]:
                     try:
                         os.remove(movie)
-                    except IOError as ex:
+                    except OSError as ex:
                         if ex.errno not in (errno.ENOENT, errno.ENAMETOOLONG):
                             raise
 

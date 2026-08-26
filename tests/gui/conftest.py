@@ -193,7 +193,7 @@ def numerals() -> dict[str, int]:
 
 @fixture(scope="session")
 def logdir(request: pytest.FixtureRequest) -> str:
-    return request.config.option.htmlpath.rstrip("report.html")
+    return request.config.option.htmlpath.removesuffix("report.html")
 
 
 @fixture(scope="session")

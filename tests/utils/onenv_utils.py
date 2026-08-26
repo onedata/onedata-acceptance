@@ -286,7 +286,7 @@ def get(key: str) -> YamlValue:
 
 
 def load_yaml(path: str) -> YamlObject:
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return cast(YamlObject, yaml.load(f, yaml.Loader))
 
 

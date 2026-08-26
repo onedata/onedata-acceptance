@@ -59,9 +59,9 @@ def assert_false(expression: Callable[..., object], *args: object, **kwargs: obj
 
 def get_fun_name(fun: str) -> str | None:
     if "method" in fun:
-        return fun.split("method ")[1].split(" ")[0]
+        return fun.split("method ")[1].split(" ", maxsplit=1)[0]
     if "function" in fun:
-        return fun.split("function ")[1].split(".")[0]
+        return fun.split("function ")[1].split(".", maxsplit=1)[0]
     return None
 
 

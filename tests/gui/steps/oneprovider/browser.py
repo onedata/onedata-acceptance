@@ -194,8 +194,8 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
     breadcrumbs = getattr(OPLoggedIn(driver), transform(which_browser)).breadcrumbs.pwd()
 
     if which_browser == "archive file browser":
-        breadcrumbs = re.split("/", breadcrumbs, 2)[-1]
-        path = re.split("/", path, 2)[-1]
+        breadcrumbs = re.split("/", breadcrumbs, maxsplit=2)[-1]
+        path = re.split("/", path, maxsplit=2)[-1]
 
     assert path == breadcrumbs, f"expected breadcrumbs {path}; displayed: {breadcrumbs}"
 

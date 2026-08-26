@@ -122,7 +122,7 @@ def create_target_file(
     file_name: str,
     dir_name: str,
 ) -> str:
-    space = file_name.split("/")[0]
+    space = file_name.split("/", maxsplit=1)[0]
     create(user, f"[{space}/{dir_name}]", client_node, users, exists_ok=True)
     file_name_hash = "".join(
         random.choice(string.ascii_lowercase + string.digits) for _ in range(16)

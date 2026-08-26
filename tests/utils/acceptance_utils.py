@@ -170,13 +170,13 @@ def get_workflow_dump(workflow_name: str) -> WorkflowDump:
         path = upload_file_path(f"automation/workflow/{workflow_name}.json")
     else:
         raise FileNotFoundError(f"Path to {workflow_name} not found")
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
     return cast(WorkflowDump, data)
 
 
 def get_lambda_dump(lambda_name: str) -> LambdaDump:
-    with open(upload_lambda_path("".join([lambda_name, "/", lambda_name, ".json"]))) as f:
+    with open(upload_lambda_path(f"{lambda_name}/{lambda_name}.json"), encoding="utf-8") as f:
         data = json.load(f)
     return cast(LambdaDump, data)
 

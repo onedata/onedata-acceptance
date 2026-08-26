@@ -395,7 +395,9 @@ def assert_downloaded_and_uploaded_lambda_dumps_the_same(
     dump_lambda_name = uploaded_dump["revision"]["atmLambdaRevision"]["_data"]["name"]
     has_downloaded_workflow_file_content(browser_id, tmpdir, dump_lambda_name + ".json")
 
-    with open(tmpdir.join(browser_id, "download", dump_lambda_name + ".json")) as f:
+    with open(
+        tmpdir.join(browser_id, "download", dump_lambda_name + ".json"), encoding="utf-8"
+    ) as f:
         downloaded_dump = json.load(f)
 
     # remove keys

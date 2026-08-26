@@ -165,7 +165,7 @@ def create_symlink_oneclient(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        file_name = file_path.split("/")[-1]
+        file_name = file_path.rsplit("/", maxsplit=1)[-1]
         create_symlink(
             user,
             f"{space}/{file_path}",
@@ -208,7 +208,7 @@ def create_file_hardlink(
         )
     elif client_lower == "rest":
         user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
-        file_name = file_path.split("/")[-1]
+        file_name = file_path.rsplit("/", maxsplit=1)[-1]
         create_hardlink_rest(
             users,
             user,
@@ -240,7 +240,7 @@ def create_hardlink_oneclient(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        file_name = file_path.split("/")[-1]
+        file_name = file_path.rsplit("/", maxsplit=1)[-1]
         create_hardlink(
             user,
             f"{space}/{file_path}",

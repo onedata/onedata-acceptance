@@ -44,7 +44,7 @@ def check_using_all_workflows() -> None:
 
 def check_names_in_file(path: str, names: set[str]) -> set[str]:
     detected_names = set()
-    with open(path, "r") as f:
+    with open(path, encoding="utf-8") as f:
         lines = f.readlines()
         for line in lines:
             words = line.split(" ")

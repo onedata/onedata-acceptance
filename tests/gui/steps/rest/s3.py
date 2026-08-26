@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import hashlib
 import hmac
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from http import HTTPStatus
 
 import requests
@@ -135,7 +135,7 @@ def s3_authorization(
 
 
 def create_bucket(bucket_name: str) -> None:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     amz_date = now.strftime("%Y%m%dT%H%M%SZ")
     date_stamp = now.strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"
@@ -165,7 +165,7 @@ def create_bucket(bucket_name: str) -> None:
 
 
 def assert_bucket_exists(bucket_name: str) -> None:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     amz_date = now.strftime("%Y%m%dT%H%M%SZ")
     date_stamp = now.strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"
@@ -196,7 +196,7 @@ def assert_bucket_exists(bucket_name: str) -> None:
 
 
 def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     amz_date = now.strftime("%Y%m%dT%H%M%SZ")
     date_stamp = now.strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"

@@ -48,7 +48,7 @@ def add_user_luma_mapping(admin_user: User, user: User, storages: list[StorageDe
             storage_details.storage_id,
             mapping,
             http_post,
-            "/".join(["all", "onedata_user_to_credentials"]),
+            "all/onedata_user_to_credentials",
         )
 
 
@@ -69,7 +69,7 @@ def add_spaces_luma_mapping(
             space_details.storage_id,
             mapping,
             http_put,
-            "/".join(["posix_compatible", "default_credentials", space_details.space_id]),
+            f"posix_compatible/default_credentials/{space_details.space_id}",
         )
 
 

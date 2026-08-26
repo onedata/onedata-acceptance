@@ -541,7 +541,9 @@ def assert_each_element_contains_some_information(
         file_path = (
             store_content
             if option == "file names"
-            else store_content[option.split(" ")[0] + option.split(" ")[-1].capitalize()]
+            else store_content[
+                option.split(" ", maxsplit=1)[0] + option.rsplit(" ", maxsplit=1)[-1].capitalize()
+            ]
         )
         actual_data.append(file_path.split("/")[-1])
     assert len(actual_data) == len(expected_data), (
@@ -1162,7 +1164,7 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
     file_name = os.listdir(path)[-1]
     file_path = tmpdir.join(browser_id, "download", file_name)
     if file_path.isfile():
-        with open(file_path) as f:
+        with open(file_path, encoding="utf-8") as f:
             data = json.load(f)
             log_entries = len(modal.logs_entry)
             error_message = (
@@ -1213,7 +1215,7 @@ def _assert_workflow_audit_log_contains_entries(
     modal = Modals(driver).audit_log
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
 
-    with open(file_path) as f:
+    with open(file_path, encoding="utf-8") as f:
         data_file = json.load(f)
     for expected_entry in data:
         if assert_expected_in_entries(expected_entry, data_file):
@@ -1251,7 +1253,7 @@ def assert_workflow_audit_log_contains_entry(
     item_list: list[str],
 ) -> bool:
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
-    with open(file_path) as f:
+    with open(file_path, encoding="utf-8") as f:
         data_file = json.load(f)
     for entry in data_file:
         try:
@@ -1277,7 +1279,7 @@ def assert_no_debug_entry_in_workflow_audit_log(
     browser_id: str, selenium: SeleniumDrivers, tmp_memory: TmpMemory, tmpdir: LocalPath
 ) -> None:
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
-    with open(file_path) as f:
+    with open(file_path, encoding="utf-8") as f:
         data_file: list[AuditLogContent] = json.load(f)
         error_message = "workflow audit log contains debug entry"
         assert not any(entry.get("severity", "") == "debug" for entry in data_file), error_message

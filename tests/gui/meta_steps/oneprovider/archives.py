@@ -183,7 +183,7 @@ def _create_archive(
             item_name,
             DATASET_BROWSER,
         )
-        item_name = item_name.split("/")[-1]
+        item_name = item_name.rsplit("/", maxsplit=1)[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, DATASET_BROWSER)
     if option in ("succeeds", "tries"):
         click_option_in_data_row_menu_in_browser(

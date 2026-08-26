@@ -244,7 +244,7 @@ def upload_workflow_rest(
     zone_hostname = hosts[zone_name]["hostname"]
     owner = users[user]
 
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         workflow_dump = json.load(f)["revision"]
 
     _upload_workflow_rest(

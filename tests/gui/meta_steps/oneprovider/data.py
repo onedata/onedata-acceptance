@@ -134,7 +134,7 @@ def rename_item(
     modal_name = "Rename modal"
     confirmation_option = "button"
     text = "Renaming the file failed"
-    new_name = new_path.split("/")[-1]
+    new_name = new_path.rsplit("/", maxsplit=1)[-1]
 
     open_modal_for_file_browser_item(
         selenium,
@@ -454,7 +454,7 @@ def assert_file_content_in_op_gui(
     tmpdir: LocalPath,
 ) -> None:
     cwd = "space root"
-    last_elem = path.split("/")[-1]
+    last_elem = path.rsplit("/", maxsplit=1)[-1]
     try:
         assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
         go_to_path_without_last_elem(selenium, user, tmp_memory, path)
@@ -1063,7 +1063,7 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     option = "Create hard link"
     button = "Place hard link"
 
-    file_name = source_path.split("/")[-1]
+    file_name = source_path.rsplit("/", maxsplit=1)[-1]
 
     _create_link_in_file_browser(
         selenium,
@@ -1146,7 +1146,7 @@ def get_file_id_from_details_modal(
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
     if "/" in file_name:
         go_to_path_without_last_elem(selenium, browser_id, tmp_memory, file_name)
-        file_name = file_name.split("/")[-1]
+        file_name = file_name.rsplit("/", maxsplit=1)[-1]
 
     modal_name = "Directory details" if "dir" in file_name else "File details"
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)

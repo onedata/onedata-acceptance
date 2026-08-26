@@ -25,7 +25,7 @@ def start_session(
     for screen in screens:
         cmd.extend(["-screen", str(screen), whd])
 
-    with open(os.devnull, "w") as dev_null:
+    with open(os.devnull, "w", encoding="utf-8") as dev_null:
         proc = sp.Popen(  # pylint: disable=consider-using-with
             cmd, stdout=dev_null, stderr=dev_null, close_fds=True
         )
@@ -41,7 +41,7 @@ def stop_session(proc: sp.Popen[bytes]) -> None:
     try:
         proc.terminate()
         proc.wait()
-    except IOError as ex:
+    except OSError as ex:
         if ex.errno not in (errno.EINVAL, errno.EPIPE):
             raise
 

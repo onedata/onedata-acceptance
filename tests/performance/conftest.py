@@ -45,7 +45,7 @@ def yaml_output(request: pytest.FixtureRequest) -> PerformanceReport:
         if not os.path.exists(PERFORMANCE_LOGDIR):
             os.makedirs(PERFORMANCE_LOGDIR)
         logdir = make_logdir(LOGDIRS.get(get_test_type(request)), "report")
-        with open(os.path.join(logdir, "performance.yaml"), "w") as report_file:
+        with open(os.path.join(logdir, "performance.yaml"), "w", encoding="utf-8") as report_file:
             report_file.write(yaml.safe_dump(performance_report.report))
         export_logs(request)
 
@@ -82,7 +82,7 @@ class AbstractPerformanceTest:
         yaml_output: PerformanceReport,
         env_description_abs_path: str,
     ) -> EnvironmentReport:
-        name = env_description_abs_path.split(os.path.sep)[-1]
+        name = env_description_abs_path.rsplit(os.path.sep, maxsplit=1)[-1]
         report = EnvironmentReport(name)
 
         def fin() -> None:

@@ -200,7 +200,7 @@ def upload_lambda_from_repository(
     selenium: SeleniumDrivers, browser_id: str, lambda_name: str
 ) -> None:
     driver = selenium[browser_id]
-    lambda_name = "".join([lambda_name, "/", lambda_name, ".json"])
+    lambda_name = f"{lambda_name}/{lambda_name}.json"
     automation_page = OZLoggedIn(driver).automation
     automation_page.upload_lambda(upload_lambda_path(lambda_name))
 

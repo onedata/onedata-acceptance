@@ -143,7 +143,7 @@ def start_environment(
                 check_deployment(dep_status)
 
             if patch_path:
-                with open(patch_path, "r") as patch_file:
+                with open(patch_path, encoding="utf-8") as patch_file:
                     patch_cfg = yaml.load(patch_file, yaml.Loader)
                 setup_users(patch_cfg, users, zone_hostname)
                 add_luma_mappings(patch_cfg, users, hosts)
@@ -212,7 +212,7 @@ def configure_os(scenario_path: str, dep_status: DeploymentStatus) -> None:
     check_deployment(dep_status)
     pods_cfg = dep_status.get("pods")
 
-    with open(scenario_path, "r") as env_file:
+    with open(scenario_path, encoding="utf-8") as env_file:
         env_cfg = yaml.load(env_file, yaml.Loader)
     os_configs = env_cfg.get("os-config")
     if not os_configs:

@@ -319,7 +319,7 @@ def click_add_query_block(selenium: SeleniumDrivers, browser_id: str) -> None:
 @repeat_failed(timeout=WAIT_FRONTEND)
 def start_query_block_no(selenium: SeleniumDrivers, browser_id: str, number: str) -> None:
     driver = selenium[browser_id]
-    no = int(number.split()[0])
+    no = int(number.split(maxsplit=1)[0])
     modal = Modals(driver).details_modal.qos.query_builder
     modal.another_block_buttons[no - 1].click()
 

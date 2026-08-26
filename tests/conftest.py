@@ -13,7 +13,7 @@ import warnings
 from collections import defaultdict
 from collections.abc import Generator
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from pathlib import Path
 from typing import cast
 
@@ -222,7 +222,7 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
         if not env_file:
             raise pytest.UsageError("In upgrade tests --env-file option must be provided")
 
-        with open(env_file, "r") as f:
+        with open(env_file, encoding="utf-8") as f:
             test_config = yaml.load(f, yaml.Loader)
         scenarios = test_config["scenarios"]
         metafunc.parametrize(
@@ -284,7 +284,7 @@ def test_config(request: pytest.FixtureRequest) -> JsonObject:
     """Loaded yaml with test config"""
     test_type = get_test_type(request)
     if test_type == "upgrade":
-        with open(request.config.option.env_file, "r") as f:
+        with open(request.config.option.env_file, encoding="utf-8") as f:
             return yaml.load(f, yaml.Loader)
     return {}
 
@@ -301,7 +301,7 @@ def entities_config(
     if config_dir_path is None:
         raise ValueError(f"No config directory for test type {get_test_type(request)}")
     config_path = os.path.join(config_dir_path, file_name)
-    with open(config_path) as config_file:
+    with open(config_path, encoding="utf-8") as config_file:
         return yaml.load(config_file, yaml.Loader)
 
 
@@ -741,7 +741,7 @@ def _gather_movie(item: pytest.Item, report: TestReport, extras: list[object]) -
 
 
 def format_timestamp(timestamp: int) -> str:
-    return datetime.fromtimestamp(timestamp / 1000.0, timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.fromtimestamp(timestamp / 1000.0, UTC).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def format_log(log: list[LogEntry]) -> str:
@@ -767,7 +767,7 @@ def capture_all_warnings() -> Generator[list[warnings.WarningMessage], None, Non
         warnings.simplefilter("always")
         yield w
 
-        with open("warnings.log", "a") as log_file:
+        with open("warnings.log", "a", encoding="utf-8") as log_file:
             for warning in w:
                 log_file.write(
                     f"{warning.filename}:{warning.lineno}: {warning.category.__name__}:"
@@ -870,7 +870,7 @@ def env_description_abs_path(
 
 @pytest.fixture(scope="session")
 def env_desc(env_description_abs_path: str) -> EnvDesc:
-    with open(env_description_abs_path, "r") as env_desc_file:
+    with open(env_description_abs_path, encoding="utf-8") as env_desc_file:
         return yaml.load(env_desc_file, yaml.Loader)
 
 

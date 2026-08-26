@@ -52,7 +52,7 @@ def get_logdir_name(root_dir: str, test_name: str) -> str:
     "tests/mytest/test1.<timestamp>"
     """
     timestamp = str(time.time())
-    return os.path.join(root_dir, ".".join([test_name, timestamp]))
+    return os.path.join(root_dir, f"{test_name}.{timestamp}")
 
 
 def make_logdir(root_dir: str | None, test_name: str) -> str:
@@ -80,13 +80,13 @@ def get_json_files(directory: str, relative: bool = False) -> list[str]:
 
 def save_log_to_file(file_path: str, log: str) -> None:
     """Saves log to file pointed by file_path"""
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         f.write(log)
 
 
 def append_log_to_file(path: str, log: str) -> None:
     """Appends log to file pointed by path"""
-    with open(path, "a") as f:
+    with open(path, "a", encoding="utf-8") as f:
         f.write(f"{log}\n\n")
         os.utime(path, None)
 
@@ -104,14 +104,14 @@ def get_function(module: ModuleType, function_name: str) -> Callable[..., object
 def ensure_json(file: str) -> str:
     """Ensures that file has .json extension."""
     if os.path.splitext(file)[1] != ".json":
-        file = ".".join([file, "json"])
+        file = f"{file}.json"
     return file
 
 
 def ensure_yaml(file: str) -> str:
     """Ensures that file has .yaml extension."""
     if os.path.splitext(file)[1] != ".yaml":
-        file = ".".join([file, "yaml"])
+        file = f"{file}.yaml"
     return file
 
 

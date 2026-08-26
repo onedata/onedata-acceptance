@@ -319,9 +319,9 @@ def get_files_content(path1: str, path2: str) -> str:
         return f"{path1} is not a file!"
     if not os.path.isfile(path2):
         return f"{path2} is not a file!"
-    with open(path1, "r") as file:
+    with open(path1, encoding="utf-8") as file:
         data1 = file.read()
-    with open(path2, "r") as file:
+    with open(path2, encoding="utf-8") as file:
         data2 = file.read()
     return (
         f"Content of {path1}:\n{data1}\nLength: {len(data1)}.\n"

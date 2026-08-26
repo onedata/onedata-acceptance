@@ -62,7 +62,7 @@ def get_item_name_from_path(
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space_name, option_in_space)
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, item_browser)
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path, item_browser)
-    return path.split("/")[-1]
+    return path.rsplit("/", maxsplit=1)[-1]
 
 
 @wt(
@@ -250,7 +250,7 @@ def check_effective_protection_flags_for_file_in_op_gui(
         tmp_memory,
     )
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory, item_name)
-    item_name = item_name.split("/")[-1]
+    item_name = item_name.rsplit("/", maxsplit=1)[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_data_row_menu)
     flags = [item.replace("_protection", "") for item in get_flags(option)]
@@ -298,7 +298,7 @@ def set_protection_flags_for_dataset_in_op_gui(
         item_name,
         item_browser=item_browser,
     )
-    item_name = item_name.split("/")[-1]
+    item_name = item_name.rsplit("/", maxsplit=1)[-1]
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(

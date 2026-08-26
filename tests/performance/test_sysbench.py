@@ -108,8 +108,8 @@ class TestSysbench(AbstractPerformanceTest):
         dir_path_proxy = client_proxy.mkdtemp(directory=client_proxy.absolute_path("space1"))
 
         print(
-            "\n################################## DIRECT-IO client (%s)"
-            " ##################################\n" % (mode)
+            f"\n################################## DIRECT-IO client ({mode})"
+            " ##################################\n"
         )
 
         execute_sysbench_test(
@@ -128,8 +128,8 @@ class TestSysbench(AbstractPerformanceTest):
         )
 
         print(
-            "\n################################## PROXY-IO client (%s)"
-            " ##################################\n" % (mode)
+            f"\n################################## PROXY-IO client ({mode})"
+            " ##################################\n"
         )
 
         execute_sysbench_test(

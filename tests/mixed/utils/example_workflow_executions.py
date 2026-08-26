@@ -41,7 +41,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         for file in input_files:
             path = upload_workflow_path("bagit-uploader") + "/" + file
             self.upload_file(path, file)
-        file_paths = [f"{dest_dir.split('/')[0]}/{file}" for file in input_files]
+        file_paths = [f"{dest_dir.split('/', maxsplit=1)[0]}/{file}" for file in input_files]
 
         return [
             {
@@ -86,7 +86,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         for file in input_files:
             path = upload_workflow_path("download-files") + "/" + file
             self.upload_file(path, file)
-        file_paths = [f"{destination.split('/')[0]}/{file}" for file in input_files]
+        file_paths = [f"{destination.split('/', maxsplit=1)[0]}/{file}" for file in input_files]
         return [
             {
                 "fetch-files": [{"fileId": self.resolve_file_id(path)}],

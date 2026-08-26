@@ -17,7 +17,7 @@ OBJECT_TYPE = "object"
 
 
 def get_item_type(item_path: str) -> str:
-    return "container" if item_path.split("/")[-1].startswith("dir") else "object"
+    return "container" if item_path.rsplit("/", maxsplit=1)[-1].startswith("dir") else "object"
 
 
 def get_content_type(item_type: str) -> str:

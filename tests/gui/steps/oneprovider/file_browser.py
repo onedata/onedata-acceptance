@@ -617,7 +617,7 @@ def assert_contents_downloaded_tar_file(
             item_path = name if path == "" else path + "/" + name
 
             configured_dir_contents[item_path] = str(content)
-            if name.startswith("dir") or name.startswith("archive"):
+            if name.startswith(("dir", "archive")):
                 configured_dir_contents[item_path] = None
                 if isinstance(content, list):
                     _get_directory_contents(content, item_path)
@@ -641,7 +641,7 @@ def assert_contents_downloaded_tar_file(
             assert f in configured_dir_contents, f"{f} is missing in downloaded tar file"
             archive_file = tar.getmember(f)
             if archive_file.isfile():
-                with open(extract_path.join(f).strpath, "r") as o:
+                with open(extract_path.join(f).strpath, encoding="utf-8") as o:
                     file_contents = o.read()
                     assert str(file_contents) == str(configured_dir_contents[f]), (
                         f"{f} content is different than expected "
