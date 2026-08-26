@@ -85,7 +85,7 @@ def click_on_option_in_harvester_menu(
     selenium: SeleniumDrivers, browser_id: str, option: str, name: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).discovery
-    page.harvesters_list[name]()
+    page.harvesters_list[name].click()
     page.harvesters_list[name].menu_button()
     page.menu[option]()
 

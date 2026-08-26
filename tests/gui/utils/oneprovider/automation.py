@@ -12,7 +12,7 @@ from tests.gui.utils.core import (
     scroll_to_css_selector,
     scroll_to_css_selector_bottom,
 )
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Icon,
@@ -24,7 +24,6 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import LabeledElement
 
 
 class ExecutionRecord(PageObject):
@@ -40,12 +39,12 @@ class ExecutionRecord(PageObject):
         return f"Workflow row {self.name} in {self.parent}"
 
 
-class Revision(LabeledElement):
+class Revision(NamedElement):
     number = id = Label(".revision-number")
     name = Label(".description")
 
 
-class Workflow(LabeledElement):
+class Workflow(NamedElement):
     name = id = Label(".workflow-schema-name")
 
     show_revisions_button = Button(".expand-button")
@@ -54,11 +53,11 @@ class Workflow(LabeledElement):
     )
 
 
-class NavigationTab(LabeledElement):
+class NavigationTab(NamedElement):
     name = id = Label(".tab-name")
 
 
-class Task(LabeledElement):
+class Task(NamedElement):
     name = id = Label(".task-name")
     name_web_elem = WebElement(".task-name")
     drag_handle = WebElement(".task-drag-handle")
@@ -92,7 +91,8 @@ class Task(LabeledElement):
             ).click()
 
 
-class ParallelBox(LabeledElement):
+class ParallelBox(NamedElement):
+    name = id = Label(".one-label")
     task_list = WebItemsSequence(".box-elements .workflow-visualiser-task", cls=Task)
 
     def scroll_to_bottom_of_task_in_parallel_box(self, task_id: str) -> None:
@@ -100,12 +100,13 @@ class ParallelBox(LabeledElement):
         scroll_to_css_selector(self.driver, box_sel)
 
 
-class RunIndicator(LabeledElement):
+class RunIndicator(NamedElement):
+    name = Label(".one-label")
     number = id = Label(".run-number")
     origin_run_number = Label(".origin-run-number")
 
 
-class WorkflowLane(LabeledElement):
+class WorkflowLane(NamedElement):
     name = id = Label(".lane-name")
     name_web_elem = WebElement(".lane-name")
     lane_web_elem = WebElement(".draggable-lane")
@@ -123,11 +124,11 @@ class WorkflowLane(LabeledElement):
         scroll_to_css_selector_bottom(self.driver, box_sel)
 
 
-class WorkflowVisualiserStore(LabeledElement):
+class WorkflowVisualiserStore(NamedElement):
     name = id = Label(".store-name")
 
 
-class InitialValueStore(LabeledElement):
+class InitialValueStore(NamedElement):
     name = id = Label(".control-label")
     input_link = Button(".editor-box-content .action-link")
     data_type = Label(".data-spec-type")

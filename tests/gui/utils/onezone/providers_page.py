@@ -10,23 +10,25 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 
+from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     WebElement,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import LabeledElement, SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.utils.utils import element_has_class
 
 
-class Provider(LabeledElement):
+class Provider(NamedElement):
+    name = id = Label(".one-label")
     support_size = Label(".status-toolbar .outer-text")
     supported_spaces_number = Label(".status-toolbar .oneicon-space .inner-text")
     home_icon = WebElement(".status-toolbar-icon:first-of-type span")
 
 
-class Icon(LabeledElement):
+class Icon(NamedElement):
     name = id = icon = Button(".circle")
 
 

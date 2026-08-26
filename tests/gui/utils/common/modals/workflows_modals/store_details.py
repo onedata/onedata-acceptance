@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     AceEditor,
     Button,
@@ -15,12 +15,11 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import LabeledElement
 
 from ..modal import Modal
 
 
-class FilterTab(LabeledElement):
+class FilterTab(NamedElement):
     name = id = Label(".column-name")
 
 

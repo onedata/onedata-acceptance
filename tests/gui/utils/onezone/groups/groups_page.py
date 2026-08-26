@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Optional
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
@@ -18,7 +18,6 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.onezone.common import EditBox, InputBox
 from tests.gui.utils.onezone.generic_page import (
-    LabeledElement,
     SidebarPanelPage,
     get_visible_elements_list,
 )
@@ -28,7 +27,7 @@ from tests.utils.utils import element_has_class
 from .hierarchy_subpage import GroupHierarchyPage
 
 
-class Group(LabeledElement):
+class Group(NamedElement):
     name = id = Label(".item-name", scroll=False)
     menu = Button(".collapsible-toolbar-toggle", scroll=False)
     members = NamedButton(".one-list-level-2 .item-header", text="Members")
@@ -42,7 +41,7 @@ class Group(LabeledElement):
         return None
 
 
-class GroupHeader(LabeledElement):
+class GroupHeader(NamedElement):
     name = id = Label(".item-name", scroll=False)
     menu = Button(".collapsible-toolbar-toggle", scroll=False)
 

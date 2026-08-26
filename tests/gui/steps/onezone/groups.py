@@ -134,7 +134,7 @@ def click_on_option_of_group_menu_on_left_sidebar_menu(
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     page = OZLoggedIn(driver).groups
-    page.groups_list[group_name]()
+    page.groups_list[group_name].click()
     getattr(page.groups_list[group_name], transform(option))()
 
 

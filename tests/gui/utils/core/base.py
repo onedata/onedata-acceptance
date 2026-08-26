@@ -13,9 +13,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-class AbstractWebElement(ABC):
-    __metaclass__ = ABCMeta
-
+class AbstractWebElement(ABC, metaclass=ABCMeta):
     def __init__(self, css_selector: str, scroll: bool = True, name: str = "") -> None:
         self.css_selector = css_selector
         self.scroll = scroll
@@ -32,9 +30,7 @@ class AbstractWebElement(ABC):
         pass
 
 
-class AbstractWebItem(AbstractWebElement, ABC):
-    __metaclass__ = ABCMeta
-
+class AbstractWebItem(AbstractWebElement, ABC, metaclass=ABCMeta):
     def __init__(self, *args: object, **kwargs: object) -> None:
         item_cls = kwargs.pop("cls", None)
         if item_cls is None:
@@ -56,9 +52,7 @@ class PageObjectMeta(ABCMeta):
         super(PageObjectMeta, cls).__init__(cls_name, bases, cls_dict)
 
 
-class AbstractPageObject:
-    __metaclass__ = PageObjectMeta
-
+class AbstractPageObject(metaclass=PageObjectMeta):
     def __init__(
         self,
         driver: WebDriver,

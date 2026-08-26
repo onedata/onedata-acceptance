@@ -6,18 +6,18 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.utils.common.common import Toggle
+from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     WebElement,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import LabeledElement
 
 from ..modal import Modal
 
 
-class ParentDatasetItem(LabeledElement):
+class ParentDatasetItem(NamedElement):
     name = id = Label(".file-path")
     metadata_protection_toggle = Toggle(".metadata-flag-toggle")
     data_protection_toggle = Toggle(".data-flag-toggle")

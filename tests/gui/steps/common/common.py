@@ -101,35 +101,25 @@ def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-_PAGE_NAME_BY_LIST_ELEMENT: dict[ListElement, str] = {
-    ListElement.SPACES: "data",
-    ListElement.SPACES_HEADERS: "data",
-    ListElement.GROUPS_HEADERS: "groups",
-    ListElement.SHARES_SIDEBAR: "shares",
-}
-
-
-def _get_page_name_for_list(list_element: ListElement) -> str:
-    return _PAGE_NAME_BY_LIST_ELEMENT.get(
-        list_element,
-        list_element.value,
-    )
-
-
-def _get_page_for_list(
+def get_page_for_list(
     list_element: ListElement,
     driver: WebDriver,
 ) -> ListPage:
     oz = OZLoggedIn(driver)
 
-    if list_element in (ListElement.WORKFLOWS, ListElement.LAMBDAS):
-        return getattr(
-            oz.automation,
-            f"{list_element.value}_page",
-        )
-
-    page_name = _get_page_name_for_list(list_element)
-    return getattr(oz, page_name)
+    match list_element:
+        case ListElement.SPACES | ListElement.SPACES_HEADERS:
+            return oz.data
+        case ListElement.GROUPS_HEADERS:
+            return oz.groups
+        case ListElement.SHARES_SIDEBAR:
+            return oz.shares
+        case ListElement.WORKFLOWS:
+            return oz.automation.workflows_page
+        case ListElement.LAMBDAS:
+            return oz.automation.lambdas_page
+        case _:
+            return getattr(oz, list_element.value)
 
 
 @wt(
@@ -151,7 +141,7 @@ def wt_assert_n_items_in_items_list(
     list_type: ListElement,
 ) -> None:
     driver = selenium[browser_id]
-    page = _get_page_for_list(list_type, driver)
+    page = get_page_for_list(list_type, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 
