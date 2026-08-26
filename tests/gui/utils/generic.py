@@ -172,6 +172,28 @@ class IndexedPathSequence(TypedDict):
     file_name: str
 
 
+def indexed_path_sequences_equal(
+    first: IndexedPathSequence, second: IndexedPathSequence
+) -> bool:
+    if first["file_name"] != second["file_name"]:
+        return False
+
+    first_indices = (first["first_idx"], first["last_idx"])
+    second_indices = (second["first_idx"], second["last_idx"])
+    if all(idx is None for idx in first_indices) or all(
+        idx is None for idx in second_indices
+    ):
+        return True
+
+    if first["prefix"] != second["prefix"]:
+        return False
+
+    return all(
+        first_idx is None or second_idx is None or first_idx == second_idx
+        for first_idx, second_idx in zip(first_indices, second_indices)
+    )
+
+
 def parse_and_validate_indices(
     matches: list[re.Match[str]], sequence: str
 ) -> list[int]:
@@ -220,23 +242,30 @@ def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
         path_parts_groups = [path_parts]
 
     parsed_groups: list[tuple[str, int]] = [
-        parse_indexed_path_parts(group, sequence)
+        parse_indexed_path_parts(group, sequence) if group else None
         for group in path_parts_groups
-        if group
     ]
-    if not parsed_groups:
+
+    # at least one of the groups is empty
+    if not all(parsed_groups):
+        first_idx, last_idx, prefix = None, None, None
+        if any(parsed_groups):
+            if not parsed_groups[0]:
+                prefix, last_idx = parsed_groups[1]
+            else:
+                prefix, first_idx = parsed_groups[0]
         return {
-            "first_idx": None,
-            "last_idx": None,
-            "prefix": None,
+            "first_idx": first_idx,
+            "last_idx": last_idx,
+            "prefix": prefix,
             "file_name": file_name,
         }
 
     first_prefix, first_idx = parsed_groups[0]
-    _, last_idx = parsed_groups[-1]
+    last_prefix, last_idx = parsed_groups[1]
 
     # Groups may have different prefixes despite each group being internally consistent.
-    if any(group_prefix != first_prefix for group_prefix, _ in parsed_groups):
+    if first_prefix != last_prefix:
         raise ValueError(f"Invalid indexed path sequence: {sequence}")
 
     return {

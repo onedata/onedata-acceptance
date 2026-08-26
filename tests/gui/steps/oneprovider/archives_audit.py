@@ -19,6 +19,7 @@ from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
+    indexed_path_sequences_equal,
     parse_elements_sequence,
     parse_indexed_path_sequence,
     transform,
@@ -499,7 +500,7 @@ def assert_archived_file_path_and_archive_name(
     details_path_params = parse_indexed_path_sequence(path_without_archive_name)
     expected_path_params = parse_indexed_path_sequence(path)
 
-    assert details_path_params == expected_path_params, (
+    assert indexed_path_sequences_equal(details_path_params, expected_path_params), (
         f"given path: {path_without_archive_name} is different than actual file path:"
         f" {path}"
     )
