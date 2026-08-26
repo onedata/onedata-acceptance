@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from collections.abc import Iterable
-from typing import ClassVar, TypeVar
+from typing import ClassVar
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.core.base import NamedElement, PageObject, PageObjectMeta
@@ -14,14 +14,11 @@ from tests.gui.utils.core.web_elements import Label, NamedButton
 from tests.gui.utils.generic import ListItemMainField, PageName
 from tests.utils.utils import repeat_failed
 
-ElementT = TypeVar("ElementT", bound=NamedElement)
-
-
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_visible_elements_list(
-    elements_list: Iterable[ElementT],
+def get_visible_elements_list[T: NamedElement](
+    elements_list: Iterable[T],
     main_field: ListItemMainField = "name",
-) -> list[ElementT]:
+) -> list[T]:
     return [element for element in elements_list if getattr(element, main_field)]
 
 
