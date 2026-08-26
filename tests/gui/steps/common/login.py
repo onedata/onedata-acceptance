@@ -64,6 +64,7 @@ def _login_to_service(
         browser_id_list,
         user_id_list,
         service_list,
+        strict=True,
     ):
         driver = selenium[browser_id]
         password = users[username].password

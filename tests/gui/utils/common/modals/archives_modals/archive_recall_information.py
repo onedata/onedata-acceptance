@@ -97,7 +97,7 @@ class ArchiveRecallInformation(Modal):
             if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
 
-            for column, value in zip(temp_columns, values_in_row):
+            for column, value in zip(temp_columns, values_in_row, strict=True):
                 column_values[column].append(value)
 
         return column_values

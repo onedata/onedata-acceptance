@@ -157,7 +157,9 @@ def scroll_to_bottom_of_the_table(driver: WebDriver) -> int:
         # Scroll to last
         driver.execute_script("arguments[0].scrollIntoView();", get_last_item_in_table(driver))
         try:
-            WebDriverWait(driver, 2).until(lambda d: get_last_item_number_in_table(d) > count)
+            WebDriverWait(driver, 2).until(
+                lambda d, previous_count=count: get_last_item_number_in_table(d) > previous_count
+            )
         except TimeoutException:
             break
     return count

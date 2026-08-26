@@ -128,7 +128,7 @@ def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
         else:
             modals = driver.find_elements(By.CSS_SELECTOR, ".modal.in, .modal.in .modal-title")
 
-        for name, modal in zip(modals[1::2], modals[::2]):
+        for name, modal in zip(modals[1::2], modals[::2], strict=True):
             if name.text.lower() == modal_name.lower():
                 return modal
         raise NoSuchElementException(f"modal {modal_name} not found")
@@ -343,7 +343,7 @@ def assert_modal_option_is_not_selected(browser_id: str, text: str, tmp_memory: 
         By.CSS_SELECTOR, ".one-option-button, .one-option-button .oneicon"
     )
     error_message = f'option "{text}" is selected while it should not be'
-    for option, checkbox in zip(options[::2], options[1::2]):
+    for option, checkbox in zip(options[::2], options[1::2], strict=True):
         if option.text == text:
             checkbox_css = checkbox.get_attribute("class")
             assert "oneicon-checkbox-empty" in checkbox_css, error_message
@@ -370,7 +370,7 @@ def select_option_with_text_in_modal(browser_id: str, text: str, tmp_memory: Tmp
     options = modal.find_elements(
         By.CSS_SELECTOR, ".one-option-button, .one-option-button .oneicon"
     )
-    for option, checkbox in zip(options[::2], options[1::2]):
+    for option, checkbox in zip(options[::2], options[1::2], strict=True):
         if option.text == text:
             checkbox_css = checkbox.get_attribute("class")
             if "oneicon-checkbox-empty" in checkbox_css:

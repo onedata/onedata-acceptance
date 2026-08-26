@@ -79,7 +79,7 @@ def rename_spaces_in_oz_using_rest(
     user_api = UserApi(user_client)
     space_api = SpaceApi(user_client)
 
-    for space_name, new_space_name in zip(space_list, new_names_list):
+    for space_name, new_space_name in zip(space_list, new_names_list, strict=True):
         if space_name in spaces:
             space = user_api.get_user_space(spaces[space_name])
         else:
@@ -208,7 +208,7 @@ def assert_spaces_have_been_renamed_in_oz_rest(
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     user_api = UserApi(user_client)
 
-    for space_name, new_space_name in zip(space_list, new_names_list):
+    for space_name, new_space_name in zip(space_list, new_names_list, strict=True):
         space_name = user_api.get_user_space(spaces[space_name]).name
         assert space_name == new_space_name, (
             f"Space should has name {new_space_name} but it has name {space_name}"

@@ -319,27 +319,28 @@ def fill_inputs_in_dublin_core_metadata_form(
     - There are currently no selectable fields.
     - There is no special field like "Material".
     """
-    option = "private"
     tab_name = "Expose as Public Data"
 
     open_tab_in_public_share(selenium, browser_id, tab_name)
     parsed_config = yaml.load(config, yaml.Loader)
 
-    for option, value in parsed_config.items():
-        option = option.lower()
+    for configured_option, value in parsed_config.items():
+        lowercase_option = configured_option.lower()
 
-        if not is_name_in_initial_form_fields(option, "dublin_core"):
-            add_metadata_field_in_dublin_core_form(selenium[browser_id], option)
+        if not is_name_in_initial_form_fields(lowercase_option, "dublin_core"):
+            add_metadata_field_in_dublin_core_form(selenium[browser_id], lowercase_option)
 
         if not isinstance(value, list):  # single string value
-            write_input_in_form_in_shares_interface(browser_id, value, option, selenium)
+            write_input_in_form_in_shares_interface(browser_id, value, lowercase_option, selenium)
         else:
-            write_input_in_form_in_shares_interface(browser_id, value[0], option, selenium)
+            write_input_in_form_in_shares_interface(
+                browser_id, value[0], lowercase_option, selenium
+            )
             for val in value[1:]:
                 click_button_in_form_in_shares_interface(
-                    browser_id, f"Add another {option}", selenium
+                    browser_id, f"Add another {lowercase_option}", selenium
                 )
-                write_input_in_form_in_shares_interface(browser_id, val, option, selenium)
+                write_input_in_form_in_shares_interface(browser_id, val, lowercase_option, selenium)
 
 
 @wt(

@@ -212,9 +212,9 @@ def see_items_in_op_rest(
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(client)
-    for path in path_list:
-        path = f"{space}/{path}"
-        check_if_item_exists_or_not_exists(result, path, client, file_api)
+    for relative_path in path_list:
+        space_path = f"{space}/{relative_path}"
+        check_if_item_exists_or_not_exists(result, space_path, client, file_api)
 
 
 def see_item_in_op_rest_using_token(

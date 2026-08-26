@@ -61,11 +61,14 @@ def open_onedata_service_page(
     emergency interface of Onepanel
     emergency interface of Onezone
     """
-    for browser_id, host in zip(browser_id_list, hosts_list):
+    for browser_id, requested_host in zip(browser_id_list, hosts_list, strict=True):
         driver = selenium[browser_id]
-        if host == "emergency interface of Onepanel":
-            host = "oneprovider-1 provider panel"
-        host_parts = host.lower().split()
+        host_description = (
+            "oneprovider-1 provider panel"
+            if requested_host == "emergency interface of Onepanel"
+            else requested_host
+        )
+        host_parts = host_description.lower().split()
         node_number: int | str
 
         if "node" in host_parts[0]:

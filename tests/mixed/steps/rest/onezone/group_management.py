@@ -141,7 +141,7 @@ def rename_groups_using_rest(
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name, new_name in zip(group_list, new_names):
+    for group_name, new_name in zip(group_list, new_names, strict=True):
         group = get_group(group_name, user_client)
         data = {"name": new_name}
         group_api.modify_group(group.group_id, data)
@@ -168,7 +168,7 @@ def fail_to_rename_groups_using_rest(
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name, new_name in zip(group_list, new_names):
+    for group_name, new_name in zip(group_list, new_names, strict=True):
         group = get_group(group_name, user_client)
         data = {"name": new_name}
         with pytest.raises(ApiException):

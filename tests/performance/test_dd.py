@@ -194,10 +194,10 @@ def convert_size(value: int | float, prefix: str, convert_to_prefix: str) -> flo
     convert_to_prefix = convert_to_prefix.upper()
     si_powers_prefixes = ["kB", "MB", "GB", "TB"]
     si_powers_values = [1000**p for p in range(1, 5)]
-    si_powers = dict(zip(si_powers_prefixes, si_powers_values))
+    si_powers = dict(zip(si_powers_prefixes, si_powers_values, strict=True))
     powers_prefixes = ["K", "M", "G", "T"]
     powers_values = [1024**p for p in range(1, 5)]
-    powers = dict(zip(powers_prefixes, powers_values))
+    powers = dict(zip(powers_prefixes, powers_values, strict=True))
 
     if is_SI_prefix(prefix):
         factor = float(si_powers[prefix]) / powers[convert_to_prefix]

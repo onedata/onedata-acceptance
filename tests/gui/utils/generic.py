@@ -243,8 +243,7 @@ def implicit_wait(
 def iter_ahead[T](iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
     read_ahead = iter(iterable)
     next(read_ahead, None)
-    for item, next_item in zip(iterable, read_ahead):
-        yield item, next_item
+    yield from zip(iterable, read_ahead, strict=False)
 
 
 def is_element_with_selector_visible_on_page(driver: WebDriver, css_selector: str) -> bool:

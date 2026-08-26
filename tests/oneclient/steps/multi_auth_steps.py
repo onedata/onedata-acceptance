@@ -43,6 +43,7 @@ def multi_mount(
         client_ids,
         client_hosts,
         list_parser(tokens),
+        strict=True,
     )
 
     for username, client_id, client_host, token in params:
@@ -66,11 +67,14 @@ def check_spaces(spaces: str, user_name: str, client_nodes: str, users: Users) -
         client = user.clients[client_node]
         spaces_in_client = client.list_spaces()
 
-        def condition() -> None:
+        def condition(
+            spaces_to_check: list[str] = spaces_in_client,
+            checked_client_node: str = client_node,
+        ) -> None:
             for space in expected_spaces:
-                assert space in spaces_in_client, (
+                assert space in spaces_to_check, (
                     f"Space {expected_spaces} not found in spaces list"
-                    f" {spaces_in_client} on client {client_node}"
+                    f" {spaces_to_check} on client {checked_client_node}"
                 )
 
         assert_(client.perform, condition)

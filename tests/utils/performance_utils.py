@@ -301,7 +301,7 @@ def generate_configs(params: Mapping[str, list[object]], description_skeleton: s
     for i, combination in enumerate(combinations):
         conf_name = f"config{i}"
         configs[conf_name] = {}
-        new_params = dict(zip(keys, combination))
+        new_params = dict(zip(keys, combination, strict=True))
         description = description_skeleton.format(**new_params)
         for key, value in new_params.items():
             new_params[key] = {"value": value}

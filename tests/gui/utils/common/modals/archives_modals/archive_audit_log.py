@@ -72,7 +72,7 @@ class ArchiveAuditLog(Modal):
             if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
 
-            for column, param in zip(temp_columns, values_in_row):
+            for column, param in zip(temp_columns, values_in_row, strict=True):
                 column_values[column].append(param)
 
             try:

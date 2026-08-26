@@ -54,40 +54,43 @@ def _assert_transfer(
     assert getattr(transfer, f"is_{item_type}")(), f"Transferred item is not {item_type} in {sufix}"
 
     parsed_desc = yaml.load(desc, yaml.Loader)
-    for key, val in parsed_desc.items():
-        if key == "destination":
-            val = hosts[val]["name"]
+    for field_name, configured_value in parsed_desc.items():
+        expected_value = (
+            hosts[configured_value]["name"] if field_name == "destination" else configured_value
+        )
+        attribute_name = field_name.replace(" ", "_")
         transfer_val = None
         try:
-            transfer_val = getattr(transfer, key.replace(" ", "_"))
+            transfer_val = getattr(transfer, attribute_name)
         except NoSuchElementException:
             # if key differs from column name, consider creating suitable dict
-            key = key.replace(" ", "_")
-            if key in ["type", "destination"]:
+            if attribute_name in ["type", "destination"]:
                 select_columns_to_be_visible_in_transfers(
                     selenium, browser_id, ["type_&_destination"]
                 )
             else:
-                select_columns_to_be_visible_in_transfers(selenium, browser_id, [key])
-            transfer_val = getattr(transfer, key)
+                select_columns_to_be_visible_in_transfers(selenium, browser_id, [attribute_name])
+            transfer_val = getattr(transfer, attribute_name)
         try:
-            assert transfer_val == str(val), (
-                f"Transfer {key} is {transfer_val} instead of {val} in {sufix}"
+            assert transfer_val == str(expected_value), (
+                f"Transfer {field_name} is {transfer_val} instead of {expected_value} in {sufix}"
             )
         except AssertionError as e:
-            if "<" in val:
-                symbol = val.split(" ")[0]
-                value = float(val.split(" ")[1])
-                unit = val.split(" ")[2]
-                val = value if unit == "MiB" else value * 1024
-                transfer_val = float(transfer_val.split(" ")[0])
+            if "<" in expected_value:
+                symbol = expected_value.split(" ")[0]
+                size_value = float(expected_value.split(" ")[1])
+                unit = expected_value.split(" ")[2]
+                expected_size_mib = size_value if unit == "MiB" else size_value * 1024
+                actual_size_mib = float(transfer_val.split(" ")[0])
                 if symbol == "<=":
-                    assert transfer_val <= val, (
-                        f"{key}: {transfer_val} MiB is greater than {val} MiB"
+                    assert actual_size_mib <= expected_size_mib, (
+                        f"{field_name}: {actual_size_mib} MiB is greater than "
+                        f"{expected_size_mib} MiB"
                     )
                 else:
-                    assert transfer_val < val, (
-                        f"{key}: {transfer_val} MiB is no less than {val} MiB"
+                    assert actual_size_mib < expected_size_mib, (
+                        f"{field_name}: {actual_size_mib} MiB is no less than "
+                        f"{expected_size_mib} MiB"
                     )
             else:
                 raise e

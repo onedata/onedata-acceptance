@@ -283,9 +283,11 @@ def assert_command_output_contains(
             assert len(v) == len(output[k]), (
                 f"expected {len(v)} elements from REST command in output, but got {len(output[k])}."
             )
-            for el in v:
-                el = try_to_resolve_items(str(el), request)
-                assert el in output[k], f"item {el} not in output command {output[k]}"
+            for configured_element in v:
+                resolved_element = try_to_resolve_items(str(configured_element), request)
+                assert resolved_element in output[k], (
+                    f"item {resolved_element} not in output command {output[k]}"
+                )
         else:
             val = try_to_resolve_items(str(v), request)
             error_message = f"expected {k}: {val} from REST command in output, but got {output[k]}"

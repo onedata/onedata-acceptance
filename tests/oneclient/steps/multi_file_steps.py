@@ -16,7 +16,7 @@ import stat as stat_lib
 import string
 import subprocess as sp
 import time
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 
 import jsondiff
 import pytest
@@ -57,29 +57,39 @@ def create_base(
         # space_name/(.hardlinks or .symlinks)/(random string)
 
         path = client.absolute_path(file_name)
+        condition: Callable[[], None]
         if mode == "regular":
 
-            def condition() -> None:
-                client.create_file(path)
+            def create_regular_file(file_path_to_create: str = path) -> None:
+                client.create_file(file_path_to_create)
 
+            condition = create_regular_file
         elif mode == "hardlink":
             target_file_path = create_target_file(
                 user, client, client_node, users, file_name, HARDLINKS_DIR
             )
 
-            def condition() -> None:
-                client.create_file(target_file_path)
-                client.create_hardlink(target_file_path, path)
+            def create_hardlink_files(
+                link_target_path: str = target_file_path,
+                hardlink_path: str = path,
+            ) -> None:
+                client.create_file(link_target_path)
+                client.create_hardlink(link_target_path, hardlink_path)
 
+            condition = create_hardlink_files
         elif mode == "symlink":
             target_file_path = create_target_file(
                 user, client, client_node, users, file_name, SYMLINKS_DIR
             )
 
-            def condition() -> None:
-                client.create_file(target_file_path)
-                client.create_symlink(target_file_path, path)
+            def create_symlink_files(
+                link_target_path: str = target_file_path,
+                symlink_path: str = path,
+            ) -> None:
+                client.create_file(link_target_path)
+                client.create_symlink(link_target_path, symlink_path)
 
+            condition = create_symlink_files
         else:
             raise AssertionError
 
@@ -405,8 +415,8 @@ def delete_file_base(
     for file in file_names:
         path = client.absolute_path(file)
 
-        def condition() -> None:
-            client.rm(path)
+        def condition(path_to_delete: str = path) -> None:
+            client.rm(path_to_delete)
 
         if should_fail:
             assert_expected_failure(condition)
@@ -693,9 +703,9 @@ def touch_file_base(
     for file in file_names:
         file_path = client.absolute_path(file)
 
-        def condition() -> bool:
+        def condition(path_to_touch: str = file_path) -> bool:
             try:
-                client.touch(file_path)
+                client.touch(path_to_touch)
             except OSError:
                 return bool(should_fail)
             return not bool(should_fail)

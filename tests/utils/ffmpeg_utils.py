@@ -193,11 +193,11 @@ def _create_ffmpeg_cmd(
         else:
             tagged_streams, tags = _tag_streams(display_num)
             cmd.append(tagged_streams)
-            for tag in tags:
-                tag = f"[{tag}]"
-                path = file_path.format(tag)
+            for stream_tag in tags:
+                bracketed_tag = f"[{stream_tag}]"
+                path = file_path.format(bracketed_tag)
                 paths.append(path)
-                cmd.extend(output_fmt + ["-map", tag, path])
+                cmd.extend(output_fmt + ["-map", bracketed_tag, path])
 
     if display_num == 1 or mosaic_filter:
         path = file_path.format("")
@@ -234,7 +234,9 @@ def _overlay_streams(tags: list[str], offsets: Iterator[Offset]) -> tuple[str, s
     return (
         ";".join(
             fmt.format(base=base, tag=tag, x=x, y=y, new_base=new_base)
-            for fmt, tag, (x, y), (base, new_base) in zip(formats, tags, offsets, bases)
+            for fmt, tag, (x, y), (base, new_base) in zip(
+                formats, tags, offsets, bases, strict=True
+            )
         ),
         base_fmt.format(num=0),
     )

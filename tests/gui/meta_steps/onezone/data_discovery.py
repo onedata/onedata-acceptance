@@ -87,11 +87,12 @@ def _unpack_files_data(selenium: SeleniumDrivers, browser_id: str) -> dict[str, 
 
 
 def _assert_data_discovery_files(expected: JsonObject, actual: str, spaces: dict[str, str]) -> None:
-    for item in expected.items():
-        if item[0] == "spaceId":
-            item = ("spaceId", f'"{spaces[cast(str, item[1])]}"')
-        if item[0] == "xattrs":
-            xattrs = cast(dict[str, JsonObject], item[1])
+    for property_name, configured_value in expected.items():
+        asserted_value = configured_value
+        if property_name == "spaceId":
+            asserted_value = f'"{spaces[cast(str, configured_value)]}"'
+        if property_name == "xattrs":
+            xattrs = cast(dict[str, JsonObject], configured_value)
             for sub_item in xattrs.items():
                 if sub_item[0] == "unexpected":
                     for s_item in sub_item[1].items():
@@ -99,8 +100,8 @@ def _assert_data_discovery_files(expected: JsonObject, actual: str, spaces: dict
                 else:
                     _assert_expected_xattr(sub_item, actual)
         else:
-            assert f"{item[0].lower()}: {str(item[1]).lower()}" in actual.lower(), (
-                f"{item[0]}: {item[1]} not in {actual}"
+            assert f"{property_name.lower()}: {str(asserted_value).lower()}" in actual.lower(), (
+                f"{property_name}: {asserted_value} not in {actual}"
             )
 
 
@@ -117,16 +118,17 @@ def _assert_expected_xattr(sub_item: tuple[str, JsonValue], actual: str) -> None
 def _assert_unexpected_properties_of_files(
     unexpected: JsonObject, actual: str, spaces: dict[str, str]
 ) -> None:
-    for item in unexpected.items():
-        if item[0] == "spaceId":
-            item = ("spaceId", f'"{spaces[cast(str, item[1])]}"')
-        if item[0] == "xattrs":
-            for sub_item in cast(JsonObject, item[1]).items():
+    for property_name, configured_value in unexpected.items():
+        asserted_value = configured_value
+        if property_name == "spaceId":
+            asserted_value = f'"{spaces[cast(str, configured_value)]}"'
+        if property_name == "xattrs":
+            for sub_item in cast(JsonObject, configured_value).items():
                 _assert_unexpected_xattr(sub_item, actual)
         else:
-            assert f"{item[0].lower()}: {str(item[1]).lower()}" not in actual.lower(), (
-                f"{item[0]}: {item[1]} in {actual}"
-            )
+            assert (
+                f"{property_name.lower()}: {str(asserted_value).lower()}" not in actual.lower()
+            ), f"{property_name}: {asserted_value} in {actual}"
 
 
 @wt(
@@ -153,7 +155,7 @@ def see_files_with_order(selenium: SeleniumDrivers, browser_id: str, config: str
     files_list = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     assert len(files_list) == len(data_dict)
-    for pair in zip(files_list, data_dict):
+    for pair in zip(files_list, data_dict, strict=True):
         assert pair[0] == pair[1], "Files are not in order"
 
 

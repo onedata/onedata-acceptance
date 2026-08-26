@@ -214,7 +214,7 @@ def rename_spaces_in_oz_using_gui(
     option = "enter"
     option_in_submenu = "overview"
 
-    for space_name, new_space_name in zip(space_list, new_names_list):
+    for space_name, new_space_name in zip(space_list, new_names_list, strict=True):
         click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option_in_submenu)
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where, space_name)
         type_space_name_on_rename_space_input_on_overview_page(selenium, user, new_space_name)
@@ -320,7 +320,7 @@ def assert_spaces_have_been_renamed_in_oz_gui(
     space_list: list[str],
     new_names_list: list[str],
 ) -> None:
-    for space_name, new_space_name in zip(space_list, new_names_list):
+    for space_name, new_space_name in zip(space_list, new_names_list, strict=True):
         assert_new_created_space_has_appeared_on_spaces(selenium, user, new_space_name)
         assert_space_has_disappeared_on_spaces(selenium, user, space_name)
 

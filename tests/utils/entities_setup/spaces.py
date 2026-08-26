@@ -349,11 +349,12 @@ def _add_users_to_space(
     users_db: Users,
     users_to_add: list[MemberEntry],
 ) -> None:
-    for user in users_to_add:
-        if isinstance(user, dict):
-            [(user, options)] = user.items()
+    for user_entry in users_to_add:
+        if isinstance(user_entry, dict):
+            [(user_name, options)] = user_entry.items()
             privileges = options["privileges"]
         else:
+            user_name = user_entry
             privileges = None
 
         _add_user_to_space(
@@ -361,7 +362,7 @@ def _add_users_to_space(
             admin_credentials.username,
             admin_credentials.password,
             space_id,
-            users_db[user].user_id,
+            users_db[user_name].user_id,
             privileges,
         )
 
@@ -392,11 +393,12 @@ def _add_groups_to_space(
     groups_db: Groups,
     groups_to_add: list[MemberEntry],
 ) -> None:
-    for group in groups_to_add:
-        if isinstance(group, dict):
-            [(group, options)] = group.items()
+    for group_entry in groups_to_add:
+        if isinstance(group_entry, dict):
+            [(group_name, options)] = group_entry.items()
             privileges = options["privileges"]
         else:
+            group_name = group_entry
             privileges = None
 
         _add_group_to_space(
@@ -404,7 +406,7 @@ def _add_groups_to_space(
             admin_credentials.username,
             admin_credentials.password,
             space_id,
-            groups_db[group],
+            groups_db[group_name],
             privileges,
         )
 

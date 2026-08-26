@@ -443,7 +443,7 @@ def assert_xmls_equal(e1: str, e2: str) -> None:
 
     assert len(r1_sorted) == len(r2_sorted), f"Xml: {e1} is not equal to\n{e2}"
     err_msg = f"Xml: {e1} is not equal to\n{e2}\nExpected value: {{}}, but got: {{}}"
-    for el1, el2 in zip(r1_sorted, r2_sorted):
+    for el1, el2 in zip(r1_sorted, r2_sorted, strict=True):
         assert el1.tag == el2.tag, err_msg.format(el1.tag, el2.tag)
         assert el1.text == el2.text, err_msg.format(el1.text, el2.text)
         assert el1.attrib == el2.attrib, err_msg.format(el1.attrib, el2.attrib)

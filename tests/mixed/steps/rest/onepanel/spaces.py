@@ -176,13 +176,14 @@ def assert_proper_space_configuration_in_op_panel_rest(
 
     storage_sync = space_details.storage_import.auto_storage_import_config
 
-    for attribute, expected_val in yaml.load(conf, yaml.Loader).items():
-        if attribute == "Scan interval [s]":
-            attribute = "Scan interval"
-        actual_val = getattr(storage_sync, "_".join(attribute.lower().split()))
+    for displayed_attribute, expected_val in yaml.load(conf, yaml.Loader).items():
+        api_attribute = (
+            "Scan interval" if displayed_attribute == "Scan interval [s]" else displayed_attribute
+        )
+        actual_val = getattr(storage_sync, "_".join(api_attribute.lower().split()))
         assert expected_val == actual_val, (
             "Storage sync value for attribute "
-            f'"{attribute}" does not match. '
+            f'"{displayed_attribute}" does not match. '
             "Expected: "
             f"{expected_val}, "
             f"got: {actual_val}"

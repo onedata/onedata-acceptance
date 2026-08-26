@@ -674,10 +674,10 @@ def assert_provider_chunks_in_data_distribution(
     assert len(displayed_chunks) == len(expected_chunks), (
         f"displayed {len(displayed_chunks)} chunks instead of expected {len(expected_chunks)}"
     )
-    for chunk1, chunk2 in zip(displayed_chunks, expected_chunks):
+    for chunk1, chunk2 in zip(displayed_chunks, expected_chunks, strict=True):
         assert all(
             round(x - z) == 0
-            for x, z in zip(chunk1, parse_seq(chunk2, pattern=r"\d+", default=int))
+            for x, z in zip(chunk1, parse_seq(chunk2, pattern=r"\d+", default=int), strict=True)
         ), f"displayed chunk {chunk1} instead of expected {chunk2}"
 
 
@@ -979,7 +979,7 @@ def check_size_stats_for_provider(
     expected_sizes: list[str],
 ) -> None:
     driver = selenium[browser_id]
-    for provider, expected_size in zip(providers, expected_sizes):
+    for provider, expected_size in zip(providers, expected_sizes, strict=True):
         provider_name = hosts[provider]["name"]
         size = getattr(
             Modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[provider_name],
@@ -1059,7 +1059,7 @@ def check_content_for_providers(
     contents_list = [
         content.strip('"') for content in parse_seq(contents, pattern=r'"(.*?)"')
     ]  # removing extra quotes
-    for provider, content in zip(providers, contents_list):
+    for provider, content in zip(providers, contents_list, strict=True):
         check_content_for_provider(selenium, hosts, browser_id, provider, content)
 
 

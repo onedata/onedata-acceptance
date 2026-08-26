@@ -211,7 +211,7 @@ def rename_groups_using_op_gui(
 ) -> None:
     confirm_type = "enter"
 
-    for group, new_name in zip(group_list, new_names):
+    for group, new_name in zip(group_list, new_names, strict=True):
         rename_group(selenium, user, group, new_name, confirm_type)
 
 
@@ -401,7 +401,7 @@ def fail_to_rename_groups_using_op_gui(
 ) -> None:
     text = "failed"
 
-    for group, new_name in zip(group_list, new_names):
+    for group, new_name in zip(group_list, new_names, strict=True):
         rename_groups_using_op_gui(selenium, user, [group], [new_name])
         assert_error_modal_with_text_appeared(selenium, user, text)
 

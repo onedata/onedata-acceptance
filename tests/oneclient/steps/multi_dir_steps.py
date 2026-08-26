@@ -35,8 +35,8 @@ def create_base(
     for _dir in dir_names:
         path = client.absolute_path(_dir)
 
-        def condition() -> None:
-            client.mkdir(path, exist_ok=exists_ok)
+        def condition(path_to_create: str = path) -> None:
+            client.mkdir(path_to_create, exist_ok=exists_ok)
 
         if should_fail:
             assert_expected_failure(condition)
@@ -66,8 +66,8 @@ def create_parents(user: str, paths: str, client_node: str, users: Users) -> Non
     for path in path_names:
         dir_path = client.absolute_path(path)
 
-        def condition() -> None:
-            client.mkdir(dir_path, recursive=True)
+        def condition(directory_path: str = dir_path) -> None:
+            client.mkdir(directory_path, recursive=True)
 
         assert_(client.perform, condition)
 
@@ -91,8 +91,8 @@ def delete_empty_base(
     for _dir in dir_names:
         path = client.absolute_path(_dir)
 
-        def condition() -> None:
-            client.rmdir(path)
+        def condition(path_to_delete: str = path) -> None:
+            client.rmdir(path_to_delete)
 
         if should_fail:
             assert_expected_failure(condition)
@@ -159,8 +159,8 @@ def delete_non_empty(user: str, dirs: str, client_node: str, users: Users) -> No
     for _dir in dir_names:
         path = client.absolute_path(_dir)
 
-        def condition() -> None:
-            client.rm(path, recursive=True, force=True)
+        def condition(path_to_delete: str = path) -> None:
+            client.rm(path_to_delete, recursive=True, force=True)
 
         assert_(client.perform, condition)
 
@@ -204,8 +204,8 @@ def delete_parents(user: str, paths: str, client_node: str, users: Users) -> Non
     for path in path_names:
         dir_path = client.absolute_path(path)
 
-        def condition() -> None:
-            client.rmdir(dir_path, recursive=True)
+        def condition(directory_path: str = dir_path) -> None:
+            client.rmdir(directory_path, recursive=True)
 
         assert_(client.perform, condition)
 

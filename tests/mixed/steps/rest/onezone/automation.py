@@ -326,7 +326,7 @@ def wt_execute_workflow_rest(
 
     content = yaml.load(config, yaml.Loader)
     client = login_to_provider(user, users, hosts[host]["hostname"])
-    for key, val in content.items():
+    for val in content.values():
         if isinstance(val, list):
             for el in val:
                 for key2, val2 in el.items():
@@ -604,12 +604,15 @@ def execute_part_of_the_workflows(
             example_initial_store_content, input_files = getattr(
                 example_execution, workflow.replace("-", "_")
             )()
-            for file, content in zip(input_files, example_initial_store_content):
+            for file, configured_store_content in zip(
+                input_files, example_initial_store_content, strict=True
+            ):
                 if not check_to_run_workflow(workflow, file, archive_types):
                     continue
                 # map store name into store_id
-                content = {
-                    get_store_schema_id_of_workflow(key, path): content[key] for key in content
+                store_content_by_id = {
+                    get_store_schema_id_of_workflow(key, path): configured_store_content[key]
+                    for key in configured_store_content
                 }
                 rev_num = get_revision_num_of_workflow(path)
                 wid = execute_workflow_rest(
@@ -620,7 +623,7 @@ def execute_part_of_the_workflows(
                     spaces,
                     space,
                     workflow,
-                    content,
+                    store_content_by_id,
                     workflows,
                     rev_number=rev_num,
                     loglevel="info",
@@ -870,15 +873,18 @@ def assert_workflow_execution_details(
 
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     details = get_workflow_execution_details(user, users, host, hosts, wid)
-    for key, val in data.items():
-        if "$(resolve_user_id" in val:
-            val = val.replace("$(resolve_user_id ", "").replace(")", "")
-            val = users[val].user_id
-        elif "$(resolve_inventory_id" in val:
-            val = val.replace("$(resolve_inventory_id ", "").replace(")", "")
-            val = inventories[val]
-        error_message = f"Value of {key} is expected to be {val}, but got {details[key]}"
-        assert details[key] == val, error_message
+    for key, configured_value in data.items():
+        expected_value = configured_value
+        if "$(resolve_user_id" in configured_value:
+            user_name = configured_value.replace("$(resolve_user_id ", "").replace(")", "")
+            expected_value = users[user_name].user_id
+        elif "$(resolve_inventory_id" in configured_value:
+            inventory_name = configured_value.replace("$(resolve_inventory_id ", "").replace(
+                ")", ""
+            )
+            expected_value = inventories[inventory_name]
+        error_message = f"Value of {key} is expected to be {expected_value}, but got {details[key]}"
+        assert details[key] == expected_value, error_message
 
 
 @wt(
