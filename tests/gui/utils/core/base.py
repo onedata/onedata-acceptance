@@ -63,7 +63,11 @@ class AbstractPageObject(metaclass=PageObjectMeta):
         self.driver = driver
         self.web_elem = web_elem
         self.parent = parent
-        if name != "":
+        # Some page objects expose a web element called ``name``. In that case,
+        # assigning the logical page-object name would invoke the element's
+        # read-only descriptor and fail during construction.
+        name_element = getattr(type(self), "name", None)
+        if name != "" and not isinstance(name_element, AbstractWebElement):
             self.name = name
 
     @abstractmethod

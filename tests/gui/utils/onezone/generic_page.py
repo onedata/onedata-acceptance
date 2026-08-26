@@ -14,6 +14,7 @@ from tests.gui.utils.core.web_elements import Label, NamedButton
 from tests.gui.utils.generic import ListItemMainField, PageName
 from tests.utils.utils import repeat_failed
 
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_visible_elements_list[T: NamedElement](
     elements_list: Iterable[T],
