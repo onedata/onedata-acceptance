@@ -12,6 +12,7 @@ from typing import cast
 
 import pytest
 import yaml
+
 from cdmi_client import ContainerApi, DataObjectApi
 from cdmi_client.rest import ApiException as CdmiException
 from oneprovider_client import (
@@ -21,7 +22,6 @@ from oneprovider_client import (
     SpaceApi,
 )
 from oneprovider_client.rest import ApiException as OPException
-
 from tests import OP_REST_PORT
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import CDMIClient as cdmi

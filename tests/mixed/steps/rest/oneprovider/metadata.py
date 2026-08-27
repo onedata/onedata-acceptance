@@ -9,7 +9,6 @@ import base64
 import json
 
 from oneprovider_client import CustomFileMetadataApi
-
 from tests.gui.utils import CDMIClient as cdmi
 from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_provider

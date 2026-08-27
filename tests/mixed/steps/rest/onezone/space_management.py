@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
-
 from tests.mixed.steps.rest.onezone.common import (
     get_provider_with_name,
     get_space_with_name,

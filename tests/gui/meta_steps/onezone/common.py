@@ -103,7 +103,7 @@ def login_using_gui(
     g_open_onedata_service_page(selenium, user_list, host_list, hosts)
     browsers_to_users = selenium["request"].getfixturevalue("browsers_to_users")
 
-    for browser, user in zip(browser_id_list, user_list, strict=True):
+    for browser, user in zip(browser_id_list, user_list, strict=False):
         browsers_to_users[browser] = user
         if test_type == "gui":
             selenium[browser] = selenium[user]

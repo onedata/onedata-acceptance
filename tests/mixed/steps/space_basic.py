@@ -9,9 +9,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Mapping
 from typing import cast
 
-from onezone_client import UserApi
 from pytest import FixtureRequest
 
+from onezone_client import UserApi
 from tests.gui.meta_steps.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_gui,
 )

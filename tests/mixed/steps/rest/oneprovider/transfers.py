@@ -8,8 +8,8 @@ from collections.abc import Mapping
 from typing import cast
 
 import yaml
-from oneprovider_client import TransferApi
 
+from oneprovider_client import TransferApi
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.rest.provider import get_provider_id

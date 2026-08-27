@@ -5,9 +5,9 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import pytest
+
 from onezone_client import GroupApi, UserApi
 from onezone_client.rest import ApiException
-
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,

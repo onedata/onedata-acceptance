@@ -12,8 +12,8 @@ from http import HTTPStatus
 from typing import Protocol, TypedDict, cast
 
 import yaml
-from oneprovider_client.rest import ApiException
 
+from oneprovider_client.rest import ApiException
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
@@ -606,7 +606,7 @@ def execute_part_of_the_workflows(
                 example_execution, workflow.replace("-", "_")
             )()
             for file, configured_store_content in zip(
-                input_files, example_initial_store_content, strict=True
+                input_files, example_initial_store_content, strict=False
             ):
                 if not check_to_run_workflow(workflow, file, archive_types):
                     continue

@@ -12,8 +12,8 @@ from collections.abc import Mapping
 from typing import Protocol, cast
 
 import yaml
-from onezone_client import TokenApi
 
+from onezone_client import TokenApi
 from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.onezone.members import (
     translate_privileges,

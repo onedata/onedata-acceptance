@@ -8,8 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import pytest
-from onezone_client import SpaceApi, UserApi
 
+from onezone_client import SpaceApi, UserApi
 from tests.mixed.steps.oneclient.data_basic import (
     change_client_name_to_hostname,
     create_file_in_op_oneclient,

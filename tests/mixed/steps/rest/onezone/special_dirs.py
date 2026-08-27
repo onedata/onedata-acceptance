@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import cast
 
 from oneprovider_client.rest import ApiException
-
 from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import SpecialDir
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
