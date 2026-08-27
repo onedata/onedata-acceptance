@@ -466,6 +466,34 @@ def scroll_to_top_in_archive_audit_log(
     modal.scroll_to_top()
 
 
+ARCHIVE_PATH_SEPARATOR = "›"
+
+
+def extract_archive_name_and_path(file_path: str) -> tuple[str | None, str]:
+    file_path = file_path.replace("\n", "")
+
+    if ARCHIVE_PATH_SEPARATOR not in file_path:
+        return None, file_path
+
+    archive_info, _, path = file_path.partition("/")
+    archive_name = archive_info.partition(ARCHIVE_PATH_SEPARATOR)[2]
+
+    return archive_name, path
+
+
+def assert_archive_names_match(
+    archive_name_in_audit_log: str,
+    archive_name_in_entry_details: str | None,
+) -> None:
+    # Depending on window size, the archive name may not be present in details.
+    if archive_name_in_entry_details is not None:
+        assert archive_name_in_audit_log == archive_name_in_entry_details, (
+            "Archive name in archive audit log modal "
+            f"({archive_name_in_audit_log!r}) differs from the one shown "
+            f"in audit log entry details ({archive_name_in_entry_details!r})"
+        )
+
+
 @wt(
     parsers.parse(
         "user of {browser_id} sees that path in Entry Details in archive audit log "
@@ -475,38 +503,29 @@ def scroll_to_top_in_archive_audit_log(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archived_file_path_and_archive_name(
-    browser_id: str, selenium: SeleniumDrivers, config: str
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    config: str,
 ) -> None:
-    driver = selenium[browser_id]
-    modal = Modals(driver).archive_audit_log
-    modal_details = Modals(driver).audit_log_entry_details
-    separator = "›"
+    modals = Modals(selenium[browser_id])
+    archive_audit_log = modals.archive_audit_log
+    entry_details = modals.audit_log_entry_details
 
     # Example shortened path:
     # 'long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\nlong-directory_19\n/\nvery-long-file_20'
-    details_file_path = modal_details.file_path.text.replace("\n", "")
 
-    # Depending on window size, the archive name may not be present.
-    if separator in details_file_path:
-        splitted_file_path = details_file_path.split("/")
-        details_archive_info = splitted_file_path[0]
+    archive_name, file_path = extract_archive_name_and_path(
+        entry_details.file_path.text
+    )
+    assert_archive_names_match(archive_audit_log.archive_name, archive_name)
 
-        details_archive_name = details_archive_info.partition(separator)[2]
-        assert modal.archive_name == details_archive_name, (
-            f"name of archive in archive audit log modal: {modal.archive_name} is"
-            f" different than shown in audit log entry details:  {details_archive_name}"
-        )
-        path_without_archive_name = "/".join(splitted_file_path[1:])
-    else:
-        path_without_archive_name = details_file_path
+    actual_path = parse_indexed_path_sequence(file_path)
 
-    details_path_params = parse_indexed_path_sequence(path_without_archive_name)
-    expected_path_config = yaml.load(config, yaml.Loader)
-    expected_path_params = IndexedPathSequence.from_yaml_dict(expected_path_config)
+    expected_path = IndexedPathSequence.from_yaml_dict(yaml.safe_load(config))
 
-    assert details_path_params.matches(expected_path_params), (
-        f"path parameters shown in audit log entry details: {details_path_params} "
-        f"do not match expected parameters: {expected_path_params}"
+    assert actual_path.matches(expected_path), (
+        f"Path parameters shown in audit log entry details ({actual_path}) "
+        f"do not match expected parameters ({expected_path})"
     )
 
 
