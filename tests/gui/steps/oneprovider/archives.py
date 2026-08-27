@@ -11,10 +11,10 @@ import time
 
 from selenium.common.exceptions import NoSuchElementException
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.gui.utils.oneprovider.archive_browser import _ArchiveBrowser

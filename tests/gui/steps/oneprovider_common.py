@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,

@@ -15,9 +15,9 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,

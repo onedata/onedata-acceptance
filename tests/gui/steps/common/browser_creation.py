@@ -19,12 +19,12 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
 from urllib3.exceptions import HTTPError
 
-from tests.gui.conftest import (
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils.common.constants import (
     DRIVER_CREATION_RETRIES,
     SCREEN_PARAMETERS,
     SELENIUM_IMPLICIT_WAIT,
 )
-from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,

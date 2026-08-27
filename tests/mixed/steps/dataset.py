@@ -11,7 +11,6 @@ from collections.abc import Mapping
 
 from _pytest._py.path import LocalPath
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
 from tests.gui.meta_steps.oneprovider.dataset import (
     assert_dataset_detached_in_op_gui,
@@ -27,6 +26,7 @@ from tests.gui.meta_steps.oneprovider.dataset import (
 from tests.gui.steps.oneprovider.browser import assert_status_tag_for_file_in_browser
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.mixed.steps.rest.oneprovider.datasets import (
     assert_dataset_detached_in_op_rest,
     assert_top_level_dataset_in_space_in_op_rest,

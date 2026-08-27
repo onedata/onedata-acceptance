@@ -16,8 +16,8 @@ from selenium.common.exceptions import (
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.core.web_elements import (
     Label,
     WebElementsSequence,

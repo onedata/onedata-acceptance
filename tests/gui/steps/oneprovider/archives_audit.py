@@ -14,9 +14,9 @@ from typing import cast
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,

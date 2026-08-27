@@ -22,9 +22,9 @@ from oneprovider_client import (
 from oneprovider_client.rest import ApiException as OPException
 
 from tests import OP_REST_PORT
-from tests.gui.conftest import NUMERALS
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import CDMIClient as cdmi
+from tests.gui.utils.common.constants import NUMERALS
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.mixed.oneprovider_client import ApiClient
 from tests.mixed.oneprovider_client.models.inline_response2015 import InlineResponse2015

@@ -11,7 +11,7 @@ from typing import NotRequired, Protocol, TypedDict, cast
 import yaml
 from oneprovider_client.rest import ApiException as OPException
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.mixed.oneprovider_client.api.archive_api import ArchiveApi
 from tests.mixed.oneprovider_client.api.basic_file_operations_api import (

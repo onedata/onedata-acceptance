@@ -10,7 +10,7 @@ from collections.abc import Iterable
 from inspect import getattr_static
 from typing import Any, ClassVar
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject, PageObjectMeta
 from tests.gui.utils.core.web_elements import Label, NamedButton
 from tests.gui.utils.generic import ListElement, PageName

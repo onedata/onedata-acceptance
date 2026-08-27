@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import (
     add_element_with_copied_token,
@@ -45,6 +44,7 @@ from tests.gui.steps.onezone.members import (
 )
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.gui.utils.onezone.groups.groups_page import Group

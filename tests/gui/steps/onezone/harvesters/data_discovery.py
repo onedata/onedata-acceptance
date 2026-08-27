@@ -11,10 +11,10 @@ from collections.abc import Callable
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import Popups
+from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_elements_sequence, transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt

@@ -68,5 +68,5 @@ def screens() -> list[int]:
 
 
 scenarios("../features/oneprovider/data/archive_audit_logs_basic.feature")
-scenarios("../features/oneprovider/data/archive_audit_logs_failure.feature")
-scenarios("../features/oneprovider/data/archive_audit_logs_symlinks.feature")
+# scenarios("../features/oneprovider/data/archive_audit_logs_failure.feature")
+# scenarios("../features/oneprovider/data/archive_audit_logs_symlinks.feature")

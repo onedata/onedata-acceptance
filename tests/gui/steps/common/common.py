@@ -20,7 +20,6 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import (
     Clickable,
     NamedElement,
@@ -29,6 +28,7 @@ from tests.gui.type_definitions import (
     WebElementOrSelector,
 )
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
     ArchiveAuditLog,

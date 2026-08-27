@@ -13,13 +13,13 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.type_definitions import (
     PrivilegeGranted,
     PrivilegeGroupConfig,
     PrivilegesConfig,
 )
 from tests.gui.utils.common.common import Toggle
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,

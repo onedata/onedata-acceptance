@@ -16,12 +16,6 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import (
-    WAIT_BACKEND,
-    WAIT_EXTENDED_UPLOAD,
-    WAIT_FRONTEND,
-    WAIT_NORMAL_UPLOAD,
-)
 from tests.gui.steps.common.miscellaneous import (
     network_throttling_download,
     switch_to_iframe,
@@ -29,6 +23,12 @@ from tests.gui.steps.common.miscellaneous import (
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.common.constants import (
+    WAIT_BACKEND,
+    WAIT_EXTENDED_UPLOAD,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_UPLOAD,
+)
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,

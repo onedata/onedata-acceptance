@@ -14,9 +14,9 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import NUMERALS, WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.constants import NUMERALS, WAIT_FRONTEND
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.edit_permissions import (
     MemberAclPermission,
 )

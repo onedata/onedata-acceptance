@@ -11,10 +11,6 @@ import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import (
-    WAIT_EXTENDED_WORKFLOW_EXECUTION,
-    WAIT_NORMAL_WORKFLOW_EXECUTION,
-)
 from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
@@ -39,6 +35,10 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     choose_time_resolution,
 )
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.constants import (
+    WAIT_EXTENDED_WORKFLOW_EXECUTION,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+)
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
