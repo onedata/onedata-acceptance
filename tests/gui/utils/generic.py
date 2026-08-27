@@ -10,12 +10,11 @@ import os
 import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
-from dataclasses import dataclass
 from enum import Enum
 from functools import partial
 from itertools import islice
 from time import sleep
-from typing import Literal, Optional, Self, TypeVar, cast, overload
+from typing import Literal, Optional, TypeVar, cast, overload
 
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
@@ -161,132 +160,6 @@ def parse_elements_sequence(value: str) -> list[str]:
     if re.fullmatch(ELEMENTS_SEQUENCE_PATTERN, value) is None:
         raise ValueError(f"Invalid elements sequence: {value!r}")
     return parse_seq(value)
-
-
-INDEXED_PATH_PART_PATTERN = re.compile(r"(?P<prefix>.+)_(?P<idx>\d+)")
-
-
-@dataclass(frozen=True)
-class IndexedPathSequence:
-    first_idx: int | None
-    last_idx: int | None
-    prefix: str | None
-    file_name: str
-
-    @classmethod
-    def from_yaml_dict(cls, config: dict[str, str]) -> Self:
-        return cls(
-            first_idx=int(config["First directory index"]),
-            last_idx=int(config["Last directory index"]),
-            prefix=config["Directory prefix"],
-            file_name=config["File name"],
-        )
-
-
-def indexed_path_sequences_equal(
-    first: IndexedPathSequence, second: IndexedPathSequence
-) -> bool:
-    if first.file_name != second.file_name:
-        return False
-
-    first_indices = (first.first_idx, first.last_idx)
-    second_indices = (second.first_idx, second.last_idx)
-    if all(idx is None for idx in first_indices) or all(
-        idx is None for idx in second_indices
-    ):
-        return True
-
-    if first.prefix != second.prefix:
-        return False
-
-    return all(
-        first_idx is None or second_idx is None or first_idx == second_idx
-        for first_idx, second_idx in zip(first_indices, second_indices)
-    )
-
-
-def parse_and_validate_indices(
-    matches: list[re.Match[str]], sequence: str
-) -> list[int]:
-    indices = [int(match.group("idx")) for match in matches]
-    # we assume the indices are in increasing order with difference=1
-    if any(indices[i] + 1 != indices[i + 1] for i in range(len(indices) - 1)):
-        raise ValueError(f"Invalid indexed path sequence: {sequence}")
-
-    return indices
-
-
-def parse_indexed_path_parts(path_parts: list[str], sequence: str) -> tuple[str, int]:
-    matches: list[re.Match[str]] = []
-
-    for part in path_parts:
-        match = INDEXED_PATH_PART_PATTERN.fullmatch(part)
-        if match is None:
-            raise ValueError(f"Invalid indexed path sequence: {sequence}")
-        matches.append(match)
-
-    prefix = matches[0].group("prefix")
-
-    # all other prefixes must be the same
-    if any(match.group("prefix") != prefix for match in matches):
-        raise ValueError(f"Invalid indexed path sequence: {sequence}")
-
-    indices = parse_and_validate_indices(matches, sequence)
-    return prefix, indices[-1]
-
-
-# return common prefix and first and last index of an indexed
-# path sequence, that may contain '...' inside
-def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
-    path_parts = sequence.split("/")
-    if path_parts.count("...") > 1:
-        raise ValueError(f"Invalid indexed path sequence: {sequence}")
-    file_name = path_parts.pop()
-
-    if "..." in path_parts:
-        ellipsis_idx = path_parts.index("...")
-        path_parts_groups = [
-            path_parts[:ellipsis_idx],
-            path_parts[ellipsis_idx + 1 :],
-        ]
-    else:
-        path_parts_groups = [path_parts]
-
-    parsed_groups: list[tuple[str, int]] = [
-        parse_indexed_path_parts(group, sequence) if group else None
-        for group in path_parts_groups
-    ]
-
-    # at least one of the groups is empty
-    if not all(parsed_groups):
-        first_idx, last_idx, prefix = None, None, None
-        if any(parsed_groups):
-            if not parsed_groups[0]:
-                prefix, last_idx = parsed_groups[1]
-            else:
-                # The path expands from the right first and then alternates sides,
-                # so a non-empty left group can never have an empty right group.
-                raise ValueError(f"Invalid indexed path sequence: {sequence}")
-        return IndexedPathSequence(
-            first_idx=first_idx,
-            last_idx=last_idx,
-            prefix=prefix,
-            file_name=file_name,
-        )
-
-    first_prefix, first_idx = parsed_groups[0]
-    last_prefix, last_idx = parsed_groups[1]
-
-    # Groups may have different prefixes despite each group being internally consistent.
-    if first_prefix != last_prefix:
-        raise ValueError(f"Invalid indexed path sequence: {sequence}")
-
-    return IndexedPathSequence(
-        first_idx=first_idx,
-        last_idx=last_idx,
-        prefix=first_prefix,
-        file_name=file_name,
-    )
 
 
 def upload_file_path(file_name: str) -> str:

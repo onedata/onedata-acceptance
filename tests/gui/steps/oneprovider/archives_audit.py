@@ -19,11 +19,12 @@ from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    IndexedPathSequence,
-    indexed_path_sequences_equal,
     parse_elements_sequence,
-    parse_indexed_path_sequence,
     transform,
+)
+from tests.gui.utils.shortened_path import (
+    IndexedPathSequence,
+    parse_indexed_path_sequence,
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -503,7 +504,7 @@ def assert_archived_file_path_and_archive_name(
     expected_path_config = yaml.load(config, yaml.Loader)
     expected_path_params = IndexedPathSequence.from_yaml_dict(expected_path_config)
 
-    assert indexed_path_sequences_equal(details_path_params, expected_path_params), (
+    assert details_path_params.matches(expected_path_params), (
         f"path parameters shown in audit log entry details: {details_path_params} "
         f"do not match expected parameters: {expected_path_params}"
     )
