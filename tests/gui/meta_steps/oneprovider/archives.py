@@ -676,21 +676,20 @@ def assert_archived_file_path_and_archive_name(
     config: str,
 ) -> None:
     driver = selenium[browser_id]
-    modals = Modals(driver)
-    archive_audit_log = modals.archive_audit_log
     expected_path = IndexedPathSequence.from_yaml_dict(yaml.safe_load(config))
 
     for screen_size in ScreenSize:
         driver.set_window_size(screen_size.value.width, screen_size.value.height)
-        entry_details_file_path = get_loaded_archive_file_path(modals)
+        time.sleep(1.0)
+        archive_audit_log = Modals(driver).archive_audit_log
+        entry_details_file_path = get_loaded_archive_file_path(driver)
+        archive_name, file_path = extract_archive_name_and_path(entry_details_file_path)
 
         # Example shortened path:
         # 'long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\n'
         # 'long-directory_19\n/\nvery-long-file_20'
 
-        archive_name, file_path = extract_archive_name_and_path(entry_details_file_path)
         assert_archive_names_match(archive_audit_log.archive_name, archive_name)
-
         actual_path = parse_indexed_path_sequence(file_path)
 
         assert actual_path.matches(expected_path), (

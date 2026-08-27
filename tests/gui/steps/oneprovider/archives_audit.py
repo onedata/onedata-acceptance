@@ -13,6 +13,7 @@ from datetime import datetime
 from typing import cast
 
 import yaml
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
@@ -492,9 +493,9 @@ def assert_archive_names_match(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_loaded_archive_file_path(
-    modals: Modals,
+    driver: WebDriver,
 ) -> str:
-    entry_details = modals.audit_log_entry_details
+    entry_details = Modals(driver).audit_log_entry_details
     entry_details_file_path = entry_details.file_path.text
 
     assert entry_details_file_path != "Loading path..."
