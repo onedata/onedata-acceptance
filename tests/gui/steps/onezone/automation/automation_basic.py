@@ -96,7 +96,7 @@ def click_option_in_inventory_menu(
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(AutomationPage)
     page = oz_page.automation
-    page.automations_list[inventory]()
+    page.automations_list[inventory].click()
     page.automations_list[inventory].menu()
     Popups(driver).menu_popup_with_text.menu[option]()
 
@@ -168,7 +168,7 @@ def go_to_inventory_subpage(
         oz_page.open_panel(AutomationPage)
         page = oz_page.automation
         tmp_memory[browser_id]["oz_page"] = page
-    page.automations_list[inventory]()
+    page.automations_list[inventory].click()
     if subpage != "main":
         getattr(page.automations_list[inventory], subpage)()
 

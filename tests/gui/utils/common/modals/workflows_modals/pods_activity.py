@@ -11,17 +11,16 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core import scroll_to_css_selector
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     WebElement,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element
 
 
-class FilterTab(Element):
+class FilterTab(NamedElement):
     name = id = Label(".text")
 
 

@@ -13,16 +13,16 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
-from tests.gui.utils.homepage import RestApiCommand
-from tests.gui.utils.homepage.documentation import DocumentationPage
+from tests.gui.utils.homepage.api import GuiRestCommand
+from tests.gui.utils.homepage.documentation_base import BaseDocumentationPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
-DEFAULT_DOCS_TIMEOUT = 30
+DEFAULT_DOCUMENTATION_TIMEOUT = 30
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
 def _get_api_tab(driver: WebDriver, modal_name: str) -> ApiTab:
     return getattr(Modals(driver), modal_name).api
 
@@ -33,25 +33,25 @@ def click_operations_dropdown_in_api_modal(
     _get_api_tab(selenium[browser_id], modal_name).operations.click()
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
 def get_rest_api_commands_from_dropdown(
     selenium: SeleniumDrivers, browser_id: str
 ) -> list[str]:
-    command_items = Popups(selenium[browser_id]).power_select.items_as(RestApiCommand)
+    command_items = Popups(selenium[browser_id]).power_select.items_as(GuiRestCommand)
     commands = [
-        item.command_title for item in command_items if item.command_type == "REST"
+        item.endpoint_title for item in command_items if item.endpoint_method == "REST"
     ]
     assert commands, "No REST API commands found in operations dropdown"
     return commands
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
 def choose_rest_api_command_from_dropdown(
     selenium: SeleniumDrivers, browser_id: str, command: str
 ) -> None:
-    command_items = Popups(selenium[browser_id]).power_select.items_as(RestApiCommand)
+    command_items = Popups(selenium[browser_id]).power_select.items_as(GuiRestCommand)
     for item in command_items:
-        if item.command_title == command and item.command_type == "REST":
+        if item.endpoint_title == command and item.endpoint_method == "REST":
             item.click()
             return
     raise AssertionError(f'REST API command "{command}" not found')
@@ -63,30 +63,49 @@ def click_rest_api_documentation_link(
     _get_api_tab(selenium[browser_id], modal_name).rest_api_documentation.click()
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def get_documentation_subpage(
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def get_documentation_page(
     selenium: SeleniumDrivers, browser_id: str, subpage: str
-) -> DocumentationPage:
+) -> BaseDocumentationPage:
     return getattr(Homepage(selenium[browser_id]), transform(subpage))
 
 
-def assert_sidebar_link_is_active_in_documentation_subpage(
-    selenium: SeleniumDrivers, browser_id: str, subpage: str, expected_link: str
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_active_sidebar_link_in_docs_subpage(
+    selenium: SeleniumDrivers, browser_id: str, link: str
 ) -> None:
-    page = get_documentation_subpage(selenium, browser_id, subpage)
-    _assert_sidebar_link_is_active(page, expected_link)
-
-
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def _assert_sidebar_link_is_active(page: DocumentationPage, expected_link: str) -> None:
+    page = get_documentation_page(selenium, browser_id, "Docs")
     active_links = page.sidebar.get_active_rows_names()
     assert (
         len(active_links) == 1
     ), f"Expected only one active link, but found {len(active_links)}"
     active_link = active_links[0]
     assert (
-        active_link == expected_link
-    ), f"Expected active link: {expected_link}, but found: {active_link}"
+        active_link == link
+    ), f"Expected active link: {link}, but found: {active_link}"
+
+
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_active_sidebar_endpoint_in_api_subpage(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    endpoint_title: str,
+    endpoint_method: str,
+) -> None:
+    page = get_documentation_page(selenium, browser_id, "API")
+    active_endpoints = page.sidebar.get_active_endpoints()
+    assert (
+        len(active_endpoints) == 1
+    ), f"Expected only one active endpoint, but found {len(active_endpoints)}"
+    active_endpoint = active_endpoints[0]
+    assert active_endpoint.endpoint_title == endpoint_title, (
+        f"Expected active endpoint title: {endpoint_title}, "
+        f"but found: {active_endpoint.endpoint_title}"
+    )
+    assert active_endpoint.endpoint_method == endpoint_method, (
+        f"Expected active endpoint method: {endpoint_method}, "
+        f"but found: {active_endpoint.endpoint_method}"
+    )
 
 
 @wt(
@@ -95,11 +114,11 @@ def _assert_sidebar_link_is_active(page: DocumentationPage, expected_link: str) 
         r' in "(?P<subpage>Docs|API)" subpage in documentation'
     )
 )
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_active_chapter_tab_in_docs_subpage(
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_active_chapter_tab_in_documentation_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, chapter: str
 ) -> None:
-    page = get_documentation_subpage(selenium, browser_id, subpage)
+    page = get_documentation_page(selenium, browser_id, subpage)
     active_tabs = page.chapters.get_active_chapter_tabs_names()
     assert (
         len(active_tabs) == 1
@@ -110,11 +129,11 @@ def assert_active_chapter_tab_in_docs_subpage(
     ), f"Expected active chapter tab: {chapter}, but found: {active_tab}"
 
 
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_user_sees_name_in_header_in_docs_subpage(
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_user_sees_name_in_header_in_documentation_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, name: str
 ) -> None:
-    page = get_documentation_subpage(selenium, browser_id, subpage)
+    page = get_documentation_page(selenium, browser_id, subpage)
     current_header = page.current_header
     assert (
         current_header == name
@@ -131,11 +150,14 @@ def assert_user_sees_name_in_header_in_docs_subpage(
         "folders": parse_elements_sequence,
     },
 )
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_expanded_folders_in_sidebar_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: str, subpage: str, folders: list[str]
+@repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
+def assert_expanded_folders_in_sidebar_in_documentation_subpage(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    subpage: str,
+    folders: list[str],
 ) -> None:
-    page = get_documentation_subpage(selenium, browser_id, subpage)
+    page = get_documentation_page(selenium, browser_id, subpage)
     expected_folders = set(folders)
     found_folders = set(page.sidebar.get_expanded_folders_names())
     assert (

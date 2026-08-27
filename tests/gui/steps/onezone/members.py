@@ -385,7 +385,7 @@ def click_generate_token_in_subgroups_list(
     oz_page = OZLoggedIn(selenium[browser_id])
     oz_page.open_panel(GroupsPage)
     page = oz_page.groups
-    page.groups_list[group]()
+    page.groups_list[group].click()
     page.groups_list[group].members()
     getattr(page.main_page.members, member).generate_token()
 
@@ -461,7 +461,7 @@ def assert_element_is_groups_child(
     oz_page = OZLoggedIn(selenium[browser_id])
     oz_page.open_panel(GroupsPage)
     page = oz_page.groups
-    page.groups_list[parent]()
+    page.groups_list[parent].click()
     page.groups_list[parent].members()
 
     try:
@@ -536,7 +536,7 @@ def check_user_in_space_members_list(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data
-    page.spaces_headers_list[space_name]()
+    page.spaces_headers_list[space_name].click()
     page.spaces_list[space_name].members()
     try:
         page.members_page.users.items[username]
@@ -656,7 +656,7 @@ def copy_invitation_token(
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(GroupsPage)
     page = oz_page.groups
-    page.groups_list[group]()
+    page.groups_list[group].click()
 
     getattr(page.main_page.members, who + "s").header.menu_button()
     button = f"Invite {who} using token"
@@ -684,7 +684,7 @@ def get_invitation_token(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).groups
-    page.groups_list[group]()
+    page.groups_list[group].click()
     page.main_page.menu_button()
     Popups(driver).menu_popup_with_text.menu["Invite " + who]()
     token = page.members_page.token.token

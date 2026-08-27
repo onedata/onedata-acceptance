@@ -9,14 +9,10 @@ from typing import Literal
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Label, WebElementsSequence
-from tests.gui.utils.homepage.documentation import (
-    APIPage,
-    DocsPage,
-    HowItWorksPage,
-    QuickStartPage,
-)
+from tests.gui.utils.core.web_elements import WebElementsSequence
+from tests.gui.utils.homepage.api import APIPage
+from tests.gui.utils.homepage.docs import DocsPage
+from tests.gui.utils.homepage.pages import HowItWorksPage, Publications, QuickStartPage
 
 PageName = Literal["how it works", "quick start", "api", "docs"]
 
@@ -46,7 +42,6 @@ class Homepage:
     def docs(self) -> DocsPage:
         return DocsPage(self.web_elem, self.web_elem, parent=self)
 
-
-class RestApiCommand(PageObject):
-    command_title = Label(".api-command-title")
-    command_type = Label(".api-command-type")
+    @property
+    def publications(self) -> Publications:
+        return Publications(self.web_elem, self.web_elem, parent=self)

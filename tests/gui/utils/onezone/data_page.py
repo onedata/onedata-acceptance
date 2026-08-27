@@ -11,7 +11,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Icon,
@@ -24,7 +24,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -32,7 +32,7 @@ from .space_configuration_subpage import SpaceConfigurationPage
 from .space_marketplace import SpaceMarketplacePage
 
 
-class Space(Element):
+class Space(NamedElement):
     name = id = Label(".item-name", scroll=False)
     support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
     supporting_providers_number = Label(
@@ -77,7 +77,7 @@ class Space(Element):
         return "active" in self.web_elem.get_attribute("class")
 
 
-class SpaceHeader(Element):
+class SpaceHeader(NamedElement):
     name = id = Label(".item-name", scroll=False)
     support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
     supporting_providers_number = Label(
@@ -93,7 +93,7 @@ class SpaceHeader(Element):
         self.menu_button.click()
 
 
-class Provider(Element):
+class Provider(NamedElement):
     id = name = Label(".one-label")
     support = Label(".outer-text")
     menu_button = Button(".provider-menu-toggle")
@@ -125,7 +125,8 @@ class SpaceMarketplaceTile(PageObject):
     show = Button(".more-link")
 
 
-class ProvidersMap(Element):
+class ProvidersMap(NamedElement):
+    name = id = Label(".one-label")
     providers = WebElementsSequence(".one-atlas-point")
 
     def click_provider(self, provider_name: str, driver: WebDriver) -> None:
@@ -188,7 +189,7 @@ class WelcomePage(PageObject):
     join_group = NamedButton(".info .ember-view", text="join a group")
 
 
-class HarvesterRow(Element):
+class HarvesterRow(NamedElement):
     name = id = Label(".item-name")
     harvester = WebElement(".item-name")
     harvester_menu_button = WebElement(".collapsible-toolbar-toggle")
