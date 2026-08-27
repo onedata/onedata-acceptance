@@ -75,6 +75,7 @@ OPTION_IN_SPACE = "Datasets, Archives"
 DATASET_BROWSER = "dataset browser"
 ARCHIVE_BROWSER = "archive browser"
 ARCHIVE_FILE_BROWSER = "archive file browser"
+RESPONSIVE_LAYOUT_DELAY = 1.0
 
 
 @wt(
@@ -670,30 +671,40 @@ def check_size_stats_for_archive_per_provider(
         " sizes:\n{config}"
     )
 )
-def assert_archived_file_path_and_archive_name(
+def assert_archive_name_and_shortened_path_for_screen_sizes(
     browser_id: str,
     selenium: SeleniumDrivers,
     config: str,
 ) -> None:
+    """
+    Example shortened path:
+    long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\n 'long-directory_19\n/\nvery-long-file_20
+    """
     driver = selenium[browser_id]
     expected_path = IndexedPathSequence.from_yaml_dict(yaml.safe_load(config))
 
     for screen_size in ScreenSize:
-        driver.set_window_size(screen_size.value.width, screen_size.value.height)
-        time.sleep(1.0)
-        archive_audit_log = Modals(driver).archive_audit_log
-        entry_details_file_path = get_loaded_archive_file_path(driver)
-        archive_name, file_path = extract_archive_name_and_path(entry_details_file_path)
+        size = screen_size.value
+        driver.set_window_size(size.width, size.height)
 
-        # Example shortened path:
-        # 'long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\n'
-        # 'long-directory_19\n/\nvery-long-file_20'
+        # WebDriver waits for the window resize, but not for the frontend's
+        # asynchronous responsive-layout update.
+        time.sleep(RESPONSIVE_LAYOUT_DELAY)
 
-        assert_archive_names_match(archive_audit_log.archive_name, archive_name)
-        actual_path = parse_indexed_path_sequence(file_path)
+        audit_log = Modals(driver).archive_audit_log
+        details_text = get_loaded_archive_file_path(driver)
+        details_archive_name, displayed_path = extract_archive_name_and_path(
+            details_text
+        )
 
+        assert_archive_names_match(
+            audit_log.archive_name,
+            details_archive_name,
+        )
+
+        actual_path = parse_indexed_path_sequence(displayed_path)
         assert actual_path.matches(expected_path), (
-            "Path parameters shown in audit log entry details for "
-            f"{screen_size.name.lower()} screen size: '{actual_path}' "
-            f"do not match expected parameters: '{expected_path}'"
+            "Path shown in audit log entry details for "
+            f"{screen_size.name.lower()} screen size does not match: "
+            f"actual={actual_path!r}, expected={expected_path!r}"
         )
