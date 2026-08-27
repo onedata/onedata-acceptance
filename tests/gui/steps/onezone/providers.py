@@ -42,7 +42,7 @@ def open_provider_popover_on_world_map(
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ProvidersPage)
-    oz_page.providers[provider_name]()
+    oz_page.providers.providers_list[provider_name].web_elem.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -134,7 +134,7 @@ def assert_provider_hostname_matches_test_hostname(
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ProvidersPage)
     page = oz_page.providers
-    page.providers_list[0]()
+    page.providers_list[0].click()
     _click_copy_hostname(driver)
     displayed_domain = clipboard.paste(display=displays[browser_id])
     assert displayed_domain == expected_domain, (
@@ -263,7 +263,7 @@ def click_on_provider_in_providers_sidebar_with_provider_name(
     selenium: SeleniumDrivers, browser_id: str, provider_name: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).providers.providers_list[provider_name]()
+    OZLoggedIn(driver).providers.providers_list[provider_name].click()
 
 
 @wt(

@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.utils.common.common import DropdownSelector, Toggle
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
@@ -18,7 +18,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import InputBox
-from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
@@ -122,7 +122,8 @@ class ConfigurationPage(PageObject):
     gui_plugin_button = NamedButton(".nav-link", text="GUI plugin")
 
 
-class Harvester(Element):
+class Harvester(NamedElement):
+    name = id = Label(".one-label")
     menu_button = Button(".collapsible-toolbar-toggle")
 
     spaces = NamedButton(".one-list-level-2 .item-header", text="Spaces")

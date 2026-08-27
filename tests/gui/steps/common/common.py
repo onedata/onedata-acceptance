@@ -8,7 +8,7 @@ import re
 import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
-from typing import Any, cast
+from typing import Any
 
 from selenium.common.exceptions import (
     StaleElementReferenceException,
@@ -23,7 +23,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import (
     Clickable,
-    NamedElement,
     VisibilityCondition,
     WebElementOrCssLocator,
     WebElementOrSelector,
@@ -37,25 +36,27 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
     ArchiveRecallInformation,
 )
 from tests.gui.utils.common.popups.generic import AlertPopupType
+from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.generic import (
     ListElement,
+    ListItemMainField,
     get_visibility_condition,
     get_web_elem_or_locator,
     transform,
 )
 from tests.gui.utils.oneprovider.browser import Browser
-from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.gui.utils.onezone.generic_page import ListPage, get_visible_elements_list
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page: GenericPage | Browser,
+    page: ListPage | Browser,
     selenium: dict[str, WebDriver],
     browser_id: str,
     number: int,
     items_type: ListElement,
-    main_field: str,
+    main_field: ListItemMainField,
 ) -> None:
     driver = selenium[browser_id]
     seen_items = set()
@@ -84,19 +85,15 @@ def assert_n_items_in_items_list(
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_visible_items_list(
-    page: GenericPage | Browser, items_type: ListElement, main_field: str = "name"
+    page: ListPage | Browser,
+    items_type: ListElement,
+    main_field: ListItemMainField = "name",
 ) -> Sequence[NamedElement]:
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
     if isinstance(page, Browser):
-        return cast(
-            Sequence[NamedElement],
-            page.get_visible_file_rows(elements_list, main_field),
-        )
-    return cast(
-        Sequence[NamedElement],
-        page.get_visible_elements_list(elements_list, main_field),
-    )
+        return page.get_visible_file_rows(elements_list, main_field)
+    return get_visible_elements_list(elements_list, main_field)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -104,14 +101,25 @@ def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page(where: str, driver: WebDriver) -> Any:
-    if where == "shares":
-        return OZLoggedIn(driver).shares
-    if where == "groups":
-        return OZLoggedIn(driver).groups
-    if where == "spaces":
-        return OZLoggedIn(driver).data
-    raise AssertionError(f"page {where} not found")
+def get_page_for_list(
+    list_element: ListElement,
+    driver: WebDriver,
+) -> ListPage:
+    oz = OZLoggedIn(driver)
+
+    match list_element:
+        case ListElement.SPACES | ListElement.SPACES_HEADERS:
+            return oz.data
+        case ListElement.GROUPS_HEADERS:
+            return oz.groups
+        case ListElement.SHARES_SIDEBAR:
+            return oz.shares
+        case ListElement.WORKFLOWS:
+            return oz.automation.workflows_page
+        case ListElement.LAMBDAS:
+            return oz.automation.lambdas_page
+        case _:
+            return getattr(oz, list_element.value)
 
 
 @wt(
@@ -133,7 +141,7 @@ def wt_assert_n_items_in_items_list(
     list_type: ListElement,
 ) -> None:
     driver = selenium[browser_id]
-    page = _get_page(list_type.value, driver)
+    page = get_page_for_list(list_type, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 

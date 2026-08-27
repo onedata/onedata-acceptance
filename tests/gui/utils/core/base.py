@@ -13,9 +13,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-class AbstractWebElement(ABC):
-    __metaclass__ = ABCMeta
-
+class AbstractWebElement(ABC, metaclass=ABCMeta):
     def __init__(self, css_selector: str, scroll: bool = True, name: str = "") -> None:
         self.css_selector = css_selector
         self.scroll = scroll
@@ -32,9 +30,7 @@ class AbstractWebElement(ABC):
         pass
 
 
-class AbstractWebItem(AbstractWebElement, ABC):
-    __metaclass__ = ABCMeta
-
+class AbstractWebItem(AbstractWebElement, ABC, metaclass=ABCMeta):
     def __init__(self, *args: object, **kwargs: object) -> None:
         item_cls = kwargs.pop("cls", None)
         if item_cls is None:
@@ -56,9 +52,7 @@ class PageObjectMeta(ABCMeta):
         super(PageObjectMeta, cls).__init__(cls_name, bases, cls_dict)
 
 
-class AbstractPageObject:
-    __metaclass__ = PageObjectMeta
-
+class AbstractPageObject(metaclass=PageObjectMeta):
     def __init__(
         self,
         driver: WebDriver,
@@ -69,7 +63,11 @@ class AbstractPageObject:
         self.driver = driver
         self.web_elem = web_elem
         self.parent = parent
-        if name != "":
+        # Some page objects expose a web element called ``name``. In that case,
+        # assigning the logical page-object name would invoke the element's
+        # read-only descriptor and fail during construction.
+        name_element = getattr(type(self), "name", None)
+        if name != "" and not isinstance(name_element, AbstractWebElement):
             self.name = name
 
     @abstractmethod
@@ -119,6 +117,12 @@ class PageObject(AbstractPageObject):
             self._click_area,
             lambda: f"cannot click on {self}",
         )
+
+
+class NamedElement(PageObject):
+    """Base class for page objects representing elements with a name."""
+
+    name: str
 
 
 class ExpandableMixin:
