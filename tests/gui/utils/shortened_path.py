@@ -11,12 +11,12 @@ _INDEXED_PATH_PART_PATTERN = re.compile(r"(?P<prefix>.+)_(?P<idx>\d+)")
 @dataclass(frozen=True)
 class PathSequenceIndices:
     first_idx: int | None
-    last_idx: int
+    last_idx: int | None
 
 
 @dataclass(frozen=True)
 class IndexedPathSequence:
-    indices: PathSequenceIndices | None
+    indices: PathSequenceIndices
     prefix: str | None
     file_name: str
 
@@ -36,16 +36,28 @@ class IndexedPathSequence:
         if self.file_name != other.file_name:
             return False
 
-        if self.indices is None or other.indices is None:
+        if (
+            self.indices.first_idx is None
+            and self.indices.last_idx is None
+            or other.indices.first_idx is None
+            and other.indices.last_idx is None
+        ):
             return True
 
         if self.prefix != other.prefix:
             return False
 
-        if self.indices.first_idx is None or other.indices.first_idx is None:
-            return self.indices.last_idx == other.indices.last_idx
-
-        return self.indices == other.indices
+        first_idx_matches = (
+            self.indices.first_idx is None
+            or other.indices.first_idx is None
+            or self.indices.first_idx == other.indices.first_idx
+        )
+        last_idx_matches = (
+            self.indices.last_idx is None
+            or other.indices.last_idx is None
+            or self.indices.last_idx == other.indices.last_idx
+        )
+        return first_idx_matches and last_idx_matches
 
 
 def _parse_indexed_path_parts(
@@ -79,71 +91,35 @@ def _parse_indexed_path_parts(
 
 def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
     *path_parts, file_name = sequence.split("/")
+    ellipsis_count = path_parts.count("...")
 
-    if path_parts.count("...") > 1:
+    if ellipsis_count > 1:
         raise ValueError(f"Invalid indexed path sequence: {sequence}")
 
-    if "..." not in path_parts:
+    if ellipsis_count == 0:
         parsed = _parse_indexed_path_parts(path_parts, sequence)
-
         if parsed is None:
-            return IndexedPathSequence(
-                indices=None,
-                prefix=None,
-                file_name=file_name,
-            )
+            prefix = None
+            indices = PathSequenceIndices(first_idx=None, last_idx=None)
+        else:
+            prefix, indices = parsed
+    else:
+        ellipsis_idx = path_parts.index("...")
+        left = _parse_indexed_path_parts(path_parts[:ellipsis_idx], sequence)
+        right = _parse_indexed_path_parts(path_parts[ellipsis_idx + 1 :], sequence)
 
-        prefix, indices = parsed
-        return IndexedPathSequence(
-            indices=indices,
-            prefix=prefix,
-            file_name=file_name,
+        if left is not None and right is not None and left[0] != right[0]:
+            raise ValueError(f"Invalid indexed path sequence: {sequence}")
+
+        parsed = left or right
+        prefix = parsed[0] if parsed is not None else None
+        indices = PathSequenceIndices(
+            first_idx=left[1].first_idx if left is not None else None,
+            last_idx=right[1].last_idx if right is not None else None,
         )
-
-    ellipsis_idx = path_parts.index("...")
-    left = _parse_indexed_path_parts(
-        path_parts[:ellipsis_idx],
-        sequence,
-    )
-    right = _parse_indexed_path_parts(
-        path_parts[ellipsis_idx + 1 :],
-        sequence,
-    )
-
-    if not any((left, right)):
-        return IndexedPathSequence(
-            indices=None,
-            prefix=None,
-            file_name=file_name,
-        )
-
-    if not right:
-        # The path expands from the right first and then alternates sides,
-        # so a non-empty left group can never have an empty right group.
-        raise ValueError(f"Invalid indexed path sequence: {sequence}")
-
-    right_prefix, right_indices = right
-
-    if not left:
-        return IndexedPathSequence(
-            indices=PathSequenceIndices(
-                first_idx=None,
-                last_idx=right_indices.last_idx,
-            ),
-            prefix=right_prefix,
-            file_name=file_name,
-        )
-
-    left_prefix, left_indices = left
-
-    if left_prefix != right_prefix:
-        raise ValueError(f"Invalid indexed path sequence: {sequence}")
 
     return IndexedPathSequence(
-        indices=PathSequenceIndices(
-            first_idx=left_indices.first_idx,
-            last_idx=right_indices.last_idx,
-        ),
-        prefix=left_prefix,
+        indices=indices,
+        prefix=prefix,
         file_name=file_name,
     )
