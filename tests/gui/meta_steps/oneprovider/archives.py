@@ -34,6 +34,11 @@ from tests.gui.steps.oneprovider.archives import (
     write_description_in_create_archive_modal,
     write_in_confirmation_input,
 )
+from tests.gui.steps.oneprovider.archives_audit import (
+    assert_archive_names_match,
+    extract_archive_name_and_path,
+    get_loaded_archive_file_path,
+)
 from tests.gui.steps.oneprovider.archives_recall import (
     assert_recall_duration_in_archive_recall_information_modal,
     get_archive_recall_information_property_without_whitespace,
@@ -56,8 +61,13 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import OPLoggedIn
+from tests.gui.utils import Modals, OPLoggedIn
+from tests.gui.utils.common.constants import ScreenSize
 from tests.gui.utils.generic import ListElement, WhichBrowser, transform
+from tests.gui.utils.shortened_path import (
+    IndexedPathSequence,
+    parse_indexed_path_sequence,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -651,3 +661,41 @@ def check_size_stats_for_archive_per_provider(
             check_content_for_provider(
                 selenium, hosts, browser_id, provider, expected_value
             )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that path in Entry Details in archive audit log"
+        " matches the config and displayed archive name is correct for different screen"
+        " sizes:\n{config}"
+    )
+)
+def assert_archived_file_path_and_archive_name(
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    config: str,
+) -> None:
+    driver = selenium[browser_id]
+    modals = Modals(driver)
+
+    archive_audit_log = modals.archive_audit_log
+    entry_details_file_path = get_loaded_archive_file_path(modals)
+    expected_path = IndexedPathSequence.from_yaml_dict(yaml.safe_load(config))
+
+    for screen_size in ScreenSize:
+        window_size = screen_size.value
+        driver.set_window_size(window_size.width, window_size.height)
+
+        # Example shortened path:
+        # 'long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\n'
+        # 'long-directory_19\n/\nvery-long-file_20'
+        archive_name, file_path = extract_archive_name_and_path(entry_details_file_path)
+        assert_archive_names_match(archive_audit_log.archive_name, archive_name)
+
+        actual_path = parse_indexed_path_sequence(file_path)
+
+        assert actual_path.matches(expected_path), (
+            "Path parameters shown in audit log entry details for "
+            f"{screen_size.name.lower()} screen size: '{actual_path}' "
+            f"do not match expected parameters: '{expected_path}'"
+        )
