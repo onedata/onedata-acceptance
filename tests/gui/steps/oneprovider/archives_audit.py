@@ -497,7 +497,7 @@ def get_loaded_archive_file_path(
     entry_details = modals.audit_log_entry_details
     entry_details_file_path = entry_details.file_path.text
 
-    assert entry_details_file_path != "Loading..."
+    assert entry_details_file_path != "Loading path..."
     return entry_details_file_path
 
 
