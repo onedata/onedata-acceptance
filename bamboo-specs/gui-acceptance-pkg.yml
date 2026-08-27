@@ -265,6 +265,8 @@ _Autoformatter check:
         scripts:
           - make black-check
         description: Black formatting
+  requirements:
+    - minikube
 
 _Static analysis:
   key: STAN
@@ -276,6 +278,8 @@ _Static analysis:
         scripts:
           - make static-analysis
         description: Static analysis
+  requirements:
+    - minikube
 
 _Type_check:
   key: TCH
@@ -287,6 +291,8 @@ _Type_check:
         scripts:
           - make type-check
         description: Type checker
+  requirements:
+    - minikube
 
 Atm examples workflows 1: &acceptance-tests-in-chrome-job
   key: COAWEX2

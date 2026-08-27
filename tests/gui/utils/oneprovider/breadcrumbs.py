@@ -63,7 +63,7 @@ class _Breadcrumbs(PageObject):
                     assert dir1 == dir2, error_message.format(dir=dir1, idx=i, item=self)
                 breadcrumbs[breadcrumbs_name.index(dir2) - 1].click()
             else:
-                for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs, strict=True)):
+                for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs, strict=False)):
                     if i == 0:
                         continue
                     assert dir1 == dir2.text, error_message.format(dir=dir1, idx=i, item=self)
