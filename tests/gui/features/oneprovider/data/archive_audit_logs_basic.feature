@@ -146,7 +146,7 @@ Feature: Archive audit logs
     Then user of browser sees that path in Entry Details in archive audit log matches the config and displayed archive name is correct for different screen sizes:
         First directory index: 0
         Last directory index: 19
-        Directory prefix: long
+        Directory prefix: long-directory
         File name: very-long-file_20
 
 
