@@ -16,7 +16,7 @@ import yaml
 
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
-from tests.gui.utils.common.constants import WAIT_FRONTEND
+from tests.gui.utils.common.constants import WAIT_FRONTEND, ScreenSize
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -496,9 +496,9 @@ def assert_archive_names_match(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that path in Entry Details in archive audit log "
-        "matches the following parameters and displayed archive name is correct:\n"
-        "{config}"
+        "user of {browser_id} sees that path in Entry Details in archive audit log"
+        " matches the config and displayed archive name is correct for different screen"
+        " sizes:\n{config}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -507,26 +507,32 @@ def assert_archived_file_path_and_archive_name(
     selenium: SeleniumDrivers,
     config: str,
 ) -> None:
-    modals = Modals(selenium[browser_id])
+    driver = selenium[browser_id]
+    modals = Modals(driver)
+
     archive_audit_log = modals.archive_audit_log
     entry_details = modals.audit_log_entry_details
-
-    # Example shortened path:
-    # 'long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\nlong-directory_19\n/\nvery-long-file_20'
-
-    archive_name, file_path = extract_archive_name_and_path(
-        entry_details.file_path.text
-    )
-    assert_archive_names_match(archive_audit_log.archive_name, archive_name)
-
-    actual_path = parse_indexed_path_sequence(file_path)
-
     expected_path = IndexedPathSequence.from_yaml_dict(yaml.safe_load(config))
 
-    assert actual_path.matches(expected_path), (
-        f"Path parameters shown in audit log entry details ({actual_path}) "
-        f"do not match expected parameters ({expected_path})"
-    )
+    for screen_size in ScreenSize:
+        window_size = screen_size.value
+        driver.set_window_size(window_size.width, window_size.height)
+
+        # Example shortened path:
+        # 'long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\n'
+        # 'long-directory_19\n/\nvery-long-file_20'
+        archive_name, file_path = extract_archive_name_and_path(
+            entry_details.file_path.text
+        )
+        assert_archive_names_match(archive_audit_log.archive_name, archive_name)
+
+        actual_path = parse_indexed_path_sequence(file_path)
+
+        assert actual_path.matches(expected_path), (
+            "Path parameters shown in audit log entry details for "
+            f"{screen_size.name.lower()} screen size: '{actual_path}' "
+            f"do not match expected parameters: '{expected_path}'"
+        )
 
 
 @wt(

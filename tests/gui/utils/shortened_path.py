@@ -109,7 +109,7 @@ def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
         path_parts[ellipsis_idx + 1 :],
         sequence,
     )
-    
+
     if not any((left, right)):
         return IndexedPathSequence(
             indices=None,

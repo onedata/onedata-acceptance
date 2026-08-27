@@ -1,5 +1,8 @@
 """Common names, characters etc. used in all GUIs."""
 
+from dataclasses import dataclass
+from enum import Enum
+
 __author__ = "Jakub Liput"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -54,8 +57,21 @@ NUMERALS = {
     "last": -1,
 }
 
+
+@dataclass(frozen=True)
+class WindowSize:
+    width: int
+    height: int
+
+
+class ScreenSize(Enum):
+    LARGE = WindowSize(width=1366, height=1024)
+    MEDIUM = WindowSize(width=1024, height=768)
+    SMALL = WindowSize(width=800, height=600)
+
+
 SCREEN_PARAMETERS: dict[str, int] = {
-    "width": 1366,
-    "height": 1024,
+    "width": ScreenSize.LARGE.value.width,
+    "height": ScreenSize.LARGE.value.height,
     "depth": 24,
 }

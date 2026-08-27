@@ -13,7 +13,6 @@ from itertools import cycle
 from typing import cast
 
 from _pytest._py.path import LocalPath
-from pytest_bdd import given
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -31,7 +30,7 @@ from tests.gui.utils.generic import (
     redirect_display,
 )
 from tests.type_definitions import JsonObject, SeleniumDrivers, WebDriverFactory
-from tests.utils.bdd_utils import parsers, given, wt
+from tests.utils.bdd_utils import given, parsers, wt
 
 
 @given(
@@ -104,20 +103,20 @@ def create_instances_of_webdriver(
         selenium[browser_id] = browser
 
 
-# TODO: VFS-2205 configure different window sizes for responsiveness
-#  tests: https://jira.plgrid.pl/jira/browse/VFS-2205
-def _config_driver(driver: WebDriver, window_width: int, window_height: int) -> None:
-    driver.implicitly_wait(SELENIUM_IMPLICIT_WAIT)
-
-    # perform attempts to change window size
+def _set_window_size(driver: WebDriver, width: int, height: int) -> None:
     for i in range(DRIVER_CREATION_RETRIES):
         try:
-            driver.set_window_size(window_width, window_height)
+            driver.set_window_size(width, height)
             break
         except WebDriverException as e:
             if i == 4:
                 raise e
             time.sleep(2)
+
+
+def _config_driver(driver: WebDriver, window_width: int, window_height: int) -> None:
+    driver.implicitly_wait(SELENIUM_IMPLICIT_WAIT)
+    _set_window_size(driver, window_width, window_height)
 
     # possible solution to chromedriver crushes: Timed out receiving message from renderer
     driver.set_page_load_timeout(60)
@@ -144,4 +143,4 @@ def change_window_size(
 ) -> None:
     # This step can't set the window's size to be bigger than the screen size
     driver = selenium[browser_id]
-    driver.set_window_size(window_width, window_height)
+    _set_window_size(driver, window_width, window_height)
