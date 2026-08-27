@@ -142,7 +142,22 @@ Feature: Archive audit logs
     And user of browser clicks "Show audit log" option in data row menu in archive browser
 
     And user of browser clicks on item "very-long-file_20" using scroll in archive audit log
+
     Then user of browser sees that path in Entry Details in archive audit log matches the following parameters and displayed archive name is correct:
+        First directory index: 0
+        Last directory index: 19
+        Directory prefix: long
+        File name: very-long-file_20
+
+    And user of browser changes window size to 1024x768
+    And user of browser sees that path in Entry Details in archive audit log matches the following parameters and displayed archive name is correct:
+        First directory index: 0
+        Last directory index: 19
+        Directory prefix: long
+        File name: very-long-file_20
+
+    And user of browser changes window size to 800x600
+    And user of browser sees that path in Entry Details in archive audit log matches the following parameters and displayed archive name is correct:
         First directory index: 0
         Last directory index: 19
         Directory prefix: long

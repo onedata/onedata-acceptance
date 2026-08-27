@@ -31,7 +31,7 @@ from tests.gui.utils.generic import (
     redirect_display,
 )
 from tests.type_definitions import JsonObject, SeleniumDrivers, WebDriverFactory
-from tests.utils.bdd_utils import parsers
+from tests.utils.bdd_utils import parsers, given, wt
 
 
 @given(
@@ -129,3 +129,19 @@ def assert_driver_working_properly(driver: WebDriver) -> None:
     except (WebDriverException, HTTPError) as e:
         driver.quit()
         raise e
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} changes window size to {window_width:d}x{window_height:d}"
+    )
+)
+def change_window_size(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    window_width: int,
+    window_height: int,
+) -> None:
+    # This step can't set the window's size to be bigger than the screen size
+    driver = selenium[browser_id]
+    driver.set_window_size(window_width, window_height)

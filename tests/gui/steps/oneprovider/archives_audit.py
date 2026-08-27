@@ -473,7 +473,7 @@ def extract_archive_name_and_path(file_path: str) -> tuple[str | None, str]:
     file_path = file_path.replace("\n", "")
 
     if ARCHIVE_PATH_SEPARATOR not in file_path:
-        return None, file_path
+        return None, file_path.partition("/")[2]
 
     archive_info, _, path = file_path.partition("/")
     archive_name = archive_info.partition(ARCHIVE_PATH_SEPARATOR)[2]

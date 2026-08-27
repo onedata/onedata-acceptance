@@ -109,15 +109,22 @@ def parse_indexed_path_sequence(sequence: str) -> IndexedPathSequence:
         path_parts[ellipsis_idx + 1 :],
         sequence,
     )
+    
+    if not any((left, right)):
+        return IndexedPathSequence(
+            indices=None,
+            prefix=None,
+            file_name=file_name,
+        )
 
-    if right is None:
+    if not right:
         # The path expands from the right first and then alternates sides,
         # so a non-empty left group can never have an empty right group.
         raise ValueError(f"Invalid indexed path sequence: {sequence}")
 
     right_prefix, right_indices = right
 
-    if left is None:
+    if not left:
         return IndexedPathSequence(
             indices=PathSequenceIndices(
                 first_idx=None,
