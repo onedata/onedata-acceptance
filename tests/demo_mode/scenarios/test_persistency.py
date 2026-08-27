@@ -18,38 +18,23 @@ from tests.demo_mode.steps.persistence import stop_persistent_environment
 @pytest.mark.usefixtures("isolated_persistence_directories")
 def test_persistency(
     release: str,
-    onezone_name: str,
-    onezone_container: str,
-    first_oneprovider_container: str,
     request: pytest.FixtureRequest,
 ) -> None:
     test_file_content = b"Onedata demo-mode persistence REST test\n"
 
-    onezone, oneprovider = start_persistent_environment(
-        release,
-        onezone_container,
-        first_oneprovider_container,
-        request,
-    )
-    assert_onezone_configuration(release, onezone_name)
+    onezone, oneprovider = start_persistent_environment(release, request)
+    assert_onezone_configuration(release)
 
     persistence_state = save_persistent_state(
         release,
         test_file_content,
-        first_oneprovider_container,
         request,
     )
     stop_persistent_environment([oneprovider, onezone])
-    start_persistent_environment(
-        release,
-        onezone_container,
-        first_oneprovider_container,
-        request,
-    )
-    assert_onezone_configuration(release, onezone_name)
+    start_persistent_environment(release, request)
+    assert_onezone_configuration(release)
     assert_persistence_state(
         release,
         test_file_content,
-        first_oneprovider_container,
         persistence_state,
     )

@@ -8,6 +8,11 @@ import subprocess
 
 import pytest
 
+from tests.demo_mode.constants import (
+    FIRST_ONEPROVIDER_CONTAINER,
+    ONEZONE_CONTAINER,
+    SECOND_ONEPROVIDER_CONTAINER,
+)
 from tests.demo_mode.steps.environment import (
     await_running_container,
     start_environment_command,
@@ -39,10 +44,8 @@ def _await_background_command(
 
 def start_foreground_environment(
     release: str,
-    onezone_container: str,
-    first_oneprovider_container: str,
     request: pytest.FixtureRequest,
-    second_oneprovider_container: str | None = None,
+    start_second_oneprovider: bool = False,
 ) -> None:
     """Start all foreground commands before awaiting their services."""
     onezone_process = start_environment_command(
@@ -57,7 +60,7 @@ def start_foreground_environment(
         request,
     )
 
-    if second_oneprovider_container is not None:
+    if start_second_oneprovider:
         second_oneprovider_process = _start_oneprovider_command(
             release,
             "distributed_environment/run_second_oneprovider.sh",
@@ -67,20 +70,20 @@ def start_foreground_environment(
 
     await_running_container(
         release,
-        onezone_container,
+        ONEZONE_CONTAINER,
         "run_in_background/await_onezone.sh",
         onezone_process,
     )
     await_running_container(
         release,
-        first_oneprovider_container,
+        FIRST_ONEPROVIDER_CONTAINER,
         "run_in_background/await_oneprovider.sh",
         first_oneprovider_process,
     )
-    if second_oneprovider_container is not None:
+    if start_second_oneprovider:
         await_running_container(
             release,
-            second_oneprovider_container,
+            SECOND_ONEPROVIDER_CONTAINER,
             "test_only/await_second_oneprovider.sh",
             second_oneprovider_process,
         )
@@ -88,8 +91,6 @@ def start_foreground_environment(
 
 def start_background_environment(
     release: str,
-    onezone_container: str,
-    first_oneprovider_container: str,
     request: pytest.FixtureRequest,
 ) -> None:
     """Start both detached commands before awaiting their services."""
@@ -106,14 +107,14 @@ def start_background_environment(
 
     _await_background_command(
         release,
-        onezone_container,
+        ONEZONE_CONTAINER,
         "run_in_background/run_onezone.sh",
         "run_in_background/await_onezone.sh",
         onezone_process,
     )
     _await_background_command(
         release,
-        first_oneprovider_container,
+        FIRST_ONEPROVIDER_CONTAINER,
         "run_in_background/run_oneprovider.sh",
         "run_in_background/await_oneprovider.sh",
         oneprovider_process,

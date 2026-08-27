@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
+from tests.demo_mode.constants import DEMO_SPACE_NAME
 from tests.demo_mode.meta_steps.environment import start_foreground_environment
 from tests.demo_mode.steps.examples import (
     assert_python_access_example_output,
@@ -15,19 +16,11 @@ from tests.demo_mode.steps.examples import (
 
 def test_python_access(
     release: str,
-    demo_space_name: str,
-    onezone_container: str,
-    first_oneprovider_container: str,
     request: pytest.FixtureRequest,
 ) -> None:
-    expected_output = f"['{demo_space_name}']\nTEST\n"
+    expected_output = f"['{DEMO_SPACE_NAME}']\nTEST\n"
 
-    start_foreground_environment(
-        release,
-        onezone_container,
-        first_oneprovider_container,
-        request,
-    )
+    start_foreground_environment(release, request)
 
     command_output = run_python_access_example(request)
     assert_python_access_example_output(command_output, expected_output)

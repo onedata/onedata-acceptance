@@ -8,6 +8,10 @@ from functools import partial
 
 import pytest
 
+from tests.demo_mode.constants import (
+    DEMO_SPACE_NAME,
+    FIRST_ONEPROVIDER_CONTAINER,
+)
 from tests.demo_mode.utils.commands import get_access_token
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.rest import (
@@ -116,12 +120,14 @@ def create_space_for_provider(
 
 @log_step("Getting REST space ID")
 def get_rest_space_id(
-    provider_container: str,
-    space_name: str,
     access_token: str,
 ) -> str:
-    """Get the ID of an existing space accessible through REST."""
-    return get_space_id(provider_container, space_name, access_token)
+    """Get the ID of the demo space accessible through the first Oneprovider."""
+    return get_space_id(
+        FIRST_ONEPROVIDER_CONTAINER,
+        DEMO_SPACE_NAME,
+        access_token,
+    )
 
 
 @log_step("Uploading REST file")

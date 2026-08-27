@@ -6,6 +6,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
+from tests.demo_mode.constants import (
+    FIRST_ONEPROVIDER_CONTAINER,
+    SECOND_ONEPROVIDER_CONTAINER,
+)
 from tests.demo_mode.meta_steps.environment import start_foreground_environment
 from tests.demo_mode.meta_steps.rest import (
     assert_oneproviders_are_distinct,
@@ -21,10 +25,6 @@ from tests.demo_mode.steps.rest import (
 
 def test_distributed_environment(
     release: str,
-    onezone_name: str,
-    onezone_container: str,
-    first_oneprovider_container: str,
-    second_oneprovider_container: str,
     request: pytest.FixtureRequest,
 ) -> None:
     first_file_name = "first-provider-rest-test.txt"
@@ -34,51 +34,43 @@ def test_distributed_environment(
 
     start_foreground_environment(
         release,
-        onezone_container,
-        first_oneprovider_container,
         request,
-        second_oneprovider_container,
+        start_second_oneprovider=True,
     )
-    assert_onezone_configuration(release, onezone_name)
+    assert_onezone_configuration(release)
 
-    assert_oneproviders_are_distinct(
-        first_oneprovider_container,
-        second_oneprovider_container,
-        release,
-    )
+    assert_oneproviders_are_distinct(release)
 
     access_token = get_demo_access_token(release)
     first_space_id = create_space_for_provider(
-        first_oneprovider_container,
+        FIRST_ONEPROVIDER_CONTAINER,
         "demo-mode-first-provider-space",
         access_token,
     )
     second_space_id = create_space_for_provider(
-        second_oneprovider_container,
+        SECOND_ONEPROVIDER_CONTAINER,
         "demo-mode-second-provider-space",
         access_token,
     )
     assert_space_support_is_isolated(
-        first_oneprovider_container,
         first_space_id,
-        second_oneprovider_container,
         second_space_id,
         access_token,
     )
 
     upload_and_verify_rest_file_content(
-        first_oneprovider_container,
         first_space_id,
         first_file_name,
         access_token,
         first_file_content,
         request,
+        provider_container=FIRST_ONEPROVIDER_CONTAINER,
     )
     upload_and_verify_rest_file_content(
-        second_oneprovider_container,
         second_space_id,
         second_file_name,
         access_token,
         second_file_content,
         request,
+        provider_container=SECOND_ONEPROVIDER_CONTAINER,
     )

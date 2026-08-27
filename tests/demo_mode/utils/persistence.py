@@ -12,6 +12,7 @@ from typing import Final
 
 import pytest
 
+from tests.demo_mode.constants import CONTAINER_NAMES
 from tests.demo_mode.type_definitions import PersistentService
 from tests.demo_mode.utils.commands import (
     load_command,
@@ -105,9 +106,9 @@ def _remove_persistence_paths_and_marker(
         marker.unlink()
 
 
-def remove_demo_persistence(container_names: list[str]) -> None:
+def remove_demo_persistence() -> None:
     """Remove containers and all bind-mounted state owned by the persistence test."""
-    remove_containers(container_names)
+    remove_containers(CONTAINER_NAMES)
     existing_paths, marker, marker_exists = _assert_and_get_test_owns_existing_paths()
     _remove_persistence_paths_and_marker(existing_paths, marker, marker_exists)
 
@@ -120,8 +121,8 @@ def remove_demo_persistence(container_names: list[str]) -> None:
     )
 
 
-def prepare_demo_persistence(container_names: list[str]) -> None:
+def prepare_demo_persistence() -> None:
     """Reserve the clean fixed host paths used by persistence commands."""
-    remove_demo_persistence(container_names)
+    remove_demo_persistence()
     marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
     marker.write_text(OWNERSHIP_MARKER_CONTENT, encoding="utf-8")

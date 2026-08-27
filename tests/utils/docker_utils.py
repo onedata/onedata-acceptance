@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import subprocess
+from collections.abc import Collection
 
 from environment import docker  # pylint: disable=import-error
 
@@ -60,7 +61,7 @@ def docker_ip(container: object) -> str:
 
 
 def remove_containers(
-    container_names: list[str],
+    container_names: Collection[str],
     timeout: float = 60,
     interval: float = 1,
 ) -> None:
