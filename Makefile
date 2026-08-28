@@ -153,7 +153,7 @@ clean_swaggers:
 	rm -rf ${MIXED_TESTS_ROOT}/cdmi_client
 
 codetag-tracker:
-	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH}
+	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
 
 
 ##
