@@ -89,6 +89,10 @@ extend-select = [
     "RET",
     "RSE102",
 
+    # Invalid literal indexes, partially replacing Pylint's inferred
+    # unsupported/unsubscriptable operation checks.
+    "RUF016",
+
     # exec/eval, requests without timeouts, protected access and debugger use.
     "S102",
     "S113",
@@ -119,15 +123,18 @@ known-third-party = ["enchant"]
 extend-ignore-names = ["i", "j", "k", "ex", "Run", "_"]
 
 [tool.ruff.lint.pylint]
+# The former Pylint policy disabled the argument-count checks. Keep Ruff's
+# existing, finite limits so the checks remain enabled without rejecting BDD
+# step functions whose signatures are defined by fixtures.
 max-args = 15
-max-bool-expr = 15
-max-branches = 15
+max-bool-expr = 5
+max-branches = 13
 max-locals = 15
-max-nested-blocks = 5
+max-nested-blocks = 7
 max-positional-args = 15
 max-public-methods = 20
 max-returns = 6
-max-statements = 200
+max-statements = 50
 
 [tool.ruff.lint.per-file-ignores]
 # Mirrors Pylint's init-import=no. Re-exporting package initializers are also

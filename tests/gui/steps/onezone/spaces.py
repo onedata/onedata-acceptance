@@ -67,7 +67,7 @@ def click_on_space_in_menu_list(driver: WebDriver, name: str, force: bool = True
     # function assumes data page is active
     page = OZLoggedIn(driver).data
     if force:
-        page.spaces_headers_list[name]()
+        page.spaces_headers_list[name].web_elem.click()
     elif not page.spaces_list[name].is_active():
         page.spaces_headers_list[name].click()
     return page
