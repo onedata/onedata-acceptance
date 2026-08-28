@@ -5,7 +5,7 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     AceEditor,
     Button,
@@ -18,22 +18,25 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import EditBox, InputBox
-from tests.gui.utils.onezone.generic_page import Element
+from tests.gui.utils.onezone.generic_page import ListPage
 
 
-class Task(Element):
+class Task(NamedElement):
+    name = id = Label(".one-label")
     menu_button = Button(".task-actions-trigger")
 
 
-class ParallelBox(Element):
+class ParallelBox(NamedElement):
+    name = id = Label(".one-label")
     task_list = WebItemsSequence(".box-elements .draggable-task", cls=Task)
 
 
-class EmptyParallelBox(Element):
+class EmptyParallelBox(NamedElement):
+    name = id = Label(".one-label")
     add_task_button = Button(".create-task-action-trigger")
 
 
-class WorkflowLane(Element):
+class WorkflowLane(NamedElement):
     name = id = Label(".lane-name")
     add_parallel_box_button = Button(".create-parallel-box-action-trigger")
     parallel_box = WebItem(".workflow-visualiser-parallel-box ", cls=ParallelBox)
@@ -46,7 +49,7 @@ class WorkflowLane(Element):
     add_parallel_box_below = Button(".space-position-end .create-parallel-box-action-trigger")
 
 
-class Store(Element):
+class Store(NamedElement):
     name = id = Label(".store-name")
 
 
@@ -64,7 +67,7 @@ class RevisionDetails(PageObject):
     description = Input(".textarea-field .form-control")
 
 
-class NavigationTab(Element):
+class NavigationTab(NamedElement):
     name = id = Label(".nav-link")
 
 
@@ -72,7 +75,8 @@ class JSONWorkflowsPanel(PageObject):
     text_area = AceEditor(".editor-with-json")
 
 
-class Arguments(Element):
+class Arguments(NamedElement):
+    name = Label(".one-label")
     argument_name = id = Label(".control-label")
     value_builder_dropdown = WebElement(".valueBuilderType-field")
     data_type = Label(".data-spec-type")
@@ -80,14 +84,16 @@ class Arguments(Element):
     json = WebItem(".valueBuilderConstValue-field", cls=JSONWorkflowsPanel)
 
 
-class Results(Element):
+class Results(NamedElement):
+    name = Label(".one-label")
     result_name = id = Label(".control-label")
     target_store_dropdown = WebElementsSequence(".targetStore-field")
     json_editor = Input(".json-editor-textarea")
     add_mapping = Button(".add-field-button")
 
 
-class Parameters(Element):
+class Parameters(NamedElement):
+    name = Label(".one-label")
     param_name = id = Label(".control-label")
     value_builder_dropdown = WebElement(".paramValueBuilder-field")
     value_editor = Input(".value-field .form-control")
@@ -104,13 +110,13 @@ class TaskAddForm(PageObject):
     )
 
 
-class Revision(Element):
+class Revision(NamedElement):
     number = id = Label(".revision-number")
     name = Label(".description")
     menu_button = Button(".one-menu-toggle")
 
 
-class Workflow(Element):
+class Workflow(NamedElement):
     name = id = Label(".name-field .text-like-field")
 
     menu_button = Button(".workflow-actions-trigger")
@@ -126,7 +132,7 @@ class WorkflowCreator(PageObject):
     create_button = NamedButton(".btn-primary", text="Create")
 
 
-class WorkflowsPage(PageObject):
+class WorkflowsPage(ListPage):
     workflows_list = WebItemsSequence(
         ".atm-workflow-schemas-list .atm-workflow-schemas-list-entry",
         cls=Workflow,

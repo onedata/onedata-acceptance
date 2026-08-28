@@ -64,7 +64,7 @@ def remove_member_from_parent(
         oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
         main_page = getattr(oz_page, page_name)
         list_name = f"{where}s_list"
-        getattr(main_page, list_name)[name]()
+        getattr(main_page, list_name)[name].click()
         getattr(main_page, list_name)[name].members()
     members_page = _find_members_page(driver, where)
     list_name = member_type + "s"

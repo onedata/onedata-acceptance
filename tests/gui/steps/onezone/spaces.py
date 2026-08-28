@@ -151,7 +151,7 @@ def assert_no_provider_for_space(
     hosts: Hosts,
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).data
-    page.spaces_headers_list[space_name]()
+    page.spaces_headers_list[space_name].click()
     page.spaces_list[space_name].providers()
     provider = hosts[provider_name]["name"]
     try:
@@ -422,7 +422,7 @@ def hover_provider_on_the_map_on_data_page(
 )
 def click_the_map_on_data_page(selenium: SeleniumDrivers, browser_id: str, page: str) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver).data, _get_subpage_name(page)).map()
+    getattr(OZLoggedIn(driver).data, _get_subpage_name(page)).map.web_elem.click()
 
 
 @wt(
@@ -808,7 +808,7 @@ def generate_and_send_support_token(
     tmp_memory: TmpMemory,
 ) -> None:
     page = OZLoggedIn(selenium[browser_id1]).data
-    page.spaces_headers_list[space_name]()
+    page.spaces_headers_list[space_name].click()
     page.spaces_list[space_name].providers()
     page.providers_page.add_support()
     copy_token(selenium, browser_id1)
@@ -863,7 +863,7 @@ def assert_tabs_of_space_enabled(
     selenium: SeleniumDrivers, browser_id: str, tabs_list: list[str], space_name: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).data
-    page.spaces_headers_list[space_name]()
+    page.spaces_headers_list[space_name].click()
     space = page.spaces_list[space_name]
     tabs = SPACE_TABS if tabs_list == ["all"] else tabs_list
 
@@ -884,7 +884,7 @@ def assert_tabs_of_space_disabled(
     selenium: SeleniumDrivers, browser_id: str, tabs_list: list[str], space_name: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).data
-    page.spaces_headers_list[space_name]()
+    page.spaces_headers_list[space_name].click()
     space = page.spaces_list[space_name]
 
     for tab in tabs_list:
