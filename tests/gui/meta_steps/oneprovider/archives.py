@@ -17,7 +17,10 @@ from tests.gui.meta_steps.oneprovider.data import (
     go_to_path_without_last_elem,
 )
 from tests.gui.meta_steps.oneprovider.dataset import get_item_name_from_path
-from tests.gui.steps.common.common import assert_n_items_in_items_list, close_alert_popup_if_present
+from tests.gui.steps.common.common import (
+    assert_n_items_in_items_list,
+    close_alert_popup_if_present,
+)
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     write_name_into_text_field_in_modal,
@@ -269,7 +272,9 @@ def copy_archive_id_to_tmp_memory(
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
         )
-        close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
+        close_alert_popup_if_present(
+            selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED
+        )
         tmp_memory[description] = clipboard.paste(display=displays[browser_id])
 
 

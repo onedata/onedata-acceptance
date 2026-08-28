@@ -118,7 +118,9 @@ class Popups:
     menu_popup_with_label = WebItem(".webui-popover.in", cls=MenuPopupWithLabel)
     menu_popup_with_text = WebItem(".webui-popover.in", cls=MenuPopupWithText)
     selector_popup = WebItem(".webui-popover.in", cls=SelectorPopup)
-    consumer_caveat_popup = WebItem(".webui-popover-tags-selector", cls=ConsumerCaveat)
+    consumer_caveat_popup = WebItem(
+        ".webui-popover-tags-selector.in", cls=ConsumerCaveat
+    )
     user_delete_account_popover_menu = WebItem(
         ".in .webui-popover-inner", cls=UserDeleteAccountPopoverMenu
     )

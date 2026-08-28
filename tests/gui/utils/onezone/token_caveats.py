@@ -4,7 +4,6 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
 from datetime import datetime, timedelta
 from typing import Iterable, Protocol, TypedDict
 
@@ -115,11 +114,19 @@ class CaveatField(PageObject):
     path_entries = WebItemsSequence(".pathEntry-collapse", cls=PathEntry)
     object_id_entries = WebItemsSequence(".objectIdEntry-field", cls=ObjectIdEntry)
 
+    @repeat_failed(timeout=1)
     def activate(self) -> None:
         self.toggle.check()
+        assert self.toggle.is_checked(), "failed to check toggle"
 
+    @repeat_failed(timeout=1)
     def deactivate(self) -> None:
         self.toggle.uncheck()
+        assert not self.toggle.is_checked(), "failed to check toggle"
+
+    @repeat_failed(timeout=1)
+    def click_new_item(self) -> None:
+        self.new_item.click()
 
     def is_allow(self) -> bool:
         return self.item_label == "Allow"
@@ -327,19 +334,14 @@ class CaveatField(PageObject):
         consumer_type: str,
         value: str,
     ) -> None:
-        self.new_item()
+        self.click_new_item()
         driver = selenium[browser_id]
         popup = Popups(driver).consumer_caveat_popup
-        popup.expand_consumer_types()
-        time.sleep(0.5)
-        popup.consumer_types[consumer_type]()
-        time.sleep(0.5)
-        popup.list_option()
 
-        # this line is to load elements, test fails without it
-        _ = [consumer.name for consumer in popup.consumers]
-        time.sleep(0.5)
-        popup.consumers[value]()
+        popup.expand_consumer_types()
+        popup.select_consumer_type(consumer_type)
+        popup.expand_consumers()
+        popup.consumers[value].click()
 
     # interface caveat
     def set_interface_caveat(self, caveat: str) -> None:
