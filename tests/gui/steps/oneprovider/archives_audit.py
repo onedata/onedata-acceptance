@@ -125,7 +125,9 @@ def assert_ascending_file_or_dir_names(browser_id: str, selenium: SeleniumDriver
     def condition(last: int, index: int = 0) -> None:
         currents = modal.get_visible_rows_of_single_column("file")[index:]
         for current in currents:
-            current_ = int(current.removeprefix("dirfile_"))
+            match = re.fullmatch(r"(?:dir|file)_(\d+)", current)
+            assert match, f"unexpected file or directory name: {current}"
+            current_ = int(match.group(1))
             error_message = f"index {current_} following {last} is not bigger"
             assert current_ > last, error_message
             last = current_
