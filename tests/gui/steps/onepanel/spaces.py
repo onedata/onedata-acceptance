@@ -40,6 +40,7 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
+from tests.gui.utils.onepanel.spaces import SpaceRecord
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -49,7 +50,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_spaces_list_from_spaces_page(
     selenium: SeleniumDrivers, browser_id: str
-) -> PageObjectsSequence:
+) -> PageObjectsSequence[SpaceRecord]:
     return Onepanel(selenium[browser_id]).content.spaces.spaces
 
 

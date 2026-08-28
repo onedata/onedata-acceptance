@@ -1,7 +1,7 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from collections.abc import Iterator, Sequence
-from typing import Optional
+from typing import Generic, Optional, TypeVar
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -19,12 +19,15 @@ class PageObjectNotFoundError(RuntimeError):
     """Raised when an item cannot be found in a page-object sequence."""
 
 
+PageObjectT = TypeVar("PageObjectT", bound=PageObject)
+
+
 class ButtonPageObject(PageObject):
-    name = "button"
+    object_name = "button"
     item_not_found_msg = "{text} btn not found in {parent}"
 
     def __str__(self) -> str:
-        return f"{self.name} btn in {self.parent}"
+        return f"{self.object_name} btn in {self.parent}"
 
     def __call__(self) -> None:
         self.click()
@@ -41,7 +44,7 @@ class ButtonPageObject(PageObject):
 
 class ButtonWithTextPageObject(ButtonPageObject):
     def __str__(self) -> str:
-        return f'{self.name} btn with "{self.text}" text in {self.parent}'
+        return f'{self.object_name} btn with "{self.text}" text in {self.parent}'
 
     @property
     def text(self) -> str:
@@ -50,13 +53,13 @@ class ButtonWithTextPageObject(ButtonPageObject):
     id = text
 
 
-class PageObjectsSequence:
+class PageObjectsSequence(Generic[PageObjectT]):
 
     def __init__(
         self,
         driver: WebDriver,
         items: Sequence[SeleniumWebElement],
-        cls: type[PageObject],
+        cls: type[PageObjectT],
         parent: Optional[object] = None,
     ) -> None:
         self.driver = driver
@@ -64,7 +67,7 @@ class PageObjectsSequence:
         self.cls = cls
         self.parent = parent
 
-    def _getitem_by_id(self, sel: object) -> Optional[PageObject]:
+    def _getitem_by_id(self, sel: object) -> Optional[PageObjectT]:
         for item in self:
             if item.id == sel:
                 return item
@@ -73,15 +76,15 @@ class PageObjectsSequence:
     def _getitem_by_idx(self, idx: int) -> Optional[SeleniumWebElement]:
         return nth(self.items, idx) if idx < len(self) else None
 
-    def __iter__(self) -> Iterator[PageObject]:
+    def __iter__(self) -> Iterator[PageObjectT]:
         return (self.cls(self.driver, item, self.parent) for item in self.items)
 
-    def __reversed__(self) -> Iterator[PageObject]:
+    def __reversed__(self) -> Iterator[PageObjectT]:
         return (
             self.cls(self.driver, item, self.parent) for item in reversed(self.items)
         )
 
-    def __getitem__(self, sel: int | str) -> PageObject:
+    def __getitem__(self, sel: int | str) -> PageObjectT:
         if isinstance(sel, int):
             item = self._getitem_by_idx(sel)
             if item:

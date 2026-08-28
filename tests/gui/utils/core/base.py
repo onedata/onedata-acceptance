@@ -14,10 +14,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 class AbstractWebElement(ABC, metaclass=ABCMeta):
-    def __init__(self, css_selector: str, scroll: bool = True, name: str = "") -> None:
+    def __init__(
+        self,
+        css_selector: str,
+        scroll: bool = True,
+        descriptor_name: str = "",
+    ) -> None:
         self.css_selector = css_selector
         self.scroll = scroll
-        self.name = name
+        self.descriptor_name = descriptor_name
 
     def __delete__(self, instance: object) -> None:
         raise AttributeError("can't delete attribute")
@@ -47,8 +52,11 @@ class PageObjectMeta(ABCMeta):
         cls_dict: dict[str, object],
     ) -> None:
         for key, val in cls_dict.items():
-            if isinstance(val, AbstractWebElement) and val.name in ("id", ""):
-                val.name = key
+            if isinstance(val, AbstractWebElement) and val.descriptor_name in (
+                "id",
+                "",
+            ):
+                val.descriptor_name = key
         super(PageObjectMeta, cls).__init__(cls_name, bases, cls_dict)
 
 
@@ -58,17 +66,13 @@ class AbstractPageObject(metaclass=PageObjectMeta):
         driver: WebDriver,
         web_elem: SeleniumWebElement,
         parent: Optional[object] = None,
-        name: str = "",
+        object_name: str = "",
     ) -> None:
         self.driver = driver
         self.web_elem = web_elem
         self.parent = parent
-        # Some page objects expose a web element called ``name``. In that case,
-        # assigning the logical page-object name would invoke the element's
-        # read-only descriptor and fail during construction.
-        name_element = getattr(type(self), "name", None)
-        if name != "" and not isinstance(name_element, AbstractWebElement):
-            self.name = name
+        if object_name != "":
+            self.object_name = object_name
 
     @abstractmethod
     def __str__(self) -> str:

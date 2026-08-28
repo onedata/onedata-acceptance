@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import cast
 
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.type_definitions import TmpMemory
@@ -67,7 +66,9 @@ def assert_record_in_clusters_menu(
     assert record in records, f"{record} not in clusters"
 
 
-def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence:
+def _get_clusters(
+    selenium: SeleniumDrivers, browser_id: str
+) -> PageObjectsSequence[MenuItem]:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ClustersPage)
@@ -79,7 +80,7 @@ def _get_cluster_record(
 ) -> MenuItem:
     menu = _get_clusters(selenium, browser_id)
     record = hosts[record_name]["name"]
-    return cast(MenuItem, menu[record])
+    return menu[record]
 
 
 @wt(parsers.parse('user of {browser_id} does not see "{record}" in clusters menu'))
@@ -239,7 +240,7 @@ def _get_old_or_new_cluster_record(
 
 def get_old_or_new_cluster_record_from_list(
     provider: str,
-    prov_list: PageObjectsSequence,
+    prov_list: PageObjectsSequence[MenuItem],
     age: str,
     tmp_memory: TmpMemory,
     hosts: Hosts,
@@ -247,11 +248,7 @@ def get_old_or_new_cluster_record_from_list(
     record_name = hosts[provider]["name"]
     old_id = tmp_memory[provider]["cluster id"]
 
-    selected = [
-        menu_item
-        for row in prov_list
-        if (menu_item := cast(MenuItem, row)).name == record_name
-    ]
+    selected = [row for row in prov_list if row.name == record_name]
     separator = CONFLICT_NAME_SEPARATOR
 
     # conflicted clusters have 4-letter cluster id digest added to label

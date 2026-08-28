@@ -17,7 +17,7 @@ from tests.gui.meta_steps.oneprovider.data import (
     go_to_path_without_last_elem,
 )
 from tests.gui.meta_steps.oneprovider.dataset import get_item_name_from_path
-from tests.gui.steps.common.common import assert_n_items_in_items_list
+from tests.gui.steps.common.common import assert_n_items_in_items_list, close_alert_popup_if_present
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     write_name_into_text_field_in_modal,
@@ -63,6 +63,7 @@ from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_side
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.common.constants import ScreenSize
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import ListElement, WhichBrowser, transform
 from tests.gui.utils.shortened_path import (
     IndexedPathSequence,
@@ -242,8 +243,6 @@ def _create_archive(
                 displays,
                 description,
             )
-            # wait for "archive id copied to clipboard" message to disappear
-            time.sleep(5)
     elif option == "fails":
         assert_option_state_in_data_row_menu(
             selenium,
@@ -270,6 +269,7 @@ def copy_archive_id_to_tmp_memory(
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
         )
+        close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
         tmp_memory[description] = clipboard.paste(display=displays[browser_id])
 
 
