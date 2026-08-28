@@ -1,0 +1,208 @@
+# Ruff policy for the OneData acceptance tests. It follows the core Ruff
+# policy from the OneData Python tooling handbook and adds compatibility rules
+# for diagnostics enabled by the former Pylint configuration.
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["CVS"]
+output-format = "pylint"
+
+[tool.ruff.lint]
+# OneData handbook core. Keep this list identical to the Python project
+# templates in onedata-dev-documentation.
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "PL"]
+
+# Preview is needed only for Ruff implementations of checks that were already
+# stable and enabled in Pylint 4.0.6. Prefix selectors cannot implicitly add
+# any other preview rules.
+preview = true
+explicit-preview-rules = true
+
+# Pylint has separate patterns for dummy variables, ignored arguments and
+# callbacks; Ruff uses one pattern for all unused-name checks.
+dummy-variable-rgx = "_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_|^cb_|_cb$"
+
+# Compatibility extensions beyond the handbook core. Each group corresponds
+# to checks enabled by the former Pylint policy.
+extend-select = [
+    # Redefined builtins.
+    "A001",
+    "A002",
+    "A003",
+    "A004",
+    "A006",
+
+    # Unused function, method, classmethod, staticmethod and lambda arguments.
+    "ARG",
+
+    # Broad Exception/BaseException handlers and raises.
+    "BLE001",
+    "TRY002",
+
+    # Comprehension and collection refactoring suggestions.
+    "C4",
+    "PERF401",
+    "PERF403",
+    "PIE790",
+    "PIE794",
+    "PIE796",
+    "PIE807",
+    "PIE810",
+
+    # The old configuration requires module docstrings and rejects empty
+    # docstrings, while function and class docstring requirements are disabled.
+    "D100",
+    "D419",
+
+    # Static string joining and lazy logging interpolation.
+    "FLY002",
+    "G",
+
+    # Naming policies which map to Pylint's configured module, class, function,
+    # argument and local-variable styles. Import-alias and exception-suffix
+    # policies are intentionally not added.
+    "N801",
+    "N802",
+    "N803",
+    "N804",
+    "N805",
+    "N806",
+    "N807",
+    "N999",
+
+    # Preview Pylint rules with enabled Pylint 4.0.6 counterparts.
+    "PLC2801",
+    "PLE1141",
+    "PLE4703",
+    "PLR0202",
+    "PLR0203",
+    "PLR0904",
+    "PLR0914",
+    "PLR0916",
+    "PLR1702",
+    "PLR1712",
+    "PLW0244",
+    "PLW1514",
+
+    # Return-flow and raise simplifications.
+    "RET",
+    "RSE102",
+
+    # exec/eval, requests without timeouts, protected access and debugger use.
+    "S102",
+    "S113",
+    "S307",
+    "SLF001",
+    "T100",
+]
+
+[tool.ruff.lint.flake8-self]
+# Pylint's exclude-protected list also contains os._exit. Ruff configures this
+# by member name, so `_exit` is ignored regardless of its owner.
+ignore-names = ["_asdict", "_fields", "_replace", "_source", "_make", "_exit"]
+
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = false
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "bamboos",
+    "cdmi_client",
+    "onepanel_client",
+    "oneprovider_client",
+    "onezone_client",
+]
+known-third-party = ["enchant"]
+
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = ["i", "j", "k", "ex", "Run", "_"]
+
+[tool.ruff.lint.pylint]
+max-args = 15
+max-bool-expr = 15
+max-branches = 15
+max-locals = 15
+max-nested-blocks = 5
+max-positional-args = 15
+max-public-methods = 20
+max-returns = 6
+max-statements = 200
+
+[tool.ruff.lint.per-file-ignores]
+# Mirrors Pylint's init-import=no. Re-exporting package initializers are also
+# the documented OneData convention.
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true        # flag a config/override section that matches no files
+warn_unused_ignores = true        # flag a `# type: ignore` that no longer applies
+warn_redundant_casts = true       # flag casts that do nothing
+disallow_untyped_defs = true      # every function must be annotated
+disallow_incomplete_defs = true   # …and partially-annotated functions are an error too
+strict_equality = true            # flag comparisons between non-overlapping types
+no_implicit_optional = true       # `x: int = None` is an error, not implicit Optional
+
+# TODO: VFS-13659 uncomment after final typing fixes
+# warn_return_any = true            # flag returning Any from a typed function
+
+# TODO: VFS-13660 remove after final typing fixes
+follow_imports = "skip"
+
+pretty = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = ["bamboos.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "py.xml",
+    "jsondiff",
+    "environment",
+    "environment.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "kubernetes",
+    "kubernetes.*",
+    "rpyc",
+    "rpyc.*",
+    "aiohttp_sse_client",
+    "aiohttp_sse_client.*",
+    "xmlrunner",
+    "xmlrunner.*",
+    "tests.utils.onenv_utils",
+    "tests.utils.user_utils",
+    "tests.mixed.utils.sse_utils",
+]
+ignore_missing_imports = true
+disable_error_code = ["import-untyped"]
+
+# TODO: VFS-13661 move all submodules into one place
+# Ignore generated / external REST clients reported by mypy logs.
+[[tool.mypy.overrides]]
+module = [
+    "onezone_client",
+    "onezone_client.*",
+    "onepanel_client",
+    "onepanel_client.*",
+    "oneprovider_client",
+    "oneprovider_client.*",
+    "cdmi_client",
+    "cdmi_client.*",
+    "tests.mixed.onezone_client",
+    "tests.mixed.onezone_client.*",
+    "tests.mixed.onepanel_client",
+    "tests.mixed.onepanel_client.*",
+    "tests.mixed.oneprovider_client",
+    "tests.mixed.oneprovider_client.*",
+    "tests.mixed.cdmi_client",
+    "tests.mixed.cdmi_client.*",
+]
+ignore_missing_imports = true
+ignore_errors = true
