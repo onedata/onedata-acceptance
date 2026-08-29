@@ -10,7 +10,6 @@ import re
 import time
 from typing import Optional, cast
 
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import (
@@ -31,6 +30,7 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
+from tests.gui.utils.onepanel import Deployment
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
@@ -173,23 +173,42 @@ def wt_type_property_to_in_box_in_deployment_step(
         r"step 5|last step) of deployment process in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_in_deployment_step(
     selenium: SeleniumDrivers, browser_id: str, btn: str, step: str
 ) -> None:
     driver = selenium[browser_id]
-    step = getattr(Onepanel(driver).content.deployment, step.lower().replace(" ", ""))
-    getattr(step, transform(btn)).click()
-    if btn == "Add host":
+    step = step.lower().replace(" ", "")
+    click_on_btn_in_deployment_step(driver, step, btn)
 
-        for _ in range(10):
-            selector = driver.find_elements(
-                By.CSS_SELECTOR, ".cluster-host-table .cluster-host-table-row"
+    if btn == "Add host":
+        condition = (
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR, ".cluster-host-table .cluster-host-table-row"
+                )
             )
-            if len(selector) < 2:
-                time.sleep(1)
-            else:
-                break
+            >= 2
+        )
+        message = f"Did not manage to add 2nd host within {WAIT_BACKEND}s time."
+
+    elif btn == "Register":
+        condition = (
+            lambda _: Onepanel(driver).content.deployment.get_active_step()
+            == "setup_ip"
+        )
+        message = f"Registration did not finish within {WAIT_BACKEND}s time."
+
+    WebDriverWait(driver, WAIT_BACKEND, poll_frequency=1).until(
+        condition,
+        message=message,
+    )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_btn_in_deployment_step(driver: WebDriver, step: str, btn: str) -> None:
+    deployment = Onepanel(driver).content.deployment
+    deployment_step = getattr(deployment, step)
+    getattr(deployment_step, transform(btn)).click()
 
 
 @wt(
@@ -272,17 +291,10 @@ def wt_await_finish_of_cluster_deployment(
     selenium: SeleniumDrivers, browser_id: str, timeout: int
 ) -> None:
     driver = selenium[browser_id]
-    limit = time.time() + timeout
-    while time.time() < limit:
-        try:
-            Modals(driver).cluster_deployment
-        except NoSuchElementException:
-            break
-        else:
-            time.sleep(1)
-            continue
-    else:
-        raise TimeoutError(f"cluster deployment exceeded time limit: {timeout}")
+    WebDriverWait(driver, timeout, poll_frequency=1).until_not(
+        lambda _: Modals(driver).cluster_deployment,
+        f"cluster deployment exceeded time limit: {timeout}",
+    )
 
 
 @wt(
