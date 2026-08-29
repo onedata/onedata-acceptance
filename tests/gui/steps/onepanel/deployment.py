@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Optional, cast
+from typing import Callable, Optional, cast
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -30,7 +30,6 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
-from tests.gui.utils.onepanel import Deployment
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
@@ -179,6 +178,9 @@ def wt_click_on_btn_in_deployment_step(
     driver = selenium[browser_id]
     step = step.lower().replace(" ", "")
     click_on_btn_in_deployment_step(driver, step, btn)
+    condition: Callable[[WebDriver], bool]
+    message: str
+    timeout: float
 
     if btn == "Add host":
         condition = (
@@ -190,6 +192,7 @@ def wt_click_on_btn_in_deployment_step(
             >= 2
         )
         message = f"Did not manage to add 2nd host within {WAIT_BACKEND}s time."
+        timeout = WAIT_BACKEND*2
 
     elif btn == "Register":
         condition = (
@@ -197,8 +200,9 @@ def wt_click_on_btn_in_deployment_step(
             == "setup_ip"
         )
         message = f"Registration did not finish within {WAIT_BACKEND}s time."
+        timeout = WAIT_BACKEND
 
-    WebDriverWait(driver, WAIT_BACKEND, poll_frequency=1).until(
+    WebDriverWait(driver, timeout, poll_frequency=1).until(
         condition,
         message=message,
     )

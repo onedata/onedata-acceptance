@@ -5,9 +5,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-import re
-from typing import Literal
-
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -19,31 +16,9 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 
+from .deployment_steps import DEPLOYMENT_STEP_TITLE_PATTERNS, DeploymentStep
 from .nodes import HostRecord
 from .storages import StorageContentPage
-
-type DeploymentStep = Literal[
-    "step1",
-    "step2",
-    "setup_dns",
-    "setup_ip",
-    "webcertstep",
-    "step5",
-    "laststep",
-]
-
-DEPLOYMENT_STEP_TITLE_PATTERNS: tuple[tuple[re.Pattern[str], DeploymentStep], ...] = (
-    (re.compile(r"\bStep\s+1\b", re.IGNORECASE), "step1"),
-    (re.compile(r"\bOneprovider registration\b", re.IGNORECASE), "step2"),
-    (re.compile(r"\bDNS setup\b", re.IGNORECASE), "setup_dns"),
-    (re.compile(r"\bcluster IP add?resses\b", re.IGNORECASE), "setup_ip"),
-    (re.compile(r"\bcertificate setup\b", re.IGNORECASE), "webcertstep"),
-    (
-        re.compile(r"\bstorage backend configuration\b", re.IGNORECASE),
-        "step5",
-    ),
-    (re.compile(r"\bsummary\b", re.IGNORECASE), "laststep"),
-)
 
 
 class Step1(PageObject):
