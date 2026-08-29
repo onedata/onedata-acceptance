@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2025 Onedata.org"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from pytest import fixture
+from pytest import fixture, mark
 from pytest_bdd import scenario, scenarios
 
 from tests.gui.meta_steps.onepanel.account_management import *
@@ -59,6 +59,8 @@ from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
+
+pytestmark = mark.clean_environment
 
 
 @fixture(scope="module")

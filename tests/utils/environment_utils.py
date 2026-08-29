@@ -134,7 +134,7 @@ def start_environment(
             dep_status = get_deployment_status()
             check_deployment(dep_status)
 
-            if not local:
+            if not local or request.config.getoption("--update-etc-hosts"):
                 update_etc_hosts()
             setup_hosts_cfg(hosts, request)
             zone_hostname = hosts["onezone"]["hostname"]

@@ -36,7 +36,7 @@ def get_images_option(
 ):
     if test_type == 'upgrade':
         # in upgrade tests images are provided in test config and manually set are ignored
-        return ''
+        return []
     images_cfg = []
     add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg, pull)
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg, pull)
@@ -61,7 +61,7 @@ def get_images_option(
                     '--openfaas-lambda-result-streamer-image',
                     images_cfg, pull
                 )
-    return ' + '.join(images_cfg)
+    return images_cfg
 
 
 def add_image_to_images_cfg(image, service_name, option, images_cfg, pull):
@@ -70,7 +70,7 @@ def add_image_to_images_cfg(image, service_name, option, images_cfg, pull):
     print('[INFO] Using image {} for service {}'.format(image, service_name))
     if pull:
         docker.pull_image_with_retries(image)
-    images_cfg.append("['{}={}']".format(option, image))
+    images_cfg.append('{}={}'.format(option, image))
 
 
 def load_test_report(junit_report_path):
@@ -277,7 +277,7 @@ if {shed_privileges}:
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
 
-command = ['python3', '-m', 'pytest', '-rs', '-s', '-v', '--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
+command = ['python3', '-m', 'pytest', '-rs', '-s', '-v', '--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + {update_etc_hosts} + ['--junitxml={report_path}'] + ['--add-test-domain']
 
 ret = subprocess.call(command)
 sys.exit(ret)
@@ -304,8 +304,11 @@ sys.exit(ret)
                '--test-type={}'.format(args.test_type),
                args.test_dir, '--junitxml={}'.format(args.report_path),
                '--local'] + pass_args
+        if args.update_etc_hosts:
+            cmd += ['--update-etc-hosts']
         if args.env_file:
             cmd += [f'--env-file={args.env_file}']
+        cmd += images_opt
         ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     else:
@@ -331,6 +334,9 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             env_file=['--env-file={}'.format(args.env_file)] if args.env_file else [],
             timeout=['--timeout={}'.format(args.timeout)] if args.timeout else [],
             images_opt=images_opt if images_opt else [],
+            update_etc_hosts=(
+                ['--update-etc-hosts'] if args.update_etc_hosts else []
+            ),
             home=os.path.expanduser('~')
         )
 

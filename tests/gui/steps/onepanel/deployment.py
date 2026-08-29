@@ -178,34 +178,36 @@ def wt_click_on_btn_in_deployment_step(
     driver = selenium[browser_id]
     step = step.lower().replace(" ", "")
     click_on_btn_in_deployment_step(driver, step, btn)
-    condition: Callable[[WebDriver], bool]
-    message: str
-    timeout: float
 
-    if btn == "Add host":
-        condition = (
-            lambda driver: len(
-                driver.find_elements(
-                    By.CSS_SELECTOR, ".cluster-host-table .cluster-host-table-row"
+    if btn in ["Add host", "Register"]:
+        condition: Callable[[WebDriver], bool]
+        message: str
+        timeout: float
+
+        if btn == "Add host":
+            condition = (
+                lambda driver: len(
+                    driver.find_elements(
+                        By.CSS_SELECTOR, ".cluster-host-table .cluster-host-table-row"
+                    )
                 )
+                >= 2
             )
-            >= 2
-        )
-        message = f"Did not manage to add 2nd host within {WAIT_BACKEND}s time."
-        timeout = WAIT_BACKEND*2
+            message = f"Did not manage to add 2nd host within {WAIT_BACKEND}s time."
+            timeout = WAIT_BACKEND * 2
 
-    elif btn == "Register":
-        condition = (
-            lambda _: Onepanel(driver).content.deployment.get_active_step()
-            == "setup_ip"
-        )
-        message = f"Registration did not finish within {WAIT_BACKEND}s time."
-        timeout = WAIT_BACKEND
+        else:
+            condition = (
+                lambda _: Onepanel(driver).content.deployment.get_active_step()
+                == "setup_ip"
+            )
+            message = f"Registration did not finish within {WAIT_BACKEND}s time."
+            timeout = WAIT_BACKEND
 
-    WebDriverWait(driver, timeout, poll_frequency=1).until(
-        condition,
-        message=message,
-    )
+        WebDriverWait(driver, timeout).until(
+            condition,
+            message=message,
+        )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

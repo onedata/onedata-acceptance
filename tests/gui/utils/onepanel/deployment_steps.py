@@ -27,7 +27,7 @@ DEPLOYMENT_STEP_TITLE_PATTERNS: tuple[tuple[re.Pattern[str], DeploymentStep], ..
     (_deployment_step_pattern(r"Step\s+1"), "step1"),
     (_deployment_step_pattern("Oneprovider registration"), "step2"),
     (_deployment_step_pattern("DNS setup"), "setup_dns"),
-    (_deployment_step_pattern("cluster IP addresses"), "setup_ip"),
+    (_deployment_step_pattern("cluster IP add?resses"), "setup_ip"),
     (_deployment_step_pattern("certificate setup"), "webcertstep"),
     (_deployment_step_pattern("storage backend configuration"), "step5"),
     (_deployment_step_pattern("summary"), "laststep"),

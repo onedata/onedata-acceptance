@@ -190,6 +190,14 @@ def pytest_addoption(parser: Parser) -> None:
         help="If present prevents cleaning environment created by one-env",
     )
     onenv.addoption(
+        "--update-etc-hosts",
+        action="store_true",
+        help=(
+            "Refresh /etc/hosts after every successful environment deployment, "
+            "including deployments between repeated tests"
+        ),
+    )
+    onenv.addoption(
         "--gui-pkg-verification",
         action="store_true",
         help="enables verification of GUI packages",
@@ -255,6 +263,11 @@ def pytest_configure(config: pytest.Config) -> None:
         "capabilities(foo="
         "bar"
         ")",
+    )
+    config.addinivalue_line(
+        "markers",
+        "clean_environment: clean the environment after the test and recreate it "
+        "before a repeated test",
     )
 
 
@@ -329,6 +342,7 @@ def onepanel_credentials(
 def emergency_passphrase(
     users: Users,
     hosts: Hosts,
+    clean_environment: None,
 ) -> str:
     zone_pod_name = hosts["onezone"]["pod_name"]
     zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
@@ -928,6 +942,63 @@ def maybe_start_env(
             previous_env,
             scenario_abs_path,
         )
+
+
+def _get_repeat_progress(request: pytest.FixtureRequest) -> tuple[int, int]:
+    repeat_marker = request.node.get_closest_marker("repeat")
+    repeat_count = (
+        int(repeat_marker.args[0])
+        if repeat_marker is not None
+        else request.config.getoption("count", default=1)
+    )
+    if repeat_count <= 1:
+        return 0, 1
+
+    repeat_number = request.getfixturevalue("__pytest_repeat_step_number")
+    return cast(int, repeat_number), repeat_count
+
+
+@pytest.fixture(autouse=True)
+def clean_environment(
+    request: pytest.FixtureRequest,
+    maybe_start_env: None,
+    env_description_abs_path: str,
+    hosts: Hosts,
+    env_desc: EnvDesc,
+    users: Users,
+    previous_env: PreviousEnv,
+    test_config: JsonObject,
+    scenario_abs_path: str,
+) -> Generator[None, None, None]:
+    """Reset the environment between marked deployment test repetitions."""
+    should_clean = request.node.get_closest_marker("clean_environment") is not None
+    if not should_clean:
+        yield
+        return
+
+    if not previous_env.get("started", False):
+        hosts.clear()
+        users.clear()
+        start_test_env(
+            request,
+            get_test_type(request),
+            env_desc,
+            hosts,
+            users,
+            env_description_abs_path,
+            test_config,
+            previous_env,
+            scenario_abs_path,
+        )
+
+    repeat_number, repeat_count = _get_repeat_progress(request)
+    yield
+
+    preserve_last_run = request.config.getoption("--no-clean")
+    if not preserve_last_run or repeat_number < repeat_count - 1:
+        export_logs(request, env_description_abs_path)
+        clean_env()
+        previous_env["started"] = False
 
 
 @pytest.fixture(scope="session")
