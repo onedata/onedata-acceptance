@@ -182,29 +182,26 @@ def wt_click_on_btn_in_deployment_step(
     if btn in ["Add host", "Register"]:
         condition: Callable[[WebDriver], bool]
         message: str
-        timeout: float
 
         if btn == "Add host":
+            host_row_selector = ".cluster-host-table .cluster-host-table-row"
             condition = (
                 lambda driver: len(
-                    driver.find_elements(
-                        By.CSS_SELECTOR, ".cluster-host-table .cluster-host-table-row"
-                    )
+                    driver.find_elements(By.CSS_SELECTOR, host_row_selector)
                 )
                 >= 2
             )
             message = f"Did not manage to add 2nd host within {WAIT_BACKEND}s time."
-            timeout = WAIT_BACKEND * 2
 
         else:
+            onepanel = Onepanel(driver)
             condition = (
-                lambda _: Onepanel(driver).content.deployment.get_active_step()
-                == "setup_ip"
+                lambda _: onepanel.content.deployment.get_active_step() == "setup_ip"
+                and onepanel.content.deployment.setup_ip.setup_ip_addresses.web_elem.is_displayed()
             )
             message = f"Registration did not finish within {WAIT_BACKEND}s time."
-            timeout = WAIT_BACKEND
 
-        WebDriverWait(driver, timeout).until(
+        WebDriverWait(driver, WAIT_BACKEND * 2).until(
             condition,
             message=message,
         )
