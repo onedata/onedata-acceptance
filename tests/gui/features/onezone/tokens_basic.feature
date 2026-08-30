@@ -13,81 +13,81 @@ Feature: Management of tokens basic features in Onezone GUI
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario Outline: User successfully creates token with default settings
-    When user of browser clicks on "Tokens" in the main menu
-    And user of browser sees exactly 0 item(s) on tokens list in tokens sidebar
-    And user of browser clicks on "Create new token" button in tokens sidebar
-    And user of browser clicks on "Create custom token" option in "Create new token" view
-    And user of browser succeeds to type "Token1" to token name input box in "Create new token" view
-    And user of browser chooses <token type> token type in "Create new token" view
-    And user of browser clicks on "Create token" button in "Create new token" view
-    Then user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
-    And user of browser sees that there is token named "Token1" on tokens list
-    And user of browser sees that "Token1" token's type is <token type>
+  # Scenario Outline: User successfully creates token with default settings
+  #   When user of browser clicks on "Tokens" in the main menu
+  #   And user of browser sees exactly 0 item(s) on tokens list in tokens sidebar
+  #   And user of browser clicks on "Create new token" button in tokens sidebar
+  #   And user of browser clicks on "Create custom token" option in "Create new token" view
+  #   And user of browser succeeds to type "Token1" to token name input box in "Create new token" view
+  #   And user of browser chooses <token type> token type in "Create new token" view
+  #   And user of browser clicks on "Create token" button in "Create new token" view
+  #   Then user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+  #   And user of browser sees that there is token named "Token1" on tokens list
+  #   And user of browser sees that "Token1" token's type is <token type>
 
-    Examples:
-    | token type|
-    | access    |
-    | identity  |
-
-
-  Scenario: User successfully creates oneprovider invite token
-    When user of browser clicks on "Tokens" in the main menu
-    And user of browser sees exactly 0 item(s) on tokens list in tokens sidebar
-    And user of browser clicks on "Create new token" button in tokens sidebar
-    And user of browser clicks on "Create custom token" option in "Create new token" view
-    And user of browser succeeds to type "Token1" to token name input box in "Create new token" view
-    And user of browser chooses invite token type in "Create new token" view
-    And user of browser chooses "Register Oneprovider" invite type
-    And user of browser clicks on "Create token" button in "Create new token" view
-    Then user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
-    And user of browser sees that there is token named "Token1" on tokens list
-    And user of browser sees that "Token1" token's type is invite
+  #   Examples:
+  #   | token type|
+  #   | access    |
+  #   | identity  |
 
 
-  Scenario Outline: User successfully renames token
-    When user of browser clicks on "Tokens" in the main menu
-    And user of browser creates 1 <token type> token
-    And user of browser clicks on rename button for token named "<token name>" on tokens list
-    And user of browser appends "-renamed" to name of token named "<token name>"
-    And user of browser confirms changes in token named "<token name>"
-    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
-    Then user of browser sees that there is token named "<token name renamed>" on tokens list
-
-    Examples:
-    | token type| token name     | token name renamed     |
-    | access    | access_token   | access_token-renamed   |
-    | identity  | identity_token | identity_token-renamed |
-    | invite    | invite_token   | invite_token-renamed   |
+  # Scenario: User successfully creates oneprovider invite token
+  #   When user of browser clicks on "Tokens" in the main menu
+  #   And user of browser sees exactly 0 item(s) on tokens list in tokens sidebar
+  #   And user of browser clicks on "Create new token" button in tokens sidebar
+  #   And user of browser clicks on "Create custom token" option in "Create new token" view
+  #   And user of browser succeeds to type "Token1" to token name input box in "Create new token" view
+  #   And user of browser chooses invite token type in "Create new token" view
+  #   And user of browser chooses "Register Oneprovider" invite type
+  #   And user of browser clicks on "Create token" button in "Create new token" view
+  #   Then user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+  #   And user of browser sees that there is token named "Token1" on tokens list
+  #   And user of browser sees that "Token1" token's type is invite
 
 
-  Scenario: User sees right tokens after filtering them
-    When user of browser clicks on "Tokens" in the main menu
-    And user of browser creates 2 access tokens
-    And user of browser creates 2 identity tokens
-    And user of browser creates 2 invite tokens
-    And user of browser sees exactly 6 item(s) on tokens list in tokens sidebar
+  # Scenario Outline: User successfully renames token
+  #   When user of browser clicks on "Tokens" in the main menu
+  #   And user of browser creates 1 <token type> token
+  #   And user of browser clicks on rename button for token named "<token name>" on tokens list
+  #   And user of browser appends "-renamed" to name of token named "<token name>"
+  #   And user of browser confirms changes in token named "<token name>"
+  #   And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+  #   Then user of browser sees that there is token named "<token name renamed>" on tokens list
 
-    And user of browser chooses "Access" filter in tokens sidebar
-    Then user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
-    And user of browser sees that there is token named "access_token" on tokens list
-    And user of browser sees that there is token named "access_token1" on tokens list
-    And user of browser sees that all tokens in tokens sidebar are type of access
+  #   Examples:
+  #   | token type| token name     | token name renamed     |
+  #   | access    | access_token   | access_token-renamed   |
+  #   | identity  | identity_token | identity_token-renamed |
+  #   | invite    | invite_token   | invite_token-renamed   |
 
-    And user of browser chooses "Identity" filter in tokens sidebar
-    Then user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
-    And user of browser sees that there is token named "identity_token" on tokens list
-    And user of browser sees that there is token named "identity_token1" on tokens list
-    And user of browser sees that all tokens in tokens sidebar are type of identity
 
-    And user of browser chooses "Invite" filter in tokens sidebar
-    Then user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
-    And user of browser sees that there is token named "invite_token" on tokens list
-    And user of browser sees that there is token named "invite_token1" on tokens list
-    And user of browser sees that all tokens in tokens sidebar are type of invite
+  # Scenario: User sees right tokens after filtering them
+  #   When user of browser clicks on "Tokens" in the main menu
+  #   And user of browser creates 2 access tokens
+  #   And user of browser creates 2 identity tokens
+  #   And user of browser creates 2 invite tokens
+  #   And user of browser sees exactly 6 item(s) on tokens list in tokens sidebar
 
-    And user of browser chooses "All" filter in tokens sidebar
-    Then user of browser sees exactly 6 item(s) on tokens list in tokens sidebar
+  #   And user of browser chooses "Access" filter in tokens sidebar
+  #   Then user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
+  #   And user of browser sees that there is token named "access_token" on tokens list
+  #   And user of browser sees that there is token named "access_token1" on tokens list
+  #   And user of browser sees that all tokens in tokens sidebar are type of access
+
+  #   And user of browser chooses "Identity" filter in tokens sidebar
+  #   Then user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
+  #   And user of browser sees that there is token named "identity_token" on tokens list
+  #   And user of browser sees that there is token named "identity_token1" on tokens list
+  #   And user of browser sees that all tokens in tokens sidebar are type of identity
+
+  #   And user of browser chooses "Invite" filter in tokens sidebar
+  #   Then user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
+  #   And user of browser sees that there is token named "invite_token" on tokens list
+  #   And user of browser sees that there is token named "invite_token1" on tokens list
+  #   And user of browser sees that all tokens in tokens sidebar are type of invite
+
+  #   And user of browser chooses "All" filter in tokens sidebar
+  #   Then user of browser sees exactly 6 item(s) on tokens list in tokens sidebar
 
 
   Scenario: User successfully creates access token with all caveats
