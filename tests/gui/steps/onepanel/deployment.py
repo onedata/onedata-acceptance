@@ -10,6 +10,7 @@ import re
 import time
 from typing import Callable, Literal, Optional
 
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import (
@@ -195,13 +196,22 @@ def wt_click_on_btn_in_deployment_step(
 
         else:
             onepanel = Onepanel(driver)
-            condition = (
-                lambda _: onepanel.content.deployment.get_active_step() == "setup_ip"
-                and onepanel.content.deployment.setup_ip.setup_ip_addresses.web_elem.is_displayed()
-            )
+
+            def is_setup_ip_step_ready(_: WebDriver) -> bool:
+                deployment = onepanel.content.deployment
+                return (
+                    deployment.get_active_step() == "setup_ip"
+                    and deployment.setup_ip.setup_ip_addresses.is_displayed()
+                )
+
+            condition = is_setup_ip_step_ready
             message = f"Registration did not finish within {WAIT_BACKEND}s time."
 
-        WebDriverWait(driver, WAIT_BACKEND * 2).until(
+        WebDriverWait(
+            driver,
+            WAIT_BACKEND * 2,
+            ignored_exceptions=[StaleElementReferenceException],
+        ).until(
             condition,
             message=message,
         )
