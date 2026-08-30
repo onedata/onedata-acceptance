@@ -24,6 +24,7 @@ Feature: Deployment process using panel of zone and provider
 
     # wait for finish of deployment
     And user of browser1 waits 300 seconds for cluster deployment to finish
+    And user of browser2 waits 300 seconds for cluster deployment to finish
 
     # setup IP step in zone panels
     And user of browser1 clicks on "Setup IP addresses" button in deployment setup IP step
