@@ -119,24 +119,22 @@ def _setup_onezone_in_step1(
 ) -> None:
     step = "step 1"
 
-    name_property = "name"
     name_input_box = "Zone name"
     wt_type_property_to_in_box_in_deployment_step(
         selenium,
         browser_id,
         zone_for_name,
-        name_property,
+        "name",
         name_input_box,
         step,
         hosts,
     )
-    hostname_property = "hostname"
     hostname_input_box = "Zone domain name"
     wt_type_property_to_in_box_in_deployment_step(
         selenium,
         browser_id,
         zone_for_domain,
-        hostname_property,
+        "hostname",
         hostname_input_box,
         step,
         hosts,
@@ -219,13 +217,12 @@ def _setup_step2(
     email = config["email"]
     step = "step 2"
 
-    name_property = "name"
     name_input_box = "Provider name"
     wt_type_property_to_in_box_in_deployment_step(
         selenium,
         browser_id,
         provider_for_name,
-        name_property,
+        "name",
         name_input_box,
         step,
         hosts,
@@ -234,13 +231,12 @@ def _setup_step2(
     if not request_a_subdomain:
         deactivate_request_subdomain_toggle(selenium, browser_id)
 
-    hostname_property = "hostname"
     hostname_input_box = "domain"
     wt_type_property_to_in_box_in_deployment_step(
         selenium,
         browser_id,
         provider_for_domain,
-        hostname_property,
+        "hostname",
         hostname_input_box,
         step,
         hosts,

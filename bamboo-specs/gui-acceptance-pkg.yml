@@ -139,7 +139,7 @@ stages:
         # - Onezone spaces memberships privileges
         # - Onezone spaces memberships privileges data
         # - Onezone spaces multiuser
-        - Onezone tokens
+        # - Onezone tokens
         # - Onezone tokens delete
         # - POSIX
         # - POSIX multiuser
@@ -1518,20 +1518,20 @@ Onezone invite tokens with caveats:
 #         scripts:
 #           - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_spaces_multiuser test_gui_pkg
 
-Onezone tokens:
-  <<: *acceptance-tests-in-chrome-job
-  key: COTT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens COUNT=10 test_gui_pkg
+# Onezone tokens:
+#   <<: *acceptance-tests-in-chrome-job
+#   key: COTT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-selenium-tests
+#         scripts:
+#           - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens COUNT=10 test_gui_pkg
 
 # Onezone tokens delete:
 #   <<: *acceptance-tests-in-chrome-job

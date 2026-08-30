@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Callable, Optional, cast
+from typing import Callable, Literal, Optional
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -153,12 +153,12 @@ def wt_type_property_to_in_box_in_deployment_step(
     selenium: SeleniumDrivers,
     browser_id: str,
     alias: str,
-    name_property: str,
+    name_property: Literal["name", "hostname"],
     input_box: str,
     step: str,
     hosts: Hosts,
 ) -> None:
-    text = cast(dict[str, str], hosts[alias])[name_property]
+    text = hosts[alias][name_property]
     step = getattr(
         Onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
     )
