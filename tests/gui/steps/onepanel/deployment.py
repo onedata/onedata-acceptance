@@ -226,11 +226,11 @@ def click_on_btn_in_deployment_step(driver: WebDriver, step: str, btn: str) -> N
 
 @wt(
     parsers.parse(
-        "user of {browser_id} tries to register provider using Register button in"
+        "user of {browser_id} tries to re-register provider using Register button in"
         " step 2 of deployment process in Onepanel"
     )
 )
-def register_prov_using_register_btn(
+def reregister_provider_using_register_btn(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
