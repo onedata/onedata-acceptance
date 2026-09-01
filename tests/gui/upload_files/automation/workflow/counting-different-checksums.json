@@ -33,7 +33,7 @@
               "preferredBatchSize": 100,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "onedata/lambda-calculate-checksum-mounted:v3",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v4-dev2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "",
