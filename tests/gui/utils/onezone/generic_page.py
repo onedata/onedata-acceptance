@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Iterable
 from typing import ClassVar
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.core.base import NamedElement, PageObject, PageObjectMeta
 from tests.gui.utils.core.web_elements import Label, NamedButton
 from tests.gui.utils.generic import ListItemMainField, PageName

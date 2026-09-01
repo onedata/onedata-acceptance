@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 from collections.abc import Mapping
 
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.permissions import (
     assert_ace_in_op_gui,
     assert_posix_permissions_in_op_gui,
@@ -18,6 +17,7 @@ from tests.gui.meta_steps.oneprovider.permissions import (
     set_posix_permissions_in_op_gui,
 )
 from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils.common.constants import WAIT_BACKEND
 from tests.mixed.steps.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.oneclient.data_basic import (
     assert_ace_in_op_oneclient,

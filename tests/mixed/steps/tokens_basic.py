@@ -4,7 +4,6 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.tokens import (
     assert_token_configuration_gui,
     choose_and_revoke_token_in_oz_gui,
@@ -16,6 +15,7 @@ from tests.gui.steps.onezone.spaces import (
     assert_new_created_space_has_appeared_on_spaces,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.constants import WAIT_BACKEND
 from tests.mixed.steps.rest.onezone.space_management import join_space_in_oz_using_rest
 from tests.mixed.steps.rest.onezone.tokens import (
     assert_token_with_config_rest,

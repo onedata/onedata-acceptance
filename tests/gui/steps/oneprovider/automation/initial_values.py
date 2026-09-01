@@ -11,8 +11,8 @@ from typing import Optional, Protocol, cast
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneprovider.automation import InitialValueStore

@@ -8,9 +8,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_PODS_TERMINATION
 from tests.gui.steps.modals.modal import get_modal
 from tests.gui.utils import Modals
+from tests.gui.utils.common.constants import WAIT_FRONTEND, WAIT_PODS_TERMINATION
 from tests.gui.utils.common.modals.workflows_modals.pods_activity import (
     PodsActivity,
 )

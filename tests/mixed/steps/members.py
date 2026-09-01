@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections.abc import Mapping
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.members import (
     assert_group_in_space_using_op_gui,
     assert_not_user_in_space_using_op_gui,
@@ -17,6 +16,7 @@ from tests.gui.meta_steps.onezone.members import (
     fail_to_set_privileges_using_op_gui,
 )
 from tests.gui.meta_steps.onezone.spaces import add_group_to_space_or_group
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.mixed.steps.rest.onezone.members import (
     add_group_to_space_using_rest,
     assert_group_in_space_using_rest,

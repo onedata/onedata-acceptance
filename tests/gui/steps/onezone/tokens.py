@@ -12,13 +12,13 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     wait_for_sliding_panel_to_stop_moving,
 )
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.token_caveats import CaveatField

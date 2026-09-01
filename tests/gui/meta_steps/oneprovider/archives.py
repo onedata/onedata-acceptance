@@ -12,7 +12,6 @@ import time
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 
-from tests.gui.conftest import RESPONSIVE_LAYOUT_DELAY
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
@@ -66,7 +65,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.common.constants import ScreenSize
+from tests.gui.utils.common.constants import RESPONSIVE_LAYOUT_DELAY, ScreenSize
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import ListElement, WhichBrowser, transform
 from tests.gui.utils.shortened_path import (

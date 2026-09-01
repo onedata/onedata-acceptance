@@ -33,13 +33,13 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.type_definitions import (
     VisibilityCondition,
     WebElementOrCssLocator,
     WebElementOrSelector,
     WebElemRoot,
 )
+from tests.gui.utils.common.constants import WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")

@@ -11,7 +11,6 @@ from typing import cast
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.archives import (
     assert_archive_callback_in_op_gui,
     assert_archive_in_op_gui,
@@ -24,6 +23,7 @@ from tests.gui.meta_steps.oneprovider.archives import (
     remove_archive_in_op_gui,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.mixed.steps.rest.oneprovider.archives import (
     assert_archive_callback_in_op_rest,
     assert_archive_in_op_rest,
