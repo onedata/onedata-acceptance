@@ -7,8 +7,8 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.onezone.uploads_page import UploadsPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt

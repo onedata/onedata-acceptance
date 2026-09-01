@@ -12,6 +12,7 @@ import time
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 
+from tests.gui.conftest import RESPONSIVE_LAYOUT_DELAY
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
@@ -75,11 +76,10 @@ from tests.gui.utils.shortened_path import (
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
-OPTION_IN_SPACE = "Datasets, Archives"
-DATASET_BROWSER = "dataset browser"
-ARCHIVE_BROWSER = "archive browser"
-ARCHIVE_FILE_BROWSER = "archive file browser"
-RESPONSIVE_LAYOUT_DELAY = 1.0
+OPTION_IN_SPACE: str = "Datasets, Archives"
+DATASET_BROWSER: str = "dataset browser"
+ARCHIVE_BROWSER: str = "archive browser"
+ARCHIVE_FILE_BROWSER: str = "archive file browser"
 
 
 @wt(

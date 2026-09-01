@@ -16,6 +16,7 @@ import yaml
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
@@ -24,7 +25,6 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import Clipboard, TarTree, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,

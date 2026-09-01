@@ -14,11 +14,11 @@ from typing import Optional, Protocol
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import network_throttling_download
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.type_definitions import Clickable, TmpMemory
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.popups.configure_columns_menu import ColumnOption
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (

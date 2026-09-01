@@ -1,7 +1,8 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
+from __future__ import annotations
+
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Optional, cast
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -9,11 +10,11 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 from tests.gui.utils.generic import click_on_web_elem
 
 __author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-class AbstractWebElement(ABC, metaclass=ABCMeta):
+class AbstractWebElement(ABC):
     def __init__(
         self,
         css_selector: str,
@@ -35,13 +36,17 @@ class AbstractWebElement(ABC, metaclass=ABCMeta):
         pass
 
 
-class AbstractWebItem(AbstractWebElement, ABC, metaclass=ABCMeta):
-    def __init__(self, *args: object, **kwargs: object) -> None:
-        item_cls = kwargs.pop("cls", None)
-        if item_cls is None:
-            raise ValueError("cls not specified")
-        self.cls = cast(type["PageObject"], item_cls)
-        super().__init__(*args, **kwargs)  # type: ignore[arg-type]
+class AbstractWebItem(AbstractWebElement, ABC):
+    def __init__(
+        self,
+        css_selector: str,
+        *,
+        cls: type[PageObject],
+        scroll: bool = True,
+        descriptor_name: str = "",
+    ) -> None:
+        self.cls = cls
+        super().__init__(css_selector, scroll, descriptor_name)
 
 
 class PageObjectMeta(ABCMeta):
@@ -52,12 +57,10 @@ class PageObjectMeta(ABCMeta):
         cls_dict: dict[str, object],
     ) -> None:
         for key, val in cls_dict.items():
-            if isinstance(val, AbstractWebElement) and val.descriptor_name in (
-                "id",
-                "",
-            ):
-                val.descriptor_name = key
-        super(PageObjectMeta, cls).__init__(cls_name, bases, cls_dict)
+            if isinstance(val, AbstractWebElement):
+                if val.descriptor_name in ("id", ""):
+                    val.descriptor_name = key
+        super().__init__(cls_name, bases, cls_dict)
 
 
 class AbstractPageObject(metaclass=PageObjectMeta):
@@ -65,7 +68,7 @@ class AbstractPageObject(metaclass=PageObjectMeta):
         self,
         driver: WebDriver,
         web_elem: SeleniumWebElement,
-        parent: Optional[object] = None,
+        parent: object | None = None,
         object_name: str = "",
     ) -> None:
         self.driver = driver
@@ -99,10 +102,10 @@ class PageObject(AbstractPageObject):
         self,
         driver: WebDriver,
         web_elem: SeleniumWebElement,
-        parent: Optional[object] = None,
-        **kwargs: object,
+        parent: object | None = None,
+        object_name: str = "",
     ) -> None:
-        super().__init__(driver, web_elem, parent, **kwargs)  # type: ignore[arg-type]
+        super().__init__(driver, web_elem, parent, object_name=object_name)
         if not hasattr(self, "_click_area"):
             self._click_area = web_elem
 

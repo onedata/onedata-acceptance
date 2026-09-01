@@ -18,6 +18,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 
+from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     wait_for_checking_toggle,
@@ -28,11 +29,6 @@ from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
-from tests.gui.utils.common.constants import (
-    SELENIUM_IMPLICIT_WAIT,
-    WAIT_BACKEND,
-    WAIT_FRONTEND,
-)
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import (

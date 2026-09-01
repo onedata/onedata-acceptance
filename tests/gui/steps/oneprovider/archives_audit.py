@@ -14,10 +14,11 @@ from typing import cast
 
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
-from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -26,6 +27,8 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+ARCHIVE_PATH_SEPARATOR: str = "›"
 
 
 @wt(
@@ -463,9 +466,6 @@ def scroll_to_top_in_archive_audit_log(
     modal.scroll_to_top()
 
 
-ARCHIVE_PATH_SEPARATOR = "›"
-
-
 def extract_archive_name_and_path(file_path: str) -> tuple[str | None, str]:
     file_path = file_path.replace("\n", "")
 
@@ -491,15 +491,17 @@ def assert_archive_names_match(
         )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def get_loaded_archive_file_path(
-    driver: WebDriver,
-) -> str:
-    entry_details = Modals(driver).audit_log_entry_details
-    entry_details_file_path = entry_details.file_path.text
+def get_loaded_archive_file_path(driver: WebDriver) -> str:
+    def get_path_if_loaded(_: WebDriver) -> str | bool:
+        file_path = Modals(driver).audit_log_entry_details.file_path.text
+        return file_path if file_path != "Loading path..." else False
 
-    assert entry_details_file_path != "Loading path..."
-    return entry_details_file_path
+    return WebDriverWait(driver, WAIT_FRONTEND).until(
+        get_path_if_loaded,
+        message=(
+            f"Archive file path did not finish loading within {WAIT_FRONTEND} seconds"
+        ),
+    )
 
 
 @wt(

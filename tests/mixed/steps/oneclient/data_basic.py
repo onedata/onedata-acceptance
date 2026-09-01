@@ -15,8 +15,9 @@ from typing import cast
 import pytest
 import yaml
 
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.common.constants import NUMERALS, WAIT_BACKEND
+from tests.gui.utils.common.constants import NUMERALS
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.mixed.utils.data import (
     Content,

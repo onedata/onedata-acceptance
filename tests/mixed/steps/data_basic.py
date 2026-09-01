@@ -14,6 +14,7 @@ from typing import Optional, cast
 import pytest
 from _pytest._py.path import LocalPath
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     assert_file_content_in_op_gui,
     assert_mtime_not_earlier_than_op_gui,
@@ -40,7 +41,6 @@ from tests.gui.meta_steps.oneprovider.metadata import (
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.mixed.steps.oneclient.data_basic import (
     assert_metadata_in_op_oneclient,
     assert_no_such_metadata_in_op_oneclient,

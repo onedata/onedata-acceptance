@@ -9,11 +9,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import OPLoggedIn, Popups
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import ListElement
 from tests.gui.utils.oneprovider.shares import SharesContentPage
 from tests.type_definitions import SeleniumDrivers

@@ -11,6 +11,7 @@ import time
 
 import yaml
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -44,7 +45,6 @@ from tests.gui.steps.rest.provider import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
-from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     OnedataService,

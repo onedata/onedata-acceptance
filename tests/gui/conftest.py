@@ -29,7 +29,20 @@ from tests.gui.sse_fixtures import (
     space_files_monitor_factory,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.common.constants import SCREEN_PARAMETERS
+from tests.gui.utils.common.constants import (
+    DRIVER_CREATION_RETRIES,
+    RESPONSIVE_LAYOUT_DELAY,
+    SCREEN_PARAMETERS,
+    SELENIUM_IMPLICIT_WAIT,
+    WAIT_BACKEND,
+    WAIT_EXTENDED_UPLOAD,
+    WAIT_EXTENDED_WORKFLOW_EXECUTION,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_DOWNLOAD,
+    WAIT_NORMAL_UPLOAD,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+    WAIT_PODS_TERMINATION,
+)
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.type_definitions import (
     HookOutcome,

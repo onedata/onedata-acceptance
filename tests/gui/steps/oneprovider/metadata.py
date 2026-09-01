@@ -9,9 +9,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_tab_on_active_element
 from tests.gui.utils import Modals
-from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     XattrMetadataEntry,
 )

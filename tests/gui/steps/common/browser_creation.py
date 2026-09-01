@@ -18,19 +18,16 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
 from urllib3.exceptions import HTTPError
 
+from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.common.constants import (
-    DRIVER_CREATION_RETRIES,
-    SCREEN_PARAMETERS,
-    SELENIUM_IMPLICIT_WAIT,
-)
+from tests.gui.utils.common.constants import SCREEN_PARAMETERS
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
     redirect_display,
 )
 from tests.type_definitions import JsonObject, SeleniumDrivers, WebDriverFactory
-from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.bdd_utils import given, parsers
 
 
 @given(
@@ -130,11 +127,6 @@ def assert_driver_working_properly(driver: WebDriver) -> None:
         raise e
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} changes window size to {window_width:d}x{window_height:d}"
-    )
-)
 def change_window_size(
     selenium: SeleniumDrivers,
     browser_id: str,

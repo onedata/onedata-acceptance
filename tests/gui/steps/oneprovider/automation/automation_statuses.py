@@ -9,13 +9,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     search_for_lane_status,
     search_for_task_in_parallel_box,
     switch_to_automation_page,
 )
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.oneprovider.automation import ParallelBox, WorkflowExecutionPage
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt

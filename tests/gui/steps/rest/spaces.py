@@ -9,7 +9,7 @@ from contextlib import suppress
 from typing import Any
 
 from tests import OP_REST_PORT, OZ_REST_PORT
-from tests.gui.utils.common.constants import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import (
     get_panel_rest_path,

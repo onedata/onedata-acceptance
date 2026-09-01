@@ -11,8 +11,8 @@ from typing import Any
 import yaml
 
 from tests import PANEL_REST_PORT
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import _camel_transform
-from tests.gui.utils.common.constants import WAIT_BACKEND
 from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import (
     get_panel_rest_path,

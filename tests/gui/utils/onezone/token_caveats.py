@@ -9,9 +9,9 @@ from typing import Iterable, Protocol, TypedDict
 
 from selenium.webdriver.common.keys import Keys
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.common.common import Toggle
-from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (

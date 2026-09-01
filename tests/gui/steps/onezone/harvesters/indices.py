@@ -12,13 +12,13 @@ from datetime import datetime
 
 from selenium.webdriver.remote.webelement import WebElement
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     wt_click_button_on_data_disc_page,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt

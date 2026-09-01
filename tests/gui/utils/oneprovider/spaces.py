@@ -14,6 +14,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.utils.utils import element_has_class
 
 
 class SettingDropdown(PageObject, ExpandableMixin):
@@ -31,7 +32,7 @@ class SpaceSidebarRecord(PageObject):
     _space_icon = WebElement('.item-icon [class*="oneicon-space"]')
 
     def is_selected(self) -> bool:
-        return "active" in self.web_elem.get_attribute("class")
+        return element_has_class(self.web_elem, "active")
 
     def is_home(self) -> bool:
         return "oneicon-space-home" in self._space_icon.get_attribute("class")

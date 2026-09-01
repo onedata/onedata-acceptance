@@ -11,6 +11,7 @@ from typing import Optional
 from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     wait_for_sliding_panel_to_stop_moving,
@@ -18,7 +19,6 @@ from tests.gui.steps.common.common import (
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,

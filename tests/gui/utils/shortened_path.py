@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from itertools import pairwise
 from typing import Self
 
-_INDEXED_PATH_PART_PATTERN = re.compile(r"(?P<prefix>.+)_(?P<idx>\d+)")
+_INDEXED_PATH_PART_PATTERN: re.Pattern = re.compile(r"(?P<prefix>.+)_(?P<idx>\d+)")
 
 
 @dataclass(frozen=True)
@@ -36,11 +36,8 @@ class IndexedPathSequence:
         if self.file_name != other.file_name:
             return False
 
-        if (
-            self.indices.first_idx is None
-            and self.indices.last_idx is None
-            or other.indices.first_idx is None
-            and other.indices.last_idx is None
+        if (self.indices.first_idx is None and self.indices.last_idx is None) or (
+            other.indices.first_idx is None and other.indices.last_idx is None
         ):
             return True
 

@@ -12,8 +12,8 @@ import requests
 from _pytest._py.path import LocalPath
 
 from tests import ELASTICSEARCH_PORT
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt

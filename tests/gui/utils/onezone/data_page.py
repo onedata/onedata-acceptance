@@ -25,6 +25,7 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.onezone.generic_page import SidebarPanelPage
+from tests.utils.utils import element_has_class
 
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -74,7 +75,7 @@ class Space(NamedElement):
         return "disabled" not in element.web_elem.get_attribute("class")
 
     def is_active(self) -> bool:
-        return "active" in self.web_elem.get_attribute("class")
+        return element_has_class(self.web_elem, "active")
 
 
 class SpaceHeader(NamedElement):

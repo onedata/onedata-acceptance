@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
 
-from .base import AbstractWebElement, AbstractWebItem
+from .base import AbstractWebElement, AbstractWebItem, PageObject
 from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjectsSequence
 
 
@@ -90,7 +90,24 @@ class WebItem(AbstractWebItem, WebElement):
 
 
 class WebItemWithText(WebItem, WebElementWithText):
-    pass
+    def __init__(  # pylint: disable=super-init-not-called
+        self,
+        css_selector: str,
+        *,
+        cls: type[PageObject],
+        text: str,
+        scroll: bool = True,
+        descriptor_name: str = "",
+    ) -> None:
+        # WebItem and WebElementWithText have incompatible cooperative constructors.
+        self.cls = cls
+        WebElementWithText.__init__(
+            self,
+            css_selector,
+            text=text,
+            scroll=scroll,
+            descriptor_name=descriptor_name,
+        )
 
 
 Button = partial(WebItem, cls=ButtonPageObject)

@@ -15,8 +15,8 @@ import requests
 import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.rest.spaces import delete_space_if_present_using_rest
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import HostDescription, JsonObject, JsonValue
 from tests.utils.bdd_utils import given, parsers, wt

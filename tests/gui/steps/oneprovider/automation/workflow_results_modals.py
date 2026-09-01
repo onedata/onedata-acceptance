@@ -15,6 +15,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait
 
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     get_last_item_number_in_table,
     scroll_to_bottom_of_the_table,
@@ -26,7 +27,6 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
 )
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Modals, Popups
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.modals.workflows_modals.audit_log import AuditLog, LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core.web_objects import PageObjectsSequence

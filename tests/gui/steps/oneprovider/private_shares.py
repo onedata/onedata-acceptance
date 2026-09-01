@@ -14,9 +14,10 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Popups
 from tests.gui.utils import PrivateShareView as private_share
-from tests.gui.utils.common.constants import NUMERALS, WAIT_FRONTEND
+from tests.gui.utils.common.constants import NUMERALS
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.shares.private_share import EDMBoxForm
 from tests.type_definitions import SeleniumDrivers
