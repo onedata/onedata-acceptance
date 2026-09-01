@@ -5,7 +5,6 @@
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-extend-exclude = ["CVS"]
 output-format = "pylint"
 
 [tool.ruff.lint]
@@ -21,93 +20,118 @@ explicit-preview-rules = true
 
 # Pylint has separate patterns for dummy variables, ignored arguments and
 # callbacks; Ruff uses one pattern for all unused-name checks.
-dummy-variable-rgx = "_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_|^cb_|_cb$"
+dummy-variable-rgx = "^(_+|_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?|dummy[a-zA-Z0-9_]*|ignored_[a-zA-Z0-9_]*|unused_[a-zA-Z0-9_]*|cb_[a-zA-Z0-9_]*|[a-zA-Z0-9_]+_cb)$"
 
 # Compatibility extensions beyond the handbook core. Each group corresponds
 # to checks enabled by the former Pylint policy.
 extend-select = [
-    # Redefined builtins.
+    # Reject variables that shadow builtins, preventing misleading calls and lookups.
     "A001",
+    # Reject arguments that shadow builtins, keeping builtin operations accessible.
     "A002",
+    # Reject class attributes that shadow builtins, avoiding ambiguous member access.
     "A003",
+    # Reject imports that shadow builtins, preventing imported names from hiding them.
     "A004",
+    # Reject lambda arguments that shadow builtins for the same reason as named arguments.
     "A006",
 
-    # Unused function, method, classmethod, staticmethod and lambda arguments.
+    # Report unused callable arguments, exposing stale APIs and mistaken fixture parameters.
     "ARG",
 
-    # Broad Exception/BaseException handlers and raises.
+    # Reject broad exception handlers, so unexpected failures are not silently swallowed.
     "BLE001",
+    # Reject raising Exception or BaseException directly, preserving meaningful error types.
     "TRY002",
 
-    # Comprehension and collection refactoring suggestions.
+    # Replace verbose or redundant comprehensions with clearer collection operations.
     "C4",
+    # Replace loops that only append with comprehensions for clarity and efficiency.
     "PERF401",
+    # Replace loops that only populate dictionaries with comprehensions.
     "PERF403",
+    # Remove pass or ellipsis placeholders from blocks that already contain statements.
     "PIE790",
+    # Reject repeated class fields, preventing an earlier definition from being overwritten.
     "PIE794",
+    # Reject duplicate enum values, preventing accidental aliases.
     "PIE796",
+    # Replace lambdas that merely call container constructors with the constructors.
     "PIE807",
+    # Combine repeated startswith or endswith calls for readability and efficiency.
     "PIE810",
 
-    # The old configuration requires module docstrings and rejects empty
-    # docstrings, while function and class docstring requirements are disabled.
+    # Require public-module docstrings, retaining the former Pylint documentation policy.
     "D100",
+    # Reject empty docstrings because they document nothing while appearing intentional.
     "D419",
 
-    # Static string joining and lazy logging interpolation.
+    # Replace joins of static strings with direct strings or f-strings for readability.
     "FLY002",
+    # Enforce valid, lazy logging calls to avoid wasted formatting and malformed log records.
     "G",
 
-    # Naming policies which map to Pylint's configured module, class, function,
-    # argument and local-variable styles. Import-alias and exception-suffix
-    # policies are intentionally not added.
+    # Enforce CapWords class names, retaining the former Pylint naming policy.
     "N801",
+    # Enforce snake_case function names, keeping callable naming consistent.
     "N802",
+    # Enforce snake_case argument names, keeping function signatures consistent.
     "N803",
+    # Require cls as a class-method first argument, making binding semantics explicit.
     "N804",
+    # Require self as an instance-method first argument, making binding semantics explicit.
     "N805",
+    # Enforce snake_case local variables, retaining the former Pylint naming policy.
     "N806",
+    # Reject ordinary functions with dunder names, reserving them for Python protocols.
     "N807",
+    # Enforce valid snake_case module names so modules import consistently across platforms.
     "N999",
 
-    # Preview Pylint rules with enabled Pylint 4.0.6 counterparts.
+    # Reject direct dunder calls, preferring operators and builtins with normal dispatch.
     "PLC2801",
+    # Catch dictionary unpacking without items(), preventing invalid iteration results.
     "PLE1141",
+    # Reject modifying a set during iteration, which otherwise raises RuntimeError.
     "PLE4703",
+    # Find class methods missing @classmethod, preventing incorrect method binding.
     "PLR0202",
+    # Find static methods missing @staticmethod, making state-independent methods explicit.
     "PLR0203",
+    # Limit public methods so classes remain focused instead of becoming broad interfaces.
     "PLR0904",
+    # Limit local variables because excessive function state makes logic hard to follow.
     "PLR0914",
+    # Limit Boolean expressions so conditions remain understandable and maintainable.
     "PLR0916",
+    # Limit nested blocks because deeply nested control flow obscures execution paths.
     "PLR1702",
+    # Remove temporary variables used only to swap values, favoring direct tuple swaps.
     "PLR1712",
+    # Reject inherited slot redefinitions that make the base slot inaccessible.
     "PLW0244",
+    # Require text encodings so file behavior does not depend on the system locale.
     "PLW1514",
 
-    # Return-flow and raise simplifications.
+    # Make return paths explicit and consistent, reducing ambiguous None-returning control flow.
     "RET",
+    # Remove empty exception-call parentheses when raising an exception class.
     "RSE102",
 
-    # Invalid literal indexes, partially replacing Pylint's inferred
-    # unsupported/unsubscriptable operation checks.
+    # Reject non-integer literal indexes that would raise TypeError at runtime.
     "RUF016",
 
-    # exec/eval, requests without timeouts, protected access and debugger use.
+    # Flag exec because executing dynamic code can enable code injection.
     "S102",
+    # Require request timeouts so network calls cannot hang indefinitely.
     "S113",
+    # Flag eval because evaluating untrusted strings can execute arbitrary code.
     "S307",
+    # Reject private-member access so code does not depend on unstable internals.
     "SLF001",
+    # Reject committed debugger calls that would interrupt unattended test execution.
     "T100",
 ]
-
-[tool.ruff.lint.flake8-self]
-# Pylint's exclude-protected list also contains os._exit. Ruff configures this
-# by member name, so `_exit` is ignored regardless of its owner.
-ignore-names = ["_asdict", "_fields", "_replace", "_source", "_make", "_exit"]
-
-[tool.ruff.lint.flake8-unused-arguments]
-ignore-variadic-names = false
 
 [tool.ruff.lint.isort]
 known-first-party = [
@@ -117,24 +141,12 @@ known-first-party = [
     "oneprovider_client",
     "onezone_client",
 ]
-known-third-party = ["enchant"]
-
-[tool.ruff.lint.pep8-naming]
-extend-ignore-names = ["i", "j", "k", "ex", "Run", "_"]
 
 [tool.ruff.lint.pylint]
 # The former Pylint policy disabled the argument-count checks. Keep Ruff's
 # existing, finite limits so the checks remain enabled without rejecting BDD
 # step functions whose signatures are defined by fixtures.
-max-args = 15
-max-bool-expr = 5
-max-branches = 13
-max-locals = 15
-max-nested-blocks = 7
-max-positional-args = 15
-max-public-methods = 20
-max-returns = 6
-max-statements = 50
+max-args = 16
 
 [tool.ruff.lint.per-file-ignores]
 # Mirrors Pylint's init-import=no. Re-exporting package initializers are also
@@ -158,11 +170,6 @@ no_implicit_optional = true       # `x: int = None` is an error, not implicit Op
 follow_imports = "skip"
 
 pretty = true
-show_error_codes = true
-
-[[tool.mypy.overrides]]
-module = ["bamboos.*"]
-ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = [
@@ -181,8 +188,6 @@ module = [
     "rpyc.*",
     "aiohttp_sse_client",
     "aiohttp_sse_client.*",
-    "xmlrunner",
-    "xmlrunner.*",
     "tests.utils.onenv_utils",
     "tests.utils.user_utils",
     "tests.mixed.utils.sse_utils",

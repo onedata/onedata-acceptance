@@ -447,30 +447,30 @@ def fill_inputs_in_edm_metadata_form(
     """
     parsed_config = yaml.load(config, yaml.Loader)
 
-    for field_name, value in parsed_config.items():
-        field_name = field_name.lower()
-        if not is_name_in_initial_form_fields(field_name, "edm"):
-            add_property_to_edm_form_in_shares_interface(browser_id, selenium, field_name)
+    for configured_field_name, value in parsed_config.items():
+        lowercase_field_name = configured_field_name.lower()
+        if not is_name_in_initial_form_fields(lowercase_field_name, "edm"):
+            add_property_to_edm_form_in_shares_interface(browser_id, selenium, lowercase_field_name)
 
         if is_metadata_field_option_selectable_edm(
-            field_name
+            lowercase_field_name
         ):  # these fields cannot have literal before them
-            if field_name != "material":
+            if lowercase_field_name != "material":
                 choose_option_in_edm_form_in_shares_interface(
-                    browser_id, value, field_name, selenium
+                    browser_id, value, lowercase_field_name, selenium
                 )
 
             else:  # choosing material involves also choosing options group first
                 choose_option_group_in_edm_form_in_shares_interface(
                     browser_id,
                     value["group"],
-                    field_name,
+                    lowercase_field_name,
                     selenium,
                 )
                 choose_option_in_edm_form_in_shares_interface(
                     browser_id,
                     value["value"],
-                    field_name,
+                    lowercase_field_name,
                     selenium,
                     requires_group_selection=True,
                 )
@@ -480,18 +480,20 @@ def fill_inputs_in_edm_metadata_form(
                 if i > 0:
                     # if it's not the first value for given field,
                     # we need to click "Add another ..." button before writing value
-                    add_property_to_edm_form_in_shares_interface(browser_id, selenium, field_name)
+                    add_property_to_edm_form_in_shares_interface(
+                        browser_id, selenium, lowercase_field_name
+                    )
                 write_to_nth_input_in_edm_form_in_shares_interface(
                     browser_id,
                     val,
-                    field_name,
+                    lowercase_field_name,
                     selenium,
                     num_to_ordinal(i),
                     numerals,
                 )
         else:
             write_to_nth_input_in_edm_form_in_shares_interface(
-                browser_id, value, field_name, selenium, "first", numerals
+                browser_id, value, lowercase_field_name, selenium, "first", numerals
             )
 
 
@@ -511,25 +513,25 @@ def assert_properties_in_edm_metadata_form(
     """
     parsed_config = yaml.load(config, yaml.Loader)
 
-    for field_name, value in parsed_config.items():
-        field_name = field_name.lower()
-        if is_metadata_field_option_selectable_edm(field_name):
+    for configured_field_name, value in parsed_config.items():
+        lowercase_field_name = configured_field_name.lower()
+        if is_metadata_field_option_selectable_edm(lowercase_field_name):
             assert_val_edm_form_in_shares_interface(
-                browser_id, value, field_name, selenium, numerals
+                browser_id, value, lowercase_field_name, selenium, numerals
             )
         elif isinstance(value, list):
             for i, val in enumerate(value):
                 assert_nth_val_edm_form_in_shares_interface(
                     browser_id,
                     val,
-                    field_name,
+                    lowercase_field_name,
                     selenium,
                     num_to_ordinal(i),
                     numerals,
                 )
         else:
             assert_nth_val_edm_form_in_shares_interface(
-                browser_id, value, field_name, selenium, "first", numerals
+                browser_id, value, lowercase_field_name, selenium, "first", numerals
             )
 
 

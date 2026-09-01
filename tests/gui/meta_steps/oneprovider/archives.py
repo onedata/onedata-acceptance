@@ -550,28 +550,40 @@ def recalled_archive_details_in_op_gui(
                 selenium, browser_id, start, stop
             )
         else:
-            value = get_archive_recall_information_property_without_whitespace(
-                selenium, browser_id, key
-            )
-            expected_value = re.sub(r"\s*", "", expected_value)
-            error_message = (
-                f'{key} for archive recall "{item_name}" is {value} '
-                f"but expected value is {expected_value} "
-            )
-            if expected_value == "Cancelled":
-                assert expected_value in value, error_message
-            elif "<=" in expected_value:
-                characters = "[\nMBGi ]"
-                error_message = (
-                    f'{key} for archive recall "{item_name}" is {value} '
-                    "and is not lower or equal to expected value: "
-                    f"{expected_value} "
+            actual_value_without_whitespace = (
+                get_archive_recall_information_property_without_whitespace(
+                    selenium, browser_id, key
                 )
-                value = re.sub(characters, "", value).split("/")[0]
-                expected_value = re.sub(characters, "", expected_value).split("<=")[-1]
-                assert int(value) <= int(expected_value), error_message
+            )
+            expected_value_without_whitespace = re.sub(r"\s*", "", expected_value)
+            error_message = (
+                f'{key} for archive recall "{item_name}" is {actual_value_without_whitespace} '
+                f"but expected value is {expected_value_without_whitespace} "
+            )
+            if expected_value_without_whitespace == "Cancelled":
+                assert expected_value_without_whitespace in actual_value_without_whitespace, (
+                    error_message
+                )
+            elif "<=" in expected_value_without_whitespace:
+                size_unit_and_whitespace_pattern = "[\nMBGi ]"
+                error_message = (
+                    f'{key} for archive recall "{item_name}" is {actual_value_without_whitespace} '
+                    "and is not lower or equal to expected value: "
+                    f"{expected_value_without_whitespace} "
+                )
+                actual_value_without_unit = re.sub(
+                    size_unit_and_whitespace_pattern, "", actual_value_without_whitespace
+                ).split("/")[0]
+                expected_upper_bound_without_unit = re.sub(
+                    size_unit_and_whitespace_pattern, "", expected_value_without_whitespace
+                ).split("<=")[-1]
+                assert int(actual_value_without_unit) <= int(expected_upper_bound_without_unit), (
+                    error_message
+                )
             else:
-                assert value == expected_value, error_message
+                assert actual_value_without_whitespace == expected_value_without_whitespace, (
+                    error_message
+                )
 
 
 @wt(

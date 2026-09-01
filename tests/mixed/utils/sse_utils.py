@@ -276,19 +276,27 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
         self.updated_file_attrs: asyncio.Queue[dict[str, FileAttrs]] = asyncio.Queue()
         self.deleted_file_ids: asyncio.Queue[str] = asyncio.Queue()
 
-    async def on_file_created(self, file_id: str, parent_file_id: str) -> None:
+    async def on_file_created(
+        self,
+        file_id: str,
+        parent_file_id: str,  # noqa: ARG002 - required by the callback interface
+    ) -> None:
         await self.created_file_ids.put(file_id)
 
     async def on_file_updated(
         self,
         file_id: str,
-        parent_file_id: str,
+        parent_file_id: str,  # noqa: ARG002 - required by the callback interface
         attributes: FileAttrs,
         cached_attrs: FileAttrs,
     ) -> None:
         await self.updated_file_attrs.put({file_id: get_updated_attrs(attributes, cached_attrs)})
 
-    async def on_file_deleted(self, file_id: str, parent_file_id: str) -> None:
+    async def on_file_deleted(
+        self,
+        file_id: str,
+        parent_file_id: str,  # noqa: ARG002 - required by the callback interface
+    ) -> None:
         await self.deleted_file_ids.put(file_id)
 
     def clean(self) -> None:

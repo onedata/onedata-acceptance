@@ -160,7 +160,7 @@ codetag-tracker:
 ## Formatting
 ##
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v13-dev3"
+STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v13-dev4"
 PYTHON_CONFIG := pyproject.toml
 UID := $(shell id -u)
 GID := $(shell id -g)
@@ -197,6 +197,15 @@ static-analysis:
 	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache $(ALL_FILES)
 	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache \
 	--ignore=ARG,PLC0415,SLF001 $(ALL_CONFTEST_FILES)
+
+# Rules ignored for conftest files:
+# - ARG (unused arguments): pytest and pytest-bdd require fixed fixture and hook
+#   signatures even when some injected arguments are unused.
+# - PLC0415 (import outside top level): GUI fixtures defer imports to avoid
+#   circular dependencies and keep platform-specific setup local.
+# - SLF001 (private member access): WebDriver instances are deliberately stored
+#   in pytest's private node state under `_driver` for sharing between fixtures
+#   and hooks.
 
 type-check:
 	$(docker_run) mypy $(ALL_FILES) $(ALL_CONFTEST_FILES) --config-file=$(PYTHON_CONFIG)

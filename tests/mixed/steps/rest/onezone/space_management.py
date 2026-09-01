@@ -208,9 +208,9 @@ def assert_spaces_have_been_renamed_in_oz_rest(
     user_api = UserApi(user_client)
 
     for space_name, new_space_name in zip(space_list, new_names_list, strict=True):
-        space_name = user_api.get_user_space(spaces[space_name]).name
-        assert space_name == new_space_name, (
-            f"Space should has name {new_space_name} but it has name {space_name}"
+        actual_space_name = user_api.get_user_space(spaces[space_name]).name
+        assert actual_space_name == new_space_name, (
+            f"Space should has name {new_space_name} but it has name {actual_space_name}"
         )
 
 

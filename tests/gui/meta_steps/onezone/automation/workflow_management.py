@@ -344,6 +344,56 @@ def execute_workflow_and_wait(
     expand_first_executed_workflow_record(selenium, browser_id)
 
 
+def _provide_range_initial_workflow_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    serialized_value: str,
+) -> None:
+    parsed_range_values = literal_eval(serialized_value)
+    if isinstance(parsed_range_values, list):
+        for range_value in parsed_range_values:
+            choose_range_as_initial_workflow_value(
+                selenium, browser_id, cast(dict[str, object], range_value)
+            )
+    else:
+        choose_range_as_initial_workflow_value(
+            selenium,
+            browser_id,
+            cast(dict[str, object], parsed_range_values),
+            False,
+        )
+
+
+def _provide_number_initial_workflow_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    serialized_value: str,
+) -> None:
+    driver = selenium[browser_id]
+    parsed_number_values = literal_eval(serialized_value)
+    if isinstance(parsed_number_values, list):
+        for number_value in parsed_number_values:
+            number_inputs = get_input_element(driver, "numbers_input")
+            cast(NumberInput, number_inputs[len(number_inputs) - 1]).input = str(number_value)
+    else:
+        number_inputs = OPLoggedIn(driver).automation_page.numbers_input
+        cast(NumberInput, number_inputs[len(number_inputs) - 1]).input = serialized_value
+
+
+def _provide_boolean_initial_workflow_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    serialized_value: str,
+) -> None:
+    driver = selenium[browser_id]
+    parsed_boolean_values = json.loads(serialized_value)
+    if isinstance(parsed_boolean_values, list):
+        for boolean_value in parsed_boolean_values:
+            boolean_inputs = get_input_element(driver, "booleans_input")
+            boolean_inputs[len(boolean_inputs) - 1].click()
+            Popups(driver).boolean_values.options[str(boolean_value).lower()].click()
+
+
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
@@ -372,34 +422,13 @@ def execute_workflow(
     # wait a moment for workflow revision to open
     time.sleep(1)
     if "range" in data_type:
-        range_items = literal_eval(serialized_value)
-        if isinstance(range_items, list):
-            for item in range_items:
-                choose_range_as_initial_workflow_value(
-                    selenium, browser_id, cast(dict[str, object], item)
-                )
-        else:
-            choose_range_as_initial_workflow_value(
-                selenium, browser_id, cast(dict[str, object], range_items), False
-            )
+        _provide_range_initial_workflow_value(selenium, browser_id, serialized_value)
     elif "number" in data_type:
-        items = literal_eval(serialized_value)
-        if isinstance(items, list):
-            for number in items:
-                numbers = get_input_element(driver, "numbers_input")
-                cast(NumberInput, numbers[len(numbers) - 1]).input = str(number)
-        else:
-            numbers = OPLoggedIn(driver).automation_page.numbers_input
-            cast(NumberInput, numbers[len(numbers) - 1]).input = str(serialized_value)
+        _provide_number_initial_workflow_value(selenium, browser_id, serialized_value)
     elif "string" in data_type:
         OPLoggedIn(driver).automation_page.string_input.input = serialized_value
     elif "boolean" in data_type:
-        items = json.loads(serialized_value)
-        if isinstance(items, list):
-            for boolean in items:
-                booleans = get_input_element(driver, "booleans_input")
-                booleans[len(booleans) - 1].click()
-                Popups(driver).boolean_values.options[str(boolean).lower()].click()
+        _provide_boolean_initial_workflow_value(selenium, browser_id, serialized_value)
     else:
         choose_file_as_initial_workflow_value(
             selenium,

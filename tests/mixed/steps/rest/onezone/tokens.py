@@ -297,9 +297,10 @@ def set_service_caveat(token_config: TokenConfig, given_service: Mapping[str, li
             if curr_service == "Any Oneprovider":
                 services_list.append("opw-*")
             else:
-                if curr_service == "dev-onezone":
-                    curr_service = "onezone"
-                services_list.append(f"ozw-{curr_service}")
+                service_name_for_whitelist = (
+                    "onezone" if curr_service == "dev-onezone" else curr_service
+                )
+                services_list.append(f"ozw-{service_name_for_whitelist}")
     if op_service:
         for curr_service in op_service:
             if "onezone" in curr_service.lower():

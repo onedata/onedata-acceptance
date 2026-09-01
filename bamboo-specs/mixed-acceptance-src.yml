@@ -218,8 +218,6 @@ _Autoformatter check:
         scripts:
           - make format-check
         description: Ruff formatting
-  requirements:
-    - minikube
 
 _Static analysis:
   key: STAN
@@ -231,8 +229,6 @@ _Static analysis:
         scripts:
           - make static-analysis
         description: Static analysis
-  requirements:
-    - minikube
 
 _Type_check:
   key: TCH
@@ -244,8 +240,6 @@ _Type_check:
         scripts:
           - make type-check
         description: Type checker
-  requirements:
-    - minikube
 
 Access tokens: &acceptance-mixed-tests-in-chrome-job
   key: CLT
