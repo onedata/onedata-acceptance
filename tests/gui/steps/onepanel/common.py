@@ -232,7 +232,7 @@ def click_on_toggle_in_onepanel_view(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that "{toggle}" toggle is {option} in '
-        "{view_name} view in Onepanel"
+        '"{view_name}" view in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -273,7 +273,7 @@ def assert_label_content_in_onepanel_view(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that "{label}" ends with "{suffix}" in '
-        "{view_name} view in Onepanel"
+        '"{view_name}" view in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -292,8 +292,8 @@ def assert_label_ends_with_in_onepanel_view(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {host} {domain_type} domain is included in"
-        ' "{label}" in {view_name} view in Onepanel'
+        'user of {browser_id} sees that "{host}" "{domain_type}" domain is included in'
+        ' "{label}" in "{view_name}" view in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)

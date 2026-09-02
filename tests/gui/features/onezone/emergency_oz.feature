@@ -21,7 +21,7 @@ Feature: Basic management of emergency Onezone panel
   Scenario: User sees correct information in overview in Onezone emergency panel
     When user of browser clicks on "Clusters" in the main menu
     And user of browser can see tabs "[Data, Shares, Providers, Groups, Tokens, Discovery, Automation]" are disabled in the main menu
-    And user of browser clicks Overview of "onezone" in the sidebar
+    And user of browser clicks "Overview" of "onezone" in the sidebar
     Then user of browser sees Name is "dev-onezone" in info tile in overview view in Onepanel
     And user of browser sees Type is "Onezone" in info tile in overview view in Onepanel
     And user of browser sees Domain is "dev-onezone.default.svc.cluster.local" in info tile in overview view in Onepanel
@@ -30,24 +30,24 @@ Feature: Basic management of emergency Onezone panel
 
   Scenario: User sees correct information in Nodes in Onezone emergency panel
     When user of browser clicks on "Clusters" in the main menu
-    And user of browser clicks Nodes of "onezone" in the sidebar
+    And user of browser clicks "Nodes" of "onezone" in the sidebar
     Then user of browser sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*onezone.* host in Nodes page in Onepanel
     And user of browser sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*onezone.* host in Nodes page in Onepanel
 
 
   Scenario: User sees correct information in Web certificate in Onezone emergency panel
     When user of browser clicks on "Clusters" in the main menu
-    And user of browser clicks Web certificate of "onezone" in the sidebar
-    Then user of browser sees that "Use Lets Encrypt" toggle is unchecked in Web certificate view in Onepanel
-    And user of browser sees that onezone zone domain is included in "DNS names" in Web certificate view in Onepanel
-    And user of browser sees that "Certificate path" ends with "/certs/web_cert.pem" in Web certificate view in Onepanel
-    And user of browser sees that "Key path" ends with "/certs/web_key.pem" in Web certificate view in Onepanel
-    And user of browser sees that "Certificate chain path" ends with "/certs/web_chain.pem" in Web certificate view in Onepanel
+    And user of browser clicks "Web certificate" of "onezone" in the sidebar
+    Then user of browser sees that "Use Lets Encrypt" toggle is unchecked in "Web certificate" view in Onepanel
+    And user of browser sees that "onezone" "zone" domain is included in "DNS names" in "Web certificate" view in Onepanel
+    And user of browser sees that "Certificate path" ends with "/certs/web_cert.pem" in "Web certificate" view in Onepanel
+    And user of browser sees that "Key path" ends with "/certs/web_key.pem" in "Web certificate" view in Onepanel
+    And user of browser sees that "Certificate chain path" ends with "/certs/web_chain.pem" in "Web certificate" view in Onepanel
 
 
   Scenario: User sees correct information in members in Onezone emergency panel
     When user of browser clicks on "Clusters" in the main menu
-    And user of browser clicks Members of "onezone" in the sidebar
+    And user of browser clicks "Members" of "onezone" in the sidebar
     Then user of browser sees 0 direct groups in Onezone clusters members page
     And user of browser sees 1 direct users in Onezone clusters members page
     And user of browser sees 0 effective groups in Onezone clusters members page
@@ -59,7 +59,7 @@ Feature: Basic management of emergency Onezone panel
 
   Scenario: User correctly changes emergency passphrase in Onezone emergency panel
     When user of browser clicks on "Clusters" in the main menu
-    And user of browser clicks Emergency passphrase of "onezone" in the sidebar
+    And user of browser clicks "Emergency passphrase" of "onezone" in the sidebar
     And user of browser clicks on Change passphrase button on emergency passphrase page
     And user of browser types "password" to Current passphrase input field on emergency passphrase page
     And user of browser types "new_password" to New passphrase input field on emergency passphrase page
@@ -73,7 +73,7 @@ Feature: Basic management of emergency Onezone panel
 
     # set previous password back
     And user of browser clicks on "Clusters" in the main menu
-    And user of browser clicks Emergency passphrase of "onezone" in the sidebar
+    And user of browser clicks "Emergency passphrase" of "onezone" in the sidebar
     And user of browser clicks on Change passphrase button on emergency passphrase page
     And user of browser types "new_password" to Current passphrase input field on emergency passphrase page
     And user of browser types "password" to New passphrase input field on emergency passphrase page
