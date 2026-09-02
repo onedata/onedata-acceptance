@@ -190,14 +190,6 @@ def pytest_addoption(parser: Parser) -> None:
         help="If present prevents cleaning environment created by one-env",
     )
     onenv.addoption(
-        "--update-etc-hosts",
-        action="store_true",
-        help=(
-            "Refresh /etc/hosts after every successful environment deployment, "
-            "including deployments between repeated tests"
-        ),
-    )
-    onenv.addoption(
         "--gui-pkg-verification",
         action="store_true",
         help="enables verification of GUI packages",

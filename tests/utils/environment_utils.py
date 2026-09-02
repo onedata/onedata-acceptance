@@ -117,7 +117,6 @@ def start_environment(
     test_config: Optional[JsonObject],
 ) -> str | OnenvError:
     attempts = 0
-    local = request.config.getoption("--local")
     up_args = parse_up_args(request, test_config)
     up_args.extend([f"{scenario_path}"])
     wait_args = parse_wait_args(request)
@@ -133,9 +132,8 @@ def start_environment(
             run_onenv_command("wait", wait_args)
             dep_status = get_deployment_status()
             check_deployment(dep_status)
+            update_etc_hosts()
 
-            if not local or request.config.getoption("--update-etc-hosts"):
-                update_etc_hosts()
             setup_hosts_cfg(hosts, request)
             zone_hostname = hosts["onezone"]["hostname"]
             users["admin"] = User(zone_hostname, "admin", "password")

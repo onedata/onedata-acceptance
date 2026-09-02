@@ -14,30 +14,33 @@ import glob
 import platform
 import argparse
 import shutil
+import textwrap
+from typing import Final
 import yaml
-from subprocess import *
+from subprocess import call, check_output
 import tempfile
 import xml.etree.ElementTree as ElementTree
 
 from bamboos.docker.environment import docker
 
-TEST_RUNNER_CONTAINER_NAME = 'test-runner'
+TEST_RUNNER_CONTAINER_NAME: Final[str] = 'test-runner'
 
 
 def get_images_option(
-        test_type='oneclient', env_file_name=None,
-        oz_image=None,
-        op_image=None,
-        oc_image=None,
-        rest_cli_image=None,
-        openfaas_pod_status_monitor_image=None,
-        openfaas_lambda_result_streamer_image=None,
-        pull=True
-):
+    test_type: str = 'oneclient', env_file_name: str | None = None,
+    oz_image: str | None = None,
+    op_image: str | None = None,
+    oc_image: str | None = None,
+    rest_cli_image: str | None = None,
+    openfaas_pod_status_monitor_image: str | None = None,
+    openfaas_lambda_result_streamer_image: str | None = None,
+        pull: bool = True
+) -> list[str]:
     if test_type == 'upgrade':
         # in upgrade tests images are provided in test config and manually set are ignored
         return []
-    images_cfg = []
+
+    images_cfg: list[str] = []
     add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg, pull)
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg, pull)
     add_image_to_images_cfg(rest_cli_image, 'rest-cli', '--rest-cli-image', images_cfg, pull)
@@ -64,16 +67,22 @@ def get_images_option(
     return images_cfg
 
 
-def add_image_to_images_cfg(image, service_name, option, images_cfg, pull):
+def add_image_to_images_cfg(
+    image: str | None,
+    service_name: str,
+    option: str,
+    images_cfg: list[str],
+    pull: bool
+) -> None:
     if not image:
         image = resolve_image(service_name)
-    print('[INFO] Using image {} for service {}'.format(image, service_name))
+    print(f'[INFO] Using image {image} for service {service_name}')
     if pull:
         docker.pull_image_with_retries(image)
-    images_cfg.append('{}={}'.format(option, image))
+    images_cfg.append(f'{option}={image}')
 
 
-def load_test_report(junit_report_path):
+def load_test_report(junit_report_path: str) -> ElementTree.Element | None:
     reports = glob.glob(junit_report_path)
     # if there are many reports, check only the last one
     if reports:
@@ -81,10 +90,11 @@ def load_test_report(junit_report_path):
         tree = ElementTree.parse(reports[-1])
         testsuite = tree.getroot()
         return testsuite
+    return None
 
 
-def env_errors_exists(testsuite):
-    if len(testsuite) == 0:
+def env_errors_exists(testsuite: ElementTree.Element | None) -> bool:
+    if testsuite is None or len(testsuite) == 0:
         # this happens when tests didn't start at all
         return True
 
@@ -99,8 +109,13 @@ def env_errors_exists(testsuite):
     return False
 
 
-def clean_env(image, script_dir, kube_config_path, minikube_config_path,
-              one_env_data_dir):
+def clean_env(
+    image: str,
+    script_dir: str,
+    kube_config_path: str,
+    minikube_config_path: str,
+    one_env_data_dir: str
+) -> None:
     reflect = [
         (script_dir, 'ro'),
         ('/var/run/docker.sock', 'rw'),
@@ -128,7 +143,7 @@ def clean_env(image, script_dir, kube_config_path, minikube_config_path,
         docker.remove(container, force=True)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description='Run Onedata acceptance tests.')
@@ -222,13 +237,6 @@ def main():
         dest='openfaas_lambda_result_streamer_image')
 
     parser.add_argument(
-        '--update-etc-hosts', '-uh',
-        action='store_true',
-        help='If present adds entries to /etc/hosts on host machine for all zone '
-             'and provider nodes in current deployment',
-        dest='update_etc_hosts')
-
-    parser.add_argument(
         '--kube-config-path',
         action='store',
         help='Path to kube config file',
@@ -264,24 +272,7 @@ def main():
 
     [args, pass_args] = parser.parse_known_args()
     script_dir = os.path.abspath(os.path.join('..', os.path.dirname(os.path.abspath(__file__))))
-
-    command = '''
-import os, subprocess, sys, stat
-
-{additional_code}
-
-if {shed_privileges}:
-    docker_gid = os.stat('/var/run/docker.sock').st_gid
-    os.chmod('/etc/resolv.conf', 0o666)
-    os.setgroups([docker_gid])
-    os.setregid({gid}, {gid})
-    os.setreuid({uid}, {uid})
-
-command = ['python3', '-m', 'pytest', '-rs', '-s', '-v', '--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + {update_etc_hosts} + ['--junitxml={report_path}'] + ['--add-test-domain']
-
-ret = subprocess.call(command)
-sys.exit(ret)
-'''
+    tmp_user_config_dir: str | None = None
 
     images_opt = get_images_option(
         args.test_type,
@@ -295,49 +286,50 @@ sys.exit(ret)
         pull=not args.no_pull
     )
 
-    if args.update_etc_hosts:
-        call(['./onenv', 'init'], cwd='one-env')
-        call(['./onenv', 'hosts'], cwd='one-env')
+    call(['./onenv', 'init'], cwd='one-env')
+    call(['./onenv', 'hosts'], cwd='one-env')
 
     if args.local:
         cmd = ['python3', '-m', 'pytest', '-rs', '-s', '-v',
-               '--test-type={}'.format(args.test_type),
-               args.test_dir, '--junitxml={}'.format(args.report_path),
+               f'--test-type={args.test_type}',
+               args.test_dir, f'--junitxml={args.report_path}',
                '--local'] + pass_args
-        if args.update_etc_hosts:
-            cmd += ['--update-etc-hosts']
         if args.env_file:
-            cmd += [f'--env-file={args.env_file}']
-        cmd += images_opt
+            cmd.append(f'--env-file={args.env_file}')
+        cmd.extend(images_opt)
         ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     else:
-        additional_code = '''
-with open('/etc/sudoers.d/all', 'w+') as file:
-    file.write("""
-ALL       ALL = (ALL) NOPASSWD: ALL
-""")
-    '''
+        local_charts_path = (
+            [f'--local-charts-path={args.local_charts_path}']
+            if args.local_charts_path else []
+        )
+        no_clean = ['--no-clean'] if not args.clean else []
+        env_file = [f'--env-file={args.env_file}'] if args.env_file else []
+        timeout = [f'--timeout={args.timeout}'] if args.timeout else []
+        uid = os.geteuid()
+        gid = os.getegid()
+        shed_privileges = platform.system() == 'Linux'
 
-        command = command.format(
-            args=pass_args,
-            uid=os.geteuid(),
-            gid=os.getegid(),
-            test_dir=args.test_dir,
-            shed_privileges=(platform.system() == 'Linux'),
-            report_path=args.report_path,
-            test_type=args.test_type,
-            additional_code=additional_code,
-            local_charts_path=['--local-charts-path={}'.format(args.local_charts_path)]
-            if args.local_charts_path else [],
-            no_clean=['--no-clean'] if not args.clean else [],
-            env_file=['--env-file={}'.format(args.env_file)] if args.env_file else [],
-            timeout=['--timeout={}'.format(args.timeout)] if args.timeout else [],
-            images_opt=images_opt if images_opt else [],
-            update_etc_hosts=(
-                ['--update-etc-hosts'] if args.update_etc_hosts else []
-            ),
-            home=os.path.expanduser('~')
+        command = textwrap.dedent(
+            f'''
+            import os, subprocess, sys, stat
+
+            with open('/etc/sudoers.d/all', 'w+') as file:
+                file.write('ALL       ALL = (ALL) NOPASSWD: ALL\\n')
+
+            if {shed_privileges}:
+                docker_gid = os.stat('/var/run/docker.sock').st_gid
+                os.chmod('/etc/resolv.conf', 0o666)
+                os.setgroups([docker_gid])
+                os.setregid({gid}, {gid})
+                os.setreuid({uid}, {uid})
+
+            command = ['python3', '-m', 'pytest', '-rs', '-s', '-v', '--test-type={args.test_type}'] + ['{args.test_dir}'] + {pass_args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + ['--junitxml={args.report_path}'] + ['--add-test-domain']
+
+            ret = subprocess.call(command)
+            sys.exit(ret)
+            '''
         )
 
         kube_config_path = os.path.expanduser(args.kube_config_path)
@@ -386,7 +378,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             network='host',
             reflect=reflect,
             image=args.image,
-            command=['python', '-c', '{}'.format(command)],
+            command=['python', '-c', command],
             run_params=run_params,
             volumes=volumes,
             # setting HOME allows to use k8s and minikube configs
@@ -405,14 +397,14 @@ ALL       ALL = (ALL) NOPASSWD: ALL
     if env_errors_exists(report):
         ret = 1
 
-    if 'tmp_user_config_dir' in locals():
+    if tmp_user_config_dir is not None:
         shutil.rmtree(tmp_user_config_dir)
 
     sys.exit(ret)
 
 
 # TODO VFS-9025 - below code copied from bamboos/docker. Remove when imports are working correctly.
-SERVICE_TO_IMAGE = {
+SERVICE_TO_IMAGE: dict[str, str] = {
     'onezone': 'docker.onedata.org/onezone-dev',
     'oneprovider': 'docker.onedata.org/oneprovider-dev',
     'oneclient': 'docker.onedata.org/oneclient-dev',
@@ -422,7 +414,7 @@ SERVICE_TO_IMAGE = {
 }
 
 
-def resolve_image(service):
+def resolve_image(service: str) -> str:
     """Returns service image based on branch from branchConfig.yaml file"""
     branch_config_path = os.path.join(os.getcwd(), 'branchConfig.yaml')
     try:
@@ -439,25 +431,31 @@ def resolve_image(service):
             else:
                 branch_tag = get_branch_tag(service_branch)
 
-            image = '{}:{}'.format(SERVICE_TO_IMAGE[service], branch_tag)
-            fallback_image = '{}:{}'.format(SERVICE_TO_IMAGE[service], fallback_tag)
+            image = f'{SERVICE_TO_IMAGE[service]}:{branch_tag}'
+            fallback_image = f'{SERVICE_TO_IMAGE[service]}:{fallback_tag}'
             if docker.image_exists(image):
                 return image
             else:
-                print('\n[INFO] Image {} for service {} not found. Falling back to {}'.format(
-                    image, service, fallback_image))
+                print(
+                    f'\n[INFO] Image {image} for service {service} not found. '
+                    f'Falling back to {fallback_image}'
+                )
                 return fallback_image
     except (IOError, KeyError) as e:
-        print("[ERROR] Error when reading image for {} from branch config file {}: {}.".format(
-            service, branch_config_path, e))
+        print(
+            f'[ERROR] Error when reading image for {service} from branch config '
+            f'file {branch_config_path}: {e}.'
+        )
         raise e
 
 
-def get_current_branch():
+def get_current_branch() -> str:
     if 'bamboo_planRepository_branchName' in os.environ:
         branch_name = os.environ['bamboo_planRepository_branchName']
-        print('[INFO] ENV variable "bamboo_planRepository_branchName" is set to {} - using it '
-              'as current branch name'.format(branch_name))
+        print(
+            f'[INFO] ENV variable "bamboo_planRepository_branchName" is set to '
+            f'{branch_name} - using it as current branch name'
+        )
     else:
         branch_name = cmd(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     if branch_name == 'HEAD':
@@ -466,18 +464,18 @@ def get_current_branch():
     return branch_name
 
 
-def cmd(args):
+def cmd(args: list[str]) -> str:
     """Executes shell command and returns result without trailing newline.
     Standard error is redirected to /dev/null."""
 
     with open('/dev/null', 'w') as dev_null:
-        result = check_output(args, stderr=dev_null)
+        result: bytes | str = check_output(args, stderr=dev_null)
     if isinstance(result, bytes):
         result = result.decode()
     return result.rstrip('\n')
 
 
-def get_branch_tag(branch):
+def get_branch_tag(branch: str) -> str:
     ticket = re.search(r'VFS-\d+.*', branch)
     if branch.startswith('develop'):
         return 'develop'
