@@ -950,7 +950,7 @@ def _get_repeat_progress(request: pytest.FixtureRequest) -> tuple[int, int]:
     return cast(int, repeat_number), repeat_count
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def clean_environment(
     request: pytest.FixtureRequest,
     maybe_start_env: None,
@@ -962,12 +962,7 @@ def clean_environment(
     test_config: JsonObject,
     scenario_abs_path: str,
 ) -> Generator[None, None, None]:
-    """Reset the environment between marked deployment test repetitions."""
-    should_clean = request.node.get_closest_marker("clean_environment") is not None
-    if not should_clean:
-        yield
-        return
-
+    """Reset the environment between deployment test repetitions."""
     if not previous_env.get("started", False):
         hosts.clear()
         users.clear()
@@ -984,10 +979,13 @@ def clean_environment(
         )
 
     repeat_number, repeat_count = _get_repeat_progress(request)
+
     yield
 
-    preserve_last_run = request.config.getoption("--no-clean")
-    if not preserve_last_run or repeat_number < repeat_count - 1:
+    is_last_repeat = repeat_number == repeat_count - 1
+    preserve_environment = request.config.getoption("--no-clean") and is_last_repeat
+
+    if not preserve_environment:
         export_logs(request, env_description_abs_path)
         clean_env()
         previous_env["started"] = False
