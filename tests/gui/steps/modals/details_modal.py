@@ -9,7 +9,7 @@ from datetime import datetime
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.modals.modal import resolve_modal_attribute_name
 from tests.gui.steps.oneprovider.browser import (

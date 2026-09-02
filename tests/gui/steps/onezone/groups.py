@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     get_visible_items_list,

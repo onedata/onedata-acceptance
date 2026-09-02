@@ -11,7 +11,7 @@ from collections.abc import Mapping
 
 from _pytest._py.path import LocalPath
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
 from tests.gui.meta_steps.oneprovider.dataset import (
     assert_dataset_detached_in_op_gui,

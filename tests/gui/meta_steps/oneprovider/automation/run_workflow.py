@@ -11,7 +11,7 @@ import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import (
+from tests.gui.constants import (
     WAIT_EXTENDED_WORKFLOW_EXECUTION,
     WAIT_NORMAL_WORKFLOW_EXECUTION,
 )

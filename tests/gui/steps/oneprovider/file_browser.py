@@ -16,7 +16,7 @@ import yaml
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import StaleElementReferenceException
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal

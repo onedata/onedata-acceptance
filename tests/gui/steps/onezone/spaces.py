@@ -17,7 +17,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear

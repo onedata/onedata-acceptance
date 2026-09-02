@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -51,6 +52,33 @@ class ConsumerCaveat(PageObject):
 
     def expand_consumer_types(self) -> None:
         self.consumer_type.click()
+        self.wait_for_consumer_types_state(is_open=True)
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def wait_for_consumer_types_state(self, is_open: bool) -> None:
+        assert (
+            len(self.consumer_types) > 0
+        ) == is_open, f"Consumer types dropdown in {self} did not {'open' if is_open else 'close'}"
+
+    def select_consumer_type(self, consumer_type: str) -> None:
+        self.choose_consumer_type(consumer_type)
+        self.wait_for_consumer_types_state(is_open=False)
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def choose_consumer_type(self, consumer_type: str) -> None:
+        self.consumer_types[consumer_type].click()
+
+    def expand_consumers(self) -> None:
+        self.list_option.click()
+        self.wait_for_consumers_to_load()
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def wait_for_consumers_to_load(self) -> None:
+        consumers = self.consumers
+        assert len(consumers) > 0, f"No consumers loaded in {self}"
+        assert all(
+            consumer.name for consumer in consumers
+        ), f"Not all consumers in {self} have their names loaded"
 
     def __str__(self) -> str:
         return "Consumer caveat popup"

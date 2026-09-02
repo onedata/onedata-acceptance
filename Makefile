@@ -169,7 +169,7 @@ define docker_run
 endef
 
 
-ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__init__.py tests/__init__.py \
+ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/constants.py tests/gui/__init__.py tests/__init__.py \
  tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
  tests/performance/__init__.py tests/performance/type_definitions.py tests/performance/test_*.py \
  tests/oneclient/steps tests/oneclient/__init__.py tests/utils tests/upgrade

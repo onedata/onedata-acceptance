@@ -10,7 +10,7 @@ from typing import cast
 
 from selenium.common.exceptions import NoSuchElementException
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.generic import transform
 from tests.type_definitions import Hosts, SeleniumDrivers

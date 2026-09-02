@@ -32,9 +32,14 @@ class Chapters(PageObject):
 
 
 class BaseDocumentationPage(PageObject):
-    current_header = Label(".docs-main-content h1")
+    _current_header = Label(".docs-main-content h1")
     sidebar = WebItem(".sidebar-root-list", cls=BaseDocumentationSidebar)
     chapters = WebItem(".docs-tabs-row", cls=Chapters)
+
+    @property
+    def current_header(self) -> str:
+        # Documentation headings contain a leading permalink marker in the DOM.
+        return self._current_header.removeprefix("#").strip()
 
     def __getitem__(self, item: str) -> PageObject:
         if hasattr(self, "elements_list"):

@@ -14,7 +14,7 @@ from typing import Optional, Protocol
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import network_throttling_download
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.type_definitions import Clickable, TmpMemory

@@ -17,7 +17,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.generic import transform

@@ -16,7 +16,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.gui.conftest import (
+from tests.gui.constants import (
     WAIT_BACKEND,
     WAIT_FRONTEND,
     WAIT_NORMAL_WORKFLOW_EXECUTION,

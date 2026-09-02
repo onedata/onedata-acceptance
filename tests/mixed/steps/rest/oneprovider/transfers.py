@@ -11,7 +11,7 @@ import yaml
 from oneprovider_client import TransferApi
 
 from tests import OP_REST_PORT
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.type_definitions import IdMap

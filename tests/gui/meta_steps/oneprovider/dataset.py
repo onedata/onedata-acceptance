@@ -83,8 +83,6 @@ def create_dataset(
 ) -> None:
     option_in_space = "Files"
     option_in_data_row_menu = "Datasets"
-    create_button = "Establish dataset"
-    close_button = "X"
 
     try:
         OPLoggedIn(selenium[browser_id]).file_browser.breadcrumbs
@@ -113,11 +111,13 @@ def create_dataset(
     click_option_in_data_row_menu_in_browser(
         selenium, browser_id, option_in_data_row_menu
     )
-    click_modal_button(selenium, browser_id, create_button, option_in_data_row_menu)
+    click_modal_button(
+        selenium, browser_id, "Establish dataset", option_in_data_row_menu
+    )
     flags = [item.replace("_protection", "") for item in get_flags(option)]
     for flag in flags:
         click_protection_toggle(browser_id, selenium, flag, option_in_data_row_menu)
-    click_modal_button(selenium, browser_id, close_button, option_in_data_row_menu)
+    click_modal_button(selenium, browser_id, "X", option_in_data_row_menu)
 
 
 def fail_to_create_dataset_in_op_gui(

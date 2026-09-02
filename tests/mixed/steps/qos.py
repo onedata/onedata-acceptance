@@ -6,7 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.qos import (
     add_qos_requirement_in_modal,
     assert_qos_file_status_in_op_gui,

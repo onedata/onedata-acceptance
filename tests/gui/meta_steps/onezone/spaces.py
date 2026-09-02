@@ -14,7 +14,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
 from tests.gui.steps.common.common import (
     close_alert_popup_if_present,

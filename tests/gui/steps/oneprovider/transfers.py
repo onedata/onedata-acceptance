@@ -16,7 +16,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
     select_columns_to_be_visible_in_transfers,
 )

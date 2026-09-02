@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import parse_elements_sequence

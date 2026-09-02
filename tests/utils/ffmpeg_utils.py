@@ -89,7 +89,7 @@ class RecorderManager:
     def __init__(self, request: pytest.FixtureRequest) -> None:
         self.request = request
 
-    def handle_start_recording(self) -> None:
+    def handle_start_recording(self, screen_parameters: dict[str, int]) -> None:
         should_record = self.request.getfixturevalue("should_record")
 
         recording = self.request.config.getoption("--xvfb-recording")
@@ -107,15 +107,13 @@ class RecorderManager:
 
             movie_dir = self.request.getfixturevalue("movie_dir")
             xvfb = self.request.getfixturevalue("xvfb")
-            screen_width = self.request.getfixturevalue("screen_width")
-            screen_height = self.request.getfixturevalue("screen_height")
 
             ffmpeg_proc, movies = start_recording(
                 movie_dir,
                 file_name,
                 xvfb,
-                screen_width,
-                screen_height,
+                screen_parameters["width"],
+                screen_parameters["height"],
                 mosaic_filter,
             )
             self.ffmpeg_details["proc"] = ffmpeg_proc

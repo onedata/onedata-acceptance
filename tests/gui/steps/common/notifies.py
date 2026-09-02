@@ -21,7 +21,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.steps.common.common import (
     click_close_button_and_wait_to_disappear,
 )

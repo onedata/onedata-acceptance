@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests import ELASTICSEARCH_PORT
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils import Modals, OZLoggedIn, Popups

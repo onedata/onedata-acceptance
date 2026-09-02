@@ -8,16 +8,21 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from typing import Final
 
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 
+from tests.gui.constants import RESPONSIVE_LAYOUT_DELAY, ScreenSize
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
 )
 from tests.gui.meta_steps.oneprovider.dataset import get_item_name_from_path
-from tests.gui.steps.common.common import assert_n_items_in_items_list
+from tests.gui.steps.common.common import (
+    assert_n_items_in_items_list,
+    close_alert_popup_if_present,
+)
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     write_name_into_text_field_in_modal,
@@ -33,6 +38,11 @@ from tests.gui.steps.oneprovider.archives import (
     get_archive_with_description,
     write_description_in_create_archive_modal,
     write_in_confirmation_input,
+)
+from tests.gui.steps.oneprovider.archives_audit import (
+    assert_archive_names_match,
+    extract_archive_name_and_path,
+    get_loaded_archive_file_path,
 )
 from tests.gui.steps.oneprovider.archives_recall import (
     assert_recall_duration_in_archive_recall_information_modal,
@@ -56,15 +66,20 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import OPLoggedIn
+from tests.gui.utils import Modals, OPLoggedIn
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import ListElement, WhichBrowser, transform
+from tests.gui.utils.shortened_path import (
+    IndexedPathSequence,
+    parse_indexed_path_sequence,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
-OPTION_IN_SPACE = "Datasets, Archives"
-DATASET_BROWSER = "dataset browser"
-ARCHIVE_BROWSER = "archive browser"
-ARCHIVE_FILE_BROWSER = "archive file browser"
+OPTION_IN_SPACE: Final[str] = "Datasets, Archives"
+DATASET_BROWSER: Final[str] = "dataset browser"
+ARCHIVE_BROWSER: Final[str] = "archive browser"
+ARCHIVE_FILE_BROWSER: Final[str] = "archive file browser"
 
 
 @wt(
@@ -231,8 +246,6 @@ def _create_archive(
                 displays,
                 description,
             )
-            # wait for "archive id copied to clipboard" message to disappear
-            time.sleep(5)
     elif option == "fails":
         assert_option_state_in_data_row_menu(
             selenium,
@@ -258,6 +271,9 @@ def copy_archive_id_to_tmp_memory(
         click_menu_for_archive(browser_id, tmp_memory, description, selenium)
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
+        )
+        close_alert_popup_if_present(
+            selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED
         )
         tmp_memory[description] = clipboard.paste(display=displays[browser_id])
 
@@ -651,3 +667,49 @@ def check_size_stats_for_archive_per_provider(
             check_content_for_provider(
                 selenium, hosts, browser_id, provider, expected_value
             )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that path in Entry Details in archive audit log"
+        " matches the config and displayed archive name is correct for different screen"
+        " sizes:\n{config}"
+    )
+)
+def assert_archive_name_and_shortened_path_for_screen_sizes(
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    config: str,
+) -> None:
+    """
+    Example shortened path:
+    long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\n 'long-directory_19\n/\nvery-long-file_20
+    """
+    driver = selenium[browser_id]
+    expected_path = IndexedPathSequence.from_yaml_dict(yaml.safe_load(config))
+
+    for screen_size in ScreenSize:
+        size = screen_size.value
+        driver.set_window_size(size.width, size.height)
+
+        # WebDriver waits for the window resize, but not for the frontend's
+        # asynchronous responsive-layout update.
+        time.sleep(RESPONSIVE_LAYOUT_DELAY)
+
+        audit_log = Modals(driver).archive_audit_log
+        details_text = get_loaded_archive_file_path(driver)
+        details_archive_name, displayed_path = extract_archive_name_and_path(
+            details_text
+        )
+
+        assert_archive_names_match(
+            audit_log.archive_name,
+            details_archive_name,
+        )
+
+        actual_path = parse_indexed_path_sequence(displayed_path)
+        assert actual_path.matches(expected_path), (
+            "Path shown in audit log entry details for "
+            f"{screen_size.name.lower()} screen size does not match: "
+            f"actual={actual_path!r}, expected={expected_path!r}"
+        )

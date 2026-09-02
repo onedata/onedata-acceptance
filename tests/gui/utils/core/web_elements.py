@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
 
-from .base import AbstractWebElement, AbstractWebItem
+from .base import AbstractWebElement, AbstractWebItem, PageObject
 from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjectsSequence
 
 
@@ -27,7 +27,7 @@ class WebElement(AbstractWebElement):
     not cached.  Access through the class returns the descriptor itself.
 
     By default, the lookup scrolls to the matching element.  The ``scroll``
-    constructor argument can disable that behavior.  The ``name`` and
+    constructor argument can disable that behavior.  The ``descriptor_name`` and
     ``parent_name`` arguments customize the element and parent descriptions used
     in lookup errors.
     """
@@ -48,7 +48,7 @@ class WebElement(AbstractWebElement):
         )
 
     def _format_msg(self, error_message: str, parent: Any, **kwargs: Any) -> str:
-        name = self.name.replace("_", " ").strip().upper()
+        name = self.descriptor_name.replace("_", " ").strip().upper()
         p_name = self.parent_name if self.parent_name != "" else str(parent)
         return error_message.format(item=name, parent=p_name, **kwargs)
 
@@ -80,12 +80,34 @@ class WebItem(AbstractWebItem, WebElement):
         return (
             elem
             if instance is None
-            else self.cls(instance.driver, elem, parent=instance, name=self.name)
+            else self.cls(
+                instance.driver,
+                elem,
+                parent=instance,
+                object_name=self.descriptor_name,
+            )
         )
 
 
 class WebItemWithText(WebItem, WebElementWithText):
-    pass
+    def __init__(  # pylint: disable=super-init-not-called
+        self,
+        css_selector: str,
+        *,
+        cls: type[PageObject],
+        text: str,
+        scroll: bool = True,
+        descriptor_name: str = "",
+    ) -> None:
+        # WebItem and WebElementWithText have incompatible cooperative constructors.
+        self.cls = cls
+        WebElementWithText.__init__(
+            self,
+            css_selector,
+            text=text,
+            scroll=scroll,
+            descriptor_name=descriptor_name,
+        )
 
 
 Button = partial(WebItem, cls=ButtonPageObject)
@@ -112,7 +134,7 @@ class Input(WebElement):
             input_box.send_keys(val)
             assert (
                 input_box.get_attribute("value") == val
-            ), f'entering "{val}" to {self.name} in {instance} failed'
+            ), f'entering "{val}" to {self.descriptor_name} in {instance} failed'
 
 
 class AceEditor(WebElement):

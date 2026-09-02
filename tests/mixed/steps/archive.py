@@ -11,7 +11,7 @@ from typing import cast
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.archives import (
     assert_archive_callback_in_op_gui,
     assert_archive_in_op_gui,

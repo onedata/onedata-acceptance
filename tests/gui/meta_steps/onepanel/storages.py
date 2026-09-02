@@ -17,7 +17,7 @@ from selenium.common.exceptions import (
 )
 
 from tests import PANEL_REST_PORT
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.rest.storages import (
     get_storage_ids_by_name,
     remove_multiple_storages_in_op_panel_using_rest,

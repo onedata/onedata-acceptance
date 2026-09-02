@@ -8,7 +8,7 @@ from http import HTTPStatus
 
 from requests.exceptions import HTTPError
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.steps.rest.s3 import (
     assert_bucket_exists,
     create_bucket,

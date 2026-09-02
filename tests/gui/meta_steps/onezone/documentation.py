@@ -33,7 +33,9 @@ from tests.utils.bdd_utils import parsers, wt
 def _assert_endpoint_details_in_api_subpage(
     selenium: SeleniumDrivers, browser_id: str, endpoint: EndpointInfo
 ) -> None:
-    assert_title_contains(selenium, browser_id, f"{endpoint.name} | API Reference")
+    assert_title_contains(
+        selenium, browser_id, f"{endpoint.name} | {endpoint.reference_title}"
+    )
     assert_active_chapter_tab_in_documentation_subpage(
         selenium, browser_id, "API", endpoint.chapter
     )

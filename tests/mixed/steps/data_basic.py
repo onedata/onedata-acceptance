@@ -14,7 +14,7 @@ from typing import Optional, cast
 import pytest
 from _pytest._py.path import LocalPath
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     assert_file_content_in_op_gui,
     assert_mtime_not_earlier_than_op_gui,

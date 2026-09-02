@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import Self
 
 from tests.gui.utils.core.base import PageObject
@@ -20,12 +21,26 @@ from tests.gui.utils.homepage.documentation_base import (
 )
 
 
+class ServiceType(Enum):
+    ONEPROVIDER = "Oneprovider"
+    ONEPANEL = "Onepanel"
+    ONEZONE = "Onezone"
+
+
 @dataclass(frozen=True)
 class EndpointInfo:
     method: str
     name: str
     category: str
-    chapter: str
+    service_type: ServiceType
+
+    @property
+    def chapter(self) -> str:
+        return f"{self.service_type.value} REST API"
+
+    @property
+    def reference_title(self) -> str:
+        return f"{self.service_type.value} API Reference"
 
     @classmethod
     def space(cls, method: str, name: str) -> Self:
@@ -33,7 +48,7 @@ class EndpointInfo:
             method=method,
             name=name,
             category="Space",
-            chapter="Onezone REST API",
+            service_type=ServiceType.ONEZONE,
         )
 
     @classmethod
@@ -42,7 +57,7 @@ class EndpointInfo:
             method=method,
             name=name,
             category=category,
-            chapter="Oneprovider REST API",
+            service_type=ServiceType.ONEPROVIDER,
         )
 
 

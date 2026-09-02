@@ -445,7 +445,7 @@ def send_public_handle_link_to_user(
     )
 )
 def fill_inputs_in_edm_metadata_form(
-    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
+    selenium: SeleniumDrivers, browser_id: str, config: str
 ) -> None:
     """
     Fill EDM metadata form according to given config.
@@ -526,11 +526,10 @@ def fill_inputs_in_edm_metadata_form(
                         field_name,
                         selenium,
                         num_to_ordinal(i),
-                        numerals,
                     )
             else:
                 write_to_nth_input_in_edm_form_in_shares_interface(
-                    browser_id, value, field_name, selenium, "first", numerals
+                    browser_id, value, field_name, selenium, "first"
                 )
 
 
@@ -541,7 +540,7 @@ def fill_inputs_in_edm_metadata_form(
     )
 )
 def assert_properties_in_edm_metadata_form(
-    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
+    selenium: SeleniumDrivers, browser_id: str, config: str
 ) -> None:
     """
     Assert EDM metadata values according to given config.
@@ -554,7 +553,7 @@ def assert_properties_in_edm_metadata_form(
         field_name = field_name.lower()
         if is_metadata_field_option_selectable_edm(field_name):
             assert_val_edm_form_in_shares_interface(
-                browser_id, value, field_name, selenium, numerals
+                browser_id, value, field_name, selenium
             )
         else:
             if isinstance(value, list):
@@ -565,11 +564,10 @@ def assert_properties_in_edm_metadata_form(
                         field_name,
                         selenium,
                         num_to_ordinal(i),
-                        numerals,
                     )
             else:
                 assert_nth_val_edm_form_in_shares_interface(
-                    browser_id, value, field_name, selenium, "first", numerals
+                    browser_id, value, field_name, selenium, "first"
                 )
 
 

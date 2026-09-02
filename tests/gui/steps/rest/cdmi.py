@@ -4,7 +4,7 @@ __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.utils import CDMIClient as cdmi
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
