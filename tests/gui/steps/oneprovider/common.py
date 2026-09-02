@@ -15,13 +15,13 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.type_definitions import FilePath, TmpMemory
-from tests.gui.utils import OPLoggedIn
-from tests.gui.utils.common.constants import (
+from tests.gui.constants import (
     WAIT_BACKEND,
     WAIT_FRONTEND,
     WAIT_NORMAL_DOWNLOAD,
 )
+from tests.gui.type_definitions import FilePath, TmpMemory
+from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,

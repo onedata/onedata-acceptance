@@ -8,14 +8,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from tests.gui.steps.common.miscellaneous import _enter_text
-from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils import OZLoggedIn, Popups, PrivacyPolicy, TermsOfUse
-from tests.gui.utils.common.constants import (
+from tests.gui.constants import (
     CONFLICT_NAME_SEPARATOR,
     WAIT_BACKEND,
     WAIT_FRONTEND,
 )
+from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils import OZLoggedIn, Popups, PrivacyPolicy, TermsOfUse
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.clusters_page import ClustersPage, MenuItem

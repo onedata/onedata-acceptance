@@ -8,8 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from datetime import date
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
-from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.space_marketplace import MarketplaceSpace
 from tests.type_definitions import SeleniumDrivers

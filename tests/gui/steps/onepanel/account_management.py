@@ -9,8 +9,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from time import sleep
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import OnePage, Popups
-from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt

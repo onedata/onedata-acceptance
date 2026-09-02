@@ -10,6 +10,7 @@ from typing import Protocol, cast
 
 from _pytest._py.path import LocalPath
 
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.onepanel.account_management import (
     change_user_password_in_oz_panel_using_gui,
     log_out_from_oz_panel_gui,
@@ -48,7 +49,6 @@ from tests.gui.steps.common.docker import (
     wt_rm_files_to_storage_mount_point,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.common.constants import WAIT_BACKEND
 from tests.mixed.steps.rest.onepanel.account_management import (
     change_user_password_in_oz_panel_using_rest,
     login_to_oz_panel_using_new_password_rest,

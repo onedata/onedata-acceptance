@@ -11,6 +11,7 @@ from typing import Optional
 
 import yaml
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
@@ -63,7 +64,6 @@ from tests.gui.steps.onezone.tokens import (
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn
-from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import is_element_with_selector_visible_on_page
 from tests.gui.utils.onezone.token_caveats import TokenCaveats

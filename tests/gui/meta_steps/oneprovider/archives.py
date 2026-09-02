@@ -8,10 +8,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from typing import Final
 
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 
+from tests.gui.constants import RESPONSIVE_LAYOUT_DELAY, ScreenSize
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
@@ -65,7 +67,6 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.common.constants import RESPONSIVE_LAYOUT_DELAY, ScreenSize
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import ListElement, WhichBrowser, transform
 from tests.gui.utils.shortened_path import (
@@ -75,10 +76,10 @@ from tests.gui.utils.shortened_path import (
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
-OPTION_IN_SPACE: str = "Datasets, Archives"
-DATASET_BROWSER: str = "dataset browser"
-ARCHIVE_BROWSER: str = "archive browser"
-ARCHIVE_FILE_BROWSER: str = "archive file browser"
+OPTION_IN_SPACE: Final[str] = "Datasets, Archives"
+DATASET_BROWSER: Final[str] = "dataset browser"
+ARCHIVE_BROWSER: Final[str] = "archive browser"
+ARCHIVE_FILE_BROWSER: Final[str] = "archive file browser"
 
 
 @wt(

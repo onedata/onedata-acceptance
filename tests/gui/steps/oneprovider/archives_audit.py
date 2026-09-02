@@ -16,9 +16,9 @@ import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
-from tests.gui.utils.common.constants import WAIT_FRONTEND
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -491,17 +491,15 @@ def assert_archive_names_match(
         )
 
 
-def get_loaded_archive_file_path(driver: WebDriver) -> str:
-    def get_path_if_loaded(_: WebDriver) -> str | bool:
-        file_path = Modals(driver).audit_log_entry_details.file_path.text
-        return file_path if file_path != "Loading path..." else False
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_loaded_archive_file_path(
+    driver: WebDriver,
+) -> str:
+    entry_details = Modals(driver).audit_log_entry_details
+    entry_details_file_path = entry_details.file_path.text
 
-    return WebDriverWait(driver, WAIT_FRONTEND).until(
-        get_path_if_loaded,
-        message=(
-            f"Archive file path did not finish loading within {WAIT_FRONTEND} seconds"
-        ),
-    )
+    assert entry_details_file_path != "Loading path..."
+    return entry_details_file_path
 
 
 @wt(

@@ -8,11 +8,11 @@ from http import HTTPStatus
 
 from requests.exceptions import HTTPError
 
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.steps.rest.s3 import (
     assert_bucket_exists,
     create_bucket,
 )
-from tests.gui.utils.common.constants import WAIT_BACKEND
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

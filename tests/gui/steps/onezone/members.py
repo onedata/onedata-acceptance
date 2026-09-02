@@ -15,6 +15,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
 from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.modals.modal import (
@@ -36,7 +37,6 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.web_objects import (

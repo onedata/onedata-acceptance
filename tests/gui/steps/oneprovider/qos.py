@@ -13,10 +13,10 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.constants import CONFLICT_NAME_SEPARATOR, WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils import Modals, OPLoggedIn, Popups
-from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR, WAIT_FRONTEND
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.qos import (
     QoSValueOption,
 )

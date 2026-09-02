@@ -16,17 +16,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
+from tests.gui.constants import (
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+)
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
     switch_to_iframe,
 )
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
-from tests.gui.utils.common.constants import (
-    WAIT_BACKEND,
-    WAIT_FRONTEND,
-    WAIT_NORMAL_WORKFLOW_EXECUTION,
-)
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import (

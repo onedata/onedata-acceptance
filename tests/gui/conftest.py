@@ -23,13 +23,7 @@ from selenium import webdriver
 
 from tests import LOGDIRS
 from tests.conftest import export_logs, get_log_dir_path
-from tests.gui.sse_fixtures import (
-    async_loop_in_thread,
-    monitors,
-    space_files_monitor_factory,
-)
-from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.common.constants import (
+from tests.gui.constants import (
     DRIVER_CREATION_RETRIES,
     RESPONSIVE_LAYOUT_DELAY,
     SCREEN_PARAMETERS,
@@ -43,6 +37,12 @@ from tests.gui.utils.common.constants import (
     WAIT_NORMAL_WORKFLOW_EXECUTION,
     WAIT_PODS_TERMINATION,
 )
+from tests.gui.sse_fixtures import (
+    async_loop_in_thread,
+    monitors,
+    space_files_monitor_factory,
+)
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.type_definitions import (
     HookOutcome,

@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.url import (
     HOSTS_SEQUENCE_PATTERN,
     assert_main_page_loaded,
@@ -16,7 +17,6 @@ from tests.gui.steps.common.url import (
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.utils import LoginPage, OnePage
-from tests.gui.utils.common.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,

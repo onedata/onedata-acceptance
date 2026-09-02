@@ -18,8 +18,8 @@ import yaml
 from _pytest._py.path import LocalPath
 
 from tests.conftest import REQUEST_TIMEOUT
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.type_definitions import LocalDirectoryContent as DirectoryContent
-from tests.gui.utils.common.constants import WAIT_BACKEND
 from tests.gui.utils.generic import suppress
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
