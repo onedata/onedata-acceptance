@@ -19,6 +19,7 @@ class DataRow(BrowserRow):
     changed = Label(".fb-table-col-ctime .file-item-text")
 
     shared_tag = WebElement(".file-status-shared")
+    public_data_tag = WebElement(".file-public-data-icon")
     metadata_tag = WebElement(".file-status-metadata")
     qos_tag = WebElement(".file-status-qos")
     dataset_tag = WebElement(".file-status-dataset")

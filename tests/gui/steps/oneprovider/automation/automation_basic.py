@@ -8,12 +8,19 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Optional, overload
 
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import (
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+)
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
     switch_to_iframe,
@@ -22,7 +29,10 @@ from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core import scroll_to_css_selector
-from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.core.web_objects import (
+    PageObjectNotFoundError,
+    PageObjectsSequence,
+)
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.automation import (
     ParallelBox,
@@ -48,6 +58,18 @@ def switch_to_automation_page(
     return OPLoggedIn(selenium[browser_id]).automation_page
 
 
+def wait_until_workflow_executions_list_is_empty(
+    page: WorkflowExecutionPage,
+    error_message: str,
+    timeout: float = WAIT_NORMAL_WORKFLOW_EXECUTION,
+) -> None:
+    @repeat_failed(timeout=timeout, interval=1)
+    def assert_workflow_executions_list_is_empty() -> None:
+        assert len(page.workflow_executions_list) == 0, error_message
+
+    assert_workflow_executions_list_is_empty()
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_input_element(
     driver: WebDriver, input_type: str
@@ -65,7 +87,11 @@ def click_button_in_navigation_tab(
     driver = selenium[browser_id]
     try:
         OPLoggedIn(driver).automation_page.navigation_tab[tab_name].click()
-    except RuntimeError:
+    except (
+        ElementNotInteractableException,
+        NoSuchElementException,
+        PageObjectNotFoundError,
+    ):
         driver.refresh()
         # wait for page to refresh
         time.sleep(5)
@@ -147,7 +173,7 @@ def search_for_lane_status(
             return status
         try:
             page.workflow_visualiser.right_arrow_scroll.click()
-        except RuntimeError:
+        except (ElementNotInteractableException, NoSuchElementException):
             pass
     raise ValueError(f"lane {lane_name} found")
 

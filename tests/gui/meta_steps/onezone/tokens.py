@@ -10,9 +10,8 @@ import time
 from typing import Optional
 
 import yaml
-from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
@@ -20,9 +19,8 @@ from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     wait_for_error_modal_to_disappear,
     wait_for_sliding_panel_to_stop_moving,
-    wait_till_alert_popup_or_error_modal_disappear,
+    wait_till_error_modal_disappear,
 )
-from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
@@ -65,7 +63,7 @@ from tests.gui.steps.onezone.tokens import (
     wt_click_on_btn_for_oz_token,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import is_element_with_selector_visible_on_page
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
@@ -73,7 +71,6 @@ from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 def _paste_token_into_text_field(
@@ -100,11 +97,6 @@ def paste_received_token_into_text_field(
 ) -> None:
     token = tmp_memory[browser_id]["mailbox"]["token"]
     _paste_token_into_text_field(selenium, browser_id, token)
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
-def _click_confirm_btn(driver: WebDriver) -> None:
-    OZLoggedIn(driver).tokens.confirm_button()
 
 
 @wt(
@@ -136,14 +128,12 @@ def succeed_to_consume_token_using_confirm_button(
     browser_id: str,
 ) -> None:
     driver = selenium[browser_id]
-    _click_confirm_btn(driver)
-    wait_till_main_content_loaded(driver)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id)
     # Case when popup did not appear or the test didn't catch it in time
     if not close_alert_popup_if_present(driver, AlertPopup.SUCCESSFULLY_JOINED):
         assert not is_element_with_selector_visible_on_page(
             driver, ".alert-global.modal.in .modal-dialog"
         ), "Error modal appeared"
-    OZLoggedIn(driver).update_current_page()
 
 
 def fail_to_consume_token_using_confirm_button(
@@ -153,7 +143,7 @@ def fail_to_consume_token_using_confirm_button(
     close_error_modal: bool = True,
 ) -> None:
     driver = selenium[browser_id]
-    _click_confirm_btn(driver)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id)
     assert_error_modal_with_text_appeared(selenium, browser_id, text=message)
     if close_error_modal:
         wait_for_error_modal_to_disappear(driver)
@@ -213,7 +203,7 @@ def assert_invalid_id_in_error_modal_and_close_modal(
     error_message = (
         f"There is no info about id of invalid target {target_name} in error modal"
     )
-    wait_till_alert_popup_or_error_modal_disappear(
+    wait_till_error_modal_disappear(
         driver, ".alert-global.modal.in .modal-dialog", lambda _: error_modal.close
     )
     match target_type:
@@ -223,7 +213,6 @@ def assert_invalid_id_in_error_modal_and_close_modal(
             assert spaces[target_name] in modal_text, error_message
         case "inventory":
             assert inventories[target_name] in modal_text, error_message
-            OZLoggedIn(driver).update_current_page()
         case "harvester":
             assert harvesters[target_name] in modal_text, error_message
         case _:
@@ -611,10 +600,10 @@ def _set_tokens_caveats(
         caveat.set_expiration_caveat(expiration_caveat, tmp_memory)
     if region_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "region")
-        caveat.set_region_caveats(selenium, browser_id, region_caveats, Popups)
+        caveat.set_region_caveats(selenium, browser_id, region_caveats)
     if country_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "country")
-        caveat.set_country_caveats(selenium, browser_id, country_caveats, Popups)
+        caveat.set_country_caveats(selenium, browser_id, country_caveats)
     if asn_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "asn")
         caveat.set_asn_caveats(selenium, browser_id, asn_caveats)
@@ -623,19 +612,19 @@ def _set_tokens_caveats(
         caveat.set_ip_caveats(selenium, browser_id, ip_caveats)
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "consumer")
+        create_token_page = OZLoggedIn(selenium[browser_id]).tokens.create_token_page
         caveat.set_consumer_caveats(
             selenium,
             browser_id,
-            Popups,
             consumer_caveats,
             users,
             groups,
             hosts,
-            OZLoggedIn,
+            create_token_page,
         )
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "service")
-        caveat.set_service_caveats(selenium, browser_id, service_caveats, Popups)
+        caveat.set_service_caveats(selenium, browser_id, service_caveats)
     if interface_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, "interface")
         caveat.set_interface_caveat(interface_caveat)

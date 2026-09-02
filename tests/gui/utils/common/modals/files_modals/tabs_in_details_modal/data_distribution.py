@@ -38,7 +38,7 @@ class _Chunk(PageObject):
         if chunks is not False:
             return [(chunk[0] * file_size, chunk[1] * file_size) for chunk in chunks]
         else:
-            raise RuntimeError(
+            raise ValueError(
                 "{} is not filled correctly: some columns "
                 "are not filled with one color".format(self)
             )

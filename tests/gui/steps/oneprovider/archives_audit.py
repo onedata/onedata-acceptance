@@ -13,8 +13,9 @@ from datetime import datetime
 from typing import cast
 
 import yaml
+from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import (
@@ -25,6 +26,8 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+ARCHIVE_PATH_SEPARATOR: str = "›"
 
 
 @wt(
@@ -462,34 +465,40 @@ def scroll_to_top_in_archive_audit_log(
     modal.scroll_to_top()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that path in Entry Details in archive audit log is:"
-        ' "{path}" and displayed archive name is correct'
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_archived_file_path_and_archive_name(
-    browser_id: str, selenium: SeleniumDrivers, path: str
+def extract_archive_name_and_path(file_path: str) -> tuple[str | None, str]:
+    file_path = file_path.replace("\n", "")
+
+    if ARCHIVE_PATH_SEPARATOR not in file_path:
+        return None, file_path.partition("/")[2]
+
+    archive_info, _, path = file_path.partition("/")
+    archive_name = archive_info.partition(ARCHIVE_PATH_SEPARATOR)[2]
+
+    return archive_name, path
+
+
+def assert_archive_names_match(
+    archive_name_in_audit_log: str,
+    archive_name_in_entry_details: str | None,
 ) -> None:
-    driver = selenium[browser_id]
-    modal_details = Modals(driver).audit_log_entry_details
+    # Depending on window size, the archive name may not be present in details.
+    if archive_name_in_entry_details is not None:
+        assert archive_name_in_audit_log == archive_name_in_entry_details, (
+            "Archive name in archive audit log modal "
+            f"({archive_name_in_audit_log!r}) differs from the one shown "
+            f"in audit log entry details ({archive_name_in_entry_details!r})"
+        )
 
-    details_file_path = modal_details.file_path.text.replace("\n", "").split("/")
-    details_archive_name = details_file_path[0].split("›")[1]
-    # Depending on window size, name of archive may not be present and it raises exception
-    details_file_path = "/".join(details_file_path[1:])
-    # Depending on window size, could be without [1:], if archive name is not present
 
-    assert (
-        path == details_file_path
-    ), f"given path: {path} is different than actual file path: {details_file_path}"
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_loaded_archive_file_path(
+    driver: WebDriver,
+) -> str:
+    entry_details = Modals(driver).audit_log_entry_details
+    entry_details_file_path = entry_details.file_path.text
 
-    modal = Modals(driver).archive_audit_log
-    assert modal.archive_name == details_archive_name, (
-        f"name of archive in archive audit log modal: {modal.archive_name} is different"
-        f" than shown in audit log entry details:  {details_archive_name}"
-    )
+    assert entry_details_file_path != "Loading path..."
+    return entry_details_file_path
 
 
 @wt(

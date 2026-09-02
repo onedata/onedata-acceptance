@@ -4,8 +4,8 @@ using web GUI
 
 import pytest
 import yaml
+from selenium.common.exceptions import ElementNotInteractableException
 
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import (
@@ -44,7 +44,6 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @given(
@@ -80,7 +79,9 @@ def navigate_to_tab_in_op_using_gui(
 def assert_cannot_click_replicate_button(
     selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
 ) -> None:
-    with pytest.raises(RuntimeError, match="Replicate button is not clickable"):
+    with pytest.raises(
+        ElementNotInteractableException, match="Replicate button is not clickable"
+    ):
         replicate_item(selenium, browser_id, provider, hosts)
 
 
@@ -172,7 +173,6 @@ def wt_assert_file_chunks(
     click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def _assert_file_chunks(
     selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, desc: str
 ) -> None:

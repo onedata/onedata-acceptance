@@ -7,10 +7,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 
 import pytest
-from selenium.common.exceptions import InvalidElementStateException, JavascriptException
+from selenium.common.exceptions import (
+    InvalidElementStateException,
+    JavascriptException,
+    NoSuchElementException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import NUMERALS, WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.edit_permissions import (
@@ -26,10 +30,8 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _get_index(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
-) -> int:
-    n = numerals[num]
+def _get_index(selenium: SeleniumDrivers, browser_id: str, num: str) -> int:
+    n = NUMERALS[num]
     if n < 0:
         perm = Modals(
             selenium[browser_id]
@@ -190,10 +192,8 @@ def assert_fail_to_select_acl_option(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_acl_modal(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
-) -> None:
-    n = _get_index(selenium, browser_id, num, numerals)
+def expand_acl_modal(selenium: SeleniumDrivers, browser_id: str, num: str) -> None:
+    n = _get_index(selenium, browser_id, num)
 
     Modals(selenium[browser_id]).details_modal.edit_permissions.acl.permissions[
         n
@@ -241,9 +241,8 @@ def assert_subject_type(
     browser_id: str,
     subject_type: str,
     num: str,
-    numerals: dict[str, int],
 ) -> None:
-    n = _get_index(selenium, browser_id, num, numerals)
+    n = _get_index(selenium, browser_id, num)
 
     assert subject_type == (
         Modals(selenium[browser_id])
@@ -260,9 +259,9 @@ def assert_subject_type(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_lack_of_subject(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
+    selenium: SeleniumDrivers, browser_id: str, num: str
 ) -> None:
-    n = _get_index(selenium, browser_id, num, numerals)
+    n = _get_index(selenium, browser_id, num)
 
     perm = Modals(selenium[browser_id]).details_modal.edit_permissions.acl.permissions[
         n
@@ -283,18 +282,17 @@ def assert_acl_record_editable(
     selenium: SeleniumDrivers,
     browser_id: str,
     num: str,
-    numerals: dict[str, int],
     name: str,
 ) -> None:
-    n = _get_index(selenium, browser_id, num, numerals)
+    n = _get_index(selenium, browser_id, num)
 
     perm = Modals(selenium[browser_id]).details_modal.edit_permissions.acl.permissions[
         n
     ]
     try:
         _ = getattr(perm, f"_{name}_select")
-    except RuntimeError as exc:
-        raise RuntimeError(
+    except NoSuchElementException as exc:
+        raise AssertionError(
             f"Subject {name} is not editable in {num} ACL record"
         ) from exc
 
@@ -310,10 +308,9 @@ def assert_acl_record_not_editable(
     selenium: SeleniumDrivers,
     browser_id: str,
     num: str,
-    numerals: dict[str, int],
     name: str,
 ) -> None:
-    n = _get_index(selenium, browser_id, num, numerals)
+    n = _get_index(selenium, browser_id, num)
 
     perm = Modals(selenium[browser_id]).details_modal.edit_permissions.acl.permissions[
         n
@@ -337,11 +334,10 @@ def assert_set_acl_privileges(
     selenium: SeleniumDrivers,
     browser_id: str,
     num: str,
-    numerals: dict[str, int],
     option_list: str,
 ) -> None:
     driver = selenium[browser_id]
-    n = _get_index(selenium, browser_id, num, numerals)
+    n = _get_index(selenium, browser_id, num)
 
     perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]
     perm.click()
@@ -378,10 +374,10 @@ def assert_set_acl_privileges(
     )
 )
 def assert_set_all_acl_privileges(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
+    selenium: SeleniumDrivers, browser_id: str, num: str
 ) -> None:
     option_list = "[allow, Content, Acl, Metadata, Attributes, Deletion]"
-    assert_set_acl_privileges(selenium, browser_id, num, numerals, option_list)
+    assert_set_acl_privileges(selenium, browser_id, num, option_list)
 
 
 @wt(
@@ -395,12 +391,11 @@ def assert_acl_subject(
     selenium: SeleniumDrivers,
     browser_id: str,
     num: str,
-    numerals: dict[str, int],
     sub_type: str,
     name: str,
 ) -> None:
     driver = selenium[browser_id]
-    n = _get_index(selenium, browser_id, num, numerals)
+    n = _get_index(selenium, browser_id, num)
 
     perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]
     name = name.strip('"')
@@ -425,10 +420,9 @@ def click_on_btn_in_acl_record(
     browser_id: str,
     btn: str,
     num: str,
-    numerals: dict[str, int],
 ) -> None:
     driver = selenium[browser_id]
-    n = _get_index(selenium, browser_id, num, numerals)
+    n = _get_index(selenium, browser_id, num)
 
     btn = btn.strip('"')
     perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]
@@ -472,9 +466,8 @@ def assert_subject_not_in_list_in_acl_record(
     browser_id: str,
     subjects: list[str],
     num: str,
-    numerals: dict[str, int],
 ) -> None:
-    n = _get_index(selenium, browser_id, num, numerals)
+    n = _get_index(selenium, browser_id, num)
 
     perm = Modals(selenium[browser_id]).details_modal.edit_permissions.acl.permissions[
         n
@@ -547,9 +540,9 @@ def assert_not_no_access_tag_on_file(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_unknown_user_id_from_acl_entry(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
+    selenium: SeleniumDrivers, browser_id: str, num: str
 ) -> str:
     driver = selenium[browser_id]
-    n = _get_index(selenium, browser_id, num, numerals)
+    n = _get_index(selenium, browser_id, num)
     perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]
     return perm.subject_id

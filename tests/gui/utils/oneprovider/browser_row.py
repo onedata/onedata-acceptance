@@ -8,16 +8,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
 from tests.gui.utils.generic import click_on_web_elem, transform
 
 
-class BrowserRow(PageObject):
+class BrowserRow(NamedElement):
 
     name = id = Label(".file-name-inner", scroll=False)
     clickable_field = WebElement(".file-name", scroll=False)
@@ -42,7 +43,7 @@ class BrowserRow(PageObject):
             if self.is_selected():
                 return
 
-        raise RuntimeError("Waited too long for being selected")
+        raise TimeoutError("Waited too long for being selected")
 
     def click_and_enter(self) -> None:
         time.sleep(0.1)
@@ -68,6 +69,6 @@ class BrowserRow(PageObject):
     def is_tag_visible(self, name: str) -> bool:
         try:
             getattr(self, f"{transform(name)}_tag")
-        except RuntimeError:
+        except NoSuchElementException:
             return False
         return True

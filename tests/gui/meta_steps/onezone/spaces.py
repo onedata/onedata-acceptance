@@ -8,11 +8,18 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
-from tests.gui.steps.common.common import get_visible_items_list
+from tests.gui.steps.common.common import (
+    close_alert_popup_if_present,
+    get_visible_items_list,
+)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -23,6 +30,9 @@ from tests.gui.steps.onepanel.spaces import (
     wt_clicks_on_btn_in_space_toolbar_in_panel,
     wt_clicks_on_understand_risk_in_cease_support_modal,
     wt_expands_toolbar_icon_for_space_in_onepanel,
+)
+from tests.gui.steps.onezone.documentation import (
+    choose_rest_api_command_from_dropdown,
 )
 from tests.gui.steps.onezone.groups import go_to_group_subpage
 from tests.gui.steps.onezone.harvesters.discovery import (
@@ -56,13 +66,16 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     confirm_create_new_space,
     copy_token,
+    get_space_names_from_sidebar,
     type_space_name_on_input_on_create_new_space_page,
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
-from tests.gui.type_definitions import Clipboard, NamedElement, TmpMemory
-from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.core.base import NamedElement
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -71,7 +84,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Copy" button on Add support page'))
@@ -98,7 +110,6 @@ def copy_support_token_from_add_support_page(
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(
     selenium: SeleniumDrivers,
     user: str,
@@ -155,7 +166,6 @@ def send_support_token_in_oz_using_gui(
     ),
     converters={"space_list": parse_elements_sequence},
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def leave_spaces_in_oz_using_gui(
     selenium: SeleniumDrivers, user: str, space_list: list[str]
 ) -> None:
@@ -166,9 +176,7 @@ def leave_spaces_in_oz_using_gui(
     driver.switch_to.default_content()
 
     if space_list == ["all"]:
-        space_names = [
-            elem.name for elem in OZLoggedIn(driver).data.spaces_headers_list
-        ]
+        space_names = get_space_names_from_sidebar(selenium, user)
     else:
         space_names = space_list
 
@@ -270,6 +278,7 @@ def invite_other_users_to_space_using_gui(
     )
     click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
+    close_alert_popup_if_present(selenium[user], AlertPopup.SUCCESSFULLY_COPIED)
     send_invitation_token_to_browser(
         user,
         item_type,
@@ -416,7 +425,11 @@ def leave_space_in_onezone(
     time.sleep(2)
     try:
         leave_spaces_in_oz_using_gui(selenium, browser_id, [space_name])
-    except RuntimeError:
+    except (
+        ElementNotInteractableException,
+        NoSuchElementException,
+        PageObjectNotFoundError,
+    ):
         pass
 
 
@@ -447,7 +460,6 @@ def leave_user_spaces_in_onezone_using_rest(
         '"{space_name}" space using available harvesters dropdown'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_harvester_to_existing_space(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -484,7 +496,6 @@ def add_harvester_to_existing_space(
         r'"(?P<where_name>.*)" (?P<where>group|space) using available groups dropdown'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_space_or_group(
     browser_id: str,
     group_name: str,
@@ -517,10 +528,10 @@ def add_group_to_space_or_group(
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
 
     click_modal_button(selenium, browser_id, button_in_modal, modal)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
 
 
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def copy_user_space_invite_token(
     browser_id: str, space_name: str, selenium: SeleniumDrivers
 ) -> None:
@@ -539,6 +550,7 @@ def copy_user_space_invite_token(
     )
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
+    close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
     close_modal(selenium, browser_id, modal)
 
 
@@ -552,10 +564,9 @@ def copy_command_from_rest_api_modal(
 ) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).rest_api
-    command = f"{command}\nREST"
 
     modal.api.operations.click()
-    Popups(driver).power_select.choose_item(command)
+    choose_rest_api_command_from_dropdown(selenium, browser_id, command)
     modal.api.copy_button.click()
 
 
@@ -582,7 +593,7 @@ def open_space_in_spaces_list(
             space = [space for space in new_spaces if space.name == space_name][0]
             driver.execute_script(
                 "arguments[0].scrollIntoView();",
-                space.clickable_field,
+                space.web_elem,
             )
             space.click()
             return

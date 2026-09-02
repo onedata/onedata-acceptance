@@ -16,6 +16,7 @@ from itertools import islice
 from time import sleep
 from typing import Literal, Optional, TypeVar, cast, overload
 
+from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
@@ -32,7 +33,7 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.type_definitions import (
     VisibilityCondition,
     WebElementOrCssLocator,
@@ -294,19 +295,27 @@ def wait_for_visible_element_using_getter(
     timeout: float = WAIT_FRONTEND,
 ) -> WebElement:
     # Wait until the getter returns a visible element.
-    # RuntimeError raised by the getter is treated as a transient lookup failure.
 
     def is_element_visible_using_getter(
         driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
     ) -> WebElement | None:
-        try:
-            web_elem = web_elem_getter(driver)
-            return web_elem if visibility_of(web_elem)(driver) else None
-        except RuntimeError:
-            return None
+        web_elem = web_elem_getter(driver)
+        return web_elem if visibility_of(web_elem)(driver) else None
 
     return WebDriverWait(driver, timeout=timeout).until(
         partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
+    )
+
+
+def wait_for_file_to_download(
+    driver: WebDriver,
+    downloaded_file: LocalPath,
+    file_name: str,
+    timeout: float = WAIT_NORMAL_DOWNLOAD,
+) -> None:
+    WebDriverWait(driver, timeout).until(
+        lambda _: downloaded_file.isfile(),
+        message=f"File {file_name} did not finish downloading",
     )
 
 
@@ -344,7 +353,7 @@ def find_web_elem(
     except NoSuchElementException as exc:
         if callable(error_message):
             error_message = error_message()
-        raise RuntimeError(error_message) from exc
+        raise NoSuchElementException(error_message) from exc
     return item
 
 
@@ -363,7 +372,9 @@ def find_web_elem_with_text(
             return item
     if callable(error_message):
         error_message = error_message()
-    raise RuntimeError(f'Css element with "{text}" text not found. {error_message}')
+    raise NoSuchElementException(
+        f'Css element with "{text}" text not found. {error_message}'
+    )
 
 
 def click_on_web_elem(
@@ -390,7 +401,7 @@ def click_on_web_elem(
     else:
         if callable(error_message):
             error_message = error_message()
-        raise RuntimeError(error_message)
+        raise ElementNotInteractableException(error_message)
 
 
 def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> None:
@@ -440,6 +451,45 @@ def redirect_display(new_display: str) -> Iterator[None]:
 
 def transform(val: str, strip_char: Optional[str] = None) -> str:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
+
+
+def assert_each_event_is_gathered(
+    events: list[str],
+    gathered_events: list[str],
+    option: str,
+) -> None:
+    for event in events:
+        assert event in gathered_events, (
+            f'No gathered event with {option} "{event}" was found. '
+            f"Gathered {option}s: {gathered_events}"
+        )
+
+
+def are_events_gathered_together(
+    first_event: str, second_event: str, gathered_events: list[str]
+) -> bool:
+    for gathered_event in gathered_events:
+        if first_event in gathered_event and second_event in gathered_event:
+            return True
+    return False
+
+
+def assert_events_are_gathered_with_event(
+    events: list[str],
+    other_event: str,
+    gathered_events: list[str],
+    option: str,
+) -> None:
+    for event in events:
+        events_are_gathered_together = are_events_gathered_together(
+            event, other_event, gathered_events
+        )
+
+        assert events_are_gathered_together, (
+            f'No gathered event with {option} containing "{event}" '
+            f'and event "{other_event}" was found. '
+            f"Gathered {option}s: {gathered_events}"
+        )
 
 
 def sort_json_keys(obj: JsonValue) -> JsonValue:
@@ -558,6 +608,9 @@ class ListElement(Enum):
     AUTOMATIONS = "automations"
     LAMBDAS = "lambdas"
     WORKFLOWS = "workflows"
+
+
+ListItemMainField = Literal["name", "description"]
 
 
 PageName = Literal[

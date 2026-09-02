@@ -8,19 +8,78 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 
-from tests.gui.conftest import WAIT_FRONTEND
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.common.miscellaneous import press_backspace_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.steps.onezone.automation.automation_basic import collapse_revision_list
+from tests.gui.steps.onezone.automation.automation_basic import (
+    ensure_revision_is_visible,
+)
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.automation_page import AutomationPage
+from tests.gui.utils.onezone.lambdas_subpage import LambdaParameter
 from tests.gui.utils.onezone.workflows_subpage import JSONWorkflowsPanel
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _get_parameter_from_lambda_form(
+    selenium: SeleniumDrivers, browser_id: str, option: str, ordinal: str
+) -> LambdaParameter:
+    form = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
+    parameters = getattr(form, transform(option))
+    ordinal = "1st" if not ordinal else ordinal
+    return getattr(parameters, "bracket_" + ordinal.strip())
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_parameter_button_in_lambda_form(
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
+    form = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
+    getattr(form, transform(option)).add_button()
+
+
+def enter_parameter_name_in_lambda_form(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    ordinal: str,
+    name: str,
+) -> None:
+    driver = selenium[browser_id]
+    parameter = _get_parameter_from_lambda_form(selenium, browser_id, option, ordinal)
+    name_input = parameter.name
+    css_selector = "#" + name_input.web_elem.get_attribute("id")
+    scroll_to_css_selector(driver, css_selector)
+    name_input.value = name
+
+
+def select_parameter_type_in_lambda_form(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    ordinal: str,
+    parameter_type: str,
+) -> None:
+    driver = selenium[browser_id]
+    parameter = _get_parameter_from_lambda_form(selenium, browser_id, option, ordinal)
+    select_parameter_type(parameter, driver, parameter_type)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_parameter_type(
+    parameter: LambdaParameter, driver: WebDriver, parameter_type: str
+) -> None:
+    parameter.type_dropdown.click()
+    Popups(driver).power_select.choose_item(parameter_type)
 
 
 @wt(
@@ -375,13 +434,11 @@ def add_lambda_revision_to_workflow(
 ) -> None:
     subpage = OZLoggedIn(selenium[browser_id]).automation.lambdas_page
     lambda_object = subpage.lambdas_list[lambda_name]
-    revision = lambda_object.revision_list[ordinal[:-2]]
+    revision_id = ordinal[:-2]
 
-    try:
-        collapse_revision_list(lambda_object)
-    except (RuntimeError, AttributeError):
-        pass
+    ensure_revision_is_visible(lambda_object, revision_id)
 
+    revision = lambda_object.revision_list[revision_id]
     revision.add_to_workflow.click()
 
 

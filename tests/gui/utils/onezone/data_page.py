@@ -11,7 +11,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Icon,
@@ -23,7 +23,9 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
+from tests.utils.utils import element_has_class
 
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -31,7 +33,7 @@ from .space_configuration_subpage import SpaceConfigurationPage
 from .space_marketplace import SpaceMarketplacePage
 
 
-class Space(Element):
+class Space(NamedElement):
     name = id = Label(".item-name", scroll=False)
     support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
     supporting_providers_number = Label(
@@ -73,10 +75,10 @@ class Space(Element):
         return "disabled" not in element.web_elem.get_attribute("class")
 
     def is_active(self) -> bool:
-        return "active" in self.web_elem.get_attribute("class")
+        return element_has_class(self.web_elem, "active")
 
 
-class SpaceHeader(Element):
+class SpaceHeader(NamedElement):
     name = id = Label(".item-name", scroll=False)
     support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
     supporting_providers_number = Label(
@@ -92,7 +94,7 @@ class SpaceHeader(Element):
         self.menu_button.click()
 
 
-class Provider(Element):
+class Provider(NamedElement):
     id = name = Label(".one-label")
     support = Label(".outer-text")
     menu_button = Button(".provider-menu-toggle")
@@ -124,7 +126,8 @@ class SpaceMarketplaceTile(PageObject):
     show = Button(".more-link")
 
 
-class ProvidersMap(Element):
+class ProvidersMap(NamedElement):
+    name = id = Label(".one-label")
     providers = WebElementsSequence(".one-atlas-point")
 
     def click_provider(self, provider_name: str, driver: WebDriver) -> None:
@@ -135,7 +138,9 @@ class ProvidersMap(Element):
                 provider.click()
                 return
 
-        raise RuntimeError(f"Provider {provider_name} was not found on the map")
+        raise PageObjectNotFoundError(
+            f"Provider {provider_name} was not found on the map"
+        )
 
     def hover_and_check_provider(self, provider_name: str, driver: WebDriver) -> None:
         for provider in self.providers:
@@ -144,7 +149,9 @@ class ProvidersMap(Element):
             if name == provider_name:
                 return
 
-        raise RuntimeError(f"Provider {provider_name} was not found on the map")
+        raise PageObjectNotFoundError(
+            f"Provider {provider_name} was not found on the map"
+        )
 
     def get_provider_horizontal_position(
         self, provider_name: str, driver: WebDriver
@@ -161,7 +168,9 @@ class ProvidersMap(Element):
 
                 return float(position)
 
-        raise RuntimeError(f"Provider {provider_name} was not found on the map")
+        raise PageObjectNotFoundError(
+            f"Provider {provider_name} was not found on the map"
+        )
 
 
 class SpaceOverviewPage(PageObject):
@@ -181,7 +190,7 @@ class WelcomePage(PageObject):
     join_group = NamedButton(".info .ember-view", text="join a group")
 
 
-class HarvesterRow(Element):
+class HarvesterRow(NamedElement):
     name = id = Label(".item-name")
     harvester = WebElement(".item-name")
     harvester_menu_button = WebElement(".collapsible-toolbar-toggle")
@@ -301,7 +310,7 @@ class DataPage(SidebarPanelPage):
                 space.click()
                 if space.name == name:
                     return
-        raise RuntimeError(f"{name} space not found")
+        raise PageObjectNotFoundError(f"{name} space not found")
 
     def get_visible_spaces_list(self) -> list[SpaceHeader]:
         return [space for space in self.spaces_headers_list if space.name != ""]

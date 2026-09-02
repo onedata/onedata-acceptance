@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OPLoggedIn
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -34,7 +34,7 @@ def is_present_on_groups_list(
     driver = selenium[browser_id]
     if not _is_group_present_in_sidebar(driver, name):
         driver.refresh()
-        raise RuntimeError(f'no group named "{name}" found in groups sidebar')
+        raise AssertionError(f'no group named "{name}" found in groups sidebar')
 
 
 @wt(
@@ -88,6 +88,6 @@ def assert_item_appeared_in_groups_perm_table(
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()
-        raise RuntimeError(
+        raise AssertionError(
             f'no {caption} named "{name}" found in groups permission table'
         )

@@ -8,11 +8,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Optional, Protocol, cast
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneprovider.automation import InitialValueStore
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -51,7 +53,7 @@ def check_if_select_files_modal_disappeared(
         raise AssertionError(
             f"Files: {files} as initial value for workflow was not selected"
         )
-    except RuntimeError:
+    except NoSuchElementException:
         pass
 
 
@@ -96,6 +98,17 @@ def open_select_initial_groups_modal(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
+def select_groups_from_select_groups_modal(
+    driver: WebDriver, group_list: str | list[str]
+) -> None:
+    if isinstance(group_list, str):
+        parsed_list = parse_seq(group_list)
+    else:
+        parsed_list = group_list
+    Modals(driver).select_groups.select(parsed_list)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_datasets_modal(driver: WebDriver) -> None:
     option = "Select datasets"
     OPLoggedIn(driver).automation_page.input_link()
@@ -135,7 +148,7 @@ def click_input_link_in_automation_page(
         try:
             # for input store type Single Value this Button does not work
             OPLoggedIn(driver).automation_page.files_input_link.click()
-        except RuntimeError:
+        except NoSuchElementException:
             # for adding another files to input store (type List) this Button
             # does not work because it finds two links (one for changing file,
             # another for adding)

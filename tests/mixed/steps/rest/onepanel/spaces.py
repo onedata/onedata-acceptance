@@ -19,7 +19,7 @@ from onepanel_client import (
     StoragesApi,
 )
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
 from tests.mixed.utils.common import login_to_oz, login_to_panel
@@ -111,7 +111,7 @@ def support_space_in_op_panel_using_rest(
             spaces_api.support_space(space_support_rq)
             break
     else:
-        raise RuntimeError(f'No storage named "{storage_name}"')
+        raise ValueError(f'No storage named "{storage_name}"')
 
 
 def configure_sync_parameters_for_space_in_op_panel_rest(

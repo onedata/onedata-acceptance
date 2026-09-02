@@ -35,9 +35,6 @@ Feature: Basic management of harvester memberships privileges with groups in One
     Then user of browser2 adds "group1" group to "harvester18" harvester using available groups dropdown
     And user of browser2 sees "group1" group in "harvester18" harvester members groups list
 
-    And user of browser1 removes "harvester18" harvester in Onezone page
-
-
   Scenario: User successfully removes group from harvester with remove group privilege
     When user of browser1 creates group "group1"
 
@@ -64,5 +61,4 @@ Feature: Basic management of harvester memberships privileges with groups in One
     And user of browser2 removes "group1" group from "harvester19" harvester members
     And user of browser2 does not see "group1" group in "harvester19" harvester members groups list
 
-    And user of browser1 removes "harvester19" harvester in Onezone page
     And user of browser1 removes group "group1"

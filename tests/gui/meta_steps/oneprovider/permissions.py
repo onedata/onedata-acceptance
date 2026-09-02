@@ -7,9 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Optional
 
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import ElementNotInteractableException
 
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
     assert_browser_in_tab_in_op,
@@ -24,6 +23,7 @@ from tests.gui.steps.modals.modal import (
     check_warning_modal,
     click_modal_button,
     click_panel_button,
+    close_first_modal_if_present,
 )
 from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
 from tests.gui.steps.oneprovider.data_tab import (
@@ -63,7 +63,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 def open_permission_modal(
@@ -85,7 +84,7 @@ def open_permission_modal(
 
     try:
         select_permission_type(selenium, browser_id, permission_type)
-    except RuntimeError as err:
+    except ElementNotInteractableException as err:
         if permission_type == "posix":
             assert_posix_tab_in_panel(selenium, browser_id, modal_name)
         else:
@@ -114,7 +113,6 @@ def _assert_posix_permissions(
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -123,27 +121,16 @@ def assert_posix_permissions_in_op_gui(
     perm: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    modal_name = "Details modal"
-    close_button = "X"
-    try:
-        click_modal_button(selenium, browser_id, close_button, modal_name)
-        _assert_posix_permissions(
-            selenium,
-            browser_id,
-            space,
-            path,
-            perm,
-            tmp_memory,
-        )
-    except (AttributeError, StaleElementReferenceException, RuntimeError):
-        _assert_posix_permissions(
-            selenium,
-            browser_id,
-            space,
-            path,
-            perm,
-            tmp_memory,
-        )
+    close_first_modal_if_present(selenium[browser_id])
+
+    _assert_posix_permissions(
+        selenium,
+        browser_id,
+        space,
+        path,
+        perm,
+        tmp_memory,
+    )
 
 
 @wt(
@@ -364,7 +351,6 @@ def assert_ace_in_op_gui(
     space: str,
     path: str,
     tmp_memory: TmpMemory,
-    numerals: dict[str, int],
 ) -> None:
     modal_name = "Details modal"
     close_button = "X"
@@ -377,8 +363,8 @@ def assert_ace_in_op_gui(
         "acl",
     )
     if acl_type != "unknown":
-        assert_acl_subject(selenium, browser_id, num, numerals, acl_type, name)
-        assert_set_acl_privileges(selenium, browser_id, num, numerals, privileges)
+        assert_acl_subject(selenium, browser_id, num, acl_type, name)
+        assert_set_acl_privileges(selenium, browser_id, num, privileges)
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
@@ -397,7 +383,6 @@ def assert_user_id_in_ace_in_op_gui(
     space: str,
     path: str,
     tmp_memory: TmpMemory,
-    numerals: dict[str, int],
     users: Users,
 ) -> None:
     modal_name = "Details modal"
@@ -410,7 +395,7 @@ def assert_user_id_in_ace_in_op_gui(
         tmp_memory,
         "acl",
     )
-    visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num, numerals)
+    visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num)
     user_id = users[name].user_id
     error_message = (
         f"id in acl entry: {visible_id} differs from actual user id: {user_id}"

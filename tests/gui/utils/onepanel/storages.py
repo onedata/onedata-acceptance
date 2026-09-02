@@ -24,6 +24,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.onezone.common import InputBox
 from tests.utils.utils import repeat_failed
 
@@ -190,7 +191,7 @@ class StorageContentPage(PageObject):
                 assert record.is_expanded(), error_message
                 break
         else:
-            raise RuntimeError(
+            raise PageObjectNotFoundError(
                 f"Cannot click on {storage_name} Modify button "
                 "because storage is not visible on page."
             )

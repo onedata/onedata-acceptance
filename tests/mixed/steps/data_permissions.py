@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 from collections.abc import Mapping
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.permissions import (
     assert_ace_in_op_gui,
     assert_posix_permissions_in_op_gui,
@@ -128,7 +128,6 @@ def assert_ace_in_op(
     privileges: str,
     item_type: str,
     name: str,
-    numerals: dict[str, int],
     tmp_memory: TmpMemory,
 ) -> None:
     full_path = f"{space}/{path}"
@@ -145,7 +144,6 @@ def assert_ace_in_op(
             space,
             path,
             tmp_memory,
-            numerals,
         )
     elif client_lower == "rest":
         privileges = _remove_parent_acl_from_string(privileges)
@@ -154,7 +152,6 @@ def assert_ace_in_op(
             users,
             host,
             hosts,
-            numerals,
             full_path,
             num,
             privileges,
@@ -173,7 +170,6 @@ def assert_ace_in_op(
             privileges,
             item_type,
             name,
-            numerals,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found")

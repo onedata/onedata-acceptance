@@ -189,9 +189,6 @@ Feature: Management of privileges in onezone GUI
           Space management:
             granted: False
 
-    And user of browser1 removes "harvester3" harvester in Onezone page
-
-
   Scenario: User sees that user added to harvester has default privileges
     Given user admin has no harvesters
     And using REST, user admin creates "harvester2" harvester in "onezone" Onezone service
@@ -215,9 +212,6 @@ Feature: Management of privileges in onezone GUI
             granted: False
           Space management:
             granted: False
-
-    And user of browser1 removes "harvester2" harvester in Onezone page
-
 
   Scenario: User sees that group added to cluster has default privileges
     Given user of browser1 sees no "group3" group in "oneprovider-1" cluster members

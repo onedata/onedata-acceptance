@@ -15,7 +15,11 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
+from tests.gui.constants import (
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_DOWNLOAD,
+)
 from tests.gui.type_definitions import FilePath, TmpMemory
 from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import (
@@ -36,9 +40,9 @@ def _wait_for_op_session_to_start(
         try:
             found = parse_url(d.current_url).group("where")
         except AttributeError as exc:
-            raise RuntimeError("no access part found in url") from exc
+            raise AssertionError("no access part found in url") from exc
         if "opw" != found.lower():
-            raise RuntimeError(
+            raise AssertionError(
                 f"expected opw as access part in url instead got: {found}"
             )
 
@@ -147,7 +151,7 @@ def wait_for_item_to_appear(item: WebElement) -> None:
             time.sleep(0.1)
         except StaleElementReferenceException:
             time.sleep(0.1)
-    raise RuntimeError(f"item {item} did not appear")
+    raise TimeoutError(f"item {item} did not appear")
 
 
 def wait_for_item_to_disappear(

@@ -17,7 +17,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.generic import transform
@@ -35,7 +35,7 @@ def _enter_text(input_box: SeleniumWebElement, text: str) -> None:
     input_box.clear()
     input_box.send_keys(text)
     if input_box.get_attribute("value") != text and input_box.text != text:
-        raise RuntimeError(f'entering "{text}" to input box failed')
+        raise AssertionError(f'entering "{text}" to input box failed')
 
 
 @wt(parsers.parse('user of {browser_id} types "{text}" on keyboard'))
@@ -73,6 +73,7 @@ def press_backspace_on_active_element(
     driver.switch_to.active_element.send_keys(Keys.BACKSPACE)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_title_contains(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
@@ -85,7 +86,6 @@ def assert_title_contains(
         'user of {browser_id} should see that the page title contains "{text}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_title_contains(
     selenium: SeleniumDrivers, browser_id: str, text: str
 ) -> None:
@@ -163,11 +163,15 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
 
 @repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
 def switch_to_iframe(
-    selenium: SeleniumDrivers, browser_id: str, _selector: Optional[str] = None
+    selenium: SeleniumDrivers, browser_id: str, selector: Optional[str] = None
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    iframe = driver.find_element(By.TAG_NAME, "iframe")
+
+    if selector:
+        iframe = driver.find_element(By.CSS_SELECTOR, selector)
+    else:
+        iframe = driver.find_element(By.TAG_NAME, "iframe")
     driver.switch_to.frame(iframe)
 
 

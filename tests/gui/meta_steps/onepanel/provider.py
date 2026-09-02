@@ -11,7 +11,7 @@ import time
 
 import yaml
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -29,6 +29,7 @@ from tests.gui.steps.onepanel.deployment import (
 )
 from tests.gui.steps.onepanel.provider import (
     deactivate_request_subdomain_toggle,
+    get_provider_name_from_provider_panel,
     wt_assert_value_of_provider_attribute,
     wt_click_on_discard_btn_in_domain_change_modal,
     wt_type_val_to_in_box_in_provider_details_form,
@@ -39,7 +40,7 @@ from tests.gui.steps.oneprovider.common import (
 )
 from tests.gui.steps.rest.provider import (
     add_provider_service_node,
-    get_provider_service_nodes_statuses,
+    assert_provider_service_nodes_statuses,
     start_stop_provider_service_node,
 )
 from tests.gui.type_definitions import TmpMemory
@@ -52,7 +53,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -65,9 +65,8 @@ def succeed_to_save_changes_in_modify_provider_detail_form(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    save_btn = wait_for_visible_element_using_getter(
-        driver, lambda driver: Onepanel(driver).content.provider.form.save
-    )
+    save_btn_getter = lambda driver: Onepanel(driver).content.provider.form.save
+    save_btn = wait_for_visible_element_using_getter(driver, save_btn_getter)
     save_btn.click()
     wait_for_item_to_disappear(save_btn.web_elem, driver)
     notify_visible_with_text(
@@ -222,7 +221,6 @@ def register_provider_in_op_using_gui(
         r"(?P<by>by user of|by) (?P<browser_id>.+?) in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -237,9 +235,7 @@ def change_provider_name_if_name_is_different_than_given(
         selenium, [browser_id], sidebar, sub_item, record
     )
 
-    current_provider = Onepanel(
-        selenium[browser_id]
-    ).content.provider.details.provider_name
+    current_provider = get_provider_name_from_provider_panel(selenium, browser_id)
     domain = hosts[provider]["hostname"]
     provider = hosts[provider]["name"]
     if current_provider != provider:
@@ -259,7 +255,6 @@ def change_provider_name_if_name_is_different_than_given(
         'is of status "{status}"'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_cluster_ones3_node_status_rest(
     hosts: Hosts,
     provider: str,
@@ -267,12 +262,14 @@ def assert_provider_cluster_ones3_node_status_rest(
     status: str,
 ) -> None:
     host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
-    res = get_provider_service_nodes_statuses(
-        hosts, provider, onepanel_credentials, OnedataService.ONES3
+    expected_statuses = {host: status}
+    assert_provider_service_nodes_statuses(
+        hosts,
+        provider,
+        onepanel_credentials,
+        OnedataService.ONES3,
+        expected_statuses,
     )
-    exp_res = {host: status}
-    error_message = f"expected {exp_res}, but got {res}"
-    assert exp_res == res, error_message
 
 
 @wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))

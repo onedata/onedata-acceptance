@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     search_for_lane_status,

@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 
 
 class MenuItem(PageObject):
@@ -34,7 +35,7 @@ class OptionsSelector(PageObject):
                     self.menu[item.name].click()
                     return
             self.scroll_down()
-        raise RuntimeError(f"item {name} not found in popup")
+        raise PageObjectNotFoundError(f"item {name} not found in popup")
 
     def hover_over(self) -> None:
         ActionChains(self.driver).move_to_element(self.menu[0].web_elem).perform()

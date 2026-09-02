@@ -10,6 +10,7 @@ import re
 import time
 from typing import Optional, cast
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import (
@@ -17,7 +18,7 @@ from selenium.webdriver.support.expected_conditions import (
 )
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     try_click_without_throwing_error,
     wait_for_error_modal_to_disappear,
@@ -275,13 +276,13 @@ def wt_await_finish_of_cluster_deployment(
     while time.time() < limit:
         try:
             Modals(driver).cluster_deployment
-        except RuntimeError:
+        except NoSuchElementException:
             break
         else:
             time.sleep(1)
             continue
     else:
-        raise RuntimeError(f"cluster deployment exceeded time limit: {timeout}")
+        raise TimeoutError(f"cluster deployment exceeded time limit: {timeout}")
 
 
 @wt(

@@ -8,9 +8,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import xml.etree.ElementTree as ET
 from typing import Optional
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import PublicShareView as public_share
 from tests.type_definitions import SeleniumDrivers
@@ -117,7 +118,7 @@ def check_ace_editor_appeared(selenium: SeleniumDrivers, browser_id: str) -> Non
     driver = selenium[browser_id]
     try:
         _ = get_xml_data_openaire(driver)
-    except RuntimeError:
+    except NoSuchElementException:
         switch_to_iframe(selenium, browser_id)
         _ = get_xml_data_openaire(driver)
 

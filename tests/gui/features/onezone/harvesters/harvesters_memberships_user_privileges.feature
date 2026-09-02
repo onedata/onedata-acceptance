@@ -26,9 +26,6 @@ Feature: Basic management of harvester memberships privileges with users in Onez
     # join to harvester
     And user of browser2 joins to harvester in Onezone page
     Then user of browser2 sees that "harvester10" has appeared on the harvesters list in the sidebar
-    And user of browser1 removes "harvester10" harvester in Onezone page
-
-
   Scenario: User successfully generates invitation token for user with add user privilege
     When user of browser1 creates "harvester16" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester16" harvester to user of browser2
@@ -52,9 +49,6 @@ Feature: Basic management of harvester memberships privileges with users in Onez
     # generate invitation token for user
     Then user of browser2 clicks on "Invite user using token" button in users list menu in "harvester16" harvester members view
     And user of browser2 sees non-empty token in token area
-
-    And user of browser1 removes "harvester16" harvester in Onezone page
-
 
   Scenario: User successfully removes user from harvester with remove user privilege
     When user of browser1 creates "harvester17" harvester in Onezone page

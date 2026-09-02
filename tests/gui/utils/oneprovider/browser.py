@@ -10,12 +10,12 @@ from abc import ABC
 from collections.abc import Iterable
 from typing import ClassVar, Optional
 
-from selenium.common.exceptions import JavascriptException
+from selenium.common.exceptions import JavascriptException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -24,6 +24,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.generic import ListItemMainField
 from tests.utils.utils import repeat_failed
 
 from ..core import scroll_to_css_selector
@@ -42,7 +43,7 @@ class Browser(ABC, PageObject):
     browser_msg_header = Label(".content-info-content-container h1")
     breadcrumbs = Breadcrumbs(".fb-breadcrumbs")
     refresh_button = Button(".toolbar-buttons .file-action-refresh")
-    jump_input = Input(".jump-input")
+    jump_input = Input(".jump-input", scroll=False)
     configure_columns = Button(".columns-configuration-button")
     empty_dir_msg = Label(".empty-dir-text")
     error_msg = Label(".error-dir-text")
@@ -67,14 +68,16 @@ class Browser(ABC, PageObject):
     @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_file_rows(
-        elements_list: Iterable[BrowserRow], main_field: str = "name"
+        elements_list: Iterable[BrowserRow],
+        main_field: ListItemMainField = "name",
     ) -> list[BrowserRow]:
         return [row for row in elements_list if getattr(row, main_field)]
 
     @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_field_value_from_visible_rows(
-        elements_list: Iterable[BrowserRow], main_field: str = "name"
+        elements_list: Iterable[BrowserRow],
+        main_field: ListItemMainField = "name",
     ) -> list[str]:
         return [
             getattr(row, main_field)
@@ -135,7 +138,7 @@ class Browser(ABC, PageObject):
     def is_empty(self) -> bool:
         try:
             self._empty_dir_icon
-        except RuntimeError:
+        except NoSuchElementException:
             return False
         return True
 

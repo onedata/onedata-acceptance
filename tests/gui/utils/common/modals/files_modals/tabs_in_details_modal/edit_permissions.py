@@ -73,7 +73,7 @@ class AclPermissionGroup(PageObject):
     def get_elem_id(self) -> str:
         elem_id = self.web_elem.get_attribute("id")
         if elem_id is None:
-            raise RuntimeError(f"ACL permission group {self.name} has no id")
+            raise AttributeError(f"ACL permission group {self.name} has no id")
         return elem_id
 
 

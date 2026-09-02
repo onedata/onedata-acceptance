@@ -33,7 +33,7 @@ def start_session(
     # let Xvfb start
     time.sleep(0.5)
     if proc.poll() is not None:
-        raise RuntimeError("Xvfb did not start")
+        raise ChildProcessError("Xvfb did not start")
     return proc
 
 

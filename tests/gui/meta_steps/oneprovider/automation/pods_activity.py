@@ -6,36 +6,25 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
-
 import yaml
-from selenium.common.exceptions import StaleElementReferenceException
-from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.modals.modal import click_modal_button
+from tests.gui.steps.modals.modal import click_modal_button, get_modal
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_on_link_in_task_box,
     click_on_task_in_lane,
 )
-from tests.gui.utils import Modals
-from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
-    FunctionPodsActivity,
+from tests.gui.steps.oneprovider.automation.pods_activity import (
+    change_tab_in_pods_activity_modal,
+    click_on_first_pod_in_pods_activity_modal,
+    wait_for_events_in_pods_activity_modal,
+    wait_until_all_pods_are_terminated_in_pods_activity_modal,
+)
+from tests.gui.utils.common.modals.workflows_modals.pods_activity import (
+    PodsActivity,
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
-
-
-def change_tab_in_function_pods_activity_modal(
-    modal: FunctionPodsActivity, tab_name: str
-) -> None:
-    tab_number = 0 if tab_name == "Current" else 1
-
-    time.sleep(0.25)
-    modal.tabs[tab_number].click()
-    time.sleep(0.25)
 
 
 @wt(
@@ -44,19 +33,12 @@ def change_tab_in_function_pods_activity_modal(
         'finish execution in modal "Function pods activity"'
     )
 )
-@repeat_failed(
-    interval=1,
-    timeout=180,
-    exceptions=(AssertionError, StaleElementReferenceException),
-)
 def wait_for_ongoing_pods_to_be_terminated(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(selenium[browser_id]).function_pods_activity
-    change_tab_in_function_pods_activity_modal(modal, "Current")
-
-    assert len(modal.pods_list) == 0, "Pods has not been terminated"
+    driver = selenium[browser_id]
+    wait_until_all_pods_are_terminated_in_pods_activity_modal(driver)
 
 
 @wt(
@@ -69,8 +51,8 @@ def assert_lambda_name_in_tab_name(
     selenium: SeleniumDrivers, browser_id: str, tab: str, lambda_name: str
 ) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(selenium[browser_id]).function_pods_activity
-    change_tab_in_function_pods_activity_modal(modal, tab)
+    modal = get_modal(selenium[browser_id], "Function pods activity", PodsActivity)
+    change_tab_in_pods_activity_modal(modal, tab)
     pod_name = modal.pods_list[0].pod_name
     error_message = (
         f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
@@ -84,12 +66,12 @@ def assert_lambda_name_in_tab_name(
         'in modal "Function pods activity"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(selenium[browser_id]).function_pods_activity
-    change_tab_in_function_pods_activity_modal(modal, tab)
-    modal.pods_list[0].click()
+    driver = selenium[browser_id]
+    modal = get_modal(driver, "Function pods activity", PodsActivity)
+    change_tab_in_pods_activity_modal(modal, tab)
+    click_on_first_pod_in_pods_activity_modal(modal)
 
 
 @wt(
@@ -98,24 +80,12 @@ def click_on_first_pod(selenium: SeleniumDrivers, browser_id: str, tab: str) -> 
         'modal "Function pods activity"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: str) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(selenium[browser_id]).function_pods_activity
-    change_tab_in_function_pods_activity_modal(modal, "All")
-
-    modal.pods_list[0].click()
-
-
-def gather_events_list(
-    modal: FunctionPodsActivity, driver: WebDriver, option: str
-) -> list[str]:
-    gathered_list = []
-    number = modal.get_number_of_data_rows(driver)
-    for i in reversed(range(int(number) + 1)):
-        elem = modal.get_elem_by_data_row_id(i, driver, option)
-        gathered_list.append(elem)
-    return gathered_list
+    driver = selenium[browser_id]
+    modal = get_modal(driver, "Function pods activity", PodsActivity)
+    change_tab_in_pods_activity_modal(modal, "All")
+    click_on_first_pod_in_pods_activity_modal(modal)
 
 
 @wt(
@@ -125,23 +95,16 @@ def gather_events_list(
         r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_in_pods_monitor(
     selenium: SeleniumDrivers, browser_id: str, events: str, option: str
 ) -> None:
 
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(driver).function_pods_activity
     events_list = [
         event for event in yaml.load(events, yaml.Loader) if "+" not in event
     ]
-    gathered_list = gather_events_list(modal, driver, option)
-
-    for event in events_list:
-        assert (
-            event in gathered_list
-        ), f"{option}: {event} has not been found. Events found: {gathered_list}"
+    wait_for_events_in_pods_activity_modal(driver, events_list, option)
 
 
 @wt(
@@ -152,7 +115,6 @@ def assert_events_in_pods_monitor(
         r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_containing_lambda_name(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -162,7 +124,6 @@ def assert_events_containing_lambda_name(
 ) -> None:
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    modal = Modals(driver).function_pods_activity
     events_list = [
         event.replace('"', "").split(" + ")[1]
         for event in yaml.load(events, yaml.Loader)
@@ -170,19 +131,7 @@ def assert_events_containing_lambda_name(
     ]
     if not events_list:
         events_list = yaml.load(events, yaml.Loader)
-    gathered_list = gather_events_list(modal, driver, option)
-
-    for event in events_list:
-        matching = []
-        for elem in gathered_list:
-            if event in elem and lambda_name in elem:
-                matching.append(elem)
-                break
-
-        error_message = (
-            f"{option}: {event} that contains {lambda_name} has not been found"
-        )
-        assert matching, error_message
+    wait_for_events_in_pods_activity_modal(driver, events_list, option, lambda_name)
 
 
 def get_lambda_name(events: str) -> str:
@@ -246,7 +195,6 @@ def checks_events_for_task(
         '"{lane}" lane contains lambda name "{lambda_name}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_pod_name_for_task(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -260,7 +208,7 @@ def assert_pod_name_for_task(
     close = "closes"
     link = "Pods activity"
     button = "X"
-    modal = "Function pods activity"
+    modal = "Pods activity"
 
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
     click_on_link_in_task_box(selenium, browser_id, lane, task, link, ordinal)
@@ -274,7 +222,9 @@ def check_number_of_events(
 ) -> None:
     driver = selenium[browser_id]
     actual_num = int(
-        Modals(driver).function_pods_activity.get_number_of_data_rows(driver)
+        get_modal(
+            driver, "Function pods activity", PodsActivity
+        ).get_number_of_data_rows(driver)
     )
     expected_num = int(exp_num)
     error_message = (

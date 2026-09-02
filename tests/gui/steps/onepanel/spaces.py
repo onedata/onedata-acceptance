@@ -10,10 +10,19 @@ import re
 import time
 from subprocess import CalledProcessError
 
+import pytest
 import yaml
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 
-from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import (
+    SELENIUM_IMPLICIT_WAIT,
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+)
 from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     wait_for_checking_toggle,
@@ -25,15 +34,24 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import (
     implicit_wait,
     parse_elements_sequence,
     transform,
 )
+from tests.gui.utils.onepanel.spaces import SpaceRecord
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_spaces_list_from_spaces_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> PageObjectsSequence[SpaceRecord]:
+    return Onepanel(selenium[browser_id]).content.spaces.spaces
 
 
 @wt(
@@ -229,7 +247,7 @@ def wt_type_text_to_input_box_in_storage_import_configuration(
     elif hasattr(form.storage_import_configuration, input_name):
         setattr(form.storage_import_configuration, input_name, text)
     else:
-        raise RuntimeError(
+        raise ValueError(
             f"failed typing text into {input_box} input field in support space form "
         )
 
@@ -390,7 +408,7 @@ def wt_clicks_on_btn_in_space_toolbar_in_panel(
     if toolbar.is_displayed():
         toolbar.options[option].click()
     else:
-        raise RuntimeError("no space toolbar found in Onepanel")
+        raise AssertionError("no space toolbar found in Onepanel")
 
 
 @wt(
@@ -584,11 +602,8 @@ def cannot_click_on_navigation_tab_in_space(
 ) -> None:
     nav = Onepanel(selenium[browser_id]).content.spaces.space.navigation
     tab = transform(tab_name, strip_char='"')
-    try:
+    with pytest.raises((ElementNotInteractableException, NoSuchElementException)):
         getattr(nav, tab).click()
-    except RuntimeError:
-        return
-    raise RuntimeError(f"can click on {tab_name}")
 
 
 @wt(

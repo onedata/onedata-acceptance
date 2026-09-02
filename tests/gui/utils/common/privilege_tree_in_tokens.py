@@ -6,11 +6,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.type_definitions import (
     PrivilegeGranted,
     PrivilegeGroupConfig,
@@ -101,7 +104,7 @@ class PrivilegeGroup(PageObject):
                 driver.find_element(
                     By.CSS_SELECTOR, ".tree-circle .oneicon-square-minus-empty"
                 ).click()
-            except RuntimeError:
+            except NoSuchElementException:
                 self.expander.click()
 
     def minimalize(self) -> None:

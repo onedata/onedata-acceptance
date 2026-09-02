@@ -6,10 +6,8 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
-
 from tests import ELASTICSEARCH_PORT
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils import Modals, OZLoggedIn, Popups
@@ -87,7 +85,7 @@ def click_on_option_in_harvester_menu(
     selenium: SeleniumDrivers, browser_id: str, option: str, name: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).discovery
-    page.harvesters_list[name]()
+    page.harvesters_list[name].click()
     page.harvesters_list[name].menu_button()
     page.menu[option]()
 
@@ -207,21 +205,14 @@ def click_button_in_harvester_spaces_page(
         " in add {element} modal"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)
 def choose_element_from_dropdown_in_add_element_modal(
     selenium: SeleniumDrivers, browser_id: str, element_name: str
 ) -> None:
     driver = selenium[browser_id]
-    modal_name = "add_one_of_elements"
-    for _ in range(10):
-        try:
-            add_one_of_elements_modal = getattr(Modals(driver), modal_name)
-            add_one_of_elements_modal.expand_dropdown()
-            Popups(driver).dropdown.options[element_name].click()
-        except RuntimeError:
-            time.sleep(0.5)
-            continue
-        break
+    add_one_of_elements_modal = Modals(driver).add_one_of_elements
+    add_one_of_elements_modal.expand_dropdown()
+    Popups(driver).dropdown.options[element_name].click()
 
 
 @wt(

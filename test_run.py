@@ -249,13 +249,6 @@ def main():
         dest='local_charts_path')
 
     parser.add_argument(
-        '--count',
-        action='store',
-        default='1',
-        help='Repeat suite N times on the same deployment',
-        dest='count')
-
-    parser.add_argument(
         '--timeout',
         action='store',
         help='Onenv wait timeout',
@@ -284,7 +277,7 @@ if {shed_privileges}:
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
 
-command = ['python3', '-m', 'pytest', '-rs', '-s', '-v', '--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {repeats} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
+command = ['python3', '-m', 'pytest', '-rs', '-s', '-v', '--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
 
 ret = subprocess.call(command)
 sys.exit(ret)
@@ -337,7 +330,6 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             no_clean=['--no-clean'] if not args.clean else [],
             env_file=['--env-file={}'.format(args.env_file)] if args.env_file else [],
             timeout=['--timeout={}'.format(args.timeout)] if args.timeout else [],
-            repeats=['--count={}'.format(args.count)] if int(args.count) > 1 else [],
             images_opt=images_opt if images_opt else [],
             home=os.path.expanduser('~')
         )

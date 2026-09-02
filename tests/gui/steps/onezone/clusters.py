@@ -7,13 +7,15 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import cast
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import (
+    CONFLICT_NAME_SEPARATOR,
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+)
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups, PrivacyPolicy, TermsOfUse
-from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.clusters_page import ClustersPage, MenuItem
@@ -64,7 +66,9 @@ def assert_record_in_clusters_menu(
     assert record in records, f"{record} not in clusters"
 
 
-def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence:
+def _get_clusters(
+    selenium: SeleniumDrivers, browser_id: str
+) -> PageObjectsSequence[MenuItem]:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ClustersPage)
@@ -76,7 +80,7 @@ def _get_cluster_record(
 ) -> MenuItem:
     menu = _get_clusters(selenium, browser_id)
     record = hosts[record_name]["name"]
-    return cast(MenuItem, menu[record])
+    return menu[record]
 
 
 @wt(parsers.parse('user of {browser_id} does not see "{record}" in clusters menu'))
@@ -236,7 +240,7 @@ def _get_old_or_new_cluster_record(
 
 def get_old_or_new_cluster_record_from_list(
     provider: str,
-    prov_list: PageObjectsSequence,
+    prov_list: PageObjectsSequence[MenuItem],
     age: str,
     tmp_memory: TmpMemory,
     hosts: Hosts,
@@ -244,11 +248,7 @@ def get_old_or_new_cluster_record_from_list(
     record_name = hosts[provider]["name"]
     old_id = tmp_memory[provider]["cluster id"]
 
-    selected = [
-        menu_item
-        for row in prov_list
-        if (menu_item := cast(MenuItem, row)).name == record_name
-    ]
+    selected = [row for row in prov_list if row.name == record_name]
     separator = CONFLICT_NAME_SEPARATOR
 
     # conflicted clusters have 4-letter cluster id digest added to label
@@ -323,7 +323,6 @@ def click_on_link_in_cookies_popup(
 ) -> None:
     driver = selenium[browser_id]
     kind_of_agreement = transform(kind_of_agreement) + "_link"
-    OZLoggedIn(driver).set_current_page(ClustersPage)
     getattr(Popups(driver).cookies, kind_of_agreement).click()
 
 
@@ -366,7 +365,6 @@ def click_button_on_agreement_page(
         getattr(PrivacyPolicy(driver), transform(button))()
     else:
         getattr(TermsOfUse(driver), transform(button))()
-    OZLoggedIn(driver).set_current_page(DataPage)
 
 
 @wt(parsers.parse('user of {browser_id} goes to "{kind_of_agreement}" page'))
@@ -378,10 +376,9 @@ def go_to_agreement_page(
     oz_page = OZLoggedIn(driver)
 
     # TODO: VFS-13725 user cannot go to terms of use while on Clusters Sidebar Panel page
-    if oz_page.get_current_page() == ClustersPage:
+    if oz_page.is_panel_active(ClustersPage.panel_name):
         oz_page.open_panel(DataPage)
 
     oz_page.expand_panel_if_needed()
     oz_page.profile.profile.click()
     Popups(driver).user_account_menu.options[kind_of_agreement].click()
-    oz_page.set_current_page(ClustersPage)
