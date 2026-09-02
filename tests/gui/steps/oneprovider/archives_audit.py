@@ -14,7 +14,6 @@ from typing import cast
 
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns

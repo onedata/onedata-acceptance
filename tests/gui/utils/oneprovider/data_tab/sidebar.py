@@ -2,13 +2,13 @@
 data tab in oneprovider web GUI.
 """
 
+from __future__ import annotations
+
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
 from collections.abc import Iterator
-from __future__ import annotations
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
