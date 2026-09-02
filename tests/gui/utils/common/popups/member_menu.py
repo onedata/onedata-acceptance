@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, WebItemsSequence
+from tests.utils.utils import element_has_class
 
 
 class MenuItem(PageObject):
@@ -16,7 +17,7 @@ class MenuItem(PageObject):
         self.click()
 
     def is_enabled(self) -> bool:
-        return "disabled" not in self.web_elem.get_attribute("class")
+        return not element_has_class(self.web_elem, "disabled")
 
 
 class DataDistributionItem(PageObject):
