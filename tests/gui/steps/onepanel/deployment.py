@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Callable, Literal, Optional
+from typing import Literal, Optional
 
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
@@ -180,40 +180,38 @@ def wt_click_on_btn_in_deployment_step(
     step = step.lower().replace(" ", "")
     click_on_btn_in_deployment_step(driver, step, btn)
 
-    if btn in ["Add host", "Register"]:
-        condition: Callable[[WebDriver], bool]
-        message: str
+    if btn == "Add host":
 
-        if btn == "Add host":
+        def is_second_host_added(_: WebDriver) -> bool:
             host_row_selector = ".cluster-host-table .cluster-host-table-row"
-            condition = (
-                lambda driver: len(
-                    driver.find_elements(By.CSS_SELECTOR, host_row_selector)
-                )
-                >= 2
-            )
-            message = f"Did not manage to add 2nd host within {WAIT_BACKEND}s time."
-
-        else:
-            onepanel = Onepanel(driver)
-
-            def is_setup_ip_step_ready(_: WebDriver) -> bool:
-                deployment = onepanel.content.deployment
-                return (
-                    deployment.get_active_step() == "setup_ip"
-                    and deployment.setup_ip.setup_ip_addresses.is_displayed()
-                )
-
-            condition = is_setup_ip_step_ready
-            message = f"Registration did not finish within {WAIT_BACKEND}s time."
+            return len(driver.find_elements(By.CSS_SELECTOR, host_row_selector)) >= 2
 
         WebDriverWait(
             driver,
             WAIT_BACKEND * 2,
             ignored_exceptions=[StaleElementReferenceException],
         ).until(
-            condition,
-            message=message,
+            is_second_host_added,
+            message=f"Did not manage to add 2nd host within {WAIT_BACKEND*2}s time.",
+        )
+
+    elif btn == "Register":
+        onepanel = Onepanel(driver)
+
+        def is_setup_ip_step_ready(_: WebDriver) -> bool:
+            deployment = onepanel.content.deployment
+            return (
+                deployment.get_active_step() == "setup_ip"
+                and deployment.setup_ip.setup_ip_addresses.is_displayed()
+            )
+
+        WebDriverWait(
+            driver,
+            WAIT_BACKEND * 2,
+            ignored_exceptions=[StaleElementReferenceException],
+        ).until(
+            is_setup_ip_step_ready,
+            message=f"Registration did not finish within {WAIT_BACKEND*2}s time.",
         )
 
 

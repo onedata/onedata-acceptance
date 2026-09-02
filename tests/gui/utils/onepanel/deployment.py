@@ -15,10 +15,12 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-
-from .deployment_steps import DEPLOYMENT_STEP_TITLE_PATTERNS, DeploymentStep
-from .nodes import HostRecord
-from .storages import StorageContentPage
+from tests.gui.utils.onepanel.deployment_steps import (
+    DEPLOYMENT_STEP_TITLE_PATTERNS,
+    DeploymentStep,
+)
+from tests.gui.utils.onepanel.nodes import HostRecord
+from tests.gui.utils.onepanel.storages import StorageContentPage
 
 
 class Step1(PageObject):
