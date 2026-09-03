@@ -14,3 +14,5 @@ Feature: Management of web certificate in Onezone GUI
     And user of browser sees that "Certificate path" ends with "/certs/web_cert.pem" in "Web certificate" view in Onepanel
     And user of browser sees that "Key path" ends with "/certs/web_key.pem" in "Web certificate" view in Onepanel
     And user of browser sees that "Certificate chain path" ends with "/certs/web_chain.pem" in "Web certificate" view in Onepanel
+    And user of browser sees that "Issuer" contains "OneData" in "Web certificate" view in Onepanel    
+    And user of browser sees that Expiration and Creation time are valid in "Web certificate" view in Onepanel
