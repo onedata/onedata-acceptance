@@ -18,9 +18,6 @@ from selenium.common.exceptions import (
 
 from tests import PANEL_REST_PORT
 from tests.gui.constants import WAIT_BACKEND
-from tests.gui.meta_steps.rest.spaces import (
-    revoke_space_supports_for_storage_using_rest,
-)
 from tests.gui.meta_steps.rest.storages import (
     get_storage_ids_by_name,
     remove_multiple_storages_in_op_panel_using_rest,
@@ -43,6 +40,7 @@ from tests.gui.steps.onepanel.storages import (
     delete_additional_param_in_posix_storage_edit_page,
     enable_import_in_add_storage_form,
     get_storage_id,
+    register_revoke_space_supports_finalizer,
     save_changes_in_posix_storage_edit_page,
     type_key_in_posix_storage_edit_page,
     wt_click_on_add_btn_in_storage_add_form_in_storage_page,
@@ -100,7 +98,7 @@ def remove_storage_in_op_panel_using_gui(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.+?) adds "(?P<name>.*)" storage '
+        r'user of (?P<browser_id>.+?) adds "(?P<storage_name>.*)" storage '
         r'in "(?P<provider_name>.+?)" Oneprovider panel service '
         r"with following configuration:\n(?P<config>(.|\s)*)"
     )
@@ -140,10 +138,11 @@ def add_storage_in_op_panel_using_gui(
         config,
     )
 
-    revoke_space_supports_for_storage_using_rest(
-        hosts[provider_name]["hostname"],
-        onepanel_credentials.username,
-        onepanel_credentials.password,
+    register_revoke_space_supports_finalizer(
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
         storage_id,
     )
 

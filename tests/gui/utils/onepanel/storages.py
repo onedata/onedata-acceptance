@@ -196,6 +196,12 @@ class StorageContentPage(PageObject):
                 "because storage is not visible on page."
             )
 
+    def get_first_expanded_storage(self) -> StorageRecord:
+        for record in self.storages:
+            if record.name and record.is_expanded():
+                return record
+        raise PageObjectNotFoundError("Cannot find any expanded storage")
+
     def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()

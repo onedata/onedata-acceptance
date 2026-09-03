@@ -7,17 +7,40 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import pytest
+
 from tests.gui.constants import (
     CONFLICT_NAME_SEPARATOR,
     WAIT_BACKEND,
     WAIT_FRONTEND,
 )
+from tests.gui.meta_steps.rest.spaces import (
+    revoke_space_supports_for_storage_using_rest,
+)
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.generic import transform
-from tests.type_definitions import SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
+
+
+def register_revoke_space_supports_finalizer(
+    request: pytest.FixtureRequest,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+    storage_id: str,
+) -> None:
+    request.addfinalizer(
+        lambda: revoke_space_supports_for_storage_using_rest(
+            hosts[provider]["hostname"],
+            onepanel_credentials.username,
+            onepanel_credentials.password,
+            storage_id,
+        )
+    )
 
 
 @wt(
@@ -91,14 +114,34 @@ def enable_import_in_add_storage_form(
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on Add button in add storage "
-        "form in storages page in Onepanel"
+        'form in storages page in Onepanel for provider "{provider_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
-    selenium: SeleniumDrivers, browser_id: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    provider_name: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
 ) -> None:
-    Onepanel(selenium[browser_id]).content.storages.form.add()
+    storages = Onepanel(selenium[browser_id]).content.storages
+    storages.form.add.click()
+
+    storage = storages.get_first_expanded_storage()
+
+    storage_id = get_storage_id(selenium, browser_id, storage.name, clipboard, displays)
+
+    register_revoke_space_supports_finalizer(
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
+        storage_id,
+    )
 
 
 @wt(

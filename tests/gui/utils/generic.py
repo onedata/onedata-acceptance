@@ -162,10 +162,10 @@ def parse_elements_sequence(value: str) -> list[str]:
         raise ValueError(f"Invalid elements sequence: {value!r}")
     return parse_seq(value)
 
+
 def parse_time(value: str) -> datetime:
     date_match = re.match(
-        r"\d{4}-\d{2}-\d{2} at \d{1,2}:\d{2} "
-        r"\(UTC[+-]\d{2}:\d{2}\)",
+        r"\d{4}-\d{2}-\d{2} at \d{1,2}:\d{2} " r"\(UTC[+-]\d{2}:\d{2}\)",
         value,
     )
     assert date_match, f'Invalid time format: "{value}"'
@@ -174,6 +174,7 @@ def parse_time(value: str) -> datetime:
         date_match.group(),
         "%Y-%m-%d at %H:%M (UTC%z)",
     )
+
 
 def upload_file_path(file_name: str) -> str:
     """Resolve an absolute path for file with name file_name stored
