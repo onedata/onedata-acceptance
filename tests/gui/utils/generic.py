@@ -381,20 +381,15 @@ def click_on_web_elem(
     driver: WebDriver,
     web_elem: WebElement,
     error_message: str | Callable[[], str],
-    delay: bool | float = True,
 ) -> None:
     disabled = "disabled" in web_elem.get_attribute("class")
     # scroll to make the element visible
     if not web_elem.is_displayed():
         _ = web_elem.location_once_scrolled_into_view
     if web_elem.is_enabled() and web_elem.is_displayed() and not disabled:
-        # TODO VFS-7484 make optional sleep and localize only those tests
-        #  that need it or find better alternative
-        # currently checking if elem is enabled not always work
-        # (probably after striping disabled from web elem
-        # elem is not immediately clickable)
-        if delay:
-            sleep(delay if isinstance(delay, float) else 0.25)
+        # Probably after striping disabled from web elem
+        # elem is not immediately clickable
+        sleep(0.25)
         action = ActionChains(driver)
         action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
         action.perform()

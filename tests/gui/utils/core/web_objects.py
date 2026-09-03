@@ -30,9 +30,7 @@ class ButtonPageObject(PageObject):
         self.click()
 
     def is_enabled(self) -> bool:
-        return self.web_elem.is_enabled() and not element_has_class(
-            self.web_elem, "disabled"
-        )
+        return self.web_elem.is_enabled()
 
     def is_active(self) -> bool:
         return element_has_class(self.web_elem, "active")
