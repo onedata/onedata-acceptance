@@ -12,7 +12,7 @@ from selenium.common.exceptions import JavascriptException, NoSuchElementExcepti
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (
     Button,

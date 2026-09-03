@@ -10,7 +10,7 @@ import time
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.common.miscellaneous import press_backspace_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear

@@ -20,7 +20,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import (
     Clickable,
     VisibilityCondition,

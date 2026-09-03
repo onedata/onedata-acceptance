@@ -11,7 +11,7 @@ import os
 import re
 import subprocess as sp
 from collections import defaultdict
-from typing import TYPE_CHECKING, Generator, cast
+from typing import Generator, cast
 
 import pytest
 from _pytest._py.path import LocalPath
@@ -23,6 +23,20 @@ from selenium import webdriver
 
 from tests import LOGDIRS
 from tests.conftest import export_logs, get_log_dir_path
+from tests.gui.constants import (
+    DRIVER_CREATION_RETRIES,
+    RESPONSIVE_LAYOUT_DELAY,
+    SCREEN_PARAMETERS,
+    SELENIUM_IMPLICIT_WAIT,
+    WAIT_BACKEND,
+    WAIT_EXTENDED_UPLOAD,
+    WAIT_EXTENDED_WORKFLOW_EXECUTION,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_DOWNLOAD,
+    WAIT_NORMAL_UPLOAD,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+    WAIT_PODS_TERMINATION,
+)
 from tests.gui.sse_fixtures import (
     async_loop_in_thread,
     monitors,
@@ -38,42 +52,6 @@ from tests.type_definitions import (
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import build_test_dir_name, make_logdir
-
-# avoid circular imports
-if TYPE_CHECKING:
-    from tests.gui.utils import DataDiscoveryPage, OZLoggedIn, Popups
-
-SELENIUM_IMPLICIT_WAIT = 0
-
-# use this const when using: WebDriverWait(selenium, WAIT_FRONTEND).until(lambda s: ...)
-# when waiting for frontend changes
-WAIT_FRONTEND = 4
-
-# use this const when using: WebDriverWait(selenium, WAIT_BACKEND).until(lambda s: ...)
-# when waiting for backend changes
-WAIT_BACKEND = 15
-
-# use this const when using: WebDriverWait(selenium, WAIT_NORMAL_UPLOAD).until(lambda s: ...)
-# when waiting for normal uploads to finish
-WAIT_NORMAL_UPLOAD = 90
-
-# use this const when using: WebDriverWait(selenium, WAIT_EXTENDED_UPLOAD).until(lambda s: ...)
-# when waiting for extended uploads to finish
-WAIT_EXTENDED_UPLOAD = 600
-
-# number of times tests will try to start Webdriver instance
-DRIVER_CREATION_RETRIES = 5
-
-# use when waiting for normal download to finish
-WAIT_NORMAL_DOWNLOAD = 10
-
-# use when waiting for workflow executions to finish
-WAIT_NORMAL_WORKFLOW_EXECUTION = 360
-WAIT_EXTENDED_WORKFLOW_EXECUTION = 1500
-
-# use when waiting for pods to terminate
-WAIT_PODS_TERMINATION = 180
-
 
 # ============================================================================
 # PYTEST CONFIGURATION
@@ -117,7 +95,7 @@ def pytest_bdd_before_scenario(
     feature: Feature,
     scenario: Scenario,
 ) -> None:
-    RecorderManager(request).handle_start_recording()
+    RecorderManager(request).handle_start_recording(SCREEN_PARAMETERS)
     print("\n" + "=" * 65)
     print(f"- Executing scenario '{scenario.name}'")
     print(f"- from feature '{feature.name}'")
@@ -174,23 +152,6 @@ def finalize(request: pytest.FixtureRequest) -> Generator[None, None, None]:
 
 
 @fixture(scope="session")
-def numerals() -> dict[str, int]:
-    return {
-        "first": 0,
-        "second": 1,
-        "third": 2,
-        "fourth": 3,
-        "fifth": 4,
-        "sixth": 5,
-        "seventh": 6,
-        "eighth": 7,
-        "ninth": 8,
-        "tenth": 9,
-        "last": -1,
-    }
-
-
-@fixture(scope="session")
 def logdir(request: pytest.FixtureRequest) -> str:
     return request.config.option.htmlpath.rstrip("report.html")
 
@@ -203,27 +164,6 @@ def driver_type(request: pytest.FixtureRequest) -> str:
 @fixture(scope="session")
 def test_type(request: pytest.FixtureRequest) -> str:
     return request.config.getoption("--test-type")
-
-
-@fixture(scope="session")
-def oz_page() -> type["OZLoggedIn"]:
-    from tests.gui.utils import OZLoggedIn
-
-    return OZLoggedIn
-
-
-@fixture(scope="session")
-def popups() -> type["Popups"]:
-    from tests.gui.utils import Popups
-
-    return Popups
-
-
-@fixture(scope="session")
-def data_discovery() -> type["DataDiscoveryPage"]:
-    from tests.gui.utils import DataDiscoveryPage
-
-    return DataDiscoveryPage
 
 
 @fixture
@@ -359,21 +299,6 @@ def capabilities(
 
 
 @fixture(scope="session")
-def screen_width() -> int:
-    return 1366
-
-
-@fixture(scope="session")
-def screen_height() -> int:
-    return 1024
-
-
-@fixture(scope="session")
-def screen_depth() -> int:
-    return 24
-
-
-@fixture(scope="session")
 def screens() -> list[int]:
     return [0]
 
@@ -391,14 +316,15 @@ def movie_dir(request: pytest.FixtureRequest) -> str:
 def xvfb(
     request: pytest.FixtureRequest,
     screens: list[int],
-    screen_width: int,
-    screen_height: int,
-    screen_depth: int,
 ) -> Generator[list[str], None, None]:
     if request.config.getoption("--xvfb"):
         display = xvfb_utils.find_free_display()
         xvfb_proc = xvfb_utils.start_session(
-            display, screens, screen_width, screen_height, screen_depth
+            display,
+            screens,
+            SCREEN_PARAMETERS["width"],
+            SCREEN_PARAMETERS["height"],
+            SCREEN_PARAMETERS["depth"],
         )
         try:
             yield [f":{display}.{screen}" for screen in screens]

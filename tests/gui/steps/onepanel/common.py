@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from datetime import datetime, timedelta
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import LoginPage, Modals, OnePage, Onepanel

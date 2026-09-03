@@ -17,7 +17,7 @@ from selenium.common.exceptions import (
 )
 
 from tests import PANEL_REST_PORT
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.rest.spaces import (
     revoke_space_supports_for_storage_using_rest,
 )

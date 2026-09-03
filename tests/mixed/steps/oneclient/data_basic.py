@@ -15,7 +15,7 @@ from typing import cast
 import pytest
 import yaml
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import NUMERALS, WAIT_BACKEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.mixed.utils.data import (
@@ -416,10 +416,9 @@ def assert_ace_in_op_oneclient(
     privileges: str,
     item_type: str,
     name: str,
-    numerals: dict[str, int],
 ) -> None:
     ace = multi_file_steps.get_metadata(user, path, host, users)["cdmi_acl"]
-    ace = json.loads(ace)[numerals[num]]
+    ace = json.loads(ace)[NUMERALS[num]]
     assert_ace(parse_elements_sequence(privileges), item_type, ace, name, num, path)
 
 

@@ -71,4 +71,4 @@ def screens() -> list[int]:
 
 
 scenarios("../features/onepanel/members.feature")
-# scenarios("../features/onepanel/invite_member.feature")
+scenarios("../features/onepanel/invite_member.feature")

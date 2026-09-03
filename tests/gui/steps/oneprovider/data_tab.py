@@ -16,7 +16,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import (
+from tests.gui.constants import (
     WAIT_BACKEND,
     WAIT_EXTENDED_UPLOAD,
     WAIT_FRONTEND,

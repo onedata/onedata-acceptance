@@ -7,10 +7,13 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import (
+    CONFLICT_NAME_SEPARATOR,
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+)
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel, Popups
-from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
