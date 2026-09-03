@@ -18,6 +18,9 @@ from selenium.common.exceptions import (
 
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.meta_steps.rest.spaces import (
+    revoke_space_supports_for_storage_using_rest,
+)
 from tests.gui.meta_steps.rest.storages import (
     get_storage_ids_by_name,
     remove_multiple_storages_in_op_panel_using_rest,
@@ -39,6 +42,7 @@ from tests.gui.steps.onepanel.storages import (
     click_value_in_posix_storage_edit_page,
     delete_additional_param_in_posix_storage_edit_page,
     enable_import_in_add_storage_form,
+    get_storage_id,
     save_changes_in_posix_storage_edit_page,
     type_key_in_posix_storage_edit_page,
     wt_click_on_add_btn_in_storage_add_form_in_storage_page,
@@ -50,6 +54,7 @@ from tests.gui.steps.onepanel.storages import (
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.rest.storages import storage_data_from_config
+from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -103,10 +108,14 @@ def remove_storage_in_op_panel_using_gui(
 def add_storage_in_op_panel_using_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
-    name: str,
+    storage_name: str,
     provider_name: str,
     config: str,
     hosts: Hosts,
+    onepanel_credentials: User,
+    request: pytest.FixtureRequest,
+    clipboard: Clipboard,
+    displays: dict[str, str],
 ) -> None:
     """Create storage according to given config.
 
@@ -117,7 +126,26 @@ def add_storage_in_op_panel_using_gui(
         imported storage: true                 --> optional
     """
     _go_to_storage_view_in_clusters(selenium, browser_id, provider_name, hosts)
-    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, name)
+    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, storage_name)
+
+    storage_id = get_storage_id(selenium, browser_id, storage_name, clipboard, displays)
+
+    _register_storage_finalizer(
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
+        storage_id,
+        storage_name,
+        config,
+    )
+
+    revoke_space_supports_for_storage_using_rest(
+        hosts[provider_name]["hostname"],
+        onepanel_credentials.username,
+        onepanel_credentials.password,
+        storage_id,
+    )
 
 
 def _go_to_storage_view_in_clusters(
@@ -138,7 +166,10 @@ def _go_to_storage_view_in_clusters(
 
 
 def _add_storage_in_op_panel_using_gui(
-    selenium: SeleniumDrivers, browser_id: str, config: str, storage_name: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    config: str,
+    storage_name: str,
 ) -> None:
     content = "storages"
     btn = "Add storage backend"

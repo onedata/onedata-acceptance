@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
@@ -336,6 +337,20 @@ def copy_storage_id_to_clipboard(
 ) -> None:
     driver = selenium[browser_id]
     Onepanel(driver).content.storages.storages[storage_name].copy_id_button()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_storage_id(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    storage_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> str:
+    Onepanel(selenium[browser_id]).content.storages.storages[
+        storage_name
+    ].copy_id_button.click()
+    return clipboard.paste(display=displays[browser_id])
 
 
 def close_all_expanded_storages(
