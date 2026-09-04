@@ -20,6 +20,7 @@ from tests.gui.meta_steps.rest.spaces import (
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.generic import transform
+from tests.gui.utils.onepanel.storages import StorageContentPage, StorageRecord
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import User
@@ -85,6 +86,7 @@ def wt_type_text_to_in_box_in_storages_page_op_panel(
         Onepanel(selenium[browser_id]).content.storages.form, transform(form)
     )
     setattr(form, transform(input_box), text)
+    # breakpoint()
 
 
 @wt(
@@ -102,6 +104,7 @@ def wt_check_option_in_box_in_storages_page_op_panel(
         Onepanel(selenium[browser_id]).content.storages.form, transform(form)
     )
     getattr(storage_form.storage_path_type, option).click()
+    # breakpoint()
 
 
 def enable_import_in_add_storage_form(
@@ -109,39 +112,6 @@ def enable_import_in_add_storage_form(
 ) -> None:
     form = Onepanel(selenium[browser_id]).content.storages.form
     form.posix.imported_storage.check()
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on Add button in add storage "
-        'form in storages page in Onepanel for provider "{provider_name}"'
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    clipboard: Clipboard,
-    displays: dict[str, str],
-    request: pytest.FixtureRequest,
-    provider_name: str,
-    hosts: Hosts,
-    onepanel_credentials: User,
-) -> None:
-    storages = Onepanel(selenium[browser_id]).content.storages
-    storages.form.add.click()
-
-    storage = storages.get_first_expanded_storage()
-
-    storage_id = get_storage_id(selenium, browser_id, storage.name, clipboard, displays)
-
-    register_revoke_space_supports_finalizer(
-        request,
-        provider_name,
-        hosts,
-        onepanel_credentials,
-        storage_id,
-    )
 
 
 @wt(
@@ -396,7 +366,9 @@ def get_storage_id(
     Onepanel(selenium[browser_id]).content.storages.storages[
         storage_name
     ].copy_id_button.click()
-    return clipboard.paste(display=displays[browser_id])
+    clip = clipboard.paste(display=displays[browser_id])
+    print(f"copied storage id: {clip} for storage {storage_name}")
+    return clip
 
 
 def close_all_expanded_storages(
@@ -435,3 +407,22 @@ def assert_number_storages_with_same_name(
         number
     ), f"{name} not visible {number} times on storages list"
     assert check_ids_different(ids), f"IDs are not unique, {ids}"
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_storages_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> StorageContentPage:
+    return Onepanel(selenium[browser_id]).content.storages
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_button_in_storage_form(storages: StorageContentPage) -> None:
+    storages.form.add.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_first_expanded_storage(
+    storages: StorageContentPage,
+) -> StorageRecord:
+    return storages.get_first_expanded_storage()

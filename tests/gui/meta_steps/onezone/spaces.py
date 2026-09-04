@@ -153,7 +153,9 @@ def send_support_token_in_oz_using_gui(
     click_element_on_lists_on_left_sidebar_menu(selenium, user, option, space_name)
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, where)
     click_get_support_button_on_providers_page(selenium, user)
+    # breakpoint()
     copy_token(selenium, user)
+    
     send_copied_item_to_other_users(
         user, item_type, [browser_id], tmp_memory, displays, clipboard
     )

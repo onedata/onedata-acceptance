@@ -35,15 +35,17 @@ from tests.gui.steps.onepanel.common import (
 )
 from tests.gui.steps.onepanel.storages import (
     assert_storage_disappeared_from_list,
+    click_add_button_in_storage_form,
     click_modify_storage_in_onepanel,
     click_value_in_posix_storage_edit_page,
     delete_additional_param_in_posix_storage_edit_page,
     enable_import_in_add_storage_form,
+    get_first_expanded_storage,
     get_storage_id,
+    get_storages_page,
     register_revoke_space_supports_finalizer,
     save_changes_in_posix_storage_edit_page,
     type_key_in_posix_storage_edit_page,
-    wt_click_on_add_btn_in_storage_add_form_in_storage_page,
     wt_clicks_on_btn_in_storage_toolbar_in_panel,
     wt_expands_toolbar_for_storage_in_onepanel,
     wt_select_storage_type_in_storage_page_op_panel,
@@ -391,3 +393,35 @@ def confirm_changes_in_modify_storage_modal(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks on Add button in add storage "
+        'form in storages page in Onepanel for provider "{provider_name}"'
+    )
+)
+def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    provider_name: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+) -> None:
+    storages = get_storages_page(selenium, browser_id)
+
+    click_add_button_in_storage_form(storages)
+
+    storage = get_first_expanded_storage(storages)
+    storage_id = get_storage_id(selenium, browser_id, storage.name, clipboard, displays)
+
+    register_revoke_space_supports_finalizer(
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
+        storage_id,
+    )

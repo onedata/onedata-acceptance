@@ -40,6 +40,7 @@ def wt_click_on_btn_in_content(
     for browser_id in browser_id_list:
         content = getattr(Onepanel(selenium[browser_id]).content, transform(content))
         getattr(content, transform(btn)).click()
+        # breakpoint()
 
 
 @wt(
