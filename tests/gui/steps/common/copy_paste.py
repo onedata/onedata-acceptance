@@ -33,7 +33,6 @@ def send_copied_item_to_other_users(
     clipboard: Clipboard,
 ) -> None:
     item = clipboard.paste(display=displays[browser_id])
-    # breakpoint()
     for browser in browser_list:
         tmp_memory[browser]["mailbox"][item_type.lower()] = item
 

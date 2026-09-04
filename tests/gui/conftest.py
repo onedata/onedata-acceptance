@@ -203,7 +203,6 @@ def clipboard() -> Clipboard:
             cmd = ["xclip", "-d", display, "-selection", "c", "-o"]
         with sp.Popen(cmd, stdout=sp.PIPE, close_fds=True) as p:
             stdout, _ = p.communicate()
-        # breakpoint()
         return stdout.decode("utf-8")
 
     return Clipboard(copy, paste)

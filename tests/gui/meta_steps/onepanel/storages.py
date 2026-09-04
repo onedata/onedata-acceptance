@@ -38,10 +38,10 @@ from tests.gui.steps.onepanel.storages import (
     click_add_button_in_storage_form,
     click_modify_storage_in_onepanel,
     click_value_in_posix_storage_edit_page,
+    copy_storage_id,
     delete_additional_param_in_posix_storage_edit_page,
     enable_import_in_add_storage_form,
     get_first_expanded_storage,
-    get_storage_id,
     get_storages_page,
     register_revoke_space_supports_finalizer,
     save_changes_in_posix_storage_edit_page,
@@ -126,9 +126,22 @@ def add_storage_in_op_panel_using_gui(
         imported storage: true                 --> optional
     """
     _go_to_storage_view_in_clusters(selenium, browser_id, provider_name, hosts)
-    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, storage_name, clipboard, displays, request, provider_name, hosts, onepanel_credentials)
+    _add_storage_in_op_panel_using_gui(
+        selenium,
+        browser_id,
+        config,
+        storage_name,
+        clipboard,
+        displays,
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
+    )
 
-    storage_id = get_storage_id(selenium, browser_id, storage_name, clipboard, displays)
+    storage_id = copy_storage_id(
+        selenium, browser_id, storage_name, clipboard, displays
+    )
 
     _register_storage_finalizer(
         request,
@@ -201,7 +214,16 @@ def _add_storage_in_op_panel_using_gui(
     )
     if options.get("imported storage", False):
         enable_import_in_add_storage_form(selenium, browser_id)
-    wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium, browser_id, clipboard, displays, request, provider_name, hosts, onepanel_credentials)
+    wt_click_on_add_btn_in_storage_add_form_in_storage_page(
+        selenium,
+        browser_id,
+        clipboard,
+        displays,
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
+    )
     notify_visible_with_text(selenium, browser_id, AlertPopup.STORAGE_ADDED)
 
 
@@ -403,8 +425,8 @@ def confirm_changes_in_modify_storage_modal(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on Add button in add storage "
-        'form in storages page in Onepanel for provider "{provider_name}"'
+        'user of {browser_id} clicks on "Add" button in add storage '
+        "form in storages page in Onepanel for provider {provider_name}"
     )
 )
 def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
@@ -422,7 +444,9 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
     click_add_button_in_storage_form(storages)
 
     storage = get_first_expanded_storage(storages)
-    storage_id = get_storage_id(selenium, browser_id, storage.name, clipboard, displays)
+    storage_id = copy_storage_id(
+        selenium, browser_id, storage.name, clipboard, displays
+    )
 
     register_revoke_space_supports_finalizer(
         request,

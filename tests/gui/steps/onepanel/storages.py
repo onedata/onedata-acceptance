@@ -86,7 +86,6 @@ def wt_type_text_to_in_box_in_storages_page_op_panel(
         Onepanel(selenium[browser_id]).content.storages.form, transform(form)
     )
     setattr(form, transform(input_box), text)
-    # breakpoint()
 
 
 @wt(
@@ -104,7 +103,6 @@ def wt_check_option_in_box_in_storages_page_op_panel(
         Onepanel(selenium[browser_id]).content.storages.form, transform(form)
     )
     getattr(storage_form.storage_path_type, option).click()
-    # breakpoint()
 
 
 def enable_import_in_add_storage_form(
@@ -356,7 +354,7 @@ def copy_storage_id_to_clipboard(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_storage_id(
+def copy_storage_id(
     selenium: SeleniumDrivers,
     browser_id: str,
     storage_name: str,
@@ -367,7 +365,6 @@ def get_storage_id(
         storage_name
     ].copy_id_button.click()
     clip = clipboard.paste(display=displays[browser_id])
-    print(f"copied storage id: {clip} for storage {storage_name}")
     return clip
 
 
@@ -410,9 +407,7 @@ def assert_number_storages_with_same_name(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_storages_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> StorageContentPage:
+def get_storages_page(selenium: SeleniumDrivers, browser_id: str) -> StorageContentPage:
     return Onepanel(selenium[browser_id]).content.storages
 
 

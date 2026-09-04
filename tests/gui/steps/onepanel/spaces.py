@@ -136,7 +136,6 @@ def wt_type_received_token_to_support_token_field(
 ) -> None:
     form = Onepanel(selenium[browser_id]).content.spaces.form
     form.token = tmp_memory[browser_id]["mailbox"]["token"]
-    # breakpoint()
 
 
 @wt(
