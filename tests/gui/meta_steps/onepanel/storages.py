@@ -126,7 +126,7 @@ def add_storage_in_op_panel_using_gui(
         imported storage: true                 --> optional
     """
     _go_to_storage_view_in_clusters(selenium, browser_id, provider_name, hosts)
-    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, storage_name)
+    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, storage_name, clipboard, displays, request, provider_name, hosts, onepanel_credentials)
 
     storage_id = get_storage_id(selenium, browser_id, storage_name, clipboard, displays)
 
@@ -171,6 +171,12 @@ def _add_storage_in_op_panel_using_gui(
     browser_id: str,
     config: str,
     storage_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    provider_name: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
 ) -> None:
     content = "storages"
     btn = "Add storage backend"
@@ -195,7 +201,7 @@ def _add_storage_in_op_panel_using_gui(
     )
     if options.get("imported storage", False):
         enable_import_in_add_storage_form(selenium, browser_id)
-    wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium, browser_id)
+    wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium, browser_id, clipboard, displays, request, provider_name, hosts, onepanel_credentials)
     notify_visible_with_text(selenium, browser_id, AlertPopup.STORAGE_ADDED)
 
 

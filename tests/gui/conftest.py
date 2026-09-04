@@ -252,6 +252,7 @@ def capabilities(
         options.binary_location = "/usr/local/bin/google-chrome"
 
         options.add_argument("--no-sandbox")
+        options.add_argument("--ozone-platform=x11")
         options.add_argument("--enable-popup-blocking")
         options.add_argument("--ignore-ssl-errors=yes")
         options.add_argument("--ignore-certificate-errors")
