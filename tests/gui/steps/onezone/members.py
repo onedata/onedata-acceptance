@@ -587,7 +587,7 @@ def assert_options_for_user_are_enabled_or_disabled(
     page.users.items[username].click_member_menu_button(driver)
 
     for option in options:
-        enabled = Popups(driver).menu_popup_with_text.menu[option].is_enabled()
+        enabled = Popups(driver).menu_popup_with_text.menu[option].is_item_enabled()
         error_msg = f"Popup {option} is in invalid state"
         if state == "enabled":
             assert enabled, error_msg
