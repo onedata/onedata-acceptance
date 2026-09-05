@@ -152,11 +152,10 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
     WebDriverWait(
         driver,
         timeout=WAIT_BACKEND * 5,
-        ignored_exceptions=[RuntimeError],
     ).until(
         lambda driver: Onepanel(
             driver
-        ).content.spaces.space.sync_chart.start_scan_is_green(),
+        ).content.spaces.space.sync_chart.is_start_scan_clickable(),
         message="Waiting for start scan button to be available failed",
     )
 

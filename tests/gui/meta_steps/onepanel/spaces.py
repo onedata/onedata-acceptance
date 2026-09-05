@@ -389,7 +389,6 @@ def set_quota_in_auto_cleaning(
     )
 )
 def run_scan_and_wait_till_finished(selenium: SeleniumDrivers, browser_id: str) -> None:
-    tab_name = "Storage import"
-    click_on_navigation_tab_in_space(browser_id, tab_name, selenium)
+    click_on_navigation_tab_in_space(browser_id, "Storage import", selenium)
     click_start_scan_button_in_storage_import_tab(selenium, browser_id)
     wait_until_scanning_is_finished_in_storage_import_tab(selenium, browser_id)

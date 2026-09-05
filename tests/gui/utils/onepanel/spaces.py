@@ -27,6 +27,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.utils.utils import element_has_class
 
 DEFAULT_IMPORT_STRATEGY_CONFIG = {
     "Mode": "auto",
@@ -121,8 +122,11 @@ class SyncChart(PageObject):
         ".storage-import-chart-operations g.ct-series-2 line"
     )
 
-    def start_scan_is_green(self) -> bool:
-        return "btn-success" in self.start_scan.web_elem.get_attribute("class")
+    def is_start_scan_clickable(self) -> bool:
+        return element_has_class(self.start_scan.web_elem, "clickable")
+
+    def is_start_scan_pending(self) -> bool:
+        return element_has_class(self.start_scan.web_elem, "pending")
 
     @property
     def inserted(self) -> int:
