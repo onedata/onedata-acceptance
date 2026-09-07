@@ -18,10 +18,6 @@ select = ["E", "W", "F", "I", "UP", "B", "SIM", "PL"]
 preview = true
 explicit-preview-rules = true
 
-# Pylint has separate patterns for dummy variables, ignored arguments and
-# callbacks; Ruff uses one pattern for all unused-name checks.
-dummy-variable-rgx = "^(_+|_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?|dummy[a-zA-Z0-9_]*|ignored_[a-zA-Z0-9_]*|unused_[a-zA-Z0-9_]*|cb_[a-zA-Z0-9_]*|[a-zA-Z0-9_]+_cb)$"
-
 # Compatibility extensions beyond the handbook core. Each group corresponds
 # to checks enabled by the former Pylint policy.
 extend-select = [
@@ -162,7 +158,6 @@ max-args = 16
 
 [tool.mypy]
 python_version = "3.12"
-warn_unused_configs = true        # flag a config/override section that matches no files
 warn_unused_ignores = true        # flag a `# type: ignore` that no longer applies
 warn_redundant_casts = true       # flag casts that do nothing
 disallow_untyped_defs = true      # every function must be annotated

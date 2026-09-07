@@ -82,11 +82,11 @@ ifdef bamboo_GUI_PKG_VERIFICATION
 endif
 
 # TODO VFS-9779 - reorganize test targets after introducing bamboo specs
-.PHONY: test_gui, test_gui_pkg, test_gui_src
-.PHONY: test_mixed, test_mixed_pkg, test_mixed_src
-.PHONY: test_oneclient, test_oneclient_pkg, test_oneclient_src
-.PHONY: test_performance, test_performance_pkg, test_performance_src
-.PHONY: test_upgrade
+.PHONY: test_gui test_gui_pkg test_gui_src
+.PHONY: test_mixed test_mixed_pkg test_mixed_src
+.PHONY: test_oneclient test_oneclient_pkg test_oneclient_src
+.PHONY: test_performance test_performance_pkg test_performance_src
+.PHONY: test_upgrade_pkg test_upgrade_src
 .PHONY: format format-check static-analysis type-check
 
 test_gui:
@@ -99,7 +99,7 @@ test_gui_src: test_gui
 
 test_mixed:
 	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	 --env-file=${ENV_FILE} -k=${KEYWORDS} --count ${COUNT} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
+	 -k=${KEYWORDS} --count ${COUNT} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
 
 test_mixed_pkg: test_mixed
 test_mixed_src: SOURCES = --sources
@@ -160,7 +160,7 @@ codetag-tracker:
 ## Formatting
 ##
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v13-dev4"
+STATIC_ANALYSER_IMAGE := docker.onedata.org/python_static_analyser:v13-dev4
 PYTHON_CONFIG := pyproject.toml
 UID := $(shell id -u)
 GID := $(shell id -g)
@@ -180,11 +180,14 @@ ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/
 
 
 format:
+	# Select Ruff's "I" (isort) rules to sort imports before formatting.
 	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache --select I --fix $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
 	$(docker_run) ruff format --config $(PYTHON_CONFIG) --no-cache $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
 
 
 format-check:
+	# Check import sorting using Ruff's "I" (isort) rules.
+	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache --select I $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
 	$(docker_run) ruff format --config $(PYTHON_CONFIG) --no-cache --check $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) || \
 	 (echo "Code failed Ruff format checking. Please run 'make format' before committing your changes. "; exit 1)
 
