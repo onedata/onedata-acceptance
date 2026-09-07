@@ -11,6 +11,8 @@ output-format = "pylint"
 # OneData handbook core. Keep this list identical to the Python project
 # templates in onedata-dev-documentation.
 select = ["E", "W", "F", "I", "UP", "B", "SIM", "PL"]
+# Disable E501 so the formatter's line length remains a soft limit.
+ignore = ["E501"]
 
 # Preview is needed only for Ruff implementations of checks that were already
 # stable and enabled in Pylint 4.0.6. Prefix selectors cannot implicitly add
