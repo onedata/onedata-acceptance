@@ -207,14 +207,21 @@ def assert_logs_order_with_optional_logs(
             severity[v] = k
             logs_expected_list.append(v)
 
-    idx, n = 0, len(logs_expected_list)
+    idx = 0
+    actual_logs_count = len(logs_actual)
     for expected_log in logs_expected_list:
         if severity[expected_log] == "Required":
-            assert idx < n and expected_log == logs_actual[idx], (
+            error_message = (
                 f"expected logs: {logs_expected_list}\ndo not match actual logs: {logs_actual}"
             )
+            assert idx < actual_logs_count, error_message
+            assert expected_log == logs_actual[idx], error_message
             idx += 1
-        if severity[expected_log] == "Optional" and idx < n and expected_log == logs_actual[idx]:
+        if (
+            severity[expected_log] == "Optional"
+            and idx < actual_logs_count
+            and expected_log == logs_actual[idx]
+        ):
             idx += 1
 
 

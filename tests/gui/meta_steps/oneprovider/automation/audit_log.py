@@ -202,12 +202,14 @@ def assert_audit_log_in_store(
         store_type,
     )
 
-    error_message = (
-        "There is no information about algorithm, checksum or file id "
-        f"in audit log in {store_name} store details"
+    assert store_details["algorithm"], (
+        f"There is no algorithm information in audit log in {store_name} store details"
     )
-    assert store_details["algorithm"] and store_details["checksum"] and store_details["fileId"], (
-        error_message
+    assert store_details["checksum"], (
+        f"There is no checksum information in audit log in {store_name} store details"
+    )
+    assert store_details["fileId"], (
+        f"There is no file id information in audit log in {store_name} store details"
     )
 
     tmp_memory[f"{store_name}_store_log"] = store_details
@@ -240,13 +242,15 @@ def assert_content_in_audit_log_in_store(
         store_type,
     )
 
-    error_message1 = (
-        "There is no information about destination path, size or "
-        f"source URL in audit log in {store_name} store details"
+    assert store_details["destinationPath"], (
+        f"There is no destination path in audit log in {store_name} store details"
     )
-    assert (
-        store_details["destinationPath"] and store_details["sourceUrl"] and store_details["size"]
-    ), error_message1
+    assert store_details["sourceUrl"], (
+        f"There is no source URL in audit log in {store_name} store details"
+    )
+    assert store_details["size"], (
+        f"There is no size information in audit log in {store_name} store details"
+    )
 
     actual_expected = {
         "sourceUrl": "source URL",

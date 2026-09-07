@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 from collections.abc import Mapping, MutableMapping
 
-from pytest import FixtureRequest
+import pytest
 
 from tests import ELASTICSEARCH_PORT, OZ_REST_PORT
 from tests.gui.steps.rest.harvesters import (
@@ -29,7 +29,7 @@ MutableIdMap = MutableMapping[str, str]
 
 
 def _register_harvester_finalizer(
-    request: FixtureRequest,
+    request: pytest.FixtureRequest,
     zone_hostname: str,
     owner_username: str,
     owner_password: str,
@@ -68,7 +68,7 @@ def create_harvesters_rest(
     hosts: HostsConfig,
     users: Users,
     harvesters: MutableIdMap,
-    request: FixtureRequest,
+    request: pytest.FixtureRequest,
 ) -> None:
     zone_hostname = hosts[service]["hostname"]
     owner = users[user]

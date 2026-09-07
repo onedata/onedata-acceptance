@@ -9,8 +9,8 @@ from collections.abc import Generator, Mapping, MutableMapping
 from contextlib import suppress
 from typing import Protocol, TypedDict
 
+import pytest
 import yaml
-from pytest import skip
 from pytest_bdd import given
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT
@@ -216,7 +216,7 @@ def _create_user(
                 password,
                 user_conf_details,
             )
-        skip(f'"{username}" user already exist')
+        pytest.skip(f'"{username}" user already exist')
         # type-checker expects the function to return something or raise an exception
         raise RuntimeError(
             f'Pytest failed to skip test when user "{username}" already exists'

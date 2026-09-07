@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import cast
 
+import pytest
+
 from oneprovider_client.rest import ApiException
 from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import SpecialDir
@@ -245,7 +247,6 @@ def try_to_move_special_dir(
         hosts,
         host,
         tmp_memory[name][user],
-        error_message=f"Moved {name.value}, but moving should have failed",
     )
 
 
@@ -256,26 +257,22 @@ def try_to_move_special_dir_by_id(
     hosts: Hosts,
     host: str,
     dir_id: str,
-    error_message: str | None = None,
 ) -> None:
     if client.lower() == "rest":
-        try:
-            cdmi_client = cdmi(hosts[host]["ip"], users[user].token)
-            cdmi_client.move_item_by_id(dir_id, "/new_name")
-            raise AssertionError(error_message)
-        except HTTPBadRequest as e:
-            assert "Operation failed with POSIX error: enoent." in str(e), (
-                f"Unexpected error occurred:\n {e}"
-            )
+        with pytest.raises(HTTPBadRequest) as exc_info:
+            cdmi(hosts[host]["ip"], users[user].token).move_item_by_id(dir_id, "/new_name")
+        error_message = str(exc_info.value)
+        assert "Operation failed with POSIX error: enoent." in error_message, (
+            f"Unexpected error occurred:\n {error_message}"
+        )
     elif "oneclient" in client.lower():
-        try:
-            oneclient_host = change_client_name_to_hostname(client.lower())
-            move_dir_by_id(user, oneclient_host, users, dir_id, "new_name")
-            raise AssertionError(error_message)
-        except OSError as e:
-            # Because the share container id is very long other error can occur
-            assert "Operation not supported" in str(e) or "File name too long" in str(e), (
-                f"Unexpected error occurred:\n {e}"
+        with pytest.raises(OSError, match=r"Operation not supported|File name too long"):
+            move_dir_by_id(
+                user,
+                change_client_name_to_hostname(client.lower()),
+                users,
+                dir_id,
+                "new_name",
             )
     else:
         raise NoSuchClientException(f"unknown client {client}")

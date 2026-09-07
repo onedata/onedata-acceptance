@@ -151,8 +151,10 @@ class PrivilegeGroup(PageObject):
         granted_count = int(self.effective_priv.split("/")[0])
         all_count = int(self.effective_priv.split("/")[1])
         if granted == "Partially":
-            msg = f"{self.name} should be partially granted but is not"
-            assert granted_count != all_count and granted_count > 0, msg
+            assert granted_count > 0, f"{self.name} should be partially granted but none are"
+            assert granted_count != all_count, (
+                f"{self.name} should be partially granted but all are"
+            )
         elif granted:
             msg = f"{self.name} should be granted but is not"
             assert granted_count == all_count, msg

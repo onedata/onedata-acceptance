@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Mapping
 from typing import cast
 
-from pytest import FixtureRequest
+import pytest
 
 from onezone_client import UserApi
 from tests.gui.meta_steps.onezone.provider import (
@@ -108,7 +108,7 @@ def create_spaces_in_oz(
     spaces: Spaces,
     clipboard: Clipboard,
     displays: dict[str, str],
-    request: FixtureRequest,
+    request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
 ) -> None:
 

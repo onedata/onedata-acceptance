@@ -351,7 +351,7 @@ def browsers_to_users() -> dict[str, str]:
     return {}
 
 
-@pytest.fixture()
+@pytest.fixture
 def clients() -> dict[str, object]:
     return {}
 
@@ -924,7 +924,7 @@ def get_test_type(request: pytest.FixtureRequest) -> TestType:
     return cast(TestType, request.config.getoption("test_type"))
 
 
-@pytest.fixture()
+@pytest.fixture
 def skip_by_env(request: pytest.FixtureRequest, env_description_file: str) -> None:
     """This function skips test cases decorated with:
     @pytest.mark.skip_env(*envs).
@@ -943,7 +943,7 @@ def skip_by_env(request: pytest.FixtureRequest, env_description_file: str) -> No
             pytest.skip(f"skipped on env: {env} with reason: {reason}")
 
 
-@pytest.fixture()
+@pytest.fixture
 def xfail_by_env(request: pytest.FixtureRequest, env_description_file: str) -> None:
     """This function marks test cases decorated with:
     @pytest.mark.skip_env(*envs)

@@ -17,7 +17,6 @@ import pytest
 from _pytest._py.path import LocalPath
 from _pytest.config.argparsing import Parser
 from _pytest.reports import TestReport
-from pytest import fixture, hookimpl, skip
 from pytest_bdd.parser import Feature, Scenario, Step
 from selenium import webdriver
 
@@ -99,7 +98,7 @@ def pytest_addoption(parser: Parser) -> None:
     )
 
 
-@hookimpl(tryfirst=True, hookwrapper=True)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item: pytest.Item) -> Generator[None, HookOutcome, None]:
     outcome = yield
     rep = cast(TestReport, outcome.get_result())
@@ -167,13 +166,13 @@ def format_step_name(step: Step) -> str:
 # =============================================================================
 
 
-@fixture(autouse=True, scope="module")
+@pytest.fixture(autouse=True, scope="module")
 def finalize(request: pytest.FixtureRequest) -> Generator[None, None, None]:
     yield
     export_logs(request)
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def numerals() -> dict[str, int]:
     return {
         "first": 0,
@@ -190,43 +189,43 @@ def numerals() -> dict[str, int]:
     }
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def logdir(request: pytest.FixtureRequest) -> str:
     return request.config.option.htmlpath.removesuffix("report.html")
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def driver_type(request: pytest.FixtureRequest) -> str:
     return request.config.getoption("--driver")
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def test_type(request: pytest.FixtureRequest) -> str:
     return request.config.getoption("--test-type")
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def oz_page() -> type["OZLoggedIn"]:
     from tests.gui.utils import OZLoggedIn
 
     return OZLoggedIn
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def popups() -> type["Popups"]:
     from tests.gui.utils import Popups
 
     return Popups
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def data_discovery() -> type["DataDiscoveryPage"]:
     from tests.gui.utils import DataDiscoveryPage
 
     return DataDiscoveryPage
 
 
-@fixture
+@pytest.fixture
 def tmp_memory() -> TmpMemory:
     """Dict to use when one wants to store sth between steps.
 
@@ -236,13 +235,13 @@ def tmp_memory() -> TmpMemory:
     return cast(TmpMemory, defaultdict(dict))
 
 
-@fixture
+@pytest.fixture
 def displays() -> dict[str, str]:
     """Dict mapping browser to used display (e.g. {'browser1': ':0.0'} )"""
     return {}
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def clipboard() -> Clipboard:
     """utility simulating os clipboard"""
     from platform import system as get_system
@@ -267,19 +266,19 @@ def clipboard() -> Clipboard:
     return Clipboard(copy, paste)
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def base_url(hosts: Hosts, maybe_start_env: object) -> str:
     return f"https://{hosts['onezone']['hostname']}"
 
 
-@fixture(scope="function", autouse=True)
+@pytest.fixture(autouse=True)
 def _skip_sensitive(request: pytest.FixtureRequest, sensitive_url: object) -> None:
     """Invert the default sensitivity behaviour: consider the test as destructive
     only if it has marker "destructive".
     """
     destructive = "destructive" in request.node.keywords
     if sensitive_url and destructive:
-        skip(
+        pytest.skip(
             "This test is destructive and the target URL is "
             "considered a sensitive environment. If this test is "
             "not destructive, add the 'nondestructive' marker to "
@@ -287,7 +286,7 @@ def _skip_sensitive(request: pytest.FixtureRequest, sensitive_url: object) -> No
         )
 
 
-@fixture
+@pytest.fixture
 def capabilities(
     request: pytest.FixtureRequest,
     capabilities: JsonObject,
@@ -357,27 +356,27 @@ def capabilities(
 # ============================================================================
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def screen_width() -> int:
     return 1366
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def screen_height() -> int:
     return 1024
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def screen_depth() -> int:
     return 24
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def screens() -> list[int]:
     return [0]
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def movie_dir(request: pytest.FixtureRequest) -> str:
     log_dir = os.path.dirname(request.config.option.htmlpath)
     movie_subdir = os.path.join(log_dir, "movies")
@@ -386,7 +385,7 @@ def movie_dir(request: pytest.FixtureRequest) -> str:
     return movie_subdir
 
 
-@fixture(scope="module")
+@pytest.fixture(scope="module")
 def xvfb(
     request: pytest.FixtureRequest,
     screens: list[int],
@@ -407,7 +406,7 @@ def xvfb(
         yield [os.environ.get("DISPLAY", "DUMMY_DISPLAY")]
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def should_record() -> bool:
     return True
 
@@ -417,7 +416,7 @@ def should_record() -> bool:
 # ============================================================================
 
 
-@fixture(name="run_unmock")
+@pytest.fixture(name="run_unmock")
 def run_around_testcase(hosts: Hosts) -> Generator[None, None, None]:
     yield
     unmock_archive_verification("oneprovider-krakow", hosts)

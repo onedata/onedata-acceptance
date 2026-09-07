@@ -18,7 +18,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from itertools import chain, repeat
 from math import sqrt
-from typing import TypedDict
+from typing import ClassVar, TypedDict
 
 import pytest
 from _pytest.reports import TestReport
@@ -85,7 +85,8 @@ def stop_recording(proc: FfmpegProcess) -> None:
 
 
 class RecorderManager:
-    ffmpeg_details: FfmpegDetails = {}
+    # Recording starts and stops in separate manager instances created by pytest hooks.
+    ffmpeg_details: ClassVar[FfmpegDetails] = {}
 
     def __init__(self, request: pytest.FixtureRequest) -> None:
         self.request = request

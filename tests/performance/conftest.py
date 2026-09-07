@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import inspect
 import os
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 from typing import cast
 
 import pytest
@@ -33,7 +33,7 @@ from tests.utils.utils import get_authors, get_copyright, get_suite_description
 
 
 @pytest.fixture(scope="session")
-def yaml_output(request: pytest.FixtureRequest) -> PerformanceReport:
+def yaml_output(request: pytest.FixtureRequest) -> Generator[PerformanceReport, None, None]:
     performance_report = PerformanceReport(
         "performance",
         get_repository().decode(),
@@ -41,23 +41,19 @@ def yaml_output(request: pytest.FixtureRequest) -> PerformanceReport:
         get_branch_name().decode(),
     )
 
-    def fin() -> None:
-        if not os.path.exists(PERFORMANCE_LOGDIR):
-            os.makedirs(PERFORMANCE_LOGDIR)
-        logdir = make_logdir(LOGDIRS.get(get_test_type(request)), "report")
-        with open(os.path.join(logdir, "performance.yaml"), "w", encoding="utf-8") as report_file:
-            report_file.write(yaml.safe_dump(performance_report.report))
-        export_logs(request)
+    yield performance_report
 
-    request.addfinalizer(fin)
-    return performance_report
+    if not os.path.exists(PERFORMANCE_LOGDIR):
+        os.makedirs(PERFORMANCE_LOGDIR)
+    logdir = make_logdir(LOGDIRS.get(get_test_type(request)), "report")
+    with open(os.path.join(logdir, "performance.yaml"), "w", encoding="utf-8") as report_file:
+        report_file.write(yaml.safe_dump(performance_report.report))
+    export_logs(request)
 
 
 class AbstractPerformanceTest:
     @pytest.fixture(scope="module")
-    def suite_report(
-        self, request: pytest.FixtureRequest, env_report: EnvironmentReport
-    ) -> SuiteReport:
+    def suite_report(self, env_report: EnvironmentReport) -> Generator[SuiteReport, None, None]:
         module = inspect.getmodule(self.__class__)
         if module is None:
             raise ValueError(f"Cannot determine module for {self.__class__.__name__}")
@@ -69,27 +65,22 @@ class AbstractPerformanceTest:
             get_authors(module),
         )
 
-        def fin() -> None:
-            env_report.add_to_report("suites", report)
+        yield report
 
-        request.addfinalizer(fin)
-        return report
+        env_report.add_to_report("suites", report)
 
     @pytest.fixture(scope="module")
     def env_report(
         self,
-        request: pytest.FixtureRequest,
         yaml_output: PerformanceReport,
         env_description_abs_path: str,
-    ) -> EnvironmentReport:
+    ) -> Generator[EnvironmentReport, None, None]:
         name = env_description_abs_path.rsplit(os.path.sep, maxsplit=1)[-1]
         report = EnvironmentReport(name)
 
-        def fin() -> None:
-            yaml_output.add_to_report("envs", report)
+        yield report
 
-        request.addfinalizer(fin)
-        return report
+        yaml_output.add_to_report("envs", report)
 
 
 def mount_performance_client(

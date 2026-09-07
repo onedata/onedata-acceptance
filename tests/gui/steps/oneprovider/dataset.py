@@ -197,10 +197,11 @@ def assert_two_identical_root_file_paths(
     browser = tmp_memory[browser_id][transform(DATASET_BROWSER)]
     paths = [dataset.path_to_root_file for dataset in browser.data if dataset.name == name]
 
-    assert len(paths) == EXPECTED_DUPLICATE_PATHS_COUNT and paths[0] == paths[1], (
-        f'"{paths[0]}" and "{paths[1]}" should be identical'
+    assert len(paths) == EXPECTED_DUPLICATE_PATHS_COUNT, (
+        f'Expected {EXPECTED_DUPLICATE_PATHS_COUNT} paths for dataset "{name}", got {len(paths)}'
     )
-    assert paths[0] == path, f'"{paths[0]}" match "{path[1]}" but does not match expected "{path}"'
+    assert paths[0] == paths[1], f'"{paths[0]}" and "{paths[1]}" should be identical'
+    assert paths[0] == path, f'"{paths[0]}" does not match expected "{path}"'
 
 
 @wt(parsers.parse('user of {browser_id} fails to click on "{button}" button in modal "{modal}"'))

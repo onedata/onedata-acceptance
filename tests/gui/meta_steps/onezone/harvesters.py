@@ -6,7 +6,7 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from pytest import FixtureRequest
+import pytest
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
@@ -69,7 +69,7 @@ from tests.utils.user_utils import User
 
 
 def _register_harvester_finalizer(
-    request: FixtureRequest,
+    request: pytest.FixtureRequest,
     hosts: Hosts,
     admin_credentials: User,
     harvester_id: str,
@@ -95,7 +95,7 @@ def click_create_button_and_succeed_to_create_harvester(
     browser_id: str,
     harvester_name: str,
     hosts: Hosts,
-    request: FixtureRequest,
+    request: pytest.FixtureRequest,
     admin_credentials: User,
     clipboard: Clipboard,
     displays: dict[str, str],
@@ -177,7 +177,7 @@ def create_harvester(
     harvesters: dict[str, str],
     clipboard: Clipboard,
     displays: dict[str, str],
-    request: FixtureRequest,
+    request: pytest.FixtureRequest,
     admin_credentials: User,
 ) -> None:
     where = "Discovery"

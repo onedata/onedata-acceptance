@@ -207,10 +207,14 @@ def assert_absence_of_path_in_dir_tree(
     selenium: SeleniumDrivers, browser_id: str, path: str
 ) -> None:
     driver = selenium[browser_id]
-    curr_dir = OPLoggedIn(driver).data.sidebar.root_dir
-    with pytest.raises(PageObjectNotFoundError):
+
+    def traverse_directory_tree() -> None:
+        curr_dir = OPLoggedIn(driver).data.sidebar.root_dir
         for directory in (path_part for path_part in path.split("/") if path_part != ""):
             curr_dir = curr_dir[directory]
+
+    with pytest.raises(PageObjectNotFoundError):
+        traverse_directory_tree()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

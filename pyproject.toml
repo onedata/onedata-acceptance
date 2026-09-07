@@ -113,13 +113,20 @@ extend-select = [
     # Require text encodings so file behavior does not depend on the system locale.
     "PLW1514",
 
+    # Enforce pytest correctness and consistent test structure.
+    "PT",
+
     # Make return paths explicit and consistent, reducing ambiguous None-returning control flow.
     "RET",
     # Remove empty exception-call parentheses when raising an exception class.
     "RSE102",
 
+    # Reject mutable class attributes that can unintentionally share state across instances.
+    "RUF012",
     # Reject non-integer literal indexes that would raise TypeError at runtime.
     "RUF016",
+    # Remove unused noqa directives left behind after code changes.
+    "RUF100",
 
     # Flag exec because executing dynamic code can enable code injection.
     "S102",

@@ -240,12 +240,13 @@ def assert_entries_with_file_names_in_archive_recall(
             index:
         ]
         for entry_name in new_entries_names:
-            file_name_p_, file_name_s_ = file_name.rsplit(".", 1)
+            file_name_p_, file_name_s_ = entry_name.rsplit(".", 1)
             file_name_p_ = file_name_p_.split("(")[0]
             error_message = (
                 f"file name {entry_name} does not match name or name duplicated of {file_name}"
             )
-            assert file_name_p == file_name_p_ and file_name_s == file_name_s_, error_message
+            assert file_name_p == file_name_p_, error_message
+            assert file_name_s == file_name_s_, error_message
 
     _scroll_and_check_condition(browser_id, selenium, condition)
 

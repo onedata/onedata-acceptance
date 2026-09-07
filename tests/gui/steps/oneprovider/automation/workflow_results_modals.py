@@ -234,9 +234,8 @@ def compare_datasets_in_store_details_modal(
 def compare_booleans_in_store_details_modal(item_list: list[bool], modal: StoreDetails) -> None:
     actual = [elem.value for elem in modal.store_content_list]
     error_message = f"Actual boolean list {actual} does not match expected {item_list}"
-    assert actual.count("true") == item_list.count(True) and actual.count(
-        "false"
-    ) == item_list.count(False), error_message
+    assert actual.count("true") == item_list.count(True), error_message
+    assert actual.count("false") == item_list.count(False), error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

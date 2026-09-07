@@ -66,7 +66,8 @@ def get_fun_name(fun: str) -> str | None:
 
 
 def assert_expected_failure(fun: Callable[..., object], *args: object, **kwargs: object) -> None:
-    with pytest.raises(OSError):
+    # Filesystem operations can report different OSError subclasses and messages by platform.
+    with pytest.raises(OSError):  # noqa: PT011
         fun(*args, **kwargs)
 
 

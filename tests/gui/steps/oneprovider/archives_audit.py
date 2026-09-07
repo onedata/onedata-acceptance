@@ -229,7 +229,8 @@ def _check_entries_in_archive_audit_log(
     data = yaml.load(config, yaml.Loader)
     for item in data:
         error_message = f"there is no visible log: {item}: {data[item]} in archive audit log"
-        assert item in visible_logs and data[item] == visible_logs[item].event, error_message
+        assert item in visible_logs, error_message
+        assert data[item] == visible_logs[item].event, error_message
 
 
 @wt(parsers.parse('user of {browser_id} clicks on item "{item_name}" in archive audit log'))

@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from pytest import FixtureRequest
+import pytest
 
 from tests.gui.meta_steps.rest.shares import create_share_using_rest
 from tests.type_definitions import Hosts
@@ -30,7 +30,7 @@ def create_n_spaces_without_support(
     user: str,
     hosts: Hosts,
     number: str,
-    request: FixtureRequest,
+    request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
 ) -> None:
     name_prefix = "space"
@@ -63,7 +63,7 @@ def create_n_spaces_with_shares(
     onepanel_credentials: User,
     storages: dict,
     shares: dict[str, str],
-    request: FixtureRequest,
+    request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
 ) -> None:
     name_prefix = "space"
