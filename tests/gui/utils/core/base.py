@@ -8,6 +8,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.utils.generic import click_on_web_elem
+from tests.utils.utils import element_has_class
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
@@ -117,6 +118,12 @@ class PageObject(AbstractPageObject):
 
     def is_displayed(self) -> bool:
         return self.web_elem.is_displayed()
+
+    def is_enabled(self) -> bool:
+        """Return whether Selenium and the application's CSS enable the element."""
+        return self.web_elem.is_enabled() and not element_has_class(
+            self.web_elem, "disabled"
+        )
 
     def click(self) -> None:
         click_on_web_elem(

@@ -29,9 +29,6 @@ class ButtonPageObject(PageObject):
     def __call__(self) -> None:
         self.click()
 
-    def is_enabled(self) -> bool:
-        return self.web_elem.is_enabled()
-
     def is_active(self) -> bool:
         return element_has_class(self.web_elem, "active")
 
