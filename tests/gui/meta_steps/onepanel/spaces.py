@@ -9,6 +9,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import yaml
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
@@ -396,10 +400,14 @@ def click_start_scan_button_in_storage_import_tab(
 ) -> None:
     driver = selenium[browser_id]
 
-    @repeat_failed(timeout=WAIT_FRONTEND)
+    @repeat_failed(
+        timeout=WAIT_FRONTEND,
+        exceptions=(NoSuchElementException, StaleElementReferenceException),
+    )
     def click_start_scan_button() -> None:
         sync_chart = Onepanel(driver).content.spaces.space.sync_chart
-        sync_chart.start_scan.click()
+        if not sync_chart.is_start_scan_pending():
+            sync_chart.start_scan.click()
 
     click_start_scan_button()
     wait_for_start_scan_button_to_be_pending(driver)
