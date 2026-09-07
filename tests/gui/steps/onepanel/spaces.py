@@ -17,23 +17,21 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
 )
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import (
     SELENIUM_IMPLICIT_WAIT,
     WAIT_BACKEND,
     WAIT_FRONTEND,
 )
-from tests.gui.steps.common.common import (
-    close_alert_popup_if_present,
-    wait_for_checking_toggle,
-)
+from tests.gui.steps.common.common import wait_for_checking_toggle
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
-from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import (
     implicit_wait,
@@ -767,24 +765,13 @@ def toggle_in_storage_import_configuration_is_enabled(
     return storage_import_conf.is_toggle_checked(transform(toggle_name))
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Start scan" button '
-        "in storage import tab in Onepanel"
+def wait_for_start_scan_button_to_be_pending(driver: WebDriver) -> None:
+    WebDriverWait(driver, timeout=WAIT_FRONTEND).until(
+        lambda current_driver: Onepanel(
+            current_driver
+        ).content.spaces.space.sync_chart.is_start_scan_pending(),
+        message="Waiting for start scan button to be pending failed",
     )
-)
-def click_start_scan_button_in_storage_import_tab(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    driver = selenium[browser_id]
-
-    @repeat_failed(timeout=WAIT_FRONTEND)
-    def click_start_scan_button() -> None:
-        sync_chart = Onepanel(driver).content.spaces.space.sync_chart
-        sync_chart.start_scan.click()
-
-    click_start_scan_button()
-    close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
 
 
 @wt(

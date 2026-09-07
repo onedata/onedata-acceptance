@@ -10,7 +10,9 @@ import time
 
 import yaml
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.miscellaneous import (
     wait_until_scanning_is_finished_in_storage_import_tab,
 )
@@ -22,12 +24,12 @@ from tests.gui.steps.onepanel.spaces import (
     click_change_quota_button,
     click_on_btn_in_space_support_form,
     click_on_navigation_tab_in_space,
-    click_start_scan_button_in_storage_import_tab,
     confirm_quota_value_change,
     get_spaces_list_from_spaces_page,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
+    wait_for_start_scan_button_to_be_pending,
     wt_assert_correct_supported_space_opened,
     wt_assert_proper_space_configuration_in_panel,
     wt_click_on_support_space_btn_on_condition,
@@ -58,6 +60,7 @@ from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
+from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -380,6 +383,27 @@ def set_quota_in_auto_cleaning(
     click_change_quota_button(selenium, browser_id, quota)
     type_value_to_quota_input(selenium, browser_id, quota, value)
     confirm_quota_value_change(selenium, browser_id, quota)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "Start scan" button '
+        "in storage import tab in Onepanel"
+    )
+)
+def click_start_scan_button_in_storage_import_tab(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def click_start_scan_button() -> None:
+        sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+        sync_chart.start_scan.click()
+
+    click_start_scan_button()
+    wait_for_start_scan_button_to_be_pending(driver)
+    close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
 
 
 @wt(
