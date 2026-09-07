@@ -334,7 +334,6 @@ def onepanel_credentials(
 def emergency_passphrase(
     users: Users,
     hosts: Hosts,
-    clean_environment: None,
 ) -> str:
     zone_pod_name = hosts["onezone"]["pod_name"]
     zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
