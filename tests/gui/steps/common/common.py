@@ -16,7 +16,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -152,7 +152,7 @@ def get_last_item_number_in_table(driver: WebDriver) -> int:
     return int(last_item.get_attribute("data-row-id")) + 1
 
 
-def get_last_item_in_table(driver: WebDriver) -> WebElement | None:
+def get_last_item_in_table(driver: WebDriver) -> SeleniumWebElement | None:
     entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
     return entries[-1] if len(entries) > 0 else None
 

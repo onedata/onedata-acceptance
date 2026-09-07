@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Iterable
 
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebElementsSequence
@@ -25,7 +25,7 @@ class PowerSelect(PageObject):
     def __init__(
         self,
         driver: WebDriver,
-        web_elem: WebElement,
+        web_elem: SeleniumWebElement,
         parent: object | None = None,
         item_cls: type[PageObject] | None = None,
         object_name: str = "",
@@ -34,7 +34,7 @@ class PowerSelect(PageObject):
         self.item_cls = item_cls
 
     @property
-    def items(self) -> list[WebElement] | PageObjectsSequence:
+    def items(self) -> list[SeleniumWebElement] | PageObjectsSequence:
         if self.item_cls is None:
             return self._items
         return self.items_as(self.item_cls)
@@ -45,7 +45,7 @@ class PowerSelect(PageObject):
     def _choose_items(
         self,
         property_name: str,
-        items: Iterable[WebElement],
+        items: Iterable[SeleniumWebElement],
         str_prefix: str,
         require_full_match: bool,
     ) -> None:

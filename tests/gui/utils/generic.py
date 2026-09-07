@@ -25,7 +25,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import (
     visibility_of,
     visibility_of_element_located,
@@ -268,7 +268,7 @@ def get_web_elem_or_locator(
     web_elem_or_selector: WebElementOrSelector,
 ) -> WebElementOrCssLocator:
     match web_elem_or_selector:
-        case WebElement():
+        case SeleniumWebElement():
             return web_elem_or_selector
         case str():
             return By.CSS_SELECTOR, web_elem_or_selector
@@ -279,7 +279,7 @@ def get_visibility_condition(
     web_elem_or_locator: WebElementOrCssLocator,
 ) -> VisibilityCondition:
     match web_elem_or_locator:
-        case WebElement() as element:
+        case SeleniumWebElement() as element:
             return visibility_of(element)
 
         case (By.CSS_SELECTOR, str()) as locator:
@@ -291,14 +291,14 @@ def get_visibility_condition(
 
 def wait_for_visible_element_using_getter(
     driver: WebDriver,
-    web_elem_getter: Callable[[WebDriver], WebElement],
+    web_elem_getter: Callable[[WebDriver], SeleniumWebElement],
     timeout: float = WAIT_FRONTEND,
-) -> WebElement:
+) -> SeleniumWebElement:
     # Wait until the getter returns a visible element.
 
     def is_element_visible_using_getter(
-        driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
-    ) -> WebElement | None:
+        driver: WebDriver, web_elem_getter: Callable[[WebDriver], SeleniumWebElement]
+    ) -> SeleniumWebElement | None:
         web_elem = web_elem_getter(driver)
         return web_elem if visibility_of(web_elem)(driver) else None
 
@@ -320,7 +320,9 @@ def wait_for_file_to_download(
 
 
 def get_element_css_classes_when_visible(
-    driver: WebDriver, web_elem: WebElement, timeout: float = WAIT_FRONTEND // 4
+    driver: WebDriver,
+    web_elem: SeleniumWebElement,
+    timeout: float = WAIT_FRONTEND // 4,
 ) -> list[str]:
     def get_element_classes(driver: WebDriver) -> list[str] | None:
         return (
@@ -345,7 +347,7 @@ def find_web_elem(
     css_selector: str,
     error_message: str | Callable[[], str],
     scroll: bool = True,
-) -> WebElement:
+) -> SeleniumWebElement:
     try:
         if scroll:
             _scroll_to_css_selector(web_elem_root, css_selector)
@@ -363,7 +365,7 @@ def find_web_elem_with_text(
     text: str,
     error_message: str | Callable[[], str],
     scroll: bool = True,
-) -> WebElement:
+) -> SeleniumWebElement:
     items = web_elem_root.find_elements(By.CSS_SELECTOR, css_selector)
     if scroll:
         _scroll_to_css_selector(web_elem_root, css_selector)
@@ -379,7 +381,7 @@ def find_web_elem_with_text(
 
 def click_on_web_elem(
     driver: WebDriver,
-    web_elem: WebElement,
+    web_elem: SeleniumWebElement,
     error_message: str | Callable[[], str],
 ) -> None:
     disabled = "disabled" in web_elem.get_attribute("class")
@@ -419,8 +421,8 @@ def suppress(*exceptions: type[BaseException]) -> Iterator[None]:
 
 @contextmanager
 def rm_css_cls(
-    driver: WebDriver, web_elem: WebElement, css_cls: str
-) -> Iterator[WebElement]:
+    driver: WebDriver, web_elem: SeleniumWebElement, css_cls: str
+) -> Iterator[SeleniumWebElement]:
     driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
     yield web_elem
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)
