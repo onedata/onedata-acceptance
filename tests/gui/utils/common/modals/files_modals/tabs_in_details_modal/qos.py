@@ -9,6 +9,7 @@ from collections.abc import Sequence
 
 from selenium.common.exceptions import JavascriptException
 
+from tests.gui.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.query_builder import QueryBuilder
 from tests.gui.utils.core.base import PageObject

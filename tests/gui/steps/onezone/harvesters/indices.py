@@ -12,7 +12,7 @@ from datetime import datetime
 
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     wt_click_button_on_data_disc_page,
 )

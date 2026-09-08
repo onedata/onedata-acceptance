@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import PublicShareView as public_share
 from tests.type_definitions import SeleniumDrivers

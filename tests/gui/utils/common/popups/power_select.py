@@ -28,9 +28,9 @@ class PowerSelect(PageObject):
         web_elem: WebElement,
         parent: object | None = None,
         item_cls: type[PageObject] | None = None,
-        name: str = "",
+        object_name: str = "",
     ) -> None:
-        super().__init__(driver, web_elem, parent, name=name)
+        super().__init__(driver, web_elem, parent, object_name=object_name)
         self.item_cls = item_cls
 
     @property

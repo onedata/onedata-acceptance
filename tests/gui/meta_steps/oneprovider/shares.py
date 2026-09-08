@@ -411,7 +411,7 @@ def send_public_handle_link_to_user(
     )
 )
 def fill_inputs_in_edm_metadata_form(
-    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
+    selenium: SeleniumDrivers, browser_id: str, config: str
 ) -> None:
     """
     Fill EDM metadata form according to given config.
@@ -475,21 +475,24 @@ def fill_inputs_in_edm_metadata_form(
                     requires_group_selection=True,
                 )
 
-        elif isinstance(value, list):
-            for i, val in enumerate(value):
-                if i > 0:
-                    # if it's not the first value for given field,
-                    # we need to click "Add another ..." button before writing value
-                    add_property_to_edm_form_in_shares_interface(
-                        browser_id, selenium, lowercase_field_name
+        else:
+            if isinstance(value, list):
+                for i, val in enumerate(value):
+                    if i > 0:
+                        # if it's not the first value for given field,
+                        # we need to click "Add another ..." button before writing value
+                        add_property_to_edm_form_in_shares_interface(
+                            browser_id, selenium, field_name
+                        )
+                    write_to_nth_input_in_edm_form_in_shares_interface(
+                        browser_id,
+                        val,
+                        field_name,
+                        selenium,
+                        num_to_ordinal(i),
                     )
                 write_to_nth_input_in_edm_form_in_shares_interface(
-                    browser_id,
-                    val,
-                    lowercase_field_name,
-                    selenium,
-                    num_to_ordinal(i),
-                    numerals,
+                    browser_id, value, field_name, selenium, "first"
                 )
         else:
             write_to_nth_input_in_edm_form_in_shares_interface(
@@ -504,7 +507,7 @@ def fill_inputs_in_edm_metadata_form(
     )
 )
 def assert_properties_in_edm_metadata_form(
-    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
+    selenium: SeleniumDrivers, browser_id: str, config: str
 ) -> None:
     """
     Assert EDM metadata values according to given config.
@@ -517,17 +520,21 @@ def assert_properties_in_edm_metadata_form(
         lowercase_field_name = configured_field_name.lower()
         if is_metadata_field_option_selectable_edm(lowercase_field_name):
             assert_val_edm_form_in_shares_interface(
-                browser_id, value, lowercase_field_name, selenium, numerals
+                browser_id, value, field_name, selenium
             )
-        elif isinstance(value, list):
-            for i, val in enumerate(value):
+        else:
+            if isinstance(value, list):
+                for i, val in enumerate(value):
+                    assert_nth_val_edm_form_in_shares_interface(
+                        browser_id,
+                        val,
+                        field_name,
+                        selenium,
+                        num_to_ordinal(i),
+                    )
+            else:
                 assert_nth_val_edm_form_in_shares_interface(
-                    browser_id,
-                    val,
-                    lowercase_field_name,
-                    selenium,
-                    num_to_ordinal(i),
-                    numerals,
+                    browser_id, value, field_name, selenium, "first"
                 )
         else:
             assert_nth_val_edm_form_in_shares_interface(

@@ -14,7 +14,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import NUMERALS, WAIT_FRONTEND
 from tests.gui.utils import Popups
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils.generic import transform
@@ -140,11 +140,10 @@ def write_input_in_edm_form_in_shares_interface(
     text: str,
     which_input: str,
     selenium: SeleniumDrivers,
-    numerals: dict[str, int],
 ) -> None:
     numeral = "first"
     write_to_nth_input_in_edm_form_in_shares_interface(
-        browser_id, text, which_input, selenium, numeral, numerals
+        browser_id, text, which_input, selenium, numeral
     )
 
 
@@ -162,11 +161,10 @@ def write_to_nth_input_in_edm_form_in_shares_interface(
     which_input: str,
     selenium: SeleniumDrivers,
     numeral: str,
-    numerals: dict[str, int],
 ) -> None:
     driver = selenium[browser_id]
     form = private_share(driver).edm_metadata_form
-    idx = numerals[numeral]
+    idx = NUMERALS[numeral]
     for item in form.items:
         if item.name == "":
             driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
@@ -266,11 +264,10 @@ def assert_val_edm_form_in_shares_interface(
     expected_value: str,
     section_name: str,
     selenium: SeleniumDrivers,
-    numerals: dict[str, int],
 ) -> None:
     numeral = "first"
     assert_nth_val_edm_form_in_shares_interface(
-        browser_id, expected_value, section_name, selenium, numeral, numerals
+        browser_id, expected_value, section_name, selenium, numeral
     )
 
 
@@ -287,11 +284,10 @@ def assert_nth_val_edm_form_in_shares_interface(
     section_name: str,
     selenium: SeleniumDrivers,
     numeral: str,
-    numerals: dict[str, int],
 ) -> None:
     driver = selenium[browser_id]
     items = private_share(driver).edm_public_view.items
-    idx = numerals[numeral]
+    idx = NUMERALS[numeral]
     for item in items:
         if item.name == "":
             driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)

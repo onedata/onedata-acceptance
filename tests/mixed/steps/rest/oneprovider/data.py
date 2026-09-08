@@ -23,6 +23,7 @@ from oneprovider_client import (
 )
 from oneprovider_client.rest import ApiException as OPException
 from tests import OP_REST_PORT
+from tests.gui.constants import NUMERALS
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import parse_elements_sequence
@@ -301,7 +302,6 @@ def assert_ace_in_op_rest(
     users: Users,
     host: str,
     hosts: Hosts,
-    numerals: dict[str, int],
     path: str,
     num: str,
     privileges: str,
@@ -309,7 +309,7 @@ def assert_ace_in_op_rest(
     name: str,
 ) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
-    ace = client.read_metadata(path)["metadata"]["cdmi_acl"][numerals[num]]
+    ace = client.read_metadata(path)["metadata"]["cdmi_acl"][NUMERALS[num]]
     assert_ace(parse_elements_sequence(privileges), item_type, ace, name, num, path)
 
 

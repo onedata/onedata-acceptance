@@ -12,7 +12,7 @@ from _pytest._py.path import LocalPath
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     close_alert_popup_if_present,
     wait_for_sliding_panel_to_stop_moving,

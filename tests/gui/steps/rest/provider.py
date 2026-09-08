@@ -9,7 +9,7 @@ from typing import Literal
 from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.utils.generic import OnedataService
 from tests.type_definitions import Hosts, JsonObject
 from tests.utils.rest_utils import (

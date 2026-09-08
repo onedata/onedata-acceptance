@@ -4,7 +4,7 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.tokens import (
     assert_token_configuration_gui,
     choose_and_revoke_token_in_oz_gui,
