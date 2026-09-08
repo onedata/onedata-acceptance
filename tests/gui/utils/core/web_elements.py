@@ -132,9 +132,9 @@ class Input(WebElement):
         input_box.clear()
         if val != "":
             input_box.send_keys(val)
-            assert (
-                input_box.get_attribute("value") == val
-            ), f'entering "{val}" to {self.descriptor_name} in {instance} failed'
+            assert input_box.get_attribute("value") == val, (
+                f'entering "{val}" to {self.descriptor_name} in {instance} failed'
+            )
 
 
 class AceEditor(WebElement):

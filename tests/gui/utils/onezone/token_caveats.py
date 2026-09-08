@@ -4,8 +4,9 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import Iterable, Protocol, TypedDict
+from typing import Protocol, TypedDict
 
 from selenium.webdriver.common.keys import Keys
 
@@ -275,9 +276,7 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
                     value = groups[value]
             if consumer_type == "oneprovider" and method == "name" and "Any" not in value:
                 value = hosts[value]["name"]
-            self.set_consumer_in_consumer_caveat(
-                selenium, browser_id, consumer_type, method, value
-            )
+            self.set_consumer_in_consumer_caveat(selenium, browser_id, consumer_type, method, value)
         create_token_page.expand_caveats()
 
     @repeat_failed(timeout=WAIT_FRONTEND)
@@ -315,9 +314,7 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         for service in service_cav:
             self.set_service_in_service_caveat(selenium, browser_id, "Service", service)
         for service in service_onepanel_cav:
-            self.set_service_in_service_caveat(
-                selenium, browser_id, "Service Onepanel", service
-            )
+            self.set_service_in_service_caveat(selenium, browser_id, "Service Onepanel", service)
 
     def set_service_in_service_caveat(
         self,

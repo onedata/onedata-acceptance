@@ -19,7 +19,6 @@ from onepanel_client import (
     StorageImport,
     StoragesApi,
 )
-
 from tests.gui.constants import WAIT_BACKEND
 from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.onezone.common import get_space_with_name

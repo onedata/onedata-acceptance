@@ -271,9 +271,7 @@ def copy_archive_id_to_tmp_memory(
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
         )
-        close_alert_popup_if_present(
-            selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED
-        )
+        close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
         tmp_memory[description] = clipboard.paste(display=displays[browser_id])
 
 
@@ -654,9 +652,7 @@ def check_size_stats_for_archive_per_provider(
                 [expected_value],
             )
         else:
-            check_content_for_provider(
-                selenium, hosts, browser_id, provider, expected_value
-            )
+            check_content_for_provider(selenium, hosts, browser_id, provider, expected_value)
 
 
 @wt(
@@ -688,9 +684,7 @@ def assert_archive_name_and_shortened_path_for_screen_sizes(
 
         audit_log = Modals(driver).archive_audit_log
         details_text = get_loaded_archive_file_path(driver)
-        details_archive_name, displayed_path = extract_archive_name_and_path(
-            details_text
-        )
+        details_archive_name, displayed_path = extract_archive_name_and_path(details_text)
 
         assert_archive_names_match(
             audit_log.archive_name,

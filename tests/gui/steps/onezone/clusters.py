@@ -58,9 +58,7 @@ def assert_record_in_clusters_menu(
     assert record in records, f"{record} not in clusters"
 
 
-def _get_clusters(
-    selenium: SeleniumDrivers, browser_id: str
-) -> PageObjectsSequence[MenuItem]:
+def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence[MenuItem]:
     driver = selenium[browser_id]
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ClustersPage)

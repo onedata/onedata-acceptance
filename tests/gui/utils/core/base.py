@@ -57,9 +57,8 @@ class PageObjectMeta(ABCMeta):
         cls_dict: dict[str, object],
     ) -> None:
         for key, val in cls_dict.items():
-            if isinstance(val, AbstractWebElement):
-                if val.descriptor_name in ("id", ""):
-                    val.descriptor_name = key
+            if isinstance(val, AbstractWebElement) and val.descriptor_name in ("id", ""):
+                val.descriptor_name = key
         super().__init__(cls_name, bases, cls_dict)
 
 

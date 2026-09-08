@@ -233,9 +233,7 @@ def assert_subject_type(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_lack_of_subject(
-    selenium: SeleniumDrivers, browser_id: str, num: str
-) -> None:
+def assert_lack_of_subject(selenium: SeleniumDrivers, browser_id: str, num: str) -> None:
     n = _get_index(selenium, browser_id, num)
 
     perm = Modals(selenium[browser_id]).details_modal.edit_permissions.acl.permissions[n]
@@ -340,9 +338,7 @@ def assert_set_acl_privileges(
         r" privileges? are set in (?P<num>\w+) ACL record in edit permissions panel"
     )
 )
-def assert_set_all_acl_privileges(
-    selenium: SeleniumDrivers, browser_id: str, num: str
-) -> None:
+def assert_set_all_acl_privileges(selenium: SeleniumDrivers, browser_id: str, num: str) -> None:
     option_list = "[allow, Content, Acl, Metadata, Attributes, Deletion]"
     assert_set_acl_privileges(selenium, browser_id, num, option_list)
 
@@ -490,9 +486,7 @@ def assert_not_no_access_tag_on_file(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_unknown_user_id_from_acl_entry(
-    selenium: SeleniumDrivers, browser_id: str, num: str
-) -> str:
+def get_unknown_user_id_from_acl_entry(selenium: SeleniumDrivers, browser_id: str, num: str) -> str:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num)
     perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]

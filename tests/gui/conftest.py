@@ -10,7 +10,8 @@ import os
 import re
 import subprocess as sp
 from collections import defaultdict
-from typing import Generator, cast
+from collections.abc import Generator
+from typing import cast
 
 import pytest
 from _pytest._py.path import LocalPath
@@ -21,20 +22,7 @@ from selenium import webdriver
 
 from tests import LOGDIRS
 from tests.conftest import export_logs, get_log_dir_path
-from tests.gui.constants import (
-    DRIVER_CREATION_RETRIES,
-    RESPONSIVE_LAYOUT_DELAY,
-    SCREEN_PARAMETERS,
-    SELENIUM_IMPLICIT_WAIT,
-    WAIT_BACKEND,
-    WAIT_EXTENDED_UPLOAD,
-    WAIT_EXTENDED_WORKFLOW_EXECUTION,
-    WAIT_FRONTEND,
-    WAIT_NORMAL_DOWNLOAD,
-    WAIT_NORMAL_UPLOAD,
-    WAIT_NORMAL_WORKFLOW_EXECUTION,
-    WAIT_PODS_TERMINATION,
-)
+from tests.gui.constants import SCREEN_PARAMETERS
 from tests.gui.sse_fixtures import (
     async_loop_in_thread,  # noqa: F401 - register fixture
     monitors,  # noqa: F401 - register fixtures
@@ -149,7 +137,7 @@ def finalize(request: pytest.FixtureRequest) -> Generator[None, None, None]:
     export_logs(request)
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def logdir(request: pytest.FixtureRequest) -> str:
     return request.config.option.htmlpath.removesuffix("report.html")
 
@@ -164,7 +152,7 @@ def test_type(request: pytest.FixtureRequest) -> str:
     return request.config.getoption("--test-type")
 
 
-@fixture
+@pytest.fixture
 def tmp_memory() -> TmpMemory:
     """Dict to use when one wants to store sth between steps.
 
@@ -295,7 +283,7 @@ def capabilities(
 # ============================================================================
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def screens() -> list[int]:
     return [0]
 

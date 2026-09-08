@@ -1,7 +1,7 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from collections.abc import Iterator, Sequence
-from typing import Optional, TypeVar
+from typing import TypeVar
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -33,9 +33,7 @@ class ButtonPageObject(PageObject):
         self.click()
 
     def is_enabled(self) -> bool:
-        return self.web_elem.is_enabled() and element_has_class(
-            self.web_elem, "disabled"
-        )
+        return self.web_elem.is_enabled() and not element_has_class(self.web_elem, "disabled")
 
     def is_active(self) -> bool:
         return element_has_class(self.web_elem, "active")
@@ -58,7 +56,7 @@ class PageObjectsSequence[PageObjectT: PageObject]:
         driver: WebDriver,
         items: Sequence[SeleniumWebElement],
         cls: type[PageObjectT],
-        parent: Optional[object] = None,
+        parent: object | None = None,
     ) -> None:
         self.driver = driver
         self.items = items
@@ -82,9 +80,7 @@ class PageObjectsSequence[PageObjectT: PageObject]:
             yield self.cls(self.driver, item, self.parent)
 
     def __reversed__(self) -> Iterator[PageObjectT]:
-        return (
-            self.cls(self.driver, item, self.parent) for item in reversed(self.items)
-        )
+        return (self.cls(self.driver, item, self.parent) for item in reversed(self.items))
 
     def __getitem__(self, sel: int | str) -> PageObjectT:
         if isinstance(sel, int):
@@ -115,9 +111,7 @@ class PageObjectsSequence[PageObjectT: PageObject]:
         return len(self)
 
     def index(self, item_for_idx: object) -> int:
-        item_searched = (
-            item_for_idx.id if isinstance(item_for_idx, self.cls) else item_for_idx
-        )
+        item_searched = item_for_idx.id if isinstance(item_for_idx, self.cls) else item_for_idx
 
         for i, item in enumerate(self):
             if item.id == item_searched:

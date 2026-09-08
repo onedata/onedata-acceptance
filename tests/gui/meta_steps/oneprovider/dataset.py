@@ -105,12 +105,8 @@ def create_dataset(
         )
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_data_row_menu
-    )
-    click_modal_button(
-        selenium, browser_id, "Establish dataset", option_in_data_row_menu
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_data_row_menu)
+    click_modal_button(selenium, browser_id, "Establish dataset", option_in_data_row_menu)
     flags = [item.replace("_protection", "") for item in get_flags(option)]
     for flag in flags:
         click_protection_toggle(browser_id, selenium, flag, option_in_data_row_menu)
