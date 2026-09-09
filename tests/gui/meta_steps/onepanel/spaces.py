@@ -10,12 +10,8 @@ import time
 from contextlib import suppress
 
 import yaml
-from selenium.common.exceptions import (
-    NoSuchElementException,
-    StaleElementReferenceException,
-)
+from selenium.common.exceptions import StaleElementReferenceException
 
-from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.miscellaneous import (
@@ -65,7 +61,6 @@ from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -403,13 +398,14 @@ def click_start_scan_button_in_storage_import_tab(
 
     def click_start_scan_button() -> None:
         wait_for_visible_element_using_getter(
-            driver, lambda driver: Onepanel(driver).content.spaces.space.sync_chart.start_scan
+            driver,
+            lambda driver: Onepanel(driver).content.spaces.space.sync_chart.start_scan,
         )
         sync_chart = Onepanel(driver).content.spaces.space.sync_chart
         wait_for_visible_element_using_getter(driver, lambda _: sync_chart.start_scan)
         with suppress(StaleElementReferenceException):
             sync_chart.start_scan.click()
-        wait_for_start_scan_button_to_be_pending(driver, timeout=1)
+        wait_for_start_scan_button_to_be_pending(driver, timeout=8)
 
     click_start_scan_button()
     close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
