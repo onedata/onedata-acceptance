@@ -274,8 +274,8 @@ def wait_for_sliding_panel_to_stop_moving(
 def wait_for_error_modal_to_disappear(driver: WebDriver) -> bool:
     """Close the error modal and return whether it appeared."""
 
-    def get_error_modal_close_button(current_driver: WebDriver) -> Clickable:
-        return Modals(current_driver).error.close
+    def get_error_modal_close_button(driver: WebDriver) -> Clickable:
+        return Modals(driver).error.close
 
     return wait_till_error_modal_disappear(
         driver,

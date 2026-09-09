@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from contextlib import suppress
 
 import yaml
 from selenium.common.exceptions import (
@@ -402,12 +403,13 @@ def click_start_scan_button_in_storage_import_tab(
 
     @repeat_failed(
         timeout=WAIT_FRONTEND,
-        exceptions=(NoSuchElementException, StaleElementReferenceException),
+        exceptions=(NoSuchElementException),
     )
     def click_start_scan_button() -> None:
         sync_chart = Onepanel(driver).content.spaces.space.sync_chart
         if not sync_chart.is_start_scan_pending():
-            sync_chart.start_scan.click()
+            with suppress(StaleElementReferenceException):
+                sync_chart.start_scan.click()
             wait_for_start_scan_button_to_be_pending(driver, timeout=1)
 
     click_start_scan_button()
