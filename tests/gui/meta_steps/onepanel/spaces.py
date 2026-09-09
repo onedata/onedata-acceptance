@@ -408,9 +408,9 @@ def click_start_scan_button_in_storage_import_tab(
         sync_chart = Onepanel(driver).content.spaces.space.sync_chart
         if not sync_chart.is_start_scan_pending():
             sync_chart.start_scan.click()
+            wait_for_start_scan_button_to_be_pending(driver, timeout=1)
 
     click_start_scan_button()
-    wait_for_start_scan_button_to_be_pending(driver)
     close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
 
 

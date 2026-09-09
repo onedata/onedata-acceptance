@@ -765,8 +765,8 @@ def toggle_in_storage_import_configuration_is_enabled(
     return storage_import_conf.is_toggle_checked(transform(toggle_name))
 
 
-def wait_for_start_scan_button_to_be_pending(driver: WebDriver) -> None:
-    WebDriverWait(driver, timeout=WAIT_FRONTEND, poll_frequency=0.05).until(
+def wait_for_start_scan_button_to_be_pending(driver: WebDriver, timeout: float) -> None:
+    WebDriverWait(driver, timeout=timeout, poll_frequency=0.05).until(
         lambda current_driver: Onepanel(
             current_driver
         ).content.spaces.space.sync_chart.is_start_scan_pending(),
