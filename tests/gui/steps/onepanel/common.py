@@ -341,7 +341,7 @@ def assert_certificate_validity_times(
     # The validity check accounts for leap years
     validity = expiration_time - creation_time
     assert (
-        timedelta(days=(10 * 365)) <= validity <= timedelta(days=(10 * 366))
+        timedelta(days=10 * 365) <= validity <= timedelta(days=10 * 366)
     ), f"Expected certificate validity should be close to 10 years, got {validity}"
 
 
