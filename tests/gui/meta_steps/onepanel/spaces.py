@@ -401,16 +401,15 @@ def click_start_scan_button_in_storage_import_tab(
 ) -> None:
     driver = selenium[browser_id]
 
-    @repeat_failed(
-        timeout=WAIT_FRONTEND,
-        exceptions=(NoSuchElementException),
-    )
     def click_start_scan_button() -> None:
+        wait_for_visible_element_using_getter(
+            driver, lambda driver: Onepanel(driver).content.spaces.space.sync_chart.start_scan
+        )
         sync_chart = Onepanel(driver).content.spaces.space.sync_chart
-        if not sync_chart.is_start_scan_pending():
-            with suppress(StaleElementReferenceException):
-                sync_chart.start_scan.click()
-            wait_for_start_scan_button_to_be_pending(driver, timeout=1)
+        wait_for_visible_element_using_getter(driver, lambda _: sync_chart.start_scan)
+        with suppress(StaleElementReferenceException):
+            sync_chart.start_scan.click()
+        wait_for_start_scan_button_to_be_pending(driver, timeout=1)
 
     click_start_scan_button()
     close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)

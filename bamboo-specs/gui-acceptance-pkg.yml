@@ -352,7 +352,7 @@ Storage sync: &acceptance-tests-in-chrome-job
     - script: &run-selenium-tests
         <<: *run-script-working-dir
         scripts:
-          - make SUITE=test_storage_sync COUNT=5 test_gui_pkg
+          - make SUITE=test_storage_sync test_gui_pkg
         description: Run Selenium tests
   final-tasks:
     - test-parser:
@@ -1681,7 +1681,7 @@ Storage sync charts:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_storage_sync_charts COUNT=5 test_gui_pkg
+          - make SUITE=test_storage_sync_charts test_gui_pkg
 
 # Transfers cancel:
 #   <<: *acceptance-tests-in-chrome-job
