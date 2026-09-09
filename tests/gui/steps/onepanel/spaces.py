@@ -766,10 +766,20 @@ def toggle_in_storage_import_configuration_is_enabled(
 
 
 def wait_for_start_scan_button_to_be_pending(driver: WebDriver, timeout: float) -> None:
-    WebDriverWait(driver, timeout=timeout, poll_frequency=0.05).until(
-        lambda driver: Onepanel(
+    def wait_for_start_scan_pending(driver: WebDriver) -> bool:
+        sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+        print(sync_chart.start_scan.web_elem.get_attribute("class").split())
+        return Onepanel(
             driver
-        ).content.spaces.space.sync_chart.is_start_scan_pending(),
+        ).content.spaces.space.sync_chart.is_start_scan_pending()
+
+    WebDriverWait(
+        driver,
+        timeout=timeout,
+        poll_frequency=0.05,
+        ignored_exceptions=(StaleElementReferenceException),
+    ).until(
+        wait_for_start_scan_pending,
         message="Waiting for start scan button to be pending failed",
     )
 

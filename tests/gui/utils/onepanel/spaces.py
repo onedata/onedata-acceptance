@@ -126,6 +126,7 @@ class SyncChart(PageObject):
         return element_has_class(self.start_scan.web_elem, "clickable")
 
     def is_start_scan_pending(self) -> bool:
+        print(self.start_scan.web_elem.get_attribute('class').split())
         return element_has_class(self.start_scan.web_elem, "pending")
 
     @property
