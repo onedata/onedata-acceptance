@@ -5,10 +5,12 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from contextlib import suppress
 import re
 from enum import Enum
 from typing import cast
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -102,23 +104,32 @@ class StartScanState(Enum):
 
 
 class StartScan(PageObject):
-    start_button = Button(".btn")
-    cancel_button = Button(".oneicon-cancelled")
+    start_button = Button(".btn-primary")
+    stop_button = Button(".btn-danger")
+
     details_button = Button(".oneicon-arrow-down")
 
     @property
     def state(self) -> StartScanState:
-        classes = self.start_button.web_elem.get_attribute("class").split()
+        start_button, stop_button = None, None
+        with suppress(NoSuchElementException):
+            stop_button = self.stop_button
 
-        if "pending" in classes:
-            return StartScanState.PENDING
-        if "btn-danger" in classes:
+        if stop_button is not None and stop_button.is_displayed():
             return StartScanState.RUNNING
-        if "btn-primary" in classes:
+
+        with suppress(NoSuchElementException):
+            start_button = self.start_button
+
+        if start_button is not None and start_button.is_displayed():
+            classes = start_button.web_elem.get_attribute("class").split()
+            if "pending" in classes:
+                return StartScanState.PENDING
             return StartScanState.READY
 
         raise RuntimeError(
-            f"Start scan button has an unknown state; CSS classes: {classes}"
+            "Start scan controls have an unknown state; neither the start "
+            "nor stop button is visible"
         )
 
 

@@ -789,6 +789,7 @@ def wait_for_start_scan_button_state(
 def click_start_scan_button(driver: WebDriver) -> None:
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     sync_chart.start_scan.start_button.click()
+    assert sync_chart.start_scan.state is not StartScanState.READY, "start scan button state is still ready after clicking it"
 
 
 @wt(
