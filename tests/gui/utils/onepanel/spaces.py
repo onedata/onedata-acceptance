@@ -5,8 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from contextlib import suppress
 import re
+from contextlib import suppress
 from enum import Enum
 from typing import cast
 

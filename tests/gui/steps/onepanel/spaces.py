@@ -786,10 +786,17 @@ def wait_for_start_scan_button_state(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_start_scan_button(driver: WebDriver) -> None:
+def click_start_scan_button_in_sync_chart(driver: WebDriver) -> None:
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     sync_chart.start_scan.start_button.click()
-    assert sync_chart.start_scan.state is not StartScanState.READY, "start scan button state is still ready after clicking it"
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_start_scan_button_state_is_not_ready(driver: WebDriver) -> None:
+    sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+    assert (
+        sync_chart.start_scan.state is not StartScanState.READY
+    ), "start scan button state is still ready after clicking it"
 
 
 @wt(

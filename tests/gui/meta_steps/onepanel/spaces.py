@@ -11,21 +11,19 @@ import time
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.gui.steps.common.common import close_alert_popup_if_present
-from tests.gui.steps.common.miscellaneous import (
-    wait_until_scanning_is_finished_in_storage_import_tab,
-)
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import (
+    assert_start_scan_button_state_is_not_ready,
     click_change_quota_button,
     click_on_btn_in_space_support_form,
     click_on_navigation_tab_in_space,
-    click_start_scan_button,
+    click_start_scan_button_in_sync_chart,
     confirm_quota_value_change,
     get_spaces_list_from_spaces_page,
     remove_space_instead_of_revoke,
@@ -387,11 +385,9 @@ def set_quota_in_auto_cleaning(
     confirm_quota_value_change(selenium, browser_id, quota)
 
 
-def click_start_scan_button_and_wait_till_running(driver: WebDriver) -> None:
-    click_start_scan_button(driver)
-    wait_for_start_scan_button_state(
-        driver, StartScanState.RUNNING, timeout=WAIT_FRONTEND
-    )
+def click_start_scan_button_and_wait_for_its_state(driver: WebDriver) -> None:
+    click_start_scan_button_in_sync_chart(driver)
+    assert_start_scan_button_state_is_not_ready(driver)
 
 
 @wt(
@@ -404,8 +400,22 @@ def click_start_scan_button_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    click_start_scan_button_and_wait_till_running(driver)
+    click_start_scan_button_and_wait_for_its_state(driver)
     close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} waits until scanning is finished "
+        "in storage import tab in Onepanel"
+    )
+)
+def wait_until_scanning_is_finished_in_storage_import_tab(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    wait_for_start_scan_button_state(
+        selenium[browser_id], StartScanState.READY, timeout=WAIT_BACKEND * 5
+    )
 
 
 @wt(
