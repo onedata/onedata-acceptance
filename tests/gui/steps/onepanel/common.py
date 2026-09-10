@@ -332,11 +332,16 @@ def assert_certificate_validity_times(
     expiration_time = parse_time(nav.expiration_time)
     # We need the same timezone (tzinfo) for "now" as is for creation_time
     now = datetime.now(creation_time.tzinfo)
-
-    # Certificate is generated when environment starts
     assert (
         now > creation_time
     ), f"Certificate creation time {creation_time} is set to a future date"
+
+    # The approximation of the creation time is used because the certificate is
+    # generated when environment starts so the time of generation may differ from
+    # the time of checking (now threshold is set to 12 hours)
+    assert abs(now - creation_time) < timedelta(
+        hours=12
+    ), f"Certificate creation time {creation_time} is not close to {now}"
 
     # The validity check accounts for leap years
     validity = expiration_time - creation_time
