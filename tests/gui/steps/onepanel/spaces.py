@@ -38,7 +38,7 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
-from tests.gui.utils.onepanel.spaces import SpaceRecord
+from tests.gui.utils.onepanel.spaces import SpaceRecord, StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -765,13 +765,14 @@ def toggle_in_storage_import_configuration_is_enabled(
     return storage_import_conf.is_toggle_checked(transform(toggle_name))
 
 
-def wait_for_start_scan_button_to_be_pending(driver: WebDriver, timeout: float) -> None:
-    def wait_for_start_scan_pending(driver: WebDriver) -> bool:
-        sync_chart = Onepanel(driver).content.spaces.space.sync_chart
-        print(sync_chart.start_scan.web_elem.get_attribute("class").split())
-        return Onepanel(
-            driver
-        ).content.spaces.space.sync_chart.is_start_scan_pending()
+def wait_for_start_scan_button_state(
+    driver: WebDriver,
+    state: StartScanState,
+    timeout: float = WAIT_FRONTEND,
+) -> None:
+    def has_expected_state(driver: WebDriver) -> bool:
+        start_scan = Onepanel(driver).content.spaces.space.sync_chart.start_scan
+        return start_scan.state is state
 
     WebDriverWait(
         driver,
@@ -779,9 +780,15 @@ def wait_for_start_scan_button_to_be_pending(driver: WebDriver, timeout: float) 
         poll_frequency=0.05,
         ignored_exceptions=(StaleElementReferenceException),
     ).until(
-        wait_for_start_scan_pending,
-        message="Waiting for start scan button to be pending failed",
+        has_expected_state,
+        message=f"Waiting for start scan button to be {state.value} failed",
     )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_start_scan_button(driver: WebDriver) -> None:
+    sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+    sync_chart.start_scan.start_button.click()
 
 
 @wt(

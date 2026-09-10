@@ -7,11 +7,11 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from contextlib import suppress
 
 import yaml
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.miscellaneous import (
@@ -25,12 +25,13 @@ from tests.gui.steps.onepanel.spaces import (
     click_change_quota_button,
     click_on_btn_in_space_support_form,
     click_on_navigation_tab_in_space,
+    click_start_scan_button,
     confirm_quota_value_change,
     get_spaces_list_from_spaces_page,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
-    wait_for_start_scan_button_to_be_pending,
+    wait_for_start_scan_button_state,
     wt_assert_correct_supported_space_opened,
     wt_assert_proper_space_configuration_in_panel,
     wt_click_on_support_space_btn_on_condition,
@@ -58,6 +59,7 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import wait_for_visible_element_using_getter
+from tests.gui.utils.onepanel.spaces import StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -385,6 +387,13 @@ def set_quota_in_auto_cleaning(
     confirm_quota_value_change(selenium, browser_id, quota)
 
 
+def click_start_scan_button_and_wait_till_running(driver: WebDriver) -> None:
+    click_start_scan_button(driver)
+    wait_for_start_scan_button_state(
+        driver, StartScanState.RUNNING, timeout=WAIT_FRONTEND
+    )
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} clicks on "Start scan" button '
@@ -395,19 +404,7 @@ def click_start_scan_button_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-
-    def click_start_scan_button() -> None:
-        wait_for_visible_element_using_getter(
-            driver,
-            lambda driver: Onepanel(driver).content.spaces.space.sync_chart.start_scan,
-        )
-        sync_chart = Onepanel(driver).content.spaces.space.sync_chart
-        wait_for_visible_element_using_getter(driver, lambda _: sync_chart.start_scan)
-        with suppress(StaleElementReferenceException):
-            sync_chart.start_scan.click()
-        wait_for_start_scan_button_to_be_pending(driver, timeout=8)
-
-    click_start_scan_button()
+    click_start_scan_button_and_wait_till_running(driver)
     close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
 
 

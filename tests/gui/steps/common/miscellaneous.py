@@ -21,6 +21,7 @@ from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.generic import transform
+from tests.gui.utils.onepanel.spaces import StartScanState
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
@@ -149,13 +150,16 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
+
+    def is_start_scan_ready(driver: WebDriver) -> bool:
+        start_scan = Onepanel(driver).content.spaces.space.sync_chart.start_scan
+        return start_scan.state is StartScanState.READY
+
     WebDriverWait(
         driver,
         timeout=WAIT_BACKEND * 5,
     ).until(
-        lambda driver: Onepanel(
-            driver
-        ).content.spaces.space.sync_chart.is_start_scan_clickable(),
+        is_start_scan_ready,
         message="Waiting for start scan button to be available failed",
     )
 

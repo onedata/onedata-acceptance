@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+from enum import Enum
 from typing import cast
 
 from selenium.webdriver import ActionChains
@@ -27,7 +28,6 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
-from tests.utils.utils import element_has_class
 
 DEFAULT_IMPORT_STRATEGY_CONFIG = {
     "Mode": "auto",
@@ -95,6 +95,33 @@ class SpaceInfo(PageObject):
         }
 
 
+class StartScanState(Enum):
+    READY = "ready"
+    RUNNING = "running"
+    PENDING = "pending"
+
+
+class StartScan(PageObject):
+    start_button = Button(".btn")
+    cancel_button = Button(".oneicon-cancelled")
+    details_button = Button(".oneicon-arrow-down")
+
+    @property
+    def state(self) -> StartScanState:
+        classes = self.start_button.web_elem.get_attribute("class").split()
+
+        if "pending" in classes:
+            return StartScanState.PENDING
+        if "btn-danger" in classes:
+            return StartScanState.RUNNING
+        if "btn-primary" in classes:
+            return StartScanState.READY
+
+        raise RuntimeError(
+            f"Start scan button has an unknown state; CSS classes: {classes}"
+        )
+
+
 class SyncChart(PageObject):
     configure = NamedButton("button", text="Configure")
     import_settings_list = WebElementsSequence(".import-settings-list li")
@@ -104,7 +131,9 @@ class SyncChart(PageObject):
         cls=StorageImportConfiguration,
     )
     auto_import_scan = WebElement(".import-info-header")
-    start_scan = NamedButton("button", text="Start scan")
+    start_scan = WebItem(
+        ".one-collapsible-list-item-header .btn-toolbar", cls=StartScan
+    )
 
     last_minute_view = Button(".btn-import-interval-minute")
     last_hour_view = Button(".btn-import-interval-hour")
@@ -121,13 +150,6 @@ class SyncChart(PageObject):
     _deleted = WebElementsSequence(
         ".storage-import-chart-operations g.ct-series-2 line"
     )
-
-    def is_start_scan_clickable(self) -> bool:
-        return element_has_class(self.start_scan.web_elem, "clickable")
-
-    def is_start_scan_pending(self) -> bool:
-        print(self.start_scan.web_elem.get_attribute('class').split())
-        return element_has_class(self.start_scan.web_elem, "pending")
 
     @property
     def inserted(self) -> int:
