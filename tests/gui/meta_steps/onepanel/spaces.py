@@ -19,7 +19,6 @@ from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import (
-    assert_start_scan_button_state_is_not_ready,
     click_change_quota_button,
     click_on_btn_in_space_support_form,
     click_on_navigation_tab_in_space,
@@ -30,6 +29,7 @@ from tests.gui.steps.onepanel.spaces import (
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
     wait_for_start_scan_button_state,
+    wait_for_storage_import_scan_start_acknowledgement,
     wt_assert_correct_supported_space_opened,
     wt_assert_proper_space_configuration_in_panel,
     wt_click_on_support_space_btn_on_condition,
@@ -387,7 +387,7 @@ def set_quota_in_auto_cleaning(
 
 def click_start_scan_button_and_wait_for_its_state(driver: WebDriver) -> None:
     click_start_scan_button_in_sync_chart(driver)
-    assert_start_scan_button_state_is_not_ready(driver)
+    wait_for_storage_import_scan_start_acknowledgement(driver)
 
 
 @wt(

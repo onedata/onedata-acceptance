@@ -32,6 +32,7 @@ from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import (
     implicit_wait,
@@ -791,12 +792,18 @@ def click_start_scan_button_in_sync_chart(driver: WebDriver) -> None:
     sync_chart.start_scan.start_button.click()
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_start_scan_button_state_is_not_ready(driver: WebDriver) -> None:
+@repeat_failed(timeout=WAIT_BACKEND, interval=0.05)
+def wait_for_storage_import_scan_start_acknowledgement(driver: WebDriver) -> None:
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+    # A short scan can return to READY before Selenium observes an intermediate
+    # state, but the notification still proves that the click was accepted.
     assert (
         sync_chart.start_scan.state is not StartScanState.READY
-    ), "start scan button state is still ready after clicking it"
+        or Popups(driver).alert_popups.find_alert_popup(
+            AlertPopup.STORAGE_IMPORT_SCAN_STARTED
+        )
+        is not None
+    ), "storage import scan has not started after clicking the start button"
 
 
 @wt(
