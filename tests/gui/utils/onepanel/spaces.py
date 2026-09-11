@@ -30,6 +30,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.utils.utils import element_has_class
 
 DEFAULT_IMPORT_STRATEGY_CONFIG = {
     "Mode": "auto",
@@ -117,8 +118,9 @@ class StartScan(PageObject):
             start_button = self.start_button
 
         if start_button is not None:
-            classes = start_button.web_elem.get_attribute("class").split()
-            if start_button.is_displayed() and "pending" in classes:
+            if start_button.is_displayed() and element_has_class(
+                start_button.web_elem, "pending"
+            ):
                 return StartScanState.PENDING
 
         with suppress(NoSuchElementException):
