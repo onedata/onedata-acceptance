@@ -111,27 +111,24 @@ class StartScan(PageObject):
 
     @property
     def state(self) -> StartScanState:
-        classes = start_button.web_elem.get_attribute("class").split()
-        if "pending" in classes:
-            return StartScanState.PENDING
-
         start_button, stop_button = None, None
+
+        with suppress(NoSuchElementException):
+            start_button = self.start_button
+
+        if start_button is not None:
+            classes = start_button.web_elem.get_attribute("class").split()
+            if "pending" in classes:
+                return StartScanState.PENDING
+            print(start_button, stop_button)
+            if start_button.is_displayed():
+                return StartScanState.READY
+
         with suppress(NoSuchElementException):
             stop_button = self.stop_button
 
         if stop_button is not None and stop_button.is_displayed():
             return StartScanState.RUNNING
-
-        with suppress(NoSuchElementException):
-            start_button = self.start_button
-        print(
-            start_button,
-            stop_button,
-            start_button.is_displayed() if start_button else None,
-            stop_button.is_displayed() if stop_button else None,
-        )
-        if start_button is not None and start_button.is_displayed():
-            return StartScanState.READY
 
         raise RuntimeError(
             "Start scan controls have an unknown state; neither the start "
