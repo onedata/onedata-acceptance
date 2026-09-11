@@ -768,7 +768,7 @@ def toggle_in_storage_import_configuration_is_enabled(
 def wait_for_start_scan_button_state(
     driver: WebDriver,
     state: StartScanState,
-    timeout: float = WAIT_FRONTEND,
+    timeout: float = WAIT_BACKEND,
 ) -> None:
     def has_expected_state(driver: WebDriver) -> bool:
         start_scan = Onepanel(driver).content.spaces.space.sync_chart.start_scan
@@ -785,13 +785,13 @@ def wait_for_start_scan_button_state(
     )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_FRONTEND, exceptions=NoSuchElementException)
 def click_start_scan_button_in_sync_chart(driver: WebDriver) -> None:
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     sync_chart.start_scan.start_button.click()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_start_scan_button_state_is_not_ready(driver: WebDriver) -> None:
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     assert (
