@@ -176,6 +176,10 @@ follow_imports = "skip"
 pretty = true
 
 [[tool.mypy.overrides]]
+module = ["bamboos.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
 module = [
     "py.xml",
     "jsondiff",
