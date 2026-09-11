@@ -111,6 +111,10 @@ class StartScan(PageObject):
 
     @property
     def state(self) -> StartScanState:
+        classes = start_button.web_elem.get_attribute("class").split()
+        if "pending" in classes:
+            return StartScanState.PENDING
+
         start_button, stop_button = None, None
         with suppress(NoSuchElementException):
             stop_button = self.stop_button
@@ -120,11 +124,13 @@ class StartScan(PageObject):
 
         with suppress(NoSuchElementException):
             start_button = self.start_button
-
+        print(
+            start_button,
+            stop_button,
+            start_button.is_displayed() if start_button else None,
+            stop_button.is_displayed() if stop_button else None,
+        )
         if start_button is not None and start_button.is_displayed():
-            classes = start_button.web_elem.get_attribute("class").split()
-            if "pending" in classes:
-                return StartScanState.PENDING
             return StartScanState.READY
 
         raise RuntimeError(
