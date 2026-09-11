@@ -7,6 +7,8 @@ All paths used are relative to script's path, not to the running user's CWD.
 Run the script with -h flag to learn about script's running options.
 """
 
+from __future__ import annotations
+
 import re
 import os
 import sys
