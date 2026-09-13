@@ -120,7 +120,11 @@ class PageObject(AbstractPageObject):
         return self.web_elem.is_displayed()
 
     def is_enabled(self) -> bool:
-        """Return whether Selenium and the application's CSS enable the element."""
+        """In our UI, disabled elements are marked with the CSS class disabled,
+        so we check it explicitly. Selenium’s is_enabled() also works in our case,
+        and we use it as an additional check.
+        """
+
         return self.web_elem.is_enabled() and not element_has_class(
             self.web_elem, "disabled"
         )
