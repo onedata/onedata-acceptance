@@ -29,7 +29,7 @@ from tests.gui.steps.onepanel.spaces import (
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
     wait_for_start_scan_button_state,
-    wait_for_storage_import_scan_start_acknowledgement,
+    wait_for_storage_import_scan_start_confirmation,
     wt_assert_correct_supported_space_opened,
     wt_assert_proper_space_configuration_in_panel,
     wt_click_on_support_space_btn_on_condition,
@@ -387,7 +387,7 @@ def set_quota_in_auto_cleaning(
 
 def click_start_scan_button_and_wait_for_its_state(driver: WebDriver) -> None:
     click_start_scan_button_in_sync_chart(driver)
-    wait_for_storage_import_scan_start_acknowledgement(driver)
+    wait_for_storage_import_scan_start_confirmation(driver)
 
 
 @wt(
