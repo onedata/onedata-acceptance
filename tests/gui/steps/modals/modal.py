@@ -19,10 +19,11 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.modals.files_modals.details_modal import NavigationTab
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
@@ -674,7 +675,7 @@ def assert_number_of_shares_in_modal(
     assert _assert_number_of_shares_in_modal(int(number), links, info), error_message
 
 
-def look_for_tab_name(navigation: PageObjectsSequence, name: str) -> str:
+def look_for_tab_name(navigation: PageObjectsSequence[NavigationTab], name: str) -> str:
     for elem in navigation:
         if name in elem.name:
             return elem.name

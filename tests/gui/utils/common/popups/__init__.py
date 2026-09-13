@@ -16,7 +16,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.web_elements import (
     Label,
@@ -118,7 +118,9 @@ class Popups:
     menu_popup_with_label = WebItem(".webui-popover.in", cls=MenuPopupWithLabel)
     menu_popup_with_text = WebItem(".webui-popover.in", cls=MenuPopupWithText)
     selector_popup = WebItem(".webui-popover.in", cls=SelectorPopup)
-    consumer_caveat_popup = WebItem(".webui-popover-tags-selector", cls=ConsumerCaveat)
+    consumer_caveat_popup = WebItem(
+        ".webui-popover-tags-selector.in", cls=ConsumerCaveat
+    )
     user_delete_account_popover_menu = WebItem(
         ".in .webui-popover-inner", cls=UserDeleteAccountPopoverMenu
     )
