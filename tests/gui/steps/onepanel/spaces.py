@@ -24,12 +24,12 @@ from tests.gui.constants import (
     WAIT_FRONTEND,
 )
 from tests.gui.steps.common.common import (
-    close_alert_popup_if_present,
     wait_for_checking_toggle,
 )
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
@@ -784,7 +784,12 @@ def click_start_scan_button_in_storage_import_tab(
         sync_chart.start_scan.click()
 
     click_start_scan_button()
-    close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.STORAGE_IMPORT_SCAN_STARTED,
+        popup_expected=False,
+    )
 
 
 @wt(

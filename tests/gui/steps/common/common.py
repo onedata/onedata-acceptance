@@ -27,7 +27,7 @@ from tests.gui.type_definitions import (
     WebElementOrCssLocator,
     WebElementOrSelector,
 )
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
     ArchiveAuditLog,
@@ -35,7 +35,6 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
-from tests.gui.utils.common.popups.generic import AlertPopupType
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.generic import (
     ListElement,
@@ -355,34 +354,6 @@ def wait_till_error_modal_disappear(
         driver,
         web_elem_or_locator,
         get_close_button,
-    )
-    return True
-
-
-def close_alert_popup_if_present(
-    driver: WebDriver,
-    popup: AlertPopupType,
-) -> bool:
-    # Close an alert identified by its enum value.
-    # If popup doesn't appear, don't throw an error.
-    # If it appeared and was not closed, raise.
-    alert_popup = Popups(driver).alert_popups.get_alert_popup(popup)
-    if alert_popup is None:
-        return False
-
-    def close_matching_popup() -> None:
-        current_popup = Popups(driver).alert_popups.find_alert_popup(popup)
-        if current_popup is not None:
-            current_popup.close.click()
-
-    try_click_without_throwing_error(close_matching_popup)
-
-    def is_popup_closed(driver: WebDriver) -> bool:
-        return Popups(driver).alert_popups.find_alert_popup(popup) is None
-
-    WebDriverWait(driver, WAIT_FRONTEND).until(
-        is_popup_closed,
-        message=f'Alert popup matching "{popup.message}" is still visible',
     )
     return True
 

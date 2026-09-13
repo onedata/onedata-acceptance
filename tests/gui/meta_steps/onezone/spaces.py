@@ -16,10 +16,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
-from tests.gui.steps.common.common import (
-    close_alert_popup_if_present,
-    get_visible_items_list,
-)
+from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -278,7 +275,12 @@ def invite_other_users_to_space_using_gui(
     )
     click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
-    close_alert_popup_if_present(selenium[user], AlertPopup.SUCCESSFULLY_COPIED)
+    notify_visible_with_text(
+        selenium,
+        user,
+        AlertPopup.SUCCESSFULLY_COPIED,
+        popup_expected=False,
+    )
     send_invitation_token_to_browser(
         user,
         item_type,
@@ -528,7 +530,12 @@ def add_group_to_space_or_group(
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
 
     click_modal_button(selenium, browser_id, button_in_modal, modal)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.MEMBER_ADDED,
+        popup_expected=False,
+    )
 
 
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
@@ -550,7 +557,12 @@ def copy_user_space_invite_token(
     )
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.SUCCESSFULLY_COPIED,
+        popup_expected=False,
+    )
     close_modal(selenium, browser_id, modal)
 
 

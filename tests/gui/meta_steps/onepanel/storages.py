@@ -23,7 +23,6 @@ from tests.gui.meta_steps.rest.storages import (
     remove_multiple_storages_in_op_panel_using_rest,
     restore_config_and_remove_storage_by_id,
 )
-from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import (
@@ -226,7 +225,6 @@ def _add_storage_in_op_panel_using_gui(
         hosts,
         onepanel_credentials,
     )
-    notify_visible_with_text(selenium, browser_id, AlertPopup.STORAGE_ADDED)
 
 
 @given(
@@ -425,10 +423,14 @@ def _register_revoke_space_supports_finalizer_if_storage_successfully_added(
     hosts: Hosts,
     onepanel_credentials: User,
 ) -> None:
-    if wait_for_error_modal_to_appear(selenium[browser_id], WAIT_BACKEND * 6):
+    if not notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.STORAGE_ADDED,
+        popup_expected=False,
+    ):
         return
 
-    # If no error modal appears, we can assume that storage was added successfully.
     storage = get_first_expanded_storage(storages)
     storage_id = copy_storage_id(
         selenium, browser_id, storage.name, clipboard, displays

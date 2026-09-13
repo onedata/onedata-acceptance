@@ -42,6 +42,9 @@ class CapturedPopup:
     message: str
     web_elem: WebElement
 
+    def __str__(self) -> str:
+        return self.message
+
 
 def capture_matching_popup(
     driver: WebDriver,
@@ -78,11 +81,10 @@ def notify_visible_with_text(
     selenium: SeleniumDrivers,
     browser_id: str,
     alert_popup: AlertPopupType,
-) -> None:
+    popup_expected: bool = True,
+) -> bool:
     driver = selenium[browser_id]
     text_regexp = alert_popup.message
-
-    # for each popup store message, web_elem and classified popup type for future use
     seen_popups: set[CapturedPopup] = set()
 
     try:
@@ -95,12 +97,17 @@ def notify_visible_with_text(
         )
 
     except TimeoutException as exc:
-        raise AssertionError(
-            f'no {alert_popup.category} notify with "{text_regexp}" msg found; '
-            f"observed messages: {list(seen_popups)}"
-        ) from exc
+        if popup_expected:
+            raise AssertionError(
+                f'no {alert_popup.category} notify with "{text_regexp}" msg found; '
+                f"observed messages: {list(seen_popups)}"
+            ) from exc
+
+        _close_all_detected_popups(driver, seen_popups)
+        return False
 
     _close_all_detected_popups(driver, seen_popups)
+    return True
 
 
 def _close_all_detected_popups(

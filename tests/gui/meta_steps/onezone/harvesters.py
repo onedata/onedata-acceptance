@@ -12,8 +12,8 @@ from selenium.common.exceptions import (
     NoSuchElementException,
 )
 
-from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
+from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onezone.harvesters.configuration import (
     assert_public_toggle_on_harvester_config_page,
@@ -220,8 +220,11 @@ def create_harvester(
     _register_harvester_finalizer(request, hosts, admin_credentials, harvester_id)
 
     harvesters[harvester_name] = harvester_id
-    close_alert_popup_if_present(
-        selenium[browser_id], popup=CreatedItemAlertPopup.HARVESTER
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        CreatedItemAlertPopup.HARVESTER,
+        popup_expected=False,
     )
 
 
@@ -300,7 +303,12 @@ def add_group_to_harvester(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_in_modal, modal)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.MEMBER_ADDED,
+        popup_expected=False,
+    )
 
 
 @wt(
@@ -363,7 +371,12 @@ def send_invitation_token(
         member,
     )
     copy_token_from_modal(selenium, browser_id1)
-    close_alert_popup_if_present(selenium[browser_id1], AlertPopup.SUCCESSFULLY_COPIED)
+    notify_visible_with_text(
+        selenium,
+        browser_id1,
+        AlertPopup.SUCCESSFULLY_COPIED,
+        popup_expected=False,
+    )
     close_modal(selenium, browser_id1, modal)
     send_copied_item_to_other_users(
         browser_id1, item_type, [browser_id2], tmp_memory, displays, clipboard

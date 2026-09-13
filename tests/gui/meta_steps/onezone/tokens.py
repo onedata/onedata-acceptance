@@ -16,11 +16,11 @@ from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
 from tests.gui.steps.common.common import (
-    close_alert_popup_if_present,
     wait_for_error_modal_to_disappear,
     wait_for_sliding_panel_to_stop_moving,
     wait_till_error_modal_disappear,
 )
+from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
@@ -130,7 +130,12 @@ def succeed_to_consume_token_using_confirm_button(
     driver = selenium[browser_id]
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
     # Case when popup did not appear or the test didn't catch it in time
-    if not close_alert_popup_if_present(driver, AlertPopup.SUCCESSFULLY_JOINED):
+    if not notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.SUCCESSFULLY_JOINED,
+        popup_expected=False,
+    ):
         assert not is_element_with_selector_visible_on_page(
             driver, ".alert-global.modal.in .modal-dialog"
         ), "Error modal appeared"
@@ -411,8 +416,11 @@ def consume_token_and_see_success_notify(
     _paste_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
     # sometimes the popup appears and disappears too quickly to be catched
-    assert close_alert_popup_if_present(
-        selenium[browser_id], AlertPopup.SUCCESSFULLY_JOINED
+    assert notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.SUCCESSFULLY_JOINED,
+        popup_expected=False,
     ), "Success notify did not appear"
 
 
@@ -436,7 +444,12 @@ def _create_token_of_type(
             selenium, browser_id, "Register Oneprovider"
         )
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.TOKEN_CREATED)
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.TOKEN_CREATED,
+        popup_expected=False,
+    )
 
 
 @wt(
@@ -571,7 +584,12 @@ def _create_token_with_config(
             tmp_memory,
         )
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.TOKEN_CREATED)
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.TOKEN_CREATED,
+        popup_expected=False,
+    )
 
 
 def _set_tokens_caveats(
@@ -949,7 +967,12 @@ def create_token_with_basic_template(
     choose_token_template(selenium, browser_id, template)
     type_new_token_name(selenium, browser_id, name)
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.TOKEN_CREATED)
+    notify_visible_with_text(
+        selenium,
+        browser_id,
+        AlertPopup.TOKEN_CREATED,
+        popup_expected=False,
+    )
 
 
 @wt(

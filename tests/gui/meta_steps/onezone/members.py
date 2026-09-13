@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import cast
 
-from tests.gui.steps.common.common import close_alert_popup_if_present
+from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import (
     assert_element_text_in_modal,
     wt_wait_for_modal_to_appear,
@@ -90,7 +90,12 @@ def remove_member_from_parent(
     Modals(driver).remove_modal.remove()
 
     for popup_enum in (AlertPopup.MEMBER_ADDED, AlertPopup.GROUP_REMOVED_FROM_CLUSTER):
-        close_alert_popup_if_present(selenium[browser_id], popup_enum)
+        notify_visible_with_text(
+            selenium,
+            browser_id,
+            popup_enum,
+            popup_expected=False,
+        )
 
 
 def fail_to_set_privileges_using_op_gui(
