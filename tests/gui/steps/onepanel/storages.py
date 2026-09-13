@@ -75,7 +75,7 @@ def wt_select_storage_type_in_storage_page_op_panel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_type_text_to_in_box_in_storages_page_op_panel(
+def wt_type_text_to_input_box_in_storages_page_op_panel(
     selenium: SeleniumDrivers,
     browser_id: str,
     text: str,

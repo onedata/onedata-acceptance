@@ -23,6 +23,7 @@ from tests.gui.meta_steps.rest.storages import (
     remove_multiple_storages_in_op_panel_using_rest,
     restore_config_and_remove_storage_by_id,
 )
+from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import (
@@ -49,7 +50,7 @@ from tests.gui.steps.onepanel.storages import (
     wt_clicks_on_btn_in_storage_toolbar_in_panel,
     wt_expands_toolbar_for_storage_in_onepanel,
     wt_select_storage_type_in_storage_page_op_panel,
-    wt_type_text_to_in_box_in_storages_page_op_panel,
+    wt_type_text_to_input_box_in_storages_page_op_panel,
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
@@ -192,26 +193,24 @@ def _add_storage_in_op_panel_using_gui(
     hosts: Hosts,
     onepanel_credentials: User,
 ) -> None:
-    content = "storages"
-    btn = "Add storage backend"
     form = "POSIX"
-    input_box = "Storage name"
-    mount_point_option = "mount point"
     options = yaml.load(config, yaml.Loader)
 
     try:
-        wt_click_on_btn_in_content(selenium, [browser_id], btn, content)
+        wt_click_on_btn_in_content(
+            selenium, [browser_id], "Add storage backend", "storages"
+        )
     except (ElementNotInteractableException, NoSuchElementException):
         pass
 
     storage_type = options["storage type"]
     wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id, storage_type)
-    wt_type_text_to_in_box_in_storages_page_op_panel(
-        selenium, browser_id, storage_name, form, input_box
+    wt_type_text_to_input_box_in_storages_page_op_panel(
+        selenium, browser_id, storage_name, form, "Storage name"
     )
-    mount_point = options[mount_point_option]
-    wt_type_text_to_in_box_in_storages_page_op_panel(
-        selenium, browser_id, mount_point, form, mount_point_option
+    mount_point = options["mount point"]
+    wt_type_text_to_input_box_in_storages_page_op_panel(
+        selenium, browser_id, mount_point, form, "mount point"
     )
     if options.get("imported storage", False):
         enable_import_in_add_storage_form(selenium, browser_id)
@@ -221,6 +220,7 @@ def _add_storage_in_op_panel_using_gui(
         clipboard,
         displays,
         request,
+        "succeeds",
         provider_name,
         hosts,
         onepanel_credentials,
@@ -457,10 +457,11 @@ def confirm_changes_in_modify_storage_modal(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Add" button in add storage '
-        "form in storages page in Onepanel for provider {provider_name}"
-    )
+    parsers.re(
+        r'user of (?P<browser_id>\w+?) (?P<result>fails|succeeds) to click on "Add"'
+        r" button in add storage"
+        r' form in storages page in Onepanel for provider "(?P<provider_name>[^"]+)"'
+    ),
 )
 def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
     selenium: SeleniumDrivers,
@@ -468,6 +469,7 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
     clipboard: Clipboard,
     displays: dict[str, str],
     request: pytest.FixtureRequest,
+    result: str,
     provider_name: str,
     hosts: Hosts,
     onepanel_credentials: User,
@@ -475,14 +477,23 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
     storages = get_storages_page(selenium, browser_id)
     click_add_button_in_storage_form(storages)
 
-    _register_revoke_space_supports_finalizer_if_storage_successfully_added(
-        selenium,
-        browser_id,
-        storages,
-        clipboard,
-        displays,
-        request,
-        provider_name,
-        hosts,
-        onepanel_credentials,
-    )
+    if result == "succeeds":
+        notify_visible_with_text(
+            selenium,
+            browser_id,
+            AlertPopup.STORAGE_ADDED,
+        )
+
+        _register_revoke_space_supports_finalizer_if_storage_successfully_added(
+            selenium,
+            browser_id,
+            storages,
+            clipboard,
+            displays,
+            request,
+            provider_name,
+            hosts,
+            onepanel_credentials,
+        )
+    else:
+        wait_for_error_modal_to_appear(selenium[browser_id], timeout=WAIT_BACKEND * 5)

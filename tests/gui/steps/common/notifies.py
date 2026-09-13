@@ -82,13 +82,14 @@ def notify_visible_with_text(
     browser_id: str,
     alert_popup: AlertPopupType,
     popup_expected: bool = True,
+    timeout: float = 2 * WAIT_BACKEND,
 ) -> bool:
     driver = selenium[browser_id]
     text_regexp = alert_popup.message
     seen_popups: set[CapturedPopup] = set()
 
     try:
-        WebDriverWait(driver, 2 * WAIT_BACKEND, poll_frequency=0.1).until(
+        WebDriverWait(driver, timeout, poll_frequency=0.1).until(
             partial(
                 capture_matching_popup,
                 seen_popups=seen_popups,

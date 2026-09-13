@@ -39,7 +39,7 @@ Feature: Storage modification
     And user of browser selects posix from storage selector in storages page in Onepanel
     And user of browser types "test_storage" to Storage name field in posix form in storages page in Onepanel
     And user of browser types "/wrong/path" to Mount point field in posix form in storages page in Onepanel
-    And user of browser clicks on "Add" button in add storage form in storages page in Onepanel for provider oneprovider-1
+    And user of browser fails to click on "Add" button in add storage form in storages page in Onepanel for provider "oneprovider-1"
 
     Then user of browser sees that error modal with text "Adding \"test_storage\" storage backend failed!" appeared
     And user of browser closes "error" modal
@@ -57,7 +57,7 @@ Feature: Storage modification
     And user of browser checks "canonical" in Storage path type field in s3 form in storages page in Onepanel
     And user of browser types "wrong_name" to Bucket name field in s3 form in storages page in Onepanel
     And user of browser types "https://s3.example.com" to Endpoint URL field in s3 form in storages page in Onepanel
-    And user of browser clicks on "Add" button in add storage form in storages page in Onepanel for provider oneprovider-1
+    And user of browser fails to click on "Add" button in add storage form in storages page in Onepanel for provider "oneprovider-1"
 
     Then user of browser sees that error modal with text "Adding \"test_storage\" storage backend failed!" appeared
     And user of browser closes "error" modal
@@ -78,7 +78,7 @@ Feature: Storage modification
     And user of browser types "test_cluster" to Cluster name field in ceph form in storages page in Onepanel
     And user of browser types "wrong_name" to Pool name field in ceph form in storages page in Onepanel
     And user of browser types "4194304" to Block size field in ceph form in storages page in Onepanel
-    And user of browser clicks on "Add" button in add storage form in storages page in Onepanel for provider oneprovider-1
+    And user of browser fails to click on "Add" button in add storage form in storages page in Onepanel for provider "oneprovider-1"
 
     Then user of browser sees that error modal with text "Adding \"test_storage\" storage backend failed!" appeared
     And user of browser closes "error" modal
