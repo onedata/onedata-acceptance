@@ -560,6 +560,7 @@ def click_modal_button(
             browser_id,
             CreatedItemAlertPopup.GROUP,
             popup_expected=False,
+            timeout=WAIT_FRONTEND,
         )
 
 

@@ -12,6 +12,7 @@ from selenium.common.exceptions import (
     NoSuchElementException,
 )
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
@@ -225,6 +226,7 @@ def create_harvester(
         browser_id,
         CreatedItemAlertPopup.HARVESTER,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 
@@ -308,6 +310,7 @@ def add_group_to_harvester(
         browser_id,
         AlertPopup.MEMBER_ADDED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 
@@ -376,6 +379,7 @@ def send_invitation_token(
         browser_id1,
         AlertPopup.SUCCESSFULLY_COPIED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
     close_modal(selenium, browser_id1, modal)
     send_copied_item_to_other_users(

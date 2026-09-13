@@ -789,6 +789,7 @@ def click_start_scan_button_in_storage_import_tab(
         browser_id,
         AlertPopup.STORAGE_IMPORT_SCAN_STARTED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 

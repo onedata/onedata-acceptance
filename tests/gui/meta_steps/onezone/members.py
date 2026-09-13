@@ -8,7 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import cast
 
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.steps.common.notifies import dismiss_notifies_if_present
 from tests.gui.steps.modals.modal import (
     assert_element_text_in_modal,
     wt_wait_for_modal_to_appear,
@@ -31,7 +32,6 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -89,13 +89,7 @@ def remove_member_from_parent(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(driver).remove_modal.remove()
 
-    for popup_enum in (AlertPopup.MEMBER_ADDED, AlertPopup.GROUP_REMOVED_FROM_CLUSTER):
-        notify_visible_with_text(
-            selenium,
-            browser_id,
-            popup_enum,
-            popup_expected=False,
-        )
+    dismiss_notifies_if_present(selenium, browser_id, timeout=WAIT_FRONTEND)
 
 
 def fail_to_set_privileges_using_op_gui(

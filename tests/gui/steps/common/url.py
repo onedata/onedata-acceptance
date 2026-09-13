@@ -359,6 +359,7 @@ def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
         browser_id,
         AlertPopup.AUTHENTICATION_SUCCEEDED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 

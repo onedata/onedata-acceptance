@@ -13,7 +13,7 @@ from typing import Final
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 
-from tests.gui.constants import RESPONSIVE_LAYOUT_DELAY, ScreenSize
+from tests.gui.constants import RESPONSIVE_LAYOUT_DELAY, WAIT_FRONTEND, ScreenSize
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
@@ -275,6 +275,7 @@ def copy_archive_id_to_tmp_memory(
             browser_id,
             AlertPopup.SUCCESSFULLY_COPIED,
             popup_expected=False,
+            timeout=WAIT_FRONTEND,
         )
         tmp_memory[description] = clipboard.paste(display=displays[browser_id])
 

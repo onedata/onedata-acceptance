@@ -60,6 +60,7 @@ def confirm_name_input_on_main_groups_page(
         browser_id,
         CreatedItemAlertPopup.GROUP,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 
@@ -187,6 +188,7 @@ def confirm_add_group(selenium: SeleniumDrivers, browser_id: str, option: str) -
             browser_id,
             CreatedItemAlertPopup.GROUP,
             popup_expected=False,
+            timeout=WAIT_FRONTEND,
         )
     else:
         confirm_name_input_on_main_groups_page(selenium, browser_id)

@@ -51,6 +51,16 @@ def capture_matching_popup(
     seen_popups: set[CapturedPopup],
     regexp: re.Pattern[str],
 ) -> bool:
+    capture_visible_popups(driver, seen_popups)
+
+    return any(regexp.match(popup.message) for popup in seen_popups)
+
+
+def capture_visible_popups(
+    driver: WebDriver,
+    seen_popups: set[CapturedPopup],
+) -> bool:
+    # this function modifies seen_popups set in place
     detected_popups: list[AlertInfoPopup] = Popups(
         driver
     ).alert_popups.get_all_alert_popups()
@@ -62,11 +72,7 @@ def capture_matching_popup(
         except (NoSuchElementException, StaleElementReferenceException):
             continue
 
-    for captured_popup in seen_popups:
-        if regexp.match(captured_popup.message):
-            return True
-
-    return False
+    return bool(seen_popups)
 
 
 @wt(
@@ -109,6 +115,24 @@ def notify_visible_with_text(
 
     _close_all_detected_popups(driver, seen_popups)
     return True
+
+
+def dismiss_notifies_if_present(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    timeout: float,
+) -> None:
+    driver = selenium[browser_id]
+    seen_popups: set[CapturedPopup] = set()
+
+    try:
+        WebDriverWait(driver, timeout, poll_frequency=0.1).until(
+            partial(capture_visible_popups, seen_popups=seen_popups)
+        )
+    except TimeoutException:
+        return
+
+    _close_all_detected_popups(driver, seen_popups)
 
 
 def _close_all_detected_popups(

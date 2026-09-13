@@ -78,6 +78,7 @@ def confirm_name_input_on_main_automation_page(
         browser_id,
         CreatedItemAlertPopup.AUTOMATION_INVENTORY,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 

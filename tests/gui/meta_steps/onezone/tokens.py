@@ -65,7 +65,6 @@ from tests.gui.steps.onezone.tokens import (
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import is_element_with_selector_visible_on_page
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -127,18 +126,12 @@ def succeed_to_consume_token_using_confirm_button(
     selenium: SeleniumDrivers,
     browser_id: str,
 ) -> None:
-    driver = selenium[browser_id]
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
-    # Case when popup did not appear or the test didn't catch it in time
-    if not notify_visible_with_text(
+    notify_visible_with_text(
         selenium,
         browser_id,
         AlertPopup.SUCCESSFULLY_JOINED,
-        popup_expected=False,
-    ):
-        assert not is_element_with_selector_visible_on_page(
-            driver, ".alert-global.modal.in .modal-dialog"
-        ), "Error modal appeared"
+    )
 
 
 def fail_to_consume_token_using_confirm_button(
@@ -415,13 +408,11 @@ def consume_token_and_see_success_notify(
 ) -> None:
     _paste_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
-    # sometimes the popup appears and disappears too quickly to be catched
-    assert notify_visible_with_text(
+    notify_visible_with_text(
         selenium,
         browser_id,
         AlertPopup.SUCCESSFULLY_JOINED,
-        popup_expected=False,
-    ), "Success notify did not appear"
+    )
 
 
 def _create_token_of_type(
@@ -449,6 +440,7 @@ def _create_token_of_type(
         browser_id,
         AlertPopup.TOKEN_CREATED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 
@@ -589,6 +581,7 @@ def _create_token_with_config(
         browser_id,
         AlertPopup.TOKEN_CREATED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 
@@ -972,6 +965,7 @@ def create_token_with_basic_template(
         browser_id,
         AlertPopup.TOKEN_CREATED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 

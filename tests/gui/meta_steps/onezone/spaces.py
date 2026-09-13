@@ -98,6 +98,7 @@ def copy_support_token_from_add_support_page(
         selenium,
         browser_id,
         AlertPopup.SUCCESSFULLY_COPIED,
+        timeout=WAIT_FRONTEND,
     )
 
 
@@ -280,6 +281,7 @@ def invite_other_users_to_space_using_gui(
         user,
         AlertPopup.SUCCESSFULLY_COPIED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
     send_invitation_token_to_browser(
         user,
@@ -314,6 +316,7 @@ def request_space_support_using_gui(
         selenium,
         user,
         AlertPopup.SUCCESSFULLY_COPIED,
+        timeout=WAIT_FRONTEND,
     )
     send_copied_item_to_other_users(
         user, "token", [receiver], tmp_memory, displays, clipboard
@@ -535,6 +538,7 @@ def add_group_to_space_or_group(
         browser_id,
         AlertPopup.MEMBER_ADDED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 
@@ -562,6 +566,7 @@ def copy_user_space_invite_token(
         browser_id,
         AlertPopup.SUCCESSFULLY_COPIED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
     close_modal(selenium, browser_id, modal)
 

@@ -141,6 +141,7 @@ def create_new_space_by_click_on_create_new_space_button(
         browser_id,
         CreatedItemAlertPopup.SPACE,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 
@@ -158,6 +159,7 @@ def create_new_space_on_onezone_page(
         browser_id,
         CreatedItemAlertPopup.SPACE,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 
@@ -926,6 +928,7 @@ def confirm_create_new_space(
             browser_id,
             CreatedItemAlertPopup.SPACE,
             popup_expected=False,
+            timeout=WAIT_FRONTEND,
         )
     else:
         create_new_space_by_click_on_create_new_space_button(selenium, browser_id)

@@ -423,14 +423,6 @@ def _register_revoke_space_supports_finalizer_if_storage_successfully_added(
     hosts: Hosts,
     onepanel_credentials: User,
 ) -> None:
-    if not notify_visible_with_text(
-        selenium,
-        browser_id,
-        AlertPopup.STORAGE_ADDED,
-        popup_expected=False,
-    ):
-        return
-
     storage = get_first_expanded_storage(storages)
     storage_id = copy_storage_id(
         selenium, browser_id, storage.name, clipboard, displays

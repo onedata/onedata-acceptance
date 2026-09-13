@@ -16,6 +16,7 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -107,6 +108,7 @@ def invite_user_to_cluster(
         browser_id,
         AlertPopup.SUCCESSFULLY_COPIED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
     close_modal(selenium, browser_id, modal)
     send_copied_item_to_other_users(
@@ -207,6 +209,7 @@ def add_group_to_cluster(
         browser_id,
         AlertPopup.MEMBER_ADDED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
 
 

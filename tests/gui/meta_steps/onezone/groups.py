@@ -295,6 +295,7 @@ def _create_group_token(
         user,
         AlertPopup.SUCCESSFULLY_COPIED,
         popup_expected=False,
+        timeout=WAIT_FRONTEND,
     )
     close_modal(selenium, user, modal)
     send_copied_item_to_other_users(

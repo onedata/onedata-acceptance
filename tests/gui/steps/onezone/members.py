@@ -740,6 +740,7 @@ def try_setting_privileges_in_members_subpage(
                 browser_id,
                 AlertPopup.PRIVILEGES_SAVED,
                 popup_expected=False,
+                timeout=WAIT_FRONTEND,
             )
 
         else:
