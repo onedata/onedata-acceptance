@@ -750,9 +750,9 @@ def wait_for_storage_import_scan_start_confirmation(driver: WebDriver) -> None:
     # A short scan can return to READY before Selenium observes an intermediate
     # state, but the notification still proves that the click was accepted.
     assert (
-        sync_chart.start_scan.state is not StartScanState.READY
-        or Popups(driver).alert_popups.find_alert_popup(AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
+        Popups(driver).alert_popups.find_alert_popup(AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
         is not None
+        or sync_chart.start_scan.state is not StartScanState.READY
     ), "storage import scan has not started after clicking the start button"
 
 

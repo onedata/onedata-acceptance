@@ -30,7 +30,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
-from tests.utils.utils import element_has_class
+from tests.utils.utils import element_has_class, repeat_failed
 
 DEFAULT_IMPORT_STRATEGY_CONFIG = {
     "Mode": "auto",
@@ -107,6 +107,7 @@ class StartScan(PageObject):
     details_button = Button(".oneicon-arrow-down")
 
     @property
+    @repeat_failed(timeout=1, interval=0.05)
     def state(self) -> StartScanState:
         start_button, stop_button = None, None
 
