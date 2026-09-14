@@ -65,38 +65,33 @@ def _assert_transfer(
 
         column = key.replace(" ", "_")
         try:
-            transfer_val = getattr(transfer, key.replace(" ", "_"))
+            actual = getattr(transfer, column)
         except NoSuchElementException:
             # if key differs from column name, consider creating suitable dict
-            key = key.replace(" ", "_")
-            if key in ["type", "destination"]:
-                select_columns_to_be_visible_in_transfers(
-                    selenium, browser_id, ["type_&_destination"]
-                )
-            else:
-                select_columns_to_be_visible_in_transfers(selenium, browser_id, [key])
-            transfer_val = getattr(transfer, key)
-        try:
-            assert transfer_val == str(
-                val
-            ), f"Transfer {key} is {transfer_val} instead of {val} in {sufix}"
-        except AssertionError as e:
-            if "<" in val:
-                symbol = val.split(" ")[0]
-                value = float(val.split(" ")[1])
-                unit = val.split(" ")[2]
-                val = value if unit == "MiB" else value * 1024
-                transfer_val = float(transfer_val.split(" ")[0])
-                if symbol == "<=":
-                    assert (
-                        transfer_val <= val
-                    ), f"{key}: {transfer_val} MiB is greater than {val} MiB"
-                else:
-                    assert (
-                        transfer_val < val
-                    ), f"{key}: {transfer_val} MiB is no less than {val} MiB"
-            else:
-                raise e
+            visible_column = (
+                "type_&_destination" if column in ["type", "destination"] else column
+            )
+            select_columns_to_be_visible_in_transfers(
+                selenium, browser_id, [visible_column]
+            )
+            actual = getattr(transfer, column)
+
+        if actual == str(expected):
+            continue
+
+        error_message = (
+            f"Transfer {key} is {actual} instead of {expected} in {state.value}"
+        )
+        if not isinstance(expected, str) or not expected.startswith("<"):
+            raise AssertionError(error_message)
+
+        operator, value, unit = expected.split()
+        limit_mib = float(value) if unit == "MiB" else float(value) * 1024
+        actual_mib = float(actual.split()[0])
+        is_within_limit = (
+            actual_mib <= limit_mib if operator == "<=" else actual_mib < limit_mib
+        )
+        assert is_within_limit, error_message
 
 
 def _assert_transfers(
