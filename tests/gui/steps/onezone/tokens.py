@@ -16,7 +16,6 @@ from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     wait_for_sliding_panel_to_stop_moving,
 )
-from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
@@ -636,15 +635,7 @@ def click_on_token_containing_name(
     raise ValueError(f"token {token_name} not found")
 
 
-@wt(
-    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
-)
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_confirm_button_on_tokens_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_confirm_button_on_tokens_page(driver: WebDriver) -> None:
     # click the button without checking if a popup or error modal appeared
-    oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.tokens.confirm_button()
-    # it is needed to wait for the page refresh
-    wait_till_main_content_loaded(selenium[browser_id])
+    OZLoggedIn(driver).tokens.confirm_button.click()

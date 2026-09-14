@@ -7,9 +7,11 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from contextlib import suppress
 from typing import Optional
 
 import yaml
+from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
@@ -20,7 +22,11 @@ from tests.gui.steps.common.common import (
     wait_for_sliding_panel_to_stop_moving,
     wait_till_error_modal_disappear,
 )
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import (
+    dismiss_notifies_if_present,
+    notify_visible_with_text,
+)
+from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
@@ -43,11 +49,11 @@ from tests.gui.steps.onezone.tokens import (
     choose_token_template,
     choose_token_type_to_create,
     click_and_get_create_token_button,
+    click_confirm_button_on_tokens_page,
     click_copy_button_in_token_view,
     click_create_custom_token,
     click_menu_button_of_tokens_page,
     click_on_button_in_tokens_sidebar,
-    click_on_confirm_button_on_tokens_page,
     click_on_token_containing_name,
     click_on_token_on_tokens_list,
     click_option_for_token_row_menu,
@@ -118,6 +124,21 @@ def click_create_token_button_in_create_token_page(
 
 
 @wt(
+    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
+)
+def click_on_confirm_button_on_tokens_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    click_confirm_button_on_tokens_page(driver)
+    # it is needed to wait for the page refresh
+    wait_till_main_content_loaded(driver)
+
+    with suppress(NoSuchElementException):
+        wait_for_item_to_disappear(OZLoggedIn(driver).tokens.confirm_button, driver)
+
+
+@wt(
     parsers.parse(
         'user of {browser_id} succeeds to consume token using "Confirm" button'
     )
@@ -127,11 +148,7 @@ def succeed_to_consume_token_using_confirm_button(
     browser_id: str,
 ) -> None:
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
-    notify_visible_with_text(
-        selenium,
-        browser_id,
-        AlertPopup.SUCCESSFULLY_JOINED,
-    )
+    dismiss_notifies_if_present(selenium, browser_id, timeout=WAIT_FRONTEND)
 
 
 def fail_to_consume_token_using_confirm_button(

@@ -29,7 +29,6 @@ from tests.gui.steps.common.common import wait_for_checking_toggle
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
-from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
@@ -799,11 +798,11 @@ def wait_for_storage_import_scan_start_confirmation(driver: WebDriver) -> None:
     # A short scan can return to READY before Selenium observes an intermediate
     # state, but the notification still proves that the click was accepted.
     assert (
-        sync_chart.start_scan.state is not StartScanState.READY
-        or Popups(driver).alert_popups.find_alert_popup(
+        Popups(driver).alert_popups.find_alert_popup(
             AlertPopup.STORAGE_IMPORT_SCAN_STARTED
         )
         is not None
+        or sync_chart.start_scan.state is not StartScanState.READY
     ), "storage import scan has not started after clicking the start button"
 
 

@@ -267,12 +267,14 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
         yield item, next_item
 
 
-def is_element_with_selector_visible_on_page(
-    driver: WebDriver, css_selector: str
+def is_element_visible_on_page(
+    driver: WebDriver, web_elem_or_selector: WebElementOrSelector
 ) -> bool:
     try:
         return bool(
-            visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
+            get_visibility_condition(get_web_elem_or_locator(web_elem_or_selector))(
+                driver
+            )
         )
     except NoSuchElementException:
         return False

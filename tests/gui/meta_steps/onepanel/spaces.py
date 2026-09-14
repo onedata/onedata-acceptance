@@ -11,10 +11,12 @@ import time
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.constants import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
-from tests.gui.steps.common.common import close_alert_popup_if_present
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import (
+    dismiss_notifies_if_present,
+    notify_visible_with_text,
+)
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
@@ -401,7 +403,7 @@ def click_start_scan_button_in_storage_import_tab(
 ) -> None:
     driver = selenium[browser_id]
     click_start_scan_button_and_wait_for_its_state(driver)
-    close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
+    dismiss_notifies_if_present(selenium, browser_id, timeout=WAIT_FRONTEND)
 
 
 @wt(
