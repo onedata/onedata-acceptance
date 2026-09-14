@@ -7,8 +7,12 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from contextlib import suppress
 
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
@@ -19,7 +23,7 @@ from tests.gui.steps.common.common import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import is_element_visible_on_page, transform
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow, TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -639,3 +643,11 @@ def click_on_token_containing_name(
 def click_confirm_button_on_tokens_page(driver: WebDriver) -> None:
     # click the button without checking if a popup or error modal appeared
     OZLoggedIn(driver).tokens.confirm_button.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_confirm_button_not_visible_on_tokens_page(driver: WebDriver) -> None:
+    with suppress(NoSuchElementException):
+        assert not is_element_visible_on_page(
+            driver, OZLoggedIn(driver).tokens.confirm_button
+        )

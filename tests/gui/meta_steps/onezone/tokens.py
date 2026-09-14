@@ -7,11 +7,9 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from contextlib import suppress
 from typing import Optional
 
 import yaml
-from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
@@ -38,6 +36,7 @@ from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.tokens import (
     assert_alert_on_tokens_page,
+    assert_confirm_button_not_visible_on_tokens_page,
     assert_invite_target,
     assert_invite_type,
     assert_token_name,
@@ -134,8 +133,7 @@ def click_on_confirm_button_on_tokens_page(
     # it is needed to wait for the page refresh
     wait_till_main_content_loaded(driver)
 
-    with suppress(NoSuchElementException):
-        wait_for_item_to_disappear(OZLoggedIn(driver).tokens.confirm_button, driver)
+    assert_confirm_button_not_visible_on_tokens_page(driver)
 
 
 @wt(
