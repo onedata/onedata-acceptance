@@ -10,7 +10,7 @@ import time
 from collections.abc import Iterable
 from datetime import datetime
 
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
@@ -195,7 +195,7 @@ def assert_not_text_on_data_discovery_page(
 
 
 def results_list_to_list_with_dictionaries(
-    results_list: Iterable[WebElement],
+    results_list: Iterable[SeleniumWebElement],
 ) -> list[dict[str, str]]:
     results = []
     for item in results_list:
@@ -211,7 +211,7 @@ def results_list_to_list_with_dictionaries(
 
 
 def text_in_result_list(
-    key: str, value: str, results_list: Iterable[WebElement]
+    key: str, value: str, results_list: Iterable[SeleniumWebElement]
 ) -> None:
     results = results_list_to_list_with_dictionaries(results_list)
     for item in results:

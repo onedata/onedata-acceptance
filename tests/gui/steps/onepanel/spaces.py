@@ -17,15 +17,15 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
 )
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import (
     SELENIUM_IMPLICIT_WAIT,
     WAIT_BACKEND,
     WAIT_FRONTEND,
 )
-from tests.gui.steps.common.common import (
-    wait_for_checking_toggle,
-)
+from tests.gui.steps.common.common import wait_for_checking_toggle
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
@@ -40,7 +40,7 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
-from tests.gui.utils.onepanel.spaces import SpaceRecord
+from tests.gui.utils.onepanel.spaces import SpaceRecord, StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -767,30 +767,44 @@ def toggle_in_storage_import_configuration_is_enabled(
     return storage_import_conf.is_toggle_checked(transform(toggle_name))
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Start scan" button '
-        "in storage import tab in Onepanel"
-    )
-)
-def click_start_scan_button_in_storage_import_tab(
-    selenium: SeleniumDrivers, browser_id: str
+def wait_for_start_scan_button_state(
+    driver: WebDriver,
+    state: StartScanState,
+    timeout: float = WAIT_BACKEND,
 ) -> None:
-    driver = selenium[browser_id]
+    def has_expected_state(driver: WebDriver) -> bool:
+        start_scan = Onepanel(driver).content.spaces.space.sync_chart.start_scan
+        return start_scan.state is state
 
-    @repeat_failed(timeout=WAIT_FRONTEND)
-    def click_start_scan_button() -> None:
-        sync_chart = Onepanel(driver).content.spaces.space.sync_chart
-        sync_chart.start_scan.click()
-
-    click_start_scan_button()
-    notify_visible_with_text(
-        selenium,
-        browser_id,
-        AlertPopup.STORAGE_IMPORT_SCAN_STARTED,
-        popup_expected=False,
-        timeout=WAIT_FRONTEND,
+    WebDriverWait(
+        driver,
+        timeout=timeout,
+        poll_frequency=0.05,
+        ignored_exceptions=(StaleElementReferenceException),
+    ).until(
+        has_expected_state,
+        message=f"Waiting for start scan button to be {state.value} failed",
     )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_start_scan_button_in_sync_chart(driver: WebDriver) -> None:
+    sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+    sync_chart.start_scan.start_button.click()
+
+
+@repeat_failed(timeout=WAIT_BACKEND, interval=0.01)
+def wait_for_storage_import_scan_start_confirmation(driver: WebDriver) -> None:
+    sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+    # A short scan can return to READY before Selenium observes an intermediate
+    # state, but the notification still proves that the click was accepted.
+    assert (
+        sync_chart.start_scan.state is not StartScanState.READY
+        or Popups(driver).alert_popups.find_alert_popup(
+            AlertPopup.STORAGE_IMPORT_SCAN_STARTED
+        )
+        is not None
+    ), "storage import scan has not started after clicking the start button"
 
 
 @wt(

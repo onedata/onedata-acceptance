@@ -11,7 +11,7 @@ from os import PathLike
 from typing import Any, Literal, Protocol, TypedDict
 
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 
 class Checkable(Protocol):
@@ -25,11 +25,11 @@ class Clickable(Protocol):
 type TmpMemory = defaultdict[str, dict[str, Any]]
 
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]
-type WebElemRoot = WebDriver | WebElement
+type WebElemRoot = WebDriver | SeleniumWebElement
 type CssLocator = tuple[Literal["css selector"], str]
-type WebElementOrCssLocator = WebElement | CssLocator
-type WebElementOrSelector = WebElement | str
-type VisibilityCondition = Callable[[WebElemRoot], WebElement | Literal[False]]
+type WebElementOrCssLocator = SeleniumWebElement | CssLocator
+type WebElementOrSelector = SeleniumWebElement | str
+type VisibilityCondition = Callable[[WebElemRoot], SeleniumWebElement | Literal[False]]
 
 type LocalDirectoryContent = int | dict[str, "LocalDirectoryContent | dict[str, str]"]
 type DataDirectoryContent = list[str | dict[str, "DataDirectoryContent"]]

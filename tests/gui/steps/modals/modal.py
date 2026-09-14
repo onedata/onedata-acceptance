@@ -15,7 +15,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -96,11 +96,11 @@ def assert_non_empty_token_in_add_storage_modal(
     tmp_memory[browser_id]["token"] = token
 
 
-def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
+def _find_modal(driver: WebDriver, modal_name: str) -> SeleniumWebElement:
 
     # TODO: VFS-13648 Refactor find modal function
 
-    def _find() -> WebElement:
+    def _find() -> SeleniumWebElement:
         elements_list = [
             "group",
             "token",
@@ -268,7 +268,7 @@ def _click_on_confirmation_btn_in_modal(
     driver: WebDriver, browser_id: str, button_name: str, tmp_memory: TmpMemory
 ) -> None:
     @repeat_failed(attempts=WAIT_BACKEND, timeout=True)
-    def click_on_btn(d: WebDriver, elem: WebElement, msg: str) -> None:
+    def click_on_btn(d: WebDriver, elem: SeleniumWebElement, msg: str) -> None:
         click_on_web_elem(d, elem, msg)
 
     button_name = button_name.lower()
@@ -364,7 +364,7 @@ def click_on_button_in_active_modal(
         button = modal.find_element(By.CSS_SELECTOR, ".modal-footer button.btn-default")
 
     @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
-    def click_on_btn(d: WebDriver, btn: WebElement, error_message: str) -> None:
+    def click_on_btn(d: WebDriver, btn: SeleniumWebElement, error_message: str) -> None:
         click_on_web_elem(d, btn, error_message)
 
     click_on_btn(driver, button, f"{option} btn for displayed modal disabled")
@@ -464,7 +464,7 @@ def assert_element_text_in_modal(
 
 
 def assert_element_text(elem: object, selector: str, elem_text: str) -> None:
-    text = cast(WebElement, getattr(elem, selector)).text
+    text = cast(SeleniumWebElement, getattr(elem, selector)).text
     assert elem_text in text, f"found {elem_text} text instead of {text}"
 
 
