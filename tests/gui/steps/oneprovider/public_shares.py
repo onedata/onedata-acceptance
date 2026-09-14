@@ -11,7 +11,7 @@ from collections.abc import Iterable
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
@@ -216,7 +216,7 @@ def click_button_in_share(
 
 
 def check_item_presence_in_dublin_core_metadata(
-    driver: WebDriver, item: str, data: Iterable[WebElement]
+    driver: WebDriver, item: str, data: Iterable[SeleniumWebElement]
 ) -> None:
     for info in data:
         if info.text == "":

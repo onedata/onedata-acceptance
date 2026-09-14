@@ -10,6 +10,7 @@ import os
 import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
+from contextlib import suppress as contextlib_suppress
 from enum import Enum
 from functools import partial
 from itertools import islice
@@ -25,7 +26,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import (
     visibility_of,
     visibility_of_element_located,
@@ -43,6 +44,7 @@ from tests.gui.type_definitions import (
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
+suppress = contextlib_suppress
 
 # RE_URL regexp is matched as shown below:
 #
@@ -260,7 +262,7 @@ def get_web_elem_or_locator(
     web_elem_or_selector: WebElementOrSelector,
 ) -> WebElementOrCssLocator:
     match web_elem_or_selector:
-        case WebElement():
+        case SeleniumWebElement():
             return web_elem_or_selector
         case str():
             return By.CSS_SELECTOR, web_elem_or_selector
@@ -271,7 +273,7 @@ def get_visibility_condition(
     web_elem_or_locator: WebElementOrCssLocator,
 ) -> VisibilityCondition:
     match web_elem_or_locator:
-        case WebElement() as element:
+        case SeleniumWebElement() as element:
             return visibility_of(element)
 
         case (By.CSS_SELECTOR, str()) as locator:
@@ -283,14 +285,14 @@ def get_visibility_condition(
 
 def wait_for_visible_element_using_getter(
     driver: WebDriver,
-    web_elem_getter: Callable[[WebDriver], WebElement],
+    web_elem_getter: Callable[[WebDriver], SeleniumWebElement],
     timeout: float = WAIT_FRONTEND,
-) -> WebElement:
+) -> SeleniumWebElement:
     # Wait until the getter returns a visible element.
 
     def is_element_visible_using_getter(
-        driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
-    ) -> WebElement | None:
+        driver: WebDriver, web_elem_getter: Callable[[WebDriver], SeleniumWebElement]
+    ) -> SeleniumWebElement | None:
         web_elem = web_elem_getter(driver)
         return web_elem if visibility_of(web_elem)(driver) else None
 
@@ -312,7 +314,9 @@ def wait_for_file_to_download(
 
 
 def get_element_css_classes_when_visible(
-    driver: WebDriver, web_elem: WebElement, timeout: float = WAIT_FRONTEND // 4
+    driver: WebDriver,
+    web_elem: SeleniumWebElement,
+    timeout: float = WAIT_FRONTEND // 4,
 ) -> list[str]:
     def get_element_classes(driver: WebDriver) -> list[str] | None:
         return web_elem.get_attribute("class").split() if visibility_of(web_elem)(driver) else None
@@ -333,7 +337,7 @@ def find_web_elem(
     css_selector: str,
     error_message: str | Callable[[], str],
     scroll: bool = True,
-) -> WebElement:
+) -> SeleniumWebElement:
     try:
         if scroll:
             _scroll_to_css_selector(web_elem_root, css_selector)
@@ -351,7 +355,7 @@ def find_web_elem_with_text(
     text: str,
     error_message: str | Callable[[], str],
     scroll: bool = True,
-) -> WebElement:
+) -> SeleniumWebElement:
     items = web_elem_root.find_elements(By.CSS_SELECTOR, css_selector)
     if scroll:
         _scroll_to_css_selector(web_elem_root, css_selector)
@@ -365,22 +369,17 @@ def find_web_elem_with_text(
 
 def click_on_web_elem(
     driver: WebDriver,
-    web_elem: WebElement,
+    web_elem: SeleniumWebElement,
     error_message: str | Callable[[], str],
-    delay: bool | float = True,
 ) -> None:
     disabled = "disabled" in web_elem.get_attribute("class")
     # scroll to make the element visible
     if not web_elem.is_displayed():
         _ = web_elem.location_once_scrolled_into_view
     if web_elem.is_enabled() and web_elem.is_displayed() and not disabled:
-        # TODO VFS-7484 make optional sleep and localize only those tests
-        #  that need it or find better alternative
-        # currently checking if elem is enabled not always work
-        # (probably after striping disabled from web elem
-        # elem is not immediately clickable)
-        if delay:
-            sleep(delay if isinstance(delay, float) else 0.25)
+        # Probably after striping disabled from web elem
+        # elem is not immediately clickable
+        sleep(0.25)
         action = ActionChains(driver)
         action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
         action.perform()
@@ -401,7 +400,9 @@ def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> No
 
 
 @contextmanager
-def rm_css_cls(driver: WebDriver, web_elem: WebElement, css_cls: str) -> Iterator[WebElement]:
+def rm_css_cls(
+    driver: WebDriver, web_elem: SeleniumWebElement, css_cls: str
+) -> Iterator[SeleniumWebElement]:
     driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
     yield web_elem
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)

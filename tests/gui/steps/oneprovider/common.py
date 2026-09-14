@@ -11,7 +11,7 @@ import time
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -129,7 +129,7 @@ def _load_exceptions_for_input_files(tmp_memory: TmpMemory, config: str) -> None
         tmp_memory["exceptions"][file] = exceptions
 
 
-def wait_for_item_to_appear(item: WebElement) -> None:
+def wait_for_item_to_appear(item: SeleniumWebElement) -> None:
     for _ in range(50):
         try:
             if item.is_displayed():
@@ -141,7 +141,7 @@ def wait_for_item_to_appear(item: WebElement) -> None:
 
 
 def wait_for_item_to_disappear(
-    item: WebElement, driver: WebDriver, timeout: float = WAIT_FRONTEND
+    item: SeleniumWebElement, driver: WebDriver, timeout: float = WAIT_FRONTEND
 ) -> None:
     WebDriverWait(driver, timeout=timeout).until(
         invisibility_of_element(item), message="Element is visible"

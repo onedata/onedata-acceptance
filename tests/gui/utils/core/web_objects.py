@@ -1,7 +1,6 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from collections.abc import Iterator, Sequence
-from typing import TypeVar
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -19,9 +18,6 @@ class PageObjectNotFoundError(RuntimeError):
     """Raised when an item cannot be found in a page-object sequence."""
 
 
-PageObjectT = TypeVar("PageObjectT", bound=PageObject)
-
-
 class ButtonPageObject(PageObject):
     object_name = "button"
     item_not_found_msg = "{text} btn not found in {parent}"
@@ -31,9 +27,6 @@ class ButtonPageObject(PageObject):
 
     def __call__(self) -> None:
         self.click()
-
-    def is_enabled(self) -> bool:
-        return self.web_elem.is_enabled() and not element_has_class(self.web_elem, "disabled")
 
     def is_active(self) -> bool:
         return element_has_class(self.web_elem, "active")
@@ -80,7 +73,8 @@ class PageObjectsSequence[PageObjectT: PageObject]:
             yield self.cls(self.driver, item, self.parent)
 
     def __reversed__(self) -> Iterator[PageObjectT]:
-        return (self.cls(self.driver, item, self.parent) for item in reversed(self.items))
+        for item in reversed(self.items):
+            yield self.cls(self.driver, item, self.parent)
 
     def __getitem__(self, sel: int | str) -> PageObjectT:
         if isinstance(sel, int):

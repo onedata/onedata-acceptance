@@ -15,7 +15,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.constants import (
     WAIT_BACKEND,
@@ -70,7 +70,9 @@ def wait_until_workflow_executions_list_is_empty(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_input_element(driver: WebDriver, input_type: str) -> PageObjectsSequence | list[WebElement]:
+def get_input_element(
+    driver: WebDriver, input_type: str
+) -> PageObjectsSequence | list[SeleniumWebElement]:
     OPLoggedIn(driver).automation_page.input_link.click()
     return getattr(OPLoggedIn(driver).automation_page, input_type)
 

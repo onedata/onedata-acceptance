@@ -17,7 +17,7 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -40,7 +40,7 @@ from tests.utils.utils import repeat_failed
 @dataclass(frozen=True)
 class CapturedPopup:
     message: str
-    web_elem: WebElement
+    web_elem: SeleniumWebElement
 
 
 def capture_matching_popup(
@@ -103,8 +103,8 @@ def _close_all_detected_popups(driver: WebDriver, seen_popups: set[CapturedPopup
 
         def get_close_button(
             driver: WebDriver,
-            popup_elem: WebElement,
-        ) -> WebElement:
+            popup_elem: SeleniumWebElement,
+        ) -> SeleniumWebElement:
             return AlertInfoPopup(driver, popup_elem).close
 
         if invisibility_of_element(web_elem)(driver):
