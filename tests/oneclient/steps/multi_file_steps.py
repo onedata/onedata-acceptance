@@ -340,9 +340,15 @@ def stat_absent(user: str, path: str, files: str, client_node: str, users: Users
     def condition() -> None:
         for f in file_names:
             p = os.path.join(path, f)
-            with pytest.raises(FileNotFoundError) as exc_info:
+            try:
                 client.stat(p)
-            assert p in exc_info.value.filename
+            except FileNotFoundError as exc:
+                if exc.filename is None or p not in exc.filename:
+                    raise AssertionError(
+                        f"Expected missing path {p!r}, got {exc.filename!r}"
+                    ) from exc
+            else:
+                raise AssertionError(f"Failed: There is item {f}")
 
     assert_(client.perform, condition)
 
