@@ -9,11 +9,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import yaml
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
-from tests.gui.steps.common.miscellaneous import (
-    wait_until_scanning_is_finished_in_storage_import_tab,
-)
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
@@ -22,12 +22,14 @@ from tests.gui.steps.onepanel.spaces import (
     click_change_quota_button,
     click_on_btn_in_space_support_form,
     click_on_navigation_tab_in_space,
-    click_start_scan_button_in_storage_import_tab,
+    click_start_scan_button_in_sync_chart,
     confirm_quota_value_change,
     get_spaces_list_from_spaces_page,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
+    wait_for_start_scan_button_state,
+    wait_for_storage_import_scan_start_confirmation,
     wt_assert_correct_supported_space_opened,
     wt_assert_proper_space_configuration_in_panel,
     wt_click_on_support_space_btn_on_condition,
@@ -55,6 +57,7 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import wait_for_visible_element_using_getter
+from tests.gui.utils.onepanel.spaces import StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -382,6 +385,39 @@ def set_quota_in_auto_cleaning(
     confirm_quota_value_change(selenium, browser_id, quota)
 
 
+def click_start_scan_button_and_wait_for_its_state(driver: WebDriver) -> None:
+    click_start_scan_button_in_sync_chart(driver)
+    wait_for_storage_import_scan_start_confirmation(driver)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "Start scan" button '
+        "in storage import tab in Onepanel"
+    )
+)
+def click_start_scan_button_in_storage_import_tab(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    click_start_scan_button_and_wait_for_its_state(driver)
+    close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} waits until scanning is finished "
+        "in storage import tab in Onepanel"
+    )
+)
+def wait_until_scanning_is_finished_in_storage_import_tab(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    wait_for_start_scan_button_state(
+        selenium[browser_id], StartScanState.READY, timeout=WAIT_BACKEND * 5
+    )
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} starts scan using "Start scan" button and waits '
@@ -389,7 +425,6 @@ def set_quota_in_auto_cleaning(
     )
 )
 def run_scan_and_wait_till_finished(selenium: SeleniumDrivers, browser_id: str) -> None:
-    tab_name = "Storage import"
-    click_on_navigation_tab_in_space(browser_id, tab_name, selenium)
+    click_on_navigation_tab_in_space(browser_id, "Storage import", selenium)
     click_start_scan_button_in_storage_import_tab(selenium, browser_id)
     wait_until_scanning_is_finished_in_storage_import_tab(selenium, browser_id)

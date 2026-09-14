@@ -16,7 +16,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -152,7 +152,7 @@ def get_last_item_number_in_table(driver: WebDriver) -> int:
     return int(last_item.get_attribute("data-row-id")) + 1
 
 
-def get_last_item_in_table(driver: WebDriver) -> WebElement | None:
+def get_last_item_in_table(driver: WebDriver) -> SeleniumWebElement | None:
     entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
     return entries[-1] if len(entries) > 0 else None
 
@@ -274,8 +274,8 @@ def wait_for_sliding_panel_to_stop_moving(
 def wait_for_error_modal_to_disappear(driver: WebDriver) -> bool:
     """Close the error modal and return whether it appeared."""
 
-    def get_error_modal_close_button(current_driver: WebDriver) -> Clickable:
-        return Modals(current_driver).error.close
+    def get_error_modal_close_button(driver: WebDriver) -> Clickable:
+        return Modals(driver).error.close
 
     return wait_till_error_modal_disappear(
         driver,

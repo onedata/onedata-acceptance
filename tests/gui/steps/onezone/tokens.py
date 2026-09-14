@@ -10,7 +10,7 @@ import time
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
@@ -179,7 +179,7 @@ def select_member_from_dropdown(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_and_get_create_token_button(
     selenium: SeleniumDrivers, browser_id: str
-) -> WebElement:
+) -> SeleniumWebElement:
     driver = selenium[browser_id]
     create_token_button = OZLoggedIn(driver).tokens.create_token_page.create_token
     create_token_button.click()
