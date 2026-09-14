@@ -61,7 +61,6 @@ Feature: Onepanel features auto-cleaning
             large_file.txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for files:
             large_file(1).txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
@@ -90,7 +89,6 @@ Feature: Onepanel features auto-cleaning
             large_file.txt:
                 oneprovider-1: entirely empty
                 oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for files:
             large_file(1).txt:
                 oneprovider-1: entirely empty
                 oneprovider-2: entirely filled
@@ -138,7 +136,6 @@ Feature: Onepanel features auto-cleaning
             large_file.txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for files:
             large_file(1).txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
@@ -164,7 +161,6 @@ Feature: Onepanel features auto-cleaning
             large_file.txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for files:
             large_file(1).txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
@@ -213,11 +209,9 @@ Feature: Onepanel features auto-cleaning
             large_file.txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for files:
             large_file(1).txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for files:
             20B-0.txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
@@ -243,11 +237,9 @@ Feature: Onepanel features auto-cleaning
             large_file.txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for files:
             large_file(1).txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for files:
             20B-0.txt:
                 oneprovider-1: entirely empty
                 oneprovider-2: entirely filled

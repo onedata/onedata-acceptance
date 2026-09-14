@@ -104,7 +104,6 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
             large_file.txt:
                 oneprovider-1: entirely filled
                 oneprovider-2: entirely filled
-    And user of browser1 sees file chunks for files:
             large_file(1).txt:
                 oneprovider-1: entirely empty
                 oneprovider-2: entirely filled
@@ -187,7 +186,6 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
             large_file.txt:
                 oneprovider-1: entirely empty
                 oneprovider-2: entirely filled
-    And user of browser1 sees file chunks for files:
             large_file(1).txt:
                 oneprovider-1: entirely empty
                 oneprovider-2: entirely filled
