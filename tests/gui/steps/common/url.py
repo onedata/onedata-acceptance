@@ -14,7 +14,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
@@ -394,11 +394,21 @@ def switch_to_first_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver.switch_to.window(driver.window_handles[0])
 
 
+def close_current_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
+    selenium[browser_id].close()
+
+
 @wt(parsers.parse('user of {browser_id} sees image named "{image_name}" in browser'))
 def assert_image_in_browser(
     browser_id: str, selenium: SeleniumDrivers, image_name: str
 ) -> None:
     driver = selenium[browser_id]
     url = driver.find_elements(By.TAG_NAME, "img")[0].get_attribute("src")
-    error_message = f"{image_name} is not visible in browser"
-    assert image_name in url, error_message
+    err_msg = f"{image_name} is not visible in browser"
+    assert image_name in url, err_msg
+
+
+@wt(parsers.parse("user of {browser_id} opens a new tab and switches to it"))
+def open_new_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    driver.switch_to.new_window("tab")

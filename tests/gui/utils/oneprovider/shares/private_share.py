@@ -21,6 +21,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.oneprovider.shares.public_share import PublicShareView
 
 
@@ -57,7 +58,7 @@ class DublinCoreMetadata(PageObject):
                     button.click()
                 break
         else:
-            raise RuntimeError(
+            raise PageObjectNotFoundError(
                 f'{button_name} was not found in "Dublin Core Metadata" form'
             )
 

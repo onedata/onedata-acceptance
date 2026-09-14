@@ -6,17 +6,19 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
+import pytest
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import (
     add_element_with_copied_token,
     fail_to_add_element_with_copied_token,
     paste_and_consume_received_token,
 )
-from tests.gui.steps.common.common import wait_for_error_modal_to_disappear
+from tests.gui.steps.common.common import (
+    close_alert_popup_if_present,
+    wait_for_error_modal_to_disappear,
+)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
@@ -26,9 +28,12 @@ from tests.gui.steps.modals.modal import (
 from tests.gui.steps.onezone.groups import (
     assert_group_exists,
     click_create_group_button_in_panel,
+    click_on_confirmation_button_to_rename_group,
+    click_on_option_in_group_menu_and_get_group,
     confirm_name_input_on_main_groups_page,
     go_to_group_subpage,
     input_name_into_input_box_on_main_groups_page,
+    input_new_group_name_into_rename_group_inpux_box,
     press_enter_on_active_element,
 )
 from tests.gui.steps.onezone.members import (
@@ -37,63 +42,39 @@ from tests.gui.steps.onezone.members import (
     click_element_in_members_list,
     click_on_option_in_members_list_menu,
     copy_token_from_modal,
-    remove_member_from_parent,
 )
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.common.popups import Popups
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import parse_elements_sequence
-from tests.gui.utils.onezone import OZLoggedIn
-from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
+from tests.gui.utils.onezone.groups.groups_page import Group
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.entities_setup.groups import (
+    GroupFinalizerRegistrar,
+    _register_group_finalizer,
+)
+from tests.utils.entities_setup.users import CredentialsLike
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_confirmation_button_to_rename_group(group: Any) -> None:
-    group.edit_box.confirm()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def input_new_group_name_into_rename_group_inpux_box(group: Any, text: str) -> None:
-    group.edit_box.value = text
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Group:
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(GroupsPage)
-    page = oz_page.groups
-    return page.groups_list[group_name]
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_group_menu(driver: WebDriver, group: Any, option: str) -> None:
-    group.menu()
-    Popups(driver).menu_popup_with_text.menu[option]()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
 def get_group_and_click_menu_button(
-    selenium: SeleniumDrivers, browser_id: str, option: str, group: str
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str, group_name: str
+) -> Group:
     driver = selenium[browser_id]
-    group_item = get_group_by_name_from_main_page(driver, group)
-    group_item.click()
-    click_on_option_in_group_menu(driver, group_item, option)
-    return group_item
+    go_to_group_subpage(selenium, browser_id, group_name, "main")
+    return click_on_option_in_group_menu_and_get_group(driver, group_name, option)
 
 
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) clicks on "
-        r'"(?P<option>Rename|Leave|Remove)" '
+        r'"(?P<option>Rename|Leave|Remove|Copy ID)" '
         r'button in group "(?P<group>.*)" menu in the sidebar'
     )
 )
-def wt_get_group_and_click_menu_button(
+def click_menu_button_for_group(
     selenium: SeleniumDrivers, browser_id: str, option: str, group: str
 ) -> None:
     _ = get_group_and_click_menu_button(selenium, browser_id, option, group)
@@ -105,7 +86,6 @@ def wt_get_group_and_click_menu_button(
         'to "{new_group_name}" using {confirm_type} to confirm'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def rename_group(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -113,9 +93,7 @@ def rename_group(
     new_group_name: str,
     confirm_type: str,
 ) -> None:
-    option = "Rename"
-
-    group = get_group_and_click_menu_button(selenium, browser_id, option, group_name)
+    group = get_group_and_click_menu_button(selenium, browser_id, "Rename", group_name)
     input_new_group_name_into_rename_group_inpux_box(group, new_group_name)
     if confirm_type == "button":
         click_on_confirmation_button_to_rename_group(group)
@@ -124,7 +102,6 @@ def rename_group(
 
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def leave_group(selenium: SeleniumDrivers, browser_id: str, group: str) -> None:
     option = "Leave"
     modal = "LEAVE GROUP"
@@ -158,7 +135,6 @@ def leave_user_groups_in_onezone_using_rest(
         extra_types={"ElementsSequence": parse_elements_sequence},
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_group(
     selenium: SeleniumDrivers, browser_id: str, group_list: list[str]
 ) -> None:
@@ -177,13 +153,53 @@ def remove_group(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_groups_using_op_gui(
-    selenium: SeleniumDrivers, browser_id: str, group_list: list[str]
+def create_groups_using_op_gui_step(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group_list: list[str],
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    hosts: Hosts,
+    admin_credentials: CredentialsLike,
 ) -> None:
-    for group in group_list:
-        click_create_group_button_in_panel(selenium, browser_id)
-        input_name_into_input_box_on_main_groups_page(selenium, browser_id, group)
-        confirm_name_input_on_main_groups_page(selenium, browser_id)
+    create_groups_using_op_gui(
+        selenium,
+        browser_id,
+        group_list,
+        clipboard,
+        displays,
+        lambda group_id: _register_group_finalizer(
+            request,
+            hosts["onezone"]["hostname"],
+            admin_credentials,
+            group_id,
+        ),
+    )
+
+
+def create_groups_using_op_gui(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group_list: list[str],
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    register_finalizer: GroupFinalizerRegistrar,
+) -> None:
+    for group_name in group_list:
+        create_single_group_using_op_gui(selenium, browser_id, group_name)
+        group_id = get_group_id_from_groups_sidebar_list(
+            selenium, browser_id, group_name, clipboard, displays
+        )
+        register_finalizer(group_id)
+
+
+def create_single_group_using_op_gui(
+    selenium: SeleniumDrivers, browser_id: str, group_name: str
+) -> None:
+    click_create_group_button_in_panel(selenium, browser_id)
+    input_name_into_input_box_on_main_groups_page(selenium, browser_id, text=group_name)
+    confirm_name_input_on_main_groups_page(selenium, browser_id)
 
 
 def see_groups_using_op_gui(
@@ -207,7 +223,6 @@ def rename_groups_using_op_gui(
         rename_group(selenium, user, group, new_name, confirm_type)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_see_groups_using_op_gui(
     selenium: SeleniumDrivers, user: str, group_list: list[str]
 ) -> None:
@@ -257,7 +272,6 @@ def fail_to_see_subgroups_using_op_gui(
         )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def _create_group_token(
     selenium: SeleniumDrivers,
     user: str,
@@ -278,6 +292,7 @@ def _create_group_token(
     go_to_group_subpage(selenium, user, name, subpage)
     click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
+    close_alert_popup_if_present(selenium[user], AlertPopup.SUCCESSFULLY_COPIED)
     close_modal(selenium, user, modal)
     send_copied_item_to_other_users(
         user, item_type, [user2], tmp_memory, displays, clipboard
@@ -434,3 +449,14 @@ def fail_to_add_subgroups_using_op_gui(
             displays,
         )
         wait_for_error_modal_to_disappear(selenium[user])
+
+
+def get_group_id_from_groups_sidebar_list(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> str:
+    click_menu_button_for_group(selenium, browser_id, "Copy ID", group_name)
+    return clipboard.paste(display=displays[browser_id])

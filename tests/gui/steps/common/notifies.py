@@ -17,11 +17,11 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.steps.common.common import (
     click_close_button_and_wait_to_disappear,
 )
@@ -29,7 +29,7 @@ from tests.gui.utils import OnePage, PublicOnePage
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.common.popups.alert_info_popup import AlertInfoPopup
 from tests.gui.utils.common.popups.generic import (
-    AlertPopup,
+    AlertPopupType,
     parse_alert_popup,
 )
 from tests.type_definitions import SeleniumDrivers
@@ -40,7 +40,7 @@ from tests.utils.utils import repeat_failed
 @dataclass(frozen=True)
 class CapturedPopup:
     message: str
-    web_elem: WebElement
+    web_elem: SeleniumWebElement
 
 
 def capture_matching_popup(
@@ -48,7 +48,9 @@ def capture_matching_popup(
     seen_popups: set[CapturedPopup],
     regexp: re.Pattern[str],
 ) -> bool:
-    detected_popups: list[AlertInfoPopup] = Popups(driver).get_all_alert_popups()
+    detected_popups: list[AlertInfoPopup] = Popups(
+        driver
+    ).alert_popups.get_all_alert_popups()
     for popup in detected_popups:
         try:
             web_elem = popup.web_elem
@@ -75,7 +77,7 @@ def capture_matching_popup(
 def notify_visible_with_text(
     selenium: SeleniumDrivers,
     browser_id: str,
-    alert_popup: AlertPopup,
+    alert_popup: AlertPopupType,
 ) -> None:
     driver = selenium[browser_id]
     text_regexp = alert_popup.message
@@ -109,8 +111,8 @@ def _close_all_detected_popups(
 
         def get_close_button(
             driver: WebDriver,
-            popup_elem: WebElement,
-        ) -> WebElement:
+            popup_elem: SeleniumWebElement,
+        ) -> SeleniumWebElement:
             return AlertInfoPopup(driver, popup_elem).close
 
         if invisibility_of_element(web_elem)(driver):

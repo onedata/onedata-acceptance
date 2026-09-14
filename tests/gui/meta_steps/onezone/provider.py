@@ -112,7 +112,6 @@ def revoke_support_of_provider_in_list(
 ) -> None:
     driver = selenium[browser_id]
     button = "Cease support"
-    alert_popup = AlertPopup.CEASED_SUPPORT
 
     click_on_menu_button_of_provider_on_providers_list(
         selenium, browser_id, provider, hosts
@@ -120,7 +119,7 @@ def revoke_support_of_provider_in_list(
     click_on_cease_support_in_menu_of_provider_on_providers_list(driver)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id)
     wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
-    notify_visible_with_text(selenium, browser_id, alert_popup)
+    notify_visible_with_text(selenium, browser_id, AlertPopup.CEASED_SUPPORT)
 
 
 @wt(

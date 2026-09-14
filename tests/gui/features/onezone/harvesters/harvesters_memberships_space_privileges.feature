@@ -34,9 +34,6 @@ Feature: Basic management of harvester memberships privileges with spaces in One
     And user of browser2 adds "space1" space to "harvester20" harvester using available spaces dropdown
 
     Then user of browser2 sees that "space1" has appeared on the spaces list in discovery page
-    And user of browser1 removes "harvester20" harvester in Onezone page
-
-
   Scenario: User successfully removes space from harvester with remove space privilege
     Given admin user does not have access to any space
     When user of browser1 creates "space2" space in Onezone
@@ -59,5 +56,4 @@ Feature: Basic management of harvester memberships privileges with spaces in One
             privilege subtypes:
               Remove space: True
     Then user of browser2 removes "space2" space from harvester
-    And user of browser1 removes "harvester21" harvester in Onezone page
     And user of browser1 leaves "space2" space in Onezone page

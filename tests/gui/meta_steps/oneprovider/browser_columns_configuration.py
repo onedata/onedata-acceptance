@@ -7,11 +7,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 
 import yaml
+from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.oneprovider.browser import (
+    change_column_visibility,
+    click_configure_columns_button,
+    get_column_from_configure_columns_menu,
+    get_column_names_from_configure_columns_menu,
+)
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Popups
+from tests.gui.utils import OPLoggedIn, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -20,7 +26,30 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+
+
+def set_column_visibility_in_configure_columns_menu(
+    driver: WebDriver, column_name: str, visible: bool
+) -> None:
+    column = get_column_from_configure_columns_menu(driver, column_name)
+    change_column_visibility(column, column_name, visible)
+
+
+def select_columns_to_be_visible_in_transfers(
+    selenium: SeleniumDrivers, browser_id: str, columns: list[str]
+) -> None:
+    columns = [column.lower().replace(" ", "_") for column in columns]
+    driver = selenium[browser_id]
+    transfer = OPLoggedIn(driver).transfers
+    click_configure_columns_button(transfer)
+    column_names = get_column_names_from_configure_columns_menu(driver)
+    for column_name in column_names:
+        parsed_column_name = column_name.lower().replace(" ", "_")
+        set_column_visibility_in_configure_columns_menu(
+            driver, column_name, parsed_column_name in columns
+        )
+    # hide columns menu popup
+    click_configure_columns_button(transfer)
 
 
 @wt(
@@ -35,7 +64,6 @@ from tests.utils.utils import repeat_failed
         "columns": parse_elements_sequence,
     },
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def select_columns_to_be_visible_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -44,22 +72,17 @@ def select_columns_to_be_visible_in_browser(
     tmp_memory: TmpMemory,
 ) -> None:
     # This function enables the selected columns and disables the rest.
-    option_select = "select"
-    option_unselect = "unselect"
     browser = tmp_memory[browser_id][transform(which_browser)]
-    browser.configure_columns.click()
-    columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
+    driver = selenium[browser_id]
+    click_configure_columns_button(browser)
+    column_names = get_column_names_from_configure_columns_menu(driver)
     parsed_columns = [column.lower() for column in columns]
-    for column in columns_menu:
-        if column.name.lower() in parsed_columns:
-            getattr(columns_menu[column.name], option_select)()
-        else:
-            getattr(columns_menu[column.name], option_unselect)()
+    for column_name in column_names:
+        set_column_visibility_in_configure_columns_menu(
+            driver, column_name, column_name.lower() in parsed_columns
+        )
     # hide columns menu popup
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
 
 
 @wt(
@@ -85,26 +108,20 @@ def change_visibility_for_browser_columns(
     # This function updates only the specified columns (enable/disable).
     # All other columns remain unchanged.
 
-    option_select = "select"
-    option_unselect = "unselect"
     browser = tmp_memory[browser_id][transform(which_browser)]
-    browser.configure_columns.click()
-
-    columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
+    driver = selenium[browser_id]
+    click_configure_columns_button(browser)
 
     parsed_columns = [column.lower() for column in columns]
-    for column in columns_menu:
-        if column.name.lower() in parsed_columns:
-            if res == "enables":
-                getattr(columns_menu[column.name], option_select)()
-            else:
-                getattr(columns_menu[column.name], option_unselect)()
+    column_names = get_column_names_from_configure_columns_menu(driver)
+    for column_name in column_names:
+        if column_name.lower() in parsed_columns:
+            set_column_visibility_in_configure_columns_menu(
+                driver, column_name, res == "enables"
+            )
 
     # hide columns menu popup
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
 
 
 @wt(
@@ -123,17 +140,17 @@ def remove_column(
 ) -> None:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
 
     wait_for_item_to_appear(
         Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    current_column = Popups(driver).configure_columns_menu.columns[name]
+    current_column = get_column_from_configure_columns_menu(driver, name)
     current_column.hover_to_button_and_click("remove", driver)
 
     # hide columns menu popup
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
 
 
 @wt(
@@ -157,12 +174,12 @@ def modify_props_of_xattr_column_in_columns_menu(
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
 
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
     wait_for_item_to_appear(
         Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    current_xattr_column = Popups(driver).configure_columns_menu.columns[name]
+    current_xattr_column = get_column_from_configure_columns_menu(driver, name)
 
     current_xattr_column.hover_to_button_and_click("modify", driver)
     modify_xattr_column = Popups(driver).configure_columns_menu.xattr_column_editor
@@ -178,7 +195,7 @@ def modify_props_of_xattr_column_in_columns_menu(
     modify_xattr_column.apply_changes.click()
 
     # hide columns menu popup
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
 
 
 @wt(
@@ -216,12 +233,12 @@ def modify_json_column_in_columns_menu(
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
 
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
     wait_for_item_to_appear(
         Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    current_column = Popups(driver).configure_columns_menu.columns[col_name]
+    current_column = get_column_from_configure_columns_menu(driver, col_name)
 
     current_column.hover_to_button_and_click("modify", driver)
     modify_json_column = Popups(driver).configure_columns_menu.json_column_editor
@@ -246,7 +263,7 @@ def modify_json_column_in_columns_menu(
 
     modify_json_column.apply_changes.click()
     # hide columns menu popup
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)
 
 
 @wt(
@@ -302,17 +319,13 @@ def assert_column_presence(
 ) -> None:
 
     browser = tmp_memory[browser_id][transform(which_browser)]
-    browser.configure_columns.click()
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
-
-    columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
-    if name in [col.name for col in columns_menu]:
+    click_configure_columns_button(browser)
+    column_names = get_column_names_from_configure_columns_menu(selenium[browser_id])
+    if name in column_names:
         if res == "does not see":
             raise AssertionError(
                 f"{option} column named '{name}' exists, but it was expected not to."
             )
     elif res == "sees":
         raise AssertionError(f"An xattr column with name: {name} does not exist")
-    browser.configure_columns.click()
+    click_configure_columns_button(browser)

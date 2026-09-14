@@ -6,13 +6,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Dict, List, Optional, cast
+from typing import Optional, cast
 
-from selenium.common.exceptions import JavascriptException
+from selenium.common.exceptions import JavascriptException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -77,7 +77,7 @@ class ArchiveAuditLog(Modal):
 
             try:
                 name_hash = getattr(row, "duplicated_name_hash")
-            except RuntimeError:
+            except NoSuchElementException:
                 name_hash = ""
 
             column_values["file"][-1] += name_hash

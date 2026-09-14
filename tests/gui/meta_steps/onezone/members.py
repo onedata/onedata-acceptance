@@ -6,11 +6,19 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import cast
 
-from tests.gui.steps.modals.modal import assert_element_text_in_modal
+from tests.gui.steps.common.common import close_alert_popup_if_present
+from tests.gui.steps.modals.modal import (
+    assert_element_text_in_modal,
+    wt_wait_for_modal_to_appear,
+)
 from tests.gui.steps.onezone.groups import go_to_group_subpage
 from tests.gui.steps.onezone.members import (
+    _change_to_tab_name,
+    _find_members_page,
     assert_member_is_in_parent_members_list,
+    assert_membership_access_denied_message_and_bulk_edit_button,
     assert_privileges_in_members_subpage,
     click_element_in_members_list,
     click_member_checkbox,
@@ -21,16 +29,68 @@ from tests.gui.steps.onezone.members import (
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
 )
-from tests.gui.utils.onezone import OZLoggedIn
-from tests.gui.utils.onezone.members_subpage import MembersPage
+from tests.gui.utils.onezone import PageName
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.entities_setup.spaces import WAIT_FRONTEND
-from tests.utils.utils import repeat_failed
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*) removes "(?P<member_name>.*)" '
+        r'(?P<member_type>user|group) from "(?P<name>.*)" '
+        r"(?P<where>cluster|group|harvester|space|automation) members"
+    )
+)
+def remove_member_from_parent(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    member_name: str,
+    member_type: str,
+    name: str,
+    tmp_memory: TmpMemory,
+    where: str,
+) -> None:
+    driver = selenium[browser_id]
+    if where != "cluster":
+        page_name = cast(PageName, _change_to_tab_name(where))
+        oz_page = OZLoggedIn(selenium[browser_id])
+        oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
+        main_page = getattr(oz_page, page_name)
+        list_name = f"{where}s_list"
+        getattr(main_page, list_name)[name].click()
+        getattr(main_page, list_name)[name].members()
+    members_page = _find_members_page(driver, where)
+    list_name = member_type + "s"
+    (
+        getattr(members_page, list_name)
+        .items[member_name]
+        .header.click_menu(selenium[browser_id])
+    )
+
+    if member_type == "user":
+        modal_name = "remove user from "
+    elif member_type == "group" and where != "group":
+        modal_name = "remove group from "
+    else:
+        modal_name = "remove subgroup from "
+
+    if where == "automation":
+        where = "atm. inventory"
+    modal_name += where
+
+    Popups(driver).menu_popup_with_text.menu["Remove this member"]()
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    Modals(driver).remove_modal.remove()
+
+    for popup_enum in (AlertPopup.MEMBER_ADDED, AlertPopup.GROUP_REMOVED_FROM_CLUSTER):
+        close_alert_popup_if_present(selenium[browser_id], popup_enum)
 
 
 def fail_to_set_privileges_using_op_gui(
@@ -134,24 +194,6 @@ def assert_group_in_space_using_op_gui(
     )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _assert_message_and_bulk_edit_btn(
-    members_page: MembersPage, expected_message: str
-) -> None:
-    message_groups = members_page.lack_groups_view_privileges.text
-    message_users = members_page.lack_users_view_privileges.text
-    bulk_edit_button = members_page.bulk_edit_button
-
-    error_message = (
-        "The message about lack of privileges to view membership is not visible"
-    )
-    assert message_groups == expected_message, f"{error_message} for groups"
-    assert message_users == expected_message, f"{error_message} for users"
-    assert (
-        not bulk_edit_button.is_enabled()
-    ), "Bulk edit button is supposed to be disabled"
-
-
 @wt(
     parsers.re(
         rf"users? of (?P<browser_ids>{ELEMENTS_SEQUENCE_PATTERN}) cannot view "
@@ -165,14 +207,12 @@ def assert_cannot_view_group_membership(
     selenium: SeleniumDrivers, browser_ids: list[str], group: str
 ) -> None:
     for browser_id in browser_ids:
-        driver = selenium[browser_id]
-        oz_page = OZLoggedIn(driver)
         go_to_group_subpage(selenium, browser_id, group, "members")
 
-        members_page = oz_page.groups.members_page
         expected_message = "Insufficient privileges to access this resource."
-
-        _assert_message_and_bulk_edit_btn(members_page, expected_message)
+        assert_membership_access_denied_message_and_bulk_edit_button(
+            selenium, browser_id, expected_message
+        )
 
 
 @wt(

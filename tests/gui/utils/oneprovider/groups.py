@@ -14,6 +14,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.utils.utils import element_has_class
 
 
 class SettingDropdown(PageObject, ExpandableMixin):
@@ -29,7 +30,7 @@ class GroupSidebarRecord(PageObject):
     members = Button("ul li.members-permissions .item-click-area")
 
     def is_selected(self) -> bool:
-        return "active" in self.web_elem.get_attribute("class")
+        return element_has_class(self.web_elem, "active")
 
 
 class GroupsSidebar(PageObject):

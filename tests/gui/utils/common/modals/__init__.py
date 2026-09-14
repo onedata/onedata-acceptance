@@ -60,7 +60,7 @@ from .troubles_modals.warning_modal import WarningModal
 from .workflows_modals.audit_log import AuditLog
 from .workflows_modals.create_new_lane import CreateNewLane
 from .workflows_modals.duplicate_revision import DuplicateRevision
-from .workflows_modals.function_pods_activity import FunctionPodsActivity
+from .workflows_modals.pods_activity import PodsActivity
 from .workflows_modals.select_files_directories_symlink import SelectFiles
 from .workflows_modals.select_groups import SelectGroups
 from .workflows_modals.store_details import StoreDetails
@@ -137,7 +137,7 @@ class Modals:
     duplicate_revision = WebItem(".modal-dialog", cls=DuplicateRevision)
     select_files = WebItem(".modal-dialog", cls=SelectFiles)
     select_groups = WebItem(".modal-dialog", cls=SelectGroups)
-    function_pods_activity = WebItem(".modal-dialog", cls=FunctionPodsActivity)
+    pods_activity = WebItem(".modal-dialog", cls=PodsActivity)
     task_time_series = WebItem(".modal-dialog", cls=TaskTimeSeries)
     store_details = WebItem(".modal-dialog", cls=StoreDetails)
     audit_log = WebItem(".modal-dialog", cls=AuditLog)

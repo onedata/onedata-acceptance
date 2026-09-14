@@ -10,9 +10,9 @@ import time
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     wait_for_sliding_panel_to_stop_moving,
 )
@@ -108,7 +108,7 @@ def click_on_button_in_tokens_sidebar(
                 button_clean.click()
                 return
             time.sleep(0.1)
-        raise RuntimeError(f"Did not manage to click {button} button")
+        raise TimeoutError(f"Did not manage to click {button} button")
     else:
         sidebar = oz_page.tokens.sidebar
         getattr(sidebar, transform(button))()
@@ -179,7 +179,7 @@ def select_member_from_dropdown(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_and_get_create_token_button(
     selenium: SeleniumDrivers, browser_id: str
-) -> WebElement:
+) -> SeleniumWebElement:
     driver = selenium[browser_id]
     create_token_button = OZLoggedIn(driver).tokens.create_token_page.create_token
     create_token_button.click()
@@ -648,4 +648,3 @@ def click_on_confirm_button_on_tokens_page(
     oz_page.tokens.confirm_button()
     # it is needed to wait for the page refresh
     wait_till_main_content_loaded(selenium[browser_id])
-    oz_page.update_current_page()

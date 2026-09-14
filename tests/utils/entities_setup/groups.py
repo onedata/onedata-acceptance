@@ -6,11 +6,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping, MutableMapping
-from typing import NotRequired, Optional, Protocol, TypedDict, cast
+from typing import Callable, NotRequired, Protocol, TypedDict, cast
 
+import pytest
 import yaml
 
 from tests import OZ_REST_PORT
+from tests.gui.steps.rest.groups import delete_group_if_present_using_rest
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPForbidden
 from tests.utils.rest_utils import (
@@ -27,7 +29,7 @@ HostsConfig = Mapping[str, Mapping[str, str]]
 
 class CredentialsLike(Protocol):
     username: str
-    password: Optional[str]
+    password: str
 
 
 class MemberOptions(TypedDict):
@@ -44,6 +46,23 @@ class GroupDescription(TypedDict):
 
 
 GroupsConfig = Mapping[str, GroupDescription]
+GroupFinalizerRegistrar = Callable[[str], None]
+
+
+def _register_group_finalizer(
+    request: pytest.FixtureRequest,
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    group_id: str,
+) -> None:
+    request.addfinalizer(
+        lambda: delete_group_if_present_using_rest(
+            zone_hostname,
+            admin_credentials.username,
+            admin_credentials.password,
+            group_id,
+        )
+    )
 
 
 @given(
@@ -58,14 +77,20 @@ def groups_creation_step(
     users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
+    request: pytest.FixtureRequest,
 ) -> None:
+    groups_config = cast(GroupsConfig, yaml.load(config, yaml.Loader))
+    zone_hostname = hosts[service]["hostname"]
     groups_creation(
-        cast(GroupsConfig, yaml.load(config, yaml.Loader)),
+        groups_config,
         service,
         admin_credentials,
         users,
         hosts,
         groups,
+        lambda group_id: _register_group_finalizer(
+            request, zone_hostname, admin_credentials, group_id
+        ),
     )
 
 
@@ -76,6 +101,7 @@ def groups_creation(
     users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
+    register_finalizer: GroupFinalizerRegistrar | None = None,
 ) -> None:
     """Create and configure groups according to given config.
 
@@ -119,7 +145,15 @@ def groups_creation(
         group3:
             owner: user2
     """
-    _groups_creation(config, service, admin_credentials, users, hosts, groups)
+    _groups_creation(
+        config,
+        service,
+        admin_credentials,
+        users,
+        hosts,
+        groups,
+        register_finalizer,
+    )
 
 
 def _groups_creation(
@@ -129,6 +163,7 @@ def _groups_creation(
     users: Users,
     hosts: HostsConfig,
     groups: MutableMapping[str, str],
+    register_finalizer: GroupFinalizerRegistrar | None,
 ) -> None:
     zone_hostname = hosts[service]["hostname"]
 
@@ -136,8 +171,13 @@ def _groups_creation(
         owner = users[description["owner"]]
 
         group_id = _create_group(
-            zone_hostname, owner.username, owner.password, group_name
+            zone_hostname,
+            owner.username,
+            owner.password,
+            group_name,
         )
+        if register_finalizer:
+            register_finalizer(group_id)
         groups[group_name] = group_id
 
         for user_entry in description.get("users", []):
@@ -163,7 +203,7 @@ def _groups_creation(
             )
 
 
-def _unpack_member_entry(entry: MemberEntry) -> tuple[str, Optional[list[str]]]:
+def _unpack_member_entry(entry: MemberEntry) -> tuple[str, list[str] | None]:
     if isinstance(entry, str):
         return entry, None
     [(name, options)] = entry.items()
@@ -173,7 +213,7 @@ def _unpack_member_entry(entry: MemberEntry) -> tuple[str, Optional[list[str]]]:
 def _create_group(
     zone_hostname: str,
     owner_username: str,
-    owner_password: Optional[str],
+    owner_password: str,
     group_name: str,
     group_type: str = "team",
 ) -> str:
@@ -193,7 +233,7 @@ def _add_user_to_group(
     admin_credentials: CredentialsLike,
     group_id: str,
     user_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})
@@ -204,7 +244,10 @@ def _add_user_to_group(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("groups", group_id, "users", user_id),
-        auth=(admin_credentials.username, admin_credentials.password),
+        auth=(
+            admin_credentials.username,
+            admin_credentials.password,
+        ),
         data=data,
     )
 
@@ -214,7 +257,7 @@ def _add_child_group(
     admin_credentials: CredentialsLike,
     parent_id: str,
     child_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})
@@ -225,14 +268,17 @@ def _add_child_group(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("groups", parent_id, "children", child_id),
-        auth=(admin_credentials.username, admin_credentials.password),
+        auth=(
+            admin_credentials.username,
+            admin_credentials.password,
+        ),
         data=data,
     )
 
 
 def _get_group_id(
     hosts: HostsConfig, users: Users, user: str, group_name: str
-) -> Optional[str]:
+) -> str | None:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     groups_id_list = get_group_id_list(user, users, zone_hostname)
@@ -314,11 +360,17 @@ def create_n_groups_using_rest(
     users: Users,
     hosts: HostsConfig,
     number: str,
+    request: pytest.FixtureRequest,
+    admin_credentials: CredentialsLike,
     host: str = "onezone",
 ) -> None:
     zone_hostname = hosts[host]["hostname"]
     for i in range(int(number)):
         group_name = f"group{i}"
-        _ = _create_group(
-            zone_hostname, users[user].username, users[user].password, group_name
+        group_id = _create_group(
+            zone_hostname,
+            users[user].username,
+            users[user].password,
+            group_name,
         )
+        _register_group_finalizer(request, zone_hostname, admin_credentials, group_id)

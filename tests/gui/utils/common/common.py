@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from functools import partial
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -99,7 +100,7 @@ class _Toggle(PageObject):
     def is_enabled(self) -> bool:
         try:
             self._lock
-        except RuntimeError:
+        except NoSuchElementException:
             return True
         return False
 

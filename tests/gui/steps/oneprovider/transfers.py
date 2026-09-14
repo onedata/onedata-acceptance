@@ -7,20 +7,25 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any, cast
 
+import pytest
 import yaml
 from selenium.common.exceptions import (
+    ElementNotInteractableException,
     NoSuchElementException,
     StaleElementReferenceException,
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
+    select_columns_to_be_visible_in_transfers,
+)
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
     switch_to_iframe,
 )
-from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     TransferState,
@@ -60,33 +65,38 @@ def _assert_transfer(
 
         column = key.replace(" ", "_")
         try:
-            actual = getattr(transfer, column)
-        except (RuntimeError, NoSuchElementException):
+            transfer_val = getattr(transfer, key.replace(" ", "_"))
+        except NoSuchElementException:
             # if key differs from column name, consider creating suitable dict
-            visible_column = (
-                "type_&_destination" if column in ["type", "destination"] else column
-            )
-            _select_columns_to_be_visible_in_transfers(
-                selenium, browser_id, [visible_column]
-            )
-            actual = getattr(transfer, column)
-
-        if actual == str(expected):
-            continue
-
-        error_message = (
-            f"Transfer {key} is {actual} instead of {expected} in {state.value}"
-        )
-        if not isinstance(expected, str) or not expected.startswith("<"):
-            raise AssertionError(error_message)
-
-        operator, value, unit = expected.split()
-        limit_mib = float(value) if unit == "MiB" else float(value) * 1024
-        actual_mib = float(actual.split()[0])
-        is_within_limit = (
-            actual_mib <= limit_mib if operator == "<=" else actual_mib < limit_mib
-        )
-        assert is_within_limit, error_message
+            key = key.replace(" ", "_")
+            if key in ["type", "destination"]:
+                select_columns_to_be_visible_in_transfers(
+                    selenium, browser_id, ["type_&_destination"]
+                )
+            else:
+                select_columns_to_be_visible_in_transfers(selenium, browser_id, [key])
+            transfer_val = getattr(transfer, key)
+        try:
+            assert transfer_val == str(
+                val
+            ), f"Transfer {key} is {transfer_val} instead of {val} in {sufix}"
+        except AssertionError as e:
+            if "<" in val:
+                symbol = val.split(" ")[0]
+                value = float(val.split(" ")[1])
+                unit = val.split(" ")[2]
+                val = value if unit == "MiB" else value * 1024
+                transfer_val = float(transfer_val.split(" ")[0])
+                if symbol == "<=":
+                    assert (
+                        transfer_val <= val
+                    ), f"{key}: {transfer_val} MiB is greater than {val} MiB"
+                else:
+                    assert (
+                        transfer_val < val
+                    ), f"{key}: {transfer_val} MiB is no less than {val} MiB"
+            else:
+                raise e
 
 
 def _assert_transfers(
@@ -222,7 +232,11 @@ def cancel_or_rerun_transfer(
     if state == "waiting":
         try:
             getattr(transfers, state)[0].menu_button()
-        except RuntimeError:
+        except (
+            ElementNotInteractableException,
+            NoSuchElementException,
+            PageObjectNotFoundError,
+        ):
             cast(TransferRecordActive, transfers.ongoing[0]).menu_button()
     else:
         getattr(transfers, transform(state))[0].menu_button()
@@ -374,14 +388,12 @@ def fail_to_click_option_in_data_distribution_popup(
     browser_id: str, option: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    try:
-        Popups(driver).data_distribution_popup.menu[option]()
-        raise AssertionError(
-            f'User can click on "{option}" option in in data row '
-            'menu in "Data distribution" panel'
-        )
-    except RuntimeError:
-        pass
+    menu = Popups(driver).data_distribution_popup.menu
+    if option not in menu:
+        return
+
+    with pytest.raises(ElementNotInteractableException):
+        menu[option]()
 
 
 @wt(
@@ -444,34 +456,11 @@ def assert_option_in_provider_popup_menu(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _select_columns_to_be_visible_in_transfers(
-    selenium: SeleniumDrivers, browser_id: str, columns: list[str]
-) -> None:
-    option_select = "select"
-    option_unselect = "unselect"
-    columns = [column.lower().replace(" ", "_") for column in columns]
-    transfer = OPLoggedIn(selenium[browser_id]).transfers
-    transfer.configure_columns.click()
-    columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
-    for column in columns_menu:
-        column_name = column.name.lower().replace(" ", "_")
-        if column_name in columns:
-            getattr(columns_menu[column.name], option_select)()
-        else:
-            getattr(columns_menu[column.name], option_unselect)()
-    # hide columns menu popup
-    transfer.configure_columns.click()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
 def _get_transfers_and_enable_initial_cols(
     browser_id: str, selenium: SeleniumDrivers
 ) -> _TransfersTab:
     columns = ["user", "type & destination", "status"]
-    _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
+    select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
     return OPLoggedIn(selenium[browser_id]).transfers
 
 
@@ -485,10 +474,10 @@ def _get_transfers_and_enable_initial_cols(
         "columns": parse_elements_sequence,
     },
 )
-def select_columns_to_be_visible_in_transfers(
+def wt_select_columns_to_be_visible_in_transfers(
     selenium: SeleniumDrivers, browser_id: str, columns: list[str]
 ) -> None:
-    _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
+    select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
 
 
 @wt(

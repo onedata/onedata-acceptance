@@ -142,7 +142,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         group: str = "group1",
     ) -> ExecutionResult:
         if self.resolve_group_id is None:
-            raise RuntimeError("Group ID resolver is required for this workflow")
+            raise ValueError("Group ID resolver is required for this workflow")
         return [
             {
                 "Parent directory": {"fileId": self.resolve_file_id(parent_directory)},

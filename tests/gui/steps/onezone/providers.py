@@ -11,10 +11,11 @@ from collections.abc import Iterator
 from itertools import zip_longest
 
 import requests
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import (
@@ -32,6 +33,21 @@ from tests.utils.utils import repeat_failed
 
 TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
 TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 120
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_provider_popover_on_world_map(
+    selenium: SeleniumDrivers, browser_id: str, provider_name: str
+) -> None:
+    driver = selenium[browser_id]
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(ProvidersPage)
+    oz_page.providers.providers_list[provider_name].web_elem.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_visit_provider(driver: WebDriver) -> None:
+    Popups(driver).provider_map_popover.visit_provider()
 
 
 @wt(
@@ -71,7 +87,7 @@ def assert_popup_for_provider_has_appeared_on_map(
     error_message = 'Popup displayed for provider named "{}" instead of "{}"'
     try:
         expected_provider_name = Popups(driver).provider_map_popover.provider_name
-    except RuntimeError:
+    except NoSuchElementException:
         Popups(driver).provider_details.values[0].copy_to_clipboard()
         expected_provider_name = clipboard.paste(display=displays[browser_id])
     provider_name = hosts[provider]["name"]
@@ -118,7 +134,7 @@ def assert_provider_hostname_matches_test_hostname(
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ProvidersPage)
     page = oz_page.providers
-    page.providers_list[0]()
+    page.providers_list[0].click()
     _click_copy_hostname(driver)
     displayed_domain = clipboard.paste(display=displays[browser_id])
     assert displayed_domain == expected_domain, (
@@ -144,10 +160,10 @@ def assert_no_provider_popup_on_world_map(
     driver = selenium[browser_id]
     try:
         Popups(driver).provider_map_popover
-    except RuntimeError:
+    except NoSuchElementException:
         pass
     else:
-        raise RuntimeError("found provider popover on world map")
+        raise AssertionError("found provider popover on world map")
 
 
 @wt(parsers.parse("user of {browser_id} clicks on Onezone world map"))
@@ -237,22 +253,17 @@ def assert_provider_working_in_oz_panel(
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(ProvidersPage)
     page = oz_page.providers
-    try:
-        provider_record = page.providers_list[provider]
-        provider_record.click()
-    except RuntimeError:
-        assert False, f'no provider "{provider}" found on providers list'
-    else:
-        assert (
-            page.is_working()
-        ), f'provider icon in Onezone for "{provider}" is not green'
+    providers = page.providers_list
+    assert provider in providers, f'no provider "{provider}" found on providers list'
+    providers[provider].click()
+    assert page.is_working(), f'provider icon in Onezone for "{provider}" is not green'
 
 
 def click_on_provider_in_providers_sidebar_with_provider_name(
     selenium: SeleniumDrivers, browser_id: str, provider_name: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).providers.providers_list[provider_name]()
+    OZLoggedIn(driver).providers.providers_list[provider_name].click()
 
 
 @wt(
@@ -414,7 +425,7 @@ def wait_until_provider_goes_offline_by_gui(
     while page.is_working():
         time.sleep(0.5)
         if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_OFFLINE:
-            raise RuntimeError(
+            raise TimeoutError(
                 "Provider did not go offline within "
                 f"{TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s."
             )
@@ -440,7 +451,7 @@ def wait_until_provider_goes_online_by_rest(
                 return
         except requests.exceptions.ConnectionError as e:
             exception_message = str(e)
-    raise RuntimeError(
+    raise TimeoutError(
         "Provider is still not working after "
         f"{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s. "
         f"Last response from health check request: {res} "

@@ -16,6 +16,7 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.rest.shares import *
 from tests.gui.steps.common.browser_creation import *
 from tests.gui.steps.common.common import *
 from tests.gui.steps.common.copy_paste import *
@@ -47,7 +48,6 @@ from tests.gui.steps.onezone.shares_sidebar import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
-from tests.gui.steps.rest.shares import *
 from tests.mixed.steps.space_advanced import *
 from tests.oneclient.steps.auth_steps import *
 from tests.utils.acceptance_utils import *

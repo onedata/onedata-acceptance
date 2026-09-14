@@ -29,6 +29,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonPageObject
+from tests.utils.utils import element_has_class
 
 
 class MembersHeaderRow(PageObject):
@@ -69,14 +70,14 @@ class MembersItemRow(PageObject):
     def are_privileges_visible(self) -> PageObject | bool:
         try:
             return self.privilege_tree
-        except RuntimeError:
+        except NoSuchElementException:
             return False
 
     def has_status_label(self, name: str) -> bool:
         return any(x.text == name for x in self.status_labels)
 
     def is_opened(self) -> bool:
-        return "active" in self.web_elem.get_attribute("class")
+        return element_has_class(self.web_elem, "active")
 
 
 class MembersUsersItemRow(MembersItemRow):

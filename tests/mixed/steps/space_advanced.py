@@ -7,13 +7,17 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.steps.rest.shares import create_share_using_rest
+from pytest import FixtureRequest
+
+from tests.gui.meta_steps.rest.shares import create_share_using_rest
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
+    CredentialsLike,
     ProviderEntry,
     _create_space,
     _get_support,
+    _register_space_finalizer,
     create_empty_file,
 )
 from tests.utils.user_utils import User, Users
@@ -25,7 +29,13 @@ from tests.utils.user_utils import User, Users
     )
 )
 def create_n_spaces_without_support(
-    zone_host: str, users: Users, user: str, hosts: Hosts, number: str
+    zone_host: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    number: str,
+    request: FixtureRequest,
+    admin_credentials: CredentialsLike,
 ) -> None:
     name_prefix = "space"
     zone_hostname = hosts[zone_host]["hostname"]
@@ -33,7 +43,13 @@ def create_n_spaces_without_support(
     owner = users[user]
     for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
-        _create_space(zone_hostname, owner.username, owner.password, space_name)
+        space_id = _create_space(
+            zone_hostname,
+            owner.username,
+            owner.password,
+            space_name,
+        )
+        _register_space_finalizer(request, zone_hostname, admin_credentials, space_id)
 
 
 @wt(
@@ -51,6 +67,8 @@ def create_n_spaces_with_shares(
     onepanel_credentials: User,
     storages: dict,
     shares: dict[str, str],
+    request: FixtureRequest,
+    admin_credentials: CredentialsLike,
 ) -> None:
     name_prefix = "space"
     host = "oneprovider-1"
@@ -64,8 +82,12 @@ def create_n_spaces_with_shares(
     for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
         space_id = _create_space(
-            zone_hostname, owner.username, owner.password, space_name
+            zone_hostname,
+            owner.username,
+            owner.password,
+            space_name,
         )
+        _register_space_finalizer(request, zone_hostname, admin_credentials, space_id)
         _get_support(
             zone_hostname,
             onepanel_credentials,

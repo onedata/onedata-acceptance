@@ -42,9 +42,6 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
     And user of browser2 clicks Data discovery of "harvester11" harvester in the sidebar
     And user of browser2 sees "This resource could not be loaded." alert on empty Data discovery page
 
-    And user of browser1 removes "harvester11" harvester in Onezone page
-
-
   Scenario: User successfully renames harvester with modify harvester privilege
     When user of browser1 creates "harvester12" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester12" harvester to user of browser2
@@ -62,9 +59,6 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
               Modify harvester: True
     Then user of browser2 refreshes site
     And user of browser2 renames "harvester12" harvester to "harvester123" in Onezone page
-    And user of browser1 removes "harvester123" harvester in Onezone page
-
-
   Scenario: User successfully removes harvester with remove harvester privilege
     When user of browser1 creates "harvester13" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester13" harvester to user of browser2
@@ -106,9 +100,6 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
     And user of browser2 clicks "user1" user in "harvester14" harvester members users list
     Then user of browser2 sees privileges for "user1" user in harvester members subpage
 
-    And user of browser1 removes "harvester14" harvester in Onezone page
-
-
   Scenario: User successfully sets privileges with set privileges privilege
     When user of browser1 creates "harvester15" harvester in Onezone page
     And user of browser1 sees that "harvester15" has appeared on the harvesters list in the sidebar
@@ -134,8 +125,4 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
     And user of browser1 sees following privileges of "user1" user in harvester members subpage:
           Harvester management:
             granted: True
-
-    And user of browser1 removes "harvester15" harvester in Onezone page
-
-
 

@@ -8,7 +8,6 @@ import xml.etree.ElementTree as ET
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
     click_icon_in_share_directory_modal,
@@ -57,9 +56,12 @@ from tests.gui.steps.oneprovider.shares import (
     click_share_in_shares_browser,
     is_selected_share_named,
 )
+from tests.gui.steps.onezone.documentation import (
+    choose_rest_api_command_from_dropdown,
+)
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Modals, Popups
+from tests.gui.utils import Modals
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.xml_addons import (
     check_ace_editor_appeared,
@@ -79,7 +81,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -92,7 +93,6 @@ from tests.utils.utils import repeat_failed
         'user of {browser_id} creates "{share_name}" share of "{item_name}" directory'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_share(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -117,7 +117,6 @@ def create_share(
         'view of "{item_name}" using "Shared" tag'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def open_single_share_view_by_modal(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -138,7 +137,6 @@ def open_single_share_view_by_modal(
 
 
 @wt(parsers.parse('user of {browser_id} creates another share named "{share_name}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_another_share(
     selenium: SeleniumDrivers, browser_id: str, share_name: str
 ) -> None:
@@ -152,7 +150,6 @@ def create_another_share(
 
 
 @wt(parsers.parse("user of {browser_id} removes current share"))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_current_share(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
@@ -167,7 +164,6 @@ def remove_current_share(
 
 
 @wt(parsers.parse('user of {browser_id} opens shares view of "{space_name}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def open_shares_view_of_given_space(
     selenium: SeleniumDrivers, browser_id: str, space_name: str, tmp_memory: TmpMemory
 ) -> None:
@@ -186,7 +182,6 @@ def open_shares_view_of_given_space(
         'share view of space "{space_name}" using sidebar'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def open_single_share_view_by_sidebar(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -205,7 +200,6 @@ def open_single_share_view_by_sidebar(
         '"{item_name}" to user of {browser2_id}'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def hand_share_url_to_another_user(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -254,7 +248,6 @@ def copy_url_of_share(
         '"{new_name}" in single share view'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def rename_share_from_single_view(
     selenium: SeleniumDrivers, browser_id: str, new_name: str, tmp_memory: TmpMemory
 ) -> None:
@@ -281,11 +274,10 @@ def copy_command_from_api_in_file_details_modal(
 ) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).details_modal
-    command = f"{command}\nREST"
 
     modal.navigation["API"].click()
     modal.api.operations.click()
-    Popups(driver).power_select.choose_item(command)
+    choose_rest_api_command_from_dropdown(selenium, browser_id, command)
     modal.api.copy_button.click()
 
 
@@ -453,7 +445,7 @@ def send_public_handle_link_to_user(
     )
 )
 def fill_inputs_in_edm_metadata_form(
-    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
+    selenium: SeleniumDrivers, browser_id: str, config: str
 ) -> None:
     """
     Fill EDM metadata form according to given config.
@@ -534,11 +526,10 @@ def fill_inputs_in_edm_metadata_form(
                         field_name,
                         selenium,
                         num_to_ordinal(i),
-                        numerals,
                     )
             else:
                 write_to_nth_input_in_edm_form_in_shares_interface(
-                    browser_id, value, field_name, selenium, "first", numerals
+                    browser_id, value, field_name, selenium, "first"
                 )
 
 
@@ -549,7 +540,7 @@ def fill_inputs_in_edm_metadata_form(
     )
 )
 def assert_properties_in_edm_metadata_form(
-    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
+    selenium: SeleniumDrivers, browser_id: str, config: str
 ) -> None:
     """
     Assert EDM metadata values according to given config.
@@ -562,7 +553,7 @@ def assert_properties_in_edm_metadata_form(
         field_name = field_name.lower()
         if is_metadata_field_option_selectable_edm(field_name):
             assert_val_edm_form_in_shares_interface(
-                browser_id, value, field_name, selenium, numerals
+                browser_id, value, field_name, selenium
             )
         else:
             if isinstance(value, list):
@@ -573,11 +564,10 @@ def assert_properties_in_edm_metadata_form(
                         field_name,
                         selenium,
                         num_to_ordinal(i),
-                        numerals,
                     )
             else:
                 assert_nth_val_edm_form_in_shares_interface(
-                    browser_id, value, field_name, selenium, "first", numerals
+                    browser_id, value, field_name, selenium, "first"
                 )
 
 

@@ -6,8 +6,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+from contextlib import suppress
+from enum import Enum
 from typing import cast
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -27,6 +30,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.utils.utils import element_has_class
 
 DEFAULT_IMPORT_STRATEGY_CONFIG = {
     "Mode": "auto",
@@ -94,6 +98,46 @@ class SpaceInfo(PageObject):
         }
 
 
+class StartScanState(Enum):
+    READY = "ready"
+    RUNNING = "running"
+    PENDING = "pending"
+
+
+class StartScan(PageObject):
+    start_button = Button(".btn-primary")
+    stop_button = Button(".btn-danger")
+
+    details_button = Button(".oneicon-arrow-down")
+
+    @property
+    def state(self) -> StartScanState:
+        start_button, stop_button = None, None
+
+        with suppress(NoSuchElementException):
+            start_button = self.start_button
+
+        if start_button is not None:
+            if start_button.is_displayed() and element_has_class(
+                start_button.web_elem, "pending"
+            ):
+                return StartScanState.PENDING
+
+        with suppress(NoSuchElementException):
+            stop_button = self.stop_button
+
+        if stop_button is not None and stop_button.is_displayed():
+            return StartScanState.RUNNING
+
+        if start_button is not None and start_button.is_displayed():
+            return StartScanState.READY
+
+        raise RuntimeError(
+            "Start scan controls have an unknown state; neither the start "
+            "nor stop button is visible"
+        )
+
+
 class SyncChart(PageObject):
     configure = NamedButton("button", text="Configure")
     import_settings_list = WebElementsSequence(".import-settings-list li")
@@ -103,7 +147,9 @@ class SyncChart(PageObject):
         cls=StorageImportConfiguration,
     )
     auto_import_scan = WebElement(".import-info-header")
-    start_scan = NamedButton("button", text="Start scan")
+    start_scan = WebItem(
+        ".one-collapsible-list-item-header .btn-toolbar", cls=StartScan
+    )
 
     last_minute_view = Button(".btn-import-interval-minute")
     last_hour_view = Button(".btn-import-interval-hour")
@@ -120,9 +166,6 @@ class SyncChart(PageObject):
     _deleted = WebElementsSequence(
         ".storage-import-chart-operations g.ct-series-2 line"
     )
-
-    def start_scan_is_green(self) -> bool:
-        return "btn-success" in self.start_scan.web_elem.get_attribute("class")
 
     @property
     def inserted(self) -> int:

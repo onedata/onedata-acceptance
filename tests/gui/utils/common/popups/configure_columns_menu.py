@@ -15,6 +15,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.utils.utils import element_has_class
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
@@ -27,12 +28,15 @@ class ColumnOption(PageObject):
     modify_column_icon = Button(".modify-column .oneicon-browser-rename")
     remove_column_icon = Button(".remove-column .oneicon-close")
 
+    def is_selected(self) -> bool:
+        return element_has_class(self.checkbox, "checked")
+
     def select(self) -> None:
-        if "unselected" in self.checkbox.get_attribute("class"):
+        if not self.is_selected():
             self.checkbox.click()
 
     def unselect(self) -> None:
-        if "checked" in self.checkbox.get_attribute("class"):
+        if self.is_selected():
             self.checkbox.click()
 
     def hover_to_button_and_click(self, button_type: str, driver: WebDriver) -> None:

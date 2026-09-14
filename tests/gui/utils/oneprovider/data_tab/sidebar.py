@@ -2,13 +2,13 @@
 data tab in oneprovider web GUI.
 """
 
+from __future__ import annotations
+
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
 from collections.abc import Iterator
-from typing import Optional
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -22,6 +22,7 @@ from tests.gui.utils.core.web_elements import (
     WebElementsSequence,
     WebItem,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceSelector
 
 
@@ -35,7 +36,7 @@ class DataTabSidebar(PageObject):
         self,
         driver: WebDriver,
         web_elem: SeleniumWebElement,
-        parent: Optional[object] = None,
+        parent: object | None = None,
         *,
         resize_handler: SeleniumWebElement,
     ) -> None:
@@ -57,22 +58,22 @@ class DataTabSidebar(PageObject):
         action.perform()
 
     @property
-    def root_dir(self) -> "DirectoryTree":
+    def root_dir(self) -> DirectoryTree:
         root, root_content = self._root_dir[:2]
         return DirectoryTree(self.driver, root, self, children=root_content)
 
     @property
-    def cwd(self) -> "DirectoryTree":
+    def cwd(self) -> DirectoryTree:
         return self._cwd(self.root_dir)
 
-    def _cwd(self, curr_dir: "DirectoryTree") -> "DirectoryTree":
+    def _cwd(self, curr_dir: DirectoryTree) -> DirectoryTree:
         if curr_dir.is_active():
             return curr_dir
         for directory in curr_dir:
             cwd = self._cwd(directory)
             if cwd:
                 return cwd
-        raise RuntimeError("no working directory found")
+        raise PageObjectNotFoundError("no working directory found")
 
 
 class DirectoryTree(PageObject, ExpandableMixin):
@@ -88,7 +89,7 @@ class DirectoryTree(PageObject, ExpandableMixin):
         self,
         driver: WebDriver,
         web_elem: SeleniumWebElement,
-        parent: Optional[object] = None,
+        parent: object | None = None,
         *,
         children: SeleniumWebElement,
     ) -> None:
@@ -98,18 +99,17 @@ class DirectoryTree(PageObject, ExpandableMixin):
     def __str__(self) -> str:
         return f"DirectoryTree({self.pwd()}) in {self.parent}"
 
-    def __iter__(self) -> Iterator["DirectoryTree"]:
+    def __iter__(self) -> Iterator[DirectoryTree]:
         css_selector = "ul.data-files-tree-list li:not(.clickable)"
-        return (
-            DirectoryTree(self.driver, dir_tree, self, children=dir_tree)
-            for dir_tree in self._children.find_elements(By.CSS_SELECTOR, css_selector)
-        )
+        elements = self._children.find_elements(By.CSS_SELECTOR, css_selector)
+        for dir_tree in elements:
+            yield DirectoryTree(self.driver, dir_tree, self, children=dir_tree)
 
-    def __getitem__(self, name: str) -> "DirectoryTree":
+    def __getitem__(self, name: str) -> DirectoryTree:
         for directory in self:
             if directory.name == name:
                 return directory
-        raise RuntimeError(f'no subdirectory named "{name}" found in {self}')
+        raise PageObjectNotFoundError(f'no subdirectory named "{name}" found in {self}')
 
     def is_expanded(self) -> bool:
         return "open" in self._toggle.get_attribute("class")

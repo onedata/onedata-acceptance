@@ -14,7 +14,7 @@ import yaml
 from oneprovider_client.rest import ApiException
 
 from tests import OP_REST_PORT, OZ_REST_PORT
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import upload_file_path, upload_workflow_path
 from tests.mixed.oneprovider_client.api.workflow_execution_api import (
@@ -53,7 +53,7 @@ BAGIT_ARCHIVES = {
 
 class CredentialsLike(Protocol):
     username: str
-    password: Optional[str]
+    password: str
 
 
 class WorkflowRun(TypedDict, total=False):
@@ -773,7 +773,7 @@ def assert_empty_workflow_phase(
         user, users, host, hosts, space, spaces, phase=phase
     )
     if any(executions):
-        raise RuntimeError(
+        raise AssertionError(
             f"workflows {[workflow_executions[wid] for wid in executions]} "
             f"are in {phase} state"
         )

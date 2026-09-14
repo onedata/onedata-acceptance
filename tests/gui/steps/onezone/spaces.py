@@ -9,17 +9,23 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any, cast
 
-from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    NoSuchElementException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
@@ -46,6 +52,15 @@ SPACE_TABS = [
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
+def get_space_names_from_sidebar(
+    selenium: SeleniumDrivers, browser_id: str
+) -> list[str]:
+    return [
+        elem.name for elem in OZLoggedIn(selenium[browser_id]).data.spaces_headers_list
+    ]
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
     # select data in main menu if not selected
     OZLoggedIn(driver).open_panel(DataPage)
@@ -58,7 +73,7 @@ def click_on_space_in_menu_list(
     # function assumes data page is active
     page = OZLoggedIn(driver).data
     if force:
-        page.spaces_headers_list[name]()
+        page.spaces_headers_list[name].web_elem.click()
     else:
         if not page.spaces_list[name].is_active():
             page.spaces_headers_list[name].click()
@@ -121,6 +136,7 @@ def create_new_space_by_click_on_create_new_space_button(
 ) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).data.input_box.confirm()
+    close_alert_popup_if_present(driver, popup=CreatedItemAlertPopup.SPACE)
 
 
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
@@ -132,6 +148,9 @@ def create_new_space_on_onezone_page(
     page.create_space_button()
     page.input_box.value = space_name
     page.input_box.confirm()
+    close_alert_popup_if_present(
+        selenium[browser_id], popup=CreatedItemAlertPopup.SPACE
+    )
 
 
 @wt(
@@ -149,12 +168,12 @@ def assert_no_provider_for_space(
     hosts: Hosts,
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).data
-    page.spaces_headers_list[space_name]()
+    page.spaces_headers_list[space_name].click()
     page.spaces_list[space_name].providers()
     provider = hosts[provider_name]["name"]
     try:
         page.providers_page.providers_list[provider]
-    except RuntimeError:
+    except (NoSuchElementException, PageObjectNotFoundError):
         pass
     else:
         assert (
@@ -456,7 +475,7 @@ def click_the_map_on_data_page(
     selenium: SeleniumDrivers, browser_id: str, page: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver).data, _get_subpage_name(page)).map()
+    getattr(OZLoggedIn(driver).data, _get_subpage_name(page)).map.web_elem.click()
 
 
 @wt(
@@ -869,7 +888,7 @@ def generate_and_send_support_token(
     tmp_memory: TmpMemory,
 ) -> None:
     page = OZLoggedIn(selenium[browser_id1]).data
-    page.spaces_headers_list[space_name]()
+    page.spaces_headers_list[space_name].click()
     page.spaces_list[space_name].providers()
     page.providers_page.add_support()
     copy_token(selenium, browser_id1)
@@ -894,6 +913,9 @@ def confirm_create_new_space(
 ) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
+        close_alert_popup_if_present(
+            selenium[browser_id], popup=CreatedItemAlertPopup.SPACE
+        )
     else:
         create_new_space_by_click_on_create_new_space_button(selenium, browser_id)
 
@@ -933,7 +955,7 @@ def assert_tabs_of_space_enabled(
     selenium: SeleniumDrivers, browser_id: str, tabs_list: list[str], space_name: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).data
-    page.spaces_headers_list[space_name]()
+    page.spaces_headers_list[space_name].click()
     space = page.spaces_list[space_name]
     tabs = SPACE_TABS if tabs_list == ["all"] else tabs_list
 
@@ -954,7 +976,7 @@ def assert_tabs_of_space_disabled(
     selenium: SeleniumDrivers, browser_id: str, tabs_list: list[str], space_name: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).data
-    page.spaces_headers_list[space_name]()
+    page.spaces_headers_list[space_name].click()
     space = page.spaces_list[space_name]
 
     for tab in tabs_list:

@@ -11,12 +11,16 @@ from collections.abc import Callable, Collection, Sequence
 from datetime import datetime
 from typing import Optional, Protocol
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import network_throttling_download
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
+from tests.gui.type_definitions import Clickable, TmpMemory
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.common.popups.configure_columns_menu import ColumnOption
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     WhichBrowser,
@@ -24,6 +28,7 @@ from tests.gui.utils.generic import (
     parse_seq,
     sort_json_from_string,
     transform,
+    wait_for_visible_element_using_getter,
 )
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
@@ -40,6 +45,57 @@ class RowMenu(Protocol):
     def choose_option(self, option: str) -> None: ...
 
     def return_option(self, name: str) -> MenuOption: ...
+
+
+class ColumnsConfigurable(Protocol):
+    configure_columns: Clickable
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_configure_columns_button(browser: ColumnsConfigurable) -> None:
+    browser.configure_columns.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_column_names_from_configure_columns_menu(driver: WebDriver) -> list[str]:
+    menu = Popups(driver).configure_columns_menu
+    wait_for_item_to_appear(menu.web_elem)
+    return [column.name for column in menu.columns]
+
+
+def get_column_from_configure_columns_menu(
+    driver: WebDriver, column_name: str
+) -> ColumnOption:
+    menu_getter = lambda driver: Popups(driver).configure_columns_menu
+    menu = wait_for_visible_element_using_getter(driver, menu_getter)
+    return menu.columns[column_name]
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_column_visibility(
+    column: ColumnOption, column_name: str, visible: bool
+) -> None:
+    if visible:
+        column.select()
+    else:
+        column.unselect()
+    assert column.is_selected() == visible, (
+        f'column "{column_name}" is '
+        f'{"not " if visible else ""}selected after changing its visibility'
+    )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_if_element_is_selected(
+    tmp_memory: TmpMemory,
+    browser_id: str,
+    name: str,
+    which_browser: WhichBrowser,
+) -> None:
+    browser_name = which_browser.value
+    error_message = f"Element {name} is not selected in {browser_name}"
+    browser = tmp_memory[browser_id][transform(browser_name)]
+    assert browser.data[name].is_selected(), error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -62,7 +118,7 @@ def click_and_press_enter_on_item_in_browser(
     while item_name not in browser.data:
         time.sleep(1)
         if time.time() > start + WAIT_BACKEND:
-            raise RuntimeError("waited too long")
+            raise TimeoutError("waited too long")
 
     click_and_enter_with_check(driver, browser, which_browser, item_name)
 
@@ -102,14 +158,14 @@ def click_and_enter_with_check(
             if breadcrumbs.split("/")[-1] == item_name:
                 return
             time.sleep(1)
-        raise RuntimeError("Click and enter has not entered the directory")
+        raise TimeoutError("Click and enter has not entered the directory")
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def check_if_breadcrumbs_on_share_page(driver: WebDriver, which_browser: str) -> str:
     try:
         breadcrumbs = OPLoggedIn(driver).shares_page.breadcrumbs.pwd()
-    except RuntimeError:
+    except NoSuchElementException:
         which_browser = transform(which_browser)
         if which_browser == "shares_file_browser":
             which_browser = "file_browser"
@@ -299,7 +355,7 @@ def check_if_item_is_dir_in_browser(
 
     try:
         item = browser.data[item_name]
-    except RuntimeError:
+    except PageObjectNotFoundError:
         browser.scroll_to_number_file(driver, data.index(item_name), browser)
         item = browser.data[item_name]
 
@@ -741,11 +797,12 @@ def assert_no_column_for_item(
     try:  # this try except block covers cases when xattr value doesn't exist
         _ = getattr(browser.data[item_name], option)
 
-    except RuntimeError as e:
+    except NoSuchElementException as e:
         if "item found in" not in str(e):
             raise AssertionError from e  # if the error does not match expected error
             # The expected error:
-            # RuntimeError: no {} item found in {} in file browser in Oneprovider page
+            # NoSuchElementException: no {} item found in {} in file browser in
+            # Oneprovider page
 
 
 @wt(
@@ -838,7 +895,7 @@ def assert_button_not_visible_in_browser(
     try:
         getattr(browser, transform(button) + "_button")
         raise AssertionError(f"button {button} is visible in {which_browser} browser")
-    except RuntimeError:
+    except NoSuchElementException:
         pass
 
 

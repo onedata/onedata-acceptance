@@ -30,14 +30,14 @@ class TaskTimeSeries(Modal):
     def get_time_from_chart(self) -> list[float]:
         chart = self.driver.execute_script(_canvas_fill, self._canvas)
         if chart is False:
-            raise RuntimeError("Failed to get data from task time series canvas")
+            raise ValueError("Failed to get data from task time series canvas")
         chart_data = cast(ChartData, chart)
         return [chunk[0] for chunk in chart_data["series"][0]["data"]]
 
     def get_columns_values(self) -> list[tuple[list[float], str]]:
         chart = self.driver.execute_script(_canvas_fill, self._canvas)
         if chart is False:
-            raise RuntimeError("Failed to get data from task time series canvas")
+            raise ValueError("Failed to get data from task time series canvas")
         chart_data = cast(ChartData, chart)
         values1 = [chunk[1] for chunk in chart_data["series"][0]["data"]]
         value_type1 = chart_data["series"][0]["name"]

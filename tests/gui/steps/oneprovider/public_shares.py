@@ -11,9 +11,9 @@ from collections.abc import Iterable
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils import PublicShareView as public_share
@@ -250,7 +250,7 @@ def click_button_in_share(
 
 
 def check_item_presence_in_dublin_core_metadata(
-    driver: WebDriver, item: str, data: Iterable[WebElement]
+    driver: WebDriver, item: str, data: Iterable[SeleniumWebElement]
 ) -> None:
     for info in data:
         if info.text == "":
@@ -258,7 +258,7 @@ def check_item_presence_in_dublin_core_metadata(
         if info.text == item:
             break
     else:
-        raise RuntimeError(f'{item} was not found in "Dublin Core Metadata"')
+        raise AssertionError(f'{item} was not found in "Dublin Core Metadata"')
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
