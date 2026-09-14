@@ -268,15 +268,15 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
 
 
 def is_element_visible_on_page(
-    driver: WebDriver, web_elem_or_selector: WebElementOrSelector
+    driver: WebDriver,
+    web_elem_or_selector: WebElementOrSelector,
 ) -> bool:
     try:
-        return bool(
-            get_visibility_condition(get_web_elem_or_locator(web_elem_or_selector))(
-                driver
-            )
+        condition = get_visibility_condition(
+            get_web_elem_or_locator(web_elem_or_selector)
         )
-    except NoSuchElementException:
+        return bool(condition(driver))
+    except (NoSuchElementException, StaleElementReferenceException):
         return False
 
 
