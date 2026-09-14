@@ -403,7 +403,7 @@ def click_start_scan_button_in_storage_import_tab(
 ) -> None:
     driver = selenium[browser_id]
     click_start_scan_button_and_wait_for_its_state(driver)
-    dismiss_notifies_if_present(selenium, browser_id, timeout=WAIT_FRONTEND)
+    dismiss_notifies_if_present(driver, timeout=WAIT_FRONTEND)
 
 
 @wt(

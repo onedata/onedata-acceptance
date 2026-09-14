@@ -72,7 +72,7 @@ def capture_visible_popups(
         except (NoSuchElementException, StaleElementReferenceException):
             continue
 
-    return bool(seen_popups)
+    return len(seen_popups) > 0
 
 
 @wt(
@@ -118,11 +118,9 @@ def notify_visible_with_text(
 
 
 def dismiss_notifies_if_present(
-    selenium: SeleniumDrivers,
-    browser_id: str,
+    driver: WebDriver,
     timeout: float,
 ) -> None:
-    driver = selenium[browser_id]
     seen_popups: set[CapturedPopup] = set()
 
     try:

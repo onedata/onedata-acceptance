@@ -89,7 +89,7 @@ def remove_member_from_parent(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(driver).remove_modal.remove()
 
-    dismiss_notifies_if_present(selenium, browser_id, timeout=WAIT_FRONTEND)
+    dismiss_notifies_if_present(driver, timeout=WAIT_FRONTEND)
 
 
 def fail_to_set_privileges_using_op_gui(

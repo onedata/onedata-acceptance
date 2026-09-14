@@ -147,8 +147,9 @@ def succeed_to_consume_token_using_confirm_button(
     selenium: SeleniumDrivers,
     browser_id: str,
 ) -> None:
+    driver = selenium[browser_id]
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
-    dismiss_notifies_if_present(selenium, browser_id, timeout=WAIT_FRONTEND)
+    dismiss_notifies_if_present(driver, timeout=WAIT_FRONTEND)
 
 
 def fail_to_consume_token_using_confirm_button(
