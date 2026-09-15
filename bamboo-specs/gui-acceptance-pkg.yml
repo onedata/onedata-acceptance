@@ -691,7 +691,7 @@ Onepanel deployment basic:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed OPTS=--update-etc-hosts test_gui_pkg
+          - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed test_gui_pkg
 
 Onepanel deployment LE:
   <<: *acceptance-tests-in-chrome-job
@@ -706,7 +706,7 @@ Onepanel deployment LE:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_deployment_with_le ENV_FILE=1oz_1op_le_not_deployed OPTS=--update-etc-hosts test_gui_pkg
+          - make SUITE=test_onepanel_deployment_with_le ENV_FILE=1oz_1op_le_not_deployed test_gui_pkg
 
 Onepanel deployment OneS3:
   <<: *acceptance-tests-in-chrome-job
@@ -721,7 +721,7 @@ Onepanel deployment OneS3:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_deployment_ones3 ENV_FILE=1oz_deployed_1op_not_deployed OPTS=--update-etc-hosts test_gui_pkg
+          - make SUITE=test_onepanel_deployment_ones3 ENV_FILE=1oz_deployed_1op_not_deployed test_gui_pkg
 
 Onepanel login:
   <<: *acceptance-tests-in-chrome-job
@@ -781,7 +781,7 @@ Onepanel two hosts deployment:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes OPTS=--update-etc-hosts test_gui_pkg
+          - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes test_gui_pkg
 
 Onepanel different storages:
   <<: *acceptance-tests-in-chrome-job
