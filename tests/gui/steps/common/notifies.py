@@ -61,9 +61,7 @@ def capture_visible_popups(
     seen_popups: set[CapturedPopup],
 ) -> bool:
     # this function modifies seen_popups set in place
-    detected_popups: list[AlertInfoPopup] = Popups(
-        driver
-    ).alert_popups.get_all_alert_popups()
+    detected_popups: list[AlertInfoPopup] = Popups(driver).alert_popups.get_all_alert_popups()
     for popup in detected_popups:
         try:
             web_elem = popup.web_elem
@@ -110,7 +108,6 @@ def notify_visible_with_text(
                 f"observed messages: {list(seen_popups)}"
             ) from exc
 
-        
         _close_all_detected_popups(driver, seen_popups)
         return False
 

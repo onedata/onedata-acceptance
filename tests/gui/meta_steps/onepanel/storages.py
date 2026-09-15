@@ -144,9 +144,7 @@ def add_storage_in_op_panel_using_gui(
         onepanel_credentials,
     )
 
-    storage_id = copy_storage_id(
-        selenium, browser_id, storage_name, clipboard, displays
-    )
+    storage_id = copy_storage_id(selenium, browser_id, storage_name, clipboard, displays)
 
     _register_storage_finalizer(
         request,
@@ -414,34 +412,7 @@ def _register_revoke_space_supports_finalizer_if_storage_successfully_added(
     onepanel_credentials: User,
 ) -> None:
     storage = get_first_expanded_storage(storages)
-    storage_id = copy_storage_id(
-        selenium, browser_id, storage.name, clipboard, displays
-    )
-
-    register_revoke_space_supports_finalizer(
-        request,
-        provider_name,
-        hosts,
-        onepanel_credentials,
-        storage_id,
-    )
-
-
-def _register_revoke_space_supports_finalizer_if_storage_successfully_added(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    storages: StorageContentPage,
-    clipboard: Clipboard,
-    displays: dict[str, str],
-    request: pytest.FixtureRequest,
-    provider_name: str,
-    hosts: Hosts,
-    onepanel_credentials: User,
-) -> None:
-    storage = get_first_expanded_storage(storages)
-    storage_id = copy_storage_id(
-        selenium, browser_id, storage.name, clipboard, displays
-    )
+    storage_id = copy_storage_id(selenium, browser_id, storage.name, clipboard, displays)
 
     register_revoke_space_supports_finalizer(
         request,

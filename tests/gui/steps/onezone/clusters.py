@@ -103,9 +103,7 @@ def assert_subpage_in_cluster_page(
     assert page_name == record_name, error_message
 
 
-@wt(
-    parsers.parse('user of {browser_id} clicks "{option}" of "{record}" in the sidebar')
-)
+@wt(parsers.parse('user of {browser_id} clicks "{option}" of "{record}" in the sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND * 1.5)
 def click_option_of_record_in_the_sidebar(
     selenium: SeleniumDrivers, browser_id: str, option: str

@@ -287,9 +287,7 @@ def assert_label_contains_text_in_onepanel_view(
 ) -> None:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label_text = getattr(nav, transform(label))
-    error_message = (
-        f"{label} should contain '{expected_text}', but it is '{actual_label_text}'"
-    )
+    error_message = f"{label} should contain '{expected_text}', but it is '{actual_label_text}'"
     assert expected_text in actual_label_text, error_message
 
 
@@ -311,22 +309,20 @@ def assert_certificate_validity_times(
     expiration_time = parse_time(nav.expiration_time)
     # We need the same timezone (tzinfo) for "now" as is for creation_time
     now = datetime.now(creation_time.tzinfo)
-    assert (
-        now > creation_time
-    ), f"Certificate creation time {creation_time} is set to a future date"
+    assert now > creation_time, f"Certificate creation time {creation_time} is set to a future date"
 
     # The approximation of the creation time is used because the certificate is
     # generated when environment starts so the time of generation may differ from
     # the time of checking (now threshold is set to 12 hours)
-    assert abs(now - creation_time) < timedelta(
-        hours=12
-    ), f"Certificate creation time {creation_time} is not close to {now}"
+    assert abs(now - creation_time) < timedelta(hours=12), (
+        f"Certificate creation time {creation_time} is not close to {now}"
+    )
 
     # The validity check accounts for leap years
     validity = expiration_time - creation_time
-    assert (
-        timedelta(days=10 * 365) <= validity <= timedelta(days=10 * 366)
-    ), f"Expected certificate validity should be close to 10 years, got {validity}"
+    assert timedelta(days=10 * 365) <= validity <= timedelta(days=10 * 366), (
+        f"Expected certificate validity should be close to 10 years, got {validity}"
+    )
 
 
 @wt(

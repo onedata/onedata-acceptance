@@ -10,8 +10,8 @@ import os
 import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
-from datetime import datetime
 from contextlib import suppress as contextlib_suppress
+from datetime import datetime
 from enum import Enum
 from functools import partial
 from itertools import islice
@@ -270,9 +270,7 @@ def is_element_visible_on_page(
     web_elem_or_selector: WebElementOrSelector,
 ) -> bool:
     try:
-        condition = get_visibility_condition(
-            get_web_elem_or_locator(web_elem_or_selector)
-        )
+        condition = get_visibility_condition(get_web_elem_or_locator(web_elem_or_selector))
         return bool(condition(driver))
     except (NoSuchElementException, StaleElementReferenceException):
         return False

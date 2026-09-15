@@ -116,26 +116,8 @@ def click_create_token_button_in_create_token_page(
     wait_for_item_to_disappear(create_token_button, driver, timeout=2 * WAIT_FRONTEND)
 
 
-@wt(
-    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
-)
-def click_on_confirm_button_on_tokens_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    driver = selenium[browser_id]
-    click_confirm_button_on_tokens_page(driver)
-    # it is needed to wait for the page refresh
-    wait_till_main_content_loaded(driver)
-
-    assert_confirm_button_not_visible_on_tokens_page(driver)
-
-
-@wt(
-    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
-)
-def click_on_confirm_button_on_tokens_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+@wt(parsers.parse("user of {browser_id} clicks on Confirm button on consume token page"))
+def click_on_confirm_button_on_tokens_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     click_confirm_button_on_tokens_page(driver)
     # it is needed to wait for the page refresh

@@ -215,9 +215,7 @@ def _check_error_modal_appeared_or_registration_finished(
     error_modal_css_selector = ".alert-global.modal.in .modal-dialog"
     sidebar_css_selector = ".one-sidebar.sidebar-clusters"
 
-    if is_element_visible_on_page(
-        driver, error_modal_css_selector
-    ):  # error modal appeared
+    if is_element_visible_on_page(driver, error_modal_css_selector):  # error modal appeared
         wait_for_error_modal_to_disappear(driver)
         return False
 

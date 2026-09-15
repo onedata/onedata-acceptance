@@ -346,26 +346,8 @@ def copy_storage_id(
     clipboard: Clipboard,
     displays: dict[str, str],
 ) -> str:
-    Onepanel(selenium[browser_id]).content.storages.storages[
-        storage_name
-    ].copy_id_button.click()
-    clip = clipboard.paste(display=displays[browser_id])
-    return clip
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def copy_storage_id(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    storage_name: str,
-    clipboard: Clipboard,
-    displays: dict[str, str],
-) -> str:
-    Onepanel(selenium[browser_id]).content.storages.storages[
-        storage_name
-    ].copy_id_button.click()
-    clip = clipboard.paste(display=displays[browser_id])
-    return clip
+    Onepanel(selenium[browser_id]).content.storages.storages[storage_name].copy_id_button.click()
+    return clipboard.paste(display=displays[browser_id])
 
 
 def close_all_expanded_storages(browser_id: str, selenium: SeleniumDrivers) -> list[str]:
