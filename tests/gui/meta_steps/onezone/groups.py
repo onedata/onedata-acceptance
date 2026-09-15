@@ -111,15 +111,11 @@ def leave_group(selenium: SeleniumDrivers, browser_id: str, group: str) -> None:
 
 
 @given(parsers.parse("{user} user does not have access to any group"))
-def g_leave_user_groups_in_onezone_using_rest(
-    hosts: Hosts, users: Users, user: str
-) -> None:
+def g_leave_user_groups_in_onezone_using_rest(hosts: Hosts, users: Users, user: str) -> None:
     leave_user_groups_in_onezone_using_rest(hosts, users, user)
 
 
-def leave_user_groups_in_onezone_using_rest(
-    hosts: Hosts, users: Users, user: str
-) -> None:
+def leave_user_groups_in_onezone_using_rest(hosts: Hosts, users: Users, user: str) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
     user_groups = get_user_groups(zone_hostname, user, users)
     for group_id in user_groups:
@@ -135,9 +131,7 @@ def leave_user_groups_in_onezone_using_rest(
         extra_types={"ElementsSequence": parse_elements_sequence},
     )
 )
-def remove_group(
-    selenium: SeleniumDrivers, browser_id: str, group_list: list[str]
-) -> None:
+def remove_group(selenium: SeleniumDrivers, browser_id: str, group_list: list[str]) -> None:
     option = "Remove"
     modal = "REMOVE GROUP"
 
@@ -202,9 +196,7 @@ def create_single_group_using_op_gui(
     confirm_name_input_on_main_groups_page(selenium, browser_id)
 
 
-def see_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: list[str]
-) -> None:
+def see_groups_using_op_gui(selenium: SeleniumDrivers, user: str, group_list: list[str]) -> None:
     option = "sees"
 
     for group in group_list:
@@ -219,7 +211,7 @@ def rename_groups_using_op_gui(
 ) -> None:
     confirm_type = "enter"
 
-    for group, new_name in zip(group_list, new_names):
+    for group, new_name in zip(group_list, new_names, strict=True):
         rename_group(selenium, user, group, new_name, confirm_type)
 
 
@@ -232,9 +224,7 @@ def fail_to_see_groups_using_op_gui(
         assert_group_exists(selenium, [user], option, group)
 
 
-def leave_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: list[str]
-) -> None:
+def leave_groups_using_op_gui(selenium: SeleniumDrivers, user: str, group_list: list[str]) -> None:
     for group in group_list:
         leave_group(selenium, user, group)
 
@@ -294,9 +284,7 @@ def _create_group_token(
     copy_token_from_modal(selenium, user)
     close_alert_popup_if_present(selenium[user], AlertPopup.SUCCESSFULLY_COPIED)
     close_modal(selenium, user, modal)
-    send_copied_item_to_other_users(
-        user, item_type, [user2], tmp_memory, displays, clipboard
-    )
+    send_copied_item_to_other_users(user, item_type, [user2], tmp_memory, displays, clipboard)
 
 
 @wt(
@@ -349,11 +337,7 @@ def create_group_token_to_invite_group_using_op_gui(
     )
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) joins group he was invited to in Onezone service"
-    )
-)
+@wt(parsers.re(r"user of (?P<browser_id>.*) joins group he was invited to in Onezone service"))
 def join_group_using_op_gui(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
@@ -417,7 +401,7 @@ def fail_to_rename_groups_using_op_gui(
 ) -> None:
     text = "failed"
 
-    for group, new_name in zip(group_list, new_names):
+    for group, new_name in zip(group_list, new_names, strict=True):
         rename_groups_using_op_gui(selenium, user, [group], [new_name])
         assert_error_modal_with_text_appeared(selenium, user, text)
 

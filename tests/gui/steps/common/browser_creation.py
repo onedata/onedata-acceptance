@@ -85,11 +85,8 @@ def create_instances_of_webdriver(
                     assert_driver_working_properly(browser)
                     break
                 except (WebDriverException, HTTPError) as e:
-                    print(
-                        f"failed to start webdriver instance at attempt: {i + 1} "
-                        f"due to:\n {e}"
-                    )
-                    if i == 4:
+                    print(f"failed to start webdriver instance at attempt: {i + 1} due to:\n {e}")
+                    if i == DRIVER_CREATION_RETRIES - 1:
                         raise e
                     time.sleep(2)
 
@@ -109,7 +106,7 @@ def _set_window_size(driver: WebDriver, width: int, height: int) -> None:
             driver.set_window_size(width, height)
             break
         except WebDriverException as e:
-            if i == 4:
+            if i == DRIVER_CREATION_RETRIES - 1:
                 raise e
             time.sleep(2)
 

@@ -27,9 +27,7 @@ class CredentialsLike(Protocol):
 
 
 @given(
-    parsers.parse(
-        'initial "{name}" storage configuration in "{host}" Onezone service:\n{config}'
-    )
+    parsers.parse('initial "{name}" storage configuration in "{host}" Onezone service:\n{config}')
 )
 def create_storage(
     hosts: HostsConfig,

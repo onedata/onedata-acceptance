@@ -4,11 +4,12 @@ __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import time
-from collections.abc import Mapping, MutableMapping, Sequence
+from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from functools import cache
-from typing import Callable, Protocol, TypedDict, cast
+from typing import Protocol, TypedDict, cast
 
 import pytest
 import requests
@@ -90,17 +91,14 @@ StorageConfig = TypedDict(
 )
 
 
-SpaceDescription = TypedDict(
-    "SpaceDescription",
-    {
-        "owner": str,
-        "users": list[MemberEntry],
-        "groups": list[MemberEntry],
-        "providers": list[ProviderEntry],
-        "storage": StorageConfig,
-    },
-    total=False,
-)
+class SpaceDescription(TypedDict, total=False):
+    owner: str
+    users: list[MemberEntry]
+    groups: list[MemberEntry]
+    providers: list[ProviderEntry]
+    storage: StorageConfig
+
+
 type SpacesConfig = Mapping[str, SpaceDescription]
 type SpaceFinalizerRegistrar = Callable[[str], None]
 
@@ -121,11 +119,7 @@ def _register_space_finalizer(
     )
 
 
-@given(
-    parsers.parse(
-        'initial spaces configuration in "{zone_host}" Onezone service:\n{config}'
-    )
-)
+@given(parsers.parse('initial spaces configuration in "{zone_host}" Onezone service:\n{config}'))
 def create_and_configure_spaces_step(
     config: str,
     zone_host: str,
@@ -254,11 +248,7 @@ def create_and_configure_spaces(
     )
 
 
-@given(
-    parsers.parse(
-        'additional spaces configuration in "{zone_host}" Onezone service:\n{config}'
-    )
-)
+@given(parsers.parse('additional spaces configuration in "{zone_host}" Onezone service:\n{config}'))
 def add_spaces_configuration(
     config: str,
     zone_host: str,
@@ -314,9 +304,7 @@ def _create_and_configure_spaces(
         )
         if register_finalizer:
             register_finalizer(space_id)
-        _add_users_to_space(
-            zone_hostname, admin_credentials, space_id, users_db, users_to_add
-        )
+        _add_users_to_space(zone_hostname, admin_credentials, space_id, users_db, users_to_add)
         _add_groups_to_space(
             zone_hostname,
             admin_credentials,
@@ -335,9 +323,7 @@ def _create_and_configure_spaces(
             users_to_add,
             users_db,
         )
-        _init_storage_from_config(
-            owner, space_name, hosts, users_db, description.get("storage")
-        )
+        _init_storage_from_config(owner, space_name, hosts, users_db, description.get("storage"))
 
 
 def _create_space(
@@ -364,11 +350,12 @@ def _add_users_to_space(
     users_db: Users,
     users_to_add: list[MemberEntry],
 ) -> None:
-    for user in users_to_add:
-        if isinstance(user, dict):
-            [(user, options)] = user.items()
+    for user_entry in users_to_add:
+        if isinstance(user_entry, dict):
+            [(user_name, options)] = user_entry.items()
             privileges = options["privileges"]
         else:
+            user_name = user_entry
             privileges = None
 
         _add_user_to_space(
@@ -376,7 +363,7 @@ def _add_users_to_space(
             admin_credentials.username,
             admin_credentials.password,
             space_id,
-            users_db[user].user_id,
+            users_db[user_name].user_id,
             privileges,
         )
 
@@ -389,10 +376,7 @@ def _add_user_to_space(
     user_id: str,
     privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"operation": "set", "privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"operation": "set", "privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,
@@ -410,11 +394,12 @@ def _add_groups_to_space(
     groups_db: Groups,
     groups_to_add: list[MemberEntry],
 ) -> None:
-    for group in groups_to_add:
-        if isinstance(group, dict):
-            [(group, options)] = group.items()
+    for group_entry in groups_to_add:
+        if isinstance(group_entry, dict):
+            [(group_name, options)] = group_entry.items()
             privileges = options["privileges"]
         else:
+            group_name = group_entry
             privileges = None
 
         _add_group_to_space(
@@ -422,7 +407,7 @@ def _add_groups_to_space(
             admin_credentials.username,
             admin_credentials.password,
             space_id,
-            groups_db[group],
+            groups_db[group_name],
             privileges,
         )
 
@@ -435,10 +420,7 @@ def _add_group_to_space(
     group_id: str,
     privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"operation": "set", "privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"operation": "set", "privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,
@@ -501,8 +483,7 @@ def _get_support(
         )
 
         all_members = [owner_credentials.username] + [
-            member if isinstance(member, str) else next(iter(member))
-            for member in members
+            member if isinstance(member, str) else next(iter(member)) for member in members
         ]
         wait_for_space_support(space_id, provider_hostname, all_members, users)
 
@@ -520,9 +501,7 @@ def wait_for_space_support(
         ).content
         space_id_list = [space["spaceId"] for space in json.loads(response)]
 
-        assert (
-            space_id in space_id_list
-        ), f"space {space_id} not found in user {user} spaces"
+        assert space_id in space_id_list, f"space {space_id} not found in user {user} spaces"
 
 
 @repeat_failed(attempts=10, interval=5)
@@ -532,13 +511,12 @@ def wait_for_storage_details(
     onepanel_username: str,
     onepanel_password: str,
 ) -> requests.Response:
-    storage_details = http_get(
+    return http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path("provider", "storages", storage_id),
         auth=(onepanel_username, onepanel_password),
     )
-    return storage_details
 
 
 @repeat_failed(attempts=10, interval=5)
@@ -547,13 +525,12 @@ def wait_for_storages_id(
     onepanel_username: str,
     onepanel_password: str,
 ) -> requests.Response:
-    storages_id = http_get(
+    return http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path("provider", "storages"),
         auth=(onepanel_username, onepanel_password),
     )
-    return storages_id
 
 
 def _get_storage_id(
@@ -562,9 +539,7 @@ def _get_storage_id(
     onepanel_password: str,
     storage_name: str,
 ) -> str:
-    storages_id = wait_for_storages_id(
-        provider_hostname, onepanel_username, onepanel_password
-    )
+    storages_id = wait_for_storages_id(provider_hostname, onepanel_username, onepanel_password)
     for storage_id in storages_id.json()["ids"]:
         storage_details = wait_for_storage_details(
             provider_hostname, storage_id, onepanel_username, onepanel_password
@@ -596,9 +571,7 @@ def _init_storage_from_config(
     provider_hostname = provider["hostname"]
     directory_tree = storage_conf["directory tree"]
 
-    init_storage(
-        owner_credentials, space_name, hosts, provider_hostname, users, directory_tree
-    )
+    init_storage(owner_credentials, space_name, hosts, provider_hostname, users, directory_tree)
 
 
 def init_storage(
@@ -740,7 +713,7 @@ def _mkfile(
                 create_cdmi_obj(
                     file_path,
                     data=str(details.get("content", None)),
-                    url=f"https://{provider_host["hostname"]}:{OP_REST_PORT}/cdmi/",
+                    url=f"https://{provider_host['hostname']}:{OP_REST_PORT}/cdmi/",
                 )
                 set_file_metadata(
                     file_path,
@@ -762,9 +735,7 @@ def _mkfile(
         create_cdmi_obj(file_path)
 
 
-def create_empty_file(
-    path: str, users: Users, user: str, provider: str, hosts: Hosts
-) -> None:
+def create_empty_file(path: str, users: Users, user: str, provider: str, hosts: Hosts) -> None:
     provider_host = cast(Mapping[str, str], hosts[provider])
     http_put(
         ip=provider_host["hostname"],
@@ -893,9 +864,7 @@ def create_files_names_alphabetically_with_dir_list(
     hosts: Hosts,
 ) -> None:
     for dir_path in dir_list:
-        create_files_names_alphabetically(
-            number, dir_path, users, user, provider, hosts
-        )
+        create_files_names_alphabetically(number, dir_path, users, user, provider, hosts)
 
 
 def _get_users_space_id_list(
@@ -912,23 +881,17 @@ def _get_users_space_id_list(
     return cast(list[str], spaces_id_list)
 
 
-def _rm_all_spaces_for_user(
-    zone_hostname: str, owner_username: str, owner_password: str
-) -> None:
-    spaces_id_list = _get_users_space_id_list(
-        zone_hostname, owner_username, owner_password
-    )
+def _rm_all_spaces_for_user(zone_hostname: str, owner_username: str, owner_password: str) -> None:
+    spaces_id_list = _get_users_space_id_list(zone_hostname, owner_username, owner_password)
 
     for space_id in spaces_id_list:
-        try:
+        with contextlib.suppress(HTTPForbidden):
             http_delete(
                 ip=zone_hostname,
                 port=OZ_REST_PORT,
                 path=get_zone_rest_path("spaces", space_id),
                 auth=(owner_username, owner_password),
             )
-        except HTTPForbidden:
-            pass
 
 
 def _rm_all_spaces_for_users_list(zone_hostname: str, users_db: Users) -> None:
@@ -989,10 +952,8 @@ def wait_for_storage_scan_to_finish(
     resp = http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
-        path=get_panel_rest_path(
-            "provider", "spaces", space_id, "storage-import", "auto", "info"
-        ),
+        path=get_panel_rest_path("provider", "spaces", space_id, "storage-import", "auto", "info"),
         auth=(onepanel_username, onepanel_password),
     )
-    err_msg = f"status of storage scan is {resp.json()["status"]}"
+    err_msg = f"status of storage scan is {resp.json()['status']}"
     assert resp.json()["status"] == "completed", err_msg

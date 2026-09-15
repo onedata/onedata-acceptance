@@ -155,14 +155,10 @@ def setup_luma(
 ) -> None:
     hosts_config = cast(Mapping[str, Mapping[str, str]], hosts)
     spaces = get_all_spaces_details(admin_credentials, hosts_config)
-    local_feed_luma_storages = get_local_feed_luma_storages(
-        admin_credentials, hosts_config
-    )
+    local_feed_luma_storages = get_local_feed_luma_storages(admin_credentials, hosts_config)
 
     for user_config in users_config:
-        username = (
-            user_config if isinstance(user_config, str) else next(iter(user_config))
-        )
+        username = user_config if isinstance(user_config, str) else next(iter(user_config))
         new_user = users[username]
         add_user_luma_mapping(admin_credentials, new_user, local_feed_luma_storages)
 
@@ -182,7 +178,9 @@ def purge_spaces(client: Client) -> None:
 
 
 def pytest_bdd_before_scenario(
-    request: pytest.FixtureRequest, feature: Feature, scenario: Scenario
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
 ) -> None:
     print("\n=================================================================")
     print(f"- Executing scenario '{scenario.name}'")
@@ -214,6 +212,8 @@ def pytest_bdd_step_error(
 
 
 def pytest_bdd_after_scenario(
-    request: pytest.FixtureRequest, feature: Feature, scenario: Scenario
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
 ) -> None:
     print("=================================================================\n")

@@ -18,9 +18,7 @@ class HostRecord(PageObject):
     database = Toggle(".one-way-toggle[data-option=database]")
     cluster_worker = Toggle(".one-way-toggle[data-option=clusterWorker]")
     cluster_manager = Toggle(".one-way-toggle[data-option=clusterManager]")
-    primary_cluster_manager = Toggle(
-        ".one-way-toggle[data-option=primaryClusterManager]"
-    )
+    primary_cluster_manager = Toggle(".one-way-toggle[data-option=primaryClusterManager]")
     ones3 = Toggle(".one-way-toggle[data-option=oneS3]")
 
     def __str__(self) -> str:

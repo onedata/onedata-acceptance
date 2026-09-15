@@ -72,9 +72,7 @@ def _create_many_shares_using_rest(
 
 
 @given(parsers.parse("user {user} is added to mock handle service in {host}"))
-def add_user_to_handle_service(
-    user: str, users: Users, host: str, hosts: Hosts
-) -> None:
+def add_user_to_handle_service(user: str, users: Users, host: str, hosts: Hosts) -> None:
     zone_hostname = hosts[transform(host)]["hostname"]
     access_token = users["admin"].token
     handle_service_id = get_first_handle_service_id(zone_hostname, access_token)
@@ -83,11 +81,7 @@ def add_user_to_handle_service(
     )
 
 
-@wt(
-    parsers.parse(
-        'using REST, {user} creates {number} shares in space "{space_name}" in {host}'
-    )
-)
+@wt(parsers.parse('using REST, {user} creates {number} shares in space "{space_name}" in {host}'))
 def create_n_shares_in_space(
     users: Users,
     user: str,
@@ -100,6 +94,4 @@ def create_n_shares_in_space(
     for i in range(int(number)):
         item_path = f"{space_name}/file{i}"
         create_empty_file(item_path, users, user, host, hosts)
-        create_share_using_rest(
-            item_path, host, user, f"share{i}", hosts, users, shares
-        )
+        create_share_using_rest(item_path, host, user, f"share{i}", hosts, users, shares)

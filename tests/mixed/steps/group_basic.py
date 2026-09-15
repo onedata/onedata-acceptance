@@ -79,17 +79,16 @@ def create_groups(
     request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
 ) -> None:
-    register_finalizer = lambda group_id: _register_group_finalizer(
-        request,
-        hosts[host]["hostname"],
-        admin_credentials,
-        group_id,
-    )
+    def register_finalizer(group_id: str) -> None:
+        _register_group_finalizer(
+            request,
+            hosts[host]["hostname"],
+            admin_credentials,
+            group_id,
+        )
 
     if client.lower() == "rest":
-        create_groups_using_rest(
-            user, users, hosts, group_list, register_finalizer, host
-        )
+        create_groups_using_rest(user, users, hosts, group_list, register_finalizer, host)
     elif client.lower() == "web gui":
         create_groups_using_op_gui(
             selenium,
@@ -146,9 +145,7 @@ def fail_to_create_group_with_token(
 ) -> None:
     try:
         create_groups_with_token(user, group_name, host, tmp_memory, hosts)
-        raise AssertionError(
-            "function: create_groups_with_token worked but it should not"
-        )
+        raise AssertionError("function: create_groups_with_token worked but it should not")
     except HTTPUnauthorized:
         pass
 
@@ -450,9 +447,7 @@ def invite_to_group(
 ) -> None:
 
     if client.lower() == "rest":
-        create_group_token_using_rest(
-            user1, user2, group, tmp_memory, users, hosts, host
-        )
+        create_group_token_using_rest(user1, user2, group, tmp_memory, users, hosts, host)
     elif client.lower() == "web gui":
         create_group_token_to_invite_user_using_op_gui(
             selenium,
@@ -515,9 +510,7 @@ def fail_to_rename_groups(
 ) -> None:
 
     if client.lower() == "rest":
-        fail_to_rename_groups_using_rest(
-            user, users, hosts, group_list, new_names, host
-        )
+        fail_to_rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
     elif client.lower() == "web gui":
         fail_to_rename_groups_using_op_gui(selenium, user, group_list, new_names)
     else:

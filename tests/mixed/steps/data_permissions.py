@@ -210,9 +210,7 @@ def assert_posix_permissions_in_op(
         assert_posix_permissions_in_op_rest(full_path, mode, user, users, host, hosts)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_posix_permissions_in_op_oneclient(
-            user, full_path, mode, oneclient_host, users
-        )
+        assert_posix_permissions_in_op_oneclient(user, full_path, mode, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -259,13 +257,9 @@ def set_posix_permissions_in_op(
                 tmp_memory,
             )
     elif client_lower == "rest":
-        set_posix_permissions_in_op_rest(
-            full_path, mode, user, users, host, hosts, result
-        )
+        set_posix_permissions_in_op_rest(full_path, mode, user, users, host, hosts, result)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        set_posix_permissions_in_op_oneclient(
-            user, full_path, mode, oneclient_host, users, result
-        )
+        set_posix_permissions_in_op_oneclient(user, full_path, mode, oneclient_host, users, result)
     else:
         raise NoSuchClientException(f"Client: {client} not found")

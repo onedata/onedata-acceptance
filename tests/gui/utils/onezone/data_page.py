@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import Optional
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -36,21 +35,15 @@ from .space_marketplace import SpaceMarketplacePage
 class Space(NamedElement):
     name = id = Label(".item-name", scroll=False)
     support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
-    supporting_providers_number = Label(
-        ".status-toolbar-icon:last-of-type", scroll=False
-    )
+    supporting_providers_number = Label(".status-toolbar-icon:last-of-type", scroll=False)
     advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
     home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
 
     overview = NamedButton(".one-list-level-2 .item-header", text="Overview")
     files = NamedButton(".one-list-level-2 .item-header", text="Files")
-    shares_public_data = NamedButton(
-        ".one-list-level-2 .item-header", text="Shares, Public Data"
-    )
+    shares_public_data = NamedButton(".one-list-level-2 .item-header", text="Shares, Public Data")
     transfers = NamedButton(".one-list-level-2 .item-header", text="Transfers")
-    datasets_archives = NamedButton(
-        ".one-list-level-2 .item-header", text="Datasets, Archives"
-    )
+    datasets_archives = NamedButton(".one-list-level-2 .item-header", text="Datasets, Archives")
     providers = NamedButton(".one-list-level-2 .item-header", text="Providers")
     members = NamedButton(".one-list-level-2 .item-header", text="Members")
     harvesters_discovery = NamedButton(
@@ -81,9 +74,7 @@ class Space(NamedElement):
 class SpaceHeader(NamedElement):
     name = id = Label(".item-name", scroll=False)
     support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
-    supporting_providers_number = Label(
-        ".status-toolbar-icon:last-of-type", scroll=False
-    )
+    supporting_providers_number = Label(".status-toolbar-icon:last-of-type", scroll=False)
     advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
     home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
     menu_button = Button(".collapsible-toolbar-toggle", scroll=False)
@@ -138,9 +129,7 @@ class ProvidersMap(NamedElement):
                 provider.click()
                 return
 
-        raise PageObjectNotFoundError(
-            f"Provider {provider_name} was not found on the map"
-        )
+        raise PageObjectNotFoundError(f"Provider {provider_name} was not found on the map")
 
     def hover_and_check_provider(self, provider_name: str, driver: WebDriver) -> None:
         for provider in self.providers:
@@ -149,13 +138,9 @@ class ProvidersMap(NamedElement):
             if name == provider_name:
                 return
 
-        raise PageObjectNotFoundError(
-            f"Provider {provider_name} was not found on the map"
-        )
+        raise PageObjectNotFoundError(f"Provider {provider_name} was not found on the map")
 
-    def get_provider_horizontal_position(
-        self, provider_name: str, driver: WebDriver
-    ) -> float:
+    def get_provider_horizontal_position(self, provider_name: str, driver: WebDriver) -> float:
         for provider in self.providers:
             ActionChains(driver).move_to_element(provider).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
@@ -168,9 +153,7 @@ class ProvidersMap(NamedElement):
 
                 return float(position)
 
-        raise PageObjectNotFoundError(
-            f"Provider {provider_name} was not found on the map"
-        )
+        raise PageObjectNotFoundError(f"Provider {provider_name} was not found on the map")
 
 
 class SpaceOverviewPage(PageObject):
@@ -184,9 +167,7 @@ class SpaceOverviewPage(PageObject):
 
 class WelcomePage(PageObject):
     create_a_space = NamedButton(".info .ember-view", text="Create a space")
-    join_an_existing_space = NamedButton(
-        ".info .ember-view", text="join an existing space"
-    )
+    join_an_existing_space = NamedButton(".info .ember-view", text="join an existing space")
     join_group = NamedButton(".info .ember-view", text="join a group")
 
 
@@ -201,9 +182,7 @@ class HarvesterRow(NamedElement):
 
 
 class HarvestersPage(PageObject):
-    harvesters_list = WebItemsSequence(
-        ".main-content .one-collapsible-list-item", cls=HarvesterRow
-    )
+    harvesters_list = WebItemsSequence(".main-content .one-collapsible-list-item", cls=HarvesterRow)
     add_one_of_harvesters = NamedButton(
         ".add-harvester-to-space-trigger.btn", text="Add one of your harvesters"
     )
@@ -215,9 +194,7 @@ class HarvestersPage(PageObject):
 class GetSupportPage(PageObject):
     request_support_modal = NamedButton(".nav-link", text="Request support")
     deploy_provider_modal = NamedButton(".nav-link", text="Deploy your own Oneprovider")
-    expose_existing_data_modal = NamedButton(
-        ".nav-link", text="Expose existing data set"
-    )
+    expose_existing_data_modal = NamedButton(".nav-link", text="Expose existing data set")
 
     token_textarea = Label(".active textarea")
     copy = Button(".request-support-tab .copy-btn")
@@ -229,7 +206,7 @@ class SpaceProvidersHeader(PageObject):
     providers_tab = WebElementsSequence(".provider-online")
     overview_tab = WebElement(".item-overview")
 
-    def get_current_active_tab(self) -> Optional[str]:
+    def get_current_active_tab(self) -> str | None:
         for tab in self.providers_tab + [self.overview_tab]:
             if "active" in tab.get_attribute("class"):
                 return tab.text
@@ -268,8 +245,7 @@ class DataPage(SidebarPanelPage):
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")
 
     spaces_headers_list = WebItemsSequence(
-        ".sidebar-spaces li.one-list-item.clickable.resource-item"
-        " .item-header:not(.truncate)",
+        ".sidebar-spaces li.one-list-item.clickable.resource-item .item-header:not(.truncate)",
         cls=SpaceHeader,
     )
 

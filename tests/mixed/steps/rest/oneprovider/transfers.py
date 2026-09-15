@@ -5,11 +5,11 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping
-from typing import Optional, cast
+from typing import cast
 
 import yaml
-from oneprovider_client import TransferApi
 
+from oneprovider_client import TransferApi
 from tests import OP_REST_PORT
 from tests.gui.constants import WAIT_BACKEND
 from tests.gui.steps.rest.provider import get_provider_id
@@ -29,8 +29,8 @@ def create_transfer_rest(
     hosts: Hosts,
     transfer_type: str,
     path: str,
-    replicating_provider: Optional[str] = None,
-    evicting_provider: Optional[str] = None,
+    replicating_provider: str | None = None,
+    evicting_provider: str | None = None,
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     transfer_api = TransferApi(client)
@@ -71,9 +71,7 @@ def assert_recent_transfer_details_rest(
     spaces: IdMap,
     config: str,
 ) -> None:
-    transfer_status = get_recent_transfer_status_rest(
-        user, users, host, hosts, spaces[space]
-    )
+    transfer_status = get_recent_transfer_status_rest(user, users, host, hosts, spaces[space])
     details = cast(Mapping[str, str], yaml.load(config, yaml.Loader))
     error_message = "expected {} to be {} but got {}"
     for k, v in details.items():
@@ -95,9 +93,7 @@ def assert_recent_transfer_details_rest(
                 k, v, transfer_status["transferStatus"]
             )
         if k == "type":
-            assert transfer_status[k] == v, error_message.format(
-                k, v, transfer_status[k]
-            )
+            assert transfer_status[k] == v, error_message.format(k, v, transfer_status[k])
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)
@@ -109,12 +105,9 @@ def assert_recent_transfer_finished_rest(
     spaces: IdMap,
     space: str,
 ) -> None:
-    transfer_status = get_recent_transfer_status_rest(
-        user, users, host, hosts, spaces[space]
-    )
+    transfer_status = get_recent_transfer_status_rest(user, users, host, hosts, spaces[space])
     finished_statutes = ["skipped", "completed", "cancelled", "failed"]
     error_message = (
-        f"transfer status {transfer_status['transferStatus']} is not in one of finished"
-        " states"
+        f"transfer status {transfer_status['transferStatus']} is not in one of finished states"
     )
     assert transfer_status["transferStatus"] in finished_statutes, error_message

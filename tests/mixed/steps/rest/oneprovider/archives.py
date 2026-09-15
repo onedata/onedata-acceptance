@@ -6,11 +6,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from collections.abc import Mapping, MutableMapping
+from http import HTTPStatus
 from typing import NotRequired, Protocol, TypedDict, cast
 
 import yaml
-from oneprovider_client.rest import ApiException as OPException
 
+from oneprovider_client.rest import ApiException as OPException
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.mixed.oneprovider_client.api.archive_api import ArchiveApi
@@ -22,11 +23,9 @@ from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.steps.rest.oneprovider.datasets import get_dataset_id
 from tests.mixed.type_definitions import (
     ArchiveConfig,
-)
-from tests.mixed.type_definitions import ArchiveTmpMemory as TmpMemory
-from tests.mixed.type_definitions import (
     IdMap,
 )
+from tests.mixed.type_definitions import ArchiveTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_provider
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
@@ -97,7 +96,7 @@ def create_archive_in_op_rest(
             _ = archive_api.create_archive(data).archive_id
             raise AssertionError("function: create_archive worked but it should not")
         except OPException as err:
-            if err.status == 400:
+            if err.status == HTTPStatus.BAD_REQUEST:
                 pass
             else:
                 raise OPException from err
@@ -176,8 +175,7 @@ def assert_number_of_archive_in_op_rest(
     dataset_archive = archive_api.list_dataset_archives(dataset_id)
     number_of_archives = len(dataset_archive.archives)
     error_message = (
-        f"number of archives {number_of_archives}, "
-        f"expected number of archives: {number}"
+        f"number of archives {number_of_archives}, expected number of archives: {number}"
     )
     assert int(number) == number_of_archives, error_message
 
@@ -201,7 +199,7 @@ def remove_archive_in_op_rest(
             archive_api.delete_archive(archive_id)
             raise AssertionError("removing archive worked but it should not")
         except OPException as err:
-            if err.status == 400:
+            if err.status == HTTPStatus.BAD_REQUEST:
                 pass
             else:
                 raise OPException from err
@@ -321,8 +319,7 @@ def assert_archive_callback_in_op_rest(
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     callback = f"{option}_callback"
     error_message = (
-        f"callback {getattr(info, callback)} does "
-        f"not match expected: {expected_callback}"
+        f"callback {getattr(info, callback)} does not match expected: {expected_callback}"
     )
     if getattr(info, callback) is None:
         assert expected_callback == "None", error_message
@@ -371,12 +368,9 @@ def recalled_archive_details_in_op_rest(
     dataset_api = DatasetApi(client)
 
     error_message = (
-        '{key} for archive recall "{name}" is {value} '
-        "but expected value is {expected_value} "
+        '{key} for archive recall "{name}" is {value} but expected value is {expected_value} '
     )
-    expected_dataset_id = get_dataset_id(
-        data["dataset"], spaces, space_name, dataset_api
-    )
+    expected_dataset_id = get_dataset_id(data["dataset"], spaces, space_name, dataset_api)
     dataset_id = recall_details.dataset_id
     expected_files = int(data["files_recalled"].split(" / ")[0])
     files = recall_details.total_file_count
@@ -401,9 +395,9 @@ def recalled_archive_details_in_op_rest(
         key="data recalled", name=name, value=size_data, expected_value=expected_data
     )
 
-    assert (
-        recall_details.finish_time >= recall_details.start_time
-    ), f'archive recall "{name}" finish time is not greater or equal recall start time'
+    assert recall_details.finish_time >= recall_details.start_time, (
+        f'archive recall "{name}" finish time is not greater or equal recall start time'
+    )
 
 
 def assert_progress_of_recall_in_op_rest(
@@ -428,12 +422,10 @@ def assert_progress_of_recall_in_op_rest(
     files_copied = recall_progress.files_copied
     expected_files_copied = int(data["files copied"].split()[-1])
     assert bytes_copied <= expected_bytes_copied, (
-        f"Bytes copied:{bytes_copied} are not <= expected bytes "
-        f"copied:{expected_bytes_copied}"
+        f"Bytes copied:{bytes_copied} are not <= expected bytes copied:{expected_bytes_copied}"
     )
     assert files_copied <= expected_files_copied, (
-        f"Files copied:{files_copied} are not <= expected files "
-        f"copied:{expected_files_copied}"
+        f"Files copied:{files_copied} are not <= expected files copied:{expected_files_copied}"
     )
 
 

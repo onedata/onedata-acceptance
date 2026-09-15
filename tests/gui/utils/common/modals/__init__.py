@@ -118,9 +118,7 @@ class Modals:
     cancel_recall = WebItem(".cancel-recall-modal .modal-dialog", cls=CancelRecall)
     archive_details = WebItem(".modal-dialog", cls=ArchiveDetails)
     archive_audit_log = WebItem(".modal-dialog", cls=ArchiveAuditLog)
-    audit_log_entry_details = WebItem(
-        ".details-container.visible", cls=AuditLogEntryDetails
-    )
+    audit_log_entry_details = WebItem(".details-container.visible", cls=AuditLogEntryDetails)
     cancel_archive = WebItem(".modal-content", cls=CancelArchive)
 
     # datasets modals
@@ -149,18 +147,12 @@ class Modals:
     cluster_deployment = WebItem(
         ".new-cluster-deploy-progress.modal-body", cls=ClusterDeploymentModal
     )
-    cease_support_for_space = WebItem(
-        ".modal.in .modal-dialog", cls=CeaseSupportForSpaceModal
-    )
+    cease_support_for_space = WebItem(".modal.in .modal-dialog", cls=CeaseSupportForSpaceModal)
 
     rest_api_modal = WebItem(".modal-dialog", cls=RESTApiModal)
     configure_web_cert = WebItem("#configure-web-cert-modal", cls=ConfigureWebCertModal)
-    enable_directory_statistics = WebItem(
-        ".modal-dialog", cls=EnableDirectoryStatistics
-    )
-    disable_directory_statistics = WebItem(
-        ".modal-dialog", cls=DisableDirectoryStatistics
-    )
+    enable_directory_statistics = WebItem(".modal-dialog", cls=EnableDirectoryStatistics)
+    disable_directory_statistics = WebItem(".modal-dialog", cls=DisableDirectoryStatistics)
 
     # marketplace modals
     advertise_space = WebItem(".modal-dialog", cls=AdvertiseSpace)

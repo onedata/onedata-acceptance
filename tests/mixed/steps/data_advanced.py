@@ -8,8 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import pytest
-from onezone_client import SpaceApi, UserApi
 
+from onezone_client import SpaceApi, UserApi
 from tests.mixed.steps.oneclient.data_basic import (
     change_client_name_to_hostname,
     create_file_in_op_oneclient,
@@ -119,12 +119,8 @@ def create_file_in_op_in_space_with_alias(
     if "oneclient" in client_lower:
         result = "succeds"
         oneclient_host = change_client_name_to_hostname(client_lower)
-        full_path = create_path_for_item_in_space_with_alias(
-            space_aliases, alias, file_name
-        )
-        create_file_in_op_oneclient(
-            user, full_path, users, result, oneclient_host, request
-        )
+        full_path = create_path_for_item_in_space_with_alias(space_aliases, alias, file_name)
+        create_file_in_op_oneclient(user, full_path, users, result, oneclient_host, request)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -148,12 +144,8 @@ def write_to_file_in_op_in_space_with_alias(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        full_path = create_path_for_item_in_space_with_alias(
-            space_aliases, alias, file_name
-        )
-        multi_reg_file_steps.write_text(
-            user, str(content), full_path, oneclient_host, users
-        )
+        full_path = create_path_for_item_in_space_with_alias(space_aliases, alias, file_name)
+        multi_reg_file_steps.write_text(user, str(content), full_path, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -177,12 +169,8 @@ def read_from_file_in_op_in_space_with_alias(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        full_path = create_path_for_item_in_space_with_alias(
-            space_aliases, alias, file_name
-        )
-        multi_reg_file_steps.read_text(
-            user, str(content), full_path, oneclient_host, users
-        )
+        full_path = create_path_for_item_in_space_with_alias(space_aliases, alias, file_name)
+        multi_reg_file_steps.read_text(user, str(content), full_path, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -244,17 +232,10 @@ def create_path_for_item_in_space_with_alias(
     space_aliases: SpaceAliases, alias: str, file_name: str
 ) -> str:
     if check_whether_space_names_repeats_for_alias(alias, space_aliases):
-        return (
-            f"{space_aliases[alias]["name"]}@{space_aliases[alias]["sid"]}/{file_name}"
-        )
-    return f"{space_aliases[alias]["name"]}/{file_name}"
+        return f"{space_aliases[alias]['name']}@{space_aliases[alias]['sid']}/{file_name}"
+    return f"{space_aliases[alias]['name']}/{file_name}"
 
 
-def check_whether_space_names_repeats_for_alias(
-    alias: str, space_aliases: SpaceAliases
-) -> bool:
+def check_whether_space_names_repeats_for_alias(alias: str, space_aliases: SpaceAliases) -> bool:
     space_name = space_aliases[alias]["name"]
-    for k, v in space_aliases.items():
-        if k != alias and v["name"] == space_name:
-            return True
-    return False
+    return any(k != alias and v["name"] == space_name for k, v in space_aliases.items())

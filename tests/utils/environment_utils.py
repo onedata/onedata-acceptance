@@ -11,7 +11,7 @@ import re
 import subprocess as sp
 import time
 from collections.abc import Mapping
-from typing import Literal, Optional, Required, TypedDict, cast, overload
+from typing import Literal, Required, TypedDict, cast, overload
 
 import pytest
 import requests
@@ -19,7 +19,6 @@ import urllib3
 import yaml
 from requests.exceptions import ConnectTimeout
 
-# pylint: disable=import-error,no-name-in-module
 from bamboos.docker.images_branch_config import resolve_image
 from tests import OZ_REST_PORT, PANEL_REST_PORT
 from tests.type_definitions import Hosts, JsonObject
@@ -51,19 +50,14 @@ ENV_READY_TIMEOUT_SECONDS = 300
 type StringMapping = Mapping[str, str]
 
 
-PodConfig = TypedDict(
-    "PodConfig",
-    {
-        "name": str,
-        "ip": str,
-        "domain": str,
-        "hostname": str,
-        "container_id": str,
-        "service_type": str,
-        "provider_host": str,
-    },
-    total=False,
-)
+class PodConfig(TypedDict, total=False):
+    name: str
+    ip: str
+    domain: str
+    hostname: str
+    container_id: str
+    service_type: str
+    provider_host: str
 
 
 class DeploymentStatus(TypedDict, total=False):
@@ -112,9 +106,9 @@ def start_environment(
     scenario_path: str,
     request: pytest.FixtureRequest,
     hosts: Hosts,
-    patch_path: Optional[str],
+    patch_path: str | None,
     users: Users,
-    test_config: Optional[JsonObject],
+    test_config: JsonObject | None,
 ) -> str | OnenvError:
     attempts = 0
     local = request.config.getoption("--local")
@@ -148,7 +142,7 @@ def start_environment(
                 check_deployment(dep_status)
 
             if patch_path:
-                with open(patch_path, "r") as patch_file:
+                with open(patch_path, encoding="utf-8") as patch_file:
                     patch_cfg = yaml.load(patch_file, yaml.Loader)
                 setup_users(patch_cfg, users, zone_hostname)
                 add_luma_mappings(patch_cfg, users, hosts)
@@ -217,7 +211,7 @@ def configure_os(scenario_path: str, dep_status: DeploymentStatus) -> None:
     check_deployment(dep_status)
     pods_cfg = dep_status.get("pods")
 
-    with open(scenario_path, "r") as env_file:
+    with open(scenario_path, encoding="utf-8") as env_file:
         env_cfg = yaml.load(env_file, yaml.Loader)
     os_configs = env_cfg.get("os-config")
     if not os_configs:
@@ -266,9 +260,7 @@ def setup_users(patch_cfg: PatchConfig, users: Users, zone_hostname: str) -> Non
         if user_name is None:
             raise ValueError("Patch user must have a name")
         password = user_cfg["password"]
-        new_user = User(
-            username=user_name, zone_hostname=zone_hostname, password=password
-        )
+        new_user = User(username=user_name, zone_hostname=zone_hostname, password=password)
         users[user_name] = new_user
         idps = user_cfg.get("idps", {})
         for idp_type in idps:
@@ -276,9 +268,7 @@ def setup_users(patch_cfg: PatchConfig, users: Users, zone_hostname: str) -> Non
             if idp_type == "keycloak":
                 global_cfg = patch_cfg.get("global")
                 if global_cfg:
-                    keycloak_cfg = cast(
-                        Mapping[str, str], global_cfg.get("keycloakInstance", {})
-                    )
+                    keycloak_cfg = cast(Mapping[str, str], global_cfg.get("keycloakInstance", {}))
                     keycloak_suffix = keycloak_cfg.get("idpName")
                     new_user.keycloak_name = f"keycloak-{keycloak_suffix}"
 
@@ -286,9 +276,7 @@ def setup_users(patch_cfg: PatchConfig, users: Users, zone_hostname: str) -> Non
 def add_luma_mappings(patch_cfg: PatchConfig, users: Users, hosts: Hosts) -> None:
     admin_user = users["admin"]
 
-    spaces = get_all_spaces_details(
-        admin_user, cast(Mapping[str, Mapping[str, str]], hosts)
-    )
+    spaces = get_all_spaces_details(admin_user, cast(Mapping[str, Mapping[str, str]], hosts))
     local_feed_luma_storages = get_local_feed_luma_storages(
         admin_user, cast(Mapping[str, Mapping[str, str]], hosts)
     )
@@ -332,9 +320,7 @@ def check_deployment(deployment_status: DeploymentStatus) -> None:
     env_ready = deployment_status.get("ready")
 
     if not env_ready:
-        raise OnenvError(
-            "Environment error: timeout while waiting for deployment to be ready."
-        )
+        raise OnenvError("Environment error: timeout while waiting for deployment to be ready.")
 
 
 def parse_patch_args(request: pytest.FixtureRequest, patch_path: str) -> list[str]:
@@ -357,9 +343,7 @@ def parse_wait_args(request: pytest.FixtureRequest) -> list[str]:
     return wait_args
 
 
-def parse_up_args(
-    request: pytest.FixtureRequest, test_config: Optional[JsonObject]
-) -> list[str]:
+def parse_up_args(request: pytest.FixtureRequest, test_config: JsonObject | None) -> list[str]:
     up_args = []
 
     option_values = [
@@ -408,9 +392,7 @@ def parse_up_args(
                 up_args.extend(
                     [
                         option,
-                        config_image_spec_to_image(
-                            service_name, cast(str, version_val)
-                        ),
+                        config_image_spec_to_image(service_name, cast(str, version_val)),
                     ]
                 )
 
@@ -428,17 +410,12 @@ def create_users_in_pod(pod_name: str, users: list[str]) -> None:
 
     def _user_exists(user: str, pod_name: str) -> bool:
         cmd = [pod_name, "--", "id", "-u", user]
-        ret = run_kubectl_command(
-            "exec", cmd, fail_with_error=False, return_output=False
-        )
+        ret = run_kubectl_command("exec", cmd, fail_with_error=False, return_output=False)
         return ret == 0
 
     for username in users:
         if _user_exists(username, pod_name):
-            print(
-                f"Skipping creation of user {username} - user already exists in"
-                f" {pod_name}."
-            )
+            print(f"Skipping creation of user {username} - user already exists in {pod_name}.")
         else:
             uid = str(gen_uid(username))
             command = [
@@ -460,17 +437,12 @@ def create_groups_in_pod(pod_name: str, groups: dict[str, list[str]]) -> None:
 
     def _group_exists(group: str, pod_name: str) -> bool:
         cmd = [pod_name, "--", "grep", "-q", group, "/etc/group"]
-        ret = run_kubectl_command(
-            "exec", cmd, fail_with_error=False, return_output=False
-        )
+        ret = run_kubectl_command("exec", cmd, fail_with_error=False, return_output=False)
         return ret == 0
 
     for group, users in groups.items():
         if _group_exists(group, pod_name):
-            print(
-                f"Skipping creation of group {group} - group already exists in"
-                f" {pod_name}."
-            )
+            print(f"Skipping creation of group {group} - group already exists in {pod_name}.")
         else:
             gid = str(gen_gid(group))
             command = [pod_name, "--", "groupadd", "-g", gid, group]
@@ -491,9 +463,7 @@ def get_pods_config() -> dict[str, PodConfig]:
         pod_service_name = pod_data["labels"].get("chart", None)
         pod_namespace = pod_data["namespace"]
         pod_ip = pod["status"].get("podIP", None)
-        pod_container_id = pod["status"]["containerStatuses"][0].get(
-            "containerID", None
-        )
+        pod_container_id = pod["status"]["containerStatuses"][0].get("containerID", None)
         if pod_container_id:
             pod_container_id = pod_container_id.replace("docker://", "")
 
@@ -596,7 +566,7 @@ def add_etc_hosts_entries(service_ip: str, service_host: str) -> None:
 @overload
 def run_kubectl_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     return_output: Literal[True] = True,
     verbose: bool = True,
@@ -606,7 +576,7 @@ def run_kubectl_command(
 @overload
 def run_kubectl_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     return_output: Literal[False] = False,
     verbose: bool = True,
@@ -615,7 +585,7 @@ def run_kubectl_command(
 
 def run_kubectl_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     return_output: bool = True,
     verbose: bool = True,
@@ -646,9 +616,7 @@ def verify_env_ready(admin_user: User, hosts: Mapping[str, object]) -> None:
         time.sleep(1)
         try:
             providers = get_providers_list(admin_user, zone_hostname)
-            ready = all(
-                is_provider_online(admin_user, zone_hostname, p) for p in providers
-            )
+            ready = all(is_provider_online(admin_user, zone_hostname, p) for p in providers)
         except (
             HTTPError,
             ConnectTimeout,
@@ -682,9 +650,7 @@ def is_provider_online(admin_user: User, zone_hostname: str, provider: str) -> b
 
 @repeat_failed(timeout=60 * 4)
 def wait_for_pod_running_phase(pod_name: str) -> None:
-    out = run_kubectl_command(
-        "get", ["pod", pod_name, "--no-headers", "-o", "json"], verbose=False
-    )
+    out = run_kubectl_command("get", ["pod", pod_name, "--no-headers", "-o", "json"], verbose=False)
     out = json.loads(out)
     assert out["status"]["phase"] == "Running"
 

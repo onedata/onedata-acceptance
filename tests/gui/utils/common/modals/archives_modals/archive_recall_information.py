@@ -6,7 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Dict, List, Optional
+import contextlib
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -61,15 +61,15 @@ class ArchiveRecallInformation(Modal):
     def __str__(self) -> str:
         return "Archive recall information"
 
-    def get_progress_info(self, type: str) -> tuple[str, str]:
+    def get_progress_info(self, progress_type: str) -> tuple[str, str]:
         """Returns a tuple with (currnet_value, total_value) for progress info.
         Return values are in string, because they can contain size with units, eg.
         ("3 B", "40 KiB").
 
-        :param str type: one of values that are in "<current> / <total>" format,
-                         eg. "files_recalled" or "data_recalled"
+        :param str progress_type: one of values that are in "<current> / <total>"
+                                  format, eg. "files_recalled" or "data_recalled"
         """
-        return ArchiveRecallInformation.parse_progress(getattr(self, type))
+        return ArchiveRecallInformation.parse_progress(getattr(self, progress_type))
 
     def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
@@ -79,17 +79,15 @@ class ArchiveRecallInformation(Modal):
         ActionChains(driver).move_to_element(self.error_log_table).perform()
 
     def scroll_to_top(self) -> None:
-        try:
+        with contextlib.suppress(JavascriptException):
             self.driver.execute_script(
                 "document.querySelector('.infinite-scroll-table "
                 ".table-scrollable-container').scrollTo(0,0)"
             )
-        except JavascriptException:
-            pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_rows_of_columns(
-        self, column_names: Optional[list[str]] = None
+        self, column_names: list[str] | None = None
     ) -> dict[str, list[str]]:
         # This function concerns browsing logs with errors in archive recall
         temp_columns = list(set((column_names or []) + ["source_file"]))
@@ -99,12 +97,12 @@ class ArchiveRecallInformation(Modal):
             if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
 
-            for column, value in zip(temp_columns, values_in_row):
+            for column, value in zip(temp_columns, values_in_row, strict=True):
                 column_values[column].append(value)
 
         return column_values
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_visible_rows_of_single_column(self, param: str) -> List[str]:
+    def get_visible_rows_of_single_column(self, param: str) -> list[str]:
         column_values = self.get_visible_rows_of_columns([param])
         return column_values[param]

@@ -13,7 +13,7 @@ import warnings
 from collections import defaultdict
 from collections.abc import Generator
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import cast
 
@@ -22,7 +22,7 @@ import yaml
 from _pytest.config.argparsing import Parser
 from _pytest.python import Metafunc
 from _pytest.reports import TestReport
-from py.xml import html  # pylint: disable=import-error, no-name-in-module
+from py.xml import html
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import Chrome
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -57,7 +57,7 @@ from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
 from tests.utils.user_utils import User, Users
 
-html.__tagspec__.update({x: 1 for x in ("video", "source")})
+html.__tagspec__.update(dict.fromkeys(("video", "source"), 1))
 VIDEO_ATTRS = {
     "controls": "",
     "poster": "",
@@ -116,12 +116,8 @@ def pytest_addoption(parser: Parser) -> None:
     )
 
     parser.addoption("--oz-image", action="store", help="onezone imageto use in tests")
-    parser.addoption(
-        "--op-image", action="store", help="oneprovider imageto use in tests"
-    )
-    parser.addoption(
-        "--oc-image", action="store", help="oneclient imageto use in tests"
-    )
+    parser.addoption("--op-image", action="store", help="oneprovider imageto use in tests")
+    parser.addoption("--oc-image", action="store", help="oneclient imageto use in tests")
     parser.addoption(
         "--rest-cli-image",
         action="store",
@@ -150,9 +146,9 @@ def pytest_addoption(parser: Parser) -> None:
         default="regular",
         help="""Determines how files in a test are created:
                     * regular - a file is created as standard regular file (default);
-                    * hardlink - a file is created as a hardlink to a 
+                    * hardlink - a file is created as a hardlink to a
                     regular file in a space, all created files are hardlinks to a different file;
-                    * symlink - a file is created as a symlink to a 
+                    * symlink - a file is created as a symlink to a
                     regular file in a space, all created files are symlinks to a different file""",
     )
 
@@ -223,13 +219,10 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
     env_file = metafunc.config.getoption("env_file")
 
     if test_type == "upgrade":
-
         if not env_file:
-            raise pytest.UsageError(
-                "In upgrade tests --env-file option must be provided"
-            )
+            raise pytest.UsageError("In upgrade tests --env-file option must be provided")
 
-        with open(env_file, "r") as f:
+        with open(env_file, encoding="utf-8") as f:
             test_config = yaml.load(f, yaml.Loader)
         scenarios = test_config["scenarios"]
         metafunc.parametrize(
@@ -270,7 +263,6 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     normal_items = []
 
     for item in items:
-
         if item.name.split("[")[0] in scenarios_to_rerun:
             item.add_marker(pytest.mark.flaky(reruns=3, reruns_delay=1))
 
@@ -292,7 +284,7 @@ def test_config(request: pytest.FixtureRequest) -> JsonObject:
     """Loaded yaml with test config"""
     test_type = get_test_type(request)
     if test_type == "upgrade":
-        with open(request.config.option.env_file, "r") as f:
+        with open(request.config.option.env_file, encoding="utf-8") as f:
             return yaml.load(f, yaml.Loader)
     return {}
 
@@ -309,7 +301,7 @@ def entities_config(
     if config_dir_path is None:
         raise ValueError(f"No config directory for test type {get_test_type(request)}")
     config_path = os.path.join(config_dir_path, file_name)
-    with open(config_path) as config_file:
+    with open(config_path, encoding="utf-8") as config_file:
         return yaml.load(config_file, yaml.Loader)
 
 
@@ -319,9 +311,7 @@ def onepanel_credentials(
     hosts: Hosts,
     emergency_passphrase: str,
 ) -> User:
-    creds = users["onepanel"] = User(
-        hosts["onezone"]["hostname"], "onepanel", emergency_passphrase
-    )
+    creds = users["onepanel"] = User(hosts["onezone"]["hostname"], "onepanel", emergency_passphrase)
     return creds
 
 
@@ -361,7 +351,7 @@ def browsers_to_users() -> dict[str, str]:
     return {}
 
 
-@pytest.fixture()
+@pytest.fixture
 def clients() -> dict[str, object]:
     return {}
 
@@ -485,7 +475,7 @@ def driver(request: pytest.FixtureRequest) -> WebDriverFactory:
         web_driver = driver_factory.get_instance()
         if event_listener_cls and not isinstance(web_driver, EventFiringWebDriver):
             web_driver = EventFiringWebDriver(web_driver, event_listener_cls())
-        setattr(request.node, "_driver", web_driver)
+        request.node._driver = web_driver
         request.addfinalizer(web_driver.quit)
         return web_driver
 
@@ -536,10 +526,8 @@ def factory(
     fun: FactoryFunction[FactoryParams, FactoryResult],
 ) -> FactoryCallable[FactoryParams, FactoryResult]:
     if "get_instance" in dir(fun):
-        raise AttributeError(
-            f'object {fun.__name__} already has "get_instance" attribute'
-        )
-    setattr(fun, "get_instance", fun)
+        raise AttributeError(f'object {fun.__name__} already has "get_instance" attribute')
+    fun.get_instance = fun
     return cast(FactoryCallable[FactoryParams, FactoryResult], fun)
 
 
@@ -564,9 +552,7 @@ def get_log_dir_path(
             if env_description_abs_path is None:
                 raise AttributeError
             feature_name = request.module.__name__.split(".")[-1]
-            test_path = os.path.join(
-                get_file_name(env_description_abs_path), feature_name
-            )
+            test_path = os.path.join(get_file_name(env_description_abs_path), feature_name)
         except AttributeError:
             test_path = "test"
         logdir_path = make_logdir(logdir_path, test_path)
@@ -673,9 +659,7 @@ def _gather_screenshot(
     pytest_html = item.config.pluginmanager.getplugin("html")
     if pytest_html is not None:
         # add screenshot to the html report
-        extras.append(
-            pytest_html.extras.image(screenshot, f"{browser_name} Screenshot")
-        )
+        extras.append(pytest_html.extras.image(screenshot, f"{browser_name} Screenshot"))
 
 
 def _gather_html(
@@ -722,9 +706,7 @@ def _gather_logs(
 
         if pytest_html is not None:
             extras.append(
-                pytest_html.extras.text(
-                    format_log(log), f"{browser_name} {log_name.title()} Log"
-                )
+                pytest_html.extras.text(format_log(log), f"{browser_name} {log_name.title()} Log")
             )
 
 
@@ -735,7 +717,6 @@ def _gather_movie(item: pytest.Item, report: TestReport, extras: list[object]) -
     log_dir = os.path.dirname(item.config.option.htmlpath)
     pytest_html = item.config.pluginmanager.getplugin("html")
     for movie_path in getattr(item, "_movies", []):
-
         src_attrs = {
             "src": os.path.relpath(movie_path, log_dir),
             "type": "video/mp4",
@@ -760,9 +741,7 @@ def _gather_movie(item: pytest.Item, report: TestReport, extras: list[object]) -
 
 
 def format_timestamp(timestamp: int) -> str:
-    return datetime.fromtimestamp(timestamp / 1000.0, timezone.utc).strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
+    return datetime.fromtimestamp(timestamp / 1000.0, UTC).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def format_log(log: list[LogEntry]) -> str:
@@ -788,7 +767,7 @@ def capture_all_warnings() -> Generator[list[warnings.WarningMessage], None, Non
         warnings.simplefilter("always")
         yield w
 
-        with open("warnings.log", "a") as log_file:
+        with open("warnings.log", "a", encoding="utf-8") as log_file:
             for warning in w:
                 log_file.write(
                     f"{warning.filename}:{warning.lineno}: {warning.category.__name__}:"
@@ -861,9 +840,7 @@ def start_test_env(
         patch_dir_path = PATCHES_DIR[get_test_type(request)]
         patch_path = os.path.join(patch_dir_path, patch)
 
-    result = start_environment(
-        scenario_path, request, hosts, patch_path, users, test_config
-    )
+    result = start_environment(scenario_path, request, hosts, patch_path, users, test_config)
     if result != "ok":
         previous_env["started"] = False
         handle_env_init_error(request, env_description_abs_path, "Environment error")
@@ -888,13 +865,12 @@ def env_description_abs_path(
     Fixture env_description_abs_path returns absolute path to env_description_file.
     """
     env_dir = ENV_DIRS.get(get_test_type(request))
-    absolute_path = absolute_path_to_env_file(env_dir, env_description_file)
-    return absolute_path
+    return absolute_path_to_env_file(env_dir, env_description_file)
 
 
 @pytest.fixture(scope="session")
 def env_desc(env_description_abs_path: str) -> EnvDesc:
-    with open(env_description_abs_path, "r") as env_desc_file:
+    with open(env_description_abs_path, encoding="utf-8") as env_desc_file:
         return yaml.load(env_desc_file, yaml.Loader)
 
 
@@ -948,7 +924,7 @@ def get_test_type(request: pytest.FixtureRequest) -> TestType:
     return cast(TestType, request.config.getoption("test_type"))
 
 
-@pytest.fixture()
+@pytest.fixture
 def skip_by_env(request: pytest.FixtureRequest, env_description_file: str) -> None:
     """This function skips test cases decorated with:
     @pytest.mark.skip_env(*envs).
@@ -967,7 +943,7 @@ def skip_by_env(request: pytest.FixtureRequest, env_description_file: str) -> No
             pytest.skip(f"skipped on env: {env} with reason: {reason}")
 
 
-@pytest.fixture()
+@pytest.fixture
 def xfail_by_env(request: pytest.FixtureRequest, env_description_file: str) -> None:
     """This function marks test cases decorated with:
     @pytest.mark.skip_env(*envs)
@@ -995,7 +971,7 @@ def xfail_by_env(request: pytest.FixtureRequest, env_description_file: str) -> N
 def select_browser(selenium: SeleniumFixtureState, browser_id: str) -> WebDriver:
     browser = cast(WebDriver, selenium[browser_id])
     request = cast(pytest.FixtureRequest, selenium["request"])
-    setattr(request.node, "_driver", browser)
+    request.node._driver = browser
     return browser
 
 

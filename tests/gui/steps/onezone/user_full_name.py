@@ -28,11 +28,7 @@ def click_on_btn_for_user_full_name_edit_box_in_oz(
     getattr(OZLoggedIn(selenium[browser_id]).profile.edit_box, btn).click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} types "{text}" to user full name edit box in Profile page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} types "{text}" to user full name edit box in Profile page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_into_user_full_name_edit_box_in_oz(
     selenium: SeleniumDrivers, browser_id: str, text: str
@@ -42,14 +38,11 @@ def type_text_into_user_full_name_edit_box_in_oz(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} activates edit box by clicking on "
-        "the user full name in Profile page"
+        "user of {browser_id} activates edit box by clicking on the user full name in Profile page"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def activate_user_full_name_edit_box_in_oz(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def activate_user_full_name_edit_box_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     OZLoggedIn(selenium[browser_id]).profile.rename_full_name()
 
 

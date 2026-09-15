@@ -155,9 +155,7 @@ class CreateNewTokenPage(PageObject):
 
     def get_caveat(self, name: str) -> CaveatField:
         caveat_field = getattr(self, f"{name}_caveat")
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView();", caveat_field.web_elem
-        )
+        self.driver.execute_script("arguments[0].scrollIntoView();", caveat_field.web_elem)
         return caveat_field
 
 

@@ -81,9 +81,7 @@ def g_click_on_subitem_for_item(
     record: str,
     hosts: Hosts,
 ) -> None:
-    wt_click_on_subitem_for_item(
-        selenium, browser_id_list, sidebar, sub_item, record, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar, sub_item, record, hosts)
 
 
 @wt(
@@ -130,15 +128,9 @@ def wt_click_on_sidebar_item(
         nav.items[record].click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks info button on warning bar in Onepanel page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks info button on warning bar in Onepanel page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_info_button_on_warning_bar(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_info_button_on_warning_bar(selenium: SeleniumDrivers, browser_id: str) -> None:
     OnePage(selenium[browser_id]).warning_bar.info()
 
 
@@ -157,8 +149,7 @@ def click_open_in_onezone(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that {age} "{record}" is not '
-        "working in clusters sidebar"
+        'user of {browser_id} sees that {age} "{record}" is not working in clusters sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -173,9 +164,7 @@ def assert_not_working_in_clusters_sidebar(
     sidebar = "CLUSTERS"
     nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
     items = nav.get_all_items(selenium[browser_id])
-    item = get_old_or_new_cluster_record_from_list(
-        record, items, age, tmp_memory, hosts
-    )
+    item = get_old_or_new_cluster_record_from_list(record, items, age, tmp_memory, hosts)
     assert item.is_not_working(), f"{record} is working in clusters sidebar"
 
 
@@ -189,11 +178,7 @@ def assert_overview_page_of_cluster(
     assert found == expected, f"Overview of {expected} not visible"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "{link}" link in {view_name} view in Onepanel'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "{link}" link in {view_name} view in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_sidebar_submenu_link(
     selenium: SeleniumDrivers, browser_id: str, view_name: str
@@ -216,11 +201,7 @@ def click_on_sidebar_submenu_subdomain_delegation_link(
     nav.subdomain_delegation_documentation_link.click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} checks "{toggle}" toggle in {view_name} view in Onepanel'
-    )
-)
+@wt(parsers.parse('user of {browser_id} checks "{toggle}" toggle in {view_name} view in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_toggle_in_onepanel_view(
     selenium: SeleniumDrivers, browser_id: str, view_name: str, toggle: str
@@ -245,9 +226,7 @@ def assert_toggle_checked_in_onepanel_view(
 ) -> None:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     toggle_elem = getattr(nav, transform(toggle.replace("-", "_")))
-    assert getattr(
-        toggle_elem, f"is_{option}"
-    )(), f"toggle {toggle} is not {option} in {view_name}"
+    assert getattr(toggle_elem, f"is_{option}")(), f"toggle {toggle} is not {option} in {view_name}"
 
 
 @wt(
@@ -354,7 +333,7 @@ def assert_value_in_info_tile_in_overview_onepanel_view(
             value = clipboard.paste(display=displays[browser_id])
         else:
             value = _property.value
-        assert (
-            value == property_value
-        ), f"Expected {property_name} to be {property_value}, but got {value}"
+        assert value == property_value, (
+            f"Expected {property_name} to be {property_value}, but got {value}"
+        )
         break

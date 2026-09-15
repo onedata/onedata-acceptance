@@ -61,9 +61,9 @@ def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
     chart_time_in_right_corner = modal.get_time_from_chart()[-1]
     now = datetime.now()
     ts = datetime.timestamp(now)
-    assert (
-        abs(chart_time_in_right_corner - ts) < 30 * 60
-    ), "Difference between current time and time on chart is greater than 30 min"
+    assert abs(chart_time_in_right_corner - ts) < 30 * 60, (
+        "Difference between current time and time on chart is greater than 30 min"
+    )
 
 
 @wt(
@@ -101,16 +101,10 @@ def choose_time_resolution(
             option.click()
             break
     else:
-        raise ValueError(
-            f'There is no {resolution} in time resolution list in modal "{modal}".'
-        )
+        raise ValueError(f'There is no {resolution} in time resolution list in modal "{modal}".')
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees "{message}" message on chart with processing stats'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees "{message}" message on chart with processing stats'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_data_message_processing_chart(
     browser_id: str, selenium: SeleniumDrivers, message: str
@@ -170,9 +164,7 @@ def click_on_task_audit_log(task: Task) -> None:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_log_in_workflow_audit_log(
-    driver: WebDriver, severity: str, source: str
-) -> None:
+def click_on_log_in_workflow_audit_log(driver: WebDriver, severity: str, source: str) -> None:
     modal = Modals(driver).audit_log
     if severity in ["Error", "Debug"]:
         modal.logs_entry[severity].click()
@@ -239,14 +231,11 @@ def compare_datasets_in_store_details_modal(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_booleans_in_store_details_modal(
-    item_list: list[bool], modal: StoreDetails
-) -> None:
+def compare_booleans_in_store_details_modal(item_list: list[bool], modal: StoreDetails) -> None:
     actual = [elem.value for elem in modal.store_content_list]
     error_message = f"Actual boolean list {actual} does not match expected {item_list}"
-    assert actual.count("true") == item_list.count(True) and actual.count(
-        "false"
-    ) == item_list.count(False), error_message
+    assert actual.count("true") == item_list.count(True), error_message
+    assert actual.count("false") == item_list.count(False), error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -268,9 +257,7 @@ def compare_array_in_store_details_modal(modal: StoreDetails, item_list: str) ->
     actual_num = modal.array_view.header.replace(")", "").split(" (")[1]
 
     assert expected_num == actual_num, (
-        f"expected number: {expected_num}"
-        " of element in array does not"
-        f" match actual: {actual_num}"
+        f"expected number: {expected_num} of element in array does not match actual: {actual_num}"
     )
     for i, item in enumerate(item_list):
         actual_elem = modal.array_view.items[i].text
@@ -294,9 +281,7 @@ def open_raw_view_for_elem(
         if modal.single_file_container.name:
             return
 
-    raise TimeoutError(
-        f"Did not manage to open raw view for {index} element in store content list"
-    )
+    raise TimeoutError(f"Did not manage to open raw view for {index} element in store content list")
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

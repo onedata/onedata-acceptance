@@ -29,9 +29,7 @@ def write_rand_text(
     users: Users,
     context: dict[str, str],
 ) -> None:
-    multi_reg_file_steps.write_rand_text(
-        user, megabytes, file, "client1", users, context
-    )
+    multi_reg_file_steps.write_rand_text(user, megabytes, file, "client1", users, context)
 
 
 @wt(parsers.re(r'(?P<user>\w+) fails to write "(?P<text>.*)" to (?P<file>.*)'))
@@ -49,11 +47,7 @@ def append(user: str, text: str, file: str, users: Users) -> None:
     multi_reg_file_steps.append(user, text, file, "client1", users)
 
 
-@when(
-    parsers.re(
-        r'(?P<user>\w+) replaces "(?P<text1>.*)" with "(?P<text2>.*)" in (?P<file>.*)'
-    )
-)
+@when(parsers.re(r'(?P<user>\w+) replaces "(?P<text1>.*)" with "(?P<text2>.*)" in (?P<file>.*)'))
 def replace(user: str, text1: str, text2: str, file: str, users: Users) -> None:
     multi_reg_file_steps.replace(user, text1, text2, file, "client1", users)
 
@@ -78,11 +72,7 @@ def do_truncate(user: str, file: str, new_size: str, users: Users) -> None:
     multi_reg_file_steps.do_truncate(user, file, new_size, "client1", users)
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) fails to change (?P<file>.*) size to (?P<new_size>.*) bytes"
-    )
-)
+@wt(parsers.re(r"(?P<user>\w+) fails to change (?P<file>.*) size to (?P<new_size>.*) bytes"))
 def do_truncate_fail(user: str, file: str, new_size: str, users: Users) -> None:
     multi_reg_file_steps.do_truncate_fail(user, file, new_size, "client1", users)
 

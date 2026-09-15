@@ -80,9 +80,7 @@ def create_dataset_in_op(
             option=option,
         )
     elif client_lower == "rest":
-        create_dataset_in_op_rest(
-            user, users, hosts, host, space_name, item_name, option
-        )
+        create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, option)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -116,9 +114,7 @@ def fail_to_create_dataset_in_op(
             selenium,
         )
     elif client_lower == "rest":
-        fail_to_create_dataset_in_op_rest(
-            user, users, hosts, host, space_name, item_name
-        )
+        fail_to_create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -191,9 +187,7 @@ def remove_dataset_in_op(
             item_name,
         )
     elif client_lower == "rest":
-        remove_dataset_in_op_rest(
-            user, users, hosts, host, space_name, item_name, spaces
-        )
+        remove_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, spaces)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -220,9 +214,7 @@ def assert_write_protection_flag_for_dataset(
 ) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
-        flags = [
-            item.replace("_protection", "_protected") for item in get_flags(option)
-        ]
+        flags = [item.replace("_protection", "_protected") for item in get_flags(option)]
         for flag in flags:
             assert_status_tag_for_file_in_browser(
                 user,
@@ -265,9 +257,7 @@ def check_dataset_structure_in_op(
     client_lower = client.lower()
     if client_lower == "web gui":
         option_in_submenu = "datasets, archives"
-        click_on_option_of_space_on_left_sidebar_menu(
-            selenium, user, space_name, option_in_submenu
-        )
+        click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option_in_submenu)
         assert_space_content_in_op_gui(
             config,
             selenium,
@@ -278,9 +268,7 @@ def check_dataset_structure_in_op(
             which_browser="dataset browser",
         )
     elif client_lower == "rest":
-        check_dataset_structure_in_op_rest(
-            user, users, hosts, host, spaces, space_name, config
-        )
+        check_dataset_structure_in_op_rest(user, users, hosts, host, spaces, space_name, config)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -433,9 +421,7 @@ def detach_dataset_in_op(
             item_name,
         )
     elif client_lower == "rest":
-        detach_dataset_in_op_rest(
-            user, users, hosts, host, item_name, spaces, space_name
-        )
+        detach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -470,9 +456,7 @@ def assert_dataset_detached_in_op(
             tmp_memory,
         )
     elif client_lower == "rest":
-        assert_dataset_detached_in_op_rest(
-            user, users, hosts, host, item_name, spaces, space_name
-        )
+        assert_dataset_detached_in_op_rest(user, users, hosts, host, item_name, spaces, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -506,8 +490,6 @@ def reattach_dataset_in_op(
             item_name,
         )
     elif client_lower == "rest":
-        reattach_dataset_in_op_rest(
-            user, users, hosts, host, item_name, spaces, space_name
-        )
+        reattach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")

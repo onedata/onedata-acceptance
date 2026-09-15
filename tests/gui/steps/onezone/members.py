@@ -6,6 +6,7 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
 from typing import cast
 
@@ -85,14 +86,10 @@ def assert_membership_access_denied_message_and_bulk_edit_button(
     message_users = members_page.lack_users_view_privileges.text
     bulk_edit_button = members_page.bulk_edit_button
 
-    error_message = (
-        "The message about lack of privileges to view membership is not visible"
-    )
+    error_message = "The message about lack of privileges to view membership is not visible"
     assert message_groups == expected_message, f"{error_message} for groups"
     assert message_users == expected_message, f"{error_message} for users"
-    assert (
-        not bulk_edit_button.is_enabled()
-    ), "Bulk edit button is supposed to be disabled"
+    assert not bulk_edit_button.is_enabled(), "Bulk edit button is supposed to be disabled"
 
 
 def _change_membership_to_name(membership_type: str, subject_type: str) -> str:
@@ -149,14 +146,11 @@ def assert_element_is_member_of_parent_in_memberships(
     def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
             return True
-        if member_index == 0:
-            return True
-        return False
+        return member_index == 0
 
     if not search_for_members(driver, records, member_name, parent_name, fun):
         raise AssertionError(
-            f'not found "{member_name}" {member_type} as a member of'
-            f' "{parent_name}" {parent_type}'
+            f'not found "{member_name}" {member_type} as a member of "{parent_name}" {parent_type}'
         )
 
 
@@ -186,13 +180,11 @@ def assert_element_is_not_member_of_parent_in_memberships(
     def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
             raise AssertionError(
-                f'found "{member_name}" {member_type} as a member of'
-                f' "{parent_name}" {parent_type}'
+                f'found "{member_name}" {member_type} as a member of "{parent_name}" {parent_type}'
             )
         if member_index == 0:
             raise AssertionError(
-                f'found "{member_name}" {member_type} as a member of'
-                f' "{parent_name}" {parent_type}'
+                f'found "{member_name}" {member_type} as a member of "{parent_name}" {parent_type}'
             )
         return False
 
@@ -215,9 +207,9 @@ def assert_count_membership_rows(
     records = tab.members_page.memberships
     count_records = len(records)
 
-    assert count_records == int(
-        number
-    ), f"found {number} membership rows instead of {count_records}"
+    assert count_records == int(number), (
+        f"found {number} membership rows instead of {count_records}"
+    )
 
 
 @wt(
@@ -280,9 +272,7 @@ def assert_members_number_in_space_members_tile(
     members_tile = OZLoggedIn(driver).data.overview_page.members_tile
     name = _change_membership_to_name(membership_type, subject_type)
     members_count = getattr(members_tile, name)
-    error_msg = (
-        f"found {number} {membership_type} {subject_type} instead of {members_count}"
-    )
+    error_msg = f"found {number} {membership_type} {subject_type} instead of {members_count}"
     assert int(members_count) == int(number), error_msg
 
 
@@ -428,9 +418,7 @@ def assert_token_area_appeared(
 
 @wt(parsers.parse("user of {browser_id} sees non-empty token in token area"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_generated_token_is_present(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def assert_generated_token_is_present(selenium: SeleniumDrivers, browser_id: str) -> None:
     try:
         text = Modals(selenium[browser_id]).invite_using_token.token
         assert len(text) > 0, "Token is empty, while it should be non-empty"
@@ -495,8 +483,7 @@ def assert_member_is_in_parent_members_list(
 
     if option == "sees":
         error_message = (
-            f'{member_type} "{member_name}" not found on'
-            f' {parent_type} "{parent_name}" members list'
+            f'{member_type} "{member_name}" not found on {parent_type} "{parent_name}" members list'
         )
         try:
             if member_type == "user":
@@ -508,8 +495,7 @@ def assert_member_is_in_parent_members_list(
 
     else:
         error_message = (
-            f'{member_type} "{member_name}" found on'
-            f' {parent_type} "{parent_name}" members list'
+            f'{member_type} "{member_name}" found on {parent_type} "{parent_name}" members list'
         )
         try:
             if member_type == "user":
@@ -541,13 +527,11 @@ def check_user_in_space_members_list(
     try:
         page.members_page.users.items[username]
     except (PageObjectNotFoundError, NoSuchElementException):
-        assert (
-            option == "does not see"
-        ), f'user "{username}" not found on "{space_name}" space members list'
+        assert option == "does not see", (
+            f'user "{username}" not found on "{space_name}" space members list'
+        )
     else:
-        assert (
-            option == "sees"
-        ), f'user "{username}" found on "{space_name}" space members list'
+        assert option == "sees", f'user "{username}" found on "{space_name}" space members list'
 
 
 @wt(
@@ -596,9 +580,7 @@ def assert_options_for_user_are_enabled_or_disabled(
             assert not menu_option.is_enabled(), error_msg
 
 
-def _get_cluster_members(
-    selenium: SeleniumDrivers, browser_id: str
-) -> PageObjectsSequence:
+def _get_cluster_members(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence:
     driver = selenium[browser_id]
     where = "cluster"
     members_page = _find_members_page(driver, where)
@@ -606,20 +588,16 @@ def _get_cluster_members(
     return getattr(members_page, list_name).items
 
 
-@wt(
-    parsers.re(
-        r'user of (?P<browser_id>.*) sees "(?P<member_name>.*)" user in cluster members'
-    )
-)
+@wt(parsers.re(r'user of (?P<browser_id>.*) sees "(?P<member_name>.*)" user in cluster members'))
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_user_in_cluster_members_page(
     selenium: SeleniumDrivers, browser_id: str, member_name: str
 ) -> None:
     cluster_members = _get_cluster_members(selenium, browser_id)
 
-    assert (
-        member_name in cluster_members
-    ), f"{member_name} user is not found in cluster members list"
+    assert member_name in cluster_members, (
+        f"{member_name} user is not found in cluster members list"
+    )
 
 
 @wt(
@@ -634,9 +612,9 @@ def assert_user_not_in_cluster_members_page(
 ) -> None:
     cluster_members = _get_cluster_members(selenium, browser_id)
 
-    assert (
-        member_name not in cluster_members
-    ), f"{member_name} user is found in cluster members list"
+    assert member_name not in cluster_members, (
+        f"{member_name} user is found in cluster members list"
+    )
 
 
 @wt(
@@ -736,14 +714,12 @@ def try_setting_privileges_in_members_subpage(
             click_button_on_element_header_in_members_and_wait(
                 selenium, browser_id, button, where, tree
             )
-            close_alert_popup_if_present(
-                selenium[browser_id], AlertPopup.PRIVILEGES_SAVED
-            )
+            close_alert_popup_if_present(selenium[browser_id], AlertPopup.PRIVILEGES_SAVED)
 
         else:
-            assert (
-                not result
-            ), f"Modify {member_type} privilege on {where} page should not be possible"
+            assert not result, (
+                f"Modify {member_type} privilege on {where} page should not be possible"
+            )
 
 
 @wt(
@@ -1047,10 +1023,8 @@ def check_element_in_members_subpage(
         except NoSuchElementException as exc:
             raise AssertionError(error_message) from exc
     else:
-        try:
+        with contextlib.suppress(NoSuchElementException):
             assert member_name not in member_list, f"{member_name} {member_type}"
-        except NoSuchElementException:
-            pass
 
 
 @wt(
@@ -1101,45 +1075,27 @@ def assert_privilege_config_for_user(
     privileges = data["privileges"]
 
     if item_type != "cluster":
-        click_element_on_lists_on_left_sidebar_menu(
-            selenium, browser_id, option, item_name
-        )
+        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, item_name)
 
     if item_type == "space":
-        click_on_option_of_space_on_left_sidebar_menu(
-            selenium, browser_id, item_name, option2
-        )
+        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, item_name, option2)
     elif item_type == "harvester":
-        click_on_option_of_harvester_on_left_sidebar_menu(
-            selenium, browser_id, item_name, option2
-        )
+        click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, item_name, option2)
     elif item_type == "inventory":
-        click_on_option_of_inventory_on_left_sidebar_menu(
-            selenium, browser_id, item_name, option2
-        )
+        click_on_option_of_inventory_on_left_sidebar_menu(selenium, browser_id, item_name, option2)
     elif item_type == "group":
         go_to_group_subpage(selenium, browser_id, item_name, option2.lower())
     elif item_type == "cluster":
         click_on_record_in_clusters_menu(selenium, browser_id, item_name, hosts)
-        wt_click_on_subitem_for_item(
-            selenium, [browser_id], option, option2, item_name, hosts
-        )
+        wt_click_on_subitem_for_item(selenium, [browser_id], option, option2, item_name, hosts)
 
     click_element_in_members_list(selenium, browser_id, name, item_type, list_type)
-    privilege_tree = get_privilege_tree(
-        selenium, browser_id, item_type, list_type, name
-    )
+    privilege_tree = get_privilege_tree(selenium, browser_id, item_type, list_type, name)
     privilege_tree.assert_privileges(selenium, browser_id, privileges)
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) clicks on (?P<member_type>users|groups) checkbox"
-    )
-)
-def click_on_bulk_checkbox(
-    browser_id: str, member_type: str, selenium: SeleniumDrivers
-) -> None:
+@wt(parsers.re(r"user of (?P<browser_id>.*) clicks on (?P<member_type>users|groups) checkbox"))
+def click_on_bulk_checkbox(browser_id: str, member_type: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).groups.members_page
     members_list = getattr(page, member_type)
@@ -1191,10 +1147,7 @@ def assert_ownership_privileges_warning_appeared_for_user(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees {number} {item_type} in "
-        "Onezone clusters members page"
-    )
+    parsers.parse("user of {browser_id} sees {number} {item_type} in Onezone clusters members page")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_items_in_members_onezone(
@@ -1203,16 +1156,10 @@ def assert_number_items_in_members_onezone(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).clusters.members_page
     actual_number = getattr(page, f"{transform(item_type)}_number")
-    assert (
-        actual_number == number
-    ), f"expected {number} but got {actual_number} of {item_type}"
+    assert actual_number == number, f"expected {number} but got {actual_number} of {item_type}"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "{button_name}" in Onezone {where} members page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "{button_name}" in Onezone {where} members page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_button_in_members_onezone(
     selenium: SeleniumDrivers, browser_id: str, button_name: str, where: str
@@ -1222,9 +1169,7 @@ def click_on_button_in_members_onezone(
     getattr(page, transform(button_name)).click()
 
 
-@wt(
-    parsers.parse("user of {browser_id} can see Onezone {where} members page is opened")
-)
+@wt(parsers.parse("user of {browser_id} can see Onezone {where} members page is opened"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_onezone_members_page_opened(
     selenium: SeleniumDrivers, browser_id: str, where: str
