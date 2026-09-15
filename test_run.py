@@ -327,7 +327,6 @@ def main() -> None:
     )
 
     call(["./onenv", "init"], cwd="one-env")
-    call(["./onenv", "hosts"], cwd="one-env")
 
     if args.local:
         cmd = [
