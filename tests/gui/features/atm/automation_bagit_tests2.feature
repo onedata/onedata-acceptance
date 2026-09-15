@@ -84,9 +84,9 @@ Feature: Bagit uploader tests
 
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 1
     And user of browser sees destination path, size and source URL information in audit log in "files-to-download" store details and they are as follow:
-      source URL: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
-      size: 5969
-      destination path: googlelogo_color_272x92dp.png
+      source URL: https://packages.onedata.org/icons/apache_pb.png
+      size: 8376
+      destination path: apache_pb.png
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
@@ -103,7 +103,7 @@ Feature: Bagit uploader tests
       - Star__-__v7__-__SegueA__-__2013_02_18.metadata.json
       - Star__-__v7__-__SegueA__-__2013_02_18.rfm
       - ark-file-meta.csv
-      - googlelogo_color_272x92dp.png
+      - apache_pb.png
 
     And user of browser closes "Store details" modal
 
@@ -126,7 +126,7 @@ Feature: Bagit uploader tests
       - Star__-__v7__-__SegueA__-__2013_02_18.metadata.json
       - Star__-__v7__-__SegueA__-__2013_02_18.rfm
       - ark-file-meta.csv
-      - googlelogo_color_272x92dp.png
+      - apache_pb.png
     And user of browser closes "Store details" modal
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-archive-destination" in 1st parallel box in "archive destination" lane
@@ -150,7 +150,7 @@ Feature: Bagit uploader tests
         - Star__-__v7__-__SegueA__-__2013_02_18.metadata.json
         - Star__-__v7__-__SegueA__-__2013_02_18.rfm
         - ark-file-meta.csv
-        - googlelogo_color_272x92dp.png
+        - apache_pb.png
       - valid.zip
 
     And user of browser sees that each file in "dir1" directory has following metadata:
@@ -159,9 +159,9 @@ Feature: Bagit uploader tests
       - checksum.md5.expected
       - checksum.md5.calculated
 
-    And user of browser sees inherited status tag for "googlelogo_color_272x92dp.png" in file browser
-    And user of browser clicks on inherited status tag for "googlelogo_color_272x92dp.png" in file browser
-    And user of browser sees Dataset status tag for "googlelogo_color_272x92dp.png" in file browser
+    And user of browser sees inherited status tag for "apache_pb.png" in file browser
+    And user of browser clicks on inherited status tag for "apache_pb.png" in file browser
+    And user of browser sees Dataset status tag for "apache_pb.png" in file browser
 
 
   Scenario Outline: User sees desirable xrootd file in file browser after execution of uploaded "bagit-uploader" with <xrootd_archive>

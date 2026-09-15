@@ -172,7 +172,7 @@ Feature: Automation examples tests
     And user of browser sees that the file structure in file browser is as follow:
         - dir1:
           - data:
-            - googlelogo_color_272x92dp.png
+            - apache_pb.png
           - file1
           - file2
           - file3
@@ -193,9 +193,9 @@ Feature: Automation examples tests
             status: Found  1 files to be downloaded.
             fetchFileName: fetch.txt
     And user of browser sees that content of "files-to-download" store is:
-      sourceUrl: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
+      sourceUrl: https://packages.onedata.org/icons/apache_pb.png
     And user of browser opens "sourceUrl" URL from "files-to-download" store in browser's location bar
-    And user of browser sees image named "googlelogo_color_272x92dp.png" in browser
+    And user of browser sees image named "apache_pb.png" in browser
 
 
   Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using xrootd fetch file
@@ -338,7 +338,7 @@ Feature: Automation examples tests
             status: Found  1 files to be downloaded.
             fetchFileName: whitespaces_fetch.txt
     And user of browser sees that content of "files-to-download" store is:
-      sourceUrl: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
+      sourceUrl: https://packages.onedata.org/icons/apache_pb.png
 
 
   Scenario: User sees desirable "Active" workflow status before 10s pass in task auditlog after changing sleepDurationSec in echo lambda
