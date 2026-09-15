@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import cast, Literal
+from typing import Literal, cast
 
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
@@ -175,10 +175,14 @@ def wt_click_on_btn_in_deployment_step(
     click_on_btn_in_deployment_step(driver, step, btn)
 
     if btn == "Add host":
+        expected_number_of_hosts = 2
 
         def is_second_host_added(_: WebDriver) -> bool:
             host_row_selector = ".cluster-host-table .cluster-host-table-row"
-            return len(driver.find_elements(By.CSS_SELECTOR, host_row_selector)) >= 2
+            return (
+                len(driver.find_elements(By.CSS_SELECTOR, host_row_selector))
+                >= expected_number_of_hosts
+            )
 
         WebDriverWait(
             driver,
@@ -186,7 +190,7 @@ def wt_click_on_btn_in_deployment_step(
             ignored_exceptions=[StaleElementReferenceException],
         ).until(
             is_second_host_added,
-            message=f"Did not manage to add 2nd host within {WAIT_BACKEND*2}s time.",
+            message=f"Did not manage to add 2nd host within {WAIT_BACKEND * 2}s time.",
         )
 
     elif btn == "Register":
@@ -205,7 +209,7 @@ def wt_click_on_btn_in_deployment_step(
             ignored_exceptions=[StaleElementReferenceException],
         ).until(
             is_setup_ip_step_ready,
-            message=f"Registration did not finish within {WAIT_BACKEND*2}s time.",
+            message=f"Registration did not finish within {WAIT_BACKEND * 2}s time.",
         )
 
 
@@ -222,9 +226,7 @@ def click_on_btn_in_deployment_step(driver: WebDriver, step: str, btn: str) -> N
         " step 2 of deployment process in Onepanel"
     )
 )
-def reregister_provider_using_register_btn(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def reregister_provider_using_register_btn(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     step = Onepanel(driver).content.deployment.step2
 
