@@ -305,18 +305,22 @@ def get_visibility_condition(
             raise TypeError(f"Unsupported element or locator: {unsupported!r}")
 
 
+def is_element_visible_using_getter(
+    driver: WebDriver, web_elem_getter: Callable[[WebDriver], SeleniumWebElement]
+) -> SeleniumWebElement | None:
+    try:
+        web_elem = web_elem_getter(driver)
+        return web_elem if visibility_of(web_elem)(driver) else None
+    except (NoSuchElementException, StaleElementReferenceException):
+        return None
+
+
 def wait_for_visible_element_using_getter(
     driver: WebDriver,
     web_elem_getter: Callable[[WebDriver], SeleniumWebElement],
     timeout: float = WAIT_FRONTEND,
 ) -> SeleniumWebElement:
     # Wait until the getter returns a visible element.
-
-    def is_element_visible_using_getter(
-        driver: WebDriver, web_elem_getter: Callable[[WebDriver], SeleniumWebElement]
-    ) -> SeleniumWebElement | None:
-        web_elem = web_elem_getter(driver)
-        return web_elem if visibility_of(web_elem)(driver) else None
 
     return WebDriverWait(driver, timeout=timeout).until(
         partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
