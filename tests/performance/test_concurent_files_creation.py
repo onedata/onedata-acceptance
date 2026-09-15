@@ -2,8 +2,6 @@
 testing concurrent creation of 10000 files.
 """
 
-# pylint: disable=consider-using-f-string,broad-exception-caught
-
 __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -41,7 +39,6 @@ TEXT = "asd"
 
 
 class TestConcurrentFilesCreation(AbstractPerformanceTest):
-
     @performance(
         default_config={
             "repeats": REPEATS,
@@ -90,9 +87,7 @@ class TestConcurrentFilesCreation(AbstractPerformanceTest):
             directory=client_directio.absolute_path("space1")
         )
 
-        dir_path_proxy = client_proxy.mkdtemp(
-            directory=client_proxy.absolute_path("space1")
-        )
+        dir_path_proxy = client_proxy.mkdtemp(directory=client_proxy.absolute_path("space1"))
         dir_path_host = client_proxy.mkdtemp(directory=user_home_dir(user_proxy))
 
         test_result1 = _execute_test(
@@ -146,18 +141,14 @@ def _execute_test(
     description: str,
 ) -> list[Result]:
     avg_work = files_number // threads_num
-    intervals = chain(
-        repeat(avg_work, threads_num - 1), [avg_work + files_number % threads_num]
-    )
+    intervals = chain(repeat(avg_work, threads_num - 1), [avg_work + files_number % threads_num])
     i = 0
     workers = []
     queue: ExceptionQueue = Queue()
     for interval in intervals:
         j = i + interval
         workers.append(
-            Thread(
-                target=_create_files, args=(client, i, j, empty_files, dir_path, queue)
-            )
+            Thread(target=_create_files, args=(client, i, j, empty_files, dir_path, queue))
         )
         i = j
 
@@ -167,11 +158,7 @@ def _execute_test(
     for worker in workers:
         worker.start()
 
-    flushed_print(
-        "\t\tStarted {} workers with avg {} file creation task each".format(
-            len(workers), avg_work
-        )
-    )
+    flushed_print(f"\t\tStarted {len(workers)} workers with avg {avg_work} file creation task each")
 
     while workers:
         try:
@@ -182,7 +169,7 @@ def _execute_test(
             raise ex
         finally:
             if time.time() >= logging_time:
-                flushed_print("\t\t\t{} workers alive".format(len(workers)))
+                flushed_print(f"\t\t\t{len(workers)} workers alive")
                 logging_time = time.time() + LOGGING_INTERVAL
 
     if not queue.empty():
@@ -192,9 +179,7 @@ def _execute_test(
 
     return [
         Result(
-            "[{}; {} threads] {} files creation".format(
-                description, threads_num, files_number
-            ),
+            f"[{description}; {threads_num} threads] {files_number} files creation",
             end - start,
             "{} files creation time using oneclient with {} content".format(
                 files_number, ("no" if empty_files else "some")
@@ -215,15 +200,15 @@ def _create_files(
     fun = client.create_file if empty_files else partial(client.write, text=TEXT)
     try:
         for i in range(start, end):
-            fun(file_path=os.path.join(dir_path, "file{}".format(i)))
-    except Exception as ex:
+            fun(file_path=os.path.join(dir_path, f"file{i}"))
+    except Exception as ex:  # noqa: BLE001 - transport worker failures to the parent thread
         queue.put(ex)
 
 
 def _teardown_after_test(client: Client, files_number: int, dir_path: str) -> None:
     logging_time = time.time() + LOGGING_INTERVAL
     for i in range(files_number):
-        client.rm(os.path.join(dir_path, "file{}".format(i)))
+        client.rm(os.path.join(dir_path, f"file{i}"))
         if time.time() >= logging_time:
-            flushed_print("\t\t\tDeleted {}nth file".format(i))
+            flushed_print(f"\t\t\tDeleted {i}nth file")
             logging_time = time.time() + LOGGING_INTERVAL

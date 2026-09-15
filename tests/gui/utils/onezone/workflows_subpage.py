@@ -45,12 +45,8 @@ class WorkflowLane(NamedElement):
         cls=EmptyParallelBox,
     )
 
-    add_parallel_box_above = Button(
-        ".space-position-start .create-parallel-box-action-trigger"
-    )
-    add_parallel_box_below = Button(
-        ".space-position-end .create-parallel-box-action-trigger"
-    )
+    add_parallel_box_above = Button(".space-position-start .create-parallel-box-action-trigger")
+    add_parallel_box_below = Button(".space-position-end .create-parallel-box-action-trigger")
 
 
 class Store(NamedElement):
@@ -64,9 +60,7 @@ class WorkflowVisualiser(PageObject):
     )
 
     add_store_button = Button(".create-store-action-trigger")
-    stores_list = WebItemsSequence(
-        ".workflow-visualiser-stores-list .tag-item", cls=Store
-    )
+    stores_list = WebItemsSequence(".workflow-visualiser-stores-list .tag-item", cls=Store)
 
 
 class RevisionDetails(PageObject):
@@ -108,15 +102,9 @@ class Parameters(NamedElement):
 class TaskAddForm(PageObject):
     task_name = WebItem(".name-field .text-like-field", cls=EditBox)
     create_button = Button(".btn-primary")
-    lambda_revision = WebElement(
-        ".atmLambdaRevisionNumber-field .ember-power-select-trigger"
-    )
-    arguments = WebItemsSequence(
-        ".argumentMappings-field .argumentMapping-field", cls=Arguments
-    )
-    results = WebItemsSequence(
-        ".resultMappings-field .singleResultMappings-field", cls=Results
-    )
+    lambda_revision = WebElement(".atmLambdaRevisionNumber-field .ember-power-select-trigger")
+    arguments = WebItemsSequence(".argumentMappings-field .argumentMapping-field", cls=Arguments)
+    results = WebItemsSequence(".resultMappings-field .singleResultMappings-field", cls=Results)
     conf_parameters = WebItemsSequence(
         ".lambdaConfigSection-field .configMapping-field", cls=Parameters
     )

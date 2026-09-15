@@ -99,7 +99,7 @@ def login_using_gui(
     g_open_onedata_service_page(selenium, user_list, host_list, hosts)
     browsers_to_users = selenium["request"].getfixturevalue("browsers_to_users")
 
-    for browser, user in zip(browser_id_list, user_list):
+    for browser, user in zip(browser_id_list, user_list, strict=False):
         browsers_to_users[browser] = user
         if test_type == "gui":
             selenium[browser] = selenium[user]
@@ -280,9 +280,8 @@ def search_for_members(
         if member_name in relations and parent_name in relations:
             member_index = relations.index(member_name)
             parent_index = relations.index(parent_name)
-            if member_index + 1 == parent_index:
-                if fun(record, member_index):
-                    return True
+            if member_index + 1 == parent_index and fun(record, member_index):
+                return True
     return False
 
 
@@ -294,9 +293,7 @@ def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: str) -> None
 
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone Emergency panel"))
-def logout_from_onezone_emergency_panel(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def logout_from_onezone_emergency_panel(selenium: SeleniumDrivers, browser_id: str) -> None:
     open_manage_account_page(selenium, browser_id)
     click_emergency_panel_logout(selenium, browser_id)
 
@@ -338,8 +335,7 @@ def change_password(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} logins as "{username}" without closing '
-        "authentication info alert"
+        'user of {browser_id} logins as "{username}" without closing authentication info alert'
     )
 )
 def wt_sign_in_to_onezone_without_closing_auth_info_alert(

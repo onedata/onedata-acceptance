@@ -93,9 +93,7 @@ def modify_storage_using_rest(
     )
 
 
-def storage_data_from_config(
-    config: str, storage_name: str
-) -> dict[str, dict[str, Any]]:
+def storage_data_from_config(config: str, storage_name: str) -> dict[str, dict[str, Any]]:
     storage_config: dict[str, object] = {}
     options = yaml.load(config, yaml.Loader)
 

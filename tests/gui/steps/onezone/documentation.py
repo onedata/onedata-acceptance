@@ -34,13 +34,9 @@ def click_operations_dropdown_in_api_modal(
 
 
 @repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
-def get_rest_api_commands_from_dropdown(
-    selenium: SeleniumDrivers, browser_id: str
-) -> list[str]:
+def get_rest_api_commands_from_dropdown(selenium: SeleniumDrivers, browser_id: str) -> list[str]:
     command_items = Popups(selenium[browser_id]).power_select.items_as(GuiRestCommand)
-    commands = [
-        item.endpoint_title for item in command_items if item.endpoint_method == "REST"
-    ]
+    commands = [item.endpoint_title for item in command_items if item.endpoint_method == "REST"]
     assert commands, "No REST API commands found in operations dropdown"
     return commands
 
@@ -76,13 +72,9 @@ def assert_active_sidebar_link_in_docs_subpage(
 ) -> None:
     page = get_documentation_page(selenium, browser_id, "Docs")
     active_links = page.sidebar.get_active_rows_names()
-    assert (
-        len(active_links) == 1
-    ), f"Expected only one active link, but found {len(active_links)}"
+    assert len(active_links) == 1, f"Expected only one active link, but found {len(active_links)}"
     active_link = active_links[0]
-    assert (
-        active_link == link
-    ), f"Expected active link: {link}, but found: {active_link}"
+    assert active_link == link, f"Expected active link: {link}, but found: {active_link}"
 
 
 @repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
@@ -94,9 +86,9 @@ def assert_active_sidebar_endpoint_in_api_subpage(
 ) -> None:
     page = get_documentation_page(selenium, browser_id, "API")
     active_endpoints = page.sidebar.get_active_endpoints()
-    assert (
-        len(active_endpoints) == 1
-    ), f"Expected only one active endpoint, but found {len(active_endpoints)}"
+    assert len(active_endpoints) == 1, (
+        f"Expected only one active endpoint, but found {len(active_endpoints)}"
+    )
     active_endpoint = active_endpoints[0]
     assert active_endpoint.endpoint_title == endpoint_title, (
         f"Expected active endpoint title: {endpoint_title}, "
@@ -120,13 +112,11 @@ def assert_active_chapter_tab_in_documentation_subpage(
 ) -> None:
     page = get_documentation_page(selenium, browser_id, subpage)
     active_tabs = page.chapters.get_active_chapter_tabs_names()
-    assert (
-        len(active_tabs) == 1
-    ), f"Expected only one active chapter tab, but found {len(active_tabs)}"
+    assert len(active_tabs) == 1, (
+        f"Expected only one active chapter tab, but found {len(active_tabs)}"
+    )
     active_tab = active_tabs[0]
-    assert (
-        active_tab == chapter
-    ), f"Expected active chapter tab: {chapter}, but found: {active_tab}"
+    assert active_tab == chapter, f"Expected active chapter tab: {chapter}, but found: {active_tab}"
 
 
 @repeat_failed(timeout=DEFAULT_DOCUMENTATION_TIMEOUT)
@@ -135,9 +125,7 @@ def assert_user_sees_name_in_header_in_documentation_subpage(
 ) -> None:
     page = get_documentation_page(selenium, browser_id, subpage)
     current_header = page.current_header
-    assert (
-        current_header == name
-    ), f"Expected header: {name}, but found header: {current_header}"
+    assert current_header == name, f"Expected header: {name}, but found header: {current_header}"
 
 
 @wt(
@@ -160,6 +148,6 @@ def assert_expanded_folders_in_sidebar_in_documentation_subpage(
     page = get_documentation_page(selenium, browser_id, subpage)
     expected_folders = set(folders)
     found_folders = set(page.sidebar.get_expanded_folders_names())
-    assert (
-        found_folders == expected_folders
-    ), f"Expected folders: {expected_folders}, but found folders {found_folders}"
+    assert found_folders == expected_folders, (
+        f"Expected folders: {expected_folders}, but found folders {found_folders}"
+    )

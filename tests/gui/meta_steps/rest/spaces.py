@@ -31,9 +31,7 @@ def revoke_all_space_supports_using_rest(
                 provider_hostname, onepanel_username, onepanel_password, space_id
             )
 
-    assert_no_space_supports_using_rest(
-        provider_hostname, onepanel_username, onepanel_password
-    )
+    assert_no_space_supports_using_rest(provider_hostname, onepanel_username, onepanel_password)
 
 
 def revoke_space_supports_for_storage_using_rest(

@@ -16,9 +16,7 @@ from . import multi_file_steps
 
 
 @wt(parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*)"))
-def create_reg_file(
-    user: str, files: str, users: Users, request: pytest.FixtureRequest
-) -> None:
+def create_reg_file(user: str, files: str, users: Users, request: pytest.FixtureRequest) -> None:
     multi_file_steps.create_reg_file(user, files, "client1", users, request)
 
 
@@ -36,9 +34,7 @@ def create_many(
     users: Users,
     request: pytest.FixtureRequest,
 ) -> None:
-    multi_file_steps.create_many(
-        user, lower, upper, parent_dir, "client1", users, request
-    )
+    multi_file_steps.create_many(user, lower, upper, parent_dir, "client1", users, request)
 
 
 @wt(parsers.re(r"(?P<user>\w+) can stat (?P<files>.*) in (?P<path>.*)"))
@@ -57,9 +53,7 @@ def ls_present(user: str, files: str, path: str, users: Users) -> None:
         r"names in range \[(?P<lower>.*), (?P<upper>.*)\)"
     )
 )
-def ls_children(
-    user: str, parent_dir: str, lower: str, upper: str, users: Users
-) -> None:
+def ls_children(user: str, parent_dir: str, lower: str, upper: str, users: Users) -> None:
     multi_file_steps.ls_children(user, parent_dir, lower, upper, "client1", users)
 
 

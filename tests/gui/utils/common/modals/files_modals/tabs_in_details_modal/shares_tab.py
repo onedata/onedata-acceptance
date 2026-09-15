@@ -9,7 +9,6 @@ from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
-    Input,
     Label,
     NamedButton,
     WebItemsSequence,

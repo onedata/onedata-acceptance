@@ -5,7 +5,6 @@ multiclient environment.
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
-# pylint: disable=cell-var-from-loop, deprecated-method
 
 import errno
 import os.path
@@ -35,8 +34,8 @@ def create_base(
     for _dir in dir_names:
         path = client.absolute_path(_dir)
 
-        def condition() -> None:
-            client.mkdir(path, exist_ok=exists_ok)
+        def condition(path_to_create: str = path) -> None:
+            client.mkdir(path_to_create, exist_ok=exists_ok)
 
         if should_fail:
             assert_expected_failure(condition)
@@ -44,18 +43,12 @@ def create_base(
             assert_(client.perform, condition)
 
 
-@when(
-    parsers.re(
-        r"(?P<user>\w+) creates directories (?P<dirs>.*)\son (?P<client_node>.*)"
-    )
-)
+@when(parsers.re(r"(?P<user>\w+) creates directories (?P<dirs>.*)\son (?P<client_node>.*)"))
 def create_(user: str, dirs: str, client_node: str, users: Users) -> None:
     create(user, dirs, client_node, users)
 
 
-def create(
-    user: str, dirs: str, client_node: str, users: Users, exists_ok: bool = False
-) -> None:
+def create(user: str, dirs: str, client_node: str, users: Users, exists_ok: bool = False) -> None:
     create_base(user, dirs, client_node, users, exists_ok=exists_ok)
 
 
@@ -72,8 +65,8 @@ def create_parents(user: str, paths: str, client_node: str, users: Users) -> Non
     for path in path_names:
         dir_path = client.absolute_path(path)
 
-        def condition() -> None:
-            client.mkdir(dir_path, recursive=True)
+        def condition(directory_path: str = dir_path) -> None:
+            client.mkdir(directory_path, recursive=True)
 
         assert_(client.perform, condition)
 
@@ -97,8 +90,8 @@ def delete_empty_base(
     for _dir in dir_names:
         path = client.absolute_path(_dir)
 
-        def condition() -> None:
-            client.rmdir(path)
+        def condition(path_to_delete: str = path) -> None:
+            client.rmdir(path_to_delete)
 
         if should_fail:
             assert_expected_failure(condition)
@@ -165,8 +158,8 @@ def delete_non_empty(user: str, dirs: str, client_node: str, users: Users) -> No
     for _dir in dir_names:
         path = client.absolute_path(_dir)
 
-        def condition() -> None:
-            client.rm(path, recursive=True, force=True)
+        def condition(path_to_delete: str = path) -> None:
+            client.rm(path_to_delete, recursive=True, force=True)
 
         assert_(client.perform, condition)
 
@@ -181,9 +174,7 @@ def try_to_move_root_dir(user: str, client_node: str, users: Users, dst: str) ->
     client.mv(client.get_mount_path(), os.path.join(ONECLIENT_MOUNT_DIR, dst))
 
 
-def move_dir_by_id(
-    user: str, client_node: str, users: Users, file_id: str, dst: str
-) -> None:
+def move_dir_by_id(user: str, client_node: str, users: Users, file_id: str, dst: str) -> None:
     client = users[user].clients[client_node]
     client.mv(
         f"{client.get_mount_path()}/.__onedata__file_id__{file_id}",
@@ -212,8 +203,8 @@ def delete_parents(user: str, paths: str, client_node: str, users: Users) -> Non
     for path in path_names:
         dir_path = client.absolute_path(path)
 
-        def condition() -> None:
-            client.rmdir(dir_path, recursive=True)
+        def condition(directory_path: str = dir_path) -> None:
+            client.rmdir(directory_path, recursive=True)
 
         assert_(client.perform, condition)
 
@@ -294,9 +285,7 @@ def create_in_container(
         r'container "(?P<container>.*)" on provider "(?P<provider>.*)"'
     )
 )
-def remove_in_container(
-    paths: str, container: str, provider: str, hosts: Hosts
-) -> None:
+def remove_in_container(paths: str, container: str, provider: str, hosts: Hosts) -> None:
     for path in list_parser(paths):
         pod_name = hosts[provider]["pod_name"]
         cmd = ["sh", "-c", f"rm -rf {path}"]

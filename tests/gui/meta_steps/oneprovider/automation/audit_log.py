@@ -6,6 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import os
 import time
@@ -201,15 +202,15 @@ def assert_audit_log_in_store(
         store_type,
     )
 
-    error_message = (
-        "There is no information about algorithm, checksum or file id "
-        f"in audit log in {store_name} store details"
+    assert store_details["algorithm"], (
+        f"There is no algorithm information in audit log in {store_name} store details"
     )
-    assert (
-        store_details["algorithm"]
-        and store_details["checksum"]
-        and store_details["fileId"]
-    ), error_message
+    assert store_details["checksum"], (
+        f"There is no checksum information in audit log in {store_name} store details"
+    )
+    assert store_details["fileId"], (
+        f"There is no file id information in audit log in {store_name} store details"
+    )
 
     tmp_memory[f"{store_name}_store_log"] = store_details
 
@@ -241,15 +242,15 @@ def assert_content_in_audit_log_in_store(
         store_type,
     )
 
-    error_message1 = (
-        "There is no information about destination path, size or "
-        f"source URL in audit log in {store_name} store details"
+    assert store_details["destinationPath"], (
+        f"There is no destination path in audit log in {store_name} store details"
     )
-    assert (
-        store_details["destinationPath"]
-        and store_details["sourceUrl"]
-        and store_details["size"]
-    ), error_message1
+    assert store_details["sourceUrl"], (
+        f"There is no source URL in audit log in {store_name} store details"
+    )
+    assert store_details["size"], (
+        f"There is no size information in audit log in {store_name} store details"
+    )
 
     actual_expected = {
         "sourceUrl": "source URL",
@@ -279,7 +280,7 @@ def get_store_audit_log(
     tmp_memory: TmpMemory,
     store_key: str,
 ) -> AuditLogContent:
-    if store_key not in tmp_memory.keys():
+    if store_key not in tmp_memory:
         assert_audit_log_in_store(
             browser_id,
             selenium,
@@ -417,9 +418,7 @@ def assert_number_of_elements_in_store_details(
     selenium: SeleniumDrivers, browser_id: str, store_name: str, number: str
 ) -> None:
     _ = open_store_details_modal(selenium, browser_id, store_name)
-    check_number_of_elements_in_store_details_modal(
-        selenium, browser_id, int(number), store_name
-    )
+    check_number_of_elements_in_store_details_modal(selenium, browser_id, int(number), store_name)
 
 
 @wt(
@@ -548,17 +547,16 @@ def assert_each_element_contains_some_information(
             store_content
             if option == "file names"
             else store_content[
-                option.split(" ")[0] + option.split(" ")[-1].capitalize()
+                option.split(" ", maxsplit=1)[0] + option.rsplit(" ", maxsplit=1)[-1].capitalize()
             ]
         )
         actual_data.append(file_path.split("/")[-1])
-    assert len(actual_data) == len(
-        expected_data
-    ), f"Actual and expected number of elements in {store_name} differ"
+    assert len(actual_data) == len(expected_data), (
+        f"Actual and expected number of elements in {store_name} differ"
+    )
     for elem in actual_data:
         assert elem in expected_data, (
-            f"Expected data does not contain {elem} file name in"
-            f" {store_name} store details modal"
+            f"Expected data does not contain {elem} file name in {store_name} store details modal"
         )
 
 
@@ -617,8 +615,7 @@ def check_visual_in_store_details_modal(
         compare_booleans_in_store_details_modal(boolean_items, modal)
     elif variable_type == "boolean":
         error_message = (
-            f"{modal.raw_view} in store details modal does not match"
-            f" expected {serialized_items}"
+            f"{modal.raw_view} in store details modal does not match expected {serialized_items}"
         )
         assert modal.raw_view == serialized_items, error_message
     else:
@@ -648,9 +645,7 @@ def check_visual_in_store_details_modal(
             elif variable_type in ["strings", "numbers"]:
                 expected = literal_eval(elem.value)
             else:
-                raise ValueError(
-                    f"this {variable_type} is not handled in this function"
-                )
+                raise ValueError(f"this {variable_type} is not handled in this function")
 
             error_message = (
                 f"expected {variable_type} {parsed_items} does not "
@@ -677,16 +672,12 @@ def assert_elements_in_store_details_modal(
     modal = open_store_details_modal(selenium, browser_id, store_name)
 
     if variable_type == "string":
-        compare_string_in_store_details_modal(
-            serialized_items, modal, variable_type, store_name
-        )
+        compare_string_in_store_details_modal(serialized_items, modal, variable_type, store_name)
     elif variable_type == "array":
         compare_array_in_store_details_modal(modal, serialized_items)
 
     else:
-        check_visual_in_store_details_modal(
-            modal, variable_type, serialized_items, store_name
-        )
+        check_visual_in_store_details_modal(modal, variable_type, serialized_items, store_name)
 
 
 @wt(
@@ -709,8 +700,7 @@ def assert_datasets_in_store_details(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{file}" file in '
-        'Store details modal for "{store_name}" store'
+        'user of {browser_id} sees "{file}" file in Store details modal for "{store_name}" store'
     )
 )
 def assert_file_in_store_details(
@@ -785,16 +775,11 @@ def compare_to_expected_if_element_exist_for_store(
             )
 
         assert elem == items[option], (
-            f"{option}: {items[option]} in store {store_name} does not"
-            f" match expected {elem}"
+            f"{option}: {items[option]} in store {store_name} does not match expected {elem}"
         )
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that content of "{store_name}" store is:\n{config}'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that content of "{store_name}" store is:\n{config}'))
 def assert_content_of_store(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -840,14 +825,10 @@ def assert_content_of_store(
                 clipboard,
                 displays,
             )
-    try:
-        modal.close()
-    except (
-        StaleElementReferenceException,
-        NoSuchElementException,
-        ElementNotInteractableException,
+    with contextlib.suppress(
+        StaleElementReferenceException, NoSuchElementException, ElementNotInteractableException
     ):
-        pass
+        modal.close()
 
 
 def compare_to_expected_if_elem_exist_audit_log(
@@ -862,9 +843,7 @@ def compare_to_expected_if_elem_exist_audit_log(
         comparable_actual: AuditLogValue | date = actual_items[label]
         if label == "timestamp":
             comparable_expected = date.today()
-            comparable_actual = date.fromtimestamp(
-                cast(float, actual_items["timestamp"]) / 1000
-            )
+            comparable_actual = date.fromtimestamp(cast(float, actual_items["timestamp"]) / 1000)
         elif label == "severity":
             comparable_expected = cast(str, expected).lower()
         assert_elements_of_task_audit_log_are_the_same(
@@ -879,8 +858,7 @@ def assert_elements_of_task_audit_log_are_the_same(
     task_name: str,
 ) -> None:
     assert expected == actual, (
-        f'{label} "{actual}" in audit log for "{task_name}" task is '
-        f'not "{expected}" as expected'
+        f'{label} "{actual}" in audit log for "{task_name}" task is not "{expected}" as expected'
     )
 
 
@@ -899,9 +877,7 @@ def compare_content_reason_of_task_audit_log(
         f'task does not contain "{actual_reason}" as expected'
     )
     if isinstance(reason, str) and "contains" in reason:
-        reason_data = yaml.load(
-            reason.split("contains ")[1].replace("])", "]"), yaml.Loader
-        )
+        reason_data = yaml.load(reason.split("contains ")[1].replace("])", "]"), yaml.Loader)
         actual_reason_text = cast(str, actual_reason)
         for reason_elem in reason_data:
             assert reason_elem in actual_reason_text, error_message
@@ -914,9 +890,7 @@ def compare_content_reason_of_task_audit_log(
             specific_details = cast(AuditLogContent, specific_error["details"])
             value = cast(AuditLogContent, specific_details["value"])
             placeholder_file_id = cast(str, value["fileId"])
-            placeholder_file_path = (
-                placeholder_file_id.split(" ")[1].replace(")", "").split("/")
-            )
+            placeholder_file_path = placeholder_file_id.split(" ")[1].replace(")", "").split("/")
             value["fileId"] = get_file_id_from_details_modal(
                 selenium,
                 browser_id,
@@ -926,9 +900,7 @@ def compare_content_reason_of_task_audit_log(
                 clipboard,
                 displays,
             )
-        assert_elements_of_task_audit_log_are_the_same(
-            reason, actual_reason, "Reason", task_name
-        )
+        assert_elements_of_task_audit_log_are_the_same(reason, actual_reason, "Reason", task_name)
 
 
 def compare_content_of_task_audit_log(
@@ -948,9 +920,7 @@ def compare_content_of_task_audit_log(
     item = cast(AuditLogContent, details.get("item", {})) if details else {}
 
     for label in expected_identical:
-        compare_to_expected_if_elem_exist_audit_log(
-            content, label, actual_content, task_name
-        )
+        compare_to_expected_if_elem_exist_audit_log(content, label, actual_content, task_name)
     if reason:
         compare_content_reason_of_task_audit_log(
             reason,
@@ -1006,10 +976,9 @@ def assert_content_of_user_task_audit_log(
     time.sleep(1)
     modal = Modals(driver).audit_log
     try:
-        modal.user_log  # pylint: disable=pointless-statement
+        _ = modal.user_log
         raise AssertionError(
-            f'Audit log in task "{task_name}" in lane'
-            f' "{lane_name}" contains user\'s entry'
+            f'Audit log in task "{task_name}" in lane "{lane_name}" contains user\'s entry'
         )
     except NoSuchElementException:
         pass
@@ -1038,7 +1007,7 @@ def assert_exception_in_element_content_in_task_audit_log(
 ) -> None:
     file_name = file_name.replace('"', "")
     expected_data = tmp_memory["exceptions"][file_name]
-    expected_data = list(map(lambda x: x.lower(), expected_data))
+    expected_data = [x.lower() for x in expected_data]
     assert_element_content_in_task_audit_log(
         expected_data,
         element,
@@ -1074,8 +1043,8 @@ def assert_element_content_in_task_audit_log(
     link = "Audit log"
     close = "closes"
     if isinstance(expected_data, list):
-        expected_data = list(map(lambda x: x.replace('"', ""), expected_data))
-        expected_data = list(map(lambda x: x.replace("\\n", "\n"), expected_data))
+        expected_data = [x.replace('"', "") for x in expected_data]
+        expected_data = [x.replace("\\n", "\n") for x in expected_data]
     else:
         expected_data = expected_data.replace('"', "")
         expected_data = expected_data.replace("\\n", "\n")
@@ -1148,9 +1117,7 @@ def assert_content_of_task_audit_log(
     actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
 
     for label in expected_identical:
-        compare_to_expected_if_elem_exist_audit_log(
-            data, label, actual_items, task_name
-        )
+        compare_to_expected_if_elem_exist_audit_log(data, label, actual_items, task_name)
 
     if content:
         compare_content_of_task_audit_log(
@@ -1198,7 +1165,7 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
     file_name = os.listdir(path)[-1]
     file_path = tmpdir.join(browser_id, "download", file_name)
     if file_path.isfile():
-        with open(file_path) as f:
+        with open(file_path, encoding="utf-8") as f:
             data = json.load(f)
             log_entries = len(modal.logs_entry)
             error_message = (
@@ -1214,9 +1181,7 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
                 visible_log = json.loads(clipboard.paste(display=displays[browser_id]))
                 # remove 'source' from dict
                 visible_log.pop("source")
-                error_message = (
-                    f"logs in file: {file_log} and visible {visible_log}are different"
-                )
+                error_message = f"logs in file: {file_log} and visible {visible_log}are different"
                 assert file_log == visible_log, error_message
                 modal.close_details.click()
     else:
@@ -1236,9 +1201,7 @@ def assert_workflow_audit_log_contains_entries(
     tmp_memory: TmpMemory,
     config: str,
 ) -> None:
-    _assert_workflow_audit_log_contains_entries(
-        selenium, browser_id, tmpdir, tmp_memory, config
-    )
+    _assert_workflow_audit_log_contains_entries(selenium, browser_id, tmpdir, tmp_memory, config)
 
 
 def _assert_workflow_audit_log_contains_entries(
@@ -1253,7 +1216,7 @@ def _assert_workflow_audit_log_contains_entries(
     modal = Modals(driver).audit_log
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
 
-    with open(file_path) as f:
+    with open(file_path, encoding="utf-8") as f:
         data_file = json.load(f)
     for expected_entry in data:
         if assert_expected_in_entries(expected_entry, data_file):
@@ -1263,18 +1226,14 @@ def _assert_workflow_audit_log_contains_entries(
     modal.x()
 
 
-def assert_expected_in_entries(
-    expected_entry: str, entries: list[AuditLogDebugEntry]
-) -> bool:
+def assert_expected_in_entries(expected_entry: str, entries: list[AuditLogDebugEntry]) -> bool:
     for actual_entry in entries:
         if compare_audit_log_debug_entries(actual_entry, expected_entry):
             return True
     return False
 
 
-def compare_audit_log_debug_entries(
-    actual_entry: AuditLogDebugEntry, expected_entry: str
-) -> bool:
+def compare_audit_log_debug_entries(actual_entry: AuditLogDebugEntry, expected_entry: str) -> bool:
     return expected_entry in actual_entry["content"]["description"] and (
         actual_entry["severity"] == "debug"
     )
@@ -1295,46 +1254,36 @@ def assert_workflow_audit_log_contains_entry(
     item_list: list[str],
 ) -> bool:
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
-    with open(file_path) as f:
+    with open(file_path, encoding="utf-8") as f:
         data_file = json.load(f)
     for entry in data_file:
         try:
             content = entry["content"]
-            if _assert_all_items_in_json(item_list, content) and (
-                len(item_list) == len(content)
-            ):
+            if _assert_all_items_in_json(item_list, content) and (len(item_list) == len(content)):
                 return True
         except KeyError:
             pass
-    error_message = (
-        f"there is no entry containing data about {item_list} in workflow audit log"
-    )
+    error_message = f"there is no entry containing data about {item_list} in workflow audit log"
     raise AssertionError(error_message)
 
 
 def _assert_all_items_in_json(item_list: list[str], data: AuditLogContent) -> bool:
-    for item in item_list:
-        if not data.get(item, False):
-            return False
-    return True
+    return all(data.get(item, False) for item in item_list)
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that workflow audit log does "
-        "not contain any system debug entry"
+        "user of {browser_id} sees that workflow audit log does not contain any system debug entry"
     )
 )
 def assert_no_debug_entry_in_workflow_audit_log(
     browser_id: str, selenium: SeleniumDrivers, tmp_memory: TmpMemory, tmpdir: LocalPath
 ) -> None:
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
-    with open(file_path) as f:
+    with open(file_path, encoding="utf-8") as f:
         data_file: list[AuditLogContent] = json.load(f)
         error_message = "workflow audit log contains debug entry"
-        assert not any(
-            entry.get("severity", "") == "debug" for entry in data_file
-        ), error_message
+        assert not any(entry.get("severity", "") == "debug" for entry in data_file), error_message
 
 
 def _get_workflow_audit_log(
@@ -1350,5 +1299,4 @@ def _get_workflow_audit_log(
     modal.download_as_json()
     wait_for_file_with_unknown_name_to_download(n_files_before_download, path)
     file_name = os.listdir(path)[-1]
-    file_path = tmpdir.join(browser_id, "download", file_name)
-    return file_path
+    return tmpdir.join(browser_id, "download", file_name)

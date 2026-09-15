@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Optional
 
 import yaml
 
@@ -77,9 +76,7 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
 
 
-def _paste_token_into_text_field(
-    selenium: SeleniumDrivers, browser_id: str, token: str
-) -> None:
+def _paste_token_into_text_field(selenium: SeleniumDrivers, browser_id: str, token: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).tokens
     page.input_name = token
 
@@ -104,10 +101,7 @@ def paste_received_token_into_text_field(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Create token" button '
-        'in "Create new token" view'
-    )
+    parsers.parse('user of {browser_id} clicks on "Create token" button in "Create new token" view')
 )
 def click_create_token_button_in_create_token_page(
     selenium: SeleniumDrivers, browser_id: str
@@ -137,10 +131,20 @@ def click_on_confirm_button_on_tokens_page(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} succeeds to consume token using "Confirm" button'
-    )
+    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
 )
+def click_on_confirm_button_on_tokens_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    click_confirm_button_on_tokens_page(driver)
+    # it is needed to wait for the page refresh
+    wait_till_main_content_loaded(driver)
+
+    assert_confirm_button_not_visible_on_tokens_page(driver)
+
+
+@wt(parsers.parse('user of {browser_id} succeeds to consume token using "Confirm" button'))
 def succeed_to_consume_token_using_confirm_button(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -214,9 +218,7 @@ def assert_invalid_id_in_error_modal_and_close_modal(
     driver = selenium[browser_id]
     error_modal = Modals(driver).error
     modal_text = get_error_modal_text(selenium, browser_id)
-    error_message = (
-        f"There is no info about id of invalid target {target_name} in error modal"
-    )
+    error_message = f"There is no info about id of invalid target {target_name} in error modal"
     wait_till_error_modal_disappear(
         driver, ".alert-global.modal.in .modal-dialog", lambda _: error_modal.close
     )
@@ -252,8 +254,7 @@ def consume_token_from_copied_token(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} fails to join group using copied token "
-        "and sees error modal"
+        "user of {browser_id} fails to join group using copied token and sees error modal"
     )
 )
 def fail_to_consume_copied_token(
@@ -435,7 +436,7 @@ def _create_token_of_type(
     selenium: SeleniumDrivers,
     browser_id: str,
     token_type: str,
-    iteration: Optional[int] = None,
+    iteration: int | None = None,
 ) -> None:
     token_name = f"{token_type}_token"
     if iteration:
@@ -447,9 +448,7 @@ def _create_token_of_type(
     choose_token_type_to_create(selenium, browser_id, token_type)
 
     if token_type == "invite":
-        choose_invite_type_in_oz_token_page(
-            selenium, browser_id, "Register Oneprovider"
-        )
+        choose_invite_type_in_oz_token_page(selenium, browser_id, "Register Oneprovider")
     click_create_token_button_in_create_token_page(selenium, browser_id)
     notify_visible_with_text(
         selenium,
@@ -473,11 +472,7 @@ def create_number_of_typed_token(
         _create_token_of_type(selenium, browser_id, token_type, i)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} creates token with following configuration:\n{config}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} creates token with following configuration:\n{config}"))
 def create_token_with_config(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -669,8 +664,7 @@ def _set_tokens_caveats(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that created token configuration "
-        "is as following:\n{config}"
+        "user of {browser_id} sees that created token configuration is as following:\n{config}"
     )
 )
 def assert_token_configuration(
@@ -916,8 +910,7 @@ def remove_all_tokens(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.parse(
-        "user of {browser_id} creates and checks token with "
-        "following configuration:\n{config}"
+        "user of {browser_id} creates and checks token with following configuration:\n{config}"
     )
 )
 def create_and_check_token(
@@ -963,8 +956,7 @@ def choose_and_revoke_token_in_oz_gui(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} creates new token named "{name}" with '
-        "basic {template} template"
+        'user of {browser_id} creates new token named "{name}" with basic {template} template'
     )
 )
 def create_token_with_basic_template(
@@ -1003,9 +995,7 @@ def create_token_with_copied_object_id(
 ) -> None:
     option = "Tokens"
     object_id = clipboard.paste(display=displays[user])
-    config = (
-        f"name: access_token\ntype: access\ncaveats:\n  object ID:\n    -  {object_id}"
-    )
+    config = f"name: access_token\ntype: access\ncaveats:\n  object ID:\n    -  {object_id}"
     click_on_option_in_the_sidebar(selenium, user, option)
     create_token_with_config(
         selenium,
@@ -1031,9 +1021,7 @@ def _copy_object_id(
     button = "File ID"
     modal = "File details"
 
-    _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, user, name, space, tmp_memory
-    )
+    _click_menu_for_elem_somewhere_in_file_browser(selenium, user, name, space, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, user, option)
     click_modal_button(selenium, user, button, modal)
     close_modal(selenium, user, modal)
@@ -1074,9 +1062,7 @@ def create_token_with_object_id(
     )
 
     object_id = tmp_memory["object_id"]
-    config = (
-        f"name: access_token\ntype: access\ncaveats:\n  object ID:\n    -  {object_id}"
-    )
+    config = f"name: access_token\ntype: access\ncaveats:\n  object ID:\n    -  {object_id}"
 
     click_on_option_in_the_sidebar(selenium, user, option)
     create_token_with_config(

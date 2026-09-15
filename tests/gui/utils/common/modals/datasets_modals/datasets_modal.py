@@ -28,12 +28,8 @@ class DatasetsModal(Modal):
     x = Button(".close")
     data_protection_toggle = Toggle(".direct-dataset-item .data-flag-toggle")
     metadata_protection_toggle = Toggle(".direct-dataset-item .metadata-flag-toggle")
-    ancestor_data_protection = Toggle(
-        ".parent-group-dataset-item .metadata-flag-toggle"
-    )
-    ancestor_metadata_protection = Toggle(
-        ".parent-group-dataset-item .data-flag-toggle"
-    )
+    ancestor_data_protection = Toggle(".parent-group-dataset-item .metadata-flag-toggle")
+    ancestor_metadata_protection = Toggle(".parent-group-dataset-item .data-flag-toggle")
     ancestor_option = WebElement(".parent-group-dataset-item .dataset-label-section")
     ancestors = WebItemsSequence(".parent-dataset-item", cls=ParentDatasetItem)
     data_protected_label = Label(".data-protected-tag")

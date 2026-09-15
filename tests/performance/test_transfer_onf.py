@@ -2,8 +2,6 @@
 testing concurrent copy of 10000 files created on remote provider.
 """
 
-# pylint: disable=consider-using-f-string,broad-exception-caught
-
 __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -36,7 +34,6 @@ LOGGING_INTERVAL = 30
 
 
 class TestTransferOnf(AbstractPerformanceTest):
-
     @performance(
         default_config={
             "repeats": REPEATS,
@@ -52,9 +49,7 @@ class TestTransferOnf(AbstractPerformanceTest):
                     "unit": "int",
                 },
             },
-            "description": (
-                "Testing transfer on the fly with concurrent copying of files"
-            ),
+            "description": ("Testing transfer on the fly with concurrent copying of files"),
         },
         configs=generate_configs(
             {"files_number": [10000], "files_size": [20480], "threads_num": [10]},
@@ -100,14 +95,12 @@ class TestTransferOnf(AbstractPerformanceTest):
 ################################################################################
 
 
-def _create_files(
-    client: Client, files_num: int, file_size: int, dir_path: str
-) -> None:
-    flushed_print("\t\tStarted creation of {} files".format(files_num))
+def _create_files(client: Client, files_num: int, file_size: int, dir_path: str) -> None:
+    flushed_print(f"\t\tStarted creation of {files_num} files")
     for i in range(files_num):
         if i % 100 == 0:
-            flushed_print("\t\t\tCreated {}nth file".format(i))
-        client.truncate(os.path.join(dir_path, "file{}".format(i)), file_size)
+            flushed_print(f"\t\t\tCreated {i}nth file")
+        client.truncate(os.path.join(dir_path, f"file{i}"), file_size)
 
 
 def _execute_test(
@@ -118,9 +111,7 @@ def _execute_test(
     dir_path: str,
 ) -> list[Result]:
     avg_work = files_number // threads_num
-    intervals = chain(
-        repeat(avg_work, threads_num - 1), [avg_work + files_number % threads_num]
-    )
+    intervals = chain(repeat(avg_work, threads_num - 1), [avg_work + files_number % threads_num])
     i = 0
     workers = []
     queue: ExceptionQueue = Queue()
@@ -135,11 +126,7 @@ def _execute_test(
     for worker in workers:
         worker.start()
 
-    flushed_print(
-        "\t\tStarted {} workers with avg {} file copying task each".format(
-            len(workers), avg_work
-        )
-    )
+    flushed_print(f"\t\tStarted {len(workers)} workers with avg {avg_work} file copying task each")
 
     while workers:
         try:
@@ -150,7 +137,7 @@ def _execute_test(
             raise ex
         finally:
             if time.time() >= logging_time:
-                flushed_print("\t\t\t{} workers alive".format(len(workers)))
+                flushed_print(f"\t\t\t{len(workers)} workers alive")
                 logging_time = time.time() + LOGGING_INTERVAL
 
     if not queue.empty():
@@ -160,33 +147,29 @@ def _execute_test(
 
     return [
         Result(
-            "[{} threads] {} files copied".format(threads_num, files_number),
+            f"[{threads_num} threads] {files_number} files copied",
             end - start,
-            "{} files copying time using oneclient with {}MB size".format(
-                files_number, file_size
-            ),
+            f"{files_number} files copying time using oneclient with {file_size}MB size",
             "seconds",
         )
     ]
 
 
-def _copy_files(
-    client: Client, start: int, end: int, dir_path: str, queue: ExceptionQueue
-) -> None:
+def _copy_files(client: Client, start: int, end: int, dir_path: str, queue: ExceptionQueue) -> None:
     try:
         for i in range(start, end):
-            src_file = os.path.join(dir_path, "file{}".format(i))
-            dst_file = os.path.join(dir_path, "file{}.bak".format(i))
+            src_file = os.path.join(dir_path, f"file{i}")
+            dst_file = os.path.join(dir_path, f"file{i}.bak")
             client.cp(src_file, dst_file)
-    except Exception as ex:
+    except Exception as ex:  # noqa: BLE001 - transport worker failures to the parent thread
         queue.put(ex)
 
 
 def _teardown_after_test(client: Client, files_number: int, dir_path: str) -> None:
     logging_time = time.time() + LOGGING_INTERVAL
     for i in range(files_number):
-        client.rm(os.path.join(dir_path, "file{}".format(i)))
-        client.rm(os.path.join(dir_path, "file{}.bak".format(i)))
+        client.rm(os.path.join(dir_path, f"file{i}"))
+        client.rm(os.path.join(dir_path, f"file{i}.bak"))
         if time.time() >= logging_time:
-            flushed_print("\t\t\tDeleted {}nth file".format(i))
+            flushed_print(f"\t\t\tDeleted {i}nth file")
             logging_time = time.time() + LOGGING_INTERVAL

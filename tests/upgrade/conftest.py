@@ -19,7 +19,7 @@ from tests.utils.environment_utils import clean_env
 from tests.utils.user_utils import Users
 
 
-@pytest.fixture()
+@pytest.fixture
 def tests_controller(
     test_config: JsonObject,
     hosts: Hosts,

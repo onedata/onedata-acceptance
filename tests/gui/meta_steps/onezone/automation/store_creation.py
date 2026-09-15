@@ -27,9 +27,7 @@ from tests.utils.bdd_utils import parsers, wt
         r"configuration:\n(?P<config>(.|\s)*)"
     )
 )
-def create_store_for_workflow(
-    browser_id: str, config: str, selenium: SeleniumDrivers
-) -> None:
+def create_store_for_workflow(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
     """Create store according to given config.
 
     Config format given in yaml is as follows:
@@ -47,9 +45,7 @@ def create_store_for_workflow(
     _create_store_for_workflow(browser_id, config, selenium)
 
 
-def _create_store_for_workflow(
-    browser_id: str, config: str, selenium: SeleniumDrivers
-) -> None:
+def _create_store_for_workflow(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
     data = yaml.load(config, yaml.Loader)
     name = data["name"]
 
@@ -66,9 +62,7 @@ def _create_store_for_workflow(
     button = "Create"
 
     click_add_store_button(selenium, browser_id)
-    write_name_into_text_field_in_modal(
-        selenium, browser_id, name, modal_name, name_textfield
-    )
+    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name, name_textfield)
     choose_option_in_dropdown_menu_in_modal(
         selenium,
         browser_id,

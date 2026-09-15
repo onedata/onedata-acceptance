@@ -7,8 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 import traceback
 from collections.abc import Callable, Mapping
+from http import HTTPStatus
 from itertools import chain
-from typing import Optional
 
 import requests
 import urllib3
@@ -29,11 +29,11 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 type PathPart = str | int
-Headers = Optional[Mapping[str, str]]
-Params = Optional[Mapping[str, Optional[str | int | list[str]]]]
-RequestData = Optional[str | bytes]
-Certificate = Optional[str | tuple[str, str]]
-Auth = Optional[tuple[str, str]]
+Headers = Mapping[str, str] | None
+Params = Mapping[str, str | int | list[str] | None] | None
+RequestData = str | bytes | None
+Certificate = str | tuple[str, str] | None
+Auth = tuple[str, str] | None
 HttpMethod = Callable[..., requests.Response]
 
 
@@ -204,7 +204,7 @@ def http_patch(
     )
 
 
-def http_request(  # pylint: disable=inconsistent-return-statements
+def http_request(
     http_method: HttpMethod,
     ip: str,
     port: int,
@@ -240,15 +240,14 @@ def http_request(  # pylint: disable=inconsistent-return-statements
                 params=params,
                 stream=stream,
             )
-            if 200 <= response.status_code < 300:
+            if HTTPStatus.OK <= response.status_code < HTTPStatus.MULTIPLE_CHOICES:
                 return response
             raise_http_exception(response)
         except HTTPServiceUnavailable as e:
             if i == retries - 1:
                 raise e
             time.sleep(5.0)
-        # pylint: disable=line-too-long,duplicate-except
-        except (ConnectTimeout, ReadTimeout, HTTPServiceUnavailable):
+        except (ConnectTimeout, ReadTimeout):
             print(r"""
              _    _ _______ _______ _____           _____          _      _              _    _ _    _ _   _  _____    _ _ _ 
             | |  | |__   __|__   __|  __ \         / ____|   /\   | |    | |            | |  | | |  | | \ | |/ ____|  | | | |
@@ -256,7 +255,7 @@ def http_request(  # pylint: disable=inconsistent-return-statements
             |  __  |  | |     | |  |  ___/        | |      / /\ \ | |    | |            |  __  | |  | | . ` | | |_ |  | | | |
             | |  | |  | |     | |  | |            | |____ / ____ \| |____| |____        | |  | | |__| | |\  | |__| |  |_|_|_|
             |_|  |_|  |_|     |_|  |_|             \_____/_/    \_\______|______|       |_|  |_|\____/|_| \_|\_____/  (_|_|_)
-            """)
+            """)  # noqa: W291 - preserve the diagnostic ASCII banner
             traceback.print_stack()
             print("Test will freeze to allow debugging!")
             while True:

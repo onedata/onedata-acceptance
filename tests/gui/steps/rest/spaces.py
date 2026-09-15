@@ -72,9 +72,7 @@ def get_user_spaces(zone_hostname: str, user: str, users: Users) -> list[str]:
     ).json()["spaces"]
 
 
-def leave_user_space(
-    zone_hostname: str, user: str, users: Users, space_id: str
-) -> None:
+def leave_user_space(zone_hostname: str, user: str, users: Users, space_id: str) -> None:
     http_delete(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -122,9 +120,7 @@ def assert_no_space_supports_using_rest(
     onepanel_username: str,
     onepanel_password: str,
 ) -> None:
-    assert not get_supported_space_ids(
-        provider_hostname, onepanel_username, onepanel_password
-    )
+    assert not get_supported_space_ids(provider_hostname, onepanel_username, onepanel_password)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

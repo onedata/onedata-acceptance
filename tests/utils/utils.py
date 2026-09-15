@@ -12,10 +12,10 @@ import traceback
 from collections.abc import Callable, Sequence
 from time import sleep, time
 from types import ModuleType
-from typing import Optional, ParamSpec, TypeVar, cast
+from typing import ParamSpec, TypeVar, cast
 
 import pytest
-from decorator import decorator  # pylint: disable=import-error
+from decorator import decorator
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 P = ParamSpec("P")
@@ -44,7 +44,7 @@ def assert_generic(
     if should_fail:
         assert_false(expression, *args, **kwargs)
     else:
-        assert_(expression, *args, **kwargs)  # pylint: disable=deprecated-method
+        assert_(expression, *args, **kwargs)
 
 
 def assert_(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
@@ -52,31 +52,28 @@ def assert_(expression: Callable[..., object], *args: object, **kwargs: object) 
     assert assert_result
 
 
-def assert_false(
-    expression: Callable[..., object], *args: object, **kwargs: object
-) -> None:
+def assert_false(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
     assert_result = expression(*args, **kwargs)
     assert not assert_result
 
 
-def get_fun_name(fun: str) -> Optional[str]:
+def get_fun_name(fun: str) -> str | None:
     if "method" in fun:
-        return fun.split("method ")[1].split(" ")[0]
+        return fun.split("method ")[1].split(" ", maxsplit=1)[0]
     if "function" in fun:
-        return fun.split("function ")[1].split(".")[0]
+        return fun.split("function ")[1].split(".", maxsplit=1)[0]
     return None
 
 
-def assert_expected_failure(
-    fun: Callable[..., object], *args: object, **kwargs: object
-) -> None:
-    with pytest.raises(OSError):
+def assert_expected_failure(fun: Callable[..., object], *args: object, **kwargs: object) -> None:
+    # Filesystem operations can report different OSError subclasses and messages by platform.
+    with pytest.raises(OSError):  # noqa: PT011
         fun(*args, **kwargs)
 
 
 def repeat_failed(
     attempts: int = 10,
-    timeout: Optional[float] = None,
+    timeout: float | None = None,
     interval: float = 0.1,
     exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
@@ -123,7 +120,7 @@ def get_authors(mod: ModuleType) -> list[str]:
     return re.split(r"\s*,\s*", author)
 
 
-def get_suite_description(mod: ModuleType) -> Optional[str]:
+def get_suite_description(mod: ModuleType) -> str | None:
     return mod.__doc__
 
 

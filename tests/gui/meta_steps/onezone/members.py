@@ -68,11 +68,7 @@ def remove_member_from_parent(
         getattr(main_page, list_name)[name].members()
     members_page = _find_members_page(driver, where)
     list_name = member_type + "s"
-    (
-        getattr(members_page, list_name)
-        .items[member_name]
-        .header.click_menu(selenium[browser_id])
-    )
+    (getattr(members_page, list_name).items[member_name].header.click_menu(selenium[browser_id]))
 
     if member_type == "user":
         modal_name = "remove user from "
@@ -230,9 +226,7 @@ def choose_member_and_set_privileges_on_groups_subpage(
     config: str,
 ) -> None:
     go_to_group_subpage(selenium, browser_id, group_name, "members")
-    click_element_in_members_list(
-        selenium, browser_id, member_name, "group", f"{member_type}s"
-    )
+    click_element_in_members_list(selenium, browser_id, member_name, "group", f"{member_type}s")
     see_privileges_for_member(selenium, browser_id, "group", member_type, member_name)
     click_member_checkbox(selenium, browser_id, member_name, f"{member_type}s")
     click_on_bulk_edit(browser_id, selenium)
@@ -257,9 +251,7 @@ def choose_member_and_assert_privileges_on_groups_subpage(
     config: str,
 ) -> None:
     go_to_group_subpage(selenium, browser_id, group_name, "members")
-    click_element_in_members_list(
-        selenium, browser_id, member_name, "group", f"{member_type}s"
-    )
+    click_element_in_members_list(selenium, browser_id, member_name, "group", f"{member_type}s")
     assert_privileges_in_members_subpage(
         selenium, browser_id, member_name, member_type, "group", config, option
     )

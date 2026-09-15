@@ -43,9 +43,9 @@ def verify(tests_controller: UpgradeTestsControllerLike, space_name: str) -> Non
     file_path = os.path.join(space_path, "file_name")
     dir_path = os.path.join(space_path, "dir_name")
     read_text = client.read(file_path)
-    assert TEXT == read_text, f"Read '{read_text}' instead of expected '{TEXT}'"
+    assert read_text == TEXT, f"Read '{read_text}' instead of expected '{TEXT}'"
     client.write(TEXT2, file_path)
     read_text2 = client.read(file_path)
-    assert TEXT2 == read_text2, f"Read '{read_text2}' instead of expected '{TEXT2}'"
+    assert read_text2 == TEXT2, f"Read '{read_text2}' instead of expected '{TEXT2}'"
     client.stat(dir_path)
     client.rm(file_path)

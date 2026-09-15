@@ -110,6 +110,7 @@ def notify_visible_with_text(
                 f"observed messages: {list(seen_popups)}"
             ) from exc
 
+        
         _close_all_detected_popups(driver, seen_popups)
         return False
 
@@ -133,9 +134,7 @@ def dismiss_notifies_if_present(
     _close_all_detected_popups(driver, seen_popups)
 
 
-def _close_all_detected_popups(
-    driver: WebDriver, seen_popups: set[CapturedPopup]
-) -> None:
+def _close_all_detected_popups(driver: WebDriver, seen_popups: set[CapturedPopup]) -> None:
     for popup in seen_popups:
         web_elem = popup.web_elem
 
@@ -157,25 +156,15 @@ def _close_all_detected_popups(
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on Onedata page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_loading_error(
-    selenium: SeleniumDrivers, browser_id: str, error_msg: str
-) -> None:
+def assert_loading_error(selenium: SeleniumDrivers, browser_id: str, error_msg: str) -> None:
     given_msg = OnePage(selenium[browser_id]).loading_error.lower()
-    assert (
-        error_msg.lower() in given_msg
-    ), f"{error_msg} not in {given_msg} error message"
+    assert error_msg.lower() in given_msg, f"{error_msg} not in {given_msg} error message"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees "{error_msg}" error on public Onedata page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on public Onedata page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_loading_error_public_page(
     selenium: SeleniumDrivers, browser_id: str, error_msg: str
 ) -> None:
     given_msg = PublicOnePage(selenium[browser_id]).loading_error.lower()
-    assert (
-        error_msg.lower() in given_msg
-    ), f"{error_msg} not in {given_msg} error message"
+    assert error_msg.lower() in given_msg, f"{error_msg} not in {given_msg} error message"

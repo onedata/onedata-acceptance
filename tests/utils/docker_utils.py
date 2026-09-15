@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import subprocess
 
-from environment import docker  # pylint: disable=import-error
+from environment import docker
 
 DockerCommand = str | list[str]
 

@@ -90,12 +90,8 @@ def change_passphrase(
     sub_item = "Emergency passphrase"
     record = "oneprovider-1"
 
-    wt_click_on_subitem_for_item(
-        selenium, [browser_id], sidebar, sub_item, record, hosts
-    )
-    click_button_on_emergency_passphrase_page(
-        selenium, browser_id, change_passphrase_button
-    )
+    wt_click_on_subitem_for_item(selenium, [browser_id], sidebar, sub_item, record, hosts)
+    click_button_on_emergency_passphrase_page(selenium, browser_id, change_passphrase_button)
     type_text_to_input_on_emergency_passphrase_page(
         selenium,
         browser_id,
