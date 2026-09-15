@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import subprocess as sp
 from collections.abc import Mapping
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -112,8 +112,8 @@ def login_to_cdmi(
     username: str,
     users: Mapping[str, TokenUserLike],
     host: str,
-    access_token: Optional[str] = None,
-    identity_token: Optional[str] = None,
+    access_token: str | None = None,
+    identity_token: str | None = None,
 ) -> ApiClient_CDMI:
 
     configuration = Conf_CDMI()
@@ -136,15 +136,13 @@ def login_to_provider(
     username: str,
     users: Mapping[str, TokenUserLike],
     host: str,
-    access_token: Optional[str] = None,
+    access_token: str | None = None,
 ) -> ApiClient_provider:
 
     header_value = access_token if access_token else users[username].token
 
     configuration = Conf_provider()
-    setup_basic_configuration(
-        configuration, host, OZ_REST_PORT, PROVIDER_REST_PATH_PREFIX
-    )
+    setup_basic_configuration(configuration, host, OZ_REST_PORT, PROVIDER_REST_PATH_PREFIX)
 
     return ApiClient_provider(
         configuration=configuration,
@@ -158,9 +156,7 @@ def construct_curl_get_cmd(link: str) -> str:
 
 
 @wt(parsers.parse("{sender} sends token to {receiver}"))
-def send_copied_token_to_other_user(
-    sender: str, receiver: str, tmp_memory: TmpMemory
-) -> None:
+def send_copied_token_to_other_user(sender: str, receiver: str, tmp_memory: TmpMemory) -> None:
     tmp_memory[receiver]["mailbox"]["token"] = tmp_memory[sender]["token"]
 
 
@@ -170,7 +166,7 @@ def execute_copied_curl_command(
     displays: dict[str, str],
     clipboard: Clipboard,
     tmp_memory: TmpMemory,
-    config: Optional[Mapping[str, str]] = None,
+    config: Mapping[str, str] | None = None,
 ) -> None:
     _execute_curl_command(
         clipboard.paste(display=displays[browser_id]),
@@ -182,9 +178,9 @@ def execute_copied_curl_command(
 def _execute_curl_command(
     command: str,
     tmp_memory: TmpMemory,
-    config: Optional[Mapping[str, str]],
-    flags: Optional[list[str]] = None,
-    file_out: Optional[str | LocalPath] = None,
+    config: Mapping[str, str] | None,
+    flags: list[str] | None = None,
+    file_out: str | LocalPath | None = None,
 ) -> None:
     cmd = (
         replace_vars_in_cmd_if_exist(command, config=config)
@@ -194,9 +190,7 @@ def _execute_curl_command(
         + (f" -o {file_out}" if file_out else "")
     )
 
-    output = sp.run(
-        cmd, capture_output=True, text=True, shell=True, check=True, timeout=60
-    )
+    output = sp.run(cmd, capture_output=True, text=True, shell=True, check=True, timeout=60)
 
     output_message, http_status_code = output.stdout.split("http status code:")
     tmp_memory["http status code"] = http_status_code
@@ -206,8 +200,7 @@ def _execute_curl_command(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} executes copied command with "
-        "environment variables:\n{config}"
+        "user of {browser_id} executes copied command with environment variables:\n{config}"
     )
 )
 def execute_copied_curl_command_with_env_vars(
@@ -225,17 +218,12 @@ def execute_copied_curl_command_with_env_vars(
     """
     loaded_config = yaml.load(config, yaml.Loader)
     resolved_config = {
-        k: try_to_resolve_items(v, selenium["request"])
-        for k, v in loaded_config.items()
+        k: try_to_resolve_items(v, selenium["request"]) for k, v in loaded_config.items()
     }
-    execute_copied_curl_command(
-        browser_id, displays, clipboard, tmp_memory, config=resolved_config
-    )
+    execute_copied_curl_command(browser_id, displays, clipboard, tmp_memory, config=resolved_config)
 
 
-def replace_vars_in_cmd_if_exist(
-    cmd: str, config: Optional[Mapping[str, str]] = None
-) -> str:
+def replace_vars_in_cmd_if_exist(cmd: str, config: Mapping[str, str] | None = None) -> str:
     if config is None:
         return cmd
     new_cmd = cmd
@@ -261,9 +249,7 @@ def try_to_resolve_items(val: str, request: FixtureRequestLike) -> str:
         "space_owner_privileges": lambda _: space_owner_privileges,
         "space_manager_privileges": lambda _: space_manager_privileges,
         "space_member_privileges": lambda _: space_member_privileges,
-        "resolve_compose_json": lambda x: json.dumps(
-            {x.split(",")[0]: x.split(",")[1]}
-        ),
+        "resolve_compose_json": lambda x: json.dumps({x.split(",")[0]: x.split(",")[1]}),
         "resolve_compose_list": lambda x: json.dumps([x]),
     }
 
@@ -285,11 +271,7 @@ def try_to_resolve_items(val: str, request: FixtureRequestLike) -> str:
     return val
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that output of executed command contains:\n{config}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that output of executed command contains:\n{config}"))
 def assert_command_output_contains(
     request: FixtureRequestLike, tmp_memory: TmpMemory, config: str
 ) -> None:
@@ -299,24 +281,22 @@ def assert_command_output_contains(
     for k, v in expected.items():
         if isinstance(v, list):
             assert len(v) == len(output[k]), (
-                f"expected {len(v)} elements from REST command in output,"
-                f" but got {len(output[k])}."
+                f"expected {len(v)} elements from REST command in output, but got {len(output[k])}."
             )
-            for el in v:
-                el = try_to_resolve_items(str(el), request)
-                assert el in output[k], f"item {el} not in output command {output[k]}"
+            for configured_element in v:
+                resolved_element = try_to_resolve_items(str(configured_element), request)
+                assert resolved_element in output[k], (
+                    f"item {resolved_element} not in output command {output[k]}"
+                )
         else:
             val = try_to_resolve_items(str(v), request)
-            error_message = (
-                f"expected {k}: {val} from REST command in output, but got {output[k]}"
-            )
+            error_message = f"expected {k}: {val} from REST command in output, but got {output[k]}"
             assert str(output[k]) == str(val), error_message
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that output of executed command is equal "
-        'to: "{expected_output}"'
+        'user of {browser_id} sees that output of executed command is equal to: "{expected_output}"'
     )
 )
 def assert_command_output_equals(tmp_memory: TmpMemory, expected_output: str) -> None:
@@ -327,8 +307,7 @@ def assert_command_output_equals(tmp_memory: TmpMemory, expected_output: str) ->
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that executed curl command "
-        "returned successful HTTP code"
+        "user of {browser_id} sees that executed curl command returned successful HTTP code"
     )
 )
 def assert_curl_command_successful_http_code(tmp_memory: TmpMemory) -> None:
@@ -392,10 +371,10 @@ def download_using_curl_with_forward(
     displays: dict[str, str],
     tmpdir: LocalPath,
     browsers_to_users: Mapping[str, str],
-    file_out: Optional[str],
+    file_out: str | None,
 ) -> None:
     download_link = clipboard.paste(display=displays[browser_id])
-    output_path: Optional[str | LocalPath] = file_out
+    output_path: str | LocalPath | None = file_out
     if file_out is not None:
         output_path = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
 

@@ -12,13 +12,13 @@ import sys
 import time
 from collections.abc import Callable
 from types import ModuleType
-from typing import Optional, Protocol
+from typing import Protocol
 
 
 class TestNodeLike(Protocol):
     nodeid: str
     name: str
-    originalname: Optional[str]
+    originalname: str | None
 
 
 def config_file(relative_file_path: str) -> str:
@@ -34,7 +34,7 @@ def config_file(relative_file_path: str) -> str:
     caller_mod_file_path = caller_mod.__file__
     if caller_mod_file_path is None:
         raise AttributeError(f"Module {caller_mod.__name__} has no __file__ attribute")
-    return f"{caller_mod_file_path.rstrip(".py")}_data/{relative_file_path}"
+    return f"{caller_mod_file_path.rstrip('.py')}_data/{relative_file_path}"
 
 
 def get_file_name(file_path: str) -> str:
@@ -52,10 +52,10 @@ def get_logdir_name(root_dir: str, test_name: str) -> str:
     "tests/mytest/test1.<timestamp>"
     """
     timestamp = str(time.time())
-    return os.path.join(root_dir, ".".join([test_name, timestamp]))
+    return os.path.join(root_dir, f"{test_name}.{timestamp}")
 
 
-def make_logdir(root_dir: Optional[str], test_name: str) -> str:
+def make_logdir(root_dir: str | None, test_name: str) -> str:
     """Creates logdir if it doesn't exist."""
     if root_dir is None:
         raise ValueError("Root directory cannot be None")
@@ -80,13 +80,13 @@ def get_json_files(directory: str, relative: bool = False) -> list[str]:
 
 def save_log_to_file(file_path: str, log: str) -> None:
     """Saves log to file pointed by file_path"""
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         f.write(log)
 
 
 def append_log_to_file(path: str, log: str) -> None:
     """Appends log to file pointed by path"""
-    with open(path, "a") as f:
+    with open(path, "a", encoding="utf-8") as f:
         f.write(f"{log}\n\n")
         os.utime(path, None)
 
@@ -104,18 +104,18 @@ def get_function(module: ModuleType, function_name: str) -> Callable[..., object
 def ensure_json(file: str) -> str:
     """Ensures that file has .json extension."""
     if os.path.splitext(file)[1] != ".json":
-        file = ".".join([file, "json"])
+        file = f"{file}.json"
     return file
 
 
 def ensure_yaml(file: str) -> str:
     """Ensures that file has .yaml extension."""
     if os.path.splitext(file)[1] != ".yaml":
-        file = ".".join([file, "yaml"])
+        file = f"{file}.yaml"
     return file
 
 
-def absolute_path_to_env_file(directory: Optional[str], file: str) -> str:
+def absolute_path_to_env_file(directory: str | None, file: str) -> str:
     """Returns absolute path to environment file from dir. Ensures that file
     has .yaml extension"""
     if directory is None:
@@ -166,8 +166,7 @@ def build_test_dir_name(node: TestNodeLike, max_length: int = 180) -> str:
 
     if len(test_dir_name) > max_length:
         print(
-            "Applying extra shortening, because test dir name is still too long:"
-            f" {test_dir_name}"
+            f"Applying extra shortening, because test dir name is still too long: {test_dir_name}"
         )
         test_dir_name = test_dir_name[:max_length]
 

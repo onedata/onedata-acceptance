@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import xml.etree.ElementTree as ET
-from typing import Optional
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -61,16 +60,12 @@ SELECTABLE_FIELDS = {
 
 
 def register_namespace_by_metadata_type(metadata_type: str) -> None:
-    namespaces = (
-        NAMESPACES_OPENAIRE
-        if metadata_type.lower() == "openaire"
-        else NAMESPACES_DATACITE
-    )
+    namespaces = NAMESPACES_OPENAIRE if metadata_type.lower() == "openaire" else NAMESPACES_DATACITE
     for prefix, uri in namespaces.items():
         ET.register_namespace(prefix, uri)
 
 
-def map_namespace_prefix_to_uri(prefix: str, metadata_type: str) -> Optional[str]:
+def map_namespace_prefix_to_uri(prefix: str, metadata_type: str) -> str | None:
     prefix = prefix.lower()
     if metadata_type.lower() == "openaire":
         return NAMESPACES_OPENAIRE.get(prefix)

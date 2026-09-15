@@ -26,4 +26,4 @@ class AddStorage(PageObject):
     generate_token = NamedButton("a.clickable", text="generate another token")
 
     def __str__(self) -> str:
-        return 'Add storage modal for "{}"'.format(self.title)
+        return f'Add storage modal for "{self.title}"'

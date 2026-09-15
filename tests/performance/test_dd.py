@@ -1,7 +1,5 @@
 """This module contains performance tests of dd operation in oneclient."""
 
-# pylint: disable=consider-using-f-string,invalid-name
-
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -32,7 +30,6 @@ SYSBENCH_OUTPUT_PATTERN = re.compile(SYSBENCH_OUTPUT_REGEX, re.MULTILINE)
 
 
 class Testdd(AbstractPerformanceTest):
-
     @performance(
         default_config={
             "repeats": REPEATS,
@@ -72,9 +69,7 @@ class Testdd(AbstractPerformanceTest):
             directory=client_directio.absolute_path("space1")
         )
 
-        test_file_proxy = client_proxy.mkstemp(
-            directory=client_proxy.absolute_path("space1")
-        )
+        test_file_proxy = client_proxy.mkstemp(directory=client_proxy.absolute_path("space1"))
         test_file_host = client_proxy.mkstemp(directory=user_home_dir(user_proxy))
 
         test_result1 = execute_dd_test(
@@ -139,15 +134,15 @@ def execute_dd_test(
 
     return [
         Result(
-            "write_throughput_{}".format(description),
+            f"write_throughput_{description}",
             write_throughput,
-            "Throughput of write operation in case of {}".format(description),
+            f"Throughput of write operation in case of {description}",
             "MB/s",
         ),
         Result(
-            "read_throughput_{}".format(description),
+            f"read_throughput_{description}",
             read_throughput,
-            "Throughput of read operation in case of {}".format(description),
+            f"Throughput of read operation in case of {description}",
             "MB/s",
         ),
     ]
@@ -197,10 +192,10 @@ def convert_size(value: int | float, prefix: str, convert_to_prefix: str) -> flo
     convert_to_prefix = convert_to_prefix.upper()
     si_powers_prefixes = ["kB", "MB", "GB", "TB"]
     si_powers_values = [1000**p for p in range(1, 5)]
-    si_powers = dict(zip(si_powers_prefixes, si_powers_values))
+    si_powers = dict(zip(si_powers_prefixes, si_powers_values, strict=True))
     powers_prefixes = ["K", "M", "G", "T"]
     powers_values = [1024**p for p in range(1, 5)]
-    powers = dict(zip(powers_prefixes, powers_values))
+    powers = dict(zip(powers_prefixes, powers_values, strict=True))
 
     if is_SI_prefix(prefix):
         factor = float(si_powers[prefix]) / powers[convert_to_prefix]
@@ -210,9 +205,9 @@ def convert_size(value: int | float, prefix: str, convert_to_prefix: str) -> flo
     return value * factor
 
 
-def is_SI_prefix(prefix: str) -> bool:
+def is_SI_prefix(prefix: str) -> bool:  # noqa: N802 - SI is the domain-standard acronym
     return prefix.endswith("B")
 
 
-def SI_prefix_to_default(prefix: str) -> str:
+def SI_prefix_to_default(prefix: str) -> str:  # noqa: N802 - SI is the domain-standard acronym
     return prefix.upper().strip("B")

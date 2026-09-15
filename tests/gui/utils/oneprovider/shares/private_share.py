@@ -30,9 +30,7 @@ class DublinCoreMetadata(PageObject):
     header = WebElement(".metadata-group-header")
 
     def click_on_background(self) -> None:
-        ActionChains(self.driver).move_to_element_with_offset(
-            self.header, 0, 0
-        ).click().perform()
+        ActionChains(self.driver).move_to_element_with_offset(self.header, 0, 0).click().perform()
 
     def write_to_last_input(self, driver: WebDriver, val: str, which: str) -> None:
         css_selector = f'.form-control[data-dc-element-type="{which}"]'
@@ -66,9 +64,7 @@ class DublinCoreMetadata(PageObject):
 class EDMBoxForm(PageObject):
     name = id = Label(".edm-property-type-name", scroll=False)
     language = WebElement(".edm-lang-dropdown-trigger", scroll=False)
-    input = WebElement(
-        ".edm-property-value input, .edm-property-value textarea", scroll=False
-    )
+    input = WebElement(".edm-property-value input, .edm-property-value textarea", scroll=False)
     dropdown = WebElement(".edm-property-value", scroll=False)
 
 
@@ -98,12 +94,8 @@ class Description(PageObject):
 
 
 class PrivateShareView(PublicShareView):
-    dublin_core_metadata_form = WebItem(
-        ".publicdata-one-carousel", cls=DublinCoreMetadata
-    )
-    edm_metadata_form = WebItem(
-        ".publicdata-one-carousel", cls=EDMMetadataForm, scroll=False
-    )
+    dublin_core_metadata_form = WebItem(".publicdata-one-carousel", cls=DublinCoreMetadata)
+    edm_metadata_form = WebItem(".publicdata-one-carousel", cls=EDMMetadataForm, scroll=False)
 
     dropdown = DropdownSelector(".ember-basic-dropdown-content")
 

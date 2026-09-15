@@ -13,17 +13,11 @@ class Options(PageObject):
     name = id = Label(".one-label")
 
     def get_state(self) -> str:
-        return (
-            "disabled"
-            if "disabled" in self.web_elem.get_attribute("class")
-            else "enabled"
-        )
+        return "disabled" if "disabled" in self.web_elem.get_attribute("class") else "enabled"
 
 
 class DataRowMenu(PageObject):
-    options = WebItemsSequence(
-        ".file-actions.dropdown-menu li:not(.separator)", cls=Options
-    )
+    options = WebItemsSequence(".file-actions.dropdown-menu li:not(.separator)", cls=Options)
 
     def choose_option(self, name: str) -> None:
         if name not in self.options:

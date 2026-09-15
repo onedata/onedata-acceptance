@@ -58,9 +58,8 @@ class PageObjectMeta(ABCMeta):
         cls_dict: dict[str, object],
     ) -> None:
         for key, val in cls_dict.items():
-            if isinstance(val, AbstractWebElement):
-                if val.descriptor_name in ("id", ""):
-                    val.descriptor_name = key
+            if isinstance(val, AbstractWebElement) and val.descriptor_name in ("id", ""):
+                val.descriptor_name = key
         super().__init__(cls_name, bases, cls_dict)
 
 
@@ -125,9 +124,7 @@ class PageObject(AbstractPageObject):
         and we use it as an additional check.
         """
 
-        return self.web_elem.is_enabled() and not element_has_class(
-            self.web_elem, "disabled"
-        )
+        return self.web_elem.is_enabled() and not element_has_class(self.web_elem, "disabled")
 
     def click(self) -> None:
         click_on_web_elem(
@@ -150,7 +147,7 @@ class ExpandableMixin:
 
     def is_expanded(self) -> bool:
         aria_expanded = self._toggle.get_attribute("aria-expanded")
-        return bool(aria_expanded and "true" == aria_expanded)
+        return bool(aria_expanded and aria_expanded == "true")
 
     def expand(self) -> None:
         if not self.is_expanded():

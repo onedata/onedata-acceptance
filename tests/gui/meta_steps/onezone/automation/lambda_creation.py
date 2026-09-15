@@ -6,9 +6,11 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import os
 import time
+from typing import cast
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -43,21 +45,17 @@ from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import transform, upload_lambda_path
-from tests.type_definitions import SeleniumDrivers
+from tests.type_definitions import JsonObject, SeleniumDrivers
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 
-ALL_LAMBDA_NAMES = []
+ALL_LAMBDA_NAMES: list[str] = []
+ORDINAL_SUFFIXES = "tsnrhtdd"
+ORDINAL_SUFFIX_COUNT = 4
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} creates lambda with following configuration:\n{config}"
-    )
-)
-def create_lambda_manually(
-    browser_id: str, config: str, selenium: SeleniumDrivers
-) -> None:
+@wt(parsers.parse("user of {browser_id} creates lambda with following configuration:\n{config}"))
+def create_lambda_manually(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
     """Create lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -94,79 +92,62 @@ def create_lambda_manually(
     _create_lambda_manually(browser_id, config, selenium)
 
 
-def _create_lambda_manually(
-    browser_id: str, config: str, selenium: SeleniumDrivers
+def _create_lambda_manually(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
+    data = cast(JsonObject, yaml.load(config, yaml.Loader))
+    _fill_lambda_basic_fields(selenium, browser_id, data)
+    _add_lambda_parameters(
+        selenium,
+        browser_id,
+        cast(list[JsonObject], data.get("configuration parameters", [])),
+        "configuration parameters",
+    )
+    _add_lambda_parameters(
+        selenium,
+        browser_id,
+        cast(list[JsonObject], data.get("arguments", [])),
+        "argument",
+    )
+    _add_lambda_parameters(
+        selenium,
+        browser_id,
+        cast(list[JsonObject], data.get("results", [])),
+        "result",
+    )
+    confirm_lambda_creation_or_edition(selenium, browser_id, "lambda")
+
+
+def _fill_lambda_basic_fields(selenium: SeleniumDrivers, browser_id: str, data: JsonObject) -> None:
+    click_add_new_button_in_menu_bar(selenium, browser_id, "Add new lambda")
+    write_text_into_lambda_form(selenium, browser_id, cast(str, data["name"]), "lambda name")
+    write_text_into_lambda_form(
+        selenium, browser_id, cast(str, data["docker image"]), "docker image"
+    )
+    read_only_option = "checks" if data.get("read-only", True) else "unchecks"
+    mount_space_option = "checks" if data.get("mount space", True) else "unchecks"
+    switch_toggle_in_lambda_form(selenium, browser_id, read_only_option, "Read only")
+    switch_toggle_in_lambda_form(selenium, browser_id, mount_space_option, "Mount space")
+
+
+def _add_lambda_parameters(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    parameters: list[JsonObject],
+    parameter_option: str,
 ) -> None:
+    for index, parameter in enumerate(parameters, start=1):
+        add_parameter_into_lambda_form(
+            selenium,
+            browser_id,
+            parameter_option,
+            cast(str, parameter["name"]),
+            cast(str, parameter["type"]),
+            _ordinal(index),
+        )
 
-    button = "Add new lambda"
-    name_field = "lambda name"
-    docker_field = "docker image"
-    read_only_toggle = "Read only"
-    mount_space_toggle = "Mount space"
-    argument_option = "argument"
-    conf_param_option = "configuration parameters"
-    result_option = "result"
-    option = "lambda"
 
-    data = yaml.load(config, yaml.Loader)
-    name = data["name"]
-    docker_image = data["docker image"]
-    read_only = data.get("read-only", True)
-    mount_space = data.get("mount space", True)
-    arguments = data.get("arguments", False)
-    results = data.get("results", False)
-    configuration_parameters = data.get("configuration parameters", False)
-
-    read_only_option = "checks" if read_only else "unchecks"
-    mount_space_option = "checks" if mount_space else "unchecks"
-
-    click_add_new_button_in_menu_bar(selenium, browser_id, button)
-    write_text_into_lambda_form(selenium, browser_id, name, name_field)
-    write_text_into_lambda_form(selenium, browser_id, docker_image, docker_field)
-    switch_toggle_in_lambda_form(
-        selenium, browser_id, read_only_option, read_only_toggle
-    )
-    switch_toggle_in_lambda_form(
-        selenium, browser_id, mount_space_option, mount_space_toggle
-    )
-
-    def ordinal(n: int) -> str:
-        return f"{n}{'tsnrhtdd'[(n // 10 % 10 != 1) * (n % 10 < 4) * n % 10:: 4]}"
-
-    if configuration_parameters:
-        for i, config_param in enumerate(configuration_parameters):
-            add_parameter_into_lambda_form(
-                selenium,
-                browser_id,
-                conf_param_option,
-                config_param["name"],
-                config_param["type"],
-                ordinal(i + 1),
-            )
-
-    if arguments:
-        for i, args in enumerate(arguments):
-            add_parameter_into_lambda_form(
-                selenium,
-                browser_id,
-                argument_option,
-                args["name"],
-                args["type"],
-                ordinal(i + 1),
-            )
-
-    if results:
-        for i, res in enumerate(results):
-            add_parameter_into_lambda_form(
-                selenium,
-                browser_id,
-                result_option,
-                res["name"],
-                res["type"],
-                ordinal(i + 1),
-            )
-
-    confirm_lambda_creation_or_edition(selenium, browser_id, option)
+def _ordinal(number: int) -> str:
+    suffix_index = (number // 10 % 10 != 1) * (number % 10 < ORDINAL_SUFFIX_COUNT) * number % 10
+    return f"{number}{ORDINAL_SUFFIXES[suffix_index::ORDINAL_SUFFIX_COUNT]}"
 
 
 @wt(
@@ -215,7 +196,7 @@ def change_parameter_type_in_lambda_form(
     page = OZLoggedIn(driver).automation.lambdas_page.form
     subpage = getattr(page, transform(option))
 
-    ordinal = "1st" if not ordinal else ordinal
+    ordinal = ordinal if ordinal else "1st"
     bracket_name = "bracket_" + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
     css_selector = "#" + object_bracket.name.web_elem.get_attribute("id")
@@ -257,9 +238,7 @@ def add_parameter_into_lambda_form(
 ) -> None:
     click_add_parameter_button_in_lambda_form(selenium, browser_id, option)
     enter_parameter_name_in_lambda_form(selenium, browser_id, option, ordinal, name)
-    select_parameter_type_in_lambda_form(
-        selenium, browser_id, option, ordinal, param_type
-    )
+    select_parameter_type_in_lambda_form(selenium, browser_id, option, ordinal, param_type)
 
 
 @wt(
@@ -276,7 +255,7 @@ def modify_parameter_in_lambda_form(
     page = OZLoggedIn(driver).automation.lambdas_page.form
     data = yaml.load(config, yaml.Loader)
     subpage = page.argument
-    ordinal = "1st" if not ordinal else ordinal
+    ordinal = ordinal if ordinal else "1st"
     bracket_name = "bracket_" + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
     object_bracket.settings()
@@ -315,12 +294,10 @@ def upload_all_lambda_dumps_from_automation_examples(
     inventory: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    global ALL_LAMBDA_NAMES
-    ALL_LAMBDA_NAMES = [
-        f
-        for f in os.listdir(upload_lambda_path(None))
-        if os.path.isdir(upload_lambda_path(f))
-    ]
+    ALL_LAMBDA_NAMES.clear()
+    ALL_LAMBDA_NAMES.extend(
+        f for f in os.listdir(upload_lambda_path(None)) if os.path.isdir(upload_lambda_path(f))
+    )
     for lambda_name in ALL_LAMBDA_NAMES:
         _upload_lambda_dump_from_automation_examples(
             selenium,
@@ -350,17 +327,16 @@ def _upload_lambda_dump_from_automation_examples(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} downloads and removes "
-        'each lambda from "{inventory}" inventory'
+        'user of {browser_id} downloads and removes each lambda from "{inventory}" inventory'
     )
 )
 def download_and_remove_all_lambda_dumps_from_inventory(
     selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
 ) -> None:
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
-        visible_lambda_name = get_lambda_dump(lamda_name)["revision"][
-            "atmLambdaRevision"
-        ]["_data"]["name"]
+        visible_lambda_name = get_lambda_dump(lamda_name)["revision"]["atmLambdaRevision"]["_data"][
+            "name"
+        ]
         download_and_remove_lambda_dump_from_inventory(
             selenium,
             browser_id,
@@ -402,9 +378,7 @@ def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(
     browser_id: str, tmpdir: LocalPath
 ) -> None:
     for lamda_name in ALL_LAMBDA_NAMES:
-        assert_downloaded_and_uploaded_lambda_dumps_the_same(
-            browser_id, lamda_name, tmpdir
-        )
+        assert_downloaded_and_uploaded_lambda_dumps_the_same(browser_id, lamda_name, tmpdir)
 
 
 def assert_downloaded_and_uploaded_lambda_dumps_the_same(
@@ -414,19 +388,17 @@ def assert_downloaded_and_uploaded_lambda_dumps_the_same(
     dump_lambda_name = uploaded_dump["revision"]["atmLambdaRevision"]["_data"]["name"]
     has_downloaded_workflow_file_content(browser_id, tmpdir, dump_lambda_name + ".json")
 
-    with open(tmpdir.join(browser_id, "download", dump_lambda_name + ".json")) as f:
+    with open(
+        tmpdir.join(browser_id, "download", dump_lambda_name + ".json"), encoding="utf-8"
+    ) as f:
         downloaded_dump = json.load(f)
 
     # remove keys
     downloaded_dump.pop("originalAtmLambdaId")
     uploaded_dump.pop("originalAtmLambdaId")
-    try:
+    with contextlib.suppress(KeyError):
         uploaded_dump["revision"]["atmLambdaRevision"]["_data"].pop("checksum")
-    except KeyError:
-        pass
-    error_message = (
-        f"Lambda dumps differ, uploaded: {uploaded_dump}, downloaded: {downloaded_dump}"
-    )
+    error_message = f"Lambda dumps differ, uploaded: {uploaded_dump}, downloaded: {downloaded_dump}"
     # test may start failing, because correct order in dicts is not guaranteed
     # in order to fix implement keys sorting
     assert downloaded_dump == uploaded_dump, error_message

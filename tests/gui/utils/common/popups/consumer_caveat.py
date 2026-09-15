@@ -56,9 +56,9 @@ class ConsumerCaveat(PageObject):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def wait_for_consumer_types_state(self, is_open: bool) -> None:
-        assert (
-            len(self.consumer_types) > 0
-        ) == is_open, f"Consumer types dropdown in {self} did not {'open' if is_open else 'close'}"
+        assert (len(self.consumer_types) > 0) == is_open, (
+            f"Consumer types dropdown in {self} did not {'open' if is_open else 'close'}"
+        )
 
     def select_consumer_type(self, consumer_type: str) -> None:
         self.choose_consumer_type(consumer_type)
@@ -76,9 +76,9 @@ class ConsumerCaveat(PageObject):
     def wait_for_consumers_to_load(self) -> None:
         consumers = self.consumers
         assert len(consumers) > 0, f"No consumers loaded in {self}"
-        assert all(
-            consumer.name for consumer in consumers
-        ), f"Not all consumers in {self} have their names loaded"
+        assert all(consumer.name for consumer in consumers), (
+            f"Not all consumers in {self} have their names loaded"
+        )
 
     def __str__(self) -> str:
         return "Consumer caveat popup"

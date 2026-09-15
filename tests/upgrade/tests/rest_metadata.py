@@ -133,9 +133,7 @@ def verify_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     new_expected_result = expected_xattrs_meta.copy()
     new_expected_result.remove({"licence1": "MIT1"})
     new_expected_result.append(new_xattr)
-    assert formatted_res == new_expected_result, err_msg.format(
-        new_expected_result, formatted_res
-    )
+    assert formatted_res == new_expected_result, err_msg.format(new_expected_result, formatted_res)
 
 
 def create_example_content_in_space(client: OneClientLike) -> None:

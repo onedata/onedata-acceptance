@@ -4,7 +4,6 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Optional
 
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
@@ -73,15 +72,13 @@ def create_xattr_columns_in_columns_menu_in_browser(
     tmp_memory: TmpMemory,
     name: str,
     with_label: bool = False,
-    label_name: Optional[str] = None,
+    label_name: str | None = None,
 ) -> None:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
 
     click_configure_columns_button(browser)
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
+    wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
 
     new_column_button = Popups(driver).configure_columns_menu.new_column_button
     wait_for_item_to_appear(new_column_button.web_elem)
@@ -212,17 +209,15 @@ def create_json_column_in_columns_menu(
     browser_id: str,
     tmp_memory: TmpMemory,
     which_browser: str,
-    label_name: Optional[str],
+    label_name: str | None,
     mode: str,
-    option: Optional[str],
+    option: str | None,
 ) -> None:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
 
     click_configure_columns_button(browser)
-    wait_for_item_to_appear(
-        Popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
+    wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
 
     columns_menu = Popups(driver).configure_columns_menu
     columns_menu.new_column_button.click()

@@ -18,9 +18,7 @@ from tests.utils.utils import element_has_class
 
 
 class SettingDropdown(PageObject, ExpandableMixin):
-    options = WebItemsSequence(
-        "ul.dropdown-menu-list li.clickable", cls=ButtonWithTextPageObject
-    )
+    options = WebItemsSequence("ul.dropdown-menu-list li.clickable", cls=ButtonWithTextPageObject)
     _toggle = WebElement('.dropdown-toggle[data-toggle="dropdown"]')
 
 
@@ -59,6 +57,4 @@ class PermissionTable(PageObject):
 
 class GroupContentPage(PageObject):
     sidebar = WebItem(".secondary-sidebar", cls=GroupsSidebar)
-    permission_table = WebItem(
-        "#content-scroll .permissions-table", cls=PermissionTable
-    )
+    permission_table = WebItem("#content-scroll .permissions-table", cls=PermissionTable)

@@ -175,9 +175,7 @@ def assert_details_of_recent_transfer_op(
     selenium: SeleniumDrivers,
 ) -> None:
     if client.lower() == "rest":
-        assert_recent_transfer_details_rest(
-            user, users, host, hosts, space, spaces, config
-        )
+        assert_recent_transfer_details_rest(user, users, host, hosts, space, spaces, config)
     elif client.lower() == "web gui":
         open_transfers_page(selenium, user, host, space, hosts)
         assert_ended_transfer(selenium, user, item_type, config, hosts)

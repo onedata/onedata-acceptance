@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping, MutableMapping
-from typing import NotRequired, Optional, Protocol, TypedDict, cast
+from typing import NotRequired, Protocol, TypedDict, cast
 
 import yaml
 
@@ -40,9 +40,7 @@ class CredentialsLike(Protocol):
 
 
 @given(
-    parsers.parse(
-        'initial inventories configuration in "{zone_name}" Onezone service:\n{config}'
-    )
+    parsers.parse('initial inventories configuration in "{zone_name}" Onezone service:\n{config}')
 )
 def inventories_creation(
     config: str,
@@ -87,9 +85,7 @@ def inventories_creation(
         inventory2:
             owner: user2
     """
-    _inventories_creation(
-        config, hosts, users, zone_name, admin_credentials, groups, inventories
-    )
+    _inventories_creation(config, hosts, users, zone_name, admin_credentials, groups, inventories)
 
 
 def _inventories_creation(
@@ -130,16 +126,14 @@ def _inventories_creation(
             )
 
 
-def _unpack_member_entry(entry: MemberEntry) -> tuple[str, Optional[list[str]]]:
+def _unpack_member_entry(entry: MemberEntry) -> tuple[str, list[str] | None]:
     if isinstance(entry, str):
         return entry, None
     [(name, options)] = entry.items()
     return name, options["privileges"]
 
 
-def _create_inventory(
-    zone_hostname: str, owner: CredentialsLike, inventory_name: str
-) -> str:
+def _create_inventory(zone_hostname: str, owner: CredentialsLike, inventory_name: str) -> str:
     inventory_properties = json.dumps({"name": inventory_name})
 
     response = http_post(
@@ -158,12 +152,9 @@ def _add_user_to_inventory(
     admin_credentials: CredentialsLike,
     inventory_id: str,
     user_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,
@@ -182,12 +173,9 @@ def _add_group_to_inventory(
     admin_credentials: CredentialsLike,
     inventory_id: str,
     group_id: str,
-    privileges: Optional[list[str]],
+    privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,

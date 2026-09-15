@@ -10,11 +10,12 @@ import os
 import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
+from contextlib import suppress as contextlib_suppress
 from enum import Enum
 from functools import partial
 from itertools import islice
 from time import sleep
-from typing import Literal, Optional, TypeVar, cast, overload
+from typing import Literal, TypeVar, cast, overload
 
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
@@ -43,6 +44,7 @@ from tests.gui.type_definitions import (
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
+suppress = contextlib_suppress
 
 # RE_URL regexp is matched as shown below:
 #
@@ -76,46 +78,45 @@ def go_to_relative_url(selenium: WebDriver, relative_url: str) -> None:
 @overload
 def parse_seq(
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: str | None = None,
+    separator: str | None = None,
 ) -> list[str]: ...
 
 
 @overload
-def parse_seq(
+def parse_seq[T](
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: str | None = None,
+    separator: str | None = None,
     *,
     default: Callable[[str], T],
 ) -> list[T]: ...
 
 
 @overload
-def parse_seq(
+def parse_seq[T](
     seq: str,
-    pattern: Optional[str],
-    separator: Optional[str],
+    pattern: str | None,
+    separator: str | None,
     default: Callable[[str], T],
 ) -> list[T]: ...
 
 
-def parse_seq(
+def parse_seq[T](
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
-    default: Callable[[str], T] = cast(Callable[[str], T], str),
+    pattern: str | None = None,
+    separator: str | None = None,
+    default: Callable[[str], T] | None = None,
 ) -> list[T]:
     """Parses regex-matched or separator-delimited values into a list,
     e.g. '["1", "2"]', '"1"', '1,2', or '1'.
     """
+    item_parser = cast(Callable[[str], T], str) if default is None else default
     if pattern is not None:
-        return [default(el.group()) for el in re.finditer(pattern, seq)]
+        return [item_parser(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
     return [
-        default(el.strip().strip('"'))
-        for el in seq.strip("[]").split(separator)
-        if el != ""
+        item_parser(el.strip().strip('"')) for el in seq.strip("[]").split(separator) if el != ""
     ]
 
 
@@ -173,7 +174,7 @@ def upload_file_path(file_name: str) -> str:
     )
 
 
-def upload_workflow_path(workflow_name: Optional[str] = None) -> str:
+def upload_workflow_path(workflow_name: str | None = None) -> str:
     """Resolve an absolute path for workflow file with name workflow_name
     stored in automation-examples submodule
     """
@@ -199,7 +200,7 @@ def upload_workflow_path(workflow_name: Optional[str] = None) -> str:
     )
 
 
-def upload_lambda_path(lambda_name: Optional[str]) -> str:
+def upload_lambda_path(lambda_name: str | None) -> str:
     """Resolve an absolute path for lambda dump file with name lambda_name
     stored in automation-examples submodule
     """
@@ -230,9 +231,7 @@ def strip_path(path_string: str, separator: str = "/") -> str:
      paths rendered
     in DOM which contains `\\n` characters in `innerText`.
     """
-    return separator.join(
-        [path_item.strip() for path_item in path_string.split(separator)]
-    )
+    return separator.join([path_item.strip() for path_item in path_string.split(separator)])
 
 
 @contextmanager
@@ -246,20 +245,15 @@ def implicit_wait(
         driver.implicitly_wait(prev_timeout)
 
 
-def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
+def iter_ahead[T](iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
     read_ahead = iter(iterable)
     next(read_ahead, None)
-    for item, next_item in zip(iterable, read_ahead):
-        yield item, next_item
+    yield from zip(iterable, read_ahead, strict=False)
 
 
-def is_element_with_selector_visible_on_page(
-    driver: WebDriver, css_selector: str
-) -> bool:
+def is_element_with_selector_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
     try:
-        return bool(
-            visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
-        )
+        return bool(visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver))
     except NoSuchElementException:
         return False
 
@@ -325,11 +319,7 @@ def get_element_css_classes_when_visible(
     timeout: float = WAIT_FRONTEND // 4,
 ) -> list[str]:
     def get_element_classes(driver: WebDriver) -> list[str] | None:
-        return (
-            web_elem.get_attribute("class").split()
-            if visibility_of(web_elem)(driver)
-            else None
-        )
+        return web_elem.get_attribute("class").split() if visibility_of(web_elem)(driver) else None
 
     return WebDriverWait(
         driver,
@@ -374,9 +364,7 @@ def find_web_elem_with_text(
             return item
     if callable(error_message):
         error_message = error_message()
-    raise NoSuchElementException(
-        f'Css element with "{text}" text not found. {error_message}'
-    )
+    raise NoSuchElementException(f'Css element with "{text}" text not found. {error_message}')
 
 
 def click_on_web_elem(
@@ -412,14 +400,6 @@ def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> No
 
 
 @contextmanager
-def suppress(*exceptions: type[BaseException]) -> Iterator[None]:
-    try:
-        yield
-    except exceptions:
-        pass
-
-
-@contextmanager
 def rm_css_cls(
     driver: WebDriver, web_elem: SeleniumWebElement, css_cls: str
 ) -> Iterator[SeleniumWebElement]:
@@ -428,7 +408,7 @@ def rm_css_cls(
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)
 
 
-def nth(seq: Iterable[T], idx: int) -> Optional[T]:
+def nth[T](seq: Iterable[T], idx: int) -> T | None:
     return next(islice(seq, idx, None), None)
 
 
@@ -446,7 +426,7 @@ def redirect_display(new_display: str) -> Iterator[None]:
             del os.environ["DISPLAY"]
 
 
-def transform(val: str, strip_char: Optional[str] = None) -> str:
+def transform(val: str, strip_char: str | None = None) -> str:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 

@@ -75,12 +75,6 @@ def screens() -> list[int]:
     return [0, 1]
 
 
-scenarios(
-    "../features/onezone/harvesters/harvesters_memberships_space_privileges.feature"
-)
-scenarios(
-    "../features/onezone/harvesters/harvesters_memberships_user_privileges.feature"
-)
-scenarios(
-    "../features/onezone/harvesters/harvesters_memberships_group_privileges.feature"
-)
+scenarios("../features/onezone/harvesters/harvesters_memberships_space_privileges.feature")
+scenarios("../features/onezone/harvesters/harvesters_memberships_user_privileges.feature")
+scenarios("../features/onezone/harvesters/harvesters_memberships_group_privileges.feature")

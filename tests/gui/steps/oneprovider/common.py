@@ -32,19 +32,15 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _wait_for_op_session_to_start(
-    selenium: SeleniumDrivers, browser_id_list: list[str]
-) -> None:
+def _wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
     @repeat_failed(timeout=WAIT_BACKEND)
     def _assert_correct_url(d: WebDriver) -> None:
         try:
             found = parse_url(d.current_url).group("where")
         except AttributeError as exc:
             raise AssertionError("no access part found in url") from exc
-        if "opw" != found.lower():
-            raise AssertionError(
-                f"expected opw as access part in url instead got: {found}"
-            )
+        if found.lower() != "opw":
+            raise AssertionError(f"expected opw as access part in url instead got: {found}")
 
     time.sleep(12)
     for browser_id in browser_id_list:
@@ -62,9 +58,7 @@ def _wait_for_op_session_to_start(
         "browser_id_list": parse_elements_sequence,
     },
 )
-def g_wait_for_op_session_to_start(
-    selenium: SeleniumDrivers, browser_id_list: list[str]
-) -> None:
+def g_wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -77,9 +71,7 @@ def g_wait_for_op_session_to_start(
         "browser_id_list": parse_elements_sequence,
     },
 )
-def wt_wait_for_op_session_to_start(
-    selenium: SeleniumDrivers, browser_id_list: list[str]
-) -> None:
+def wt_wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -96,8 +88,7 @@ def wt_assert_provider_name_prov_in_op(
     val = hosts[val]["name"]
     displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
     assert displayed_name == val, (
-        f"displayed {displayed_name} provider name in Oneprovider GUI "
-        f"instead of expected {val}"
+        f"displayed {displayed_name} provider name in Oneprovider GUI instead of expected {val}"
     )
 
 
@@ -108,19 +99,14 @@ def wt_assert_provider_name_prov_in_op(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_in_op(
-    selenium: SeleniumDrivers, browser_id: str, val: str
-) -> None:
+def wt_assert_provider_name_in_op(selenium: SeleniumDrivers, browser_id: str, val: str) -> None:
     displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
     assert displayed_name == val, (
-        f"displayed {displayed_name} provider name in Oneprovider GUI instead"
-        f" of expected {val}"
+        f"displayed {displayed_name} provider name in Oneprovider GUI instead of expected {val}"
     )
 
 
-@given(
-    parsers.parse("possible exception messages appearing for workflow files:\n{config}")
-)
+@given(parsers.parse("possible exception messages appearing for workflow files:\n{config}"))
 def load_exceptions_for_input_files(tmp_memory: TmpMemory, config: str) -> None:
     """
     Configuration is as follows

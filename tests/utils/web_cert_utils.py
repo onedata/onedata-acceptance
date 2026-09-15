@@ -25,7 +25,7 @@ def replace_cert_in_op(
 ) -> None:
     cmd_args = [
         os.path.join(PROJECT_DIR, CERT_PATH_TESTS, cert_path_in_tests),
-        f"{hosts[prov]["pod_name"]}:{os.path.join(CERT_PATH_OP, cert_name_in_op)}",
+        f"{hosts[prov]['pod_name']}:{os.path.join(CERT_PATH_OP, cert_name_in_op)}",
     ]
     run_kubectl_command("cp", cmd_args)
 
@@ -37,11 +37,8 @@ def replace_cert_for_one_not_including_s3_in_op(hosts: HostsConfig, prov: str) -
 
 @wt(
     parsers.parse(
-        "{user} replaces web cert for one not including OneS3 domain "
-        'in "{provider}" provider'
+        '{user} replaces web cert for one not including OneS3 domain in "{provider}" provider'
     )
 )
-def wt_replace_cert_for_one_not_including_s3_in_op(
-    hosts: HostsConfig, provider: str
-) -> None:
+def wt_replace_cert_for_one_not_including_s3_in_op(hosts: HostsConfig, provider: str) -> None:
     replace_cert_for_one_not_including_s3_in_op(hosts, provider)

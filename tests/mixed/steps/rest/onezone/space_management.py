@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
-
 from tests.mixed.steps.rest.onezone.common import (
     get_provider_with_name,
     get_space_with_name,
@@ -79,7 +78,7 @@ def rename_spaces_in_oz_using_rest(
     user_api = UserApi(user_client)
     space_api = SpaceApi(user_client)
 
-    for space_name, new_space_name in zip(space_list, new_names_list):
+    for space_name, new_space_name in zip(space_list, new_names_list, strict=True):
         if space_name in spaces:
             space = user_api.get_user_space(spaces[space_name])
         else:
@@ -158,9 +157,7 @@ def join_space_in_oz_using_rest(
     tmp_memory: TmpMemory,
 ) -> None:
     for user in user_list:
-        user_client = login_to_oz(
-            user, users[user].password, hosts[zone_name]["hostname"]
-        )
+        user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
         user_api = UserApi(user_client)
         mailbox = cast(Mailbox, tmp_memory[user]["mailbox"])
         token = SpaceInviteToken(mailbox["token"])
@@ -177,9 +174,9 @@ def assert_spaces_have_appeared_in_oz_rest(
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
 
     for space_name in space_list:
-        assert get_user_space_with_name(
-            user_client, space_name
-        ), f"There is no space named {space_name}"
+        assert get_user_space_with_name(user_client, space_name), (
+            f"There is no space named {space_name}"
+        )
 
 
 def assert_there_are_no_spaces_in_oz_rest(
@@ -195,9 +192,7 @@ def assert_there_are_no_spaces_in_oz_rest(
     user_spaces = user_api.list_user_spaces()
 
     for space_name in space_list:
-        assert (
-            spaces[space_name] not in user_spaces.spaces
-        ), f"There is space named {space_name}"
+        assert spaces[space_name] not in user_spaces.spaces, f"There is space named {space_name}"
 
 
 def assert_spaces_have_been_renamed_in_oz_rest(
@@ -212,11 +207,11 @@ def assert_spaces_have_been_renamed_in_oz_rest(
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     user_api = UserApi(user_client)
 
-    for space_name, new_space_name in zip(space_list, new_names_list):
-        space_name = user_api.get_user_space(spaces[space_name]).name
-        assert (
-            space_name == new_space_name
-        ), f"Space should has name {new_space_name} but it has name {space_name}"
+    for space_name, new_space_name in zip(space_list, new_names_list, strict=True):
+        actual_space_name = user_api.get_user_space(spaces[space_name]).name
+        assert actual_space_name == new_space_name, (
+            f"Space should has name {new_space_name} but it has name {actual_space_name}"
+        )
 
 
 def assert_there_is_no_provider_for_space_in_oz_rest(
@@ -241,12 +236,10 @@ def assert_there_is_no_provider_for_space_in_oz_rest(
     for provider_alias in providers_alias_list:
         provider_name = hosts[provider_alias]["name"]
         assert_msg = (
-            f"Space {space_name} is supported by provider {provider_name} while"
-            " it should not be"
+            f"Space {space_name} is supported by provider {provider_name} while it should not be"
         )
         assert (
-            get_provider_with_name(admin_client, provider_name)
-            not in space_providers.providers
+            get_provider_with_name(admin_client, provider_name) not in space_providers.providers
         ), assert_msg
 
 
@@ -265,9 +258,9 @@ def assert_space_is_supported_by_provider_in_oz_rest(
     space = get_user_space_with_name(user_client, space_name)
 
     providers = [provider_api.get_provider_details(pid).name for pid in space.providers]
-    assert (
-        provider_name in providers
-    ), f"Provider {provider_name} does not support space {space_name}"
+    assert provider_name in providers, (
+        f"Provider {provider_name} does not support space {space_name}"
+    )
 
 
 def assert_provider_does_not_support_space_in_oz_rest(
@@ -278,15 +271,13 @@ def assert_provider_does_not_support_space_in_oz_rest(
     space_name: str,
     provider_alias: str,
 ) -> None:
-    user_client_oz = login_to_oz(
-        user, users[user].password, hosts[zone_host]["hostname"]
-    )
+    user_client_oz = login_to_oz(user, users[user].password, hosts[zone_host]["hostname"])
 
     space = get_user_space_with_name(user_client_oz, space_name)
     provider_name = hosts[provider_alias]["name"]
-    assert (
-        provider_name not in space.providers
-    ), f"Provider {provider_name} supports space {space_name}"
+    assert provider_name not in space.providers, (
+        f"Provider {provider_name} supports space {space_name}"
+    )
 
 
 def copy_id_of_space_rest(

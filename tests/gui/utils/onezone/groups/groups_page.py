@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Optional
-
 from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -34,7 +32,7 @@ class Group(NamedElement):
     hierarchy = NamedButton(".one-list-level-2 .item-header", text="Hierarchy")
     edit_box = WebItem(".name-editor", cls=EditBox)
 
-    def get_active_subpage(self) -> Optional[str]:
+    def get_active_subpage(self) -> str | None:
         for subpage in ["members", "hierarchy"]:
             if element_has_class(getattr(self, subpage).web_elem, "active"):
                 return subpage
@@ -64,9 +62,7 @@ class MenuItem(PageObject):
 class GroupsPage(SidebarPanelPage):
     panel_name = "groups"
 
-    groups_list = WebItemsSequence(
-        ".sidebar-groups .one-list>.one-list-item.clickable", cls=Group
-    )
+    groups_list = WebItemsSequence(".sidebar-groups .one-list>.one-list-item.clickable", cls=Group)
     groups_headers_list = WebItemsSequence(
         ".sidebar-groups .one-list>.one-list-item.clickable", cls=GroupHeader
     )
@@ -89,7 +85,7 @@ class GroupsPage(SidebarPanelPage):
 
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
 
-    def get_visible_active_group_name(self) -> Optional[str]:
+    def get_visible_active_group_name(self) -> str | None:
         groups = get_visible_elements_list(self.groups_list)
         for group in groups:
             if element_has_class(group.web_elem, "active"):

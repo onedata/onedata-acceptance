@@ -13,9 +13,7 @@ class DNSSetup(PageObject):
     documentation_link = WebElement(".documentation-link")
 
     # Subdomain Delegation
-    subdomain_delegation_documentation_link = WebElement(
-        ".subheader-text  .documentation-link"
-    )
+    subdomain_delegation_documentation_link = WebElement(".subheader-text  .documentation-link")
 
     use_built_in_dns_server = Toggle(
         ".row-onezone-built-in-server .toggle-field-dns-built-in-server"

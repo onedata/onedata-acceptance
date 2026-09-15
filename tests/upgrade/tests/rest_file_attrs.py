@@ -32,9 +32,7 @@ SPACE_NAME = "space_posix"
 TEXT = "example"
 
 ALL_ATTRS: list[str] = [
-    attr.value
-    for attr in FileAttr
-    if attr.value not in ("hasJsonMetadata", "jsonMetadata")
+    attr.value for attr in FileAttr if attr.value not in ("hasJsonMetadata", "jsonMetadata")
 ]  # excluded hasJsonMetadata, jsonMetadata as they are available since 25.0
 
 ATTRS_MAP: dict[str, str] = {
@@ -96,7 +94,6 @@ def setup_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     )
 
     if not is_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
-
         file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
         RESULTS["file_attrs_hardlink_setup"] = get_file_attributes(
             provider_host, token, file_id, ALL_ATTRS
@@ -126,7 +123,6 @@ def verify_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     )
 
     if not is_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
-
         file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
         compare_attrs(
             RESULTS["file_attrs_hardlink_setup"],
@@ -187,9 +183,7 @@ def compare_attrs(
 
 
 @repeat_failed(timeout=TIMEOUT_FOR_UPDATING_FILE_ATTRS)
-def _wait_for_file_size_attr(
-    provider_host: str, token: str, file_id: str, ex_size: int
-) -> None:
+def _wait_for_file_size_attr(provider_host: str, token: str, file_id: str, ex_size: int) -> None:
     res = get_file_attributes(provider_host, token, file_id, ["size"])
     assert res["size"] == ex_size
 

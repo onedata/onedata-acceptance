@@ -132,9 +132,9 @@ class Input(WebElement):
         input_box.clear()
         if val != "":
             input_box.send_keys(val)
-            assert (
-                input_box.get_attribute("value") == val
-            ), f'entering "{val}" to {self.descriptor_name} in {instance} failed'
+            assert input_box.get_attribute("value") == val, (
+                f'entering "{val}" to {self.descriptor_name} in {instance} failed'
+            )
 
 
 class AceEditor(WebElement):
@@ -144,9 +144,7 @@ class AceEditor(WebElement):
         driver = instance.web_elem.parent
         if item := driver.execute_script(script):
             return item.text
-        raise NoSuchElementException(
-            self._format_msg("no {item} item found in {parent}", instance)
-        )
+        raise NoSuchElementException(self._format_msg("no {item} item found in {parent}", instance))
 
     def __set__(self, instance: Any, val: Any) -> None:
         driver = instance.web_elem.parent

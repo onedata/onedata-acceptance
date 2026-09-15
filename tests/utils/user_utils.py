@@ -9,9 +9,9 @@ import hashlib
 import json
 import os
 from collections.abc import Mapping
-from typing import Optional, cast
+from typing import cast
 
-import rpyc  # pylint: disable=import-error
+import rpyc
 
 from tests import HTTP_PORT, OZ_REST_PORT
 from tests.type_definitions import EnvDesc
@@ -32,18 +32,18 @@ BAD_TOKEN = "bad token"
 CORRECT_TOKEN = "token"
 
 
-class User:  # pylint: disable=too-many-instance-attributes
+class User:
     def __init__(
         self,
         zone_hostname: str,
         username: str,
         password: str,
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
     ) -> None:
         self.username = username
         self.password = password
         self._user_id = user_id
-        self._token: Optional[str] = None
+        self._token: str | None = None
         self.idps: list[str] = []
         self.keycloak_name = ""
         self.zone_hostname = zone_hostname
@@ -66,15 +66,11 @@ class User:  # pylint: disable=too-many-instance-attributes
         self._user_id = self._retrieve_onedata_id()
         return self._user_id
 
-    def get_rpyc_connection(
-        self, client_host_dict: Mapping[str, str]
-    ) -> RpycConnectionLike:
+    def get_rpyc_connection(self, client_host_dict: Mapping[str, str]) -> RpycConnectionLike:
         client_host = client_host_dict["pod_name"]
         if self._rpyc_connections.get(client_host, None):
             return self._rpyc_connections[client_host]
-        self._rpyc_connections[client_host] = self._create_rpyc_connection(
-            client_host_dict
-        )
+        self._rpyc_connections[client_host] = self._create_rpyc_connection(client_host_dict)
         return self._rpyc_connections[client_host]
 
     def mark_last_operation_failed(self) -> None:
@@ -90,8 +86,8 @@ class User:  # pylint: disable=too-many-instance-attributes
         hosts: Mapping[str, Mapping[str, str]],
         env_desc: EnvDesc,
         token: str = CORRECT_TOKEN,
-        opts: Optional[list[str]] = None,
-    ) -> Optional[Client]:
+        opts: list[str] | None = None,
+    ) -> Client | None:
         rpyc_connection = self.get_rpyc_connection(hosts[client_host_alias])
         client_conf = get_client_conf(client_id, client_host_alias, env_desc)
         client_key = str(client_conf["id"])
@@ -103,9 +99,9 @@ class User:  # pylint: disable=too-many-instance-attributes
         token = self.token if token == CORRECT_TOKEN else token
 
         rpyc_connection.modules.os.environ["ONECLIENT_ACCESS_TOKEN"] = token
-        rpyc_connection.modules.os.environ["ONECLIENT_PROVIDER_HOST"] = hosts[
-            provider_key
-        ]["hostname"]
+        rpyc_connection.modules.os.environ["ONECLIENT_PROVIDER_HOST"] = hosts[provider_key][
+            "hostname"
+        ]
 
         ret = client.mount(client_conf.get("mode"), additional_opts=opts)
         if ret == 0:
@@ -147,9 +143,7 @@ class User:  # pylint: disable=too-many-instance-attributes
         )
         return json.loads(response.content)["userId"]
 
-    def _create_rpyc_connection(
-        self, client_host_dict: Mapping[str, str]
-    ) -> RpycConnectionLike:
+    def _create_rpyc_connection(self, client_host_dict: Mapping[str, str]) -> RpycConnectionLike:
         client_host = client_host_dict["pod_name"]
         client_host_ip = client_host_dict["ip"]
         cointainer_id = client_host_dict["container_id"]
@@ -160,17 +154,15 @@ class User:  # pylint: disable=too-many-instance-attributes
             f" {os.path.join(RPYC_LOGS_DIR, self.username)}"
         )
 
-        print(
-            f"\n\nstarting rpyc server for user '{self.username}' on client host"
-            f" '{client_host}'"
-        )
+        print(f"\n\nstarting rpyc server for user '{self.username}' on client host '{client_host}'")
 
         docker_run_cmd(self.username, cointainer_id, cmd, detach=True)
         rpyc_connection = self._connect_to_rpyc(client_host_ip, port)
 
         # change timeout for rpyc to avoid AsyncResultTimeout in performance tests on bamboo
-        # pylint: disable=protected-access
-        rpyc_connection._config["sync_request_timeout"] = 300
+        rpyc_connection._config["sync_request_timeout"] = (  # noqa: SLF001 - RPyC exposes timeouts through this configuration mapping
+            300
+        )
 
         print(
             f"rpyc server for user '{self.username}' on client host '{client_host}'"
@@ -199,7 +191,4 @@ def create_dir(pod: str, log_dir_path: str) -> None:
 
 
 def gen_port_number(username: str) -> int:
-    return (
-        int(hashlib.sha1(username.encode("utf-8")).hexdigest(), 16) % 10000
-        + RPYC_DEFAULT_PORT
-    )
+    return int(hashlib.sha1(username.encode("utf-8")).hexdigest(), 16) % 10000 + RPYC_DEFAULT_PORT

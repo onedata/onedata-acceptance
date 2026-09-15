@@ -55,12 +55,8 @@ class StoreDetails(Modal):
     name_header = WebElement(".modal-header .truncated-string")
 
     tabs = WebItemsSequence(".nav-tabs .ember-view", cls=FilterTab)
-    store_content_list = WebItemsSequence(
-        ".entries-table .data-row", cls=StoreDetailsListRow
-    )
-    store_content_object = WebItemsSequence(
-        ".entries-table .data-row", cls=StoreDetailsObjectRow
-    )
+    store_content_list = WebItemsSequence(".entries-table .data-row", cls=StoreDetailsListRow)
+    store_content_object = WebItemsSequence(".entries-table .data-row", cls=StoreDetailsObjectRow)
     raw_view = AceEditor(".value-container-presenter")
     array_view = WebItem(".array-visual-presenter", cls=ArrayView)
     single_file_container = WebItem(".content-container", cls=SingleFileContainer)

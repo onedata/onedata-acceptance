@@ -37,8 +37,7 @@ def get_parallel_box(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{status}" status in status '
-        "bar in workflow visualizer"
+        'user of {browser_id} sees "{status}" status in status bar in workflow visualizer'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -47,9 +46,7 @@ def assert_status_in_workflow_visualizer(
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     actual_status = page.workflow_visualiser.status
-    assert (
-        status in actual_status
-    ), f"Workflow status {actual_status} is not equal to {status}"
+    assert status in actual_status, f"Workflow status {actual_status} is not equal to {status}"
 
 
 @repeat_failed(timeout=2 * WAIT_BACKEND)
@@ -134,16 +131,14 @@ def await_for_lane_or_workflow_status(
     page = switch_to_automation_page(selenium, browser_id)
     actual_status = get_status(page, option, name)
     error_message = (
-        f'After awaiting for {option} "{name}" its'
-        f" status is not {expected_status} as expected"
+        f'After awaiting for {option} "{name}" its status is not {expected_status} as expected'
     )
     assert actual_status.lower() == expected_status.lower(), error_message
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that status of "{workflow}"'
-        ' workflow is "{expected_status}"'
+        'user of {browser_id} sees that status of "{workflow}" workflow is "{expected_status}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -161,8 +156,7 @@ def assert_status_of_workflow(
 
 def assert_status(name: object, actual_status: str, expected_status: str) -> None:
     error_message = (
-        f'Actual "{name}" status: "{actual_status}" does not '
-        f'match expected: "{expected_status}"'
+        f'Actual "{name}" status: "{actual_status}" does not match expected: "{expected_status}"'
     )
     assert actual_status.lower() == expected_status.lower(), error_message
 

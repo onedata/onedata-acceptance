@@ -118,13 +118,9 @@ def change_user_password_in_oz_panel(
 ) -> None:
 
     if client.lower() == "web gui":
-
         change_user_password_in_oz_panel_using_gui(selenium, user, users, new_password)
     elif client.lower() == "rest":
-
-        change_user_password_in_oz_panel_using_rest(
-            user, new_password, host, users, hosts
-        )
+        change_user_password_in_oz_panel_using_rest(user, new_password, host, users, hosts)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -138,7 +134,6 @@ def change_user_password_in_oz_panel(
 def log_out_from_oz_panel(client: str, user: str, selenium: SeleniumDrivers) -> None:
 
     if client.lower() == "web gui":
-
         log_out_from_oz_panel_gui(user, selenium)
     elif client.lower() == "rest":
         pass
@@ -164,10 +159,8 @@ def login_to_oz_panel_using_new_password(
 ) -> None:
 
     if client.lower() == "web gui":
-
         login_to_oz_panel_using_new_password_gui(selenium, user, password)
     elif client.lower() == "rest":
-
         login_to_oz_panel_using_new_password_rest(user, password, hosts, host)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -195,7 +188,6 @@ def modify_provider_using_test_hostname_in_op_panel(
     test_domain = f"{hosts[provider_name]['hostname']}.test"
 
     if client.lower() == "rest":
-
         modify_provider_in_op_panel_using_rest(
             user,
             users,
@@ -205,7 +197,6 @@ def modify_provider_using_test_hostname_in_op_panel(
             test_domain,
         )
     elif client.lower() == "web gui":
-
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium,
             user,
@@ -238,7 +229,6 @@ def modify_provider_using_known_hostname_in_op_panel(
 ) -> None:
 
     if client.lower() == "rest":
-
         modify_provider_in_op_panel_using_rest(
             user,
             users,
@@ -248,7 +238,6 @@ def modify_provider_using_known_hostname_in_op_panel(
             hosts[target_provider]["hostname"],
         )
     elif client.lower() == "web gui":
-
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium,
             user,
@@ -282,7 +271,6 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(
     test_domain = f"{hosts[provider]['hostname']}.test"
 
     if client.lower() == "rest":
-
         assert_provider_has_name_and_hostname_in_oz_rest(
             user,
             users,
@@ -292,7 +280,6 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(
             test_domain,
         )
     elif client.lower() == "web gui":
-
         assert_provider_has_name_and_hostname_in_oz_gui(
             selenium,
             user,
@@ -322,12 +309,8 @@ def deregister_provider_in_op_panel(
 ) -> None:
 
     if client.lower() == "rest":
-
-        deregister_provider_in_op_panel_using_rest(
-            user, users, host, _as_rest_hosts(hosts)
-        )
+        deregister_provider_in_op_panel_using_rest(user, users, host, _as_rest_hosts(hosts))
     elif client.lower() == "web gui":
-
         deregister_provider_in_op_panel_using_gui(selenium, user, host, hosts)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -351,7 +334,6 @@ def assert_there_is_no_provider_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         assert_there_is_no_provider_in_oz_rest(
             user,
             users,
@@ -360,7 +342,6 @@ def assert_there_is_no_provider_in_oz(
             provider_name,
         )
     elif client.lower() == "web gui":
-
         assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -385,12 +366,10 @@ def assert_provider_does_not_support_space_in_oz(
 ) -> None:
 
     if client.lower() == "rest":
-
         assert_provider_does_not_support_space_in_oz_rest(
             user, users, host, hosts, space_name, provider_name
         )
     elif client.lower() == "web gui":
-
         assert_provider_does_not_support_space_in_oz_gui(
             selenium, user, space_name, provider_name, hosts
         )
@@ -476,7 +455,6 @@ def request_space_support(
 ) -> None:
 
     if client.lower() == "rest":
-
         request_space_support_using_rest(
             user,
             users,
@@ -487,7 +465,6 @@ def request_space_support(
             supporting_user,
         )
     elif client.lower() == "web gui":
-
         request_space_support_using_gui(
             selenium,
             user,
@@ -546,7 +523,6 @@ def support_space_in_op_panel(
     """
 
     if client.lower() == "web gui":
-
         support_space_in_op_panel_using_gui(
             selenium,
             user,
@@ -557,10 +533,7 @@ def support_space_in_op_panel(
             hosts,
         )
     elif client.lower() == "rest":
-
-        support_space_in_op_panel_using_rest(
-            user, host, hosts, users, tmp_memory, config
-        )
+        support_space_in_op_panel_using_rest(user, host, hosts, users, tmp_memory, config)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -585,12 +558,10 @@ def w_assert_space_is_supported_by_provider_in_oz(
 ) -> None:
 
     if client.lower() == "web gui":
-
         assert_space_is_supported_by_provider_in_oz_gui(
             selenium, user, space_name, provider_name, hosts
         )
     elif client.lower() == "rest":
-
         assert_space_is_supported_by_provider_in_oz_rest(
             user, users, host, hosts, space_name, provider_name
         )
@@ -619,7 +590,6 @@ def revoke_space_support_in_op_panel(
 ) -> None:
 
     if client.lower() == "web gui":
-
         revoke_space_support_in_op_panel_using_gui(
             selenium,
             user,
@@ -628,7 +598,6 @@ def revoke_space_support_in_op_panel(
             hosts,
         )
     elif client.lower() == "rest":
-
         revoke_space_support_in_op_panel_using_rest(
             user,
             users,
@@ -743,12 +712,10 @@ def assert_proper_space_configuration_in_op_panel(
     """
 
     if client.lower() == "web gui":
-
         assert_proper_space_configuration_in_op_panel_gui(
             selenium, user, space, sync_type, config, host, hosts
         )
     elif client.lower() == "rest":
-
         assert_proper_space_configuration_in_op_panel_rest(
             space,
             user,
@@ -798,10 +765,8 @@ def configure_sync_parameters_for_space_in_op_panel(
     """
 
     if client.lower() == "web gui":
-
         configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, config)
     elif client.lower() == "rest":
-
         configure_sync_parameters_for_space_in_op_panel_rest(
             user,
             users,
@@ -854,7 +819,6 @@ def assert_space_content_in_op(
     """
 
     if client.lower() == "web gui":
-
         assert_space_content_in_op_gui(
             config,
             selenium,
@@ -864,10 +828,7 @@ def assert_space_content_in_op(
             space_name,
         )
     elif client.lower() == "rest":
-
-        assert_space_content_in_op_rest(
-            user, users, hosts, config, space_name, spaces, host
-        )
+        assert_space_content_in_op_rest(user, users, hosts, config, space_name, spaces, host)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -915,10 +876,8 @@ def copy_id_of_space(
 ) -> None:
 
     if client.lower() == "web gui":
-
         copy_id_of_space_gui(selenium, user, space_name, tmp_memory)
     elif client.lower() == "rest":
-
         copy_id_of_space_rest(
             user,
             users,
@@ -949,7 +908,6 @@ def send_copied_invite_token(
     send_to: str,
 ) -> None:
     if client.lower() == "web gui":
-
         send_copied_invite_token_in_oz_gui(
             selenium, user, [send_to], tmp_memory, displays, clipboard
         )
@@ -959,8 +917,7 @@ def send_copied_invite_token(
 
 @wt(
     parsers.parse(
-        "using REST, {user} forces start of storage import scan for "
-        '"{space}" at "{provider}"'
+        'using REST, {user} forces start of storage import scan for "{space}" at "{provider}"'
     )
 )
 def force_start_storage_import_scan(
@@ -1000,11 +957,7 @@ def force_start_and_wait_to_finish_storage_import_scan(
         raise NoSuchClientException(f"Client: {client} not found.")
 
 
-@wt(
-    parsers.parse(
-        'using REST, {user} waits for space "{space}" support in {provider_name}'
-    )
-)
+@wt(parsers.parse('using REST, {user} waits for space "{space}" support in {provider_name}'))
 def wt_wait_for_space_support_rest(
     space: str,
     spaces: Spaces,
@@ -1013,6 +966,4 @@ def wt_wait_for_space_support_rest(
     provider_name: str,
     hosts: Hosts,
 ) -> None:
-    wait_for_space_support(
-        spaces[space], hosts[provider_name]["hostname"], [user], users
-    )
+    wait_for_space_support(spaces[space], hosts[provider_name]["hostname"], [user], users)

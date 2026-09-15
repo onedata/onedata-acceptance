@@ -79,11 +79,7 @@ def open_transfer_page_by_clicking_on_link(
     wait_for_transfers_page_to_load(selenium, browser_id)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} evicts file "{file_name}" from provider {provider}'
-    )
-)
+@wt(parsers.parse('user of {browser_id} evicts file "{file_name}" from provider {provider}'))
 def evict_file(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -144,6 +140,4 @@ def replicate_and_wait_to_complete(
     replicate_files_to_providers(
         selenium, browser_id, names, tmp_memory, [provider], hosts, "replicates"
     )
-    wait_for_all_transfers_to_start_and_finish(
-        selenium, browser_id, provider, space, hosts
-    )
+    wait_for_all_transfers_to_start_and_finish(selenium, browser_id, provider, space, hosts)

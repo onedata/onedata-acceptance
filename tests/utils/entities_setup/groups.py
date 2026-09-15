@@ -4,9 +4,10 @@ __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
-from collections.abc import Mapping, MutableMapping
-from typing import Callable, NotRequired, Protocol, TypedDict, cast
+from collections.abc import Callable, Mapping, MutableMapping
+from typing import NotRequired, Protocol, TypedDict, cast
 
 import pytest
 import yaml
@@ -65,11 +66,7 @@ def _register_group_finalizer(
     )
 
 
-@given(
-    parsers.parse(
-        'initial groups configuration in "{service}" Onezone service:\n{config}'
-    )
-)
+@given(parsers.parse('initial groups configuration in "{service}" Onezone service:\n{config}'))
 def groups_creation_step(
     config: str,
     service: str,
@@ -198,9 +195,7 @@ def _groups_creation(
 
             child_id = groups[child_group]
 
-            _add_child_group(
-                zone_hostname, admin_credentials, group_id, child_id, privileges
-            )
+            _add_child_group(zone_hostname, admin_credentials, group_id, child_id, privileges)
 
 
 def _unpack_member_entry(entry: MemberEntry) -> tuple[str, list[str] | None]:
@@ -235,10 +230,7 @@ def _add_user_to_group(
     user_id: str,
     privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,
@@ -259,10 +251,7 @@ def _add_child_group(
     child_id: str,
     privileges: list[str] | None,
 ) -> None:
-    if privileges:
-        data = json.dumps({"privileges": privileges})
-    else:
-        data = None
+    data = json.dumps({"privileges": privileges}) if privileges else None
 
     http_put(
         ip=zone_hostname,
@@ -276,9 +265,7 @@ def _add_child_group(
     )
 
 
-def _get_group_id(
-    hosts: HostsConfig, users: Users, user: str, group_name: str
-) -> str | None:
+def _get_group_id(hosts: HostsConfig, users: Users, user: str, group_name: str) -> str | None:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     groups_id_list = get_group_id_list(user, users, zone_hostname)
@@ -300,9 +287,7 @@ def _get_group_id(
         "{user} before definition in next steps"
     )
 )
-def remove_group_in_onezone(
-    hosts: HostsConfig, users: Users, user: str, group_name: str
-) -> None:
+def remove_group_in_onezone(hosts: HostsConfig, users: Users, user: str, group_name: str) -> None:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     group_id = _get_group_id(hosts, users, user, group_name)
@@ -317,8 +302,7 @@ def remove_group_in_onezone(
 
 @given(
     parsers.parse(
-        "there is no groups in Onezone page used by {user} before "
-        "definition in next steps"
+        "there is no groups in Onezone page used by {user} before definition in next steps"
     )
 )
 def remove_all_groups_rest(user: str, hosts: HostsConfig, users: Users) -> None:
@@ -330,18 +314,14 @@ def remove_all_groups_rest(user: str, hosts: HostsConfig, users: Users) -> None:
         _try_to_remove_group(group, zone_hostname, user, users)
 
 
-def _try_to_remove_group(
-    group_id: str, zone_hostname: str, user: str, users: Users
-) -> None:
-    try:
+def _try_to_remove_group(group_id: str, zone_hostname: str, user: str, users: Users) -> None:
+    with contextlib.suppress(HTTPForbidden):
         http_delete(
             ip=zone_hostname,
             port=OZ_REST_PORT,
             path=get_zone_rest_path("groups", group_id),
             auth=(user, users[user].password),
         )
-    except HTTPForbidden:
-        pass
 
 
 def get_group_id_list(user: str, users: Users, zone_hostname: str) -> list[str]:

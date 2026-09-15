@@ -56,9 +56,7 @@ def open_initial_modal(data_type: str, driver: WebDriver) -> None:
         open_select_initial_files_modal(driver)
 
 
-def go_to_path_and_return_file_name_in_modal(
-    path: str, driver: WebDriver, modal_name: str
-) -> str:
+def go_to_path_and_return_file_name_in_modal(path: str, driver: WebDriver, modal_name: str) -> str:
     if "/" in path:
         modal = getattr(Modals(driver), transform(modal_name))
         file_name, path_list = get_item_name_and_containing_dir_path(path)
@@ -71,10 +69,7 @@ def go_to_path_and_return_file_name_in_modal(
 def select_initial_items_for_workflow_in_modal(
     files: str | list[str], driver: WebDriver, data_type: str
 ) -> None:
-    if isinstance(files, str):
-        parsed_files = parse_seq(files)
-    else:
-        parsed_files = files
+    parsed_files = parse_seq(files) if isinstance(files, str) else files
     last_file_name = parsed_files[-1].split("/")[-1]
 
     for path in parsed_files:
@@ -227,9 +222,7 @@ def wait_for_workflows_in_automation_subpage_extended_time(
     )
 
 
-def wait_for_workflow_execution_in_atm_subpage(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def wait_for_workflow_execution_in_atm_subpage(selenium: SeleniumDrivers, browser_id: str) -> None:
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "start")
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "finish")
     assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id)
@@ -262,9 +255,7 @@ def assert_no_suspended_workflows_in_atm_subpage(
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Suspended")
-    error_message = (
-        "Workflow did not finished successfully and it is in suspended state."
-    )
+    error_message = "Workflow did not finished successfully and it is in suspended state."
     wait_until_workflow_executions_list_is_empty(page, error_message)
 
 
@@ -294,8 +285,7 @@ def await_for_task_status(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} changes time resolution to"
-        ' "{resolution}" in modal "{modal}"'
+        'user of {browser_id} changes time resolution to "{resolution}" in modal "{modal}"'
     )
 )
 def change_time_resolution_in_modal(
