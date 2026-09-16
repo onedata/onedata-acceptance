@@ -20,7 +20,7 @@ from tests.gui.meta_steps.oneprovider.data import (
 )
 from tests.gui.meta_steps.oneprovider.dataset import get_item_name_from_path
 from tests.gui.steps.common.common import assert_n_items_in_items_list
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import is_notify_popup_visible
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     write_name_into_text_field_in_modal,
@@ -269,7 +269,7 @@ def copy_archive_id_to_tmp_memory(
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
         )
-        notify_visible_with_text(
+        is_notify_popup_visible(
             selenium,
             browser_id,
             AlertPopup.SUCCESSFULLY_COPIED,

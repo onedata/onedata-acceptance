@@ -20,7 +20,7 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import is_notify_popup_visible
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.files_modals.details_modal import NavigationTab
@@ -496,7 +496,7 @@ def click_modal_button(
     button = button.replace(".", "")
     getattr(modal, transform(button)).click()
     if modal_attribute_name == "create_group" and transform(button) == "create":
-        notify_visible_with_text(
+        is_notify_popup_visible(
             selenium,
             browser_id,
             CreatedItemAlertPopup.GROUP,

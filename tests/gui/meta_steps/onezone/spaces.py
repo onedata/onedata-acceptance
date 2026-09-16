@@ -19,7 +19,7 @@ from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import is_notify_popup_visible
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
@@ -93,7 +93,7 @@ def copy_support_token_from_add_support_page(
     tmp_memory: TmpMemory,
 ) -> None:
     click_copy_button_on_request_support_page(selenium, browser_id, displays, clipboard, tmp_memory)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         browser_id,
         AlertPopup.SUCCESSFULLY_COPIED,
@@ -235,7 +235,7 @@ def remove_provider_support_for_space_in_oz_using_gui(
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user)
     wt_clicks_on_btn_in_cease_support_modal(selenium, user, confirmation_button)
-    notify_visible_with_text(selenium, user, AlertPopup.CEASED_SUPPORT)
+    is_notify_popup_visible(selenium, user, AlertPopup.CEASED_SUPPORT)
 
 
 def invite_other_users_to_space_using_gui(
@@ -259,7 +259,7 @@ def invite_other_users_to_space_using_gui(
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option_in_space)
     click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         user,
         AlertPopup.SUCCESSFULLY_COPIED,
@@ -291,7 +291,7 @@ def request_space_support_using_gui(
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, "Providers")
     click_get_support_button_on_providers_page(selenium, user)
     click_copy_button_on_request_support_page(selenium, user, displays, clipboard, tmp_memory)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         user,
         AlertPopup.SUCCESSFULLY_COPIED,
@@ -486,7 +486,7 @@ def add_group_to_space_or_group(
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
 
     click_modal_button(selenium, browser_id, button_in_modal, modal)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         browser_id,
         AlertPopup.MEMBER_ADDED,
@@ -510,7 +510,7 @@ def copy_user_space_invite_token(
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space_name, option_in_space)
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         browser_id,
         AlertPopup.SUCCESSFULLY_COPIED,

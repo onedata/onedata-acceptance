@@ -17,7 +17,7 @@ from tests.gui.meta_steps.onezone.tokens import (
 )
 from tests.gui.steps.common.common import wait_for_error_modal_to_disappear
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import is_notify_popup_visible
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
@@ -280,7 +280,7 @@ def _create_group_token(
     go_to_group_subpage(selenium, user, name, subpage)
     click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         user,
         AlertPopup.SUCCESSFULLY_COPIED,

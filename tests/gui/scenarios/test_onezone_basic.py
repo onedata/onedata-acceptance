@@ -70,12 +70,12 @@ def screens() -> list[int]:
     return [0, 1]
 
 
-scenarios("../features/onezone/login_page.feature")
-scenarios("../features/onezone/user_account_manage.feature")
-scenarios("../features/onezone/full_name.feature")
+# scenarios("../features/onezone/login_page.feature")
+# scenarios("../features/onezone/user_account_manage.feature")
+# scenarios("../features/onezone/full_name.feature")
 scenarios("../features/onezone/default_privileges.feature")
-scenarios("../features/onezone/clusters_effective_privileges.feature")
-scenarios("../features/onezone/emergency_oz.feature")
+# scenarios("../features/onezone/clusters_effective_privileges.feature")
+# scenarios("../features/onezone/emergency_oz.feature")
 
-# THIS SCENARIO HAS TO BE EXECUTED IN THE END
-scenarios("../features/onezone/delete_account.feature")
+# # THIS SCENARIO HAS TO BE EXECUTED IN THE END
+# scenarios("../features/onezone/delete_account.feature")

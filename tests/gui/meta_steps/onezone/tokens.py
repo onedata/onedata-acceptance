@@ -21,7 +21,7 @@ from tests.gui.steps.common.common import (
 )
 from tests.gui.steps.common.notifies import (
     dismiss_notifies_if_present,
-    notify_visible_with_text,
+    is_notify_popup_visible,
 )
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
@@ -407,7 +407,7 @@ def consume_token_and_see_success_notify(
 ) -> None:
     _paste_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         browser_id,
         AlertPopup.SUCCESSFULLY_JOINED,
@@ -432,7 +432,7 @@ def _create_token_of_type(
     if token_type == "invite":
         choose_invite_type_in_oz_token_page(selenium, browser_id, "Register Oneprovider")
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         browser_id,
         AlertPopup.TOKEN_CREATED,
@@ -569,7 +569,7 @@ def _create_token_with_config(
             tmp_memory,
         )
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         browser_id,
         AlertPopup.TOKEN_CREATED,
@@ -950,7 +950,7 @@ def create_token_with_basic_template(
     choose_token_template(selenium, browser_id, template)
     type_new_token_name(selenium, browser_id, name)
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    notify_visible_with_text(
+    is_notify_popup_visible(
         selenium,
         browser_id,
         AlertPopup.TOKEN_CREATED,

@@ -81,7 +81,7 @@ def capture_visible_popups(
         },
     )
 )
-def notify_visible_with_text(
+def is_notify_popup_visible(
     selenium: SeleniumDrivers,
     browser_id: str,
     alert_popup: AlertPopupType,
