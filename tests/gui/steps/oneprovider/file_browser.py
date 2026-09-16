@@ -674,14 +674,35 @@ def assert_item_displayed_on_page(
         if "not" in option:
             assert name not in data, f"{name} is displayed on page"
         else:
-            assert name in data, f"{name} is not displayed on page, displayed files: {data}"
+            assert name in visible_files, (
+                f"{name} is not displayed on page, displayed files: {visible_files}"
+            )
 
 
-@wt(parsers.parse('user of {browser_id} writes "{prefix}" to jump input in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def write_to_jump_input(browser_id: str, tmp_memory: TmpMemory, prefix: str) -> None:
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.3)
+def write_text_to_jump_input(
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    prefix: str,
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
-    browser.jump_input = prefix
+
+    if browser.jump_input != prefix:
+        browser.jump_input = prefix
+        assert browser.jump_input == prefix, f'Prefix "{prefix}" was not successfully written'
+
+
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01)
+def assert_item_is_highlighted_in_file_browser(
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+) -> None:
+    browser = tmp_memory[browser_id]["file_browser"]
+
+    assert browser.data[item_name].is_highlighted(), (
+        f'item "{item_name}" is not highlighted after writing text to jump input'
+    )
 
 
 @wt(
