@@ -64,7 +64,8 @@ from tests.gui.steps.oneprovider.file_browser import (
     confirm_rename_directory,
     select_files_from_file_list_using_ctrl,
     select_first_n_files,
-    write_text_to_jump_input,
+    wait_until_prefix_written_to_jump_input,
+    write_to_jump_input,
 )
 from tests.gui.steps.onezone.spaces import (
     _click_on_option_in_the_sidebar,
@@ -89,6 +90,15 @@ from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.user_utils import Users
 
 
+def write_text_to_jump_input_and_wait_until_applied(
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    prefix: str,
+) -> None:
+    write_to_jump_input(browser_id, tmp_memory, prefix)
+    wait_until_prefix_written_to_jump_input(browser_id, tmp_memory, prefix)
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} writes "{prefix}" to jump input in file browser '
@@ -101,7 +111,7 @@ def write_to_jump_input_and_assert_highlighted_item(
     prefix: str,
     item_name: str,
 ) -> None:
-    write_text_to_jump_input(browser_id, tmp_memory, prefix)
+    write_text_to_jump_input_and_wait_until_applied(browser_id, tmp_memory, prefix)
     assert_item_is_highlighted_in_file_browser(browser_id, tmp_memory, item_name)
 
 

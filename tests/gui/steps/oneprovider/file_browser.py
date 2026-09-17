@@ -679,30 +679,35 @@ def assert_item_displayed_on_page(
             )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND, interval=0.3)
-def write_text_to_jump_input(
-    browser_id: str,
-    tmp_memory: TmpMemory,
-    prefix: str,
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01, attempts=WAIT_FRONTEND * 100)
+def write_to_jump_input(browser_id: str, tmp_memory: TmpMemory, prefix: str) -> None:
+    browser = tmp_memory[browser_id]["file_browser"]
+    browser.jump_input = prefix
+
+
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01, attempts=WAIT_FRONTEND * 100)
+def wait_until_prefix_written_to_jump_input(
+    browser_id: str, tmp_memory: TmpMemory, prefix: str
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
-
-    if browser.jump_input != prefix:
-        browser.jump_input = prefix
-        assert browser.jump_input == prefix, f'Prefix "{prefix}" was not successfully written'
+    assert browser.jump_input == prefix, f'Prefix "{prefix}" was not successfully written'
 
 
-@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01)
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01, attempts=WAIT_FRONTEND * 100)
 def assert_item_is_highlighted_in_file_browser(
     browser_id: str,
     tmp_memory: TmpMemory,
     item_name: str,
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
-
-    assert browser.data[item_name].is_highlighted(), (
-        f'item "{item_name}" is not highlighted after writing text to jump input'
-    )
+    visible_items: list[BrowserRow] = browser.get_visible_file_rows(browser.files_list)
+    for item in visible_items:
+        if item.name == item_name:
+            assert item.is_highlighted(), (
+                f'item "{item_name}" is not highlighted after writing text to jump input'
+            )
+            return
+    raise AssertionError(f"item {item_name} not found among visible file rows")
 
 
 @wt(
