@@ -13,16 +13,14 @@ from typing import Final
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 
-from tests.gui.constants import RESPONSIVE_LAYOUT_DELAY, ScreenSize
+from tests.gui.constants import RESPONSIVE_LAYOUT_DELAY, WAIT_FRONTEND, ScreenSize
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
 )
 from tests.gui.meta_steps.oneprovider.dataset import get_item_name_from_path
-from tests.gui.steps.common.common import (
-    assert_n_items_in_items_list,
-    close_alert_popup_if_present,
-)
+from tests.gui.steps.common.common import assert_n_items_in_items_list
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     write_name_into_text_field_in_modal,
@@ -271,7 +269,13 @@ def copy_archive_id_to_tmp_memory(
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
         )
-        close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
+        is_notify_popup_visible_and_close_all_alert_popups(
+            selenium,
+            browser_id,
+            AlertPopup.SUCCESSFULLY_COPIED,
+            popup_expected=False,
+            timeout=WAIT_FRONTEND,
+        )
         tmp_memory[description] = clipboard.paste(display=displays[browser_id])
 
 

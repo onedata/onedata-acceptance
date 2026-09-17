@@ -82,7 +82,7 @@ Feature: Deployment process using panel of zone and provider
     # check config in zone and provider panels
     Then user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 clicks on "onezone" in clusters menu
-    And user of browser1 clicks Nodes of "onezone" in the sidebar
+    And user of browser1 clicks "Nodes" of "onezone" in the sidebar
     And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*onezone.* host in Nodes page in Onepanel
     And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*onezone.* host in Nodes page in Onepanel
 

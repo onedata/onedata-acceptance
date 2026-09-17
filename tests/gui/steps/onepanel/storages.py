@@ -7,16 +7,41 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import pytest
+
 from tests.gui.constants import (
     CONFLICT_NAME_SEPARATOR,
     WAIT_BACKEND,
     WAIT_FRONTEND,
 )
+from tests.gui.meta_steps.rest.spaces import (
+    revoke_space_supports_for_storage_using_rest,
+)
+from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.generic import transform
-from tests.type_definitions import SeleniumDrivers
+from tests.gui.utils.onepanel.storages import StorageContentPage, StorageRecord
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
+
+
+def register_revoke_space_supports_finalizer(
+    request: pytest.FixtureRequest,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+    storage_id: str,
+) -> None:
+    request.addfinalizer(
+        lambda: revoke_space_supports_for_storage_using_rest(
+            hosts[provider]["hostname"],
+            onepanel_credentials.username,
+            onepanel_credentials.password,
+            storage_id,
+        )
+    )
 
 
 @wt(
@@ -48,7 +73,7 @@ def wt_select_storage_type_in_storage_page_op_panel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_type_text_to_in_box_in_storages_page_op_panel(
+def wt_type_text_to_input_box_in_storages_page_op_panel(
     selenium: SeleniumDrivers,
     browser_id: str,
     text: str,
@@ -313,6 +338,18 @@ def copy_storage_id_to_clipboard(
     Onepanel(driver).content.storages.storages[storage_name].copy_id_button()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_storage_id(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    storage_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> str:
+    Onepanel(selenium[browser_id]).content.storages.storages[storage_name].copy_id_button.click()
+    return clipboard.paste(display=displays[browser_id])
+
+
 def close_all_expanded_storages(browser_id: str, selenium: SeleniumDrivers) -> list[str]:
     driver = selenium[browser_id]
     storages_list = Onepanel(driver).content.storages.storages
@@ -345,3 +382,20 @@ def assert_number_storages_with_same_name(
 
     assert len(rows_with_name) == int(number), f"{name} not visible {number} times on storages list"
     assert check_ids_different(ids), f"IDs are not unique, {ids}"
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_storages_page(selenium: SeleniumDrivers, browser_id: str) -> StorageContentPage:
+    return Onepanel(selenium[browser_id]).content.storages
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_button_in_storage_form(storages: StorageContentPage) -> None:
+    storages.form.add.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_first_expanded_storage(
+    storages: StorageContentPage,
+) -> StorageRecord:
+    return storages.get_first_expanded_storage()

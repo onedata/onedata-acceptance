@@ -73,6 +73,7 @@ def screens() -> list[int]:
 scenarios("../features/onepanel/storages.feature")
 scenarios("../features/onepanel/spaces.feature")
 scenarios("../features/onepanel/gui_settings.feature")
+scenarios("../features/onepanel/web_certificate.feature")
 
 
 @pytest.mark.last

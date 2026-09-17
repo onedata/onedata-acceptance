@@ -42,12 +42,25 @@ class CapturedPopup:
     message: str
     web_elem: SeleniumWebElement
 
+    def __str__(self) -> str:
+        return self.message
+
 
 def capture_matching_popup(
     driver: WebDriver,
     seen_popups: set[CapturedPopup],
     regexp: re.Pattern[str],
 ) -> bool:
+    capture_visible_popups(driver, seen_popups)
+
+    return any(regexp.match(popup.message) for popup in seen_popups)
+
+
+def capture_visible_popups(
+    driver: WebDriver,
+    seen_popups: set[CapturedPopup],
+) -> bool:
+    # this function modifies seen_popups set in place
     detected_popups: list[AlertInfoPopup] = Popups(driver).alert_popups.get_all_alert_popups()
     for popup in detected_popups:
         try:
@@ -57,7 +70,7 @@ def capture_matching_popup(
         except (NoSuchElementException, StaleElementReferenceException):
             continue
 
-    return any(regexp.match(captured_popup.message) for captured_popup in seen_popups)
+    return len(seen_popups) > 0
 
 
 @wt(
@@ -68,19 +81,24 @@ def capture_matching_popup(
         },
     )
 )
-def notify_visible_with_text(
+def is_notify_popup_visible_and_close_all_alert_popups(
     selenium: SeleniumDrivers,
     browser_id: str,
     alert_popup: AlertPopupType,
-) -> None:
+    popup_expected: bool = True,
+    timeout: float = 2 * WAIT_BACKEND,
+) -> bool:
+    """Check for the expected notify and close all alert popups detected while waiting.
+
+    Return whether the expected notify was found. If it was not found and
+    ``popup_expected`` is true, raise an assertion error instead.
+    """
     driver = selenium[browser_id]
     text_regexp = alert_popup.message
-
-    # for each popup store message, web_elem and classified popup type for future use
     seen_popups: set[CapturedPopup] = set()
 
     try:
-        WebDriverWait(driver, 2 * WAIT_BACKEND, poll_frequency=0.1).until(
+        WebDriverWait(driver, timeout, poll_frequency=0.1).until(
             partial(
                 capture_matching_popup,
                 seen_popups=seen_popups,
@@ -89,10 +107,31 @@ def notify_visible_with_text(
         )
 
     except TimeoutException as exc:
-        raise AssertionError(
-            f'no {alert_popup.category} notify with "{text_regexp}" msg found; '
-            f"observed messages: {list(seen_popups)}"
-        ) from exc
+        if popup_expected:
+            raise AssertionError(
+                f'no {alert_popup.category} notify with "{text_regexp}" msg found; '
+                f"observed messages: {list(seen_popups)}"
+            ) from exc
+
+        _close_all_detected_popups(driver, seen_popups)
+        return False
+
+    _close_all_detected_popups(driver, seen_popups)
+    return True
+
+
+def dismiss_notifies_if_present(
+    driver: WebDriver,
+    timeout: float,
+) -> None:
+    seen_popups: set[CapturedPopup] = set()
+
+    try:
+        WebDriverWait(driver, timeout, poll_frequency=0.1).until(
+            partial(capture_visible_popups, seen_popups=seen_popups)
+        )
+    except TimeoutException:
+        return
 
     _close_all_detected_popups(driver, seen_popups)
 

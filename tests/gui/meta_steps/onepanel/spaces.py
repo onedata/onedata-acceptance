@@ -11,10 +11,12 @@ import time
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.constants import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
-from tests.gui.steps.common.common import close_alert_popup_if_present
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import (
+    dismiss_notifies_if_present,
+    is_notify_popup_visible_and_close_all_alert_popups,
+)
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
@@ -78,7 +80,7 @@ def support_space_using_form(selenium: SeleniumDrivers, browser_id: str) -> None
     )
     click_on_btn_in_space_support_form(selenium, browser_id)
     wait_for_item_to_disappear(support_space_btn.web_elem, driver)
-    notify_visible_with_text(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
         AlertPopup.ADDED_SPACE_SUPPORT,
@@ -135,7 +137,9 @@ def result_to_support_space_in_op_panel_using_gui(
     _support_space_in_op_panel_using_gui(selenium, user, config, tmp_memory, provider_name, hosts)
     if result == "succeeds":
         wait_till_main_content_loaded(selenium[user])
-        notify_visible_with_text(selenium, user, AlertPopup.ADDED_SPACE_SUPPORT)
+        is_notify_popup_visible_and_close_all_alert_popups(
+            selenium, user, AlertPopup.ADDED_SPACE_SUPPORT
+        )
         wt_assert_correct_supported_space_opened(selenium, user, space_name)
     else:
         text = "Space supporting failed"
@@ -239,7 +243,7 @@ def configure_auto_storage_import_in_storage_import_tab(
     button = "Save configuration"
     alert_popup = AlertPopup.CONFIGURATION_SPACE_SUPPORT_CHANGED
     wt_clicks_on_button_in_space_record(selenium, user, button)
-    notify_visible_with_text(selenium, user, alert_popup)
+    is_notify_popup_visible_and_close_all_alert_popups(selenium, user, alert_popup)
 
 
 @wt(
@@ -268,7 +272,7 @@ def revoke_space_support_in_op_panel_using_gui(
     # alert_popup = AlertPopup.CEASED_SUPPORT
     # wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
     # wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)
-    # notify_visible_with_text(selenium, user, alert_popup)
+    # is_notify_popup_visible_and_close_all_alert_popups(selenium, user, alert_popup)
     remove_space_instead_of_revoke(selenium, user)
 
 
@@ -370,7 +374,7 @@ def click_start_scan_button_in_storage_import_tab(
 ) -> None:
     driver = selenium[browser_id]
     click_start_scan_button_and_wait_for_its_state(driver)
-    close_alert_popup_if_present(driver, popup=AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
+    dismiss_notifies_if_present(driver, timeout=WAIT_FRONTEND)
 
 
 @wt(
