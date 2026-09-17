@@ -106,13 +106,14 @@ def write_text_to_jump_input_and_wait_until_applied(
     )
 )
 def write_to_jump_input_and_assert_highlighted_item(
+    selenium: SeleniumDrivers,
     browser_id: str,
     tmp_memory: TmpMemory,
     prefix: str,
     item_name: str,
 ) -> None:
     write_text_to_jump_input_and_wait_until_applied(browser_id, tmp_memory, prefix)
-    assert_item_is_highlighted_in_file_browser(browser_id, tmp_memory, item_name)
+    assert_item_is_highlighted_in_file_browser(selenium, browser_id, tmp_memory, item_name)
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(
