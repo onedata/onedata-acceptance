@@ -181,7 +181,7 @@ def wt_click_on_btn_in_deployment_step(
             host_row_selector = ".cluster-host-table .cluster-host-table-row"
             return (
                 len(driver.find_elements(By.CSS_SELECTOR, host_row_selector))
-                >= expected_number_of_hosts
+                == expected_number_of_hosts
             )
 
         WebDriverWait(

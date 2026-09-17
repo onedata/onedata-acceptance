@@ -322,9 +322,14 @@ def onepanel_credentials(
 
 @pytest.fixture(autouse=True)
 def emergency_passphrase(
+    request: pytest.FixtureRequest,
     users: Users,
     hosts: Hosts,
 ) -> str:
+    # Autouse fixtures run before fixtures requested with mark.usefixtures.
+    if "clean_environment" in request.fixturenames:
+        request.getfixturevalue("clean_environment")
+
     zone_pod_name = hosts["onezone"]["pod_name"]
     zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
     passphrase = onenv_utils.get_env_variable(zone_pod, "ONEPANEL_EMERGENCY_PASSPHRASE")
