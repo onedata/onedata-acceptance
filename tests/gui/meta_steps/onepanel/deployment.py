@@ -13,7 +13,7 @@ import yaml
 
 from tests.gui.meta_steps.onezone.provider import send_copied_invite_token_in_oz_gui
 from tests.gui.steps.common.login import login_using_basic_auth
-from tests.gui.steps.common.notifies import is_notify_popup_visible
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.onepanel.deployment import (
     wt_assert_begin_of_cluster_deployment,
     wt_check_host_options_list_in_deployment_step1,
@@ -282,4 +282,6 @@ def _add_storage_in_step5(selenium: SeleniumDrivers, browser_id: str, configurat
     wt_select_storage_type_in_deployment_step5(selenium, browser_id, storage_type)
     wt_type_text_to_in_box_in_deployment_step5(selenium, browser_id, name, storage_type, name_box)
     wt_click_on_add_btn_in_storage_add_form(selenium, browser_id)
-    is_notify_popup_visible(selenium, browser_id, AlertPopup.STORAGE_ADDED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium, browser_id, AlertPopup.STORAGE_ADDED
+    )

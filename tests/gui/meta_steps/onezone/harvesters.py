@@ -14,7 +14,7 @@ from selenium.common.exceptions import (
 
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.common.notifies import is_notify_popup_visible
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onezone.harvesters.configuration import (
     assert_public_toggle_on_harvester_config_page,
@@ -198,7 +198,7 @@ def create_harvester(
     _register_harvester_finalizer(request, hosts, admin_credentials, harvester_id)
 
     harvesters[harvester_name] = harvester_id
-    is_notify_popup_visible(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
         CreatedItemAlertPopup.HARVESTER,
@@ -274,7 +274,7 @@ def add_group_to_harvester(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_in_modal, modal)
-    is_notify_popup_visible(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
         AlertPopup.MEMBER_ADDED,
@@ -337,7 +337,7 @@ def send_invitation_token(
         member,
     )
     copy_token_from_modal(selenium, browser_id1)
-    is_notify_popup_visible(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id1,
         AlertPopup.SUCCESSFULLY_COPIED,

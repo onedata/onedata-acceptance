@@ -19,7 +19,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
-from tests.gui.steps.common.notifies import is_notify_popup_visible
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
@@ -121,7 +121,7 @@ def create_new_space_by_click_on_create_new_space_button(
 ) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).data.input_box.confirm()
-    is_notify_popup_visible(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
         CreatedItemAlertPopup.SPACE,
@@ -139,7 +139,7 @@ def create_new_space_on_onezone_page(
     page.create_space_button()
     page.input_box.value = space_name
     page.input_box.confirm()
-    is_notify_popup_visible(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
         CreatedItemAlertPopup.SPACE,
@@ -839,7 +839,7 @@ def copy_token(selenium: SeleniumDrivers, browser_id: str) -> None:
 def confirm_create_new_space(selenium: SeleniumDrivers, browser_id: str, option: str) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
-        is_notify_popup_visible(
+        is_notify_popup_visible_and_close_all_alert_popups(
             selenium,
             browser_id,
             CreatedItemAlertPopup.SPACE,

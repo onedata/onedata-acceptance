@@ -26,7 +26,7 @@ from tests.gui.meta_steps.rest.storages import (
 )
 from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
-from tests.gui.steps.common.notifies import is_notify_popup_visible
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     wait_for_named_modal_to_disappear,
@@ -450,7 +450,7 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
     click_add_button_in_storage_form(storages)
 
     if result == "succeeds":
-        is_notify_popup_visible(
+        is_notify_popup_visible_and_close_all_alert_popups(
             selenium,
             browser_id,
             AlertPopup.STORAGE_ADDED,

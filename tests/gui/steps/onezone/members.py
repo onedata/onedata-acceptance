@@ -18,7 +18,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
-from tests.gui.steps.common.notifies import is_notify_popup_visible
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import (
     assert_element_text,
     wt_wait_for_modal_to_appear,
@@ -714,7 +714,7 @@ def try_setting_privileges_in_members_subpage(
             click_button_on_element_header_in_members_and_wait(
                 selenium, browser_id, button, where, tree
             )
-            is_notify_popup_visible(
+            is_notify_popup_visible_and_close_all_alert_popups(
                 selenium,
                 browser_id,
                 AlertPopup.PRIVILEGES_SAVED,

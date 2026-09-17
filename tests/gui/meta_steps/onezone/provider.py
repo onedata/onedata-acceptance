@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.docker import wt_assert_file_in_path_with_content
-from tests.gui.steps.common.notifies import is_notify_popup_visible
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.onepanel.spaces import (
     wt_clicks_on_btn_in_cease_support_modal,
@@ -109,7 +109,9 @@ def revoke_support_of_provider_in_list(
     click_on_cease_support_in_menu_of_provider_on_providers_list(driver)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id)
     wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
-    is_notify_popup_visible(selenium, browser_id, AlertPopup.CEASED_SUPPORT)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium, browser_id, AlertPopup.CEASED_SUPPORT
+    )
 
 
 @wt(

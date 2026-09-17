@@ -81,13 +81,18 @@ def capture_visible_popups(
         },
     )
 )
-def is_notify_popup_visible(
+def is_notify_popup_visible_and_close_all_alert_popups(
     selenium: SeleniumDrivers,
     browser_id: str,
     alert_popup: AlertPopupType,
     popup_expected: bool = True,
     timeout: float = 2 * WAIT_BACKEND,
 ) -> bool:
+    """Check for the expected notify and close all alert popups detected while waiting.
+
+    Return whether the expected notify was found. If it was not found and
+    ``popup_expected`` is true, raise an assertion error instead.
+    """
     driver = selenium[browser_id]
     text_regexp = alert_popup.message
     seen_popups: set[CapturedPopup] = set()

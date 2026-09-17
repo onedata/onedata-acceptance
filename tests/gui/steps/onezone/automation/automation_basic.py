@@ -14,7 +14,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
-from tests.gui.steps.common.notifies import is_notify_popup_visible
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
@@ -63,7 +63,7 @@ def input_name_into_input_box_on_main_automation_page(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_name_input_on_main_automation_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     OZLoggedIn(selenium[browser_id]).automation.input_box.confirm()
-    is_notify_popup_visible(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
         CreatedItemAlertPopup.AUTOMATION_INVENTORY,
