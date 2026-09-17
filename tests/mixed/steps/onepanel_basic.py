@@ -19,7 +19,7 @@ from tests.gui.meta_steps.onepanel.account_management import (
 from tests.gui.meta_steps.onepanel.provider import (
     deregister_provider_in_op_panel_using_gui,
     modify_provider_with_given_name_in_op_panel_using_gui,
-    register_provider_in_op_using_gui,
+    reregister_provider_in_op_using_gui,
 )
 from tests.gui.meta_steps.onepanel.spaces import (
     assert_proper_space_configuration_in_op_panel_gui,
@@ -379,12 +379,12 @@ def assert_provider_does_not_support_space_in_oz(
 
 @wt(
     parsers.re(
-        r"using (?P<client>.*), (?P<user>.+?) registers "
+        r"using (?P<client>.*), (?P<user>.+?) re-registers "
         r'provider in "(?P<host>.+?)" Onezone service with following '
         r"configuration:\n(?P<config>(.|\s)*)"
     )
 )
-def register_provider_in_op(
+def reregister_provider_in_op(
     client: str,
     user: str,
     hosts: Hosts,
@@ -393,7 +393,7 @@ def register_provider_in_op(
     config: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    """Register provider according to given config.
+    """Re-register provider according to given config.
 
     config should be in yaml format exactly as seen in panel, e.g.
 
@@ -427,7 +427,7 @@ def register_provider_in_op(
     if client.lower() == "rest":
         register_provider_in_op_using_rest(user, users, _as_rest_hosts(hosts), config)
     elif client.lower() == "web gui":
-        register_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory)
+        reregister_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 

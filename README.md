@@ -146,6 +146,8 @@ for the complete syntax.
 ## Other useful parameters
 
 * `--count N` - repeats every test in the suite `N` times on the same deployment.
+  Tests marked with `clean_environment` (such as deployment tests) receive a fresh
+  environment for every repetition.
 * `--reruns N` - reruns failed tests up to `N` times. Unlike `--count`, successful
   tests are not repeated.
 * `--timeout SECONDS` - sets the timeout used while waiting for the Onedata

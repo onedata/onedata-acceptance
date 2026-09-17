@@ -33,7 +33,6 @@ Feature: Deployment with Let`s Encrypt and enabled subdomain delegation process 
     And user of browser2 activates Request a subdomain toggle
     And user of browser2 types "admin@admin.email" to admin email field in step 2 of deployment process in Onepanel
     And user of browser2 clicks on Register button in step 2 of deployment process in Onepanel
-    And user of browser2 is idle for 10 seconds
 
     # setup IP step in provider panel
     And user of browser2 sees that IP address of "oneprovider-1" host is that of "oneprovider-1" in deployment setup IP step
