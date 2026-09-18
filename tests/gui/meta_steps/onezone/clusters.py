@@ -6,6 +6,7 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
 from functools import partial
 
@@ -16,11 +17,12 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
-from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onezone.clusters import (
@@ -71,11 +73,7 @@ def _register_gui_settings_finalizer(
     )
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} invites user of {browser} to "{cluster}" cluster'
-    )
-)
+@wt(parsers.parse('user of {browser_id} invites user of {browser} to "{cluster}" cluster'))
 def invite_user_to_cluster(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -96,13 +94,17 @@ def invite_user_to_cluster(
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_record_in_clusters_menu(selenium, browser_id, cluster, hosts)
-    wt_click_on_subitem_for_item(
-        selenium, [browser_id], option, sub_item, cluster, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, [browser_id], option, sub_item, cluster, hosts)
 
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.SUCCESSFULLY_COPIED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
     close_modal(selenium, browser_id, modal)
     send_copied_item_to_other_users(
         browser_id, item_type, [browser], tmp_memory, displays, clipboard
@@ -138,9 +140,7 @@ def change_privilege_config_in_cluster(
     option = "sets"
     cluster = "oneprovider-1"
 
-    wt_click_on_subitem_for_item(
-        selenium, [browser_id], "CLUSTERS", "Members", cluster, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, [browser_id], "CLUSTERS", "Members", cluster, hosts)
     click_element_in_members_list(selenium, browser_id, user_name, where, list_type)
     see_privileges_for_member(selenium, browser_id, where, member_type, user_name)
     try_setting_privileges_in_members_subpage(
@@ -154,11 +154,7 @@ def change_privilege_config_in_cluster(
     )
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} adds "{group_name}" group to "{cluster_name}" cluster'
-    )
-)
+@wt(parsers.parse('user of {browser_id} adds "{group_name}" group to "{cluster_name}" cluster'))
 def add_group_to_cluster(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -191,13 +187,17 @@ def add_group_to_cluster(
             wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
             break
         except TimeoutException:
-            click_on_option_in_members_list_menu(
-                selenium, browser_id, sub_item, where, member
-            )
+            click_on_option_in_members_list_menu(selenium, browser_id, sub_item, where, member)
 
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_name, modal)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.MEMBER_ADDED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @given(
@@ -216,7 +216,9 @@ def no_member_in_parent(
     tmp_memory: TmpMemory,
     where: str,
 ) -> None:
-    try:
+    with contextlib.suppress(
+        ElementNotInteractableException, NoSuchElementException, PageObjectNotFoundError
+    ):
         remove_member_from_parent(
             selenium,
             browser_id,
@@ -226,12 +228,6 @@ def no_member_in_parent(
             tmp_memory,
             where,
         )
-    except (
-        ElementNotInteractableException,
-        NoSuchElementException,
-        PageObjectNotFoundError,
-    ):
-        pass
 
 
 @wt(parsers.parse('user of {browser_id} remembers "{provider}" cluster id'))
@@ -291,9 +287,7 @@ def set_gui_settings(
     if operation == "sets":
         write_input_in_gui_settings_page(selenium, browser_id, box, text)
     else:
-        remove_notification_in_gui_settings_page(
-            selenium, browser_id, kind_of_agreement
-        )
+        remove_notification_in_gui_settings_page(selenium, browser_id, kind_of_agreement)
     click_button_in_gui_settings_page(selenium, browser_id, button)
 
     # wait for save button to be clicked
@@ -306,9 +300,7 @@ def set_gui_settings(
         'cookie consent notification in GUI settings page of "{record}"'
     )
 )
-def insert_setting_link(
-    selenium: SeleniumDrivers, browser_id: str, kind_of_agreement: str
-) -> None:
+def insert_setting_link(selenium: SeleniumDrivers, browser_id: str, kind_of_agreement: str) -> None:
     link = "insert " + kind_of_agreement + " link"
     button = "save cookie consent notification"
     click_button_in_gui_settings_page(selenium, browser_id, link)

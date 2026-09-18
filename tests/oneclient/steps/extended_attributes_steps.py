@@ -11,14 +11,8 @@ from tests.utils.user_utils import Users
 from . import multi_file_steps
 
 
-@wt(
-    parsers.cfparse(
-        "{user} sets on {file} extended attribute {name} with value {value}"
-    )
-)
-def set_extended_attribute(
-    user: str, file: str, name: str, value: str, users: Users
-) -> None:
+@wt(parsers.cfparse("{user} sets on {file} extended attribute {name} with value {value}"))
+def set_extended_attribute(user: str, file: str, name: str, value: str, users: Users) -> None:
     multi_file_steps.set_xattr(user, file, name, value, "client1", users)
 
 
@@ -28,25 +22,18 @@ def remove_extended_attribute(user: str, file: str, name: str, users: Users) -> 
 
 
 @wt(parsers.cfparse("{user} checks that {file} has extended attribute {name}"))
-def check_extended_attribute_exists(
-    user: str, file: str, name: str, users: Users
-) -> None:
+def check_extended_attribute_exists(user: str, file: str, name: str, users: Users) -> None:
     multi_file_steps.check_xattr_exists(user, file, name, "client1", users)
 
 
-@wt(
-    parsers.cfparse("{user} checks that {file} does not have extended attribute {name}")
-)
-def check_extended_attribute_doesn_exist(
-    user: str, file: str, name: str, users: Users
-) -> None:
+@wt(parsers.cfparse("{user} checks that {file} does not have extended attribute {name}"))
+def check_extended_attribute_doesn_exist(user: str, file: str, name: str, users: Users) -> None:
     multi_file_steps.check_xattr_doesnt_exist(user, file, name, "client1", users)
 
 
 @wt(
     parsers.cfparse(
-        "{user} checks that {file} has string extended attribute "
-        "{name} with value {value}"
+        "{user} checks that {file} has string extended attribute {name} with value {value}"
     )
 )
 def check_string_extended_attribute(
@@ -57,8 +44,7 @@ def check_string_extended_attribute(
 
 @wt(
     parsers.cfparse(
-        "{user} checks that {file} has numeric extended attribute "
-        "{name} with value {value}"
+        "{user} checks that {file} has numeric extended attribute {name} with value {value}"
     )
 )
 def check_numeric_extended_attribute(
@@ -69,8 +55,7 @@ def check_numeric_extended_attribute(
 
 @wt(
     parsers.cfparse(
-        "{user} checks that {file} has JSON extended attribute "
-        "{name} with value {value}"
+        "{user} checks that {file} has JSON extended attribute {name} with value {value}"
     )
 )
 def check_json_extended_attribute(

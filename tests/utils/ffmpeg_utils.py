@@ -18,7 +18,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from itertools import chain, repeat
 from math import sqrt
-from typing import TypedDict
+from typing import ClassVar, TypedDict
 
 import pytest
 from _pytest.reports import TestReport
@@ -26,6 +26,7 @@ from _pytest.reports import TestReport
 FfmpegProcess = sp.Popen[str]
 MoviePaths = list[str]
 Offset = tuple[int, int]
+MAX_RECORDING_FILE_NAME_LENGTH = 180
 
 
 class FfmpegDetails(TypedDict, total=False):
@@ -52,8 +53,8 @@ def start_recording(
         with _suppress(OSError, errnos=(errno.ENOENT, errno.ENAMETOOLONG)):
             os.remove(path)
 
-    with open(os.devnull, "w") as dev_null:
-        proc = sp.Popen(  # pylint: disable=consider-using-with
+    with open(os.devnull, "w", encoding="utf-8") as dev_null:
+        proc = sp.Popen(
             cmd,
             stdin=sp.PIPE,
             stdout=dev_null,
@@ -84,7 +85,8 @@ def stop_recording(proc: FfmpegProcess) -> None:
 
 
 class RecorderManager:
-    ffmpeg_details: FfmpegDetails = {}
+    # Recording starts and stops in separate manager instances created by pytest hooks.
+    ffmpeg_details: ClassVar[FfmpegDetails] = {}
 
     def __init__(self, request: pytest.FixtureRequest) -> None:
         self.request = request
@@ -99,8 +101,12 @@ class RecorderManager:
             # add timestamp to video name
             file_name = f"{self.request.node.name}.{int(time.time())}"
 
-            # for len(file_name) > 180 ffmpeg is not starting
-            file_name = file_name[:180] if len(file_name) > 180 else file_name
+            # ffmpeg does not start when the output name exceeds its limit.
+            file_name = (
+                file_name[:MAX_RECORDING_FILE_NAME_LENGTH]
+                if len(file_name) > MAX_RECORDING_FILE_NAME_LENGTH
+                else file_name
+            )
 
             # if there is '/' in file name ffmpeg is not starting
             file_name = file_name.replace("/", "_")
@@ -118,7 +124,7 @@ class RecorderManager:
             )
             self.ffmpeg_details["proc"] = ffmpeg_proc
             self.ffmpeg_details["movies"] = movies
-            setattr(self.request.node, "_movies", movies)
+            self.request.node._movies = movies  # noqa: SLF001 - pytest node stores recording artifacts
 
     def handle_stop_recording(self, status: TestReport) -> None:
         recording = self.request.config.getoption("--xvfb-recording")
@@ -126,7 +132,7 @@ class RecorderManager:
             stop_recording(self.ffmpeg_details["proc"])
             # if setup and call of this given passed then whole test passed
             if hasattr(self.request.node, "setup_xvfb_recorder"):
-                setup_passed = getattr(self.request.node, "setup_xvfb_recorder").passed
+                setup_passed = self.request.node.setup_xvfb_recorder.passed
             else:
                 setup_passed = False
             call_passed = status.passed
@@ -134,7 +140,7 @@ class RecorderManager:
                 for movie in self.ffmpeg_details["movies"]:
                     try:
                         os.remove(movie)
-                    except IOError as ex:
+                    except OSError as ex:
                         if ex.errno not in (errno.ENOENT, errno.ENAMETOOLONG):
                             raise
 
@@ -191,11 +197,11 @@ def _create_ffmpeg_cmd(
         else:
             tagged_streams, tags = _tag_streams(display_num)
             cmd.append(tagged_streams)
-            for tag in tags:
-                tag = f"[{tag}]"
-                path = file_path.format(tag)
+            for stream_tag in tags:
+                bracketed_tag = f"[{stream_tag}]"
+                path = file_path.format(bracketed_tag)
                 paths.append(path)
-                cmd.extend(output_fmt + ["-map", tag, path])
+                cmd.extend(output_fmt + ["-map", bracketed_tag, path])
 
     if display_num == 1 or mosaic_filter:
         path = file_path.format("")
@@ -226,16 +232,15 @@ def _overlay_streams(tags: list[str], offsets: Iterator[Offset]) -> tuple[str, s
     base_fmt = "base{num}"
 
     formats = chain(repeat(overlay_fmt, len(tags) - 1), [last_overlay_fmt])
-    bases = (
-        (base_fmt.format(num=num), base_fmt.format(num=num + 1))
-        for num in range(len(tags))
-    )
+    bases = ((base_fmt.format(num=num), base_fmt.format(num=num + 1)) for num in range(len(tags)))
     offsets = iter(offsets)
 
     return (
         ";".join(
             fmt.format(base=base, tag=tag, x=x, y=y, new_base=new_base)
-            for fmt, tag, (x, y), (base, new_base) in zip(formats, tags, offsets, bases)
+            for fmt, tag, (x, y), (base, new_base) in zip(
+                formats, tags, offsets, bases, strict=True
+            )
         ),
         base_fmt.format(num=0),
     )
@@ -244,9 +249,7 @@ def _overlay_streams(tags: list[str], offsets: Iterator[Offset]) -> tuple[str, s
 def _tag_streams(input_streams_num: int) -> tuple[str, list[str]]:
     tags = [f"v{num}" for num in range(input_streams_num)]
     fmt = "[{stream}:v] setpts=PTS-STARTPTS [{tag}]"
-    tagged_streams = ";".join(
-        fmt.format(stream=i, tag=tag) for i, tag in enumerate(tags)
-    )
+    tagged_streams = ";".join(fmt.format(stream=i, tag=tag) for i, tag in enumerate(tags))
     return tagged_streams, tags
 
 

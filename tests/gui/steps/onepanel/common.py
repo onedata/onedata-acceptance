@@ -6,6 +6,7 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from datetime import datetime, timedelta
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
@@ -14,6 +15,7 @@ from tests.gui.utils import LoginPage, Modals, OnePage, Onepanel
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
+    parse_time,
     transform,
 )
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -81,9 +83,7 @@ def g_click_on_subitem_for_item(
     record: str,
     hosts: Hosts,
 ) -> None:
-    wt_click_on_subitem_for_item(
-        selenium, browser_id_list, sidebar, sub_item, record, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar, sub_item, record, hosts)
 
 
 @wt(
@@ -130,15 +130,9 @@ def wt_click_on_sidebar_item(
         nav.items[record].click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks info button on warning bar in Onepanel page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks info button on warning bar in Onepanel page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_info_button_on_warning_bar(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_info_button_on_warning_bar(selenium: SeleniumDrivers, browser_id: str) -> None:
     OnePage(selenium[browser_id]).warning_bar.info()
 
 
@@ -157,8 +151,7 @@ def click_open_in_onezone(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that {age} "{record}" is not '
-        "working in clusters sidebar"
+        'user of {browser_id} sees that {age} "{record}" is not working in clusters sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -173,9 +166,7 @@ def assert_not_working_in_clusters_sidebar(
     sidebar = "CLUSTERS"
     nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
     items = nav.get_all_items(selenium[browser_id])
-    item = get_old_or_new_cluster_record_from_list(
-        record, items, age, tmp_memory, hosts
-    )
+    item = get_old_or_new_cluster_record_from_list(record, items, age, tmp_memory, hosts)
     assert item.is_not_working(), f"{record} is working in clusters sidebar"
 
 
@@ -189,11 +180,7 @@ def assert_overview_page_of_cluster(
     assert found == expected, f"Overview of {expected} not visible"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "{link}" link in {view_name} view in Onepanel'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "{link}" link in {view_name} view in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_sidebar_submenu_link(
     selenium: SeleniumDrivers, browser_id: str, view_name: str
@@ -216,11 +203,7 @@ def click_on_sidebar_submenu_subdomain_delegation_link(
     nav.subdomain_delegation_documentation_link.click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} checks "{toggle}" toggle in {view_name} view in Onepanel'
-    )
-)
+@wt(parsers.parse('user of {browser_id} checks "{toggle}" toggle in {view_name} view in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_toggle_in_onepanel_view(
     selenium: SeleniumDrivers, browser_id: str, view_name: str, toggle: str
@@ -232,7 +215,7 @@ def click_on_toggle_in_onepanel_view(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that "{toggle}" toggle is {option} in '
-        "{view_name} view in Onepanel"
+        '"{view_name}" view in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -245,9 +228,7 @@ def assert_toggle_checked_in_onepanel_view(
 ) -> None:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     toggle_elem = getattr(nav, transform(toggle.replace("-", "_")))
-    assert getattr(
-        toggle_elem, f"is_{option}"
-    )(), f"toggle {toggle} is not {option} in {view_name}"
+    assert getattr(toggle_elem, f"is_{option}")(), f"toggle {toggle} is not {option} in {view_name}"
 
 
 @wt(
@@ -273,7 +254,7 @@ def assert_label_content_in_onepanel_view(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that "{label}" ends with "{suffix}" in '
-        "{view_name} view in Onepanel"
+        '"{view_name}" view in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -292,8 +273,62 @@ def assert_label_ends_with_in_onepanel_view(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {host} {domain_type} domain is included in"
-        ' "{label}" in {view_name} view in Onepanel'
+        'user of {browser_id} sees that "{label}" contains "{expected_text}" in '
+        '"{view_name}" view in Onepanel'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_label_contains_text_in_onepanel_view(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    view_name: str,
+    label: str,
+    expected_text: str,
+) -> None:
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
+    actual_label_text = getattr(nav, transform(label))
+    error_message = f"{label} should contain '{expected_text}', but it is '{actual_label_text}'"
+    assert expected_text in actual_label_text, error_message
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that "Expiration" and "Creation" time are valid '
+        'in "{view_name}" view in Onepanel'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_certificate_validity_times(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    view_name: str,
+) -> None:
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
+
+    creation_time = parse_time(nav.creation_time)
+    expiration_time = parse_time(nav.expiration_time)
+    # We need the same timezone (tzinfo) for "now" as is for creation_time
+    now = datetime.now(creation_time.tzinfo)
+    assert now > creation_time, f"Certificate creation time {creation_time} is set to a future date"
+
+    # The approximation of the creation time is used because the certificate is
+    # generated when environment starts so the time of generation may differ from
+    # the time of checking (now threshold is set to 12 hours)
+    assert abs(now - creation_time) < timedelta(hours=12), (
+        f"Certificate creation time {creation_time} is not close to {now}"
+    )
+
+    # The validity check accounts for leap years
+    validity = expiration_time - creation_time
+    assert timedelta(days=10 * 365) <= validity <= timedelta(days=10 * 366), (
+        f"Expected certificate validity should be close to 10 years, got {validity}"
+    )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that {host} "{domain_type}" domain is included in'
+        ' "{label}" in "{view_name}" view in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
@@ -354,7 +389,7 @@ def assert_value_in_info_tile_in_overview_onepanel_view(
             value = clipboard.paste(display=displays[browser_id])
         else:
             value = _property.value
-        assert (
-            value == property_value
-        ), f"Expected {property_name} to be {property_value}, but got {value}"
+        assert value == property_value, (
+            f"Expected {property_name} to be {property_value}, but got {value}"
+        )
         break

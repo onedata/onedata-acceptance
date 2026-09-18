@@ -8,7 +8,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
@@ -16,11 +18,13 @@ from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     wait_for_sliding_panel_to_stop_moving,
 )
-from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import (
+    is_element_visible_using_getter,
+    transform,
+)
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow, TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -116,8 +120,7 @@ def click_on_button_in_tokens_sidebar(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on "Create custom token" '
-        'option in "Create new token" view'
+        'user of {browser_id} clicks on "Create custom token" option in "Create new token" view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -129,15 +132,9 @@ def click_create_custom_token(selenium: SeleniumDrivers, browser_id: str) -> Non
     )
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "{link}" link in "Create new token" view'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "{link}" link in "Create new token" view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_link_in_create_token_view(
-    selenium: SeleniumDrivers, browser_id: str, link: str
-) -> None:
+def click_link_in_create_token_view(selenium: SeleniumDrivers, browser_id: str, link: str) -> None:
     driver = selenium[browser_id]
     link = f"{link} link" if "documentation" in link else link
     element = getattr(OZLoggedIn(driver).tokens.create_token_page, transform(link))
@@ -149,8 +146,7 @@ def click_link_in_create_token_view(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on "Show inactive caveats" '
-        'label in "Create new token" view'
+        'user of {browser_id} clicks on "Show inactive caveats" label in "Create new token" view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -162,8 +158,7 @@ def show_inactive_caveats(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{member_name}" {type} '
-        "from dropdown on tokens page"
+        'user of {browser_id} chooses "{member_name}" {type} from dropdown on tokens page'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -187,10 +182,7 @@ def click_and_get_create_token_button(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} chooses {token_type} token type in "
-        '"Create new token" view'
-    )
+    parsers.parse('user of {browser_id} chooses {token_type} token type in "Create new token" view')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_token_type_to_create(
@@ -202,9 +194,9 @@ def choose_token_type_to_create(
     # ensure correct option is selected
     option_input = f"{token_type}_input"
     error_message = f"did not manage to select {option}"
-    assert getattr(
-        OZLoggedIn(driver).tokens.create_token_page, option_input
-    ).is_selected(), error_message
+    assert getattr(OZLoggedIn(driver).tokens.create_token_page, option_input).is_selected(), (
+        error_message
+    )
 
 
 @wt(parsers.parse("user of {browser_id} clicks on copy button in token view"))
@@ -239,9 +231,7 @@ def choose_invite_select(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_token_usage_limit(
-    selenium: SeleniumDrivers, browser_id: str, limit: str
-) -> None:
+def select_token_usage_limit(selenium: SeleniumDrivers, browser_id: str, limit: str) -> None:
     driver = selenium[browser_id]
     limits = OZLoggedIn(driver).tokens.create_token_page.usage_limit
     if limit == "infinity":
@@ -251,31 +241,19 @@ def select_token_usage_limit(
         limits.number_input = limit
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that "{token_name}" token\'s type is {token_type}'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that "{token_name}" token\'s type is {token_type}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_is_type(
     selenium: SeleniumDrivers, browser_id: str, token_type: str, token_name: str
 ) -> None:
     driver = selenium[browser_id]
     token = get_token_by_name(driver, token_name)
-    assert token.is_type_of(
-        token_type
-    ), f"Token should be type of {token_type} but is not"
+    assert token.is_type_of(token_type), f"Token should be type of {token_type} but is not"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} chooses "{token_filter}" filter in tokens sidebar'
-    )
-)
+@wt(parsers.parse('user of {browser_id} chooses "{token_filter}" filter in tokens sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_token_filter(
-    selenium: SeleniumDrivers, browser_id: str, token_filter: str
-) -> None:
+def choose_token_filter(selenium: SeleniumDrivers, browser_id: str, token_filter: str) -> None:
     filters = OZLoggedIn(selenium[browser_id]).tokens.sidebar.filter
     getattr(filters, token_filter.lower())()
 
@@ -307,18 +285,15 @@ def choose_invite_token_filter(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that all tokens in tokens sidebar "
-        "are type of {token_type}"
+        "user of {browser_id} sees that all tokens in tokens sidebar are type of {token_type}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_all_tokens_are_type(
-    selenium: SeleniumDrivers, browser_id: str, token_type: str
-) -> None:
+def assert_all_tokens_are_type(selenium: SeleniumDrivers, browser_id: str, token_type: str) -> None:
     tokens = OZLoggedIn(selenium[browser_id]).tokens.sidebar.tokens
-    assert all(
-        token.is_type_of(token_type) for token in tokens
-    ), f"Not all visible tokens are type of {token_type}"
+    assert all(token.is_type_of(token_type) for token in tokens), (
+        f"Not all visible tokens are type of {token_type}"
+    )
 
 
 @wt(
@@ -342,9 +317,7 @@ def assert_token_is_marked(
 
 @wt(parsers.parse("user of {browser_id} clicks on tokens view menu button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_button_of_tokens_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_menu_button_of_tokens_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).tokens.menu()
 
@@ -360,9 +333,7 @@ def click_option_in_token_page_menu(
 
 @wt(parsers.parse('user of {browser_id} clicks "Revoke" toggle to {action} token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def switch_toggle_to_change_token(
-    selenium: SeleniumDrivers, browser_id: str, action: str
-) -> None:
+def switch_toggle_to_change_token(selenium: SeleniumDrivers, browser_id: str, action: str) -> None:
     driver = selenium[browser_id]
     if action == "revoke":
         OZLoggedIn(driver).tokens.revoke_toggle.check()
@@ -372,22 +343,14 @@ def switch_toggle_to_change_token(
 
 @wt(parsers.parse('user of {browser_id} clicks "Save" button on tokens view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_save_button_on_tokens_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_save_button_on_tokens_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).tokens.save_button()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} appends "{text}" to name of token named "{token_name}'
-    )
-)
+@wt(parsers.parse('user of {browser_id} appends "{text}" to name of token named "{token_name}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def append_token_name_in_sidebar(
-    selenium: SeleniumDrivers, browser_id: str, text: str
-) -> None:
+def append_token_name_in_sidebar(selenium: SeleniumDrivers, browser_id: str, text: str) -> None:
     driver = selenium[browser_id]
     input_box = OZLoggedIn(driver).tokens.sidebar.name_input
     OZLoggedIn(driver).tokens.sidebar.name_input = input_box + text
@@ -395,17 +358,14 @@ def append_token_name_in_sidebar(
 
 @wt(parsers.parse("user of {browser_id} confirms changes in token named {token_name}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_token_changes_in_sidebar(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def confirm_token_changes_in_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).tokens.sidebar.confirm()
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that there is token named "
-        '"{token_name}" on tokens list'
+        'user of {browser_id} sees that there is token named "{token_name}" on tokens list'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -424,26 +384,20 @@ def assert_token_on_tokens_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_new_token_name(
-    selenium: SeleniumDrivers, browser_id: str, token_name: str
-) -> None:
+def type_new_token_name(selenium: SeleniumDrivers, browser_id: str, token_name: str) -> None:
     driver = selenium[browser_id]
     input_box = OZLoggedIn(driver).tokens.create_token_page.token_name_input
     input_box.value = token_name
-    assert (
-        input_box.value == token_name
-    ), f"Failed to type new token name, expected {token_name}, got: {input_box.value}"
+    assert input_box.value == token_name, (
+        f"Failed to type new token name, expected {token_name}, got: {input_box.value}"
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_token_name(
-    selenium: SeleniumDrivers, browser_id: str, token_name: str
-) -> None:
+def assert_token_name(selenium: SeleniumDrivers, browser_id: str, token_name: str) -> None:
     driver = selenium[browser_id]
     given_name = OZLoggedIn(driver).tokens.token_name
-    assert (
-        given_name == token_name
-    ), f"Given name {given_name} is not like expected {token_name}"
+    assert given_name == token_name, f"Given name {given_name} is not like expected {token_name}"
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -459,25 +413,21 @@ def assert_token_revoked(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_token_type(
-    selenium: SeleniumDrivers, browser_id: str, expected_type: str
-) -> None:
+def assert_token_type(selenium: SeleniumDrivers, browser_id: str, expected_type: str) -> None:
     driver = selenium[browser_id]
     actual_type = OZLoggedIn(driver).tokens.token_type
-    assert (
-        actual_type == expected_type.capitalize()
-    ), f"Expected type {expected_type} does not match actual {actual_type}"
+    assert actual_type == expected_type.capitalize(), (
+        f"Expected type {expected_type} does not match actual {actual_type}"
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_invite_type(
-    selenium: SeleniumDrivers, browser_id: str, expected_type: str
-) -> None:
+def assert_invite_type(selenium: SeleniumDrivers, browser_id: str, expected_type: str) -> None:
     driver = selenium[browser_id]
     actual_type = OZLoggedIn(driver).tokens.invite_type
-    assert (
-        actual_type == expected_type
-    ), f"Expected invite type {expected_type} does not match actual {actual_type}"
+    assert actual_type == expected_type, (
+        f"Expected invite type {expected_type} does not match actual {actual_type}"
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -496,16 +446,14 @@ def assert_invite_target(
     if expected_target.startswith("$(resolve_id"):
         space_name = expected_target.split(" ")[1].replace(")", "")
         expected_target = "ID: " + spaces[space_name]
-    assert (
-        actual_type == expected_target
-    ), f"Expected invite target {expected_target} does not match actual {actual_type}"
+    assert actual_type == expected_target, (
+        f"Expected invite target {expected_target} does not match actual {actual_type}"
+    )
 
 
 @wt(parsers.parse('user of {browser_id} sees that token usage count is "{count}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_token_usage_count_value(
-    selenium: SeleniumDrivers, browser_id: str, count: str
-) -> None:
+def assert_token_usage_count_value(selenium: SeleniumDrivers, browser_id: str, count: str) -> None:
     driver = selenium[browser_id]
     text = OZLoggedIn(driver).tokens.usage_count
     parse_and_compare_usage_count(text, count)
@@ -519,9 +467,7 @@ def parse_and_compare_usage_count(text_given: str, text_expected: str) -> None:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_caveat_by_name(
-    selenium: SeleniumDrivers, browser_id: str, caveat_name: str
-) -> CaveatField:
+def get_caveat_by_name(selenium: SeleniumDrivers, browser_id: str, caveat_name: str) -> CaveatField:
     driver = selenium[browser_id]
     new_token_page = OZLoggedIn(driver).tokens.create_token_page
     return new_token_page.get_caveat(caveat_name)
@@ -542,13 +488,10 @@ def get_privileges_tree(selenium: SeleniumDrivers, browser_id: str) -> Privilege
 
 @wt(
     parsers.parse(
-        'user of {browser_id} deselects "{token_name}" '
-        'in modal "Clean up obsolete tokens"'
+        'user of {browser_id} deselects "{token_name}" in modal "Clean up obsolete tokens"'
     )
 )
-def deselect_tokens_on_modal(
-    browser_id: str, token_name: str, selenium: SeleniumDrivers
-) -> None:
+def deselect_tokens_on_modal(browser_id: str, token_name: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     clean_modal = Modals(driver).clean_up_obsolete_tokens
 
@@ -561,8 +504,7 @@ def deselect_tokens_on_modal(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} deselects "{token_type}" type '
-        'in modal "Clean up obsolete tokens"'
+        'user of {browser_id} deselects "{token_type}" type in modal "Clean up obsolete tokens"'
     )
 )
 def deselect_token_type_on_modal(
@@ -576,8 +518,7 @@ def deselect_token_type_on_modal(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} {ability_to_see} "{token_name}" '
-        "in token list on tokens page sidebar"
+        'user of {browser_id} {ability_to_see} "{token_name}" in token list on tokens page sidebar'
     )
 )
 def assert_token_on_token_page_sidebar(
@@ -594,14 +535,10 @@ def assert_token_on_token_page_sidebar(
         assert token_name in {token.name for token in tokens_page.tokens}, error_message
     if ability_to_see == "does not see":
         error_message = f"token list on sidebar should not contain {token_name}"
-        assert token_name not in {
-            token.name for token in tokens_page.tokens
-        }, error_message
+        assert token_name not in {token.name for token in tokens_page.tokens}, error_message
 
 
-def choose_token_template(
-    selenium: SeleniumDrivers, browser_id: str, template: str
-) -> None:
+def choose_token_template(selenium: SeleniumDrivers, browser_id: str, template: str) -> None:
     driver = selenium[browser_id]
     tokens_page = OZLoggedIn(driver).tokens
     getattr(tokens_page, f"{transform(template)}_template").click()
@@ -609,9 +546,7 @@ def choose_token_template(
 
 @wt(parsers.parse('user of {browser_id} sees alert with text: "{text}" on tokens page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_alert_on_tokens_page(
-    browser_id: str, text: str, selenium: SeleniumDrivers
-) -> None:
+def assert_alert_on_tokens_page(browser_id: str, text: str, selenium: SeleniumDrivers) -> None:
     alert = OZLoggedIn(selenium[browser_id]).tokens.alert
     assert text in alert, f"{text} does not match alert: {alert}"
 
@@ -636,15 +571,14 @@ def click_on_token_containing_name(
     raise ValueError(f"token {token_name} not found")
 
 
-@wt(
-    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
-)
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_confirm_button_on_tokens_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_confirm_button_on_tokens_page(driver: WebDriver) -> None:
     # click the button without checking if a popup or error modal appeared
-    oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.tokens.confirm_button()
-    # it is needed to wait for the page refresh
-    wait_till_main_content_loaded(selenium[browser_id])
+    OZLoggedIn(driver).tokens.confirm_button.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_confirm_button_not_visible_on_tokens_page(driver: WebDriver) -> None:
+    assert not is_element_visible_using_getter(
+        driver, lambda driver: OZLoggedIn(driver).tokens.confirm_button.web_elem
+    )

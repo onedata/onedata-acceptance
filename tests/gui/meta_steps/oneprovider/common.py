@@ -83,9 +83,7 @@ def navigate_to_tab_in_op_using_gui(
 def assert_cannot_click_replicate_button(
     selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
 ) -> None:
-    with pytest.raises(
-        ElementNotInteractableException, match="Replicate button is not clickable"
-    ):
+    with pytest.raises(ElementNotInteractableException, match="Replicate button is not clickable"):
         replicate_item(selenium, browser_id, provider, hosts)
 
 
@@ -113,18 +111,12 @@ def replicate_files_to_providers(
     details_modal_str = "Details modal"
     for name in names:
         click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-        click_option_in_data_row_menu_in_browser(
-            selenium, browser_id, "Data distribution"
-        )
+        click_option_in_data_row_menu_in_browser(selenium, browser_id, "Data distribution")
         assert_tab_in_modal(selenium, browser_id, "Distribution", details_modal_str)
 
         for provider in providers:
-            if is_current_item_fully_on_provider(
-                selenium[browser_id], hosts[provider]["name"]
-            ):
-                assert_cannot_click_replicate_button(
-                    selenium, browser_id, provider, hosts
-                )
+            if is_current_item_fully_on_provider(selenium[browser_id], hosts[provider]["name"]):
+                assert_cannot_click_replicate_button(selenium, browser_id, provider, hosts)
                 continue
             replicate_item(selenium, browser_id, provider, hosts)
             if result == "fails to replicate":
@@ -152,11 +144,7 @@ def assert_eviction_done(
     click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees file chunks for files:\n(?P<desc>(.|\s)*)"
-    )
-)
+@wt(parsers.re(r"user of (?P<browser_id>.*) sees file chunks for files:\n(?P<desc>(.|\s)*)"))
 def wt_assert_file_chunks(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -185,13 +173,9 @@ def _assert_file_chunks(
 ) -> None:
     for provider, chunks in desc.items():
         if chunks == "entirely empty":
-            assert_provider_chunk_in_data_distribution_empty(
-                selenium, browser_id, provider, hosts
-            )
+            assert_provider_chunk_in_data_distribution_empty(selenium, browser_id, provider, hosts)
         elif chunks == "entirely filled":
-            assert_provider_chunk_in_data_distribution_filled(
-                selenium, browser_id, provider, hosts
-            )
+            assert_provider_chunk_in_data_distribution_filled(selenium, browser_id, provider, hosts)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
@@ -297,14 +281,10 @@ def select_files_and_replicate(
     result: str,
 ) -> None:
     select_files_from_file_list_using_ctrl(browser_id, item_list, tmp_memory)
-    choose_option_from_selection_menu(
-        browser_id, selenium, "Data distribution", tmp_memory
-    )
+    choose_option_from_selection_menu(browser_id, selenium, "Data distribution", tmp_memory)
 
     for provider in providers:
-        if is_current_item_fully_on_provider(
-            selenium[browser_id], hosts[provider]["name"]
-        ):
+        if is_current_item_fully_on_provider(selenium[browser_id], hosts[provider]["name"]):
             assert_cannot_click_replicate_button(selenium, browser_id, provider, hosts)
             continue
         replicate_item(selenium, browser_id, provider, hosts)

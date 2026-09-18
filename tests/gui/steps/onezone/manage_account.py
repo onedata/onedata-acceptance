@@ -24,11 +24,7 @@ def open_manage_account_page(selenium: SeleniumDrivers, browser_id: str) -> None
     oz_page.expand_panel_if_needed()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} expands account settings dropdown in the sidebar"
-    )
-)
+@wt(parsers.parse("user of {browser_id} expands account settings dropdown in the sidebar"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
@@ -69,9 +65,7 @@ def start_username_change(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def enter_new_username(
-    selenium: SeleniumDrivers, browser_id: str, new_username: str
-) -> None:
+def enter_new_username(selenium: SeleniumDrivers, browser_id: str, new_username: str) -> None:
     OZLoggedIn(selenium[browser_id]).profile.edit_user_name_box.value = new_username
 
 
@@ -110,11 +104,7 @@ def click_on_user_menu_button_in_oz(selenium: SeleniumDrivers, browser_id: str) 
     OZLoggedIn(driver).profile.show_user_account_menu_toolbar.click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on remove user button in menu on Profile page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on remove user button in menu on Profile page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_remove_user_button_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
@@ -137,9 +127,7 @@ def click_understand_consequences_checkbox_in_oz(
 
 @wt(parsers.parse("user of {browser_id} clicks on delete account button in modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_delete_account_button_in_oz(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_delete_account_button_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     Modals(driver).delete_user_account.delete_account.click()
 

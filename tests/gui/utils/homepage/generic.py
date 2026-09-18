@@ -12,9 +12,7 @@ SPACE_ENDPOINTS: Final[dict[str, EndpointInfo]] = {
     "Get space details": EndpointInfo.space("GET", "Get space details"),
     "List all space privileges": EndpointInfo.space("GET", "List all space privileges"),
     "List direct space users": EndpointInfo.space("GET", "List space users"),
-    "List effective space users": EndpointInfo.space(
-        "GET", "List effective space users"
-    ),
+    "List effective space users": EndpointInfo.space("GET", "List effective space users"),
     "Get effective space user details": EndpointInfo.space(
         "GET", "Get effective space user details"
     ),
@@ -24,13 +22,9 @@ SPACE_ENDPOINTS: Final[dict[str, EndpointInfo]] = {
     "List user's effective space privileges": EndpointInfo.space(
         "GET", "List effective user's space privileges"
     ),
-    "Update user's space privileges": EndpointInfo.space(
-        "PATCH", "Update user's space privileges"
-    ),
+    "Update user's space privileges": EndpointInfo.space("PATCH", "Update user's space privileges"),
     "List direct space groups": EndpointInfo.space("GET", "List space groups"),
-    "List effective space groups": EndpointInfo.space(
-        "GET", "List effective space groups"
-    ),
+    "List effective space groups": EndpointInfo.space("GET", "List effective space groups"),
     "Get effective space group details": EndpointInfo.space(
         "GET", "Get effective space group details"
     ),
@@ -57,9 +51,7 @@ FILE_DETAILS_ENDPOINTS: Final[dict[str, EndpointInfo]] = {
     "Create file in directory": EndpointInfo.file_details(
         "POST", "Create file in directory", "Basic File Operations"
     ),
-    "Remove file": EndpointInfo.file_details(
-        "DELETE", "Remove file", "Basic File Operations"
-    ),
+    "Remove file": EndpointInfo.file_details("DELETE", "Remove file", "Basic File Operations"),
     "Get attributes": EndpointInfo.file_details(
         "GET", "Get file attributes", "Basic File Operations"
     ),

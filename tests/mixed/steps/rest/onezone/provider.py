@@ -1,7 +1,6 @@
 """Utils and fixtures to facilitate operations on providers in Onezone using REST API."""
 
 from onezone_client import ProviderApi
-
 from tests.mixed.steps.rest.onezone.common import get_provider_with_name
 from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_oz
@@ -24,9 +23,9 @@ def assert_provider_has_name_and_hostname_in_oz_rest(
     for pid in providers:
         provider = provider_api.get_provider_details(pid)
         if provider.name == provider_name:
-            assert (
-                provider.domain == domain
-            ), f"Provider has domain {provider.domain} instead of {domain}"
+            assert provider.domain == domain, (
+                f"Provider has domain {provider.domain} instead of {domain}"
+            )
             break
     else:
         raise AssertionError(f'Couldn\'t find provider named "{provider_name}"')

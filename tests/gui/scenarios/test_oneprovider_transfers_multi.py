@@ -52,6 +52,4 @@ def screens() -> list[int]:
 
 
 scenarios("../features/oneprovider/transfers/transfers_multi.feature")
-scenarios(
-    "../features/onezone/space/spaces_memberships_privileges_multiprovider.feature"
-)
+scenarios("../features/onezone/space/spaces_memberships_privileges_multiprovider.feature")

@@ -43,8 +43,7 @@ def wt_assert_listed_buckets(
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_spaces = list_buckets(s3)
     error_message = (
-        f"Expected spaces: {spaces_list},\n does not match to actual ones:"
-        f" {actual_spaces}"
+        f"Expected spaces: {spaces_list},\n does not match to actual ones: {actual_spaces}"
     )
     assert set(actual_spaces) == set(spaces_list), error_message
 
@@ -62,11 +61,7 @@ def wt_assert_bucket_exists(
     assert does_bucket_exist(s3, space_name)
 
 
-@wt(
-    parsers.parse(
-        'using OneS3, user {user} downloads "{file_name}" from "{space_name}"'
-    )
-)
+@wt(parsers.parse('using OneS3, user {user} downloads "{file_name}" from "{space_name}"'))
 def wt_download_file_from_bucket(
     space_name: str,
     file_name: str,
@@ -124,8 +119,7 @@ def wt_assert_file_content_read_from_bucket(
 
 @wt(
     parsers.parse(
-        "using OneS3, user {user} can see items "
-        '{items:ElementsSequence} in "{space_name}"',
+        'using OneS3, user {user} can see items {items:ElementsSequence} in "{space_name}"',
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )

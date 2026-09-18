@@ -12,7 +12,7 @@ from tests.gui.steps.common.login import (
     wt_assert_login_page,
     wt_enter_text_to_field_in_login_form,
 )
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.onepanel.account_management import (
     wt_click_confirm_btn_in_chpasswd_form,
     wt_click_on_btn_in_account_management,
@@ -45,7 +45,7 @@ def change_user_password_in_oz_panel_using_gui(
     wt_type_text_to_in_box_in_chpasswd_form(selenium, user, "New", new_password)
     wt_type_text_to_in_box_in_chpasswd_form(selenium, user, "Retype new", new_password)
     wt_click_confirm_btn_in_chpasswd_form(selenium, user)
-    notify_visible_with_text(selenium, user, AlertPopup.PASSWORD_CHANGED)
+    is_notify_popup_visible_and_close_all_alert_popups(selenium, user, AlertPopup.PASSWORD_CHANGED)
 
 
 def login_to_oz_panel_using_new_password_gui(
@@ -56,7 +56,9 @@ def login_to_oz_panel_using_new_password_gui(
     wt_enter_text_to_field_in_login_form(selenium, user, "Password", password)
     press_sign_in_btn_on_login_page(selenium, user)
 
-    notify_visible_with_text(selenium, user, AlertPopup.AUTHENTICATION_SUCCEEDED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium, user, AlertPopup.AUTHENTICATION_SUCCEEDED
+    )
 
 
 def log_out_from_oz_panel_gui(username: str, selenium: SeleniumDrivers) -> None:
@@ -90,12 +92,8 @@ def change_passphrase(
     sub_item = "Emergency passphrase"
     record = "oneprovider-1"
 
-    wt_click_on_subitem_for_item(
-        selenium, [browser_id], sidebar, sub_item, record, hosts
-    )
-    click_button_on_emergency_passphrase_page(
-        selenium, browser_id, change_passphrase_button
-    )
+    wt_click_on_subitem_for_item(selenium, [browser_id], sidebar, sub_item, record, hosts)
+    click_button_on_emergency_passphrase_page(selenium, browser_id, change_passphrase_button)
     type_text_to_input_on_emergency_passphrase_page(
         selenium,
         browser_id,

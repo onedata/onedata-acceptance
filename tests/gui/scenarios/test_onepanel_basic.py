@@ -73,6 +73,7 @@ def screens() -> list[int]:
 scenarios("../features/onepanel/storages.feature")
 scenarios("../features/onepanel/spaces.feature")
 scenarios("../features/onepanel/gui_settings.feature")
+scenarios("../features/onepanel/web_certificate.feature")
 
 
 @pytest.mark.last
@@ -84,8 +85,6 @@ def test_user_deregisters_provider_registers_it_again_and_sees_that_provider_is_
     pass
 
 
-@scenario(
-    "../features/onepanel/provider.feature", "User changes provider name and domain"
-)
+@scenario("../features/onepanel/provider.feature", "User changes provider name and domain")
 def test_user_changes_provider_name_and_domain():
     pass

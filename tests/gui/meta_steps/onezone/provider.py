@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.docker import wt_assert_file_in_path_with_content
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.onepanel.spaces import (
     wt_clicks_on_btn_in_cease_support_modal,
@@ -49,9 +49,7 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
         refresh_site(selenium, [user])
 
     click_on_option_in_the_sidebar(selenium, user, option)
-    click_on_provider_in_providers_sidebar_with_provider_name(
-        selenium, user, provider_name
-    )
+    click_on_provider_in_providers_sidebar_with_provider_name(selenium, user, provider_name)
 
     if test_domain:
         request = selenium["request"]
@@ -66,9 +64,7 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
             clipboard,
         )
     else:
-        assert_provider_hostname_matches_known_domain(
-            selenium, user, domain_provider, hosts
-        )
+        assert_provider_hostname_matches_known_domain(selenium, user, domain_provider, hosts)
 
 
 def assert_there_is_no_provider_in_oz_gui(
@@ -78,9 +74,7 @@ def assert_there_is_no_provider_in_oz_gui(
 
     refresh_site(selenium, [user])
     click_on_option_in_the_sidebar(selenium, user, option)
-    assert_provider_is_not_in_providers_list_in_data_sidebar(
-        selenium, user, provider_name, hosts
-    )
+    assert_provider_is_not_in_providers_list_in_data_sidebar(selenium, user, provider_name, hosts)
 
 
 def send_copied_invite_token_in_oz_gui(
@@ -96,9 +90,7 @@ def send_copied_invite_token_in_oz_gui(
 
     click_button_in_cluster_page(selenium, user, button)
     copy_registration_cluster_token(selenium, user)
-    send_copied_item_to_other_users(
-        user, item_type, browser_list, tmp_memory, displays, clipboard
-    )
+    send_copied_item_to_other_users(user, item_type, browser_list, tmp_memory, displays, clipboard)
 
 
 @wt(
@@ -113,13 +105,13 @@ def revoke_support_of_provider_in_list(
     driver = selenium[browser_id]
     button = "Cease support"
 
-    click_on_menu_button_of_provider_on_providers_list(
-        selenium, browser_id, provider, hosts
-    )
+    click_on_menu_button_of_provider_on_providers_list(selenium, browser_id, provider, hosts)
     click_on_cease_support_in_menu_of_provider_on_providers_list(driver)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id)
     wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
-    notify_visible_with_text(selenium, browser_id, AlertPopup.CEASED_SUPPORT)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium, browser_id, AlertPopup.CEASED_SUPPORT
+    )
 
 
 @wt(

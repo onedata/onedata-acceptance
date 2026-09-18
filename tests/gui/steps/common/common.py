@@ -27,7 +27,7 @@ from tests.gui.type_definitions import (
     WebElementOrCssLocator,
     WebElementOrSelector,
 )
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
     ArchiveAuditLog,
@@ -35,7 +35,6 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
-from tests.gui.utils.common.popups.generic import AlertPopupType
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.generic import (
     ListElement,
@@ -163,12 +162,10 @@ def scroll_to_bottom_of_the_table(driver: WebDriver) -> int:
         if count == 0:
             return count
         # Scroll to last
-        driver.execute_script(
-            "arguments[0].scrollIntoView();", get_last_item_in_table(driver)
-        )
+        driver.execute_script("arguments[0].scrollIntoView();", get_last_item_in_table(driver))
         try:
             WebDriverWait(driver, 2).until(
-                lambda d: get_last_item_number_in_table(d) > count
+                lambda d, previous_count=count: get_last_item_number_in_table(d) > previous_count
             )
         except TimeoutException:
             break
@@ -209,17 +206,22 @@ def assert_logs_order_with_optional_logs(
             severity[v] = k
             logs_expected_list.append(v)
 
-    idx, n = 0, len(logs_expected_list)
+    idx = 0
+    actual_logs_count = len(logs_actual)
     for expected_log in logs_expected_list:
         if severity[expected_log] == "Required":
-            assert idx < n and expected_log == logs_actual[idx], (
-                f"expected logs: {logs_expected_list}\n"
-                f"do not match actual logs: {logs_actual}"
+            error_message = (
+                f"expected logs: {logs_expected_list}\ndo not match actual logs: {logs_actual}"
             )
+            assert idx < actual_logs_count, error_message
+            assert expected_log == logs_actual[idx], error_message
             idx += 1
-        if severity[expected_log] == "Optional":
-            if idx < n and expected_log == logs_actual[idx]:
-                idx += 1
+        if (
+            severity[expected_log] == "Optional"
+            and idx < actual_logs_count
+            and expected_log == logs_actual[idx]
+        ):
+            idx += 1
 
 
 def scroll_and_get_columns(
@@ -236,9 +238,7 @@ def scroll_and_get_columns(
         visible_names = visible_elems[main_column]
 
         modal.scroll_by_press_space()
-        stop_scrolling_flag = not any(
-            name not in checked_names for name in visible_names
-        )
+        stop_scrolling_flag = not any(name not in checked_names for name in visible_names)
         checked_names.update(visible_names)
     return list(checked_names)
 
@@ -302,17 +302,13 @@ def wait_for_element_to_appear(
     timeout: float = WAIT_FRONTEND,
 ) -> bool:
     """Return whether the element appeared before the timeout."""
-    web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(
-        web_elem_or_selector
-    )
-    visibility_condition: VisibilityCondition = get_visibility_condition(
-        web_elem_or_locator
-    )
+    web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(web_elem_or_selector)
+    visibility_condition: VisibilityCondition = get_visibility_condition(web_elem_or_locator)
     try:
         # selenium function visibility_of does not ignore StaleElementReferenceException
-        WebDriverWait(
-            driver, timeout, ignored_exceptions=[StaleElementReferenceException]
-        ).until(visibility_condition)
+        WebDriverWait(driver, timeout, ignored_exceptions=[StaleElementReferenceException]).until(
+            visibility_condition
+        )
     except TimeoutException:
         return False
     return True
@@ -332,9 +328,7 @@ def click_close_button_and_wait_to_disappear(
     web_elem_or_locator: WebElementOrCssLocator,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    try_click_without_throwing_error(
-        lambda: get_close_button(driver).click()  # pylint: disable=unnecessary-lambda
-    )
+    try_click_without_throwing_error(lambda: get_close_button(driver).click())
     WebDriverWait(driver, WAIT_FRONTEND).until(
         invisibility_of_element(web_elem_or_locator),
         message="Popup or modal is still visible",
@@ -355,34 +349,6 @@ def wait_till_error_modal_disappear(
         driver,
         web_elem_or_locator,
         get_close_button,
-    )
-    return True
-
-
-def close_alert_popup_if_present(
-    driver: WebDriver,
-    popup: AlertPopupType,
-) -> bool:
-    # Close an alert identified by its enum value.
-    # If popup doesn't appear, don't throw an error.
-    # If it appeared and was not closed, raise.
-    alert_popup = Popups(driver).alert_popups.get_alert_popup(popup)
-    if alert_popup is None:
-        return False
-
-    def close_matching_popup() -> None:
-        current_popup = Popups(driver).alert_popups.find_alert_popup(popup)
-        if current_popup is not None:
-            current_popup.close.click()
-
-    try_click_without_throwing_error(close_matching_popup)
-
-    def is_popup_closed(driver: WebDriver) -> bool:
-        return Popups(driver).alert_popups.find_alert_popup(popup) is None
-
-    WebDriverWait(driver, WAIT_FRONTEND).until(
-        is_popup_closed,
-        message=f'Alert popup matching "{popup.message}" is still visible',
     )
     return True
 

@@ -33,9 +33,7 @@ from tests.utils.bdd_utils import parsers, wt
 def _assert_endpoint_details_in_api_subpage(
     selenium: SeleniumDrivers, browser_id: str, endpoint: EndpointInfo
 ) -> None:
-    assert_title_contains(
-        selenium, browser_id, f"{endpoint.name} | {endpoint.reference_title}"
-    )
+    assert_title_contains(selenium, browser_id, f"{endpoint.name} | {endpoint.reference_title}")
     assert_active_chapter_tab_in_documentation_subpage(
         selenium, browser_id, "API", endpoint.chapter
     )
@@ -106,8 +104,6 @@ def assert_all_links_to_rest_api_documentation_work_in_space_menu(
 def assert_user_sees_name_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, name: str
 ) -> None:
-    assert_user_sees_name_in_header_in_documentation_subpage(
-        selenium, browser_id, "Docs", name
-    )
+    assert_user_sees_name_in_header_in_documentation_subpage(selenium, browser_id, "Docs", name)
     assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, name)
     assert_title_contains(selenium, browser_id, f"{name} | Onedata Docs")

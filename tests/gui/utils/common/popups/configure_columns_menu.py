@@ -75,9 +75,9 @@ class JsonColumnEditor(PageObject):
     apply_changes = NamedButton(".edit-column-btn", text="Apply")
 
     def clear_actual_key(self, driver: WebDriver) -> None:
-        ActionChains(driver).key_down(Keys.CONTROL).send_keys("a").key_up(
-            Keys.CONTROL
-        ).key_down(Keys.BACKSPACE).perform()
+        ActionChains(driver).key_down(Keys.CONTROL).send_keys("a").key_up(Keys.CONTROL).key_down(
+            Keys.BACKSPACE
+        ).perform()
         # Using send_keys(Keys.CONTROL, "a", Keys.BACKSPACE) does not work reliably
         # in this case, so ActionChains are used instead.
 

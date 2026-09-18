@@ -1,3 +1,4 @@
+# ruff: noqa: N803 - boto3 keyword names are part of the external API
 """Low-level OneS3 helpers using the boto3 library."""
 
 __author__ = "Wojciech Szmelich"
@@ -5,11 +6,12 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
+from http import HTTPStatus
 from typing import Protocol, TypedDict, cast
 
-import boto3  # pylint: disable=import-error
+import boto3
 from _pytest._py.path import LocalPath
-from botocore.config import Config  # pylint: disable=import-error
+from botocore.config import Config
 
 from tests import ONES3_PORT
 from tests.gui.type_definitions import TmpMemory
@@ -82,9 +84,7 @@ def get_s3client(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts) -> S3Clien
     if tmp_memory["s3 client"]:
         return cast(S3Client, tmp_memory["s3 client"])
     s3_endpoint = f"https://{hosts['oneprovider-1']['hostname']}:{ONES3_PORT}"
-    tmp_memory["s3 client"] = create_s3client(
-        s3_endpoint, tokens["oc_token"]["token"], SECRET_KEY
-    )
+    tmp_memory["s3 client"] = create_s3client(s3_endpoint, tokens["oc_token"]["token"], SECRET_KEY)
     return cast(S3Client, tmp_memory["s3 client"])
 
 
@@ -93,9 +93,7 @@ def list_buckets(s3: S3Client) -> list[str]:
 
 
 def does_bucket_exist(s3: S3Client, bucket_name: str) -> bool:
-    return (
-        s3.head_bucket(Bucket=bucket_name)["ResponseMetadata"]["HTTPStatusCode"] == 200
-    )
+    return s3.head_bucket(Bucket=bucket_name)["ResponseMetadata"]["HTTPStatusCode"] == HTTPStatus.OK
 
 
 def download_file_from_bucket(
@@ -110,14 +108,10 @@ def download_file_from_bucket(
 def create_file_in_bucket(
     s3: S3Client, bucket_name: str, file_name: str, file_content: str
 ) -> None:
-    s3.put_object(
-        Bucket=bucket_name, Key=file_name, Body=bytes(file_content, encoding="utf-8")
-    )
+    s3.put_object(Bucket=bucket_name, Key=file_name, Body=bytes(file_content, encoding="utf-8"))
 
 
-def read_file_content_from_bucket(
-    s3: S3Client, bucket_name: str, file_path: str
-) -> str:
+def read_file_content_from_bucket(s3: S3Client, bucket_name: str, file_path: str) -> str:
     response = s3.get_object(Bucket=bucket_name, Key=file_path)
     return response["Body"].read().decode("utf-8")
 

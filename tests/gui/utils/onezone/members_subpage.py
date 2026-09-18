@@ -35,9 +35,7 @@ from tests.utils.utils import element_has_class
 class MembersHeaderRow(PageObject):
     checkbox = Button("div.one-checkbox")
     search_bar = Input("input.form-control")
-    menu_button = Button(
-        "li.list-header-row .collapsible-toolbar-toggle.btn-menu-toggle"
-    )
+    menu_button = Button("li.list-header-row .collapsible-toolbar-toggle.btn-menu-toggle")
 
 
 class MembersItemHeader(PageObject):
@@ -110,9 +108,7 @@ class MembershipRelation(PageObject):
 class MembershipRow(PageObject):
     name = id = Label("div")
     clickable_name = WebElement("div")
-    elements = WebItemsSequence(
-        ".membership-row-element.membership-block", cls=MembershipElement
-    )
+    elements = WebItemsSequence(".membership-row-element.membership-block", cls=MembershipElement)
     relations = WebItemsSequence(
         ".membership-row-element.membership-relation", cls=MembershipRelation
     )
@@ -140,9 +136,7 @@ class MembersPage(PageObject):
     lack_users_view_privileges = WebElement(".row.user-list-row .alert")
 
     token = WebItem(".invitation-token-presenter", cls=InvitationTokenArea)
-    memberships = WebItemsSequence(
-        ".membership-visualiser .membership-row", cls=MembershipRow
-    )
+    memberships = WebItemsSequence(".membership-visualiser .membership-row", cls=MembershipRow)
 
     forbidden_alert = WebElement(".alert.forbidden")
     open_in_onezone = Button(".manage-via-onezone")

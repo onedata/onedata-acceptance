@@ -37,10 +37,7 @@ class HTTPError(IOError, metaclass=HTTPErrorMeta):
         self.response = response
 
     def __str__(self) -> str:
-        return (
-            f"[{self.response.status_code}] {self.response.reason}:"
-            f" {self.response.text}"
-        )
+        return f"[{self.response.status_code}] {self.response.reason}: {self.response.text}"
 
 
 class HTTPClientError(HTTPError):

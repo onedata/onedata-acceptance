@@ -1,7 +1,5 @@
 """This module contains performance tests of oneclient using sysbench benchmark."""
 
-# pylint: disable=consider-using-f-string,unused-argument
-
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -23,7 +21,6 @@ SUCCESS_RATE = 100
 
 
 class TestSysbench(AbstractPerformanceTest):
-
     @performance(
         default_config={
             "repeats": REPEATS,
@@ -106,13 +103,11 @@ class TestSysbench(AbstractPerformanceTest):
             directory=client_directio.absolute_path("space1")
         )
 
-        dir_path_proxy = client_proxy.mkdtemp(
-            directory=client_proxy.absolute_path("space1")
-        )
+        dir_path_proxy = client_proxy.mkdtemp(directory=client_proxy.absolute_path("space1"))
 
         print(
-            "\n################################## DIRECT-IO client (%s)"
-            " ##################################\n" % (mode)
+            f"\n################################## DIRECT-IO client ({mode})"
+            " ##################################\n"
         )
 
         execute_sysbench_test(
@@ -131,8 +126,8 @@ class TestSysbench(AbstractPerformanceTest):
         )
 
         print(
-            "\n################################## PROXY-IO client (%s)"
-            " ##################################\n" % (mode)
+            f"\n################################## PROXY-IO client ({mode})"
+            " ##################################\n"
         )
 
         execute_sysbench_test(
@@ -355,7 +350,7 @@ def sysbench(
     file_block_size: int,
     operation: str,
     client: Client,
-    user: str,
+    user: str,  # noqa: ARG001 - keep sysbench helper signatures uniform
     directory: str,
     output: bool = False,
 ) -> CommandResult:
@@ -390,32 +385,18 @@ def sysbench_command(
     directory: str,
 ) -> str:
 
-    cmd = (
-        "cd {dir} && "
+    return (
+        f"cd {directory} && "
         "sysbench "
-        "--threads={threads} "
-        "--file-total-size={total_size}M "
-        "--file-num={file_number} "
-        "--file-test-mode={mode} "
-        "--validate={validate} "
-        "--events={events} "
-        "--report-interval={report_interval} "
-        "--time={time} "
-        "--file-block-size={file_block_size}K "
+        f"--threads={threads} "
+        f"--file-total-size={total_size}M "
+        f"--file-num={file_number} "
+        f"--file-test-mode={mode} "
+        f"--validate={validate} "
+        f"--events={events} "
+        f"--report-interval={report_interval} "
+        f"--time={time} "
+        f"--file-block-size={file_block_size}K "
         "fileio "
-        "{type}"
-    ).format(
-        dir=directory,
-        threads=threads,
-        total_size=total_size,
-        file_number=file_number,
-        mode=mode,
-        validate=validate,
-        events=events,
-        report_interval=report_interval,
-        time=time,
-        file_block_size=file_block_size,
-        type=operation,
+        f"{operation}"
     )
-
-    return cmd

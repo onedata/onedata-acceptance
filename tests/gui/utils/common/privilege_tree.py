@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Optional
 
 from selenium.common.exceptions import (
     ElementNotInteractableException,
@@ -31,6 +30,8 @@ from tests.gui.utils.core.web_elements import (
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.utils import repeat_failed
+
+PRIVILEGE_ROW_LOOKUP_ATTEMPTS = 10
 
 
 class PrivilegeRow(PageObject):
@@ -63,9 +64,7 @@ class PrivilegeRow(PageObject):
     def assert_effective_privilege_granted(self, granted: PrivilegeGranted) -> None:
         if granted:
             msg = f"{self.name} should be granted but is not"
-            assert "oneicon-checked" in self.effective_granted.get_attribute(
-                "class"
-            ), msg
+            assert "oneicon-checked" in self.effective_granted.get_attribute("class"), msg
         else:
             msg = f"{self.name} should not be granted but it is"
             assert self.effective_revoke, msg
@@ -80,19 +79,16 @@ class PrivilegeRow(PageObject):
             if (self.toggle.is_checked() and not granted) or (
                 not self.toggle.is_checked() and granted
             ):
-                driver.execute_script(
-                    "document.querySelector('.col-content').scrollTo(0, 0)"
-                )
+                driver.execute_script("document.querySelector('.col-content').scrollTo(0, 0)")
                 elem_id = self._checkbox.get_attribute("id")
                 try:
                     driver.find_element(By.CSS_SELECTOR, "#" + elem_id).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
+        elif granted:
+            self.activate()
         else:
-            if granted:
-                self.activate()
-            else:
-                self.deactivate()
+            self.deactivate()
         if granted:
             return self.toggle.is_checked()
         return self.toggle.is_unchecked()
@@ -112,9 +108,7 @@ class PrivilegeGroup(PageObject):
         if not self.is_expanded():
             expander_id = self._expander.get_attribute("id")
             try:
-                driver.execute_script(
-                    "document.querySelector('.col-content').scrollTo(0, 0)"
-                )
+                driver.execute_script("document.querySelector('.col-content').scrollTo(0, 0)")
                 driver.find_element(By.CSS_SELECTOR, f"#{expander_id}").click()
             except ElementNotInteractableException:
                 self.expander.click()
@@ -125,12 +119,8 @@ class PrivilegeGroup(PageObject):
     def collapse(self, driver: WebDriver) -> None:
         if self.is_expanded():
             try:
-                driver.execute_script(
-                    "document.querySelector('.col-content').scrollTo(0, 0)"
-                )
-                driver.find_element(
-                    By.CSS_SELECTOR, ".table-privileges .oneicon-arrow-up"
-                ).click()
+                driver.execute_script("document.querySelector('.col-content').scrollTo(0, 0)")
+                driver.find_element(By.CSS_SELECTOR, ".table-privileges .oneicon-arrow-up").click()
             except ElementNotInteractableException:
                 self.expander.click()
 
@@ -161,8 +151,10 @@ class PrivilegeGroup(PageObject):
         granted_count = int(self.effective_priv.split("/")[0])
         all_count = int(self.effective_priv.split("/")[1])
         if granted == "Partially":
-            msg = f"{self.name} should be partially granted but is not"
-            assert granted_count != all_count and granted_count > 0, msg
+            assert granted_count > 0, f"{self.name} should be partially granted but none are"
+            assert granted_count != all_count, (
+                f"{self.name} should be partially granted but all are"
+            )
         elif granted:
             msg = f"{self.name} should be granted but is not"
             assert granted_count == all_count, msg
@@ -183,20 +175,17 @@ class PrivilegeGroup(PageObject):
                 or (not self.toggle.is_checked() and granted)
                 or self.toggle.is_partial_checked()
             ):
-                driver.execute_script(
-                    "document.querySelector('.col-content').scrollTo(0, 0)"
-                )
+                driver.execute_script("document.querySelector('.col-content').scrollTo(0, 0)")
                 elem_id = self._checkbox.get_attribute("id")
                 for _ in range(count):
                     try:
                         driver.find_element(By.CSS_SELECTOR, "#" + elem_id).click()
                     except ElementNotInteractableException:
                         self.toggle.click()
+        elif granted:
+            self.activate()
         else:
-            if granted:
-                self.activate()
-            else:
-                self.deactivate()
+            self.deactivate()
         if granted:
             return self.toggle.is_checked()
         return self.toggle.is_unchecked()
@@ -278,9 +267,7 @@ class PrivilegeTree(PageObject):
                 if is_direct_privileges:
                     self.privileges[sub_name].assert_privilege_granted(sub_granted)
                 else:
-                    self.privileges[sub_name].assert_effective_privilege_granted(
-                        sub_granted
-                    )
+                    self.privileges[sub_name].assert_effective_privilege_granted(sub_granted)
             privilege_row.collapse(driver)
         if is_direct_privileges:
             privilege_row.assert_privilege_granted(granted)
@@ -343,10 +330,10 @@ class PrivilegeTree(PageObject):
         with_scroll: bool = False,
     ) -> bool:
         driver = selenium[browser_id]
-        privilege_row: Optional[PrivilegeGroup] = None
+        privilege_row: PrivilegeGroup | None = None
         # Tolerate loading of privileges table
         privilege_row_try = 0
-        while privilege_row is None and privilege_row_try < 10:
+        while privilege_row is None and privilege_row_try < PRIVILEGE_ROW_LOOKUP_ATTEMPTS:
             try:
                 privilege_row = self.privilege_groups[name]
             except PageObjectNotFoundError:
@@ -368,9 +355,7 @@ class PrivilegeTree(PageObject):
                 )
             privilege_row.collapse(driver)
         else:
-            result = result and privilege_row.set_privilege(
-                driver, granted, with_scroll
-            )
+            result = result and privilege_row.set_privilege(driver, granted, with_scroll)
         return result
 
     def set_all_true(self) -> None:
@@ -384,7 +369,7 @@ class PrivilegeTree(PageObject):
     def wait_for_load_privileges(self) -> None:
         for _ in range(50):
             try:
-                self.spinner  # pylint: disable=pointless-statement
+                _ = self.spinner
                 time.sleep(0.1)
             except NoSuchElementException:
                 return

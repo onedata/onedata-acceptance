@@ -5,42 +5,28 @@ Define fixtures used in web GUI acceptance/behavioral tests.
 __author__ = "Jakub Liput, Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
-# pylint: disable=unused-import
 
 import os
 import re
 import subprocess as sp
 from collections import defaultdict
-from typing import Generator, cast
+from collections.abc import Generator
+from typing import cast
 
 import pytest
 from _pytest._py.path import LocalPath
 from _pytest.config.argparsing import Parser
 from _pytest.reports import TestReport
-from pytest import fixture, hookimpl, skip
 from pytest_bdd.parser import Feature, Scenario, Step
 from selenium import webdriver
 
 from tests import LOGDIRS
 from tests.conftest import export_logs, get_log_dir_path
-from tests.gui.constants import (
-    DRIVER_CREATION_RETRIES,
-    RESPONSIVE_LAYOUT_DELAY,
-    SCREEN_PARAMETERS,
-    SELENIUM_IMPLICIT_WAIT,
-    WAIT_BACKEND,
-    WAIT_EXTENDED_UPLOAD,
-    WAIT_EXTENDED_WORKFLOW_EXECUTION,
-    WAIT_FRONTEND,
-    WAIT_NORMAL_DOWNLOAD,
-    WAIT_NORMAL_UPLOAD,
-    WAIT_NORMAL_WORKFLOW_EXECUTION,
-    WAIT_PODS_TERMINATION,
-)
+from tests.gui.constants import SCREEN_PARAMETERS
 from tests.gui.sse_fixtures import (
-    async_loop_in_thread,
-    monitors,
-    space_files_monitor_factory,
+    async_loop_in_thread,  # noqa: F401 - register fixture
+    monitors,  # noqa: F401 - register fixtures
+    space_files_monitor_factory,  # noqa: F401 - register fixture
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
@@ -77,7 +63,7 @@ def pytest_addoption(parser: Parser) -> None:
     )
 
 
-@hookimpl(tryfirst=True, hookwrapper=True)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item: pytest.Item) -> Generator[None, HookOutcome, None]:
     outcome = yield
     rep = cast(TestReport, outcome.get_result())
@@ -145,28 +131,28 @@ def format_step_name(step: Step) -> str:
 # =============================================================================
 
 
-@fixture(autouse=True, scope="module")
+@pytest.fixture(autouse=True, scope="module")
 def finalize(request: pytest.FixtureRequest) -> Generator[None, None, None]:
     yield
     export_logs(request)
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def logdir(request: pytest.FixtureRequest) -> str:
-    return request.config.option.htmlpath.rstrip("report.html")
+    return request.config.option.htmlpath.removesuffix("report.html")
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def driver_type(request: pytest.FixtureRequest) -> str:
     return request.config.getoption("--driver")
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def test_type(request: pytest.FixtureRequest) -> str:
     return request.config.getoption("--test-type")
 
 
-@fixture
+@pytest.fixture
 def tmp_memory() -> TmpMemory:
     """Dict to use when one wants to store sth between steps.
 
@@ -176,16 +162,15 @@ def tmp_memory() -> TmpMemory:
     return cast(TmpMemory, defaultdict(dict))
 
 
-@fixture
+@pytest.fixture
 def displays() -> dict[str, str]:
     """Dict mapping browser to used display (e.g. {'browser1': ':0.0'} )"""
     return {}
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def clipboard() -> Clipboard:
     """utility simulating os clipboard"""
-    from collections import namedtuple
     from platform import system as get_system
 
     def copy(text: str, display: str) -> None:
@@ -208,19 +193,19 @@ def clipboard() -> Clipboard:
     return Clipboard(copy, paste)
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def base_url(hosts: Hosts, maybe_start_env: object) -> str:
-    return f'https://{hosts["onezone"]["hostname"]}'
+    return f"https://{hosts['onezone']['hostname']}"
 
 
-@fixture(scope="function", autouse=True)
+@pytest.fixture(autouse=True)
 def _skip_sensitive(request: pytest.FixtureRequest, sensitive_url: object) -> None:
     """Invert the default sensitivity behaviour: consider the test as destructive
     only if it has marker "destructive".
     """
     destructive = "destructive" in request.node.keywords
     if sensitive_url and destructive:
-        skip(
+        pytest.skip(
             "This test is destructive and the target URL is "
             "considered a sensitive environment. If this test is "
             "not destructive, add the 'nondestructive' marker to "
@@ -228,7 +213,7 @@ def _skip_sensitive(request: pytest.FixtureRequest, sensitive_url: object) -> No
         )
 
 
-@fixture
+@pytest.fixture
 def capabilities(
     request: pytest.FixtureRequest,
     capabilities: JsonObject,
@@ -251,6 +236,9 @@ def capabilities(
         options.binary_location = "/usr/local/bin/google-chrome"
 
         options.add_argument("--no-sandbox")
+        # This flag is needed for clipboard to work for Ubuntu 26.04 and newer,
+        # some functions are not compatible with Wayland, so we need to force X11
+        options.add_argument("--ozone-platform=x11")
         options.add_argument("--enable-popup-blocking")
         options.add_argument("--ignore-ssl-errors=yes")
         options.add_argument("--ignore-certificate-errors")
@@ -298,12 +286,12 @@ def capabilities(
 # ============================================================================
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def screens() -> list[int]:
     return [0]
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def movie_dir(request: pytest.FixtureRequest) -> str:
     log_dir = os.path.dirname(request.config.option.htmlpath)
     movie_subdir = os.path.join(log_dir, "movies")
@@ -312,7 +300,7 @@ def movie_dir(request: pytest.FixtureRequest) -> str:
     return movie_subdir
 
 
-@fixture(scope="module")
+@pytest.fixture(scope="module")
 def xvfb(
     request: pytest.FixtureRequest,
     screens: list[int],
@@ -334,7 +322,7 @@ def xvfb(
         yield [os.environ.get("DISPLAY", "DUMMY_DISPLAY")]
 
 
-@fixture(scope="session")
+@pytest.fixture(scope="session")
 def should_record() -> bool:
     return True
 
@@ -344,7 +332,7 @@ def should_record() -> bool:
 # ============================================================================
 
 
-@fixture(name="run_unmock")
+@pytest.fixture(name="run_unmock")
 def run_around_testcase(hosts: Hosts) -> Generator[None, None, None]:
     yield
     unmock_archive_verification("oneprovider-krakow", hosts)

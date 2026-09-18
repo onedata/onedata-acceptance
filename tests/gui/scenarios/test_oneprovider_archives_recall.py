@@ -67,6 +67,4 @@ def screens() -> list[int]:
 
 
 scenarios("../features/oneprovider/data/archive_recall.feature")
-scenarios(
-    "../features/oneprovider/multiprovider/archive_recall_multiple_providers.feature"
-)
+scenarios("../features/oneprovider/multiprovider/archive_recall_multiple_providers.feature")

@@ -1,7 +1,6 @@
 """Utils for managing REST API for CDMI service"""
 
 import json
-from typing import Optional
 
 import requests
 
@@ -18,7 +17,7 @@ OBJECT_TYPE = "object"
 
 
 def get_item_type(item_path: str) -> str:
-    return "container" if item_path.split("/")[-1].startswith("dir") else "object"
+    return "container" if item_path.rsplit("/", maxsplit=1)[-1].startswith("dir") else "object"
 
 
 def get_content_type(item_type: str) -> str:
@@ -26,10 +25,7 @@ def get_content_type(item_type: str) -> str:
 
 
 def parse_path(path: str, item_type: str, add_cdmi_prefix: bool = False) -> str:
-    if item_type == "container" and path and path[-1] != "/":
-        parsed_path = f"{path}/"
-    else:
-        parsed_path = path
+    parsed_path = f"{path}/" if item_type == "container" and path and path[-1] != "/" else path
 
     if parsed_path and parsed_path[0] != "/":
         parsed_path = f"/{parsed_path}"
@@ -91,9 +87,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def read_from_file(
-        self, path: str, read_range: Optional[tuple[int, int]] = None
-    ) -> bytes:
+    def read_from_file(self, path: str, read_range: tuple[int, int] | None = None) -> bytes:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         headers = {}

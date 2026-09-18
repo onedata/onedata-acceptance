@@ -79,9 +79,7 @@ class POSIXEditorKeyValue(PageObject):
 
 class QOSParams(PageObject):
     key_values = WebItemsSequence(".text-input.group-with-tip", cls=POSIXEditorKeyValue)
-    last_key = WebItem(
-        ".text-input.group-with-tip.last-record .text-left", cls=InputBox
-    )
+    last_key = WebItem(".text-input.group-with-tip.last-record .text-left", cls=InputBox)
     enabled_remove_icons = WebElementsSequence(".remove-param")
 
     def set_last_key(self, key: str) -> None:
@@ -109,17 +107,13 @@ class Editor(PageObject):
     save_button = Button("button.btn-primary")
     cancel_button = NamedButton("button", text="Cancel")
 
-    def change_field_in_editor(
-        self, driver: WebDriver, field_name: str, new_val: str
-    ) -> None:
+    def change_field_in_editor(self, driver: WebDriver, field_name: str, new_val: str) -> None:
         input_box = getattr(self, field_name)
         driver.execute_script("arguments[0].scrollIntoView();", input_box)
         input_box.clear()
         if new_val != "":
             input_box.send_keys(new_val)
-            assert (
-                input_box.get_attribute("value") == new_val
-            ), f'entering "{new_val}" failed'
+            assert input_box.get_attribute("value") == new_val, f'entering "{new_val}" failed'
 
 
 class POSIXEditor(Editor):
@@ -163,9 +157,7 @@ class StorageRecord(PageObject, ExpandableMixin):
     menu_button = Button(".collapsible-toolbar-toggle")
 
     def is_expanded(self) -> bool:
-        return bool(
-            re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
-        )
+        return bool(re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class")))
 
     def expand_menu(self) -> None:
         self.menu_button.click()
@@ -181,9 +173,7 @@ class StorageContentPage(PageObject):
     cancel = NamedButton("button", text="Cancel")
 
     @repeat_failed(timeout=30)
-    def click_modify_button_of_storage(
-        self, driver: WebDriver, storage_name: str
-    ) -> None:
+    def click_modify_button_of_storage(self, driver: WebDriver, storage_name: str) -> None:
         for index, record in enumerate(self.storages):
             if record.name == storage_name:
                 driver.execute_script(f'$(".btn-default")[{index}].click();')
@@ -195,6 +185,12 @@ class StorageContentPage(PageObject):
                 f"Cannot click on {storage_name} Modify button "
                 "because storage is not visible on page."
             )
+
+    def get_first_expanded_storage(self) -> StorageRecord:
+        for record in self.storages:
+            if record.name and record.is_expanded():
+                return record
+        raise PageObjectNotFoundError("Cannot find any expanded storage")
 
     def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)

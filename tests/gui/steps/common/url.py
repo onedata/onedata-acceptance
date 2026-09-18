@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import Union
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -15,7 +14,7 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import close_alert_popup_if_present
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
@@ -31,6 +30,7 @@ from tests.utils.utils import repeat_failed
 
 HOST_PATTERN = rf"(?:{'|'.join(pattern.value for pattern in HostPattern)})"
 HOST_ELEMENT_PATTERN = rf'(?:{HOST_PATTERN}|"{HOST_PATTERN}")'
+MIN_RESOURCE_ID_LENGTH = 10
 
 HOSTS_SEQUENCE_PATTERN = (
     rf"(?:"
@@ -62,12 +62,15 @@ def open_onedata_service_page(
     emergency interface of Onepanel
     emergency interface of Onezone
     """
-    for browser_id, host in zip(browser_id_list, hosts_list):
+    for browser_id, requested_host in zip(browser_id_list, hosts_list, strict=True):
         driver = selenium[browser_id]
-        if host == "emergency interface of Onepanel":
-            host = "oneprovider-1 provider panel"
-        host_parts = host.lower().split()
-        node_number: Union[int, str]
+        host_description = (
+            "oneprovider-1 provider panel"
+            if requested_host == "emergency interface of Onepanel"
+            else requested_host
+        )
+        host_parts = host_description.lower().split()
+        node_number: int | str
 
         if "node" in host_parts[0]:
             node_number = int(host_parts[0][-1])
@@ -127,17 +130,13 @@ def wt_open_onedata_service_page(
 
 @wt(parsers.re(r"user of (?P<browser_id>.+) should be redirected to (?P<page>.+) page"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_being_redirected_to_page(
-    page: str, selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def assert_being_redirected_to_page(page: str, selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     match = re.match(r"https?://.*?(/#)?(/.*)", driver.current_url)
     if match is None:
         raise ValueError(f"Cannot parse current URL: {driver.current_url}")
     curr_page = match.group(2)
-    assert (
-        curr_page == page
-    ), f"currently on {curr_page} page instead of expected {page}"
+    assert curr_page == page, f"currently on {curr_page} page instead of expected {page}"
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.+) changes the relative URL to (?P<path>.+)"))
@@ -152,18 +151,12 @@ def change_relative_url(selenium: SeleniumDrivers, browser_id: str, path: str) -
         r"application path to plain (?P<path>.+)"
     )
 )
-def change_application_path(
-    selenium: SeleniumDrivers, browser_id: str, path: str
-) -> None:
+def change_application_path(selenium: SeleniumDrivers, browser_id: str, path: str) -> None:
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group("base_url") + "/#" + path)
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) sees that (?:url|URL) matches: (?P<path>.+)"
-    )
-)
+@wt(parsers.re(r"user of (?P<browser_id>.+?) sees that (?:url|URL) matches: (?P<path>.+)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_url_matching(selenium: SeleniumDrivers, browser_id: str, path: str) -> None:
     driver = selenium[browser_id]
@@ -285,8 +278,7 @@ def open_site_url(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} opens URL received from user of "
-        "{browser2_id} without waiting"
+        "user of {browser_id} opens URL received from user of {browser2_id} without waiting"
     )
 )
 def open_received_url_without_waiting(
@@ -307,7 +299,9 @@ def cp_part_of_url(
 ) -> None:
     driver = selenium[browser_id]
     item_value = parse_url(driver.current_url).group("id")
-    assert len(item_value) > 10, f"did not manage to get resource ID, got: {item_value}"
+    assert len(item_value) > MIN_RESOURCE_ID_LENGTH, (
+        f"did not manage to get resource ID, got: {item_value}"
+    )
     clipboard.copy(
         item_value,
         display=displays[browser_id],
@@ -321,9 +315,7 @@ def cp_part_of_url(
     )
 )
 @wt(
-    parsers.re(
-        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) refreshes site"
-    ),
+    parsers.re(rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) refreshes site"),
     converters={
         "browser_id_list": parse_elements_sequence,
     },
@@ -342,9 +334,7 @@ def refresh_site(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
         "browser_id_list": parse_elements_sequence,
     },
 )
-def refresh_site_and_wait(
-    selenium: SeleniumDrivers, browser_id_list: list[str]
-) -> None:
+def refresh_site_and_wait(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
     for browser_id in browser_id_list:
         selenium[browser_id].refresh()
     for browser_id in browser_id_list:
@@ -354,14 +344,18 @@ def refresh_site_and_wait(
 def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     wait_till_main_content_loaded(driver)
-    close_alert_popup_if_present(driver, popup=AlertPopup.AUTHENTICATION_SUCCEEDED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.AUTHENTICATION_SUCCEEDED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def wait_till_main_content_loaded(driver: WebDriver) -> None:
-    elems = driver.find_elements(
-        By.CSS_SELECTOR, ".main-menu-content li.main-menu-item"
-    )
+    elems = driver.find_elements(By.CSS_SELECTOR, ".main-menu-content li.main-menu-item")
     assert len(elems) > 0, "did not manage to load main page"
 
 
@@ -384,11 +378,7 @@ def switch_to_last_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver.switch_to.window(driver.window_handles[-1])
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} switches to the previously opened tab in the web browser"
-    )
-)
+@wt(parsers.parse("user of {browser_id} switches to the previously opened tab in the web browser"))
 def switch_to_first_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.window(driver.window_handles[0])
@@ -399,9 +389,7 @@ def close_current_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 
 @wt(parsers.parse('user of {browser_id} sees image named "{image_name}" in browser'))
-def assert_image_in_browser(
-    browser_id: str, selenium: SeleniumDrivers, image_name: str
-) -> None:
+def assert_image_in_browser(browser_id: str, selenium: SeleniumDrivers, image_name: str) -> None:
     driver = selenium[browser_id]
     url = driver.find_elements(By.TAG_NAME, "img")[0].get_attribute("src")
     err_msg = f"{image_name} is not visible in browser"

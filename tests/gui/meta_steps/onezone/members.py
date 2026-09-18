@@ -8,7 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import cast
 
-from tests.gui.steps.common.common import close_alert_popup_if_present
+from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.steps.common.notifies import dismiss_notifies_if_present
 from tests.gui.steps.modals.modal import (
     assert_element_text_in_modal,
     wt_wait_for_modal_to_appear,
@@ -31,7 +32,6 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -68,11 +68,7 @@ def remove_member_from_parent(
         getattr(main_page, list_name)[name].members()
     members_page = _find_members_page(driver, where)
     list_name = member_type + "s"
-    (
-        getattr(members_page, list_name)
-        .items[member_name]
-        .header.click_menu(selenium[browser_id])
-    )
+    (getattr(members_page, list_name).items[member_name].header.click_menu(selenium[browser_id]))
 
     if member_type == "user":
         modal_name = "remove user from "
@@ -89,8 +85,7 @@ def remove_member_from_parent(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(driver).remove_modal.remove()
 
-    for popup_enum in (AlertPopup.MEMBER_ADDED, AlertPopup.GROUP_REMOVED_FROM_CLUSTER):
-        close_alert_popup_if_present(selenium[browser_id], popup_enum)
+    dismiss_notifies_if_present(driver, timeout=WAIT_FRONTEND)
 
 
 def fail_to_set_privileges_using_op_gui(
@@ -231,9 +226,7 @@ def choose_member_and_set_privileges_on_groups_subpage(
     config: str,
 ) -> None:
     go_to_group_subpage(selenium, browser_id, group_name, "members")
-    click_element_in_members_list(
-        selenium, browser_id, member_name, "group", f"{member_type}s"
-    )
+    click_element_in_members_list(selenium, browser_id, member_name, "group", f"{member_type}s")
     see_privileges_for_member(selenium, browser_id, "group", member_type, member_name)
     click_member_checkbox(selenium, browser_id, member_name, f"{member_type}s")
     click_on_bulk_edit(browser_id, selenium)
@@ -258,9 +251,7 @@ def choose_member_and_assert_privileges_on_groups_subpage(
     config: str,
 ) -> None:
     go_to_group_subpage(selenium, browser_id, group_name, "members")
-    click_element_in_members_list(
-        selenium, browser_id, member_name, "group", f"{member_type}s"
-    )
+    click_element_in_members_list(selenium, browser_id, member_name, "group", f"{member_type}s")
     assert_privileges_in_members_subpage(
         selenium, browser_id, member_name, member_type, "group", config, option
     )

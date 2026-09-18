@@ -45,9 +45,7 @@ def restart_network(name: str, stop_time: str, hosts: Hosts) -> None:
             f"{pod_name}:/tmp/https_restart.escript",
         ],
     )
-    run_kubectl_command(
-        "exec", [pod_name, "--", "/tmp/https_restart.escript", stop_time]
-    )
+    run_kubectl_command("exec", [pod_name, "--", "/tmp/https_restart.escript", stop_time])
     time.sleep(int(stop_time))
 
 
@@ -114,9 +112,7 @@ def mock_archive_verification(name: str, hosts: Hosts, run_unmock: object) -> No
             f"{pod_name}:/tmp/archive_verification_mock.escript",
         ],
     )
-    run_kubectl_command(
-        "exec", [pod_name, "--", "/tmp/archive_verification_mock.escript"]
-    )
+    run_kubectl_command("exec", [pod_name, "--", "/tmp/archive_verification_mock.escript"])
 
 
 # NOTE: because of underlying escript implementation this step currently works
@@ -139,6 +135,4 @@ def unmock_archive_verification(name: str, hosts: Hosts) -> None:
             f"{pod_name}:/tmp/archive_verification_unmock.escript",
         ],
     )
-    run_kubectl_command(
-        "exec", [pod_name, "--", "/tmp/archive_verification_unmock.escript"]
-    )
+    run_kubectl_command("exec", [pod_name, "--", "/tmp/archive_verification_unmock.escript"])

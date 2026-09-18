@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any, cast
+from typing import Any
 
 import pytest
 import yaml
@@ -52,45 +52,40 @@ def _assert_transfer(
     browser_id: str,
 ) -> None:
     item_type = desc["item_type"]
-    assert getattr(
-        transfer, f"is_{item_type}"
-    )(), f"Transferred item is not {item_type} in {state.value}"
+    assert getattr(transfer, f"is_{item_type}")(), (
+        f"Transferred item is not {item_type} in {state.value}"
+    )
 
-    for key, expected in desc.items():
+    for key, configured_expected in desc.items():
         if key == "item_type":
             continue
 
-        if key == "destination":
-            expected = hosts[expected]["name"]
+        expected = (
+            hosts[configured_expected]["name"]
+            if key == "destination"
+            else configured_expected
+        )
 
         column = key.replace(" ", "_")
         try:
             actual = getattr(transfer, column)
         except NoSuchElementException:
             # if key differs from column name, consider creating suitable dict
-            visible_column = (
-                "type_&_destination" if column in ["type", "destination"] else column
-            )
-            select_columns_to_be_visible_in_transfers(
-                selenium, browser_id, [visible_column]
-            )
+            visible_column = "type_&_destination" if column in ["type", "destination"] else column
+            select_columns_to_be_visible_in_transfers(selenium, browser_id, [visible_column])
             actual = getattr(transfer, column)
 
         if actual == str(expected):
             continue
 
-        error_message = (
-            f"Transfer {key} is {actual} instead of {expected} in {state.value}"
-        )
+        error_message = f"Transfer {key} is {actual} instead of {expected} in {state.value}"
         if not isinstance(expected, str) or not expected.startswith("<"):
             raise AssertionError(error_message)
 
         operator, value, unit = expected.split()
         limit_mib = float(value) if unit == "MiB" else float(value) * 1024
         actual_mib = float(actual.split()[0])
-        is_within_limit = (
-            actual_mib <= limit_mib if operator == "<=" else actual_mib < limit_mib
-        )
+        is_within_limit = actual_mib <= limit_mib if operator == "<=" else actual_mib < limit_mib
         assert is_within_limit, error_message
 
 
@@ -103,11 +98,11 @@ def _assert_transfers(
 ) -> None:
     parsed_desc = yaml.load(descriptions, yaml.Loader)
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    transfer_records = getattr(transfers, state.value)
+    transfer_records: list[TransferRecordHistory] = getattr(transfers, state.value)
 
     for name, description in parsed_desc.items():
         _assert_transfer(
-            cast(TransferRecordHistory, transfer_records[name]),
+            transfer_records[name],
             description,
             state,
             hosts,
@@ -129,7 +124,7 @@ def _assert_first_transfer(
     parsed_desc["item_type"] = item_type
 
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    transfer = cast(TransferRecordHistory, getattr(transfers, state.value)[0])
+    transfer: TransferRecordHistory = getattr(transfers, state.value)[0]
     assert transfer.name == name, "First transfer is not the expected one"
     _assert_transfer(
         transfer,
@@ -232,7 +227,8 @@ def cancel_or_rerun_transfer(
             NoSuchElementException,
             PageObjectNotFoundError,
         ):
-            cast(TransferRecordActive, transfers.ongoing[0]).menu_button()
+            ongoing_transfer: TransferRecordActive = transfers.ongoing[0]
+            ongoing_transfer.menu_button()
     else:
         getattr(transfers, transform(state))[0].menu_button()
 
@@ -246,12 +242,10 @@ def cancel_or_rerun_transfer(
     timeout=420,
     exceptions=(AssertionError, StaleElementReferenceException),
 )
-def wait_for_waiting_transfer_to_start(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    assert (
-        len(OPLoggedIn(selenium[browser_id]).transfers.waiting) == 0
-    ), "Waiting transfers did not start"
+def wait_for_waiting_transfer_to_start(selenium: SeleniumDrivers, browser_id: str) -> None:
+    assert len(OPLoggedIn(selenium[browser_id]).transfers.waiting) == 0, (
+        "Waiting transfers did not start"
+    )
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) waits for all transfers to finish"))
@@ -260,19 +254,18 @@ def wait_for_waiting_transfer_to_start(
     timeout=240,
     exceptions=(AssertionError, StaleElementReferenceException),
 )
-def wait_for_ongoing_tranfers_to_finish(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    assert (
-        len(OPLoggedIn(selenium[browser_id]).transfers.ongoing) == 0
-    ), "Ongoing transfers did not finish"
+def wait_for_ongoing_tranfers_to_finish(selenium: SeleniumDrivers, browser_id: str) -> None:
+    assert len(OPLoggedIn(selenium[browser_id]).transfers.ongoing) == 0, (
+        "Ongoing transfers did not finish"
+    )
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) expands first transfer record"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    cast(TransferRecordHistory, transfers.ended[0]).expand()
+    ended_transfer: TransferRecordHistory = transfers.ended[0]
+    ended_transfer.expand()
 
 
 @wt(
@@ -284,7 +277,8 @@ def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_non_zero_transfer_speed(selenium: SeleniumDrivers, browser_id: str) -> None:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    chart = cast(TransferRecordHistory, transfers.ended[0]).get_chart()
+    ended_transfer: TransferRecordHistory = transfers.ended[0]
+    chart = ended_transfer.get_chart()
     assert chart.get_speed() != "0", "Transfer throughput is 0"
 
 
@@ -337,15 +331,11 @@ def migrate_item(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def replicate_item(
-    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
-) -> None:
+def replicate_item(selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts) -> None:
     menu_option = "Replicate here"
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    Modals(driver).details_modal.data_distribution.providers[
-        provider_name
-    ].menu_button()
+    Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button()
     Popups(driver).data_distribution_popup.menu[menu_option]()
 
 
@@ -368,9 +358,7 @@ def click_menu_button_in_data_distribution_panel(
 ) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    Modals(driver).details_modal.data_distribution.providers[
-        provider_name
-    ].menu_button()
+    Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button()
 
 
 @wt(
@@ -391,28 +379,16 @@ def fail_to_click_option_in_data_distribution_popup(
         menu[option]()
 
 
-@wt(
-    parsers.re(
-        r'user of {browser_id} sees "see history" button in data distribution modal'
-    )
-)
+@wt(parsers.re(r'user of {browser_id} sees "see history" button in data distribution modal'))
 @repeat_failed(interval=1, timeout=90)
 def assert_see_history_btn_shown(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    button = getattr(Modals(driver).details_modal.data_distribution, "see_history_btn")
-    assert (
-        button.is_displayed()
-    ), 'Button "see history" not found in data distribution modal'
+    button = Modals(driver).details_modal.data_distribution.see_history_btn
+    assert button.is_displayed(), 'Button "see history" not found in data distribution modal'
 
 
-@wt(
-    parsers.re(
-        r'user of (?P<browser_id>.*) selects "(?P<space>.*)" space in transfers tab'
-    )
-)
-def change_transfer_space(
-    selenium: SeleniumDrivers, browser_id: str, space: str
-) -> None:
+@wt(parsers.re(r'user of (?P<browser_id>.*) selects "(?P<space>.*)" space in transfers tab'))
+def change_transfer_space(selenium: SeleniumDrivers, browser_id: str, space: str) -> None:
     OPLoggedIn(selenium[browser_id]).transfers.spaces[space].select()
 
 
@@ -442,9 +418,7 @@ def assert_option_in_provider_popup_menu(
     driver = selenium[browser_id]
 
     provider_name = hosts[provider]["name"]
-    Modals(driver).details_modal.data_distribution.providers[
-        provider_name
-    ].menu_button()
+    Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button()
 
     menu = Popups(driver).menu_popup_with_text.menu
     assert option not in menu, f"{option} should not be in selection menu"
@@ -490,7 +464,7 @@ def assert_visible_columns_in_transfers(
 ) -> None:
     transfers = OPLoggedIn(selenium[browser_id]).transfers
     transfers_columns = transfers.column_headers
-    transfers_columns = list(map(lambda x: x.name.lower(), transfers_columns))
+    transfers_columns = [x.name.lower() for x in transfers_columns]
     error_message = (
         "there is different number of columns visible: "
         f"{len(transfers_columns)} than expected: {len(columns)}, in "

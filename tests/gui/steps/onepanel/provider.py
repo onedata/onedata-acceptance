@@ -19,9 +19,7 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_provider_name_from_provider_panel(
-    selenium: SeleniumDrivers, browser_id: str
-) -> str:
+def get_provider_name_from_provider_panel(selenium: SeleniumDrivers, browser_id: str) -> str:
     return Onepanel(selenium[browser_id]).content.provider.details.provider_name
 
 
@@ -38,9 +36,9 @@ def wt_assert_value_of_provider_attribute(
 ) -> None:
     details = Onepanel(selenium[browser_id]).content.provider.details
     displayed_val = getattr(details, transform(attribute))
-    assert (
-        displayed_val == val
-    ), f"displayed {displayed_val} instead of expected {val} as provider's {attribute}"
+    assert displayed_val == val, (
+        f"displayed {displayed_val} instead of expected {val} as provider's {attribute}"
+    )
 
 
 @wt(
@@ -64,8 +62,7 @@ def wt_assert_value_of_provider_attribute_is_known(
     details = Onepanel(selenium[browser_id]).content.provider.details
     displayed_val = getattr(details, transform(attribute))
     assert displayed_val == expected_val, (
-        f"displayed {displayed_val} instead of expected {expected_val} as"
-        f" provider's {attribute}"
+        f"displayed {displayed_val} instead of expected {expected_val} as provider's {attribute}"
     )
 
 
@@ -123,11 +120,7 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(
     )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks Discard button on modal in Provider panel"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks Discard button on modal in Provider panel"))
 def click_discard_button_on_modal_in_provider_panel(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
@@ -135,11 +128,7 @@ def click_discard_button_on_modal_in_provider_panel(
     Onepanel(driver).discard_button()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on Discard button in the configure web cert modal"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on Discard button in the configure web cert modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_discard_btn_in_domain_change_modal(
     selenium: SeleniumDrivers, browser_id: str
@@ -152,25 +141,13 @@ def wt_click_on_discard_btn_in_domain_change_modal(
 
 
 @wt(parsers.parse("user of {browser_id} activates Request a subdomain toggle"))
-def activate_request_subdomain_toggle(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    (
-        Onepanel(
-            selenium[browser_id]
-        ).content.deployment.step2.subdomain_delegation.check()
-    )
+def activate_request_subdomain_toggle(selenium: SeleniumDrivers, browser_id: str) -> None:
+    (Onepanel(selenium[browser_id]).content.deployment.step2.subdomain_delegation.check())
 
 
 @wt(parsers.parse("user of {browser_id} deactivates Request a subdomain toggle"))
-def deactivate_request_subdomain_toggle(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    (
-        Onepanel(
-            selenium[browser_id]
-        ).content.deployment.step2.subdomain_delegation.uncheck()
-    )
+def deactivate_request_subdomain_toggle(selenium: SeleniumDrivers, browser_id: str) -> None:
+    (Onepanel(selenium[browser_id]).content.deployment.step2.subdomain_delegation.uncheck())
 
 
 matcher_wt_enter_test_domain_in_deployment_step2 = parsers.re(
@@ -184,9 +161,9 @@ matcher_wt_enter_test_domain_in_deployment_step2 = parsers.re(
 def wt_enter_test_domain_in_deployment_step2(
     selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
 ) -> None:
-    Onepanel(selenium[browser_id]).content.provider.form.domain = (
-        f"{hosts[provider][r'hostname']}.test"
-    )
+    Onepanel(
+        selenium[browser_id]
+    ).content.provider.form.domain = f"{hosts[provider][r'hostname']}.test"
 
 
 matcher_wt_assert_value_of_provider_domain = parsers.re(
@@ -203,15 +180,13 @@ def wt_assert_value_of_provider_domain(
     displayed_val = Onepanel(selenium[browser_id]).content.provider.details.domain
     expected_val = f"{hosts[provider][r'hostname']}.test"
     assert displayed_val == expected_val, (
-        f"displayed {displayed_val} instead of expected {expected_val} as"
-        " provider's domain"
+        f"displayed {displayed_val} instead of expected {expected_val} as provider's domain"
     )
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks go to emergency interface "
-        "in provider deregistration popups"
+        "user of {browser_id} clicks go to emergency interface in provider deregistration popups"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

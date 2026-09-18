@@ -12,30 +12,28 @@ from tests.utils.bdd_utils import parsers, wt
 
 WORKFLOW_DIR = "automation-examples/workflows"
 TESTS_DIR = "tests/gui/features"
-WORKFLOWS_NAMES = []
+WORKFLOWS_NAMES: list[str] = []
 
 
 @wt(parsers.parse("workflows from automation-examples are gathered"))
 def gather_workflows_names() -> None:
-    global WORKFLOWS_NAMES
     workflows_names: list[str] = []
     for _, _, files in os.walk(WORKFLOW_DIR):
         workflows_names.extend(filter(lambda x: x.endswith(".json"), files))
-    WORKFLOWS_NAMES = workflows_names
+    WORKFLOWS_NAMES.clear()
+    WORKFLOWS_NAMES.extend(workflows_names)
 
 
 @wt(parsers.parse("all gathered workflows are used in acceptance tests"))
 def check_using_all_workflows() -> None:
     workflows_names = WORKFLOWS_NAMES
     # remove extension
-    workflows_names_set = set(map(lambda x: x.split(".")[0], workflows_names))
+    workflows_names_set = {x.split(".")[0] for x in workflows_names}
     used_workflows = set()
     for directory_path, _, files in os.walk(TESTS_DIR):
         for file in files:
             used_workflows.update(
-                check_names_in_file(
-                    os.path.join(directory_path, file), workflows_names_set
-                )
+                check_names_in_file(os.path.join(directory_path, file), workflows_names_set)
             )
     error_message = (
         "there are workflows not included in tests: "
@@ -46,10 +44,10 @@ def check_using_all_workflows() -> None:
 
 def check_names_in_file(path: str, names: set[str]) -> set[str]:
     detected_names = set()
-    with open(path, "r") as f:
+    with open(path, encoding="utf-8") as f:
         lines = f.readlines()
         for line in lines:
             words = line.split(" ")
-            words_set = set(map(lambda x: x.replace('"', ""), words))
+            words_set = {x.replace('"', "") for x in words}
             detected_names.update(words_set.intersection(names))
     return detected_names
