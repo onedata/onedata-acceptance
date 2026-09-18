@@ -39,7 +39,7 @@ class BrowserRow(NamedElement):
         return element_has_class(self.web_elem, "fb-table-row-file")
 
     def is_directory(self) -> bool:
-        return element_has_class(self.web_elem, "browser-directory")
+        return element_has_class(self.web_elem, "fb-table-row-dir")
 
     def wait_for_selected(self) -> None:
         for _ in range(30):
