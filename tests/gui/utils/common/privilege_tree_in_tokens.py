@@ -6,11 +6,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.type_definitions import (
     PrivilegeGranted,
     PrivilegeGroupConfig,
@@ -63,19 +66,16 @@ class PrivilegeRow(PageObject):
             if (self.toggle.is_checked() and not granted) or (
                 not self.toggle.is_checked() and granted
             ):
-                driver.execute_script(
-                    "document.querySelector('.col-content').scrollTo(0, 0)"
-                )
+                driver.execute_script("document.querySelector('.col-content').scrollTo(0, 0)")
                 elem_class = self._checkbox.get_attribute("class").split(" ")[0]
                 try:
                     driver.find_element(By.CSS_SELECTOR, "." + elem_class).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
+        elif granted:
+            self.activate()
         else:
-            if granted:
-                self.activate()
-            else:
-                self.deactivate()
+            self.deactivate()
 
 
 class PrivilegeGroup(PageObject):
@@ -95,13 +95,11 @@ class PrivilegeGroup(PageObject):
     def collapse(self, driver: WebDriver) -> None:
         if self.is_expanded():
             try:
-                driver.execute_script(
-                    "document.querySelector('.col-content').scrollTo(0, 0)"
-                )
+                driver.execute_script("document.querySelector('.col-content').scrollTo(0, 0)")
                 driver.find_element(
                     By.CSS_SELECTOR, ".tree-circle .oneicon-square-minus-empty"
                 ).click()
-            except RuntimeError:
+            except NoSuchElementException:
                 self.expander.click()
 
     def minimalize(self) -> None:
@@ -172,9 +170,7 @@ class PrivilegeTree(PageObject):
         privileges: PrivilegesConfig,
     ) -> None:
         for privilege_name, privilege_group in privileges.items():
-            self._assert_privilege_group(
-                selenium, browser_id, privilege_group, privilege_name
-            )
+            self._assert_privilege_group(selenium, browser_id, privilege_group, privilege_name)
 
     def _assert_privilege_group(
         self,

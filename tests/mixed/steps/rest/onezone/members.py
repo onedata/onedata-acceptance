@@ -5,11 +5,12 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping
+from http import HTTPStatus
 from typing import cast
 
 import yaml
-from onezone_client.rest import ApiException
 
+from onezone_client.rest import ApiException
 from tests.mixed.onezone_client import SpaceApi
 from tests.mixed.steps.rest.onezone.common import get_group
 from tests.mixed.type_definitions import (
@@ -156,22 +157,18 @@ def fail_to_set_privileges_using_rest(
     space_api = SpaceApi(user_client_oz)
     grant: list[str] = []
     revoke: list[str] = []
-    privileges = cast(
-        Mapping[str, PrivilegeGroupConfig], yaml.load(config, yaml.Loader)
-    )
+    privileges = cast(Mapping[str, PrivilegeGroupConfig], yaml.load(config, yaml.Loader))
     translate_privileges(privileges, grant, revoke)
     data = {"grant": grant, "revoke": revoke}
     try:
-        space_api.update_user_space_privileges(
-            spaces[space_name], users[member_name].user_id, data
-        )
+        space_api.update_user_space_privileges(spaces[space_name], users[member_name].user_id, data)
         raise AssertionError(
             "function: space_api.update_user_space_privileges"
             " worked but it should not, because of lack in "
             "privileges"
         )
     except ApiException as err:
-        if err.status == 403:
+        if err.status == HTTPStatus.FORBIDDEN:
             pass
 
 
@@ -193,15 +190,13 @@ def assert_privileges_in_space_using_rest(
     ).privileges
     grant: list[str] = []
     revoke: list[str] = []
-    privileges = cast(
-        Mapping[str, PrivilegeGroupConfig], yaml.load(config, yaml.Loader)
-    )
+    privileges = cast(Mapping[str, PrivilegeGroupConfig], yaml.load(config, yaml.Loader))
     translate_privileges(privileges, grant, revoke)
     grant.sort()
     user_privileges.sort()
-    assert (
-        grant == user_privileges
-    ), f"users privileges {user_privileges} does not match expected privileges: {grant}"
+    assert grant == user_privileges, (
+        f"users privileges {user_privileges} does not match expected privileges: {grant}"
+    )
 
 
 def fail_to_create_invitation_in_space_using_rest(
@@ -222,7 +217,7 @@ def fail_to_create_invitation_in_space_using_rest(
             " should not, because of lack in privileges"
         )
     except ApiException as err:
-        if err.status == 403:
+        if err.status == HTTPStatus.FORBIDDEN:
             pass
 
 
@@ -318,9 +313,9 @@ def assert_user_is_member_of_space_rest(
     space_users = get_users_id_list(user, users, hosts, zone_name, spaces, space_name)
 
     for username in user_list:
-        assert (
-            users[username].user_id in space_users
-        ), f"There is no user {username} in space {space_name}"
+        assert users[username].user_id in space_users, (
+            f"There is no user {username} in space {space_name}"
+        )
 
 
 def assert_not_user_in_space_using_rest(
@@ -333,9 +328,9 @@ def assert_not_user_in_space_using_rest(
     member_name: str,
 ) -> None:
     users_id_list = get_users_id_list(user, users, hosts, host, spaces, space_name)
-    assert (
-        users[member_name].user_id not in users_id_list
-    ), f"user {member_name} is in space {space_name}"
+    assert users[member_name].user_id not in users_id_list, (
+        f"user {member_name} is in space {space_name}"
+    )
 
 
 def get_users_id_list(

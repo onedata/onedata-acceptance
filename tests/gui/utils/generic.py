@@ -10,12 +10,15 @@ import os
 import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
+from contextlib import suppress as contextlib_suppress
+from datetime import datetime
 from enum import Enum
 from functools import partial
 from itertools import islice
 from time import sleep
-from typing import Literal, Optional, TypeVar, cast, overload
+from typing import Literal, TypeVar, cast, overload
 
+from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
@@ -24,7 +27,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import (
     visibility_of,
     visibility_of_element_located,
@@ -32,7 +35,7 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.type_definitions import (
     VisibilityCondition,
     WebElementOrCssLocator,
@@ -42,6 +45,7 @@ from tests.gui.type_definitions import (
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
+suppress = contextlib_suppress
 
 # RE_URL regexp is matched as shown below:
 #
@@ -75,46 +79,45 @@ def go_to_relative_url(selenium: WebDriver, relative_url: str) -> None:
 @overload
 def parse_seq(
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: str | None = None,
+    separator: str | None = None,
 ) -> list[str]: ...
 
 
 @overload
-def parse_seq(
+def parse_seq[T](
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: str | None = None,
+    separator: str | None = None,
     *,
     default: Callable[[str], T],
 ) -> list[T]: ...
 
 
 @overload
-def parse_seq(
+def parse_seq[T](
     seq: str,
-    pattern: Optional[str],
-    separator: Optional[str],
+    pattern: str | None,
+    separator: str | None,
     default: Callable[[str], T],
 ) -> list[T]: ...
 
 
-def parse_seq(
+def parse_seq[T](
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
-    default: Callable[[str], T] = cast(Callable[[str], T], str),
+    pattern: str | None = None,
+    separator: str | None = None,
+    default: Callable[[str], T] | None = None,
 ) -> list[T]:
     """Parses regex-matched or separator-delimited values into a list,
     e.g. '["1", "2"]', '"1"', '1,2', or '1'.
     """
+    item_parser = cast(Callable[[str], T], str) if default is None else default
     if pattern is not None:
-        return [default(el.group()) for el in re.finditer(pattern, seq)]
+        return [item_parser(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
     return [
-        default(el.strip().strip('"'))
-        for el in seq.strip("[]").split(separator)
-        if el != ""
+        item_parser(el.strip().strip('"')) for el in seq.strip("[]").split(separator) if el != ""
     ]
 
 
@@ -161,6 +164,19 @@ def parse_elements_sequence(value: str) -> list[str]:
     return parse_seq(value)
 
 
+def parse_time(value: str) -> datetime:
+    date_match = re.match(
+        r"\d{4}-\d{2}-\d{2} at \d{1,2}:\d{2} \(UTC[+-]\d{2}:\d{2}\)",
+        value,
+    )
+    assert date_match, f'Invalid time format: "{value}"'
+
+    return datetime.strptime(
+        date_match.group(),
+        "%Y-%m-%d at %H:%M (UTC%z)",
+    )
+
+
 def upload_file_path(file_name: str) -> str:
     """Resolve an absolute path for file with name file_name stored
     in upload_files dir
@@ -172,7 +188,7 @@ def upload_file_path(file_name: str) -> str:
     )
 
 
-def upload_workflow_path(workflow_name: Optional[str] = None) -> str:
+def upload_workflow_path(workflow_name: str | None = None) -> str:
     """Resolve an absolute path for workflow file with name workflow_name
     stored in automation-examples submodule
     """
@@ -198,7 +214,7 @@ def upload_workflow_path(workflow_name: Optional[str] = None) -> str:
     )
 
 
-def upload_lambda_path(lambda_name: Optional[str]) -> str:
+def upload_lambda_path(lambda_name: str | None) -> str:
     """Resolve an absolute path for lambda dump file with name lambda_name
     stored in automation-examples submodule
     """
@@ -229,9 +245,7 @@ def strip_path(path_string: str, separator: str = "/") -> str:
      paths rendered
     in DOM which contains `\\n` characters in `innerText`.
     """
-    return separator.join(
-        [path_item.strip() for path_item in path_string.split(separator)]
-    )
+    return separator.join([path_item.strip() for path_item in path_string.split(separator)])
 
 
 @contextmanager
@@ -245,21 +259,20 @@ def implicit_wait(
         driver.implicitly_wait(prev_timeout)
 
 
-def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
+def iter_ahead[T](iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
     read_ahead = iter(iterable)
     next(read_ahead, None)
-    for item, next_item in zip(iterable, read_ahead):
-        yield item, next_item
+    yield from zip(iterable, read_ahead, strict=False)
 
 
-def is_element_with_selector_visible_on_page(
-    driver: WebDriver, css_selector: str
+def is_element_visible_on_page(
+    driver: WebDriver,
+    web_elem_or_selector: WebElementOrSelector,
 ) -> bool:
     try:
-        return bool(
-            visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver)
-        )
-    except NoSuchElementException:
+        condition = get_visibility_condition(get_web_elem_or_locator(web_elem_or_selector))
+        return bool(condition(driver))
+    except (NoSuchElementException, StaleElementReferenceException):
         return False
 
 
@@ -267,7 +280,7 @@ def get_web_elem_or_locator(
     web_elem_or_selector: WebElementOrSelector,
 ) -> WebElementOrCssLocator:
     match web_elem_or_selector:
-        case WebElement():
+        case SeleniumWebElement():
             return web_elem_or_selector
         case str():
             return By.CSS_SELECTOR, web_elem_or_selector
@@ -278,7 +291,7 @@ def get_visibility_condition(
     web_elem_or_locator: WebElementOrCssLocator,
 ) -> VisibilityCondition:
     match web_elem_or_locator:
-        case WebElement() as element:
+        case SeleniumWebElement() as element:
             return visibility_of(element)
 
         case (By.CSS_SELECTOR, str()) as locator:
@@ -288,37 +301,47 @@ def get_visibility_condition(
             raise TypeError(f"Unsupported element or locator: {unsupported!r}")
 
 
+def is_element_visible_using_getter(
+    driver: WebDriver, web_elem_getter: Callable[[WebDriver], SeleniumWebElement]
+) -> SeleniumWebElement | None:
+    try:
+        web_elem = web_elem_getter(driver)
+        return web_elem if visibility_of(web_elem)(driver) else None
+    except (NoSuchElementException, StaleElementReferenceException):
+        return None
+
+
 def wait_for_visible_element_using_getter(
     driver: WebDriver,
-    web_elem_getter: Callable[[WebDriver], WebElement],
+    web_elem_getter: Callable[[WebDriver], SeleniumWebElement],
     timeout: float = WAIT_FRONTEND,
-) -> WebElement:
+) -> SeleniumWebElement:
     # Wait until the getter returns a visible element.
-    # RuntimeError raised by the getter is treated as a transient lookup failure.
-
-    def is_element_visible_using_getter(
-        driver: WebDriver, web_elem_getter: Callable[[WebDriver], WebElement]
-    ) -> WebElement | None:
-        try:
-            web_elem = web_elem_getter(driver)
-            return web_elem if visibility_of(web_elem)(driver) else None
-        except RuntimeError:
-            return None
 
     return WebDriverWait(driver, timeout=timeout).until(
         partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
     )
 
 
+def wait_for_file_to_download(
+    driver: WebDriver,
+    downloaded_file: LocalPath,
+    file_name: str,
+    timeout: float = WAIT_NORMAL_DOWNLOAD,
+) -> None:
+    WebDriverWait(driver, timeout).until(
+        lambda _: downloaded_file.isfile(),
+        message=f"File {file_name} did not finish downloading",
+    )
+
+
 def get_element_css_classes_when_visible(
-    driver: WebDriver, web_elem: WebElement, timeout: float = WAIT_FRONTEND // 4
+    driver: WebDriver,
+    web_elem: SeleniumWebElement,
+    timeout: float = WAIT_FRONTEND // 4,
 ) -> list[str]:
     def get_element_classes(driver: WebDriver) -> list[str] | None:
-        return (
-            web_elem.get_attribute("class").split()
-            if visibility_of(web_elem)(driver)
-            else None
-        )
+        return web_elem.get_attribute("class").split() if visibility_of(web_elem)(driver) else None
 
     return WebDriverWait(
         driver,
@@ -336,7 +359,7 @@ def find_web_elem(
     css_selector: str,
     error_message: str | Callable[[], str],
     scroll: bool = True,
-) -> WebElement:
+) -> SeleniumWebElement:
     try:
         if scroll:
             _scroll_to_css_selector(web_elem_root, css_selector)
@@ -344,7 +367,7 @@ def find_web_elem(
     except NoSuchElementException as exc:
         if callable(error_message):
             error_message = error_message()
-        raise RuntimeError(error_message) from exc
+        raise NoSuchElementException(error_message) from exc
     return item
 
 
@@ -354,7 +377,7 @@ def find_web_elem_with_text(
     text: str,
     error_message: str | Callable[[], str],
     scroll: bool = True,
-) -> WebElement:
+) -> SeleniumWebElement:
     items = web_elem_root.find_elements(By.CSS_SELECTOR, css_selector)
     if scroll:
         _scroll_to_css_selector(web_elem_root, css_selector)
@@ -363,34 +386,29 @@ def find_web_elem_with_text(
             return item
     if callable(error_message):
         error_message = error_message()
-    raise RuntimeError(f'Css element with "{text}" text not found. {error_message}')
+    raise NoSuchElementException(f'Css element with "{text}" text not found. {error_message}')
 
 
 def click_on_web_elem(
     driver: WebDriver,
-    web_elem: WebElement,
+    web_elem: SeleniumWebElement,
     error_message: str | Callable[[], str],
-    delay: bool | float = True,
 ) -> None:
     disabled = "disabled" in web_elem.get_attribute("class")
     # scroll to make the element visible
     if not web_elem.is_displayed():
         _ = web_elem.location_once_scrolled_into_view
     if web_elem.is_enabled() and web_elem.is_displayed() and not disabled:
-        # TODO VFS-7484 make optional sleep and localize only those tests
-        #  that need it or find better alternative
-        # currently checking if elem is enabled not always work
-        # (probably after striping disabled from web elem
-        # elem is not immediately clickable)
-        if delay:
-            sleep(delay if isinstance(delay, float) else 0.25)
+        # Probably after striping disabled from web elem
+        # elem is not immediately clickable
+        sleep(0.25)
         action = ActionChains(driver)
         action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
         action.perform()
     else:
         if callable(error_message):
             error_message = error_message()
-        raise RuntimeError(error_message)
+        raise ElementNotInteractableException(error_message)
 
 
 def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> None:
@@ -404,23 +422,15 @@ def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> No
 
 
 @contextmanager
-def suppress(*exceptions: type[BaseException]) -> Iterator[None]:
-    try:
-        yield
-    except exceptions:
-        pass
-
-
-@contextmanager
 def rm_css_cls(
-    driver: WebDriver, web_elem: WebElement, css_cls: str
-) -> Iterator[WebElement]:
+    driver: WebDriver, web_elem: SeleniumWebElement, css_cls: str
+) -> Iterator[SeleniumWebElement]:
     driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
     yield web_elem
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)
 
 
-def nth(seq: Iterable[T], idx: int) -> Optional[T]:
+def nth[T](seq: Iterable[T], idx: int) -> T | None:
     return next(islice(seq, idx, None), None)
 
 
@@ -438,8 +448,47 @@ def redirect_display(new_display: str) -> Iterator[None]:
             del os.environ["DISPLAY"]
 
 
-def transform(val: str, strip_char: Optional[str] = None) -> str:
+def transform(val: str, strip_char: str | None = None) -> str:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
+
+
+def assert_each_event_is_gathered(
+    events: list[str],
+    gathered_events: list[str],
+    option: str,
+) -> None:
+    for event in events:
+        assert event in gathered_events, (
+            f'No gathered event with {option} "{event}" was found. '
+            f"Gathered {option}s: {gathered_events}"
+        )
+
+
+def are_events_gathered_together(
+    first_event: str, second_event: str, gathered_events: list[str]
+) -> bool:
+    for gathered_event in gathered_events:
+        if first_event in gathered_event and second_event in gathered_event:
+            return True
+    return False
+
+
+def assert_events_are_gathered_with_event(
+    events: list[str],
+    other_event: str,
+    gathered_events: list[str],
+    option: str,
+) -> None:
+    for event in events:
+        events_are_gathered_together = are_events_gathered_together(
+            event, other_event, gathered_events
+        )
+
+        assert events_are_gathered_together, (
+            f'No gathered event with {option} containing "{event}" '
+            f'and event "{other_event}" was found. '
+            f"Gathered {option}s: {gathered_events}"
+        )
 
 
 def sort_json_keys(obj: JsonValue) -> JsonValue:
@@ -558,6 +607,9 @@ class ListElement(Enum):
     AUTOMATIONS = "automations"
     LAMBDAS = "lambdas"
     WORKFLOWS = "workflows"
+
+
+ListItemMainField = Literal["name", "description"]
 
 
 PageName = Literal[

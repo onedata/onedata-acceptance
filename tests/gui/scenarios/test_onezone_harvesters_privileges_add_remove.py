@@ -21,6 +21,7 @@ from tests.gui.meta_steps.onezone.data_discovery import *
 from tests.gui.meta_steps.onezone.discovery import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.harvesters import *
+from tests.gui.meta_steps.onezone.members import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.common.browser_creation import *
@@ -74,12 +75,6 @@ def screens() -> list[int]:
     return [0, 1]
 
 
-scenarios(
-    "../features/onezone/harvesters/harvesters_memberships_space_privileges.feature"
-)
-scenarios(
-    "../features/onezone/harvesters/harvesters_memberships_user_privileges.feature"
-)
-scenarios(
-    "../features/onezone/harvesters/harvesters_memberships_group_privileges.feature"
-)
+scenarios("../features/onezone/harvesters/harvesters_memberships_space_privileges.feature")
+scenarios("../features/onezone/harvesters/harvesters_memberships_user_privileges.feature")
+scenarios("../features/onezone/harvesters/harvesters_memberships_group_privileges.feature")

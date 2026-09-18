@@ -4,11 +4,12 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from http import HTTPStatus
 from typing import NotRequired, TypedDict, cast
 
 import yaml
-from oneprovider_client.rest import ApiException as OPException
 
+from oneprovider_client.rest import ApiException as OPException
 from tests.gui.meta_steps.oneprovider.dataset import get_flags
 from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
@@ -55,12 +56,10 @@ def fail_to_create_dataset_in_op_rest(
 ) -> None:
     try:
         option = ""
-        create_dataset_in_op_rest(
-            user, users, hosts, host, space_name, item_name, option
-        )
+        create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, option)
         raise AssertionError("function: establish_dataset worked but it should not")
     except OPException as err:
-        if err.status == 400:
+        if err.status == HTTPStatus.BAD_REQUEST:
             pass
         else:
             raise OPException from err
@@ -116,9 +115,7 @@ def get_dataset_id(
     raise AssertionError("dataset id not found")
 
 
-def get_dataset_child_id(
-    path_list: list[str], dataset_id: str, dataset_api: DatasetApi
-) -> str:
+def get_dataset_child_id(path_list: list[str], dataset_id: str, dataset_api: DatasetApi) -> str:
     for item in path_list[1:]:
         dataset_children = dataset_api.list_dataset_children(dataset_id)
         for dataset in dataset_children.datasets:
@@ -209,9 +206,7 @@ def check_structure_of_dataset_children_in_op_rest(
                 )
                 break
         else:
-            raise AssertionError(
-                f"There is no dataset for child item {expected_child_name}"
-            )
+            raise AssertionError(f"There is no dataset for child item {expected_child_name}")
 
 
 def check_effective_protection_flags_for_file_in_op_rest(
@@ -304,9 +299,7 @@ def assert_dataset_detached_in_op_rest(
         if dataset.name == item_name:
             break
     else:
-        raise AssertionError(
-            f"Dataset for item {item_name} not found on detached view mode"
-        )
+        raise AssertionError(f"Dataset for item {item_name} not found on detached view mode")
 
 
 def reattach_dataset_in_op_rest(

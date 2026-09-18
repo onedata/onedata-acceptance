@@ -6,10 +6,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Generator, Mapping, MutableMapping
-from typing import Optional, Protocol, TypedDict
+from contextlib import suppress
+from typing import Protocol, TypedDict
 
+import pytest
 import yaml
-from pytest import skip
 from pytest_bdd import given
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT
@@ -52,9 +53,7 @@ UserOptions = TypedDict(
 UserConfigEntry = str | dict[str, UserOptions]
 
 
-@given(
-    parsers.parse('initial users configuration in "{host}" Onezone service:\n{config}')
-)
+@given(parsers.parse('initial users configuration in "{host}" Onezone service:\n{config}'))
 def users_creation_with_cleanup_step(
     host: str,
     config: str,
@@ -82,8 +81,7 @@ def users_creation_with_cleanup_step(
 
 @given(
     parsers.parse(
-        'initial user for future delete configuration in "{host}" '
-        "Onezone service:\n{config}"
+        'initial user for future delete configuration in "{host}" Onezone service:\n{config}'
     )
 )
 def users_creation_step(
@@ -206,13 +204,11 @@ def _create_user(
         return _create_new_user(
             zone_hostname, onepanel_credentials, username, password, user_conf_details
         )
-    except HTTPBadRequest:
+    except HTTPBadRequest as exc:
         # this error appear when trying to create user with name that already exist
         # (possible remnants from previous tests)
         if rm_users:
-            _remove_remnant_user(
-                username, zone_hostname, onepanel_credentials, admin_credentials
-            )
+            _remove_remnant_user(username, zone_hostname, onepanel_credentials, admin_credentials)
             return _create_new_user(
                 zone_hostname,
                 onepanel_credentials,
@@ -220,8 +216,11 @@ def _create_user(
                 password,
                 user_conf_details,
             )
-        skip(f'"{username}" user already exist')
-    raise RuntimeError(f'Creation of user "{username}" was skipped')
+        pytest.skip(f'"{username}" user already exist')
+        # type-checker expects the function to return something or raise an exception
+        raise RuntimeError(
+            f'Pytest failed to skip test when user "{username}" already exists'
+        ) from exc
 
 
 def _configure_user(
@@ -251,9 +250,10 @@ def _add_user_to_zone_cluster(
     zone_hostname: str,
     admin_credentials: CredentialsLike,
     user_credentials: User,
-    cluster_privileges: Optional[list[str]],
+    cluster_privileges: list[str] | None,
 ) -> User:
-    username, password = user_credentials.username, user_credentials.password
+    username = user_credentials.username
+    password = user_credentials.password
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
 
@@ -298,9 +298,7 @@ def _cleanup_users(
     ignore_http_exceptions: bool = False,
 ) -> None:
     for user_credentials in users_db.values():
-        _rm_user(
-            zone_hostname, admin_credentials, user_credentials, ignore_http_exceptions
-        )
+        _rm_user(zone_hostname, admin_credentials, user_credentials, ignore_http_exceptions)
 
 
 def _rm_user(
@@ -309,19 +307,13 @@ def _rm_user(
     user_credentials: User,
     ignore_http_exceptions: bool = False,
 ) -> None:
-    try:
+    ignored_exception = HTTPError if ignore_http_exceptions else HTTPNotFound
+    with suppress(ignored_exception):
         _rm_zone_user(zone_hostname, admin_credentials, user_credentials.user_id)
-    except HTTPNotFound:
-        pass
-    except HTTPError as ex:
-        if not ignore_http_exceptions:
-            raise ex
 
 
 @repeat_failed(attempts=5)
-def _rm_zone_user(
-    zone_hostname: str, admin_credentials: CredentialsLike, user_id: str
-) -> None:
+def _rm_zone_user(zone_hostname: str, admin_credentials: CredentialsLike, user_id: str) -> None:
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
 

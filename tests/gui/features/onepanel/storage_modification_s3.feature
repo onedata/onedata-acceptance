@@ -5,6 +5,7 @@ Feature: Storage S3 management using onepanel, REST
     Given initial users configuration in "onezone" Onezone service:
             - user1
     And there are no spaces supported by oneprovider-1 in Onepanel
+    And using REST, user creates S3 bucket "test"
     And "test_storage1" storage backend in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
           storage type: S3
           hostname: http://dev-volume-s3-krakow.default:9000

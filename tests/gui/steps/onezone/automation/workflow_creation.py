@@ -8,19 +8,78 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 
-from tests.gui.conftest import WAIT_FRONTEND
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.common.miscellaneous import press_backspace_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.steps.onezone.automation.automation_basic import collapse_revision_list
+from tests.gui.steps.onezone.automation.automation_basic import (
+    ensure_revision_is_visible,
+)
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.automation_page import AutomationPage
+from tests.gui.utils.onezone.lambdas_subpage import LambdaParameter
 from tests.gui.utils.onezone.workflows_subpage import JSONWorkflowsPanel
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _get_parameter_from_lambda_form(
+    selenium: SeleniumDrivers, browser_id: str, option: str, ordinal: str
+) -> LambdaParameter:
+    form = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
+    parameters = getattr(form, transform(option))
+    ordinal = ordinal if ordinal else "1st"
+    return getattr(parameters, "bracket_" + ordinal.strip())
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_parameter_button_in_lambda_form(
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
+    form = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
+    getattr(form, transform(option)).add_button()
+
+
+def enter_parameter_name_in_lambda_form(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    ordinal: str,
+    name: str,
+) -> None:
+    driver = selenium[browser_id]
+    parameter = _get_parameter_from_lambda_form(selenium, browser_id, option, ordinal)
+    name_input = parameter.name
+    css_selector = "#" + name_input.web_elem.get_attribute("id")
+    scroll_to_css_selector(driver, css_selector)
+    name_input.value = name
+
+
+def select_parameter_type_in_lambda_form(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    ordinal: str,
+    parameter_type: str,
+) -> None:
+    driver = selenium[browser_id]
+    parameter = _get_parameter_from_lambda_form(selenium, browser_id, option, ordinal)
+    select_parameter_type(parameter, driver, parameter_type)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_parameter_type(
+    parameter: LambdaParameter, driver: WebDriver, parameter_type: str
+) -> None:
+    parameter.type_dropdown.click()
+    Popups(driver).power_select.choose_item(parameter_type)
 
 
 @wt(
@@ -53,7 +112,7 @@ def write_text_into_lambda_form(
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     label = getattr(page.lambdas_page.form, transform(text_field))
-    setattr(label, "value", text)
+    label.value = text
 
 
 @wt(
@@ -167,22 +226,14 @@ def write_text_into_workflow_name_on_main_workflows_page(
     page.workflows_page.workflow_creator.workflow_name.value = text
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} confirms creating new workflow using "Create" button'
-    )
-)
+@wt(parsers.parse('user of {browser_id} confirms creating new workflow using "Create" button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_workflow_creation(selenium: SeleniumDrivers, browser_id: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     page.workflows_page.workflow_creator.create_button.click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "Add store" button in workflow visualizer'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "Add store" button in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_store_button(selenium: SeleniumDrivers, browser_id: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
@@ -191,14 +242,11 @@ def click_add_store_button(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{store_name}" in the stores '
-        "list in workflow visualizer"
+        'user of {browser_id} sees "{store_name}" in the stores list in workflow visualizer'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_store_in_store_list(
-    selenium: SeleniumDrivers, browser_id: str, store_name: str
-) -> None:
+def assert_store_in_store_list(selenium: SeleniumDrivers, browser_id: str, store_name: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     stores_list = page.workflows_page.workflow_visualiser.stores_list
 
@@ -225,9 +273,7 @@ def click_add_lane_button_in_workflow_visualizer(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
-@wt(
-    parsers.parse('user of {browser_id} sees "{lane_name}" lane in workflow visualizer')
-)
+@wt(parsers.parse('user of {browser_id} sees "{lane_name}" lane in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_lane_in_workflow_visualizer(
     selenium: SeleniumDrivers, browser_id: str, lane_name: str
@@ -245,9 +291,7 @@ def assert_lane_in_workflow_visualizer(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_parallel_box_to_lane(
-    selenium: SeleniumDrivers, browser_id: str, lane_name: str
-) -> None:
+def add_parallel_box_to_lane(selenium: SeleniumDrivers, browser_id: str, lane_name: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     workflow_visualiser = page.workflows_page.workflow_visualiser
     workflow_visualiser.workflow_lanes[lane_name].add_parallel_box_button.click()
@@ -331,11 +375,7 @@ def click_option_in_task_menu_button(
     Popups(driver).menu_popup_with_label.menu[option].click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} writes "{text}" in name textfield of selected workflow'
-    )
-)
+@wt(parsers.parse('user of {browser_id} writes "{text}" in name textfield of selected workflow'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def insert_text_in_textfield_of_workflow(
     selenium: SeleniumDrivers, browser_id: str, text: str
@@ -346,14 +386,12 @@ def insert_text_in_textfield_of_workflow(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} confirms edition of selected workflow "
-        'details using "Save" button'
+        'user of {browser_id} confirms edition of selected workflow details using "Save" button'
     )
 )
 @wt(
     parsers.parse(
-        "user of {browser_id} saves workflow edition by clicking "
-        '"Save" button from menu bar'
+        'user of {browser_id} saves workflow edition by clicking "Save" button from menu bar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -375,13 +413,11 @@ def add_lambda_revision_to_workflow(
 ) -> None:
     subpage = OZLoggedIn(selenium[browser_id]).automation.lambdas_page
     lambda_object = subpage.lambdas_list[lambda_name]
-    revision = lambda_object.revision_list[ordinal[:-2]]
+    revision_id = ordinal[:-2]
 
-    try:
-        collapse_revision_list(lambda_object)
-    except (RuntimeError, AttributeError):
-        pass
+    ensure_revision_is_visible(lambda_object, revision_id)
 
+    revision = lambda_object.revision_list[revision_id]
     revision.add_to_workflow.click()
 
 

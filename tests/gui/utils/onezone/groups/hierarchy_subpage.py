@@ -57,6 +57,4 @@ class GroupHierarchyPage(PageObject):
         ".content-groups-hierarchy .parents .group-boxes-container .group-box",
         cls=Group,
     )
-    hierarchy_view_menu = Button(
-        ".content-groups-hierarchy .collapsible-toolbar-toggle"
-    )
+    hierarchy_view_menu = Button(".content-groups-hierarchy .collapsible-toolbar-toggle")

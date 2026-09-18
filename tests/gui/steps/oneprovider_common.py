@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -98,21 +98,13 @@ def _has_dir_content_been_loaded(driver: WebDriver) -> None:
         )
 
 
-@given(
-    parsers.parse(
-        "user of {browser_id} sees that content of current directory has been loaded"
-    )
-)
+@given(parsers.parse("user of {browser_id} sees that content of current directory has been loaded"))
 def g_has_dir_content_been_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     _has_dir_content_been_loaded(driver)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that content of current directory has been loaded"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that content of current directory has been loaded"))
 def wt_has_dir_content_been_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     _has_dir_content_been_loaded(driver)

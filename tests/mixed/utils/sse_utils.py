@@ -10,10 +10,10 @@ import json
 import time
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Final, NotRequired, Optional, TypedDict, cast
+from typing import Final, NotRequired, TypedDict, cast
 
-from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
-from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
+from aiohttp_sse_client import client as sse_client
+from aiohttp_sse_client.client import MessageEvent
 
 from tests.mixed.type_definitions import FileAttrs
 
@@ -39,7 +39,7 @@ class SSEEvent(Enum):
     DELETED = "deleted"
 
 
-class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attributes
+class SpaceFilesMonitorClient(ABC):
     def __init__(
         self,
         oneprovider_authority: str,
@@ -59,12 +59,10 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         # fileId -> attributes
         self.files: dict[str, FileAttrs] = {}
         self.deleted_files: set[str] = set()
-        self.last_event_id: Optional[str] = None
-        self.first_event_id: Optional[str] = None
+        self.last_event_id: str | None = None
+        self.first_event_id: str | None = None
 
-        self.changed_or_created_events: asyncio.Queue[dict[str, FileAttrs]] = (
-            asyncio.Queue()
-        )
+        self.changed_or_created_events: asyncio.Queue[dict[str, FileAttrs]] = asyncio.Queue()
         self.heartbeat_events: asyncio.Queue[tuple[str, float]] = asyncio.Queue()
 
         self.backoff: int = INITIAL_BACKOFF_TIMEOUT
@@ -84,7 +82,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
                 await self._consume_stream(reconnect=bool(self.last_event_id))
             except asyncio.CancelledError:
                 break
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except Exception as e:  # noqa: BLE001 - reconnect after any stream failure
                 if loop.is_closed() or not loop.is_running():
                     print("Loop is closed, breaking run()")
                     break
@@ -94,9 +92,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
                 except asyncio.CancelledError:
                     print("Cancelled during backoff sleep, shutting down")
                     break
-                self.backoff = min(
-                    self.backoff * BACKOFF_INCREASE_FACTOR, MAX_BACKOFF_TIMEOUT
-                )
+                self.backoff = min(self.backoff * BACKOFF_INCREASE_FACTOR, MAX_BACKOFF_TIMEOUT)
 
         # clean up data structures to allow reusing this object after reconnection
         self.clean()
@@ -259,7 +255,6 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
 
 
 class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
-
     def __init__(
         self,
         oneprovider_authority: str,
@@ -281,21 +276,27 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
         self.updated_file_attrs: asyncio.Queue[dict[str, FileAttrs]] = asyncio.Queue()
         self.deleted_file_ids: asyncio.Queue[str] = asyncio.Queue()
 
-    async def on_file_created(self, file_id: str, parent_file_id: str) -> None:
+    async def on_file_created(
+        self,
+        file_id: str,
+        parent_file_id: str,  # noqa: ARG002 - required by the callback interface
+    ) -> None:
         await self.created_file_ids.put(file_id)
 
     async def on_file_updated(
         self,
         file_id: str,
-        parent_file_id: str,
+        parent_file_id: str,  # noqa: ARG002 - required by the callback interface
         attributes: FileAttrs,
         cached_attrs: FileAttrs,
     ) -> None:
-        await self.updated_file_attrs.put(
-            {file_id: get_updated_attrs(attributes, cached_attrs)}
-        )
+        await self.updated_file_attrs.put({file_id: get_updated_attrs(attributes, cached_attrs)})
 
-    async def on_file_deleted(self, file_id: str, parent_file_id: str) -> None:
+    async def on_file_deleted(
+        self,
+        file_id: str,
+        parent_file_id: str,  # noqa: ARG002 - required by the callback interface
+    ) -> None:
         await self.deleted_file_ids.put(file_id)
 
     def clean(self) -> None:

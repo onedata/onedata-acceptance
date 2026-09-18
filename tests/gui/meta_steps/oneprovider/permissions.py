@@ -5,11 +5,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Optional
+from selenium.common.exceptions import ElementNotInteractableException
 
-from selenium.common.exceptions import StaleElementReferenceException
-
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
     assert_browser_in_tab_in_op,
@@ -24,6 +21,7 @@ from tests.gui.steps.modals.modal import (
     check_warning_modal,
     click_modal_button,
     click_panel_button,
+    close_first_modal_if_present,
 )
 from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
 from tests.gui.steps.oneprovider.data_tab import (
@@ -63,7 +61,6 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 def open_permission_modal(
@@ -77,15 +74,13 @@ def open_permission_modal(
     option = "Permissions"
     modal_name = "Details modal"
 
-    _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, browser_id, path, space, tmp_memory
-    )
+    _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path, space, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, option, modal_name)
 
     try:
         select_permission_type(selenium, browser_id, permission_type)
-    except RuntimeError as err:
+    except ElementNotInteractableException as err:
         if permission_type == "posix":
             assert_posix_tab_in_panel(selenium, browser_id, modal_name)
         else:
@@ -114,7 +109,6 @@ def _assert_posix_permissions(
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -123,27 +117,16 @@ def assert_posix_permissions_in_op_gui(
     perm: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    modal_name = "Details modal"
-    close_button = "X"
-    try:
-        click_modal_button(selenium, browser_id, close_button, modal_name)
-        _assert_posix_permissions(
-            selenium,
-            browser_id,
-            space,
-            path,
-            perm,
-            tmp_memory,
-        )
-    except (AttributeError, StaleElementReferenceException, RuntimeError):
-        _assert_posix_permissions(
-            selenium,
-            browser_id,
-            space,
-            path,
-            perm,
-            tmp_memory,
-        )
+    close_first_modal_if_present(selenium[browser_id])
+
+    _assert_posix_permissions(
+        selenium,
+        browser_id,
+        space,
+        path,
+        perm,
+        tmp_memory,
+    )
 
 
 @wt(
@@ -229,7 +212,7 @@ def _set_acl_privileges_for_selected(
     tmp_memory: TmpMemory,
     privileges: str,
     name: str,
-    path: Optional[str] = None,
+    path: str | None = None,
 ) -> None:
     option = "Permissions"
     modal_name = "Details modal"
@@ -303,9 +286,7 @@ def grant_acl_privileges_in_op_gui(
     option_in_submenu = "Files"
     _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, space)
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, option_in_submenu
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space, option_in_submenu)
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
     if isinstance(item_list, str):
         item_list = parse_elements_sequence(item_list)
@@ -364,7 +345,6 @@ def assert_ace_in_op_gui(
     space: str,
     path: str,
     tmp_memory: TmpMemory,
-    numerals: dict[str, int],
 ) -> None:
     modal_name = "Details modal"
     close_button = "X"
@@ -377,8 +357,8 @@ def assert_ace_in_op_gui(
         "acl",
     )
     if acl_type != "unknown":
-        assert_acl_subject(selenium, browser_id, num, numerals, acl_type, name)
-        assert_set_acl_privileges(selenium, browser_id, num, numerals, privileges)
+        assert_acl_subject(selenium, browser_id, num, acl_type, name)
+        assert_set_acl_privileges(selenium, browser_id, num, privileges)
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
@@ -397,7 +377,6 @@ def assert_user_id_in_ace_in_op_gui(
     space: str,
     path: str,
     tmp_memory: TmpMemory,
-    numerals: dict[str, int],
     users: Users,
 ) -> None:
     modal_name = "Details modal"
@@ -410,11 +389,9 @@ def assert_user_id_in_ace_in_op_gui(
         tmp_memory,
         "acl",
     )
-    visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num, numerals)
+    visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num)
     user_id = users[name].user_id
-    error_message = (
-        f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
-    )
+    error_message = f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
     assert visible_id == user_id, error_message
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
@@ -484,6 +461,6 @@ def assert_warning_in_details_modal_in_edit_permimssions_tab(
     driver = selenium[browser_id]
     acl = Modals(driver).details_modal.edit_permissions.acl
     warn_priv = acl.limited_privileges_warning
-    assert (
-        text == warn_priv.text
-    ), f"Warning from modal: {warn_priv.text} is not equal to given: {text}"
+    assert text == warn_priv.text, (
+        f"Warning from modal: {warn_priv.text} is not equal to given: {text}"
+    )

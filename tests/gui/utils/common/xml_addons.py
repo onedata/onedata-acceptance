@@ -6,11 +6,11 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import xml.etree.ElementTree as ET
-from typing import Optional
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import PublicShareView as public_share
 from tests.type_definitions import SeleniumDrivers
@@ -60,16 +60,12 @@ SELECTABLE_FIELDS = {
 
 
 def register_namespace_by_metadata_type(metadata_type: str) -> None:
-    namespaces = (
-        NAMESPACES_OPENAIRE
-        if metadata_type.lower() == "openaire"
-        else NAMESPACES_DATACITE
-    )
+    namespaces = NAMESPACES_OPENAIRE if metadata_type.lower() == "openaire" else NAMESPACES_DATACITE
     for prefix, uri in namespaces.items():
         ET.register_namespace(prefix, uri)
 
 
-def map_namespace_prefix_to_uri(prefix: str, metadata_type: str) -> Optional[str]:
+def map_namespace_prefix_to_uri(prefix: str, metadata_type: str) -> str | None:
     prefix = prefix.lower()
     if metadata_type.lower() == "openaire":
         return NAMESPACES_OPENAIRE.get(prefix)
@@ -117,7 +113,7 @@ def check_ace_editor_appeared(selenium: SeleniumDrivers, browser_id: str) -> Non
     driver = selenium[browser_id]
     try:
         _ = get_xml_data_openaire(driver)
-    except RuntimeError:
+    except NoSuchElementException:
         switch_to_iframe(selenium, browser_id)
         _ = get_xml_data_openaire(driver)
 

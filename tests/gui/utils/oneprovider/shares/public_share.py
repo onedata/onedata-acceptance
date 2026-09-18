@@ -56,8 +56,7 @@ class PublicShareView:
     files_tab = Button(".nav-link-files")
     dublin_core_metadata_data = WebElementsSequence(".public-data-value")
     copy_link = Button(
-        ".clipboard-btn-input[data-clipboard-target~="
-        '".clipboard-line-public-url-input"]'
+        '.clipboard-btn-input[data-clipboard-target~=".clipboard-line-public-url-input"]'
     )
 
     def __init__(self, driver: WebDriver) -> None:

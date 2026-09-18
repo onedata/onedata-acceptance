@@ -39,9 +39,7 @@ class TreeNode(PageObject):
     name = id = Label(".tree-label")
     checkbox = Button(".tree-checkbox")
     expander = Button(".tree-toggle")
-    onedata_tree_nodes = WebItemsSequence(
-        ".tree-branch .tree-node", cls=OnedataTreeNode
-    )
+    onedata_tree_nodes = WebItemsSequence(".tree-branch .tree-node", cls=OnedataTreeNode)
 
 
 class FilterTree(PageObject):
@@ -60,9 +58,7 @@ class DataDiscoveryPage:
     items = WebElementsSequence(".ember-power-select-option")
 
     query_builder = WebItem(".query-builder", cls=QueryBuilder)
-    results_list = WebItemsSequence(
-        ".results-list .query-results-result", cls=ResultSample
-    )
+    results_list = WebItemsSequence(".results-list .query-results-result", cls=ResultSample)
     error_message = Label(".error-container .main-message")
 
     ecrin_gui_app_logo = Label(".app-logo")

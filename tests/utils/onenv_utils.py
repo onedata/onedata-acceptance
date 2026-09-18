@@ -10,17 +10,15 @@ import os
 import re
 import subprocess as sp
 import sys
-from typing import Literal, Optional, cast, overload
+from typing import Literal, cast, overload
 
 import urllib3
 import yaml
-from kubernetes import client, config  # pylint: disable=import-error
+from kubernetes import client, config
 
 type Command = list[str]
 type CommandResult = str | int
-type YamlValue = Optional[
-    str | int | float | bool | list["YamlValue"] | dict[str, "YamlValue"]
-]
+type YamlValue = str | int | float | bool | list["YamlValue"] | dict[str, "YamlValue"] | None
 type YamlObject = dict[str, YamlValue]
 
 
@@ -31,11 +29,11 @@ class OnenvError(BaseException):
 @overload
 def run_onenv_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: Literal[True] = True,
-    cwd: Optional[str] = "one-env",
+    cwd: str | None = "one-env",
     onenv_path: str = "./onenv",
 ) -> str: ...
 
@@ -43,11 +41,11 @@ def run_onenv_command(
 @overload
 def run_onenv_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: Literal[False] = False,
-    cwd: Optional[str] = "one-env",
+    cwd: str | None = "one-env",
     onenv_path: str = "./onenv",
 ) -> int: ...
 
@@ -55,34 +53,29 @@ def run_onenv_command(
 @overload
 def run_onenv_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: bool = True,
-    cwd: Optional[str] = "one-env",
+    cwd: str | None = "one-env",
     onenv_path: str = "./onenv",
 ) -> CommandResult: ...
 
 
 def run_onenv_command(
     command: str,
-    args: Optional[list[str]] = None,
+    args: list[str] | None = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: bool = True,
-    cwd: Optional[str] = "one-env",
+    cwd: str | None = "one-env",
     onenv_path: str = "./onenv",
 ) -> CommandResult:
-    if sudo:
-        cmd = ["sudo", onenv_path, command]
-    else:
-        cmd = [onenv_path, command]
+    cmd = ["sudo", onenv_path, command] if sudo else [onenv_path, command]
 
     if args:
         cmd.extend(args)
-    return run_command(
-        cmd, fail_with_error=fail_with_error, return_output=return_output, cwd=cwd
-    )
+    return run_command(cmd, fail_with_error=fail_with_error, return_output=return_output, cwd=cwd)
 
 
 @overload
@@ -90,7 +83,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: Literal[True] = True,
-    cwd: Optional[str] = None,
+    cwd: str | None = None,
     verbose: bool = True,
 ) -> str: ...
 
@@ -100,7 +93,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: Literal[False] = False,
-    cwd: Optional[str] = None,
+    cwd: str | None = None,
     verbose: bool = True,
 ) -> int: ...
 
@@ -110,7 +103,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: bool = True,
-    cwd: Optional[str] = None,
+    cwd: str | None = None,
     verbose: bool = True,
 ) -> CommandResult: ...
 
@@ -119,7 +112,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: bool = True,
-    cwd: Optional[str] = None,
+    cwd: str | None = None,
     verbose: bool = True,
 ) -> CommandResult:
     if verbose:
@@ -159,7 +152,7 @@ def client_alias_to_pod_mapping() -> dict[str, str]:
         prov_clients_mapping[provider_alias].append(client_pod)
 
     i = 1
-    for prov_alias in sorted(list(prov_clients_mapping.keys())):
+    for prov_alias in sorted(prov_clients_mapping.keys()):
         client_pods = sorted(prov_clients_mapping[prov_alias], key=get_name)
         for pod in client_pods:
             key = f"oneclient-{i}"
@@ -182,16 +175,16 @@ def service_name_to_alias_mapping(name: str) -> str:
     ][0]
 
 
-def get_service_type(pod: client.V1Pod) -> Optional[str]:
+def get_service_type(pod: client.V1Pod) -> str | None:
     # returns SERVICE_ONEZONE | SERVICE_ONEPROVIDER
     return pod.metadata.labels.get("component")
 
 
-def get_client_provider_host(pod: client.V1Pod) -> Optional[str]:
+def get_client_provider_host(pod: client.V1Pod) -> str | None:
     return get_env_variable(pod, "ONECLIENT_PROVIDER_HOST")
 
 
-def get_env_variable(pod: client.V1Pod, env_name: str) -> Optional[str]:
+def get_env_variable(pod: client.V1Pod, env_name: str) -> str | None:
     envs = get_env_variables(pod)
     for env in envs:
         if env.name == env_name:
@@ -207,7 +200,7 @@ def init_helm() -> None:
     sp.call(helm_init_cmd(client_only=True))
 
 
-def helm_init_cmd(client_only: Optional[bool] = None) -> Command:
+def helm_init_cmd(client_only: bool | None = None) -> Command:
     cmd = ["helm", "init"]
 
     if client_only:
@@ -218,11 +211,8 @@ def helm_init_cmd(client_only: Optional[bool] = None) -> Command:
 
 def get_kube_client() -> client.CoreV1Api:
     urllib3.disable_warnings()
-    config.load_kube_config(
-        config_file=os.path.join(os.path.expanduser("~"), ".kube", "config")
-    )
-    kube = client.CoreV1Api()
-    return kube
+    config.load_kube_config(config_file=os.path.join(os.path.expanduser("~"), ".kube", "config"))
+    return client.CoreV1Api()
 
 
 def list_pods_and_jobs() -> list[client.V1Pod]:
@@ -236,7 +226,7 @@ def cmd_exec(
     command: str | list[str],
     interactive: bool = False,
     tty: bool = False,
-    container: Optional[str] = None,
+    container: str | None = None,
 ) -> Command:
     cmd = ["kubectl", "--namespace", get_current_namespace(), "exec"]
 
@@ -279,7 +269,7 @@ def list_pods() -> list[client.V1Pod]:
 def match_pods(substring: str) -> list[client.V1Pod]:
     pods_list = list_pods()
     # Accept dashes as wildcard characters
-    pattern = f".*{substring.replace("-", ".*")}.*"
+    pattern = f".*{substring.replace('-', '.*')}.*"
     return list(filter(lambda pod: re.match(pattern, get_name(pod)), pods_list))
 
 
@@ -296,7 +286,7 @@ def get(key: str) -> YamlValue:
 
 
 def load_yaml(path: str) -> YamlObject:
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return cast(YamlObject, yaml.load(f, yaml.Loader))
 
 

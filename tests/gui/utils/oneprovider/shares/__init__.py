@@ -31,9 +31,7 @@ class SharesOptions(PageObject):
 class SharesContentPage(Browser):
     no_shares_msg = Label(".content-info-content-container")
     name = Label(".file-browser .fb-breadcrumbs-dir > .truncate")
-    shares_list = WebItemsSequence(
-        ".one-collapsible-list .list-header-row", cls=SharesOptions
-    )
+    shares_list = WebItemsSequence(".one-collapsible-list .list-header-row", cls=SharesOptions)
     path = Breadcrumbs(".share-header-path")
     url = Input(".clipboard-input.form-control")
     copy_icon = Button(".copy-btn-icon")

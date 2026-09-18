@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from oneprovider_client import BasicFileOperationsApi, FilePathResolutionApi
-
 from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_provider
 from tests.utils.user_utils import Users

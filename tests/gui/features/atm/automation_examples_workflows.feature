@@ -55,7 +55,7 @@ Feature: Automation examples tests
         isExtensionMatchingFormat: false
         fileName: test.py
         fileId: $(resolve_id space1/test.py)
-        extensions: [".txt", ".bat", ".c", ".h", ".ksh", ".pl"]
+        extensions: [".txt", ".bat", ".c", ".h", ".ksh", ".pl", ".srt"]
 
 
   Scenario: User sees desirable information about "lorem_ipsum.enl" in "files-format" store after execution of uploaded "detect-file-formats" workflow finishes
@@ -80,7 +80,7 @@ Feature: Automation examples tests
         isExtensionMatchingFormat: false
         fileName: lorem_ipsum.enl
         fileId: $(resolve_id space1/lorem_ipsum.enl)
-        extensions: [".txt", ".bat", ".c", ".h", ".ksh", ".pl"]
+        extensions: [".txt", ".bat", ".c", ".h", ".ksh", ".pl", ".srt"]
 
 
   Scenario: User sees desirable error message in modal after trying to choose directory as initial value for "detect-file-formats" workflow
@@ -308,7 +308,7 @@ Feature: Automation examples tests
         source: system
         content:
           details:
-            reason: $(contains ["ValueError", "not enough values to unpack (expected 3, got 1)"])
+            reason: $(contains ["Failed to extract url, size and path from fetch file line number 1"])
           description: Lambda exception occurred during item processing.
     And user of browser sees that number of elements in the content of the "fetch-files" store details modal is 1
     And user of browser sees that "file_id" in "fetch-files" store details modal is id of "incorrect_fetch.txt" in "space1" space

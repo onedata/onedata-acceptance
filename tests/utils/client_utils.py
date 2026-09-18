@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2016-2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import contextlib
 import hashlib
 import os
 import random
@@ -12,8 +13,8 @@ import stat as stat_lib
 import string
 import subprocess
 import time
-from collections.abc import Callable
-from typing import IO, Mapping, Optional, Protocol, TypedDict, cast
+from collections.abc import Callable, Mapping
+from typing import IO, Protocol, TypedDict, cast
 
 from tests.type_definitions import EnvDesc
 from tests.utils import ONECLIENT_LOGS_DIR, ONECLIENT_MOUNT_DIR
@@ -21,7 +22,7 @@ from tests.utils.path_utils import escape_path
 from tests.utils.utils import log_exception
 
 type Command = str | list[str]
-type Condition = Callable[[], Optional[bool]]
+type Condition = Callable[[], bool | None]
 type XattrValue = str | bytes
 
 
@@ -48,7 +49,7 @@ class OsProxy(Protocol):
     def mknod(self, path: str, mode: int) -> None: ...
     def link(self, src: str, dest: str) -> None: ...
     def symlink(self, src: str, dest: str) -> None: ...
-    def utime(self, path: str, times: Optional[tuple[float, float]]) -> None: ...
+    def utime(self, path: str, times: tuple[float, float] | None) -> None: ...
 
 
 class ShutilProxy(Protocol):
@@ -57,7 +58,7 @@ class ShutilProxy(Protocol):
         self,
         path: str,
         ignore_errors: bool = ...,
-        onerror: Optional[Callable[..., object]] = ...,
+        onerror: Callable[..., object] | None = ...,
     ) -> None: ...
     def copytree(self, src: str, dest: str) -> str: ...
     def copy(self, src: str, dest: str) -> str: ...
@@ -74,7 +75,7 @@ class ProcessProxy(Protocol):
 class SubprocessProxy(Protocol):
     def check_output(self, command: Command) -> bytes: ...
     def call(self, command: Command) -> int: ...
-    def Popen(  # pylint: disable=invalid-name
+    def Popen(  # noqa: N802 - protocol mirrors subprocess.Popen
         self,
         command: Command,
         stdout: int,
@@ -84,8 +85,8 @@ class SubprocessProxy(Protocol):
 
 
 class TempfileProxy(Protocol):
-    def mkstemp(self, **kwargs: Optional[str]) -> tuple[int, str]: ...
-    def mkdtemp(self, **kwargs: Optional[str]) -> str: ...
+    def mkstemp(self, **kwargs: str | None) -> tuple[int, str]: ...
+    def mkdtemp(self, **kwargs: str | None) -> str: ...
 
 
 class XattrsProxy(Protocol):
@@ -118,7 +119,7 @@ class RpycConnectionLike(Protocol):
     _config: dict[str, object]
 
 
-type CommandResult = Optional[int | str]
+type CommandResult = int | str | None
 
 ClientConfig = TypedDict(
     "ClientConfig",
@@ -127,13 +128,9 @@ ClientConfig = TypedDict(
 )
 
 
-class Client:
-    def __init__(
-        self, rpyc_connection: RpycConnectionLike, timeout: Optional[int] = 40
-    ) -> None:
-        self._id = "".join(
-            random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
-        )
+class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
+    def __init__(self, rpyc_connection: RpycConnectionLike, timeout: int | None = 40) -> None:
+        self._id = "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         self._mount_path = os.path.join(ONECLIENT_MOUNT_DIR, self._id)
         self.rpyc_connection = rpyc_connection
         self.timeout = timeout if timeout is not None else 40
@@ -142,14 +139,11 @@ class Client:
 
     def mount(
         self,
-        mode: Optional[str],
+        mode: str | None,
         gdb: bool = False,
-        additional_opts: Optional[list[str]] = None,
+        additional_opts: list[str] | None = None,
     ) -> CommandResult:
-        if mode and "proxy" in mode:
-            mode_flag = "--force-proxy-io"
-        else:
-            mode_flag = "--force-direct-io"
+        mode_flag = "--force-proxy-io" if mode and "proxy" in mode else "--force-direct-io"
         if additional_opts is None:
             additional_opts = ["--message-trace-log"]
 
@@ -171,9 +165,7 @@ class Client:
                 + [self._mount_path]
             )
 
-        ret = self.run_cmd(cmd, verbose=True)
-
-        return ret
+        return self.run_cmd(cmd, verbose=True)
 
     def unmount(self) -> None:
         print(f"\nUnmounting client from {self._mount_path}\n")
@@ -186,7 +178,7 @@ class Client:
     def absolute_path(self, path: str) -> str:
         return os.path.join(self._mount_path, path)
 
-    def perform(self, condition: Condition, timeout: Optional[int] = None) -> bool:
+    def perform(self, condition: Condition, timeout: int | None = None) -> bool:
         if timeout is None:
             timeout = self.timeout
         return self._repeat_until(condition, timeout)
@@ -197,11 +189,8 @@ class Client:
         while not condition_satisfied and timeout >= 0:
             try:
                 result = condition()
-                if result is None:
-                    condition_satisfied = True
-                else:
-                    condition_satisfied = bool(result)
-            except:  # pylint: disable=bare-except
+                condition_satisfied = True if result is None else bool(result)
+            except Exception:  # noqa: BLE001 - retry arbitrary callback failures
                 condition_satisfied = False
                 if timeout == 0:
                     log_exception()
@@ -249,12 +238,10 @@ class Client:
         path: str,
         recursive: bool = False,
         force: bool = False,
-        onerror: Optional[Callable[..., object]] = None,
+        onerror: Callable[..., object] | None = None,
     ) -> None:
         if recursive and force:
-            self.rpyc_connection.modules.shutil.rmtree(
-                path, ignore_errors=True, onerror=onerror
-            )
+            self.rpyc_connection.modules.shutil.rmtree(path, ignore_errors=True, onerror=onerror)
         elif recursive:
             self.rpyc_connection.modules.shutil.rmtree(path, onerror=onerror)
         else:
@@ -267,9 +254,7 @@ class Client:
         else:
             self.rpyc_connection.modules.os.rmdir(dir_path)
 
-    def mkdir(
-        self, dir_path: str, recursive: bool = False, exist_ok: bool = False
-    ) -> None:
+    def mkdir(self, dir_path: str, recursive: bool = False, exist_ok: bool = False) -> None:
         if recursive or exist_ok:
             self.rpyc_connection.modules.os.makedirs(dir_path, exist_ok=exist_ok)
         else:
@@ -308,8 +293,7 @@ class Client:
 
     def read(self, file_path: str, mode: str = "r") -> str | bytes:
         with self.rpyc_connection.builtins.open(file_path, mode) as f:
-            read_text = f.read()
-        return read_text
+            return f.read()
 
     def open_file(self, file: str, mode: str = "w+") -> IO:
         return self.rpyc_connection.builtins.open(file, mode)
@@ -348,10 +332,8 @@ class Client:
 
     def clear_xattr(self, file: str) -> None:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
-        try:
+        with contextlib.suppress(KeyError):
             xattrs.clear()
-        except KeyError:
-            pass
 
     def execute(self, command: Command, output: bool = False) -> int | bytes:
         if output:
@@ -364,11 +346,11 @@ class Client:
             m.update(f.read().encode("utf-8"))
         return m.hexdigest()
 
-    def mkstemp(self, directory: Optional[str] = None) -> str:
+    def mkstemp(self, directory: str | None = None) -> str:
         _handle, abs_path = self.rpyc_connection.modules.tempfile.mkstemp(dir=directory)
         return abs_path
 
-    def mkdtemp(self, directory: Optional[str] = None) -> str:
+    def mkdtemp(self, directory: str | None = None) -> str:
         return self.rpyc_connection.modules.tempfile.mkdtemp(dir=directory)
 
     def replace_pattern(
@@ -413,7 +395,7 @@ class Client:
         error: bool = False,
         retries: int = 0,
         retry_sleep: int | float = 8,
-        on_retry: Optional[Callable[[], None]] = None,
+        on_retry: Callable[[], None] | None = None,
         verbose: bool = False,
     ) -> CommandResult:
         """Run command on oneself docker using rpyc
@@ -455,7 +437,7 @@ class Client:
                 print(proc.stderr.read().decode())
         if retries > 0:
             if verbose:
-                print(f"Command {" ".join(cmd)} failed. Retries left: {retries}")
+                print(f"Command {' '.join(cmd)} failed. Retries left: {retries}")
             if on_retry:
                 on_retry()
             time.sleep(retry_sleep)
@@ -479,17 +461,12 @@ def user_home_dir(user: str = "root") -> str:
     return os.path.join("/home", user)
 
 
-def get_client_conf(
-    client_id: str, client_host_alias: str, env_desc: EnvDesc
-) -> ClientConfig:
+def get_client_conf(client_id: str, client_host_alias: str, env_desc: EnvDesc) -> ClientConfig:
     client_host_mapping = cast(Mapping[str, object], env_desc.get("oneclient") or {})
-    client_host_conf = cast(
-        Mapping[str, object], client_host_mapping.get(client_host_alias) or {}
-    )
+    client_host_conf = cast(Mapping[str, object], client_host_mapping.get(client_host_alias) or {})
     client_conf = cast(
         ClientConfig,
-        cast(Mapping[str, object], client_host_conf.get("clients") or {}).get(client_id)
-        or {},
+        cast(Mapping[str, object], client_host_conf.get("clients") or {}).get(client_id) or {},
     )
     client_conf["id"] = client_id
     return client_conf

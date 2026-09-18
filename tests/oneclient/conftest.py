@@ -19,10 +19,12 @@ from tests.utils.client_utils import Client
 from tests.utils.entities_setup.groups import CredentialsLike as GroupCredentialsLike
 from tests.utils.entities_setup.groups import (
     GroupsConfig,
+    _register_group_finalizer,
 )
 from tests.utils.entities_setup.groups import groups_creation as setup_groups
 from tests.utils.entities_setup.spaces import (
     SpacesConfig,
+    _register_space_finalizer,
 )
 from tests.utils.entities_setup.spaces import (
     create_and_configure_spaces as setup_spaces,
@@ -71,6 +73,7 @@ def run_around_testcase(
     storages: Storages,
     spaces: dict[str, str],
     rm_users: bool,
+    request: pytest.FixtureRequest,
 ) -> Generator[None, None, None]:
     unmount_all_clients_and_purge_spaces(users)
     setup_entities(
@@ -83,6 +86,7 @@ def run_around_testcase(
         storages,
         spaces,
         rm_users,
+        request,
     )
     yield
     unmount_all_clients_and_purge_spaces(users)
@@ -98,7 +102,9 @@ def setup_entities(
     storages: Storages,
     spaces: dict[str, str],
     rm_users: bool,
+    request: pytest.FixtureRequest,
 ) -> None:
+    zone_hostname = hosts["onezone"]["hostname"]
     setup_users(
         "onezone",
         cast(list[UserConfigEntry], config.get("users")),
@@ -115,6 +121,9 @@ def setup_entities(
         users,
         cast(Mapping[str, Mapping[str, str]], hosts),
         groups,
+        lambda group_id: _register_group_finalizer(
+            request, zone_hostname, admin_credentials, group_id
+        ),
     )
     setup_spaces(
         cast(SpacesConfig, config.get("spaces")),
@@ -126,6 +135,9 @@ def setup_entities(
         groups,
         storages,
         spaces,
+        lambda space_id: _register_space_finalizer(
+            request, zone_hostname, admin_credentials, space_id
+        ),
     )
     setup_luma(
         cast(list[UserConfigEntry], config.get("users")),
@@ -143,14 +155,10 @@ def setup_luma(
 ) -> None:
     hosts_config = cast(Mapping[str, Mapping[str, str]], hosts)
     spaces = get_all_spaces_details(admin_credentials, hosts_config)
-    local_feed_luma_storages = get_local_feed_luma_storages(
-        admin_credentials, hosts_config
-    )
+    local_feed_luma_storages = get_local_feed_luma_storages(admin_credentials, hosts_config)
 
     for user_config in users_config:
-        username = (
-            user_config if isinstance(user_config, str) else next(iter(user_config))
-        )
+        username = user_config if isinstance(user_config, str) else next(iter(user_config))
         new_user = users[username]
         add_user_luma_mapping(admin_credentials, new_user, local_feed_luma_storages)
 
@@ -170,7 +178,9 @@ def purge_spaces(client: Client) -> None:
 
 
 def pytest_bdd_before_scenario(
-    request: pytest.FixtureRequest, feature: Feature, scenario: Scenario
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
 ) -> None:
     print("\n=================================================================")
     print(f"- Executing scenario '{scenario.name}'")
@@ -202,6 +212,8 @@ def pytest_bdd_step_error(
 
 
 def pytest_bdd_after_scenario(
-    request: pytest.FixtureRequest, feature: Feature, scenario: Scenario
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
 ) -> None:
     print("=================================================================\n")

@@ -6,13 +6,15 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Optional, Protocol, cast
+from typing import Protocol, cast
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneprovider.automation import InitialValueStore
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -43,22 +45,16 @@ def choose_range_as_initial_workflow_value(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_if_select_files_modal_disappeared(
-    driver: WebDriver, files: str | list[str]
-) -> None:
+def check_if_select_files_modal_disappeared(driver: WebDriver, files: str | list[str]) -> None:
     try:
-        Modals(driver).select_files  # pylint: disable=expression-not-assigned
-        raise AssertionError(
-            f"Files: {files} as initial value for workflow was not selected"
-        )
-    except RuntimeError:
+        _ = Modals(driver).select_files
+        raise AssertionError(f"Files: {files} as initial value for workflow was not selected")
+    except NoSuchElementException:
         pass
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_files_modal(
-    driver: WebDriver, store_name: Optional[str] = None
-) -> None:
+def open_select_initial_files_modal(driver: WebDriver, store_name: str | None = None) -> None:
     option = "Select/upload file"
 
     click_input_link_in_automation_page(driver, store_name)
@@ -69,14 +65,10 @@ def open_select_initial_files_modal(
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    Modals(driver).select_files  # pylint: disable=expression-not-assigned
+    _ = Modals(driver).select_files
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "Add groups..." link in "{store_name}" store'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "Add groups..." link in "{store_name}" store'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_groups_modal(
     selenium: SeleniumDrivers, browser_id: str, store_name: str
@@ -92,7 +84,13 @@ def open_select_initial_groups_modal(
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    Modals(driver).select_groups  # pylint: disable=expression-not-assigned
+    _ = Modals(driver).select_groups
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_groups_from_select_groups_modal(driver: WebDriver, group_list: str | list[str]) -> None:
+    parsed_list = parse_seq(group_list) if isinstance(group_list, str) else group_list
+    Modals(driver).select_groups.select(parsed_list)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -103,7 +101,7 @@ def open_select_initial_datasets_modal(driver: WebDriver) -> None:
     Popups(driver).workflow_dataset_initial_value.menu[option].click()
     time.sleep(1)
     # check if modal opened
-    Modals(driver).select_dataset  # pylint: disable=expression-not-assigned
+    _ = Modals(driver).select_dataset
 
 
 def get_select_option_from_initial_value_popup(
@@ -122,12 +120,10 @@ def get_initial_value_store(driver: WebDriver, store_name: str) -> InitialValueS
         return initial_value_stores[store_name + ":"]
     if store_name + ": " in initial_value_stores:
         return initial_value_stores[store_name + ": "]
-    raise ValueError()
+    raise ValueError
 
 
-def click_input_link_in_automation_page(
-    driver: WebDriver, store_name: Optional[str]
-) -> None:
+def click_input_link_in_automation_page(driver: WebDriver, store_name: str | None) -> None:
     if store_name:
         store = get_initial_value_store(driver, store_name)
         store.input_link.click()
@@ -135,7 +131,7 @@ def click_input_link_in_automation_page(
         try:
             # for input store type Single Value this Button does not work
             OPLoggedIn(driver).automation_page.files_input_link.click()
-        except RuntimeError:
+        except NoSuchElementException:
             # for adding another files to input store (type List) this Button
             # does not work because it finds two links (one for changing file,
             # another for adding)
@@ -148,9 +144,7 @@ def get_data_type_in_initial_value_store(driver: WebDriver, store_name: str) -> 
     return store.data_type
 
 
-def get_data_type_of_array_initial_value_store(
-    driver: WebDriver, store_name: str
-) -> str:
+def get_data_type_of_array_initial_value_store(driver: WebDriver, store_name: str) -> str:
     store = get_initial_value_store(driver, store_name)
     link_name = store.input_link.web_elem.text
 

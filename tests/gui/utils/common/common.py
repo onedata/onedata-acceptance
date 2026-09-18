@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from functools import partial
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -98,8 +99,8 @@ class _Toggle(PageObject):
 
     def is_enabled(self) -> bool:
         try:
-            self._lock
-        except RuntimeError:
+            _ = self._lock
+        except NoSuchElementException:
             return True
         return False
 
@@ -121,9 +122,7 @@ class _DropdownSelector(PageObject, ExpandableMixin):
 
 class _MigrateDropdownSelector(PageObject, ExpandableMixin):
     selected = Label(".ember-power-select-trigger")
-    providers_list = WebItemsSequence(
-        "ul li .oneprovider-name", cls=ButtonWithTextPageObject
-    )
+    providers_list = WebItemsSequence("ul li .oneprovider-name", cls=ButtonWithTextPageObject)
     _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
 
 

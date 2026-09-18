@@ -23,9 +23,7 @@ def create_qos_requirement_in_op_rest(
     path = f"{space_name}/{file_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     file_id = _lookup_file_id(path, client)
-    create_qos_requirement_in_op_by_id_rest(
-        user, users, hosts, host, expression, file_id
-    )
+    create_qos_requirement_in_op_by_id_rest(user, users, hosts, host, expression, file_id)
 
 
 def create_qos_requirement_in_op_by_id_rest(
@@ -61,9 +59,7 @@ def assert_qos_file_status_in_op_rest(
             f'there is no qos file status for "{file_name}" in space "{space_name}"'
         )
     if qos and option == "has not":
-        raise AssertionError(
-            f'there is qos file status for "{file_name}" in space "{space_name}"'
-        )
+        raise AssertionError(f'there is qos file status for "{file_name}" in space "{space_name}"')
 
 
 def delete_qos_requirement_in_op_rest(

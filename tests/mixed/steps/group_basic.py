@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 
+import pytest
+
 from tests import OZ_REST_PORT
 from tests.gui.meta_steps.onezone.groups import (
     add_subgroups_using_op_gui,
@@ -47,6 +49,8 @@ from tests.mixed.steps.rest.onezone.group_management import (
 from tests.mixed.utils.common import NoSuchClientException
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup.groups import _register_group_finalizer
+from tests.utils.entities_setup.users import CredentialsLike
 from tests.utils.http_exceptions import HTTPUnauthorized
 from tests.utils.rest_utils import get_zone_rest_path, http_post
 from tests.utils.user_utils import Users
@@ -70,12 +74,30 @@ def create_groups(
     hosts: Hosts,
     users: Users,
     selenium: SeleniumDrivers,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    admin_credentials: CredentialsLike,
 ) -> None:
+    def register_finalizer(group_id: str) -> None:
+        _register_group_finalizer(
+            request,
+            hosts[host]["hostname"],
+            admin_credentials,
+            group_id,
+        )
 
     if client.lower() == "rest":
-        create_groups_using_rest(user, users, hosts, group_list, host)
+        create_groups_using_rest(user, users, hosts, group_list, register_finalizer, host)
     elif client.lower() == "web gui":
-        create_groups_using_op_gui(selenium, user, group_list)
+        create_groups_using_op_gui(
+            selenium,
+            user,
+            group_list,
+            clipboard,
+            displays,
+            register_finalizer,
+        )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -123,9 +145,7 @@ def fail_to_create_group_with_token(
 ) -> None:
     try:
         create_groups_with_token(user, group_name, host, tmp_memory, hosts)
-        raise AssertionError(
-            "function: create_groups_with_token worked but it should not"
-        )
+        raise AssertionError("function: create_groups_with_token worked but it should not")
     except HTTPUnauthorized:
         pass
 
@@ -427,9 +447,7 @@ def invite_to_group(
 ) -> None:
 
     if client.lower() == "rest":
-        create_group_token_using_rest(
-            user1, user2, group, tmp_memory, users, hosts, host
-        )
+        create_group_token_using_rest(user1, user2, group, tmp_memory, users, hosts, host)
     elif client.lower() == "web gui":
         create_group_token_to_invite_user_using_op_gui(
             selenium,
@@ -492,9 +510,7 @@ def fail_to_rename_groups(
 ) -> None:
 
     if client.lower() == "rest":
-        fail_to_rename_groups_using_rest(
-            user, users, hosts, group_list, new_names, host
-        )
+        fail_to_rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
     elif client.lower() == "web gui":
         fail_to_rename_groups_using_op_gui(selenium, user, group_list, new_names)
     else:

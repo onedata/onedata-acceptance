@@ -5,14 +5,15 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import contextlib
 import time
-from typing import Dict, List, Optional, cast
+from typing import cast
 
-from selenium.common.exceptions import JavascriptException
+from selenium.common.exceptions import JavascriptException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -48,19 +49,17 @@ class ArchiveAuditLog(Modal):
         action.key_down(Keys.SPACE).perform()
 
     def scroll_to_top(self) -> None:
-        try:
+        with contextlib.suppress(JavascriptException):
             self.driver.execute_script(
                 "document.querySelector("
                 "'.audit-log-browser "
                 ".table-scrollable-container')"
                 ".scrollTo(0, 0)"
             )
-        except JavascriptException:
-            pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_rows_of_columns(
-        self, column_names: Optional[list[str]] = None
+        self, column_names: list[str] | None = None
     ) -> dict[str, list[str]]:
 
         temp_columns = list(set((column_names or []) + ["file"]))
@@ -72,12 +71,12 @@ class ArchiveAuditLog(Modal):
             if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
 
-            for column, param in zip(temp_columns, values_in_row):
+            for column, param in zip(temp_columns, values_in_row, strict=True):
                 column_values[column].append(param)
 
             try:
-                name_hash = getattr(row, "duplicated_name_hash")
-            except RuntimeError:
+                name_hash = row.duplicated_name_hash
+            except NoSuchElementException:
                 name_hash = ""
 
             column_values["file"][-1] += name_hash

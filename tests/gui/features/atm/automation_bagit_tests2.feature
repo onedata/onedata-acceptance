@@ -296,7 +296,7 @@ Feature: Bagit uploader tests
       severity: Error
       content:
         details:
-          reason: $(contains ["HTTPSConnectionPool(host='www.heh.xd', port=443)", "Max retries exceeded with url", "Caused by NewConnectionError", "Failed to establish a new connection", "[Errno -2] Name or service not known"])
+          reason: $(contains ["HTTPSConnectionPool(host='www.heh.xd', port=443)", "Max retries exceeded with url", "Caused by NameResolutionError", "Failed to resolve 'www.heh.xd'", "[Errno -2] Name or service not known"])
         description: Lambda exception occurred during item processing.
 
 

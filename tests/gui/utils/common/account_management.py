@@ -26,6 +26,4 @@ class AccountManagementContentPage(PageObject):
     user_details = WebItem(".user-credentials-form", cls=UserAccountDetails)
     chpasswd_form = WebItem(".user-credentials-form", cls=UserAccountsForm)
     change_password = NamedButton(".btn-change-password", text="Change password")
-    cancel_password_change = NamedButton(
-        ".btn-change-password", text="Cancel password change"
-    )
+    cancel_password_change = NamedButton(".btn-change-password", text="Cancel password change")

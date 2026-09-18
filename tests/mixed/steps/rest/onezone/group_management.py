@@ -5,9 +5,9 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import pytest
-from onezone_client import GroupApi, GroupCreateRequest, UserApi
-from onezone_client.rest import ApiException
 
+from onezone_client import GroupApi, UserApi
+from onezone_client.rest import ApiException
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -17,6 +17,12 @@ from tests.mixed.type_definitions import RestOnezoneTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup.groups import (
+    CredentialsLike,
+    GroupFinalizerRegistrar,
+    _create_group,
+    _register_group_finalizer,
+)
 from tests.utils.user_utils import Users
 
 
@@ -29,18 +35,43 @@ from tests.utils.user_utils import Users
         "group_list": parse_elements_sequence,
     },
 )
+def create_groups_using_rest_step(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    group_list: list[str],
+    request: pytest.FixtureRequest,
+    admin_credentials: CredentialsLike,
+) -> None:
+    zone_hostname = hosts["onezone"]["hostname"]
+    create_groups_using_rest(
+        user,
+        users,
+        hosts,
+        group_list,
+        lambda group_id: _register_group_finalizer(
+            request, zone_hostname, admin_credentials, group_id
+        ),
+    )
+
+
 def create_groups_using_rest(
     user: str,
     users: Users,
     hosts: Hosts,
     group_list: list[str],
+    register_finalizer: GroupFinalizerRegistrar,
     host: str = "onezone",
 ) -> None:
-    user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
-    user_api = UserApi(user_client)
-
+    owner = users[user]
     for group_name in group_list:
-        user_api.create_user_group(GroupCreateRequest(name=group_name))
+        group_id = _create_group(
+            hosts[host]["hostname"],
+            owner.username,
+            owner.password,
+            group_name,
+        )
+        register_finalizer(group_id)
 
 
 @wt(
@@ -61,9 +92,7 @@ def see_groups_using_rest(
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     for group_name in group_list:
-        assert get_group(
-            group_name, user_client
-        ), f"There is no group named {group_name}"
+        assert get_group(group_name, user_client), f"There is no group named {group_name}"
 
 
 @wt(
@@ -112,7 +141,7 @@ def rename_groups_using_rest(
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name, new_name in zip(group_list, new_names):
+    for group_name, new_name in zip(group_list, new_names, strict=True):
         group = get_group(group_name, user_client)
         data = {"name": new_name}
         group_api.modify_group(group.group_id, data)
@@ -139,7 +168,7 @@ def fail_to_rename_groups_using_rest(
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
-    for group_name, new_name in zip(group_list, new_names):
+    for group_name, new_name in zip(group_list, new_names, strict=True):
         group = get_group(group_name, user_client)
         data = {"name": new_name}
         with pytest.raises(ApiException):
@@ -337,9 +366,7 @@ def assert_subgroups_using_rest(
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     subgroups = group_api.list_child_groups(get_group(parent, user_client).group_id)
-    subgroups_names = [
-        group.name for group in [group_api.get_group(g) for g in subgroups.groups]
-    ]
+    subgroups_names = [group.name for group in [group_api.get_group(g) for g in subgroups.groups]]
     for child in group_list:
         assert child in subgroups_names
 
@@ -391,8 +418,6 @@ def fail_to_see_subgroups_using_rest(
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     subgroups = group_api.list_child_groups(get_group(parent, user_client).group_id)
-    subgroups_names = [
-        group.name for group in [group_api.get_group(g) for g in subgroups.groups]
-    ]
+    subgroups_names = [group.name for group in [group_api.get_group(g) for g in subgroups.groups]]
     for child in group_list:
         assert child not in subgroups_names

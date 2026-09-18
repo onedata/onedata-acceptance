@@ -57,8 +57,8 @@ function(id, type, meta, ctx) {
                 [{
                     "type": "Point",
                     "coordinates": [meta['latitude'], meta['longitude']]
-                }],                                                         
-                id                                                          
+                }],
+                id
             ];
         }
     }
@@ -108,13 +108,12 @@ EXAMPLE_FILE_TO_CHECK_FILE_CHANGES = "file_json"
 # when counting all files there will be included also special dirs
 SPECIAL_DIRS_COUNT_20_02_19 = 2  # space dir and trash dir
 SPECIAL_DIRS_COUNT_21_02_1 = 3  # also space archive root dir
-SPECIAL_DIRS_COUNT_21_02_8 = 5  #
+SPECIAL_DIRS_COUNT_21_02_8 = 5
 
 SPACE_NAME = "space_views"
 RESULTS: dict[str, JsonList | str] = {}
 
 
-# pylint: disable=too-many-statements
 def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]:
     return [
         UpgradeTest(
@@ -135,7 +134,6 @@ def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]
     ]
 
 
-# pylint: disable=too-many-statements
 def setup_views(tests_controller: UpgradeTestsControllerLike) -> None:
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
@@ -145,14 +143,10 @@ def setup_views(tests_controller: UpgradeTestsControllerLike) -> None:
 
     # enable file popularity mechanism in space
     data = {"enabled": True}
-    configure_file_popularity_mechanism_in_the_space(
-        provider_host, admin_token, space_id, data
-    )
+    configure_file_popularity_mechanism_in_the_space(provider_host, admin_token, space_id, data)
 
     # create views
-    _ = create_view(
-        provider_host, token, space_id, VIEW_WITH_ALL_FILES, MAP_FUNC_ALL_FILES
-    )
+    _ = create_view(provider_host, token, space_id, VIEW_WITH_ALL_FILES, MAP_FUNC_ALL_FILES)
     _ = create_view(
         provider_host,
         token,
@@ -160,12 +154,8 @@ def setup_views(tests_controller: UpgradeTestsControllerLike) -> None:
         VIEW_WITH_FILES_WITH_META,
         MAP_FUNC_FILES_WITH_META,
     )
-    _ = create_view(
-        provider_host, token, space_id, VIEW_SPATIAL, MAP_FUNC_SPATIAL, spatial=True
-    )
-    _ = create_view(
-        provider_host, token, space_id, VIEW_WITH_REDUCE, MAP_FUNC_FILES_WITH_META
-    )
+    _ = create_view(provider_host, token, space_id, VIEW_SPATIAL, MAP_FUNC_SPATIAL, spatial=True)
+    _ = create_view(provider_host, token, space_id, VIEW_WITH_REDUCE, MAP_FUNC_FILES_WITH_META)
 
     # create files
     create_example_content_in_space(client)
@@ -174,9 +164,7 @@ def setup_views(tests_controller: UpgradeTestsControllerLike) -> None:
     add_example_metadata_to_files_in_space(provider_host, token)
 
     # add reduce function to view
-    update_view_reduce_function(
-        provider_host, token, space_id, VIEW_WITH_REDUCE, REDUCE_FUNC
-    )
+    update_view_reduce_function(provider_host, token, space_id, VIEW_WITH_REDUCE, REDUCE_FUNC)
 
     RESULTS[VIEW_WITH_ALL_FILES] = wait_for_expected_files_in_query_view(
         query=partial(query_view, provider_host, token, space_id, VIEW_WITH_ALL_FILES),
@@ -187,9 +175,7 @@ def setup_views(tests_controller: UpgradeTestsControllerLike) -> None:
         extra_files=True,
     )
     RESULTS[VIEW_WITH_FILES_WITH_META] = wait_for_expected_files_in_query_view(
-        query=partial(
-            query_view, provider_host, token, space_id, VIEW_WITH_FILES_WITH_META
-        ),
+        query=partial(query_view, provider_host, token, space_id, VIEW_WITH_FILES_WITH_META),
         provider_host=provider_host,
         token=token,
         expected_files=FILES_WITH_METADATA,
@@ -409,9 +395,7 @@ def wait_for_expected_files_in_query_view(
             extra_files_num = SPECIAL_DIRS_COUNT_21_02_1
         case _:
             extra_files_num = SPECIAL_DIRS_COUNT_21_02_8
-    exp_files_count = (
-        len(expected_files) + extra_files_num if extra_files else len(expected_files)
-    )
+    exp_files_count = len(expected_files) + extra_files_num if extra_files else len(expected_files)
     assert exp_files_count == len(items), f"expected {expected_files} but got: {items}"
     for file in expected_files:
         file_id = lookup_file_id(f"{SPACE_NAME}/{file}", provider_host, token)
@@ -424,9 +408,9 @@ def wait_for_expected_result_in_reduce_query_view(
     query: Callable[[], JsonList], expected_result: int
 ) -> JsonList:
     res = query()
-    assert (
-        res[0]["value"] == expected_result
-    ), f"expected reduce value {expected_result} but got {res}"
+    assert res[0]["value"] == expected_result, (
+        f"expected reduce value {expected_result} but got {res}"
+    )
     return res
 
 
@@ -443,9 +427,9 @@ def get_record_for_file_in_file_changes(
     items = res.text.split("\r\n")
     parsed_items: JsonList = [yaml.load(item, yaml.Loader) for item in items][0:-1]
     record = [item for item in parsed_items if item["fileId"] == file_id]
-    assert (
-        len(record) >= 1
-    ), f"Record for file {file_name} not found. All found items:\n {parsed_items}"
+    assert len(record) >= 1, (
+        f"Record for file {file_name} not found. All found items:\n {parsed_items}"
+    )
     return record
 
 

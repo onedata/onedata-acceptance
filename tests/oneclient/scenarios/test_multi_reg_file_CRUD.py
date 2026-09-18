@@ -25,10 +25,7 @@ def test_create(env_description_file):
     pass
 
 
-@scenario(
-    "Create a file, read it on the second client, delete it, and repeat "
-    "the whole process"
-)
+@scenario("Create a file, read it on the second client, delete it, and repeat the whole process")
 def test_recreate_and_read(env_description_file):
     pass
 
@@ -53,9 +50,7 @@ def test_delete_by_other_user(env_description_file):
     pass
 
 
-@scenario(
-    "Fail to delete regular file by other user without write permission on parent"
-)
+@scenario("Fail to delete regular file by other user without write permission on parent")
 def test_fail_to_delete_by_other_user_without_write_permission(
     env_description_file,
 ):

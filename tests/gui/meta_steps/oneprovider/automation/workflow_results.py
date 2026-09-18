@@ -12,7 +12,6 @@ import time
 from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -22,6 +21,9 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
 )
 from tests.gui.steps.oneprovider.automation.automation_statuses import (
     assert_task_status_in_parallel_box,
+)
+from tests.gui.steps.oneprovider.automation.workflow_results import (
+    count_checksums_for_downloaded_file,
 )
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     assert_processing_chart,
@@ -33,20 +35,13 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals
-from tests.gui.utils.common.count_checksums import (
-    adler32_sum,
-    md5_sum,
-    sha256_sum,
-    sha512_sum,
-)
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     MetadataTab,
 )
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.generic import parse_elements_sequence, wait_for_file_to_download
 from tests.gui.utils.oneprovider.automation import WorkflowVisualiser
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 def get_store_details_json(
@@ -58,7 +53,7 @@ def get_store_details_json(
     store_type: str,
 ) -> dict[str, object]:
     page = get_op_workflow_visualizer_page(driver)
-    store_details = json.loads(
+    return json.loads(
         open_modal_and_get_store_content(
             browser_id,
             driver,
@@ -69,8 +64,6 @@ def get_store_details_json(
             store_type,
         )
     )
-
-    return store_details
 
 
 def open_modal_and_get_store_content(
@@ -85,9 +78,7 @@ def open_modal_and_get_store_content(
 ) -> str:
     page.stores_list[store_name].click()
     modal = Modals(driver).store_details
-    store_value = get_store_content(
-        modal, store_type, index, clipboard, displays, browser_id
-    )
+    store_value = get_store_content(modal, store_type, index, clipboard, displays, browser_id)
     modal.close()
 
     return store_value
@@ -149,7 +140,6 @@ def compare_store_contents(
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def count_checksums_for_file(
     browser_id: str,
     tmp_memory: TmpMemory,
@@ -162,20 +152,13 @@ def count_checksums_for_file(
     click_and_press_enter_on_item_in_browser(
         selenium, browser_id, file_name, tmp_memory, "file browser"
     )
+
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
-    results = {}
-    checksum_functions = {
-        "adler32_sum": adler32_sum,
-        "md5_sum": md5_sum,
-        "sha256_sum": sha256_sum,
-        "sha512_sum": sha512_sum,
-    }
+    wait_for_file_to_download(selenium[browser_id], downloaded_file, file_name)
 
-    for checksum in checksum_list:
-        checksum_function_name = checksum + "_sum"
-        results[checksum] = checksum_functions[checksum_function_name](downloaded_file)
-
-    tmp_memory["checksums_" + file_name] = results
+    tmp_memory["checksums_" + file_name] = count_checksums_for_downloaded_file(
+        downloaded_file, checksum_list
+    )
 
 
 def checksums_counted_in_workflow(metadata_modal: MetadataTab) -> dict[str, str]:
@@ -210,9 +193,7 @@ def assert_checksums_are_the_same(
     # checksums needs to be counted in advance using
     # count_checksums_for_file function
     counted_checksum = tmp_memory["checksums_" + file_name]
-    click_on_status_tag_for_file_in_file_browser(
-        browser_id, status_type, file_name, tmp_memory
-    )
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type, file_name, tmp_memory)
     metadata_modal = Modals(selenium[browser_id]).details_modal.metadata
     workflow_checksum = checksums_counted_in_workflow(metadata_modal)
 
@@ -251,9 +232,7 @@ def count_checksums_and_compare_them(
         checksum_list,
         selenium,
     )
-    assert_checksums_are_the_same(
-        browser_id, checksum_list, file_name, tmp_memory, selenium
-    )
+    assert_checksums_are_the_same(browser_id, checksum_list, file_name, tmp_memory, selenium)
 
 
 @wt(
@@ -276,13 +255,9 @@ def assert_status_of_task_is_one_of_two(
     close = "closes"
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
     try:
-        assert_task_status_in_parallel_box(
-            selenium, browser_id, ordinal, lane, task, status1
-        )
+        assert_task_status_in_parallel_box(selenium, browser_id, ordinal, lane, task, status1)
     except AssertionError:
-        assert_task_status_in_parallel_box(
-            selenium, browser_id, ordinal, lane, task, status2
-        )
+        assert_task_status_in_parallel_box(selenium, browser_id, ordinal, lane, task, status2)
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, close)
 
 
@@ -305,9 +280,7 @@ def assert_status_of_task(
     close = "closes"
 
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
-    assert_task_status_in_parallel_box(
-        selenium, browser_id, ordinal, lane, task, expected_status
-    )
+    assert_task_status_in_parallel_box(selenium, browser_id, ordinal, lane, task, expected_status)
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, close)
 
 

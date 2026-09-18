@@ -6,10 +6,11 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Optional, cast
+from typing import cast
+
+import pytest
 
 from oneprovider_client.rest import ApiException
-
 from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import SpecialDir
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
@@ -89,9 +90,7 @@ def get_space_archives_dir_id(
     if tmp_memory[SpecialDir.SPACE_ARCHIVES_DIR]:
         tmp_memory[SpecialDir.SPACE_ARCHIVES_DIR][user] = space_details.archives_dir_id
     else:
-        tmp_memory[SpecialDir.SPACE_ARCHIVES_DIR] = {
-            user: space_details.archives_dir_id
-        }
+        tmp_memory[SpecialDir.SPACE_ARCHIVES_DIR] = {user: space_details.archives_dir_id}
 
 
 @wt(
@@ -148,15 +147,13 @@ def get_share_container_id(
 
 
 def _assert_ex_error_message_rest(error_message: str) -> None:
-    assert any(
-        ex in error_message for ex in EX_ERR_MSGS_REST
-    ), f"Unexpected error occurred:\n {error_message}"
+    assert any(ex in error_message for ex in EX_ERR_MSGS_REST), (
+        f"Unexpected error occurred:\n {error_message}"
+    )
 
 
 def _assert_ex_error_message_oc(error_message: str) -> None:
-    assert (
-        EX_ERR_MSG_OC in error_message
-    ), f"Unexpected error occurred:\n {error_message}"
+    assert EX_ERR_MSG_OC in error_message, f"Unexpected error occurred:\n {error_message}"
 
 
 @wt(
@@ -213,8 +210,7 @@ def try_to_remove_special_dir_by_id(
 
 @wt(
     parsers.parse(
-        "using {client}, {user} fails to remove the user root "
-        "directory using file path in {host}"
+        "using {client}, {user} fails to remove the user root directory using file path in {host}"
     )
 )
 def try_to_remove_user_root_dir_by_path(client: str, users: Users, user: str) -> None:
@@ -251,7 +247,6 @@ def try_to_move_special_dir(
         hosts,
         host,
         tmp_memory[name][user],
-        error_message=f"Moved {name.value}, but moving should have failed",
     )
 
 
@@ -262,35 +257,30 @@ def try_to_move_special_dir_by_id(
     hosts: Hosts,
     host: str,
     dir_id: str,
-    error_message: Optional[str] = None,
 ) -> None:
     if client.lower() == "rest":
-        try:
-            cdmi_client = cdmi(hosts[host]["ip"], users[user].token)
-            cdmi_client.move_item_by_id(dir_id, "/new_name")
-            raise AssertionError(error_message)
-        except HTTPBadRequest as e:
-            assert "Operation failed with POSIX error: enoent." in str(
-                e
-            ), f"Unexpected error occurred:\n {e}"
+        with pytest.raises(HTTPBadRequest) as exc_info:
+            cdmi(hosts[host]["ip"], users[user].token).move_item_by_id(dir_id, "/new_name")
+        error_message = str(exc_info.value)
+        assert "Operation failed with POSIX error: enoent." in error_message, (
+            f"Unexpected error occurred:\n {error_message}"
+        )
     elif "oneclient" in client.lower():
-        try:
-            oneclient_host = change_client_name_to_hostname(client.lower())
-            move_dir_by_id(user, oneclient_host, users, dir_id, "new_name")
-            raise AssertionError(error_message)
-        except OSError as e:
-            # Because the share container id is very long other error can occur
-            assert "Operation not supported" in str(e) or "File name too long" in str(
-                e
-            ), f"Unexpected error occurred:\n {e}"
+        with pytest.raises(OSError, match=r"Operation not supported|File name too long"):
+            move_dir_by_id(
+                user,
+                change_client_name_to_hostname(client.lower()),
+                users,
+                dir_id,
+                "new_name",
+            )
     else:
         raise NoSuchClientException(f"unknown client {client}")
 
 
 @wt(
     parsers.parse(
-        "using {client}, {user} fails to move the "
-        "user root directory using file path in {host}"
+        "using {client}, {user} fails to move the user root directory using file path in {host}"
     )
 )
 def try_to_move_user_root_dir_by_path(client: str, user: str, users: Users) -> None:
@@ -372,9 +362,7 @@ def try_to_create_file_in_user_root_dir_by_path(
         try:
             oneclient_host = change_client_name_to_hostname(client.lower())
             try_to_create_file_in_root_dir(user, oneclient_host, users, file_name)
-            raise AssertionError(
-                "file created in user root dir, but creation should have failed"
-            )
+            raise AssertionError("file created in user root dir, but creation should have failed")
         except OSError as e:
             _assert_ex_error_message_oc(str(e))
 
@@ -402,9 +390,7 @@ def try_to_add_qos_to_special_dir(
         host,
         tmp_memory[name][user],
         expression,
-        error_message=(
-            f"Qos requirement added to {name.value}, but adding should have failed"
-        ),
+        error_message=(f"Qos requirement added to {name.value}, but adding should have failed"),
     )
 
 
@@ -454,9 +440,7 @@ def try_to_add_json_metadata_to_special_dir(
         host,
         tmp_memory[name][user],
         expression,
-        error_message=(
-            f"Json metadata added to {name.value}, but adding should have failed"
-        ),
+        error_message=(f"Json metadata added to {name.value}, but adding should have failed"),
     )
 
 
@@ -485,8 +469,7 @@ def try_to_add_json_metadata_to_special_dir_by_id(
 
 @wt(
     parsers.parse(
-        "using REST, {user} fails to establish dataset on the "
-        "{name:SpecialDir} in {host}",
+        "using REST, {user} fails to establish dataset on the {name:SpecialDir} in {host}",
         extra_types={"SpecialDir": SpecialDir},
     )
 )
@@ -504,9 +487,7 @@ def try_to_establish_dataset_on_special_dir(
         hosts,
         host,
         tmp_memory[name][user],
-        error_message=(
-            f"Established dataset on {name.value}, but establishing should have failed"
-        ),
+        error_message=(f"Established dataset on {name.value}, but establishing should have failed"),
     )
 
 

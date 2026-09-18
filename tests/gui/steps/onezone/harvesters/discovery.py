@@ -6,10 +6,8 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
-
 from tests import ELASTICSEARCH_PORT
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils import Modals, OZLoggedIn, Popups
@@ -19,11 +17,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on {button_name} button in discovery sidebar"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on {button_name} button in discovery sidebar"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_discovery_on_left_sidebar_menu(
     selenium: SeleniumDrivers, browser_id: str, button_name: str
@@ -35,9 +29,7 @@ def click_button_on_discovery_on_left_sidebar_menu(
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in discovery page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_button_in_discovery_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_create_button_in_discovery_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).discovery.create_button()
 
@@ -87,14 +79,12 @@ def click_on_option_in_harvester_menu(
     selenium: SeleniumDrivers, browser_id: str, option: str, name: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).discovery
-    page.harvesters_list[name]()
+    page.harvesters_list[name].click()
     page.harvesters_list[name].menu_button()
     page.menu[option]()
 
 
-@wt(
-    parsers.parse('user of {browser_id} types "{text}" to rename harvester input field')
-)
+@wt(parsers.parse('user of {browser_id} types "{text}" to rename harvester input field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_rename_input_field_in_discovery_page(
     selenium: SeleniumDrivers, browser_id: str, text: str
@@ -106,9 +96,7 @@ def type_text_to_rename_input_field_in_discovery_page(
 
 @wt(parsers.parse("user of {browser_id} confirms harvester rename using button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_harvester_rename_using_button(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def confirm_harvester_rename_using_button(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).discovery.rename_button()
 
@@ -158,8 +146,7 @@ def see_insufficient_permissions_alert_on_discovery_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} types "{text}" to {input_name} input '
-        "field in discovery page"
+        'user of {browser_id} types "{text}" to {input_name} input field in discovery page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -187,11 +174,7 @@ def type_endpoint_to_input_field_in_discovery_page(
     _enter_text(input_field, text)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks {button_name} button in harvester spaces page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks {button_name} button in harvester spaces page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_harvester_spaces_page(
     selenium: SeleniumDrivers, browser_id: str, button_name: str
@@ -203,25 +186,17 @@ def click_button_in_harvester_spaces_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{element_name}" from dropdown'
-        " in add {element} modal"
+        'user of {browser_id} chooses "{element_name}" from dropdown in add {element} modal'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)
 def choose_element_from_dropdown_in_add_element_modal(
     selenium: SeleniumDrivers, browser_id: str, element_name: str
 ) -> None:
     driver = selenium[browser_id]
-    modal_name = "add_one_of_elements"
-    for _ in range(10):
-        try:
-            add_one_of_elements_modal = getattr(Modals(driver), modal_name)
-            add_one_of_elements_modal.expand_dropdown()
-            Popups(driver).dropdown.options[element_name].click()
-        except RuntimeError:
-            time.sleep(0.5)
-            continue
-        break
+    add_one_of_elements_modal = Modals(driver).add_one_of_elements
+    add_one_of_elements_modal.expand_dropdown()
+    Popups(driver).dropdown.options[element_name].click()
 
 
 @wt(
@@ -235,9 +210,7 @@ def assert_space_has_appeared_in_discovery_page(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    assert (
-        space_name in OZLoggedIn(driver).discovery.spaces_list
-    ), f'space "{space_name}" not found'
+    assert space_name in OZLoggedIn(driver).discovery.spaces_list, f'space "{space_name}" not found'
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

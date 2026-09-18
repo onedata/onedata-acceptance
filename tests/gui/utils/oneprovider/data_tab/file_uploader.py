@@ -48,6 +48,4 @@ class FileUploader(PageObject):
         return f"file uploader in {self.parent}"
 
     def scroll_to_bottom(self) -> None:
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView();", self.rows[-1].web_elem
-        )
+        self.driver.execute_script("arguments[0].scrollIntoView();", self.rows[-1].web_elem)

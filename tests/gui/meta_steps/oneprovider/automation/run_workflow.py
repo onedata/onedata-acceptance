@@ -8,11 +8,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import (
+    WAIT_EXTENDED_WORKFLOW_EXECUTION,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+)
 from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
@@ -20,6 +22,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     change_tab_in_automation_subpage,
     click_on_task_in_lane,
     switch_to_automation_page,
+    wait_until_workflow_executions_list_is_empty,
 )
 from tests.gui.steps.oneprovider.automation.automation_statuses import (
     await_for_task_status_in_parallel_box,
@@ -30,6 +33,7 @@ from tests.gui.steps.oneprovider.automation.initial_values import (
     open_select_initial_datasets_modal,
     open_select_initial_files_modal,
     open_select_initial_groups_modal,
+    select_groups_from_select_groups_modal,
 )
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     choose_time_resolution,
@@ -43,7 +47,6 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 def open_initial_modal(data_type: str, driver: WebDriver) -> None:
@@ -53,9 +56,7 @@ def open_initial_modal(data_type: str, driver: WebDriver) -> None:
         open_select_initial_files_modal(driver)
 
 
-def go_to_path_and_return_file_name_in_modal(
-    path: str, driver: WebDriver, modal_name: str
-) -> str:
+def go_to_path_and_return_file_name_in_modal(path: str, driver: WebDriver, modal_name: str) -> str:
     if "/" in path:
         modal = getattr(Modals(driver), transform(modal_name))
         file_name, path_list = get_item_name_and_containing_dir_path(path)
@@ -68,10 +69,7 @@ def go_to_path_and_return_file_name_in_modal(
 def select_initial_items_for_workflow_in_modal(
     files: str | list[str], driver: WebDriver, data_type: str
 ) -> None:
-    if isinstance(files, str):
-        parsed_files = parse_seq(files)
-    else:
-        parsed_files = files
+    parsed_files = parse_seq(files) if isinstance(files, str) else files
     last_file_name = parsed_files[-1].split("/")[-1]
 
     for path in parsed_files:
@@ -129,18 +127,7 @@ def choose_group_as_initial_workflow_value_for_store(
     driver = selenium[browser_id]
     open_select_initial_groups_modal(selenium, browser_id, store_name)
     # Modal can be opened but groups might not be loaded yet
-    _select_groups_from_select_groups_modal(driver, group_list)
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _select_groups_from_select_groups_modal(
-    driver: WebDriver, group_list: str | list[str]
-) -> None:
-    if isinstance(group_list, str):
-        parsed_list = parse_seq(group_list)
-    else:
-        parsed_list = group_list
-    Modals(driver).select_groups.select(parsed_list)
+    select_groups_from_select_groups_modal(driver, group_list)
 
 
 def provide_text_to_object_initial_workflow_value_store(
@@ -212,10 +199,6 @@ def choose_file_as_initial_workflow_value(
         r" (?P<option>start|finish)"
     )
 )
-@repeat_failed(
-    interval=1,
-    timeout=360,
-)
 def wait_for_workflows_in_automation_subpage(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
@@ -228,27 +211,29 @@ def wait_for_workflows_in_automation_subpage(
         r"all workflows to (?P<option>start|finish)"
     )
 )
-@repeat_failed(
-    interval=1,
-    timeout=1500,
-    exceptions=(AssertionError, StaleElementReferenceException),
-)
 def wait_for_workflows_in_automation_subpage_extended_time(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
+    _wait_for_workflows_in_automation_subpage(
+        selenium,
+        browser_id,
+        option,
+        timeout=WAIT_EXTENDED_WORKFLOW_EXECUTION,
+    )
 
 
-def wait_for_workflow_execution_in_atm_subpage(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def wait_for_workflow_execution_in_atm_subpage(selenium: SeleniumDrivers, browser_id: str) -> None:
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "start")
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "finish")
     assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id)
 
 
 def _wait_for_workflows_in_automation_subpage(
-    selenium: SeleniumDrivers, browser_id: str, option: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    *,
+    timeout: float = WAIT_NORMAL_WORKFLOW_EXECUTION,
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     if option == "start":
@@ -258,7 +243,11 @@ def _wait_for_workflows_in_automation_subpage(
         change_tab_in_automation_subpage(selenium, browser_id, "Ongoing")
         err = "Ongoing workflows did not finish their run"
 
-    assert len(page.workflow_executions_list) == 0, err
+    wait_until_workflow_executions_list_is_empty(
+        page,
+        err,
+        timeout=timeout,
+    )
 
 
 def assert_no_suspended_workflows_in_atm_subpage(
@@ -266,10 +255,8 @@ def assert_no_suspended_workflows_in_atm_subpage(
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Suspended")
-    error_message = (
-        "Workflow did not finished successfully and it is in suspended state."
-    )
-    assert len(page.workflow_executions_list) == 0, error_message
+    error_message = "Workflow did not finished successfully and it is in suspended state."
+    wait_until_workflow_executions_list_is_empty(page, error_message)
 
 
 @wt(
@@ -298,8 +285,7 @@ def await_for_task_status(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} changes time resolution to"
-        ' "{resolution}" in modal "{modal}"'
+        'user of {browser_id} changes time resolution to "{resolution}" in modal "{modal}"'
     )
 )
 def change_time_resolution_in_modal(

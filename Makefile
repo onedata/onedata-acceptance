@@ -82,11 +82,11 @@ ifdef bamboo_GUI_PKG_VERIFICATION
 endif
 
 # TODO VFS-9779 - reorganize test targets after introducing bamboo specs
-.PHONY: test_gui, test_gui_pkg, test_gui_src
-.PHONY: test_mixed, test_mixed_pkg, test_mixed_src
-.PHONY: test_oneclient, test_oneclient_pkg, test_oneclient_src
-.PHONY: test_performance, test_performance_pkg, test_performance_src
-.PHONY: test_upgrade
+.PHONY: test_gui test_gui_pkg test_gui_src
+.PHONY: test_mixed test_mixed_pkg test_mixed_src
+.PHONY: test_oneclient test_oneclient_pkg test_oneclient_src
+.PHONY: test_performance test_performance_pkg test_performance_src
+.PHONY: test_upgrade_pkg test_upgrade_src
 .PHONY: test_demo_mode
 .PHONY: format
 
@@ -100,7 +100,7 @@ test_gui_src: test_gui
 
 test_mixed:
 	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	 --env-file=${ENV_FILE} -k=${KEYWORDS} --count ${COUNT} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
+	 -k=${KEYWORDS} --count ${COUNT} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
 
 test_mixed_pkg: test_mixed
 test_mixed_src: SOURCES = --sources
@@ -198,7 +198,8 @@ codetag-tracker:
 ## Formatting
 ##
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v12"
+STATIC_ANALYSER_IMAGE := docker.onedata.org/python_static_analyser:v13
+PYTHON_CONFIG := pyproject.toml
 UID := $(shell id -u)
 GID := $(shell id -g)
 
@@ -207,7 +208,7 @@ define docker_run
 endef
 
 
-ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__init__.py tests/__init__.py \
+ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/constants.py tests/gui/__init__.py tests/__init__.py \
  tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
  tests/performance/__init__.py tests/performance/type_definitions.py tests/performance/test_*.py \
  tests/oneclient/steps tests/oneclient/__init__.py tests/utils tests/upgrade \
@@ -220,13 +221,16 @@ ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/
 
 
 format:
-	$(docker_run) isort $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) --settings-file tests/configs/.pyproject.toml
-	$(docker_run) black $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) --config tests/configs/.pyproject.toml
+	# Select Ruff's "I" (isort) rules to sort imports before formatting.
+	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache --select I --fix $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
+	$(docker_run) ruff format --config $(PYTHON_CONFIG) --no-cache $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
 
 
-black-check:
-	$(docker_run) black $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) --check --config tests/configs/.pyproject.toml || \
-	 (echo "Code failed Black format checking. Please run 'make format' before commiting your changes. "; exit 1)
+format-check:
+	# Check import sorting using Ruff's "I" (isort) rules.
+	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache --select I $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
+	$(docker_run) ruff format --config $(PYTHON_CONFIG) --no-cache --check $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) || \
+	 (echo "Code failed Ruff format checking. Please run 'make format' before committing your changes. "; exit 1)
 
 
 ##
@@ -234,9 +238,18 @@ black-check:
 ##
 
 static-analysis:
-	$(docker_run) pylint $(ALL_FILES) --output-format=colorized --rcfile=tests/configs/.pylintrc
-	$(docker_run) pylint $(ALL_CONFTEST_FILES) --output-format=colorized \
-	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc
+	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache $(ALL_FILES)
+	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache \
+	--ignore=ARG,PLC0415,SLF001 $(ALL_CONFTEST_FILES)
+
+# Rules ignored for conftest files:
+# - ARG (unused arguments): pytest and pytest-bdd require fixed fixture and hook
+#   signatures even when some injected arguments are unused.
+# - PLC0415 (import outside top level): GUI fixtures defer imports to avoid
+#   circular dependencies and keep platform-specific setup local.
+# - SLF001 (private member access): WebDriver instances are deliberately stored
+#   in pytest's private node state under `_driver` for sharing between fixtures
+#   and hooks.
 
 type-check:
-	$(docker_run) mypy $(ALL_FILES) $(ALL_CONFTEST_FILES) --config-file=tests/configs/.pyproject.toml
+	$(docker_run) mypy $(ALL_FILES) $(ALL_CONFTEST_FILES) --config-file=$(PYTHON_CONFIG)

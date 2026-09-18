@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import hashlib
 import json
 from collections.abc import Callable, Mapping
+from http import HTTPStatus
 from typing import NamedTuple
 
 import requests
@@ -32,9 +33,7 @@ class StorageDetails(NamedTuple):
     provider_ip: str
 
 
-def add_user_luma_mapping(
-    admin_user: User, user: User, storages: list[StorageDetails]
-) -> None:
+def add_user_luma_mapping(admin_user: User, user: User, storages: list[StorageDetails]) -> None:
 
     for storage_details in storages:
         mapping: dict[str, object] = {
@@ -42,9 +41,7 @@ def add_user_luma_mapping(
                 "mappingScheme": "onedataUser",
                 "onedataUserId": user.user_id,
             },
-            "storageUser": {
-                "storageCredentials": {"uid": gen_uid(user.username), "type": "posix"}
-            },
+            "storageUser": {"storageCredentials": {"uid": gen_uid(user.username), "type": "posix"}},
         }
         add_mapping(
             admin_user,
@@ -52,7 +49,7 @@ def add_user_luma_mapping(
             storage_details.storage_id,
             mapping,
             http_post,
-            "/".join(["all", "onedata_user_to_credentials"]),
+            "all/onedata_user_to_credentials",
         )
 
 
@@ -73,9 +70,7 @@ def add_spaces_luma_mapping(
             space_details.storage_id,
             mapping,
             http_put,
-            "/".join(
-                ["posix_compatible", "default_credentials", space_details.space_id]
-            ),
+            f"posix_compatible/default_credentials/{space_details.space_id}",
         )
 
 
@@ -101,7 +96,7 @@ def get_local_feed_luma_storages(
                 headers={"X-Auth-Token": admin_user.token},
             )
             loaded_response = json.loads(response.content)
-            if "lumaFeed" in loaded_response and "local" == loaded_response["lumaFeed"]:
+            if "lumaFeed" in loaded_response and loaded_response["lumaFeed"] == "local":
                 storages.append(StorageDetails(storage_id, provider_ip))
 
     return storages
@@ -141,14 +136,11 @@ def get_all_spaces_details(
 
 
 def get_providers_ips(hosts: Mapping[str, Mapping[str, str]]) -> list[str]:
-    providers_ips = []
-    for service in hosts.values():
-        if (
-            "service_type" in service.keys()
-            and service["service_type"] == "oneprovider"
-        ):
-            providers_ips.append(service["ip"])
-    return providers_ips
+    return [
+        service["ip"]
+        for service in hosts.values()
+        if "service_type" in service and service["service_type"] == "oneprovider"
+    ]
 
 
 def add_mapping(
@@ -179,7 +171,7 @@ def add_mapping(
                 "Content-Type": "application/json",
             },
         )
-        assert 204 == response.status_code
+        assert response.status_code == HTTPStatus.NO_CONTENT
     except HTTPConflict:
         # luma mapping for this entity was already added
         pass

@@ -4,14 +4,13 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
+from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import Callable, Iterable, Protocol, TypedDict
+from typing import Protocol, TypedDict
 
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.popups import Popups
@@ -27,12 +26,8 @@ from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
-RegionCaveat = TypedDict(
-    "RegionCaveat", {"allow": bool, "region codes": list[str]}, total=False
-)
-CountryCaveat = TypedDict(
-    "CountryCaveat", {"allow": bool, "country codes": list[str]}, total=False
-)
+RegionCaveat = TypedDict("RegionCaveat", {"allow": bool, "region codes": list[str]}, total=False)
+CountryCaveat = TypedDict("CountryCaveat", {"allow": bool, "country codes": list[str]}, total=False)
 ConsumerCaveatConfig = TypedDict(
     "ConsumerCaveatConfig", {"type": str, "by": str, "consumer name": str}
 )
@@ -43,9 +38,9 @@ class PathCaveatConfig(TypedDict):
     path: str
 
 
-ExpirationCaveat = TypedDict(
-    "ExpirationCaveat", {"after": int, "set": bool}, total=False
-)
+class ExpirationCaveat(TypedDict, total=False):
+    after: int
+    set: bool
 
 
 TokenCaveats = TypedDict(
@@ -73,16 +68,6 @@ class CreateTokenPage(Protocol):
     def expand_caveats(self) -> None: ...
 
 
-class TokensArea(Protocol):
-    @property
-    def create_token_page(self) -> CreateTokenPage: ...
-
-
-class ZonePage(Protocol):
-    @property
-    def tokens(self) -> TokensArea: ...
-
-
 class CaveatTag(PageObject):
     name = id = Label(".tag-label")
     icon = WebElement(".tag-icon")
@@ -102,7 +87,7 @@ class ObjectIdEntry(PageObject):
     name = id = Label(".text-like-field")
 
 
-class CaveatField(PageObject):
+class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat operations
     name = id = Label(".control-label")
     toggle = Toggle(".one-way-toggle")
 
@@ -126,46 +111,51 @@ class CaveatField(PageObject):
     path_entries = WebItemsSequence(".pathEntry-collapse", cls=PathEntry)
     object_id_entries = WebItemsSequence(".objectIdEntry-field", cls=ObjectIdEntry)
 
+    @repeat_failed(timeout=1)
     def activate(self) -> None:
         self.toggle.check()
+        assert self.toggle.is_checked(), "failed to check toggle"
 
+    @repeat_failed(timeout=1)
     def deactivate(self) -> None:
         self.toggle.uncheck()
+        assert not self.toggle.is_checked(), "failed to check toggle"
+
+    @repeat_failed(timeout=1)
+    def click_new_item(self) -> None:
+        self.new_item.click()
 
     def is_allow(self) -> bool:
         return self.item_label == "Allow"
 
     def set_allow(
         self,
-        popups: Callable[[WebDriver], Popups],
         selenium: SeleniumDrivers,
         browser_id: str,
     ) -> None:
         if not self.is_allow():
             self.expander()
-            popups(selenium[browser_id]).power_select.choose_item("Allow")
+            Popups(selenium[browser_id]).power_select.choose_item("Allow")
 
     def set_deny(
         self,
-        popups: Callable[[WebDriver], Popups],
         selenium: SeleniumDrivers,
         browser_id: str,
     ) -> None:
         if self.is_allow():
             self.expander()
-            popups(selenium[browser_id]).power_select.choose_item("Deny")
+            Popups(selenium[browser_id]).power_select.choose_item("Deny")
 
     def set_allowance(
         self,
         allow: bool,
-        popups: Callable[[WebDriver], Popups],
         selenium: SeleniumDrivers,
         browser_id: str,
     ) -> None:
         if allow:
-            self.set_allow(popups, selenium, browser_id)
+            self.set_allow(selenium, browser_id)
         else:
-            self.set_deny(popups, selenium, browser_id)
+            self.set_deny(selenium, browser_id)
 
     def assert_allowance(self, allow: bool) -> None:
         if allow:
@@ -214,25 +204,23 @@ class CaveatField(PageObject):
         selenium: SeleniumDrivers,
         browser_id: str,
         region_caveat: RegionCaveat,
-        popups: Callable[[WebDriver], Popups],
     ) -> None:
         self.activate()
         caveat_allow = region_caveat.get("allow", True)
         regions = region_caveat.get("region codes", [])
-        self.set_allowance(caveat_allow, popups, selenium, browser_id)
+        self.set_allowance(caveat_allow, selenium, browser_id)
         for region in regions:
-            self.set_region_in_region_caveat(selenium, browser_id, region, popups)
+            self.set_region_in_region_caveat(selenium, browser_id, region)
 
     def set_region_in_region_caveat(
         self,
         selenium: SeleniumDrivers,
         browser_id: str,
         region: str,
-        popups: Callable[[WebDriver], Popups],
     ) -> None:
         self.new_item()
         driver = selenium[browser_id]
-        popups(driver).selector_popup.selectors[region]()
+        Popups(driver).selector_popup.selectors[region]()
 
     # country caveat
     def set_country_caveats(
@@ -240,12 +228,11 @@ class CaveatField(PageObject):
         selenium: SeleniumDrivers,
         browser_id: str,
         country_caveat: CountryCaveat,
-        popups: Callable[[WebDriver], Popups],
     ) -> None:
         self.activate()
         caveat_allow = country_caveat.get("allow", True)
         countries = country_caveat.get("country codes", [])
-        self.set_allowance(caveat_allow, popups, selenium, browser_id)
+        self.set_allowance(caveat_allow, selenium, browser_id)
         for country in countries:
             self.set_item_in_inner_input(selenium, browser_id, country)
 
@@ -270,15 +257,14 @@ class CaveatField(PageObject):
         self,
         selenium: SeleniumDrivers,
         browser_id: str,
-        popups: Callable[[WebDriver], Popups],
         consumer_caveats: Iterable[ConsumerCaveatConfig],
         users: Users,
         groups: dict[str, str],
         hosts: Hosts,
-        oz_page: Callable[[WebDriver], ZonePage],
+        create_token_page: CreateTokenPage,
     ) -> None:
         self.activate()
-        oz_page(selenium[browser_id]).tokens.create_token_page.hide_caveats()
+        create_token_page.hide_caveats()
         for consumer in consumer_caveats:
             consumer_type = consumer.get("type")
             method = consumer.get("by")
@@ -288,30 +274,23 @@ class CaveatField(PageObject):
                     value = users[value].user_id
                 elif consumer_type == "group":
                     value = groups[value]
-            if (
-                consumer_type == "oneprovider"
-                and method == "name"
-                and "Any" not in value
-            ):
+            if consumer_type == "oneprovider" and method == "name" and "Any" not in value:
                 value = hosts[value]["name"]
-            self.set_consumer_in_consumer_caveat(
-                selenium, browser_id, popups, consumer_type, method, value
-            )
-        oz_page(selenium[browser_id]).tokens.create_token_page.expand_caveats()
+            self.set_consumer_in_consumer_caveat(selenium, browser_id, consumer_type, method, value)
+        create_token_page.expand_caveats()
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def set_consumer_in_consumer_caveat(
         self,
         selenium: SeleniumDrivers,
         browser_id: str,
-        popups: Callable[[WebDriver], Popups],
         consumer_type: str,
         method: str,
         value: str,
     ) -> None:
         self.new_item()
         driver = selenium[browser_id]
-        popup = popups(driver).consumer_caveat_popup
+        popup = Popups(driver).consumer_caveat_popup
         popup.expand_consumer_types()
         popup.select_type(consumer_type)
         if method == "name":
@@ -328,41 +307,30 @@ class CaveatField(PageObject):
         selenium: SeleniumDrivers,
         browser_id: str,
         service_caveats: dict[str, list[str]],
-        popups: Callable[[WebDriver], Popups],
     ) -> None:
         self.activate()
         service_cav = service_caveats.get("Service", [])
         service_onepanel_cav = service_caveats.get("Service Onepanel", [])
         for service in service_cav:
-            self.set_service_in_service_caveat(
-                selenium, browser_id, popups, "Service", service
-            )
+            self.set_service_in_service_caveat(selenium, browser_id, "Service", service)
         for service in service_onepanel_cav:
-            self.set_service_in_service_caveat(
-                selenium, browser_id, popups, "Service Onepanel", service
-            )
+            self.set_service_in_service_caveat(selenium, browser_id, "Service Onepanel", service)
 
     def set_service_in_service_caveat(
         self,
         selenium: SeleniumDrivers,
         browser_id: str,
-        popups: Callable[[WebDriver], Popups],
         consumer_type: str,
         value: str,
     ) -> None:
-        self.new_item()
+        self.click_new_item()
         driver = selenium[browser_id]
-        popup = popups(driver).consumer_caveat_popup
-        popup.expand_consumer_types()
-        time.sleep(0.5)
-        popup.consumer_types[consumer_type]()
-        time.sleep(0.5)
-        popup.list_option()
+        popup = Popups(driver).consumer_caveat_popup
 
-        # this line is to load elements, test fails without it
-        _ = [consumer.name for consumer in popup.consumers]
-        time.sleep(0.5)
-        popup.consumers[value]()
+        popup.expand_consumer_types()
+        popup.select_consumer_type(consumer_type)
+        popup.expand_consumers()
+        popup.consumers[value].click()
 
     # interface caveat
     def set_interface_caveat(self, caveat: str) -> None:
@@ -383,7 +351,7 @@ class CaveatField(PageObject):
         space = path_caveat["space"]
         path = path_caveat["path"]
         self.add_item()
-        if not self.item_label == space:
+        if self.item_label != space:
             self.expander()
             if hasattr(self, "options"):
                 self.options[space]()
@@ -404,9 +372,7 @@ class CaveatField(PageObject):
     # assertions
 
     # expiration caveat
-    def assert_expiration_caveat(
-        self, exp_caveat: ExpirationCaveat, tmp_memory: TmpMemory
-    ) -> None:
+    def assert_expiration_caveat(self, exp_caveat: ExpirationCaveat, tmp_memory: TmpMemory) -> None:
         value_set = exp_caveat.get("set", False)
         if value_set:
             expected_time = tmp_memory.get("expire_time", None)
@@ -427,9 +393,7 @@ class CaveatField(PageObject):
             self.assert_region_in_region_caveat(region)
 
     def assert_region_in_region_caveat(self, region: str) -> None:
-        assert (
-            region in self.tags
-        ), f"{region} should be amongst region caveats but is not"
+        assert region in self.tags, f"{region} should be amongst region caveats but is not"
 
     # country caveat
     def assert_country_caveats(self, country_caveat: CountryCaveat) -> None:
@@ -441,9 +405,7 @@ class CaveatField(PageObject):
             self.assert_region_in_region_caveat(country)
 
     def assert_country_in_country_caveat(self, country: str) -> None:
-        assert (
-            country in self.tags
-        ), f"{country} should be amongst country caveats but is not"
+        assert country in self.tags, f"{country} should be amongst country caveats but is not"
 
     # asn caveat
     def assert_asn_caveats(self, asn_list: Iterable[int]) -> None:
@@ -476,34 +438,24 @@ class CaveatField(PageObject):
     ) -> None:
         for consumer in consumer_caveats:
             consumer_type = consumer["type"]
-            if creation:
-                method = "name"
-            else:
-                method = consumer["by"]
+            method = "name" if creation else consumer["by"]
             value = consumer["consumer name"]
             if method == "id":
                 if consumer_type == "user":
                     value = users[value].user_id
                 elif consumer_type == "group":
                     value = groups[value]
-            if (
-                consumer_type == "oneprovider"
-                and method == "name"
-                and "Any" not in value
-            ):
+            if consumer_type == "oneprovider" and method == "name" and "Any" not in value:
                 value = hosts[value]["name"]
             self.assert_consumer_in_consumer_caveat(consumer_type, method, value)
 
     def assert_consumer_in_consumer_caveat(
         self, consumer_type: str, method: str, value: str
     ) -> None:
-        if method == "name":
-            tag = self.tags[value]
-        else:
-            tag = self.tags["ID: " + value]
-        assert tag.is_icon_type(
-            consumer_type
-        ), f"Consumer caveat for {value} is not {consumer_type}"
+        tag = self.tags[value] if method == "name" else self.tags["ID: " + value]
+        assert tag.is_icon_type(consumer_type), (
+            f"Consumer caveat for {value} is not {consumer_type}"
+        )
 
     # service caveat
     def assert_service_caveats(self, services: Iterable[str]) -> None:
@@ -512,9 +464,7 @@ class CaveatField(PageObject):
             self.assert_ip_in_ip_caveats(service)
 
     def assert_service_in_service_caveat(self, service: str) -> None:
-        assert (
-            service in self.tags
-        ), f"{service} should be amongst services caveats but is not"
+        assert service in self.tags, f"{service} should be amongst services caveats but is not"
 
     # interface caveat
     def assert_interface_caveat(self, interface: str) -> None:
@@ -533,9 +483,9 @@ class CaveatField(PageObject):
         space = path_caveat["space"]
         path = path_caveat["path"]
         entry = self.path_entries[space]
-        assert (
-            entry.path == path
-        ), f"Invalid path: {space} {path}. Actual: {entry.space_name} {entry.path}"
+        assert entry.path == path, (
+            f"Invalid path: {space} {path}. Actual: {entry.space_name} {entry.path}"
+        )
 
     # object id caveat
     def assert_object_id_caveats(self, ids: Iterable[str]) -> None:
@@ -543,6 +493,4 @@ class CaveatField(PageObject):
             self.assert_object_id_caveat(object_id)
 
     def assert_object_id_caveat(self, object_id: str) -> None:
-        assert (
-            object_id in self.object_id_entries
-        ), f"Object id {object_id} not in object ids"
+        assert object_id in self.object_id_entries, f"Object id {object_id} not in object ids"

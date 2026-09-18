@@ -11,11 +11,15 @@ import time
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
+from tests.gui.constants import (
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_DOWNLOAD,
+)
 from tests.gui.type_definitions import FilePath, TmpMemory
 from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import (
@@ -28,19 +32,15 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _wait_for_op_session_to_start(
-    selenium: SeleniumDrivers, browser_id_list: list[str]
-) -> None:
+def _wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
     @repeat_failed(timeout=WAIT_BACKEND)
     def _assert_correct_url(d: WebDriver) -> None:
         try:
             found = parse_url(d.current_url).group("where")
         except AttributeError as exc:
-            raise RuntimeError("no access part found in url") from exc
-        if "opw" != found.lower():
-            raise RuntimeError(
-                f"expected opw as access part in url instead got: {found}"
-            )
+            raise AssertionError("no access part found in url") from exc
+        if found.lower() != "opw":
+            raise AssertionError(f"expected opw as access part in url instead got: {found}")
 
     time.sleep(12)
     for browser_id in browser_id_list:
@@ -58,9 +58,7 @@ def _wait_for_op_session_to_start(
         "browser_id_list": parse_elements_sequence,
     },
 )
-def g_wait_for_op_session_to_start(
-    selenium: SeleniumDrivers, browser_id_list: list[str]
-) -> None:
+def g_wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -73,9 +71,7 @@ def g_wait_for_op_session_to_start(
         "browser_id_list": parse_elements_sequence,
     },
 )
-def wt_wait_for_op_session_to_start(
-    selenium: SeleniumDrivers, browser_id_list: list[str]
-) -> None:
+def wt_wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -92,8 +88,7 @@ def wt_assert_provider_name_prov_in_op(
     val = hosts[val]["name"]
     displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
     assert displayed_name == val, (
-        f"displayed {displayed_name} provider name in Oneprovider GUI "
-        f"instead of expected {val}"
+        f"displayed {displayed_name} provider name in Oneprovider GUI instead of expected {val}"
     )
 
 
@@ -104,19 +99,14 @@ def wt_assert_provider_name_prov_in_op(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_in_op(
-    selenium: SeleniumDrivers, browser_id: str, val: str
-) -> None:
+def wt_assert_provider_name_in_op(selenium: SeleniumDrivers, browser_id: str, val: str) -> None:
     displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
     assert displayed_name == val, (
-        f"displayed {displayed_name} provider name in Oneprovider GUI instead"
-        f" of expected {val}"
+        f"displayed {displayed_name} provider name in Oneprovider GUI instead of expected {val}"
     )
 
 
-@given(
-    parsers.parse("possible exception messages appearing for workflow files:\n{config}")
-)
+@given(parsers.parse("possible exception messages appearing for workflow files:\n{config}"))
 def load_exceptions_for_input_files(tmp_memory: TmpMemory, config: str) -> None:
     """
     Configuration is as follows
@@ -139,7 +129,7 @@ def _load_exceptions_for_input_files(tmp_memory: TmpMemory, config: str) -> None
         tmp_memory["exceptions"][file] = exceptions
 
 
-def wait_for_item_to_appear(item: WebElement) -> None:
+def wait_for_item_to_appear(item: SeleniumWebElement) -> None:
     for _ in range(50):
         try:
             if item.is_displayed():
@@ -147,11 +137,11 @@ def wait_for_item_to_appear(item: WebElement) -> None:
             time.sleep(0.1)
         except StaleElementReferenceException:
             time.sleep(0.1)
-    raise RuntimeError(f"item {item} did not appear")
+    raise TimeoutError(f"item {item} did not appear")
 
 
 def wait_for_item_to_disappear(
-    item: WebElement, driver: WebDriver, timeout: float = WAIT_FRONTEND
+    item: SeleniumWebElement, driver: WebDriver, timeout: float = WAIT_FRONTEND
 ) -> None:
     WebDriverWait(driver, timeout=timeout).until(
         invisibility_of_element(item), message="Element is visible"

@@ -6,16 +6,19 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
-from typing import Optional
+from contextlib import suppress
 
 from _pytest._py.path import LocalPath
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -34,14 +37,11 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on Create automation inventory "
-        "button in automation sidebar"
+        "user of {browser_id} clicks on Create automation inventory button in automation sidebar"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_automation_button_in_sidebar(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def click_create_automation_button_in_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
     OZLoggedIn(selenium[browser_id]).automation.create_automation()
 
 
@@ -51,9 +51,7 @@ def get_oz_workflow_visualizer(driver: WebDriver) -> WorkflowVisualiser:
     return page.automation.workflows_page.workflow_visualiser
 
 
-@wt(
-    parsers.parse('user of {browser_id} writes "{text}" into inventory name text field')
-)
+@wt(parsers.parse('user of {browser_id} writes "{text}" into inventory name text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def input_name_into_input_box_on_main_automation_page(
     selenium: SeleniumDrivers, browser_id: str, text: str
@@ -61,16 +59,17 @@ def input_name_into_input_box_on_main_automation_page(
     OZLoggedIn(selenium[browser_id]).automation.input_box.value = text
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on confirmation button on automation page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on confirmation button on automation page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_name_input_on_main_automation_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def confirm_name_input_on_main_automation_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     OZLoggedIn(selenium[browser_id]).automation.input_box.confirm()
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        CreatedItemAlertPopup.AUTOMATION_INVENTORY,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @wt(
@@ -88,16 +87,12 @@ def click_option_in_inventory_menu(
     oz_page = OZLoggedIn(driver)
     oz_page.open_panel(AutomationPage)
     page = oz_page.automation
-    page.automations_list[inventory]()
+    page.automations_list[inventory].click()
     page.automations_list[inventory].menu()
     Popups(driver).menu_popup_with_text.menu[option]()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} writes "{text}" into rename inventory text field'
-    )
-)
+@wt(parsers.parse('user of {browser_id} writes "{text}" into rename inventory text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def input_new_inventory_name_into_rename_inventory_input_box(
     selenium: SeleniumDrivers, browser_id: str, text: str
@@ -106,11 +101,7 @@ def input_new_inventory_name_into_rename_inventory_input_box(
     page.automations_list[0].edit_box.value = text
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) confirms inventory rename with confirmation button"
-    )
-)
+@wt(parsers.re(r"user of (?P<browser_id>.*) confirms inventory rename with confirmation button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium: SeleniumDrivers, browser_id: str) -> None:
     OZLoggedIn(selenium[browser_id]).automation.automations_list[0].edit_box.confirm()
@@ -160,15 +151,14 @@ def go_to_inventory_subpage(
         oz_page.open_panel(AutomationPage)
         page = oz_page.automation
         tmp_memory[browser_id]["oz_page"] = page
-    page.automations_list[inventory]()
+    page.automations_list[inventory].click()
     if subpage != "main":
         getattr(page.automations_list[inventory], subpage)()
 
 
 @wt(
     parsers.parse(
-        'user of {browser_ids:ElementsSequence} sees "{text}" label in '
-        '"{inventory}" main page',
+        'user of {browser_ids:ElementsSequence} sees "{text}" label in "{inventory}" main page',
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
@@ -177,9 +167,7 @@ def assert_text_in_inventory_page(
     selenium: SeleniumDrivers, browser_ids: list[str], text: str
 ) -> None:
     for browser_id in browser_ids:
-        error_message = OZLoggedIn(
-            selenium[browser_id]
-        ).automation.privileges_error_message
+        error_message = OZLoggedIn(selenium[browser_id]).automation.privileges_error_message
 
         assert text in error_message, f"Error message: {text} not found"
 
@@ -192,9 +180,7 @@ def assert_text_in_inventory_page(
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_workflow_as_json(
-    selenium: SeleniumDrivers, browser_id: str, file_name: str
-) -> None:
+def upload_workflow_as_json(selenium: SeleniumDrivers, browser_id: str, file_name: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).automation.upload_workflow(upload_file_path(file_name))
 
@@ -217,7 +203,7 @@ def upload_lambda_from_repository(
     selenium: SeleniumDrivers, browser_id: str, lambda_name: str
 ) -> None:
     driver = selenium[browser_id]
-    lambda_name = "".join([lambda_name, "/", lambda_name, ".json"])
+    lambda_name = f"{lambda_name}/{lambda_name}.json"
     automation_page = OZLoggedIn(driver).automation
     automation_page.upload_lambda(upload_lambda_path(lambda_name))
 
@@ -236,30 +222,21 @@ def assert_workflow_exists(
     page = OZLoggedIn(selenium[browser_id]).automation
 
     if option == "does not see":
-        assert (
-            workflow not in page.workflows_page.workflows_list
-        ), f"Workflow: {workflow} found "
+        assert workflow not in page.workflows_page.workflows_list, f"Workflow: {workflow} found "
     else:
-        assert (
-            workflow in page.workflows_page.workflows_list
-        ), f"Workflow: {workflow} not found "
+        assert workflow in page.workflows_page.workflows_list, f"Workflow: {workflow} not found "
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{lambda_name}" in lambdas list '
-        "in inventory lambdas subpage"
+        'user of {browser_id} sees "{lambda_name}" in lambdas list in inventory lambdas subpage'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_lambda_exists(
-    selenium: SeleniumDrivers, browser_id: str, lambda_name: str
-) -> None:
+def assert_lambda_exists(selenium: SeleniumDrivers, browser_id: str, lambda_name: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
 
-    assert (
-        lambda_name in page.lambdas_page.lambdas_list
-    ), f"Lambda: {lambda_name} not found "
+    assert lambda_name in page.lambdas_page.lambdas_list, f"Lambda: {lambda_name} not found "
 
 
 @wt(
@@ -269,20 +246,14 @@ def assert_lambda_exists(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_lambdas(
-    selenium: SeleniumDrivers, browser_id: str, number: str
-) -> None:
+def assert_number_of_lambdas(selenium: SeleniumDrivers, browser_id: str, number: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     lambdas_number = len(page.lambdas_page.lambdas_list)
     error_message = f"number of lambdas is {lambdas_number} instead of {number}"
     assert lambdas_number == int(number), error_message
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Create new revision" in "{lambda_name}"'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "Create new revision" in "{lambda_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_create_new_revision_button(
     selenium: SeleniumDrivers, browser_id: str, lambda_name: str
@@ -291,8 +262,13 @@ def click_on_create_new_revision_button(
     page.lambdas_page.lambdas_list[lambda_name].create_new_revision.click()
 
 
-def collapse_revision_list(subpage: Lambda | Workflow) -> None:
-    subpage.show_revisions_button.click()
+def ensure_revision_is_visible(subpage: Lambda | Workflow, revision_id: str) -> None:
+    revisions = subpage.revision_list
+    if revision_id in revisions:
+        return
+
+    if len(revisions) == 1 and revisions[0].id != "1":
+        subpage.show_revisions_button.click()
 
 
 def get_lambda_or_workflow_bracket(
@@ -301,14 +277,7 @@ def get_lambda_or_workflow_bracket(
     page_name = page + "s_page"
     subpage = getattr(OZLoggedIn(selenium[browser_id]).automation, page_name)
     list_name = page + "s_list"
-    bracket = getattr(subpage, list_name)[object_name]
-
-    try:
-        collapse_revision_list(bracket)
-    except (RuntimeError, AttributeError):
-        pass
-
-    return bracket
+    return getattr(subpage, list_name)[object_name]
 
 
 @wt(
@@ -330,8 +299,10 @@ def assert_revision_description_in_object_bracket(
     description: str,
 ) -> None:
     bracket = get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name)
+    revision_id = ordinal[:-2]
+    ensure_revision_is_visible(bracket, revision_id)
 
-    revision = bracket.revision_list[ordinal[:-2]]
+    revision = bracket.revision_list[revision_id]
 
     if option == "does not see":
         assert revision.name != description, f"Revision: {object_name} found"
@@ -356,11 +327,13 @@ def assert_revision_of_object(
     page: str,
 ) -> None:
     bracket = get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name)
+    revision_id = ordinal[:-2]
+    ensure_revision_is_visible(bracket, revision_id)
 
     if option == "does not see":
-        assert ordinal[:-2] not in bracket.revision_list, f"{ordinal} revision found"
+        assert revision_id not in bracket.revision_list, f"{ordinal} revision found"
     else:
-        assert ordinal[:-2] in bracket.revision_list, f"{ordinal} revision not found"
+        assert revision_id in bracket.revision_list, f"{ordinal} revision not found"
 
 
 @wt(
@@ -379,9 +352,7 @@ def click_option_in_revision_menu_button_ordinal(
     ordinal: str,
     page: str,
 ) -> None:
-    click_option_in_revision_menu_button(
-        selenium, browser_id, option, object_name, page, ordinal
-    )
+    click_option_in_revision_menu_button(selenium, browser_id, option, object_name, page, ordinal)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -391,15 +362,27 @@ def click_option_in_revision_menu_button(
     option: str,
     object_name: str,
     page: str,
-    ordinal: Optional[str] = None,
+    ordinal: str | None = None,
 ) -> None:
     item = get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name)
     if ordinal is None:
         item.revision_list[0].menu_button.click()
     else:
-        ordinal_parsed = str(from_ordinal_number_to_int(ordinal))
-        item.revision_list[ordinal_parsed].menu_button.click()
+        revision_id = str(from_ordinal_number_to_int(ordinal))
+        ensure_revision_is_visible(item, revision_id)
+        item.revision_list[revision_id].menu_button.click()
     Popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_lambda_menu(driver: WebDriver, lambda_name: str) -> None:
+    page = OZLoggedIn(driver).automation
+    page.lambdas_page.lambdas_list[lambda_name].lambda_menu.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_popup_in_lambda_menu(driver: WebDriver, option: str) -> None:
+    Popups(driver).menu_popup_with_label.menu[option].click()
 
 
 @wt(
@@ -437,8 +420,7 @@ def change_navigation_tab_in_workflow(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} writes "{text}" in description '
-        "textfield in workflow Details tab"
+        'user of {browser_id} writes "{text}" in description textfield in workflow Details tab'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -460,16 +442,12 @@ def click_on_option_of_inventory_on_left_sidebar_menu(
 
 
 def try_to_close_workflow_creation_popup(driver: WebDriver) -> None:
-    try:
+    with suppress(WebDriverException):
         Popups(driver).workflow_creation_alert.close()
-    except Exception:  # pylint: disable=broad-exception-caught
-        pass
 
 
 @wt(parsers.parse("user of {browser_id} sees that workflow editor appeared"))
-def wt_wait_for_workflow_editor_to_expand(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def wt_wait_for_workflow_editor_to_expand(selenium: SeleniumDrivers, browser_id: str) -> None:
     wait_for_workflow_editor_to_expand(selenium[browser_id])
 
 

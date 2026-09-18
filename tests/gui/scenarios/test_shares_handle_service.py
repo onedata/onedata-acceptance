@@ -13,6 +13,7 @@ from pytest_bdd import scenario, scenarios
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.shares import *
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.rest.shares import *
 from tests.gui.steps.common.browser_creation import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
@@ -44,7 +45,6 @@ from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
-from tests.gui.steps.rest.shares import *
 from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *

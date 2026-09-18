@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
@@ -16,13 +16,13 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.generic import rm_css_cls
 from tests.gui.utils.onezone.common import EditBox, InputBox
-from tests.gui.utils.onezone.generic_page import Element, SidebarPanelPage
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.gui.utils.onezone.lambdas_subpage import LambdasPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.gui.utils.onezone.workflows_subpage import WorkflowsPage
 
 
-class Inventory(Element):
+class Inventory(NamedElement):
     name = id = Label(".item-name")
     menu = Button(".atm-inventory-menu-trigger")
     workflows = NamedButton(".one-list-level-2 .item-header", text="Workflows")
@@ -32,9 +32,7 @@ class Inventory(Element):
 
 
 class AutomationDetailsPage(PageObject):
-    upload_json = NamedButton(
-        ".upload-atm-workflow-schema-action-trigger", text="Upload (json)"
-    )
+    upload_json = NamedButton(".upload-atm-workflow-schema-action-trigger", text="Upload (json)")
     add_new_workflow = NamedButton(".btn", text="Add new workflow")
 
     add_new_lambda = NamedButton(".btn", text="Add new lambda")

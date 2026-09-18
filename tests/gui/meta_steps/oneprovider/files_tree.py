@@ -62,9 +62,7 @@ def check_tree_browser(
     )
     browser = tmp_memory[user][transform(which_browser)]
     for child in parent.nodes:
-        if check_if_item_is_dir_in_browser(
-            selenium, user, child.name, tmp_memory, which_browser
-        ):
+        if check_if_item_is_dir_in_browser(selenium, user, child.name, tmp_memory, which_browser):
             browser.scroll_to_top()
             click_and_press_enter_on_item_in_browser(
                 selenium,
@@ -87,9 +85,7 @@ def check_tree_browser(
                     tmpdir,
                     which_browser,
                 )
-            go_one_back_using_breadcrumbs_in_data_tab_in_op(
-                selenium, user, which_browser
-            )
+            go_one_back_using_breadcrumbs_in_data_tab_in_op(selenium, user, which_browser)
         elif child.content is not None:
             click_and_press_enter_on_item_in_browser(
                 selenium,

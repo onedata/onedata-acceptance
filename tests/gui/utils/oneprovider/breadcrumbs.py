@@ -38,8 +38,7 @@ class _Breadcrumbs(PageObject):
             path_parts = path.split("/")
             breadcrumbs = self._breadcrumbs
             assert len(path_parts) <= len(breadcrumbs), (
-                f"specified path {path_parts} exceeded one displayed in breadcrumbs"
-                f" {self}"
+                f"specified path {path_parts} exceeded one displayed in breadcrumbs {self}"
             )
 
             i = None
@@ -58,27 +57,23 @@ class _Breadcrumbs(PageObject):
                     for i in range(2, 2 + (len(path_parts) - len(breadcrumbs))):
                         path_parts.remove(path_parts[i])
 
-                for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs_name)):
+                for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs_name, strict=True)):
                     if i == 0:
                         continue
-                    assert dir1 == dir2, error_message.format(
-                        dir=dir1, idx=i, item=self
-                    )
+                    assert dir1 == dir2, error_message.format(dir=dir1, idx=i, item=self)
                 breadcrumbs[breadcrumbs_name.index(dir2) - 1].click()
             else:
-                for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs)):
+                for i, (dir1, dir2) in enumerate(zip(path_parts, breadcrumbs, strict=False)):
                     if i == 0:
                         continue
-                    assert dir1 == dir2.text, error_message.format(
-                        dir=dir1, idx=i, item=self
-                    )
+                    assert dir1 == dir2.text, error_message.format(dir=dir1, idx=i, item=self)
                 assert dir2 is not None
                 dir2.click()
 
     def go_one_back(self) -> None:
         breadcrumbs = self._breadcrumbs
         if len(breadcrumbs) - 2 < 0:
-            raise RuntimeError(f"Cannot go back in breadcrumbs {breadcrumbs}")
+            raise IndexError(f"Cannot go back in breadcrumbs {breadcrumbs}")
         breadcrumbs[len(breadcrumbs) - 2].click()
 
     @property

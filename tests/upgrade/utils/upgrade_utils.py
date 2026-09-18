@@ -8,12 +8,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 import traceback
 from collections.abc import Callable, Iterable, Mapping
-from typing import Optional, Protocol, TypedDict, TypeGuard, cast
+from typing import Protocol, TypedDict, TypeGuard, cast
 
 import pytest
 from packaging.version import Version
 
-# pylint: disable=import-error,no-name-in-module
 from bamboos.docker.environment.docker import pull_image_with_retries
 from bamboos.docker.images_branch_config import resolve_image
 from tests.conftest import export_logs
@@ -94,7 +93,7 @@ class UpgradeTest:
         name: str,
         setup: TestCallback,
         verify: TestCallback,
-        min_prov_version: Optional[int] = None,
+        min_prov_version: int | None = None,
     ) -> None:
         self.__name = name
         self.__setup = setup  # function executed before any upgrade is performed
@@ -104,7 +103,7 @@ class UpgradeTest:
     def get_name(self) -> str:
         return self.__name
 
-    def get_required_min_prov_version(self) -> Optional[int]:
+    def get_required_min_prov_version(self) -> int | None:
         return self.__min_prov_version
 
     def run_setup(self) -> None:
@@ -118,7 +117,6 @@ class UpgradeTest:
         print(f'\nVerify for test "{self.__name}" finished\n')
 
 
-# pylint: disable=too-many-instance-attributes,broad-exception-caught
 class UpgradeTestsController:
     def __init__(
         self,
@@ -149,9 +147,7 @@ class UpgradeTestsController:
     def add_test(self, test: UpgradeTest) -> None:
         req_prov_version = test.get_required_min_prov_version()
         if req_prov_version is not None:
-            if req_prov_version <= get_major_prov_version(
-                self.hosts["oneprovider-1"]["hostname"]
-            ):
+            if req_prov_version <= get_major_prov_version(self.hosts["oneprovider-1"]["hostname"]):
                 self.__tests_list.append(test)
         else:
             self.__tests_list.append(test)
@@ -190,13 +186,11 @@ class UpgradeTestsController:
 
     def run_tests(self) -> None:
         admin_user = self.users["admin"]
-        self.initial_prov_version = get_prov_version(
-            self.hosts["oneprovider-1"]["hostname"]
-        )
+        self.initial_prov_version = get_prov_version(self.hosts["oneprovider-1"]["hostname"])
         for test in self.__tests_list:
             try:
                 self.__run_setup(test)
-            except Exception:
+            except Exception:  # noqa: BLE001 - record any setup failure and continue the suite
                 self.__test_results[test.get_name()] = format_failed_test_results(
                     "SETUP", traceback.format_exc(), test
                 )
@@ -207,7 +201,7 @@ class UpgradeTestsController:
         time.sleep(10)
         self.__unmount_clients()
         for service_name in ["onezone", "oneprovider", "oneclient"]:
-            if service_name in self.test_config["targetVersions"].keys():
+            if service_name in self.test_config["targetVersions"]:
                 upgrade_service(
                     service_name,
                     admin_user,
@@ -224,7 +218,7 @@ class UpgradeTestsController:
                 continue
             try:
                 self.__run_verify(test)
-            except Exception:
+            except Exception:  # noqa: BLE001 - record any verification failure
                 self.__test_results[test.get_name()] = format_failed_test_results(
                     "VERIFY", traceback.format_exc(), test
                 )
@@ -237,9 +231,7 @@ class UpgradeTestsController:
 
     def __run_setup(self, test: UpgradeTest) -> None:
         test.run_setup()
-        export_logs(
-            self.request, self.env["env_description_abs_path"], "before_upgrade"
-        )
+        export_logs(self.request, self.env["env_description_abs_path"], "before_upgrade")
 
     def __run_verify(self, test: UpgradeTest) -> None:
         test.run_verify()
@@ -274,7 +266,7 @@ def upgrade_service(
     version_spec: VersionSpec,
     prev_version_spec: VersionSpec,
 ) -> None:
-    for service in hosts.keys():
+    for service in hosts:
         if service.startswith(service_name):
             pod_name = hosts[service]["pod_name"]
             run_upgrade_command(pod_name, service_name, version_spec, prev_version_spec)
@@ -307,8 +299,7 @@ def prepare_sources_upgrade_command(version_spec: VersionSpec) -> list[str]:
     if not is_upgrade_from_sources(version_spec):
         return []
     components = ["--sources-path", "."]
-    for component in version_spec["sources"]["components"]:
-        components.append(f"--{component}")
+    components.extend(f"--{component}" for component in version_spec["sources"]["components"])
     return components
 
 

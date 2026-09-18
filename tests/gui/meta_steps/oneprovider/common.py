@@ -4,8 +4,8 @@ using web GUI
 
 import pytest
 import yaml
+from selenium.common.exceptions import ElementNotInteractableException
 
-from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import (
@@ -44,7 +44,6 @@ from tests.gui.utils.generic import (
 )
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @given(
@@ -80,7 +79,7 @@ def navigate_to_tab_in_op_using_gui(
 def assert_cannot_click_replicate_button(
     selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
 ) -> None:
-    with pytest.raises(RuntimeError, match="Replicate button is not clickable"):
+    with pytest.raises(ElementNotInteractableException, match="Replicate button is not clickable"):
         replicate_item(selenium, browser_id, provider, hosts)
 
 
@@ -108,18 +107,12 @@ def replicate_files_to_providers(
     details_modal_str = "Details modal"
     for name in names:
         click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-        click_option_in_data_row_menu_in_browser(
-            selenium, browser_id, "Data distribution"
-        )
+        click_option_in_data_row_menu_in_browser(selenium, browser_id, "Data distribution")
         assert_tab_in_modal(selenium, browser_id, "Distribution", details_modal_str)
 
         for provider in providers:
-            if is_current_item_fully_on_provider(
-                selenium[browser_id], hosts[provider]["name"]
-            ):
-                assert_cannot_click_replicate_button(
-                    selenium, browser_id, provider, hosts
-                )
+            if is_current_item_fully_on_provider(selenium[browser_id], hosts[provider]["name"]):
+                assert_cannot_click_replicate_button(selenium, browser_id, provider, hosts)
                 continue
             replicate_item(selenium, browser_id, provider, hosts)
             if result == "fails to replicate":
@@ -172,20 +165,15 @@ def wt_assert_file_chunks(
     click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def _assert_file_chunks(
     selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, desc: str
 ) -> None:
     parsed_desc = yaml.load(desc, yaml.Loader)
     for provider, chunks in parsed_desc.items():
         if chunks == "entirely empty":
-            assert_provider_chunk_in_data_distribution_empty(
-                selenium, browser_id, provider, hosts
-            )
+            assert_provider_chunk_in_data_distribution_empty(selenium, browser_id, provider, hosts)
         elif chunks == "entirely filled":
-            assert_provider_chunk_in_data_distribution_filled(
-                selenium, browser_id, provider, hosts
-            )
+            assert_provider_chunk_in_data_distribution_filled(selenium, browser_id, provider, hosts)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))

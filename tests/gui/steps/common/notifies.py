@@ -17,11 +17,11 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.steps.common.common import (
     click_close_button_and_wait_to_disappear,
 )
@@ -29,7 +29,7 @@ from tests.gui.utils import OnePage, PublicOnePage
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.common.popups.alert_info_popup import AlertInfoPopup
 from tests.gui.utils.common.popups.generic import (
-    AlertPopup,
+    AlertPopupType,
     parse_alert_popup,
 )
 from tests.type_definitions import SeleniumDrivers
@@ -40,7 +40,10 @@ from tests.utils.utils import repeat_failed
 @dataclass(frozen=True)
 class CapturedPopup:
     message: str
-    web_elem: WebElement
+    web_elem: SeleniumWebElement
+
+    def __str__(self) -> str:
+        return self.message
 
 
 def capture_matching_popup(
@@ -48,7 +51,17 @@ def capture_matching_popup(
     seen_popups: set[CapturedPopup],
     regexp: re.Pattern[str],
 ) -> bool:
-    detected_popups: list[AlertInfoPopup] = Popups(driver).get_all_alert_popups()
+    capture_visible_popups(driver, seen_popups)
+
+    return any(regexp.match(popup.message) for popup in seen_popups)
+
+
+def capture_visible_popups(
+    driver: WebDriver,
+    seen_popups: set[CapturedPopup],
+) -> bool:
+    # this function modifies seen_popups set in place
+    detected_popups: list[AlertInfoPopup] = Popups(driver).alert_popups.get_all_alert_popups()
     for popup in detected_popups:
         try:
             web_elem = popup.web_elem
@@ -57,11 +70,7 @@ def capture_matching_popup(
         except (NoSuchElementException, StaleElementReferenceException):
             continue
 
-    for captured_popup in seen_popups:
-        if regexp.match(captured_popup.message):
-            return True
-
-    return False
+    return len(seen_popups) > 0
 
 
 @wt(
@@ -72,19 +81,24 @@ def capture_matching_popup(
         },
     )
 )
-def notify_visible_with_text(
+def is_notify_popup_visible_and_close_all_alert_popups(
     selenium: SeleniumDrivers,
     browser_id: str,
-    alert_popup: AlertPopup,
-) -> None:
+    alert_popup: AlertPopupType,
+    popup_expected: bool = True,
+    timeout: float = 2 * WAIT_BACKEND,
+) -> bool:
+    """Check for the expected notify and close all alert popups detected while waiting.
+
+    Return whether the expected notify was found. If it was not found and
+    ``popup_expected`` is true, raise an assertion error instead.
+    """
     driver = selenium[browser_id]
     text_regexp = alert_popup.message
-
-    # for each popup store message, web_elem and classified popup type for future use
     seen_popups: set[CapturedPopup] = set()
 
     try:
-        WebDriverWait(driver, 2 * WAIT_BACKEND, poll_frequency=0.1).until(
+        WebDriverWait(driver, timeout, poll_frequency=0.1).until(
             partial(
                 capture_matching_popup,
                 seen_popups=seen_popups,
@@ -93,24 +107,43 @@ def notify_visible_with_text(
         )
 
     except TimeoutException as exc:
-        raise AssertionError(
-            f'no {alert_popup.category} notify with "{text_regexp}" msg found; '
-            f"observed messages: {list(seen_popups)}"
-        ) from exc
+        if popup_expected:
+            raise AssertionError(
+                f'no {alert_popup.category} notify with "{text_regexp}" msg found; '
+                f"observed messages: {list(seen_popups)}"
+            ) from exc
+
+        _close_all_detected_popups(driver, seen_popups)
+        return False
+
+    _close_all_detected_popups(driver, seen_popups)
+    return True
+
+
+def dismiss_notifies_if_present(
+    driver: WebDriver,
+    timeout: float,
+) -> None:
+    seen_popups: set[CapturedPopup] = set()
+
+    try:
+        WebDriverWait(driver, timeout, poll_frequency=0.1).until(
+            partial(capture_visible_popups, seen_popups=seen_popups)
+        )
+    except TimeoutException:
+        return
 
     _close_all_detected_popups(driver, seen_popups)
 
 
-def _close_all_detected_popups(
-    driver: WebDriver, seen_popups: set[CapturedPopup]
-) -> None:
+def _close_all_detected_popups(driver: WebDriver, seen_popups: set[CapturedPopup]) -> None:
     for popup in seen_popups:
         web_elem = popup.web_elem
 
         def get_close_button(
             driver: WebDriver,
-            popup_elem: WebElement,
-        ) -> WebElement:
+            popup_elem: SeleniumWebElement,
+        ) -> SeleniumWebElement:
             return AlertInfoPopup(driver, popup_elem).close
 
         if invisibility_of_element(web_elem)(driver):
@@ -125,25 +158,15 @@ def _close_all_detected_popups(
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on Onedata page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_loading_error(
-    selenium: SeleniumDrivers, browser_id: str, error_msg: str
-) -> None:
+def assert_loading_error(selenium: SeleniumDrivers, browser_id: str, error_msg: str) -> None:
     given_msg = OnePage(selenium[browser_id]).loading_error.lower()
-    assert (
-        error_msg.lower() in given_msg
-    ), f"{error_msg} not in {given_msg} error message"
+    assert error_msg.lower() in given_msg, f"{error_msg} not in {given_msg} error message"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees "{error_msg}" error on public Onedata page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on public Onedata page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_loading_error_public_page(
     selenium: SeleniumDrivers, browser_id: str, error_msg: str
 ) -> None:
     given_msg = PublicOnePage(selenium[browser_id]).loading_error.lower()
-    assert (
-        error_msg.lower() in given_msg
-    ), f"{error_msg} not in {given_msg} error message"
+    assert error_msg.lower() in given_msg, f"{error_msg} not in {given_msg} error message"

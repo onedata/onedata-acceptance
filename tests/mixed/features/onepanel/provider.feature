@@ -44,7 +44,7 @@ Feature: Provider management in Onepanel
     And user is idle for 8 seconds
     Then using <client2>, user1 sees that provider "oneprovider-1" has been deregistered in "onezone" Onezone service
     And using <client1>, user1 sends copied invite token to onepanel user in "onezone" Onezone service
-    And using <client1>, onepanel registers provider in "onezone" Onezone service with following configuration:
+    And using <client1>, onepanel re-registers provider in "onezone" Onezone service with following configuration:
           provider name:
               of provider: oneprovider-1
           domain:
@@ -62,4 +62,3 @@ Feature: Provider management in Onepanel
 # TODO VFS-12309 enable using web gui in mixed tests
 #  | REST    | web GUI   |
     | web GUI | REST      |
-

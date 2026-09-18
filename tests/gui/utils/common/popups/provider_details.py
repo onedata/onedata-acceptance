@@ -37,21 +37,15 @@ class ProviderMapPopover(PageObject):
     provider_hostname_container = WebElement(".drop-provider-host-container")
     provider_hostname = Input(".provider-host-text")
     copy_hostname = Button(".provider-host-copy-btn-container")
-    spaces_list = WebItemsSequence(
-        ".spaces-list li.provider-place-drop-space", cls=Space
-    )
+    spaces_list = WebItemsSequence(".spaces-list li.provider-place-drop-space", cls=Space)
     toggle_home_provider = NamedButton(
         ".btn-container .btn-toggle-default", text="Toggle home provider"
     )
-    visit_provider = NamedButton(
-        ".btn-container .btn-go-to-files", text="Visit provider"
-    )
+    visit_provider = NamedButton(".btn-container .btn-go-to-files", text="Visit provider")
 
     def click_copy_hostname_icon(self) -> None:
         self.driver.execute_script(
             "arguments[0].scrollIntoView();", self.provider_hostname_container
         )
-        ActionChains(self.driver).move_to_element(
-            self.provider_hostname_container
-        ).perform()
+        ActionChains(self.driver).move_to_element(self.provider_hostname_container).perform()
         self.copy_hostname.click()

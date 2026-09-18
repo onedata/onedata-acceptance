@@ -18,6 +18,4 @@ class SharesSidebarRecord(PageObject):
 class SharesPage(SidebarPanelPage):
     panel_name = "shares"
 
-    shares_list = WebItemsSequence(
-        ".sidebar-shares .one-list-item", cls=SharesSidebarRecord
-    )
+    shares_list = WebItemsSequence(".sidebar-shares .one-list-item", cls=SharesSidebarRecord)

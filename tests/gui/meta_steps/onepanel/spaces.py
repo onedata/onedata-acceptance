@@ -9,13 +9,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import yaml
+from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests import OP_REST_PORT
-from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.common.miscellaneous import (
-    wait_until_scanning_is_finished_in_storage_import_tab,
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
+from tests.gui.steps.common.notifies import (
+    dismiss_notifies_if_present,
+    is_notify_popup_visible_and_close_all_alert_popups,
 )
-from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
@@ -23,11 +24,14 @@ from tests.gui.steps.onepanel.spaces import (
     click_change_quota_button,
     click_on_btn_in_space_support_form,
     click_on_navigation_tab_in_space,
-    click_start_scan_button_in_storage_import_tab,
+    click_start_scan_button_in_sync_chart,
     confirm_quota_value_change,
+    get_spaces_list_from_spaces_page,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
+    wait_for_start_scan_button_state,
+    wait_for_storage_import_scan_start_confirmation,
     wt_assert_correct_supported_space_opened,
     wt_assert_proper_space_configuration_in_panel,
     wt_click_on_support_space_btn_on_condition,
@@ -55,11 +59,10 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import wait_for_visible_element_using_getter
+from tests.gui.utils.onepanel.spaces import StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
 from tests.utils.user_utils import Users
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -70,12 +73,14 @@ from tests.utils.utils import repeat_failed
 )
 def support_space_using_form(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
+    # Getter avoids raising NoSuchElementException before the wait starts.
     support_space_btn = wait_for_visible_element_using_getter(
-        driver, lambda driver: Onepanel(driver).content.spaces.form.support_space
+        driver,
+        lambda current_driver: Onepanel(current_driver).content.spaces.form.support_space,
     )
     click_on_btn_in_space_support_form(selenium, browser_id)
     wait_for_item_to_disappear(support_space_btn.web_elem, driver)
-    notify_visible_with_text(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
         AlertPopup.ADDED_SPACE_SUPPORT,
@@ -129,12 +134,12 @@ def result_to_support_space_in_op_panel_using_gui(
     provider_name: str,
     hosts: Hosts,
 ) -> None:
-    _support_space_in_op_panel_using_gui(
-        selenium, user, config, tmp_memory, provider_name, hosts
-    )
+    _support_space_in_op_panel_using_gui(selenium, user, config, tmp_memory, provider_name, hosts)
     if result == "succeeds":
         wait_till_main_content_loaded(selenium[user])
-        notify_visible_with_text(selenium, user, AlertPopup.ADDED_SPACE_SUPPORT)
+        is_notify_popup_visible_and_close_all_alert_popups(
+            selenium, user, AlertPopup.ADDED_SPACE_SUPPORT
+        )
         wt_assert_correct_supported_space_opened(selenium, user, space_name)
     else:
         text = "Space supporting failed"
@@ -183,9 +188,7 @@ def _handle_configure_auto_storage_import(
 
     continuous_scan = "Continuous scan"
     if (
-        toggle_in_storage_import_configuration_is_enabled(
-            selenium, user, continuous_scan
-        )
+        toggle_in_storage_import_configuration_is_enabled(selenium, user, continuous_scan)
         and "scan interval [s]" in storage_import_configuration
     ):
         interval = str(storage_import_configuration["scan interval [s]"])
@@ -210,15 +213,11 @@ def _support_space_in_op_panel_using_gui(
     options = yaml.load(config, yaml.Loader)
     unit = options.get("unit", "MiB")
 
-    wt_click_on_subitem_for_item(
-        selenium, [user], sidebar, sub_item, provider_name, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, [user], sidebar, sub_item, provider_name, hosts)
     wt_click_on_support_space_btn_on_condition(selenium, user)
     wt_select_storage_in_support_space_form(selenium, user, options["storage"])
     wt_type_received_token_to_support_token_field(selenium, user, tmp_memory)
-    wt_type_text_to_input_box_in_space_support_form(
-        selenium, user, str(options["size"]), input_box
-    )
+    wt_type_text_to_input_box_in_space_support_form(selenium, user, str(options["size"]), input_box)
     wt_select_unit_in_space_support_form(selenium, user, unit)
 
     storage_import_configuration = options.get("storage import", False)
@@ -226,17 +225,14 @@ def _support_space_in_op_panel_using_gui(
         if storage_import_configuration.get("mode") == "manual":
             wt_select_mode_in_space_support_form(selenium, user, "manual")
         else:
-            _handle_configure_auto_storage_import(
-                selenium, user, storage_import_configuration
-            )
+            _handle_configure_auto_storage_import(selenium, user, storage_import_configuration)
 
     click_on_btn_in_space_support_form(selenium, user)
 
 
 @wt(
     parsers.parse(
-        "user of {user} sets import configuration in "
-        "Storage import tab as following:\n{config}"
+        "user of {user} sets import configuration in Storage import tab as following:\n{config}"
     )
 )
 def configure_auto_storage_import_in_storage_import_tab(
@@ -247,7 +243,7 @@ def configure_auto_storage_import_in_storage_import_tab(
     button = "Save configuration"
     alert_popup = AlertPopup.CONFIGURATION_SPACE_SUPPORT_CHANGED
     wt_clicks_on_button_in_space_record(selenium, user, button)
-    notify_visible_with_text(selenium, user, alert_popup)
+    is_notify_popup_visible_and_close_all_alert_popups(selenium, user, alert_popup)
 
 
 @wt(
@@ -267,9 +263,7 @@ def revoke_space_support_in_op_panel_using_gui(
     sub_item = "Spaces"
     option = "Revoke space support"
 
-    wt_click_on_subitem_for_item(
-        selenium, [user], sidebar, sub_item, provider_name, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, [user], sidebar, sub_item, provider_name, hosts)
     wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option)
 
@@ -278,7 +272,7 @@ def revoke_space_support_in_op_panel_using_gui(
     # alert_popup = AlertPopup.CEASED_SUPPORT
     # wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
     # wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)
-    # notify_visible_with_text(selenium, user, alert_popup)
+    # is_notify_popup_visible_and_close_all_alert_popups(selenium, user, alert_popup)
     remove_space_instead_of_revoke(selenium, user)
 
 
@@ -310,24 +304,13 @@ def assert_proper_space_configuration_in_op_panel_gui(
 ) -> None:
     sidebar = "Clusters"
     sub_item = "Spaces"
-    wt_click_on_subitem_for_item(
-        selenium, [user], sidebar, sub_item, provider_name, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, [user], sidebar, sub_item, provider_name, hosts)
     wt_open_space_item_in_spaces_page_op_panel(selenium, user, space)
-    wt_assert_proper_space_configuration_in_panel(
-        selenium, user, sync_type, space, conf
-    )
+    wt_assert_proper_space_configuration_in_panel(selenium, user, sync_type, space, conf)
 
 
-@given(
-    parsers.parse(
-        "there are no spaces supported in Onepanel used by user of {browser_id}"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def revoke_all_space_supports(
-    selenium: SeleniumDrivers, browser_id: str, hosts: Hosts
-) -> None:
+@given(parsers.parse("there are no spaces supported in Onepanel used by user of {browser_id}"))
+def revoke_all_space_supports(selenium: SeleniumDrivers, browser_id: str, hosts: Hosts) -> None:
     sidebar = "CLUSTERS"
     sub_item = "Spaces"
     record = "oneprovider-1"
@@ -339,12 +322,10 @@ def revoke_all_space_supports(
     click_on_record_in_clusters_menu(selenium, browser_id, record, hosts)
     # wait for load cluster
     time.sleep(5)
-    wt_click_on_subitem_for_item(
-        selenium, [browser_id], sidebar, sub_item, record, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, [browser_id], sidebar, sub_item, record, hosts)
     # wait for load spaces list
     time.sleep(1)
-    spaces_list = Onepanel(selenium[browser_id]).content.spaces.spaces
+    spaces_list = get_spaces_list_from_spaces_page(selenium, browser_id)
 
     while len(spaces_list) > 0:
         space = spaces_list[0]
@@ -354,62 +335,59 @@ def revoke_all_space_supports(
         wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
         # wait for update spaces list
         time.sleep(1)
-        spaces_list = Onepanel(selenium[browser_id]).content.spaces.spaces
+        spaces_list = get_spaces_list_from_spaces_page(selenium, browser_id)
     selenium[browser_id].refresh()
 
 
-def _revoke_all_space_supports_using_rest(
-    _selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
-) -> None:
-    user = "onepanel"
-
-    provider_hostname = hosts[provider_host]["hostname"]
-
-    spaces_list = http_get(
-        ip=provider_hostname,
-        port=OP_REST_PORT,
-        path=get_panel_rest_path("provider", "spaces"),
-        auth=(user, users[user].password),
-    ).json()
-
-    for space in spaces_list["ids"]:
-        http_delete(
-            ip=provider_hostname,
-            port=OP_REST_PORT,
-            path=get_panel_rest_path("provider", "spaces", space),
-            auth=(user, users[user].password),
-        )
-
-
 @given(parsers.parse("there are no spaces supported by {provider_host} in Onepanel"))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def g_revoke_all_space_supports_using_rest(
-    selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
-) -> None:
-    _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
-
-
-@wt(parsers.parse("{provider_host} revokes all spaces support in Onepanel using REST"))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_revoke_all_space_supports_using_rest(
-    selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: str
-) -> None:
-    _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
+def g_revoke_all_space_supports_using_rest(hosts: Hosts, users: Users, provider_host: str) -> None:
+    user = "onepanel"
+    provider_hostname = hosts[provider_host]["hostname"]
+    revoke_all_space_supports_using_rest(provider_hostname, user, users[user].password)
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sets {quota} quota to {value} value "
-        "in auto-cleaning tab in Onepanel"
+        "user of {browser_id} sets {quota} quota to {value} value in auto-cleaning tab in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def set_quota_in_auto_cleaning(
     selenium: SeleniumDrivers, browser_id: str, quota: str, value: str
 ) -> None:
     click_change_quota_button(selenium, browser_id, quota)
     type_value_to_quota_input(selenium, browser_id, quota, value)
     confirm_quota_value_change(selenium, browser_id, quota)
+
+
+def click_start_scan_button_and_wait_for_its_state(driver: WebDriver) -> None:
+    click_start_scan_button_in_sync_chart(driver)
+    wait_for_storage_import_scan_start_confirmation(driver)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "Start scan" button in storage import tab in Onepanel'
+    )
+)
+def click_start_scan_button_in_storage_import_tab(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    click_start_scan_button_and_wait_for_its_state(driver)
+    dismiss_notifies_if_present(driver, timeout=WAIT_FRONTEND)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} waits until scanning is finished in storage import tab in Onepanel"
+    )
+)
+def wait_until_scanning_is_finished_in_storage_import_tab(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    wait_for_start_scan_button_state(
+        selenium[browser_id], StartScanState.READY, timeout=WAIT_BACKEND * 5
+    )
 
 
 @wt(
@@ -419,7 +397,6 @@ def set_quota_in_auto_cleaning(
     )
 )
 def run_scan_and_wait_till_finished(selenium: SeleniumDrivers, browser_id: str) -> None:
-    tab_name = "Storage import"
-    click_on_navigation_tab_in_space(browser_id, tab_name, selenium)
+    click_on_navigation_tab_in_space(browser_id, "Storage import", selenium)
     click_start_scan_button_in_storage_import_tab(selenium, browser_id)
     wait_until_scanning_is_finished_in_storage_import_tab(selenium, browser_id)

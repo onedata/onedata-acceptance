@@ -1,7 +1,5 @@
 """This module provides utility functions for bdd tests."""
 
-# pylint: disable=invalid-name,redefined-outer-name
-
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -13,7 +11,6 @@ from types import NoneType, UnionType
 from typing import (
     Any,
     Literal,
-    Optional,
     Protocol,
     TypeAliasType,
     Union,
@@ -50,17 +47,14 @@ class StepDecorator(Protocol):
     ) -> StepFunction[params, return_type]: ...
 
 
-def _get_runtime_cast_target(ann: object) -> Optional[type]:
+def _get_runtime_cast_target(ann: object) -> type | None:
     while isinstance(ann, TypeAliasType):
         ann = ann.__value__
 
     if (
         ann is Any
         or is_typeddict(ann)
-        or (
-            getattr(ann, "_is_protocol", False)
-            and not getattr(ann, "_is_runtime_protocol", False)
-        )
+        or (getattr(ann, "_is_protocol", False) and not getattr(ann, "_is_runtime_protocol", False))
     ):
         return None
 
@@ -80,10 +74,10 @@ def _get_runtime_cast_target(ann: object) -> Optional[type]:
 
 def given(
     name: object,
-    fixture: Optional[object] = None,
-    converters: Optional[Converters] = None,
+    fixture: object | None = None,
+    converters: Converters | None = None,
     scope: str = "function",
-    target_fixture: Optional[str] = None,
+    target_fixture: str | None = None,
 ) -> StepDecorator:
     wrappers = [
         sanitize_arguments,
@@ -93,17 +87,17 @@ def given(
     return _create_decorator(given, wrappers)
 
 
-def when(name: object, converters: Optional[Converters] = None) -> StepDecorator:
+def when(name: object, converters: Converters | None = None) -> StepDecorator:
     wrappers = [sanitize_arguments, pytest_bdd_when(name, converters, stacklevel=2)]
     return _create_decorator(when, wrappers)
 
 
-def then(name: object, converters: Optional[Converters] = None) -> StepDecorator:
+def then(name: object, converters: Converters | None = None) -> StepDecorator:
     wrappers = [sanitize_arguments, pytest_bdd_then(name, converters, stacklevel=2)]
     return _create_decorator(then, wrappers)
 
 
-def wt(name: object, converters: Optional[Converters] = None) -> StepDecorator:
+def wt(name: object, converters: Converters | None = None) -> StepDecorator:
     wrappers = [
         sanitize_arguments,
         pytest_bdd_when(name, converters, stacklevel=2),
@@ -179,7 +173,6 @@ def _create_decorator(
     return cast(StepDecorator, decorator)
 
 
-# pylint: disable=line-too-long
 scenarios_to_rerun = {
     "test_user_resume_workflow_execution_after_pausing_execution_of_created_workflow_while_lane_had_preparing_status",
     "test_user_sees_status_cancelled_in_lane1_and_unscheduled_in_lane2_after_cancelling_execution_of_uploaded_workflowwithsleeptwolanes_workflow",

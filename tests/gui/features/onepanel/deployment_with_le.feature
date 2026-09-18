@@ -33,7 +33,6 @@ Feature: Deployment with Let`s Encrypt and enabled subdomain delegation process 
     And user of browser2 activates Request a subdomain toggle
     And user of browser2 types "admin@admin.email" to admin email field in step 2 of deployment process in Onepanel
     And user of browser2 clicks on Register button in step 2 of deployment process in Onepanel
-    And user of browser2 is idle for 10 seconds
 
     # setup IP step in provider panel
     And user of browser2 sees that IP address of "oneprovider-1" host is that of "oneprovider-1" in deployment setup IP step
@@ -57,8 +56,8 @@ Feature: Deployment with Let`s Encrypt and enabled subdomain delegation process 
     And user of browser2 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*oneprovider.* host in Nodes page in Onepanel
     # check web cert
     And user of browser2 clicks on Web certificate item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser2 sees that "Use Lets Encrypt" toggle is checked in Web certificate view in Onepanel
-    And user of browser2 sees that oneprovider-1 provider domain is included in "DNS names" in Web certificate view in Onepanel
-    And user of browser2 sees that "Certificate path" ends with "/certs/web_cert.pem" in Web certificate view in Onepanel
-    And user of browser2 sees that "Key path" ends with "/certs/web_key.pem" in Web certificate view in Onepanel
-    And user of browser2 sees that "Certificate chain path" ends with "/certs/web_chain.pem" in Web certificate view in Onepanel
+    And user of browser2 sees that "Use Lets Encrypt" toggle is checked in "Web certificate" view in Onepanel
+    And user of browser2 sees that oneprovider-1 "provider" domain is included in "DNS names" in "Web certificate" view in Onepanel
+    And user of browser2 sees that "Certificate path" ends with "/certs/web_cert.pem" in "Web certificate" view in Onepanel
+    And user of browser2 sees that "Key path" ends with "/certs/web_key.pem" in "Web certificate" view in Onepanel
+    And user of browser2 sees that "Certificate chain path" ends with "/certs/web_chain.pem" in "Web certificate" view in Onepanel

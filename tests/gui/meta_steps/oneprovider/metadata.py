@@ -4,9 +4,14 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
 
-from tests.gui.conftest import WAIT_FRONTEND
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
+
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_filebrowser,
     open_modal_for_file_browser_item,
@@ -39,7 +44,6 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -48,10 +52,7 @@ from tests.utils.utils import repeat_failed
         r'key "(?P<key_name>.*?)" and value "(?P<value>.*?)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
-def add_xattr_entry(
-    selenium: SeleniumDrivers, browser_id: str, key_name: str, value: str
-) -> None:
+def add_xattr_entry(selenium: SeleniumDrivers, browser_id: str, key_name: str, value: str) -> None:
     type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, key_name)
     type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, value, key_name)
 
@@ -69,7 +70,6 @@ def get_modal_name_from_item_name(item_name: str) -> str:
         r'for "(?P<item_name>.*?)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_json_rdf_metadata_for_item(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -98,7 +98,6 @@ def add_json_rdf_metadata_for_item(
         r'tab for "(?P<item_name>.*?)"(?P<dir> directory|)'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def open_json_rdf_metadata_for_item(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -121,7 +120,6 @@ def open_json_rdf_metadata_for_item(
         r' in "(?P<space>.*)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def set_metadata_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -152,9 +150,7 @@ def set_metadata_in_op_gui(
     if tab_name == "xattrs":
         attribute, val = val.split("=")
         type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, attribute)
-        type_text_to_val_of_attr_in_new_xattr_entry(
-            selenium, browser_id, val, attribute
-        )
+        type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, val, attribute)
     else:
         click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
         type_text_to_metadata_textarea(selenium, browser_id, val, tab_name)
@@ -181,7 +177,6 @@ def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: str) -
         r'metadata: "(?P<val>.*)" in "(?P<space>.*)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_metadata_in_op_gui(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -208,13 +203,12 @@ def assert_metadata_in_op_gui(
     )
     if res == "fails":
         _assert_metadata_loading_alert(selenium, browser_id)
+    elif tab_name == "xattrs":
+        attribute, val = val.split("=")
+        assert_there_is_such_xattr_meta_record(selenium, browser_id, attribute, val)
     else:
-        if tab_name == "xattrs":
-            attribute, val = val.split("=")
-            assert_there_is_such_xattr_meta_record(selenium, browser_id, attribute, val)
-        else:
-            click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
-            assert_textarea_contains_record(selenium, browser_id, val, tab_name)
+        click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
+        assert_textarea_contains_record(selenium, browser_id, val, tab_name)
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
@@ -300,17 +294,11 @@ def remove_all_metadata_in_op_gui(
 def click_save_button_metadata(selenium: SeleniumDrivers, browser_id: str) -> None:
     button = "Save"
     panel = "Metadata"
-    try:
+    with contextlib.suppress(ElementNotInteractableException, NoSuchElementException):
         click_panel_button(selenium, browser_id, button, panel)
-    except RuntimeError:
-        pass
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that there is no metadata in metadata panel"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that there is no metadata in metadata panel"))
 def assert_no_metadata_in_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     panel = "Metadata"
 

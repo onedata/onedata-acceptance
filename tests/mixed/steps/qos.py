@@ -6,7 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.qos import (
     add_qos_requirement_in_modal,
     assert_qos_file_status_in_op_gui,
@@ -95,9 +95,7 @@ def assert_qos_file_status_in_op(
             option,
         )
     elif client_lower == "rest":
-        assert_qos_file_status_in_op_rest(
-            user, users, hosts, host, space_name, file_name, option
-        )
+        assert_qos_file_status_in_op_rest(user, users, hosts, host, space_name, file_name, option)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -131,8 +129,6 @@ def delete_qos_requirement_in_op(
             tmp_memory,
         )
     elif client_lower == "rest":
-        delete_qos_requirement_in_op_rest(
-            user, users, hosts, host, space_name, file_name
-        )
+        delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name, file_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")

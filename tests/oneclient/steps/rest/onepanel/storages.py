@@ -2,9 +2,6 @@
 using REST API.
 """
 
-# pylint: disable=wrong-import-position, unused-argument
-from __future__ import absolute_import
-
 __author__ = "Bartek Kryza"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -26,8 +23,8 @@ from tests.utils.user_utils import User
 
 
 def modify_storage_parameters(
-    user: str,
-    provider: str,
+    user: str,  # noqa: ARG001 - keep shared storage-step call signature
+    provider: str,  # noqa: ARG001 - keep shared storage-step call signature
     storage_id: str,
     storage_name: str,
     params: dict[str, str],

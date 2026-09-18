@@ -16,12 +16,8 @@ from tests.utils.user_utils import Users
 from . import multi_auth_steps
 
 
-@given(
-    parsers.re(r"oneclient mounted using (?P<token>(token|bad token)) by (?P<user>\w+)")
-)
-def default_mount(
-    user: str, token: str, hosts: Hosts, users: Users, env_desc: EnvDesc
-) -> None:
+@given(parsers.re(r"oneclient mounted using (?P<token>(token|bad token)) by (?P<user>\w+)"))
+def default_mount(user: str, token: str, hosts: Hosts, users: Users, env_desc: EnvDesc) -> None:
     users[user].mount_client(
         "oneclient-1",
         "client1",

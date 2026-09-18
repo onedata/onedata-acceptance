@@ -194,3 +194,17 @@ Scenario: User sets OpenAIRE metadata on mock handle service and sees updated XM
 
   And user of browser1 refreshes site
   And user of browser1 sees that OpenAIRE XML node with "datacite:title" tag has "new_title" value in share's private interface
+
+
+Scenario: User sees public data status tag after refreshing file list
+  When user of space_owner_browser opens file browser for "space1" space
+  And user of space_owner_browser creates "share_dir1" share of "dir1" directory
+  And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
+  And user of space_owner_browser opens "Dublin Core" Public Data editor in share's private interface
+  And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
+  And user of space_owner_browser clicks "Files" of "space1" space in the sidebar
+  And user of space_owner_browser sees file browser in files tab in Oneprovider page
+  And user of space_owner_browser sees public data status tag for "dir1" in file browser
+  And user of space_owner_browser clicks "Refresh" button from file browser menu bar
+  Then user of space_owner_browser sees public data status tag for "dir1" in file browser
+  

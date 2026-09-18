@@ -5,15 +5,23 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
-from typing import Optional, overload
+from typing import overload
 
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import (
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_WORKFLOW_EXECUTION,
+)
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
     switch_to_iframe,
@@ -22,7 +30,10 @@ from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core import scroll_to_css_selector
-from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.core.web_objects import (
+    PageObjectNotFoundError,
+    PageObjectsSequence,
+)
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.automation import (
     ParallelBox,
@@ -41,17 +52,27 @@ def get_op_workflow_visualizer_page(driver: WebDriver) -> WorkflowVisualiser:
     return OPLoggedIn(driver).automation_page.workflow_visualiser
 
 
-def switch_to_automation_page(
-    selenium: SeleniumDrivers, browser_id: str
-) -> WorkflowExecutionPage:
+def switch_to_automation_page(selenium: SeleniumDrivers, browser_id: str) -> WorkflowExecutionPage:
     switch_to_iframe(selenium, browser_id)
     return OPLoggedIn(selenium[browser_id]).automation_page
+
+
+def wait_until_workflow_executions_list_is_empty(
+    page: WorkflowExecutionPage,
+    error_message: str,
+    timeout: float = WAIT_NORMAL_WORKFLOW_EXECUTION,
+) -> None:
+    @repeat_failed(timeout=timeout, interval=1)
+    def assert_workflow_executions_list_is_empty() -> None:
+        assert len(page.workflow_executions_list) == 0, error_message
+
+    assert_workflow_executions_list_is_empty()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_input_element(
     driver: WebDriver, input_type: str
-) -> PageObjectsSequence | list[WebElement]:
+) -> PageObjectsSequence | list[SeleniumWebElement]:
     OPLoggedIn(driver).automation_page.input_link.click()
     return getattr(OPLoggedIn(driver).automation_page, input_type)
 
@@ -65,7 +86,11 @@ def click_button_in_navigation_tab(
     driver = selenium[browser_id]
     try:
         OPLoggedIn(driver).automation_page.navigation_tab[tab_name].click()
-    except RuntimeError:
+    except (
+        ElementNotInteractableException,
+        NoSuchElementException,
+        PageObjectNotFoundError,
+    ):
         driver.refresh()
         # wait for page to refresh
         time.sleep(5)
@@ -91,8 +116,7 @@ def choose_workflow_revision_to_run(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} confirms workflow execution "
-        'by clicking "Run workflow" button'
+        'user of {browser_id} confirms workflow execution by clicking "Run workflow" button'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -127,28 +151,23 @@ def search_for_lane_status(
     driver: WebDriver,
     page: WorkflowExecutionPage,
     lane_name: str,
-    box_number: Optional[int] = None,
+    box_number: int | None = None,
 ) -> str | ParallelBox:
     workflow_visualiser = page.workflow_visualiser
     number_of_lanes = len(workflow_visualiser.workflow_lanes)
 
     for i in range(number_of_lanes):
-        lane_id = workflow_visualiser.workflow_lanes[i].lane_web_elem.get_attribute(
-            "id"
-        )
+        lane_id = workflow_visualiser.workflow_lanes[i].lane_web_elem.get_attribute("id")
         scroll_to_css_selector(driver, f"#{lane_id}")
         found_lane = driver.find_element(By.CSS_SELECTOR, f"#{lane_id} .lane-name").text
         if found_lane == lane_name:
             if box_number is not None:
                 return workflow_visualiser.workflow_lanes[i].parallel_boxes[box_number]
-            status = driver.find_element(
+            return driver.find_element(
                 By.CSS_SELECTOR, f"#{lane_id} .visible-run-status-label"
             ).text
-            return status
-        try:
+        with contextlib.suppress(ElementNotInteractableException, NoSuchElementException):
             page.workflow_visualiser.right_arrow_scroll.click()
-        except RuntimeError:
-            pass
     raise ValueError(f"lane {lane_name} found")
 
 
@@ -204,16 +223,15 @@ def click_on_task_in_lane(
                 task.click_on_drag_handle()
         # wait for task to be closed
         time.sleep(2)
-        assert not check_if_task_is_opened(
-            task
-        ), f"Failed to close {task_name} task in parallel box"
-    else:
-        if not check_if_task_is_opened(task):
-            if len(parallel_box.task_list) > 1:
-                scroll_to_css_selector(driver, f"#{task_id}")
-            # wait a moment for scroll
-            time.sleep(1)
-            task.click_on_drag_handle()
+        assert not check_if_task_is_opened(task), (
+            f"Failed to close {task_name} task in parallel box"
+        )
+    elif not check_if_task_is_opened(task):
+        if len(parallel_box.task_list) > 1:
+            scroll_to_css_selector(driver, f"#{task_id}")
+        # wait a moment for scroll
+        time.sleep(1)
+        task.click_on_drag_handle()
 
 
 @wt(
@@ -246,11 +264,7 @@ def click_on_link_in_task_box(
     task.click_on_option_in_task(option)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "{tab_name}" tab in automation subpage'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "{tab_name}" tab in automation subpage'))
 def change_tab_in_automation_subpage(
     selenium: SeleniumDrivers, browser_id: str, tab_name: str
 ) -> None:
@@ -261,9 +275,7 @@ def change_tab_in_automation_subpage(
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) clicks on first executed workflow"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_first_executed_workflow_record(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def expand_first_executed_workflow_record(selenium: SeleniumDrivers, browser_id: str) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Ended")
     page.workflow_executions_list[0].click()
@@ -276,9 +288,7 @@ def expand_first_executed_workflow_record(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_workflow_menu(
-    selenium: SeleniumDrivers, browser_id: str, workflow: str
-) -> None:
+def click_on_workflow_menu(selenium: SeleniumDrivers, browser_id: str, workflow: str) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     page.workflow_executions_list[workflow].menu_button()
 
@@ -289,9 +299,7 @@ def click_on_workflow_menu(
         r"on workflow executions list"
     )
 )
-def click_and_enter_workflow(
-    selenium: SeleniumDrivers, browser_id: str, workflow: str
-) -> None:
+def click_and_enter_workflow(selenium: SeleniumDrivers, browser_id: str, workflow: str) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     page.workflow_executions_list[workflow].click()
 
@@ -326,17 +334,14 @@ def assert_workflow_on_executed_workflows_list(
 def assert_option_disabled_in_automation_page(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    error_message = (
-        f"Option {option} is not disabled in data row menu in automation workflows page"
-    )
+    error_message = f"Option {option} is not disabled in data row menu in automation workflows page"
     disabled_options = Popups(selenium[browser_id]).workflow_menu.disabled_options
     assert option in disabled_options, error_message
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "{option}" option in run menu'
-        ' for "{lane_name}" lane'
+        'user of {browser_id} clicks "{option}" option in run menu for "{lane_name}" lane'
     )
 )
 def click_option_for_lane(
@@ -351,14 +356,11 @@ def click_option_for_lane(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "{button}" button on '
-        '"{workflow}" workflow status bar'
+        'user of {browser_id} clicks "{button}" button on "{workflow}" workflow status bar'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_status_bar(
-    selenium: SeleniumDrivers, browser_id: str, button: str
-) -> None:
+def click_button_on_status_bar(selenium: SeleniumDrivers, browser_id: str, button: str) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     time.sleep(1)
     getattr(page.workflow_visualiser, transform(button))()
@@ -394,9 +396,7 @@ def select_logging_level_in_automation_subpage(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_elem_in_store_details_modal(
-    modal: StoreDetails, name: str, option: str = ""
-) -> None:
+def click_on_elem_in_store_details_modal(modal: StoreDetails, name: str, option: str = "") -> None:
     if option == "archive":
         modal.store_content_list[name].file_name.click()
     elif option == "dataset":

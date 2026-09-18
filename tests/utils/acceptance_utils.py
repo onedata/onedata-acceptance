@@ -12,7 +12,7 @@ import os
 import subprocess
 import time
 from collections.abc import Mapping, Sequence
-from typing import NotRequired, Optional, Protocol, TypedDict, cast
+from typing import NotRequired, Protocol, TypedDict, cast
 
 from tests.gui.utils.generic import (
     upload_file_path,
@@ -88,30 +88,23 @@ def make_arg_list(arg: str) -> str:
     return "[" + arg + "]"
 
 
-def execute_command(
-    cmd: Command, error: Optional[str] = None, should_fail: bool = False
-) -> bytes:
-    with subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    ) as process:
+def execute_command(cmd: Command, error: str | None = None, should_fail: bool = False) -> bytes:
+    with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         output, err = process.communicate()
         proc_returncode = process.returncode
         err_str = err.decode() if isinstance(err, bytes) else err
         out_str = output.decode() if isinstance(output, bytes) else output
 
-    if (proc_returncode != 0) ^ should_fail:
-        raise RuntimeError(
+    if proc_returncode != 0 and not should_fail:
+        message = (
             f"{error}: {err_str}; {out_str}"
             if error
-            else (
-                f"Command did not fail: {' '.join(cmd)}, Err: {err_str}, Output:"
-                f" {out_str}"
-                if should_fail
-                else (
-                    f'Error when executing command "{" ".join(cmd)}": {err_str};'
-                    f" {out_str}"
-                )
-            )
+            else f'Error when executing command "{" ".join(cmd)}": {err_str}; {out_str}'
+        )
+        raise ChildProcessError(message)
+    if proc_returncode == 0 and should_fail:
+        raise AssertionError(
+            f"Command did not fail but should: {' '.join(cmd)}, Err: {err_str}, Output: {out_str}"
         )
     return output
 
@@ -133,11 +126,7 @@ def wait_given_time_if_web_gui(client: str, seconds: str) -> None:
         r"(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?"
     )
 )
-@wt(
-    parsers.re(
-        r"(?P<user>.+?) is idle for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?"
-    )
-)
+@wt(parsers.re(r"(?P<user>.+?) is idle for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?"))
 def wait_given_time(seconds: str | float) -> None:
     time.sleep(float(seconds))
 
@@ -181,15 +170,13 @@ def get_workflow_dump(workflow_name: str) -> WorkflowDump:
         path = upload_file_path(f"automation/workflow/{workflow_name}.json")
     else:
         raise FileNotFoundError(f"Path to {workflow_name} not found")
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
     return cast(WorkflowDump, data)
 
 
 def get_lambda_dump(lambda_name: str) -> LambdaDump:
-    with open(
-        upload_lambda_path("".join([lambda_name, "/", lambda_name, ".json"]))
-    ) as f:
+    with open(upload_lambda_path(f"{lambda_name}/{lambda_name}.json"), encoding="utf-8") as f:
         data = json.load(f)
     return cast(LambdaDump, data)
 

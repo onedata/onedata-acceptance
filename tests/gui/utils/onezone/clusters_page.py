@@ -89,9 +89,7 @@ class ClustersPage(SidebarPanelPage):
     confirm_deregistration = Button(".btn-danger.btn-deregister")
 
     edit_settings = NamedButton(".one-button.btn-default", text="Edit settings")
-    confirm_modify_provider_details = NamedButton(
-        "button", text="Modify provider details"
-    )
+    confirm_modify_provider_details = NamedButton("button", text="Modify provider details")
     gui_settings_page = WebItem(".content-clusters-gui-settings", cls=GuiSettingsPage)
     members_page = WebItem(".content-clusters-members", cls=MembersPage)
     emergency_passphrase_page = WebItem(

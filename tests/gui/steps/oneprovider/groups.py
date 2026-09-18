@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OPLoggedIn
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -23,18 +23,15 @@ def _is_group_present_in_sidebar(driver: WebDriver, group_name: str) -> bool:
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that group named "
-        '"{name}" has appeared in the groups list'
+        'user of {browser_id} sees that group named "{name}" has appeared in the groups list'
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND, interval=1.5)
-def is_present_on_groups_list(
-    selenium: SeleniumDrivers, browser_id: str, name: str
-) -> None:
+def is_present_on_groups_list(selenium: SeleniumDrivers, browser_id: str, name: str) -> None:
     driver = selenium[browser_id]
     if not _is_group_present_in_sidebar(driver, name):
         driver.refresh()
-        raise RuntimeError(f'no group named "{name}" found in groups sidebar')
+        raise AssertionError(f'no group named "{name}" found in groups sidebar')
 
 
 @wt(
@@ -47,11 +44,7 @@ def is_present_on_groups_list(
 def click_settings_icon_for_group(
     selenium: SeleniumDrivers, browser_id: str, group_name: str
 ) -> None:
-    (
-        OPLoggedIn(selenium[browser_id])
-        .groups.sidebar.groups[group_name]
-        .settings.expand()
-    )
+    (OPLoggedIn(selenium[browser_id]).groups.sidebar.groups[group_name].settings.expand())
 
 
 @wt(
@@ -88,6 +81,4 @@ def assert_item_appeared_in_groups_perm_table(
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()
-        raise RuntimeError(
-            f'no {caption} named "{name}" found in groups permission table'
-        )
+        raise AssertionError(f'no {caption} named "{name}" found in groups permission table')

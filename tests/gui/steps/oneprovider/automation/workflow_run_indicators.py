@@ -34,8 +34,7 @@ def assert_run_indicator_for_lane(
 ) -> None:
     run_indicators = get_run_indicators_for_lane(selenium, browser_id, lane_name)
     error_message = (
-        f'Run indicator with "{number}" does not appeared on run bar '
-        f"for lane {lane_name}"
+        f'Run indicator with "{number}" does not appeared on run bar for lane {lane_name}'
     )
     assert number in run_indicators, error_message
 
@@ -52,8 +51,7 @@ def assert_certain_indicator_is_only_one_in_lane(
     assert_run_indicator_for_lane(selenium, browser_id, lane_name, number)
     run_indicators = get_run_indicators_for_lane(selenium, browser_id, lane_name)
     error_message = (
-        f'Run indicator with "{number}" is not the only one indicator '
-        f'for "{lane_name}" lane'
+        f'Run indicator with "{number}" is not the only one indicator for "{lane_name}" lane'
     )
     assert len(run_indicators) == 1, error_message
 
@@ -117,8 +115,6 @@ def assert_status_for_run_in_popup(
 ) -> None:
     click_on_run_indicator_for_lane(selenium, browser_id, lane_name, number)
     info = Popups(selenium[browser_id]).run_info
-    info_dict_list = {
-        elem.split(": ")[0].lower(): elem.split(": ")[1] for elem in info.split("\n")
-    }
+    info_dict_list = {elem.split(": ")[0].lower(): elem.split(": ")[1] for elem in info.split("\n")}
     error_message = f'{option} is not {value} for "{number}" run for "{lane_name}" lane'
     assert info_dict_list[option] == value.lower(), error_message

@@ -6,9 +6,15 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import pytest
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onezone.harvesters.configuration import (
     assert_public_toggle_on_harvester_config_page,
@@ -18,6 +24,7 @@ from tests.gui.steps.onezone.harvesters.configuration import (
 )
 from tests.gui.steps.onezone.harvesters.discovery import (
     assert_space_has_appeared_in_discovery_page,
+    check_element_exists_on_sidebar_list,
     choose_element_from_dropdown_in_add_element_modal,
     click_button_in_harvester_spaces_page,
     click_button_on_discovery_on_left_sidebar_menu,
@@ -49,14 +56,76 @@ from tests.gui.steps.onezone.members import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.onezone.spaces import (
+    assert_error_popup_has_appeared,
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
+from tests.gui.steps.rest.harvesters import remove_harvester_using_rest
 from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.common.popups.generic import AlertPopup, CreatedItemAlertPopup
 from tests.gui.utils.generic import parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.user_utils import User
+
+
+def _register_harvester_finalizer(
+    request: pytest.FixtureRequest,
+    hosts: Hosts,
+    admin_credentials: User,
+    harvester_id: str,
+) -> None:
+    request.addfinalizer(
+        lambda: remove_harvester_using_rest(
+            harvester_id,
+            hosts["onezone"]["hostname"],
+            admin_credentials.username,
+            admin_credentials.password,
+        )
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks on Create button in discovery page "
+        'and succeeds to create "{harvester_name}" harvester'
+    )
+)
+def click_create_button_and_succeed_to_create_harvester(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    harvester_name: str,
+    hosts: Hosts,
+    request: pytest.FixtureRequest,
+    admin_credentials: User,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
+    click_create_button_in_discovery_page(selenium, browser_id)
+    check_element_exists_on_sidebar_list(
+        selenium, browser_id, harvester_name, "appeared", "harvesters"
+    )
+    click_on_option_in_harvester_menu(selenium, browser_id, "Copy ID", harvester_name)
+    harvester_id = clipboard.paste(display=displays[browser_id])
+    _register_harvester_finalizer(request, hosts, admin_credentials, harvester_id)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks on Create button in discovery page "
+        'and fails to create "{harvester_name}" harvester'
+    )
+)
+def click_create_button_and_fail_to_create_harvester(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    harvester_name: str,
+) -> None:
+    click_create_button_in_discovery_page(selenium, browser_id)
+    assert_error_popup_has_appeared(selenium, browser_id)
+    check_element_exists_on_sidebar_list(
+        selenium, browser_id, harvester_name, "disappeared", "harvesters"
+    )
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
@@ -66,16 +135,13 @@ def remove_space_from_harvester(
     button = "Remove"
     modal = "Remove space from harvester"
 
-    click_remove_space_option_in_menu_in_discover_spaces_page(
-        selenium, browser_id, space_name
-    )
+    click_remove_space_option_in_menu_in_discover_spaces_page(selenium, browser_id, space_name)
     click_modal_button(selenium, browser_id, button, modal)
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} removes "{space_name}" space '
-        'from harvester "{harvester_name}"'
+        'user of {browser_id} removes "{space_name}" space from harvester "{harvester_name}"'
     )
 )
 def remove_space_from_given_harvester(
@@ -85,41 +151,25 @@ def remove_space_from_given_harvester(
     modal = "Remove space from harvester"
     option = "Spaces"
 
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option
-    )
-    click_remove_space_option_in_menu_in_discover_spaces_page(
-        selenium, browser_id, space_name
-    )
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, harvester_name, option)
+    click_remove_space_option_in_menu_in_discover_spaces_page(selenium, browser_id, space_name)
     click_modal_button(selenium, browser_id, button, modal)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} removes "{harvester_name}" harvester in Onezone page'
-    )
-)
-def remove_harvester(
-    selenium: SeleniumDrivers, browser_id: str, harvester_name: str
-) -> None:
+@wt(parsers.parse('user of {browser_id} removes "{harvester_name}" harvester in Onezone page'))
+def remove_harvester(selenium: SeleniumDrivers, browser_id: str, harvester_name: str) -> None:
     where = "Discovery"
     list_type = "harvesters"
     option = "Remove"
     modal = "Remove harvester"
 
     click_on_option_in_the_sidebar(selenium, browser_id, where)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, list_type, harvester_name
-    )
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, list_type, harvester_name)
     click_on_option_in_harvester_menu(selenium, browser_id, option, harvester_name)
     click_modal_button(selenium, browser_id, option, modal)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} creates "{harvester_name}" harvester in Onezone page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} creates "{harvester_name}" harvester in Onezone page'))
 def create_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -128,6 +178,8 @@ def create_harvester(
     harvesters: dict[str, str],
     clipboard: Clipboard,
     displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    admin_credentials: User,
 ) -> None:
     where = "Discovery"
     input_name = "name"
@@ -137,15 +189,22 @@ def create_harvester(
 
     click_on_option_in_the_sidebar(selenium, browser_id, where)
     click_button_on_discovery_on_left_sidebar_menu(selenium, browser_id, button_name)
-    type_text_to_input_field_in_discovery_page(
-        selenium, browser_id, harvester_name, input_name
-    )
-    type_endpoint_to_input_field_in_discovery_page(
-        selenium, browser_id, endpoint_input, hosts
-    )
+    type_text_to_input_field_in_discovery_page(selenium, browser_id, harvester_name, input_name)
+    type_endpoint_to_input_field_in_discovery_page(selenium, browser_id, endpoint_input, hosts)
     click_create_button_in_discovery_page(selenium, browser_id)
     click_on_option_in_harvester_menu(selenium, browser_id, option, harvester_name)
-    harvesters[harvester_name] = clipboard.paste(display=displays[browser_id])
+    harvester_id = clipboard.paste(display=displays[browser_id])
+
+    _register_harvester_finalizer(request, hosts, admin_credentials, harvester_id)
+
+    harvesters[harvester_name] = harvester_id
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        CreatedItemAlertPopup.HARVESTER,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @wt(
@@ -170,18 +229,12 @@ def join_space_to_harvester(
     modal_name = "Add one of your spaces"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option2)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, option3, harvester_name
-    )
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option
-    )
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option3, harvester_name)
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, harvester_name, option)
     try:
         click_button_in_harvester_spaces_page(selenium, browser_id, button_name)
-    except RuntimeError:
-        click_option_in_discovery_page_menu(
-            selenium, browser_id, button_name.capitalize()
-        )
+    except (ElementNotInteractableException, NoSuchElementException):
+        click_option_in_discovery_page_menu(selenium, browser_id, button_name.capitalize())
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, space_name)
@@ -210,9 +263,7 @@ def add_group_to_harvester(
     modal = "Add one of groups"
     modal_name = "Add one of your groups"
 
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option
-    )
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, harvester_name, option)
     click_on_option_in_members_list_menu(
         selenium,
         browser_id,
@@ -223,6 +274,13 @@ def add_group_to_harvester(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_in_modal, modal)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.MEMBER_ADDED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @wt(
@@ -231,19 +289,14 @@ def add_group_to_harvester(
         'in "{harvester_name}" harvester in Discovery page'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_in_harvester(
     selenium: SeleniumDrivers, browser_id: str, index_name: str, harvester_name: str
 ) -> None:
     option = "Indices"
     member_menu_option = "Create new index"
 
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option
-    )
-    click_on_member_menu_option_in_harvester_indices_page(
-        selenium, browser_id, member_menu_option
-    )
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, harvester_name, option)
+    click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id, member_menu_option)
     type_index_name_to_input_field_in_indices_page(selenium, browser_id, index_name)
     click_create_button_in_indices_page(selenium, browser_id)
 
@@ -275,9 +328,7 @@ def send_invitation_token(
     click_element_on_lists_on_left_sidebar_menu(
         selenium, browser_id1, list_type + "s", harvester_name
     )
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id1, harvester_name, option
-    )
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id1, harvester_name, option)
     click_on_option_in_members_list_menu(
         selenium,
         browser_id1,
@@ -286,6 +337,13 @@ def send_invitation_token(
         member,
     )
     copy_token_from_modal(selenium, browser_id1)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id1,
+        AlertPopup.SUCCESSFULLY_COPIED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
     close_modal(selenium, browser_id1, modal)
     send_copied_item_to_other_users(
         browser_id1, item_type, [browser_id2], tmp_memory, displays, clipboard
@@ -299,7 +357,6 @@ def send_invitation_token(
         r'"(?P<harvester_name>.*)" harvester:\n(?P<config>(.|\s)*)'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_privilege_config_in_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -339,7 +396,6 @@ def change_privilege_config_in_harvester(
         'to "{harvester_renamed}" in Onezone page'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def rename_harvester(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -349,13 +405,9 @@ def rename_harvester(
     option = "harvesters"
     menu_option = "Rename"
 
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, option, harvester_name
-    )
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, harvester_name)
     click_on_option_in_harvester_menu(selenium, browser_id, menu_option, harvester_name)
-    type_text_to_rename_input_field_in_discovery_page(
-        selenium, browser_id, harvester_renamed
-    )
+    type_text_to_rename_input_field_in_discovery_page(selenium, browser_id, harvester_renamed)
     confirm_harvester_rename_using_button(selenium, browser_id)
 
 
@@ -373,12 +425,8 @@ def assert_space_on_harvester_list(
     option3 = "Spaces"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, option2, harvester
-    )
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester, option3
-    )
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option2, harvester)
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, harvester, option3)
     assert_space_has_appeared_in_discovery_page(selenium, browser_id, space)
 
 
@@ -397,17 +445,11 @@ def configure_harvester_as_public(
 
     click_on_option_in_the_sidebar(selenium, browser_id, discovery_tab)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, scope, harvester)
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester, config_tab
-    )
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, harvester, config_tab)
 
-    click_button_in_tab_of_harvester_config_page(
-        selenium, browser_id, edit_button, general_tab
-    )
+    click_button_in_tab_of_harvester_config_page(selenium, browser_id, edit_button, general_tab)
     check_public_toggle_on_harvester_config_page(selenium, browser_id, action)
-    click_button_in_tab_of_harvester_config_page(
-        selenium, browser_id, save_button, general_tab
-    )
+    click_button_in_tab_of_harvester_config_page(selenium, browser_id, save_button, general_tab)
     assert_public_toggle_on_harvester_config_page(selenium, browser_id, is_checked)
 
 
@@ -426,9 +468,7 @@ def check_harvesting_process_in_harvester(
 
     click_on_option_in_the_sidebar(selenium, browser_id, discovery_tab)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, scope, harvester)
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester, indices_tab
-    )
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, harvester, indices_tab)
     assert_used_by_gui_tag_on_indices_page(selenium, browser_id, index)
     expand_index_record_in_indices_page(selenium, browser_id, index)
     assert_progress_in_harvesting(selenium, browser_id, index)
@@ -441,7 +481,6 @@ def check_harvesting_process_in_harvester(
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_with_toggles_list(
     browser_id: str,
     selenium: SeleniumDrivers,
@@ -451,9 +490,7 @@ def create_index_with_toggles_list(
 ) -> None:
     option = "Indices"
     text = "Create new index"
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option
-    )
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, harvester_name, option)
     click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id, text)
     type_index_name_to_input_field_in_indices_page(selenium, browser_id, index_name)
     uncheck_toggles_on_create_index_page(selenium, browser_id, toggles_list)
@@ -466,14 +503,11 @@ def create_index_with_toggles_list(
         ' on GUI plugin tab for "{harvester_name}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_indices_for_harvester(
     browser_id: str, selenium: SeleniumDrivers, index_name: str, harvester_name: str
 ) -> None:
     option = "Configuration"
     tab_name = "GUI plugin"
-    click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option
-    )
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id, harvester_name, option)
     click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name)
     change_indices_on_gui_plugin_tab(selenium, browser_id, index_name)

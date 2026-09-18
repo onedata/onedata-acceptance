@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import os
 import subprocess
-from typing import Optional
 
 import yaml
 from selenium.common.exceptions import NoSuchElementException
@@ -15,11 +14,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
-from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import Onepanel, Popups
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -35,13 +33,11 @@ def _enter_text(input_box: SeleniumWebElement, text: str) -> None:
     input_box.clear()
     input_box.send_keys(text)
     if input_box.get_attribute("value") != text and input_box.text != text:
-        raise RuntimeError(f'entering "{text}" to input box failed')
+        raise AssertionError(f'entering "{text}" to input box failed')
 
 
 @wt(parsers.parse('user of {browser_id} types "{text}" on keyboard'))
-def type_string_into_active_element(
-    selenium: SeleniumDrivers, browser_id: str, text: str
-) -> None:
+def type_string_into_active_element(selenium: SeleniumDrivers, browser_id: str, text: str) -> None:
     _enter_text(selenium[browser_id].switch_to.active_element, text)
 
 
@@ -66,29 +62,19 @@ def press_tab_on_active_element(selenium: SeleniumDrivers, browser_id: str) -> N
 
 
 @wt(parsers.parse("user of {browser_id} presses backspace on keyboard"))
-def press_backspace_on_active_element(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
+def press_backspace_on_active_element(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.active_element.send_keys(Keys.BACKSPACE)
 
 
-def assert_title_contains(
-    selenium: SeleniumDrivers, browser_id: str, text: str
-) -> None:
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_title_contains(selenium: SeleniumDrivers, browser_id: str, text: str) -> None:
     page_title = selenium[browser_id].title
     assert text in page_title, f"{page_title} page title should contain {text}"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} should see that the page title contains "{text}"'
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_title_contains(
-    selenium: SeleniumDrivers, browser_id: str, text: str
-) -> None:
+@wt(parsers.parse('user of {browser_id} should see that the page title contains "{text}"'))
+def wt_assert_title_contains(selenium: SeleniumDrivers, browser_id: str, text: str) -> None:
     assert_title_contains(selenium, browser_id, text)
 
 
@@ -139,43 +125,21 @@ def pass_test() -> None:
     pass
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} waits until scanning is finished "
-        "in storage import tab in Onepanel"
-    )
-)
-def wait_until_scanning_is_finished_in_storage_import_tab(
-    selenium: SeleniumDrivers, browser_id: str
-) -> None:
-    driver = selenium[browser_id]
-    WebDriverWait(
-        driver,
-        timeout=WAIT_BACKEND * 5,
-        ignored_exceptions=[RuntimeError],
-    ).until(
-        lambda driver: Onepanel(
-            driver
-        ).content.spaces.space.sync_chart.start_scan_is_green(),
-        message="Waiting for start scan button to be available failed",
-    )
-
-
 @repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
 def switch_to_iframe(
-    selenium: SeleniumDrivers, browser_id: str, _selector: Optional[str] = None
+    selenium: SeleniumDrivers, browser_id: str, selector: str | None = None
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    iframe = driver.find_element(By.TAG_NAME, "iframe")
+
+    if selector:
+        iframe = driver.find_element(By.CSS_SELECTOR, selector)
+    else:
+        iframe = driver.find_element(By.TAG_NAME, "iframe")
     driver.switch_to.frame(iframe)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sets copied {elem} as {var_name} environment variable"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sets copied {elem} as {var_name} environment variable"))
 def set_env_variable_with_copied_val(
     clipboard: Clipboard, var_name: str, displays: dict[str, str], browser_id: str
 ) -> None:
@@ -229,21 +193,13 @@ def _process_curl_output(output: str, page: str) -> dict[str, object]:
     return _process_onedata_curl_output(output)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that curl result matches following config:\n{config}"
-    )
-)
-def assert_curl_result_with_config(
-    browser_id: str, tmp_memory: TmpMemory, config: str
-) -> None:
+@wt(parsers.parse("user of {browser_id} sees that curl result matches following config:\n{config}"))
+def assert_curl_result_with_config(browser_id: str, tmp_memory: TmpMemory, config: str) -> None:
     curl_res = tmp_memory[browser_id]["curl result"]
     expected_data = yaml.load(config, yaml.Loader)
 
     for key, val in expected_data.items():
-        assert (
-            curl_res[_camel_transform(key)] == val
-        ), f"{key}: {val} not in curl result"
+        assert curl_res[_camel_transform(key)] == val, f"{key}: {val} not in curl result"
 
 
 def _camel_transform(phrase: str) -> str:

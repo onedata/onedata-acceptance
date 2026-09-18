@@ -9,7 +9,7 @@ import re
 import subprocess
 from collections.abc import Collection
 
-from environment import docker  # pylint: disable=import-error
+from environment import docker
 
 from tests.utils.time_utils import deadline_after, remaining_time, sleep_before_retry
 

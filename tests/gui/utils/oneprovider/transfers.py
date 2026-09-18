@@ -19,7 +19,10 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.core.web_objects import (
+    PageObjectNotFoundError,
+    PageObjectsSequence,
+)
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 
 TRANSFER_STATUS_LIST = [
@@ -46,9 +49,7 @@ class TransferRecord(PageObject):
     username = Label("td:nth-of-type(2)")
     status_icon = Icon(".cell-status")
     menu_button = Button(".cell-actions")
-    type_destination = WebItem(
-        ".transfers-table-cell-typeDestination", cls=TypeAndDestination
-    )
+    type_destination = WebItem(".transfers-table-cell-typeDestination", cls=TypeAndDestination)
 
     @property
     def status(self) -> str:
@@ -62,18 +63,14 @@ class TransferRecord(PageObject):
     def destination(self) -> str:
         return self.type_destination.destination
 
-    def _get_icon_class(
-        self, icon: SeleniumWebElement, expected_tokens: list[str]
-    ) -> str:
+    def _get_icon_class(self, icon: SeleniumWebElement, expected_tokens: list[str]) -> str:
         icon_classes = icon.get_attribute("class").split()
 
         for icon_class in icon_classes:
             if icon_class in expected_tokens:
                 return icon_class
 
-        raise RuntimeError(
-            f"no transfer state matching {expected_tokens} found in {self}"
-        )
+        raise ValueError(f"no transfer state matching {expected_tokens} found in {self}")
 
     def get_chart(self) -> "TransferChart":
         return TransferChart(
@@ -138,12 +135,8 @@ class _TransfersTab(PageObject):
     providers_table = WebElement(".providers-table")
     spaces = WebItemsSequence("ul.spaces-list li", cls=SpaceRecord)
     tabs = WebItemsSequence(".providers-table .nav-tabs li", cls=TabHeader)
-    _ended_list = WebItemsSequence(
-        ".col-ended-transfers tr.data-row", cls=TransferRecordHistory
-    )
-    _ongoing_list = WebItemsSequence(
-        ".col-ongoing-transfers tr.data-row", cls=TransferRecordActive
-    )
+    _ended_list = WebItemsSequence(".col-ended-transfers tr.data-row", cls=TransferRecordHistory)
+    _ongoing_list = WebItemsSequence(".col-ongoing-transfers tr.data-row", cls=TransferRecordActive)
     _waiting_list = WebItemsSequence(
         ".col-waiting-transfers tr.data-row", cls=TransferRecordHistory
     )
@@ -179,7 +172,7 @@ class _TransfersTab(PageObject):
         for tab in self.tabs:
             if name in tab.name.lower():
                 return tab
-        raise RuntimeError(f"no tab named {name} in transfer tab")
+        raise PageObjectNotFoundError(f"no tab named {name} in transfer tab")
 
 
 TransfersTab = partial(WebItem, cls=_TransfersTab)
