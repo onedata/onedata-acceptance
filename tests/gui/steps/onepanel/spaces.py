@@ -324,16 +324,14 @@ def wt_clicks_on_button_in_space_record(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} opens "{space_name}" record on spaces list in Spaces page in Onepanel'
+        'user of {browser_id} opens "{space}" record on spaces list in Spaces page in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_open_space_item_in_spaces_page_op_panel(
-    selenium: SeleniumDrivers, browser_id: str, space_name: str
+    selenium: SeleniumDrivers, browser_id: str, space: str
 ) -> None:
-    space: SpaceRecord = Onepanel(selenium[browser_id]).content.spaces.spaces[space_name]
-    if not space.is_expanded():
-        space.click()
+    Onepanel(selenium[browser_id]).content.spaces.spaces[space].click()
 
 
 @wt(
