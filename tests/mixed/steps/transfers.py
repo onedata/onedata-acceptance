@@ -14,13 +14,13 @@ from tests.gui.meta_steps.oneprovider.common import (
 )
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.meta_steps.oneprovider.transfers import (
+    assert_ended_first_transfer,
     evict_file,
     open_transfers_page,
     wait_for_all_transfers_to_start_and_finish,
 )
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
 from tests.gui.steps.oneprovider.data_tab import upload_files_to_cwd_in_data_tab
-from tests.gui.steps.oneprovider.transfers import assert_ended_first_transfer
 from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,

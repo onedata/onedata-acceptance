@@ -4,6 +4,7 @@ __author__ = "Michal Stanisz, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from enum import Enum
 from functools import partial
 
 from selenium.webdriver.common.by import By
@@ -36,6 +37,11 @@ TRANSFER_STATUS_LIST = [
     "enqueued",
 ]
 TRANSFER_TYPE_LIST = ["migration", "replication", "eviction"]
+
+
+class TransferItemType(Enum):
+    FILE = "file"
+    DIRECTORY = "directory"
 
 
 class TypeAndDestination(PageObject):

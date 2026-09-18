@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import Any
 
 import pytest
-import yaml
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
@@ -34,6 +33,8 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.gui.utils.oneprovider.transfers import (
+    TransferItemType,
+    TransferRecord,
     TransferRecordActive,
     TransferRecordHistory,
     _TransfersTab,
@@ -43,73 +44,46 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _assert_transfer(
-    transfer_name: str,
-    desc: dict[str, Any],
-    state: TransferState,
+def _get_transfer_record(
     selenium: SeleniumDrivers,
     browser_id: str,
-) -> None:
-
+    transfer_name: str,
+    state: TransferState,
+) -> TransferRecord:
     transfers = OPLoggedIn(selenium[browser_id]).transfers
-    transfer = getattr(transfers, state.value)[transfer_name]
+    return getattr(transfers, state.value)[transfer_name]
 
-    item_type = desc["item_type"]
-    assert getattr(transfer, f"is_{item_type}")(), (
-        f"Transferred item is not {item_type} in {state.value}"
+
+def assert_transfer_item_type(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    transfer_name: str,
+    state: TransferState,
+    expected_item_type: TransferItemType,
+) -> None:
+    transfer = _get_transfer_record(selenium, browser_id, transfer_name, state)
+    match expected_item_type:
+        case TransferItemType.FILE:
+            is_expected_item_type = transfer.is_file()
+        case TransferItemType.DIRECTORY:
+            is_expected_item_type = transfer.is_directory()
+
+    assert is_expected_item_type, (
+        f"Transferred item is not {expected_item_type.value} in {state.value}"
     )
 
-    for key, configured_expected in desc.items():
-        if key == "item_type":
-            continue
 
-        if key == "status":
-            select_columns_to_be_visible_in_transfers(selenium, browser_id, ["status"])
-            _wait_for_transfer_status(
-                selenium,
-                browser_id,
-                transfer_name,
-                state,
-                configured_expected,
-            )
-            continue
-
-        expected = configured_expected
-
-        column = key.replace(" & ", "_and_").replace(" ", "_")
-        try:
-            actual = getattr(transfer, column)
-        except NoSuchElementException:
-            visible_column = key.replace(" ", "_")
-            select_columns_to_be_visible_in_transfers(selenium, browser_id, [visible_column])
-            transfers = OPLoggedIn(selenium[browser_id]).transfers
-            transfer = getattr(transfers, state.value)[transfer_name]
-            actual = getattr(transfer, column)
-
-        if actual == str(expected):
-            continue
-
-        error_message = f"Transfer {key} is {actual} instead of {expected} in {state.value}"
-        if not isinstance(expected, str) or not expected.startswith("<"):
-            raise AssertionError(error_message)
-
-        operator, value, unit = expected.split()
-        limit_mib = float(value) if unit == "MiB" else float(value) * 1024
-        actual_mib = float(actual.split()[0])
-        is_within_limit = actual_mib <= limit_mib if operator == "<=" else actual_mib < limit_mib
-        assert is_within_limit, error_message
-
-
-def _wait_for_transfer_status(
+def assert_transfer_status(
     selenium: SeleniumDrivers,
     browser_id: str,
     transfer_name: str,
     state: TransferState,
     expected_status: str,
 ) -> None:
-    def has_expected_status(driver: WebDriver) -> bool:
-        transfers = OPLoggedIn(driver).transfers
-        transfer = getattr(transfers, state.value)[transfer_name]
+    select_columns_to_be_visible_in_transfers(selenium, browser_id, ["status"])
+
+    def has_expected_status(_: WebDriver) -> bool:
+        transfer = _get_transfer_record(selenium, browser_id, transfer_name, state)
         return transfer.status == expected_status
 
     WebDriverWait(
@@ -129,104 +103,53 @@ def _wait_for_transfer_status(
     )
 
 
-def _assert_transfers(
+def get_transfer_column_value(
     selenium: SeleniumDrivers,
     browser_id: str,
-    descriptions: str,
+    transfer_name: str,
+    state: TransferState,
+    column: str,
+) -> Any:
+    def get_column_value(_: WebDriver) -> Any:
+        transfer = _get_transfer_record(selenium, browser_id, transfer_name, state)
+        return getattr(transfer, column)
+
+    return WebDriverWait(
+        selenium[browser_id],
+        timeout=WAIT_FRONTEND,
+        poll_frequency=0.1,
+        ignored_exceptions=(
+            NoSuchElementException,
+            PageObjectNotFoundError,
+            StaleElementReferenceException,
+            ValueError,
+        ),
+    ).until(
+        get_column_value,
+        message=(
+            f'Column "{column}" for transfer "{transfer_name}" in {state.value} was not readable'
+        ),
+    )
+
+
+def assert_transfer_column_value(
+    column_name: str,
+    actual: Any,
+    expected: Any,
     state: TransferState,
 ) -> None:
-    parsed_desc = yaml.load(descriptions, yaml.Loader)
-    _get_transfers_and_enable_initial_cols(browser_id, selenium)
+    if actual == str(expected):
+        return
 
-    for name, description in parsed_desc.items():
-        _assert_transfer(
-            name,
-            description,
-            state,
-            selenium,
-            browser_id,
-        )
+    error_message = f"Transfer {column_name} is {actual} instead of {expected} in {state.value}"
+    if not isinstance(expected, str) or not expected.startswith("<"):
+        raise AssertionError(error_message)
 
-
-def _assert_first_transfer(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    description: str,
-    item_type: str,
-    state: TransferState,
-) -> None:
-    parsed_desc = yaml.load(description, yaml.Loader)
-    name = parsed_desc.pop("name")
-    parsed_desc["item_type"] = item_type
-
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    transfer: TransferRecordHistory = getattr(transfers, state.value)[0]
-    assert transfer.name == name, "First transfer is not the expected one"
-    _assert_transfer(
-        name,
-        parsed_desc,
-        state,
-        selenium,
-        browser_id,
-    )
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees (?:files|directories)"
-        r" in ended transfers:\n(?P<descriptions>(.|\s)*)"
-    )
-)
-def assert_ended_transfers(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    descriptions: str,
-) -> None:
-    _assert_transfers(selenium, browser_id, descriptions, TransferState.ENDED)
-
-
-def assert_ended_first_transfer(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    description: str,
-    item_type: str,
-) -> None:
-    _assert_first_transfer(
-        selenium,
-        browser_id,
-        description,
-        item_type,
-        TransferState.ENDED,
-    )
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees (?:files|directories)"
-        r" in waiting transfers:\n(?P<descriptions>(.|\s)*)"
-    )
-)
-def assert_waiting_transfers(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    descriptions: str,
-) -> None:
-    _assert_transfers(selenium, browser_id, descriptions, TransferState.WAITING)
-
-
-def assert_waiting_first_transfer(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    description: str,
-    item_type: str,
-) -> None:
-    _assert_first_transfer(
-        selenium,
-        browser_id,
-        description,
-        item_type,
-        TransferState.WAITING,
-    )
+    operator, value, unit = expected.split()
+    limit_mib = float(value) if unit == "MiB" else float(value) * 1024
+    actual_mib = float(actual.split()[0])
+    is_within_limit = actual_mib <= limit_mib if operator == "<=" else actual_mib < limit_mib
+    assert is_within_limit, error_message
 
 
 @wt(
@@ -245,7 +168,7 @@ def assert_waiting_first_transfer(
 def cancel_or_rerun_transfer(
     selenium: SeleniumDrivers, browser_id: str, option: str, state: str
 ) -> None:
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
+    transfers = get_transfers_and_enable_initial_cols(browser_id, selenium)
     if state == "waiting":
         try:
             getattr(transfers, state)[0].menu_button()
@@ -290,7 +213,7 @@ def wait_for_ongoing_tranfers_to_finish(selenium: SeleniumDrivers, browser_id: s
 @wt(parsers.re(r"user of (?P<browser_id>.*) expands first transfer record"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
+    transfers = get_transfers_and_enable_initial_cols(browser_id, selenium)
     ended_transfer: TransferRecordHistory = transfers.ended[0]
     ended_transfer.expand()
 
@@ -303,7 +226,7 @@ def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_non_zero_transfer_speed(selenium: SeleniumDrivers, browser_id: str) -> None:
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
+    transfers = get_transfers_and_enable_initial_cols(browser_id, selenium)
     ended_transfer: TransferRecordHistory = transfers.ended[0]
     chart = ended_transfer.get_chart()
     assert chart.get_speed() != "0", "Transfer throughput is 0"
@@ -452,7 +375,7 @@ def assert_option_in_provider_popup_menu(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _get_transfers_and_enable_initial_cols(
+def get_transfers_and_enable_initial_cols(
     browser_id: str, selenium: SeleniumDrivers
 ) -> _TransfersTab:
     columns = ["user", "type & destination", "status"]
