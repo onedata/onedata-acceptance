@@ -18,6 +18,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.utils.utils import element_has_class
 
 
 class ACLPermissionType(PageObject):
@@ -25,8 +26,7 @@ class ACLPermissionType(PageObject):
     checkbox = Button(".permission-checkbox")
 
     def is_checked(self) -> bool:
-        classes = self.checkbox.get_attribute("class")
-        return "checked" in classes
+        return element_has_class(self.checkbox, "checked")
 
     def __str__(self) -> str:
         return f"permission type option {self.name} in {self.parent}"

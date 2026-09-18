@@ -25,6 +25,7 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 from tests.utils.entities_setup.spaces import WAIT_BACKEND
+from tests.utils.utils import element_has_class
 
 from .account_management import AccountManagementContentPage
 
@@ -77,12 +78,14 @@ class _Toggle(PageObject):
         return f"toggle switch in {self.parent}"
 
     def is_checked(self) -> bool:
-        class_attrs = self.web_elem.get_attribute("class")
-        print("Toggle class attributes:", class_attrs)
-        return "checked" in class_attrs and "in-progress" not in class_attrs
+        print("Toggle class attributes:", self.web_elem.get_attribute("class"))
+        web_elem = self.web_elem
+        return element_has_class(web_elem, "checked") and not element_has_class(
+            web_elem, "in-progress"
+        )
 
     def is_partial_checked(self) -> bool:
-        return "maybe" in self.web_elem.get_attribute("class")
+        return element_has_class(self.web_elem, "maybe")
 
     def is_unchecked(self) -> bool:
         return not self.is_checked() and not self.is_partial_checked()
