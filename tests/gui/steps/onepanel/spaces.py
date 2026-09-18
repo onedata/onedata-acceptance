@@ -30,6 +30,7 @@ from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
+from tests.gui.steps.rest.spaces import revoke_space_support_using_rest
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.common.popups.generic import AlertPopup
@@ -42,8 +43,25 @@ from tests.gui.utils.generic import (
 from tests.gui.utils.onepanel.spaces import SpaceRecord, StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.user_utils import Users
+from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
+
+
+def register_revoke_space_support_finalizer(
+    request: pytest.FixtureRequest,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+    space_id: str,
+) -> None:
+    request.addfinalizer(
+        lambda: revoke_space_support_using_rest(
+            hosts[provider]["hostname"],
+            onepanel_credentials.username,
+            onepanel_credentials.password,
+            space_id,
+        )
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

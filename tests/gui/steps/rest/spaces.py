@@ -147,30 +147,3 @@ def get_space_details_in_oz(
         path=get_zone_rest_path("spaces", space_id),
         auth=(owner_username, owner_password),
     ).json()
-
-
-def get_user_space_ids(
-    zone_hostname: str,
-    owner_username: str,
-    owner_password: str,
-) -> list[str]:
-    return http_get(
-        ip=zone_hostname,
-        port=OZ_REST_PORT,
-        path=get_zone_rest_path("user", "spaces"),
-        auth=(owner_username, owner_password),
-    ).json()["spaces"]
-
-
-def get_space_id_by_name(
-    zone_hostname: str, owner_username: str, owner_password: str, space_name: str
-) -> str | None:
-    space_ids = get_user_space_ids(zone_hostname, owner_username, owner_password)
-
-    for space_id in space_ids:
-        space_details = get_space_details_in_oz(
-            zone_hostname, owner_username, owner_password, space_id
-        )
-        if space_details.get("name") == space_name:
-            return space_id
-    return None

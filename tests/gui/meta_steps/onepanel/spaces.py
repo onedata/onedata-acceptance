@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from functools import partial
 
+import pytest
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -31,6 +32,7 @@ from tests.gui.steps.onepanel.spaces import (
     copy_supported_space_id,
     get_space_option_toggle,
     get_spaces_list_from_spaces_page,
+    register_revoke_space_support_finalizer,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
@@ -66,7 +68,7 @@ from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.gui.utils.onepanel.spaces import StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.user_utils import Users
+from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
 
@@ -124,6 +126,8 @@ def support_space_in_op_panel_using_gui(
     hosts: Hosts,
     clipboard: Clipboard,
     displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    onepanel_credentials: User,
 ) -> None:
     result = "succeeds"
 
@@ -138,6 +142,8 @@ def support_space_in_op_panel_using_gui(
         hosts,
         clipboard,
         displays,
+        request,
+        onepanel_credentials,
     )
 
 
@@ -159,6 +165,8 @@ def result_to_support_space_in_op_panel_using_gui(
     hosts: Hosts,
     clipboard: Clipboard,
     displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    onepanel_credentials: User,
 ) -> None:
     _support_space_in_op_panel_using_gui(selenium, user, config, tmp_memory, provider_name, hosts)
     if result == "succeeds":
@@ -169,9 +177,15 @@ def result_to_support_space_in_op_panel_using_gui(
         space_id = assert_correct_supported_space_opened_and_get_its_id(
             selenium, user, space_name, clipboard, displays
         )
+        register_revoke_space_support_finalizer(
+            request,
+            provider_name,
+            hosts,
+            onepanel_credentials,
+            space_id,
+        )
     else:
-        text = "Space supporting failed"
-        assert_error_modal_with_text_appeared(selenium, user, text)
+        assert_error_modal_with_text_appeared(selenium, user, "Space supporting failed")
 
 
 def assert_correct_supported_space_opened_and_get_its_id(

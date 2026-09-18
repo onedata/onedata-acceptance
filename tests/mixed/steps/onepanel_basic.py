@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Protocol, cast
 
+import pytest
 from _pytest._py.path import LocalPath
 
 from tests.gui.constants import WAIT_BACKEND
@@ -502,6 +503,10 @@ def support_space_in_op_panel(
     host: str,
     config: str,
     space_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    onepanel_credentials: User,
 ) -> None:
     """Support space according to given config.
 
@@ -531,6 +536,10 @@ def support_space_in_op_panel(
             space_name,
             host,
             hosts,
+            clipboard,
+            displays,
+            request,
+            onepanel_credentials,
         )
     elif client.lower() == "rest":
         support_space_in_op_panel_using_rest(user, host, hosts, users, tmp_memory, config)
