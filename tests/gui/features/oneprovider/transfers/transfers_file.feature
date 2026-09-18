@@ -57,7 +57,7 @@ Feature: Oneprovider transfers files functionality
             large_file.txt:
                 item_type: file
                 replicated: 50 MiB
-                type: replication
+                type & destination: replication
                 status: completed
 
     # Check transfer chart
@@ -124,7 +124,7 @@ Feature: Oneprovider transfers files functionality
             large_file.txt:
                 item_type: file
                 replicated: 50 MiB
-                type: migration
+                type & destination: migration
                 status: completed
 
     # Check transfer chart
@@ -201,17 +201,17 @@ Feature: Oneprovider transfers files functionality
             large_file.txt:
                 item_type: file
                 replicated: 50 MiB
-                type: replication
+                type & destination: replication
                 status: completed
             file1.txt:
                 item_type: file
                 replicated: 5 MiB
-                type: replication
+                type & destination: replication
                 status: completed
             file2.txt:
                 item_type: file
                 replicated: 5 MiB
-                type: replication
+                type & destination: replication
                 status: completed
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page

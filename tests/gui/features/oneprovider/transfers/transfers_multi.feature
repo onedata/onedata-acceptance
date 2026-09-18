@@ -46,7 +46,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
             large_file.txt:
                 item_type: file
                 replicated: 50 MiB
-                type: replication
+                type & destination: replication
                 status: completed
 
     # Check transfer chart
@@ -89,7 +89,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
             dir1:
                 item_type: directory
                 replicated: 50 MiB
-                type: replication
+                type & destination: replication
                 status: completed
 
     # Check transfer chart
@@ -128,7 +128,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
             large_file.txt:
                 item_type: file
                 replicated: 50 MiB
-                type: migration
+                type & destination: migration
                 status: completed
 
     # Check transfer chart
@@ -172,7 +172,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
             dir1:
                 item_type: directory
                 replicated: 50 MiB
-                type: migration
+                type & destination: migration
                 status: completed
 
     # Check transfer chart

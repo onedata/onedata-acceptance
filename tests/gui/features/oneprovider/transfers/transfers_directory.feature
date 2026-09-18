@@ -53,7 +53,7 @@ Feature: Oneprovider transfers directories functionality
             dir1:
                 item_type: directory
                 replicated: 50 MiB
-                type: replication
+                type & destination: replication
                 status: completed
 
     # Check transfer chart
@@ -87,7 +87,7 @@ Feature: Oneprovider transfers directories functionality
             dir1:
                 item_type: directory
                 replicated: 0 B
-                type: migration
+                type & destination: migration
                 status: failed
 
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
@@ -117,7 +117,7 @@ Feature: Oneprovider transfers directories functionality
             dir1:
                 item_type: directory
                 replicated: 0 B
-                type: replication
+                type & destination: replication
                 status: failed
 
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
@@ -171,7 +171,7 @@ Feature: Oneprovider transfers directories functionality
             dir1:
                 item_type: directory
                 replicated: 0 B
-                type: replication
+                type & destination: replication
                 status: completed
 
     And user of browser clicks "Files" of "space1" space in the sidebar
@@ -205,7 +205,7 @@ Feature: Oneprovider transfers directories functionality
             dir1:
                 item_type: directory
                 replicated: 50 MiB
-                type: migration
+                type & destination: migration
                 status: completed
 
     And user of browser clicks "Files" of "space1" space in the sidebar

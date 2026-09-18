@@ -37,7 +37,7 @@ Feature: Cancel transfer test
             "0":
                 item_type: file
                 replicated: < 9.3 GB
-                type: replication
+                type & destination: replication
                 status: cancelled
     Then user of browser reruns transfer in ended transfers
     And user of browser waits for all transfers to start
@@ -46,5 +46,5 @@ Feature: Cancel transfer test
             "0":
                 item_type: file
                 replicated: <= 9.3 GB
-                type: replication
+                type & destination: replication
                 status: completed

@@ -15,6 +15,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
@@ -33,7 +34,6 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.gui.utils.oneprovider.transfers import (
-    TransferRecord,
     TransferRecordActive,
     TransferRecordHistory,
     _TransfersTab,
@@ -44,13 +44,16 @@ from tests.utils.utils import repeat_failed
 
 
 def _assert_transfer(
-    transfer: TransferRecord,
+    transfer_name: str,
     desc: dict[str, Any],
     state: TransferState,
-    hosts: Hosts,
     selenium: SeleniumDrivers,
     browser_id: str,
 ) -> None:
+
+    transfers = OPLoggedIn(selenium[browser_id]).transfers
+    transfer = getattr(transfers, state.value)[transfer_name]
+
     item_type = desc["item_type"]
     assert getattr(transfer, f"is_{item_type}")(), (
         f"Transferred item is not {item_type} in {state.value}"
@@ -60,17 +63,27 @@ def _assert_transfer(
         if key == "item_type":
             continue
 
-        expected = (
-            hosts[configured_expected]["name"] if key == "destination" else configured_expected
-        )
+        if key == "status":
+            select_columns_to_be_visible_in_transfers(selenium, browser_id, ["status"])
+            _wait_for_transfer_status(
+                selenium,
+                browser_id,
+                transfer_name,
+                state,
+                configured_expected,
+            )
+            continue
 
-        column = key.replace(" ", "_")
+        expected = configured_expected
+
+        column = key.replace(" & ", "_and_").replace(" ", "_")
         try:
             actual = getattr(transfer, column)
         except NoSuchElementException:
-            # if key differs from column name, consider creating suitable dict
-            visible_column = "type_&_destination" if column in ["type", "destination"] else column
+            visible_column = key.replace(" ", "_")
             select_columns_to_be_visible_in_transfers(selenium, browser_id, [visible_column])
+            transfers = OPLoggedIn(selenium[browser_id]).transfers
+            transfer = getattr(transfers, state.value)[transfer_name]
             actual = getattr(transfer, column)
 
         if actual == str(expected):
@@ -87,23 +100,49 @@ def _assert_transfer(
         assert is_within_limit, error_message
 
 
+def _wait_for_transfer_status(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    transfer_name: str,
+    state: TransferState,
+    expected_status: str,
+) -> None:
+    def has_expected_status(driver: WebDriver) -> bool:
+        transfers = OPLoggedIn(driver).transfers
+        transfer = getattr(transfers, state.value)[transfer_name]
+        return transfer.status == expected_status
+
+    WebDriverWait(
+        selenium[browser_id],
+        timeout=90,
+        poll_frequency=0.5,
+        ignored_exceptions=(
+            NoSuchElementException,
+            PageObjectNotFoundError,
+            StaleElementReferenceException,
+        ),
+    ).until(
+        has_expected_status,
+        message=(
+            f'Transfer "{transfer_name}" in {state.value} did not reach status "{expected_status}"'
+        ),
+    )
+
+
 def _assert_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
     descriptions: str,
-    hosts: Hosts,
     state: TransferState,
 ) -> None:
     parsed_desc = yaml.load(descriptions, yaml.Loader)
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    transfer_records: list[TransferRecordHistory] = getattr(transfers, state.value)
+    _get_transfers_and_enable_initial_cols(browser_id, selenium)
 
     for name, description in parsed_desc.items():
         _assert_transfer(
-            transfer_records[name],
+            name,
             description,
             state,
-            hosts,
             selenium,
             browser_id,
         )
@@ -113,7 +152,6 @@ def _assert_first_transfer(
     selenium: SeleniumDrivers,
     browser_id: str,
     description: str,
-    hosts: Hosts,
     item_type: str,
     state: TransferState,
 ) -> None:
@@ -125,10 +163,9 @@ def _assert_first_transfer(
     transfer: TransferRecordHistory = getattr(transfers, state.value)[0]
     assert transfer.name == name, "First transfer is not the expected one"
     _assert_transfer(
-        transfer,
+        name,
         parsed_desc,
         state,
-        hosts,
         selenium,
         browser_id,
     )
@@ -140,28 +177,24 @@ def _assert_first_transfer(
         r" in ended transfers:\n(?P<descriptions>(.|\s)*)"
     )
 )
-@repeat_failed(interval=0.5, timeout=30)
 def assert_ended_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
     descriptions: str,
-    hosts: Hosts,
 ) -> None:
-    _assert_transfers(selenium, browser_id, descriptions, hosts, TransferState.ENDED)
+    _assert_transfers(selenium, browser_id, descriptions, TransferState.ENDED)
 
 
 def assert_ended_first_transfer(
     selenium: SeleniumDrivers,
     browser_id: str,
     description: str,
-    hosts: Hosts,
     item_type: str,
 ) -> None:
     _assert_first_transfer(
         selenium,
         browser_id,
         description,
-        hosts,
         item_type,
         TransferState.ENDED,
     )
@@ -173,28 +206,24 @@ def assert_ended_first_transfer(
         r" in waiting transfers:\n(?P<descriptions>(.|\s)*)"
     )
 )
-@repeat_failed(interval=0.5, timeout=40)
 def assert_waiting_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
     descriptions: str,
-    hosts: Hosts,
 ) -> None:
-    _assert_transfers(selenium, browser_id, descriptions, hosts, TransferState.WAITING)
+    _assert_transfers(selenium, browser_id, descriptions, TransferState.WAITING)
 
 
 def assert_waiting_first_transfer(
     selenium: SeleniumDrivers,
     browser_id: str,
     description: str,
-    hosts: Hosts,
     item_type: str,
 ) -> None:
     _assert_first_transfer(
         selenium,
         browser_id,
         description,
-        hosts,
         item_type,
         TransferState.WAITING,
     )

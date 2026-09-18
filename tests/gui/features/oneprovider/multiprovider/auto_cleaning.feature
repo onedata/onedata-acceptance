@@ -50,7 +50,7 @@ Feature: Onepanel features auto-cleaning
             dir1:
                 item_type: directory
                 replicated: 100 MiB
-                type: replication
+                type & destination: replication
                 status: completed
 
     # check data distribution
@@ -125,7 +125,7 @@ Feature: Onepanel features auto-cleaning
             dir1:
                 item_type: directory
                 replicated: 100 MiB
-                type: replication
+                type & destination: replication
                 status: completed
 
     # check data distribution
@@ -198,7 +198,7 @@ Feature: Onepanel features auto-cleaning
             dir1:
                 item_type: directory
                 replicated: 100 MiB
-                type: replication
+                type & destination: replication
                 status: completed
 
     # check data distribution

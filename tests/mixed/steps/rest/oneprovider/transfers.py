@@ -92,8 +92,9 @@ def assert_recent_transfer_details_rest(
             assert transfer_status["transferStatus"] == v, error_message.format(
                 k, v, transfer_status["transferStatus"]
             )
-        if k == "type":
-            assert transfer_status[k] == v, error_message.format(k, v, transfer_status[k])
+        if k == "type & destination":
+            actual_type = transfer_status["type"]
+            assert actual_type == v, error_message.format(k, v, actual_type)
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)

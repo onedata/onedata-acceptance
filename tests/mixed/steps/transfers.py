@@ -178,7 +178,7 @@ def assert_details_of_recent_transfer_op(
         assert_recent_transfer_details_rest(user, users, host, hosts, space, spaces, config)
     elif client.lower() == "web gui":
         open_transfers_page(selenium, user, host, space, hosts)
-        assert_ended_first_transfer(selenium, user, config, hosts, item_type)
+        assert_ended_first_transfer(selenium, user, config, item_type)
     else:
         raise NoSuchClientException(f"Client {client} not found")
 
