@@ -74,6 +74,7 @@ class SpaceSupportForm(PageObject):
 class SpaceInfo(PageObject):
     space_name = Label(".space-name")
     space_id = Input(".space-info .content-row:nth-child(2) input[type=text]")
+    copy_space_id = Button(".copy-btn")
     storage_name = Label(".space-provider-storage")
     _storage_import = WebElement(".storage-import")
     size = Input(".size-number-input")
