@@ -763,7 +763,7 @@ def click_start_scan_button_in_sync_chart(driver: WebDriver) -> None:
     sync_chart.start_scan.start_button.click()
 
 
-@repeat_failed(timeout=WAIT_BACKEND, interval=0.01)
+@repeat_failed(timeout=WAIT_BACKEND, interval=0.01, attempts=WAIT_BACKEND * 100)
 def wait_for_storage_import_scan_start_confirmation(driver: WebDriver) -> None:
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     # A short scan can return to READY before Selenium observes an intermediate

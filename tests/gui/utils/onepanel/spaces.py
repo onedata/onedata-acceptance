@@ -108,7 +108,7 @@ class StartScan(PageObject):
     details_button = Button(".oneicon-arrow-down")
 
     @property
-    @repeat_failed(timeout=1, interval=0.05)
+    @repeat_failed(timeout=1, interval=0.05, attempts=200)
     def state(self) -> StartScanState:
         start_button, stop_button = None, None
 

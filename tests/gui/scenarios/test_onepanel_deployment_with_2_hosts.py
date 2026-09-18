@@ -7,8 +7,8 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from pytest import fixture
-from pytest_bdd import scenario, scenarios
+from pytest import fixture, mark
+from pytest_bdd import scenario
 
 from tests.gui.meta_steps.onepanel.account_management import *
 from tests.gui.meta_steps.onepanel.provider import *
@@ -65,4 +65,10 @@ def screens() -> list[int]:
     return [0, 1]
 
 
-scenarios("../features/onepanel/deployment_with_2_hosts.feature")
+@mark.usefixtures("clean_environment")
+@scenario(
+    "../features/onepanel/deployment_with_2_hosts.feature",
+    "Cluster deployment with 2 hosts",
+)
+def test_cluster_deployment_with_2_hosts():
+    pass

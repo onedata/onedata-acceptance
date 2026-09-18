@@ -21,7 +21,7 @@ from tests.gui.steps.onepanel.common import (
     wt_click_on_subitem_for_item_with_name,
 )
 from tests.gui.steps.onepanel.deployment import (
-    wt_click_on_btn_in_deployment_step,
+    reregister_provider_using_register_btn,
     wt_click_proceed_button_in_step2,
     wt_type_property_to_in_box_in_deployment_step,
     wt_type_registration_token_in_step2,
@@ -146,7 +146,7 @@ def deregister_provider_in_op_panel_using_gui(
     )
 
 
-def register_provider_in_op_using_gui(
+def reregister_provider_in_op_using_gui(
     selenium: SeleniumDrivers,
     user: str,
     hosts: Hosts,
@@ -203,7 +203,7 @@ def register_provider_in_op_using_gui(
         selenium, user, options["admin email"], "Admin email", step2
     )
 
-    wt_click_on_btn_in_deployment_step(selenium, user, "Register", step2)
+    reregister_provider_using_register_btn(selenium, user)
 
 
 @given(

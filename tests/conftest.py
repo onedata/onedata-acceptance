@@ -249,6 +249,11 @@ def pytest_configure(config: pytest.Config) -> None:
         "bar"
         ")",
     )
+    config.addinivalue_line(
+        "markers",
+        "clean_environment: clean the environment after the test and recreate it "
+        "before a repeated test",
+    )
 
 
 def pytest_report_header(config: pytest.Config, start_path: Path) -> str:
@@ -317,9 +322,14 @@ def onepanel_credentials(
 
 @pytest.fixture(autouse=True)
 def emergency_passphrase(
+    request: pytest.FixtureRequest,
     users: Users,
     hosts: Hosts,
 ) -> str:
+    # Autouse fixtures run before fixtures requested with mark.usefixtures.
+    if "clean_environment" in request.fixturenames:
+        request.getfixturevalue("clean_environment")
+
     zone_pod_name = hosts["onezone"]["pod_name"]
     zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
     passphrase = onenv_utils.get_env_variable(zone_pod, "ONEPANEL_EMERGENCY_PASSPHRASE")
@@ -904,6 +914,61 @@ def maybe_start_env(
             previous_env,
             scenario_abs_path,
         )
+
+
+def _get_repeat_progress(request: pytest.FixtureRequest) -> tuple[int, int]:
+    repeat_marker = request.node.get_closest_marker("repeat")
+    repeat_count = (
+        int(repeat_marker.args[0])
+        if repeat_marker is not None
+        else request.config.getoption("count", default=1)
+    )
+    if repeat_count <= 1:
+        return 0, 1
+
+    repeat_number = request.getfixturevalue("__pytest_repeat_step_number")
+    return cast(int, repeat_number), repeat_count
+
+
+@pytest.fixture
+def clean_environment(
+    request: pytest.FixtureRequest,
+    maybe_start_env: None,
+    env_description_abs_path: str,
+    hosts: Hosts,
+    env_desc: EnvDesc,
+    users: Users,
+    previous_env: PreviousEnv,
+    test_config: JsonObject,
+    scenario_abs_path: str,
+) -> Generator[None, None, None]:
+    """Reset the environment between deployment test repetitions."""
+    if not previous_env.get("started", False):
+        hosts.clear()
+        users.clear()
+        start_test_env(
+            request,
+            get_test_type(request),
+            env_desc,
+            hosts,
+            users,
+            env_description_abs_path,
+            test_config,
+            previous_env,
+            scenario_abs_path,
+        )
+
+    repeat_number, repeat_count = _get_repeat_progress(request)
+
+    yield
+
+    is_last_repeat = repeat_number == repeat_count - 1
+    preserve_environment = request.config.getoption("--no-clean") and is_last_repeat
+
+    if not preserve_environment:
+        export_logs(request, env_description_abs_path)
+        clean_env()
+        previous_env["started"] = False
 
 
 @pytest.fixture(scope="session")
