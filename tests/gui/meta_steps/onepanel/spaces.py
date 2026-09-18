@@ -116,7 +116,7 @@ def support_space_using_form(selenium: SeleniumDrivers, browser_id: str) -> None
         r"with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
-def support_space_in_op_panel_using_gui(
+def wt_support_space_in_op_panel_using_gui(
     selenium: SeleniumDrivers,
     user: str,
     config: str,
@@ -128,6 +128,7 @@ def support_space_in_op_panel_using_gui(
     displays: dict[str, str],
     request: pytest.FixtureRequest,
     onepanel_credentials: User,
+    spaces: dict[str, str],
 ) -> None:
     result = "succeeds"
 
@@ -144,6 +145,7 @@ def support_space_in_op_panel_using_gui(
         displays,
         request,
         onepanel_credentials,
+        spaces,
     )
 
 
@@ -167,15 +169,16 @@ def result_to_support_space_in_op_panel_using_gui(
     displays: dict[str, str],
     request: pytest.FixtureRequest,
     onepanel_credentials: User,
+    spaces: dict[str, str],
 ) -> None:
-    _support_space_in_op_panel_using_gui(selenium, user, config, tmp_memory, provider_name, hosts)
+    support_space_in_op_panel_using_gui(selenium, user, config, tmp_memory, provider_name, hosts)
     if result == "succeeds":
         wait_till_main_content_loaded(selenium[user])
         is_notify_popup_visible_and_close_all_alert_popups(
             selenium, user, AlertPopup.ADDED_SPACE_SUPPORT
         )
         space_id = assert_correct_supported_space_opened_and_get_its_id(
-            selenium, user, space_name, clipboard, displays
+            selenium, user, space_name, clipboard, displays, spaces
         )
         register_revoke_space_support_finalizer(
             request,
@@ -194,10 +197,15 @@ def assert_correct_supported_space_opened_and_get_its_id(
     space_name: str,
     clipboard: Clipboard,
     displays: dict[str, str],
+    spaces: dict[str, str],
 ) -> str:
     wt_assert_correct_supported_space_opened(selenium, browser_id, space_name)
     copy_supported_space_id(selenium[browser_id])
-    return clipboard.paste(display=displays[browser_id])
+    clip = clipboard.paste(display=displays[browser_id])
+    assert spaces[space_name] == clipboard.paste(display=displays[browser_id]), (
+        "space ID is different than actual"
+    )
+    return clip
 
 
 def _set_toggle_state(
@@ -252,7 +260,7 @@ def _handle_configure_auto_storage_import(
         )
 
 
-def _support_space_in_op_panel_using_gui(
+def support_space_in_op_panel_using_gui(
     selenium: SeleniumDrivers,
     user: str,
     config: str,
