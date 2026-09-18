@@ -1,10 +1,10 @@
-"""Composite steps for running demo-mode examples."""
+"""Composite steps for the comprehensive demo-mode example."""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.demo_mode.steps.examples import (
+from tests.demo_mode.steps.comprehensive_example import (
     assert_comprehensive_example_file_name,
     assert_comprehensive_example_message_contains_file_name,
     assert_comprehensive_example_success_message_count,

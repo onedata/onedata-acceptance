@@ -12,7 +12,11 @@ from tests.demo_mode.constants import (
     DEMO_SPACE_NAME,
     FIRST_ONEPROVIDER_CONTAINER,
 )
-from tests.demo_mode.utils.commands import get_access_token
+from tests.demo_mode.utils.command_runner import (
+    assert_command_succeeded,
+    run_command_and_wait_to_finish,
+)
+from tests.demo_mode.utils.command_templates import load_command
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.rest import (
     create_and_support_space,
@@ -43,7 +47,18 @@ def assert_onezone_version(actual_version: object, expected_version: str) -> Non
 @log_step("Getting demo access token")
 def get_demo_access_token(release: str) -> str:
     """Get the access token exposed by the demo environment."""
-    return get_access_token(release)
+    relative_command_path = "common/get_oneprovider_token.sh"
+    result = run_command_and_wait_to_finish(
+        load_command(relative_command_path, release),
+        relative_command_path,
+        capture_output=True,
+    )
+    assert_command_succeeded(result, relative_command_path)
+
+    access_token = result.stdout.strip()
+    if not access_token:
+        raise AssertionError("The access-token command returned an empty result")
+    return access_token
 
 
 @log_step("Downloading REST file")

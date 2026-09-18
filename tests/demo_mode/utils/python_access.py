@@ -1,4 +1,4 @@
-"""Helpers for running demo-mode examples."""
+"""Helpers for running the Python-access demo-mode example."""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
@@ -12,7 +12,8 @@ from shutil import rmtree
 
 import pytest
 
-from tests.demo_mode.utils.commands import command_path, run_command
+from tests.demo_mode.utils.command_runner import run_command_and_wait_to_finish
+from tests.demo_mode.utils.command_templates import command_path
 from tests.demo_mode.utils.logging import log_running_command
 
 
@@ -53,7 +54,7 @@ def run_python_access_command(
     """Run the Python-access command and translate a timeout into a test failure."""
     log_running_command(command)
     try:
-        return run_command(
+        return run_command_and_wait_to_finish(
             command,
             "python-access",
             timeout=timeout,

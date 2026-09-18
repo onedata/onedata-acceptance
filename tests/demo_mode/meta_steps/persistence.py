@@ -8,7 +8,7 @@ import pytest
 
 from tests.demo_mode.constants import FIRST_ONEPROVIDER_CONTAINER
 from tests.demo_mode.meta_steps.rest import get_oneprovider_id
-from tests.demo_mode.steps.environment import await_running_container
+from tests.demo_mode.steps.environment import await_oneprovider, await_onezone
 from tests.demo_mode.steps.persistence import (
     assert_access_token_is_persistent,
     assert_provider_id_is_persistent,
@@ -38,16 +38,10 @@ def start_persistent_environment(
         request,
     )
 
-    await_running_container(
-        release,
-        onezone.container_name,
-        "run_in_background/await_onezone.sh",
-        onezone.process,
-    )
-    await_running_container(
+    await_onezone(release, onezone.process)
+    await_oneprovider(
         release,
         oneprovider.container_name,
-        "run_in_background/await_oneprovider.sh",
         oneprovider.process,
     )
     return onezone, oneprovider

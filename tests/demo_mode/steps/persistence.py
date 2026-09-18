@@ -14,7 +14,7 @@ from tests.demo_mode.constants import (
     ONEZONE_CONTAINER,
 )
 from tests.demo_mode.type_definitions import PersistentService
-from tests.demo_mode.utils.commands import stop_command
+from tests.demo_mode.utils.command_runner import stop_command
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.persistence import start_persistent_service
 from tests.demo_mode.utils.rest import get_provider_supported_space_ids

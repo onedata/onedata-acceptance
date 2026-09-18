@@ -9,6 +9,14 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
+class RestEndpoint:
+    """Host and port of a REST endpoint."""
+
+    host: str
+    port: int
+
+
+@dataclass(frozen=True)
 class PersistentService:
     """A persistent demo-mode service and its Docker container."""
 

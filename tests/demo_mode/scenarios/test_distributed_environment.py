@@ -10,7 +10,7 @@ from tests.demo_mode.constants import (
     FIRST_ONEPROVIDER_CONTAINER,
     SECOND_ONEPROVIDER_CONTAINER,
 )
-from tests.demo_mode.meta_steps.environment import start_foreground_environment
+from tests.demo_mode.meta_steps.environment import start_distributed_environment
 from tests.demo_mode.meta_steps.rest import (
     assert_oneproviders_are_distinct,
     assert_onezone_configuration,
@@ -32,11 +32,7 @@ def test_distributed_environment(
     second_file_name = "second-provider-rest-test.txt"
     second_file_content = b"Data stored through the second Oneprovider\n"
 
-    start_foreground_environment(
-        release,
-        request,
-        start_second_oneprovider=True,
-    )
+    start_distributed_environment(release, request)
     assert_onezone_configuration(release)
 
     assert_oneproviders_are_distinct(release)

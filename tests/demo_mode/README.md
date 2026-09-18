@@ -15,12 +15,11 @@ Please read this document before writing or modifying demo-mode tests.
 
 The commands are based on the
 [demo-mode admin guide](https://onedata.org/docs/25/admin-guide/demo-mode/).
-The shell commands under [commands](commands), except those in
-[test_only](commands/test_only), are the examples exercised by the tests. They
-are loaded verbatim, with only `xRELEASExVERSIONx` replaced by the release
-supplied on the command line. Keep these commands suitable for use as standalone
-examples. The `test_only` directory contains supporting commands that are not
-part of the tutorial.
+The shell commands under [commands](commands) are the examples exercised by the
+tests. When commands are loaded, `xRELEASExVERSIONx` is replaced by the release
+supplied on the command line. Reusable container commands also contain
+`xCONTAINERxNAMEx`, which is replaced by the target container name. Keep these
+commands suitable for use as standalone examples.
 
 
 ## Docker terminal options

@@ -8,7 +8,7 @@ import pytest
 
 from tests.demo_mode.constants import DEMO_SPACE_NAME
 from tests.demo_mode.meta_steps.environment import start_foreground_environment
-from tests.demo_mode.steps.examples import (
+from tests.demo_mode.steps.python_access import (
     assert_python_access_example_output,
     run_python_access_example,
 )

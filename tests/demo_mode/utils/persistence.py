@@ -14,11 +14,8 @@ import pytest
 
 from tests.demo_mode.constants import CONTAINER_NAMES
 from tests.demo_mode.type_definitions import PersistentService
-from tests.demo_mode.utils.commands import (
-    load_command,
-    start_command,
-    stop_command,
-)
+from tests.demo_mode.utils.command_runner import start_command, stop_command
+from tests.demo_mode.utils.command_templates import load_command
 from tests.utils.docker_utils import remove_containers
 
 HOST_TMP_ENVIRONMENT_VARIABLE: Final = "DEMO_MODE_HOST_TMP"

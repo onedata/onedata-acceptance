@@ -9,7 +9,12 @@ from typing import Final, cast
 from urllib.parse import urlsplit
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
-from tests.demo_mode.utils.commands import get_onezone_url
+from tests.demo_mode.type_definitions import RestEndpoint
+from tests.demo_mode.utils.command_runner import (
+    assert_command_succeeded,
+    run_command_and_wait_to_finish,
+)
+from tests.demo_mode.utils.command_templates import command_path
 from tests.type_definitions import JsonObject
 from tests.utils.docker_utils import docker_ip
 from tests.utils.rest_utils import (
@@ -25,45 +30,77 @@ from tests.utils.utils import repeat_failed
 
 SPACE_SUPPORT_SIZE: Final = 1024**3
 SPACE_APPEARANCE_TIMEOUT: Final = 60.0
+ONEZONE_URL_PREFIX: Final = "URL: "
 
 
 def _authorization_headers(access_token: str) -> dict[str, str]:
     return {"X-Auth-Token": access_token}
 
 
-def _get_onezone_rest_endpoint() -> tuple[str, int]:
-    onezone_url = get_onezone_url()
-    parsed_url = urlsplit(onezone_url)
-    has_disallowed_components = (
-        parsed_url.username is not None
-        or parsed_url.password is not None
-        or parsed_url.path not in ("", "/")
-        or bool(parsed_url.query)
-        or bool(parsed_url.fragment)
+def _get_onezone_url() -> str:
+    relative_command_path = "common/get_onezone_url.sh"
+    command = command_path(relative_command_path).read_text(encoding="utf-8")
+    result = run_command_and_wait_to_finish(
+        command,
+        relative_command_path,
+        capture_output=True,
     )
-    if (
-        parsed_url.scheme != "https"
-        or not parsed_url.hostname
-        or has_disallowed_components
-    ):
+    assert_command_succeeded(result, relative_command_path)
+
+    output_lines = result.stdout.splitlines()
+    if len(output_lines) != 1 or not output_lines[0].startswith(ONEZONE_URL_PREFIX):
         raise AssertionError(
-            f"The Onezone URL command returned an invalid URL: {onezone_url!r}"
+            f"The Onezone URL command returned unexpected output: {result.stdout!r}"
         )
+
+    onezone_url = output_lines[0].removeprefix(ONEZONE_URL_PREFIX)
+    if not onezone_url:
+        raise AssertionError("The Onezone URL command returned an empty URL")
+    return onezone_url
+
+
+def _get_onezone_rest_endpoint() -> RestEndpoint:
+    onezone_url = _get_onezone_url()
     try:
+        parsed_url = urlsplit(onezone_url)
+        hostname = parsed_url.hostname
         port = parsed_url.port or OZ_REST_PORT
     except ValueError as error:
         raise AssertionError(
             f"The Onezone URL command returned an invalid URL: {onezone_url!r}"
         ) from error
-    return parsed_url.hostname, port
+
+    assert parsed_url.scheme == "https", (
+        f"Expected an HTTPS Onezone URL, got {onezone_url!r}"
+    )
+    assert hostname, (
+        f"Expected the Onezone URL to contain a hostname, got {onezone_url!r}"
+    )
+    assert parsed_url.username is None, (
+        f"Expected the Onezone URL not to contain a username, got {onezone_url!r}"
+    )
+    assert parsed_url.password is None, (
+        f"Expected the Onezone URL not to contain a password, got {onezone_url!r}"
+    )
+    assert parsed_url.path in ("", "/"), (
+        f"Expected the Onezone URL not to contain a path, got {onezone_url!r}"
+    )
+    assert not parsed_url.query, (
+        f"Expected the Onezone URL not to contain a query, got {onezone_url!r}"
+    )
+    assert not parsed_url.fragment, (
+        f"Expected the Onezone URL not to contain a fragment, got {onezone_url!r}"
+    )
+
+    return RestEndpoint(host=hostname, port=port)
 
 
 def get_onezone_configuration() -> JsonObject:
     """Get the public configuration exposed by the demo Onezone REST API."""
-    onezone_host, onezone_port = _get_onezone_rest_endpoint()
+    endpoint = _get_onezone_rest_endpoint()
     response = http_get(
-        ip=onezone_host,
-        port=onezone_port,
+        ip=endpoint.host,
+        port=endpoint.port,
         path=get_zone_rest_path("configuration"),
     )
     return cast(JsonObject, response.json())
@@ -101,10 +138,10 @@ def _list_accessible_spaces(
 
 
 def _create_space(space_name: str, access_token: str) -> str:
-    onezone_host, onezone_port = _get_onezone_rest_endpoint()
+    endpoint = _get_onezone_rest_endpoint()
     response = http_post(
-        ip=onezone_host,
-        port=onezone_port,
+        ip=endpoint.host,
+        port=endpoint.port,
         path=get_zone_rest_path("user", "spaces"),
         headers=_authorization_headers(access_token),
         data=json.dumps({"name": space_name}),
@@ -131,10 +168,10 @@ def _list_onepanel_resource_ids(
 
 
 def _create_space_support_token(space_id: str, access_token: str) -> str:
-    onezone_host, onezone_port = _get_onezone_rest_endpoint()
+    endpoint = _get_onezone_rest_endpoint()
     response = http_post(
-        ip=onezone_host,
-        port=onezone_port,
+        ip=endpoint.host,
+        port=endpoint.port,
         path=get_zone_rest_path("spaces", space_id, "providers", "token"),
         headers=_authorization_headers(access_token),
     )

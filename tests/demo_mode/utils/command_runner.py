@@ -1,4 +1,4 @@
-"""Command helpers for demo-mode tests."""
+"""Subprocess lifecycle helpers for demo-mode commands."""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
@@ -10,44 +10,17 @@ import subprocess
 from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Final, TextIO
+from typing import TextIO
 
+from tests.demo_mode.utils.command_templates import DEMO_MODE_ROOT
 from tests.demo_mode.utils.logging import log_running_command, open_command_log
 from tests.utils.time_utils import deadline_after, remaining_time, sleep_before_retry
-
-DEMO_MODE_ROOT: Final = Path(__file__).resolve().parents[1]
-COMMANDS_ROOT: Final = DEMO_MODE_ROOT / "commands"
-RELEASE_PLACEHOLDER: Final = "xRELEASExVERSIONx"
-ONEZONE_URL_PREFIX: Final = "URL: "
 
 
 @dataclass(frozen=True)
 class CommandOutput:
     stdout: str
     stderr: str
-
-
-def command_path(relative_path: str) -> Path:
-    """Return a validated path to an unmodified file in ``commands``."""
-    path = (COMMANDS_ROOT / relative_path).resolve()
-    if not path.is_relative_to(COMMANDS_ROOT):
-        raise ValueError(
-            f"Command path must resolve within {COMMANDS_ROOT}, but "
-            f"{relative_path!r} resolves to {path}"
-        )
-
-    if not path.is_file():
-        raise FileNotFoundError(path)
-    return path
-
-
-def load_command(relative_path: str, release: str) -> str:
-    """Load a command verbatim, replacing only its release placeholder."""
-    return (
-        command_path(relative_path)
-        .read_text(encoding="utf-8")
-        .replace(RELEASE_PLACEHOLDER, release)
-    )
 
 
 def _start_subprocess(
@@ -64,6 +37,7 @@ def _start_subprocess(
         stderr = subprocess.PIPE
     else:
         stdout = log_file
+        # Merge stderr into stdout so both streams are written to the command log.
         stderr = subprocess.STDOUT
 
     return subprocess.Popen(
@@ -119,7 +93,7 @@ def stop_command(process: subprocess.Popen[str], timeout: float = 10) -> None:
         process.wait()
 
 
-def run_command(
+def run_command_and_wait_to_finish(
     command: str,
     command_name: str,
     timeout: float | None = None,
@@ -150,7 +124,19 @@ def run_command(
         )
 
 
-def wait_for_successful_process(
+def assert_command_succeeded(
+    result: subprocess.CompletedProcess[str],
+    command_name: str,
+) -> None:
+    """Assert that a completed command exited successfully."""
+    if result.returncode != 0:
+        raise AssertionError(
+            f"Command {command_name!r} failed with exit code "
+            f"{result.returncode}:\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+        )
+
+
+def wait_for_process_success(
     process: subprocess.Popen[str],
     command_name: str,
     timeout: float = 600,
@@ -171,7 +157,7 @@ def wait_for_successful_process(
         )
 
 
-def wait_for_successful_command(
+def retry_command_until_success(
     command: str,
     command_name: str,
     timeout: float = 600,
@@ -182,7 +168,7 @@ def wait_for_successful_command(
 
     while remaining_time(deadline) > 0:
         try:
-            result = run_command(
+            result = run_command_and_wait_to_finish(
                 command,
                 command_name,
                 timeout=remaining_time(deadline),
@@ -205,44 +191,3 @@ def wait_for_successful_command(
         f"Command did not succeed within {timeout}s (exit code {result.returncode}):\n"
         f"{command}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
     )
-
-
-def _run_command_and_return_stdout(command: str, command_name: str) -> str:
-    result = run_command(command, command_name, capture_output=True)
-    if result.returncode != 0:
-        raise AssertionError(
-            f"Command {command_name!r} failed with exit code "
-            f"{result.returncode}:\n{result.stderr}"
-        )
-    return result.stdout
-
-
-def get_access_token(release: str) -> str:
-    relative_command_path = "common/get_oneprovider_token.sh"
-    output = _run_command_and_return_stdout(
-        load_command(relative_command_path, release),
-        relative_command_path,
-    )
-
-    access_token = output.strip()
-    if not access_token:
-        raise AssertionError("The access-token command returned an empty result")
-    return access_token
-
-
-def get_onezone_url() -> str:
-    """Run the common tutorial command and return its Onezone URL."""
-    relative_command_path = "common/get_onezone_url.sh"
-    command = command_path(relative_command_path).read_text(encoding="utf-8")
-    output = _run_command_and_return_stdout(command, relative_command_path)
-
-    output_lines = output.splitlines()
-    if len(output_lines) != 1 or not output_lines[0].startswith(ONEZONE_URL_PREFIX):
-        raise AssertionError(
-            f"The Onezone URL command returned unexpected output: {output!r}"
-        )
-
-    onezone_url = output_lines[0].removeprefix(ONEZONE_URL_PREFIX)
-    if not onezone_url:
-        raise AssertionError("The Onezone URL command returned an empty URL")
-    return onezone_url
