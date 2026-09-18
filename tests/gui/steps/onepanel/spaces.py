@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 import time
 from subprocess import CalledProcessError
+from typing import Any
 
 import pytest
 import yaml
@@ -25,7 +26,6 @@ from tests.gui.constants import (
     WAIT_BACKEND,
     WAIT_FRONTEND,
 )
-from tests.gui.steps.common.common import wait_for_checking_toggle
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
@@ -578,17 +578,10 @@ def cannot_click_on_navigation_tab_in_space(
         getattr(nav, tab).click()
 
 
-@wt(parsers.parse('user of {browser_id} enables {toggle_name} in "{space}" space in Onepanel'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def enable_space_option_in_onepanel(
-    selenium: SeleniumDrivers, browser_id: str, toggle_name: str
-) -> None:
-    driver = selenium[browser_id]
+def get_space_option_toggle(driver: WebDriver, toggle_name: str) -> Any:
     option = toggle_name.replace("-", "_")
     tab = getattr(Onepanel(driver).content.spaces.space, option)
-    toggle = getattr(tab, f"enable_{option}")
-    toggle.check()
-    wait_for_checking_toggle(toggle, toggle_name=toggle_name)
+    return getattr(tab, f"enable_{option}")
 
 
 @wt(parsers.parse("user of {browser_id} enables {option} in auto-cleaning tab in Onepanel"))

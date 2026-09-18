@@ -7,12 +7,14 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from functools import partial
 
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
+from tests.gui.steps.common.common import wait_for_checking_toggle_with_getter
 from tests.gui.steps.common.notifies import (
     dismiss_notifies_if_present,
     is_notify_popup_visible_and_close_all_alert_popups,
@@ -26,6 +28,7 @@ from tests.gui.steps.onepanel.spaces import (
     click_on_navigation_tab_in_space,
     click_start_scan_button_in_sync_chart,
     confirm_quota_value_change,
+    get_space_option_toggle,
     get_spaces_list_from_spaces_page,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
@@ -63,6 +66,22 @@ from tests.gui.utils.onepanel.spaces import StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
+from tests.utils.utils import repeat_failed
+
+
+@wt(parsers.parse('user of {browser_id} enables {toggle_name} in "{space}" space in Onepanel'))
+def enable_space_option_in_onepanel(
+    selenium: SeleniumDrivers, browser_id: str, toggle_name: str
+) -> None:
+    driver = selenium[browser_id]
+    toggle_getter = partial(get_space_option_toggle, toggle_name=toggle_name)
+
+    @repeat_failed(timeout=WAIT_BACKEND)
+    def check_toggle() -> None:
+        toggle_getter(driver).check()
+
+    check_toggle()
+    wait_for_checking_toggle_with_getter(toggle_getter, driver, toggle_name=toggle_name)
 
 
 @wt(
