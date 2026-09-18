@@ -43,12 +43,14 @@ def command_path(relative_path: str) -> Path:
 
 def load_command(relative_path: str, release: str) -> str:
     """Load a command verbatim, replacing only its release placeholder."""
-    command = command_path(relative_path).read_text(encoding="utf-8")
-    command = command.replace(RELEASE_PLACEHOLDER, release)
-    return command
+    return (
+        command_path(relative_path)
+        .read_text(encoding="utf-8")
+        .replace(RELEASE_PLACEHOLDER, release)
+    )
 
 
-def _start_subprocess(  # pylint: disable=consider-using-with
+def _start_subprocess(
     command: str,
     cwd: Path,
     log_file: TextIO,
@@ -79,12 +81,11 @@ def _start_subprocess(  # pylint: disable=consider-using-with
 def start_command(command: str, command_name: str) -> subprocess.Popen[str]:
     log_running_command(command)
     with open_command_log(command, command_name) as log_file:
-        process = _start_subprocess(
+        return _start_subprocess(
             command,
             DEMO_MODE_ROOT,
             log_file,
         )
-    return process
 
 
 def _has_process_finished(process: subprocess.Popen[str]) -> bool:
@@ -206,17 +207,24 @@ def wait_for_successful_command(
     )
 
 
-def get_access_token(release: str) -> str:
-    relative_command_path = "common/get_oneprovider_token.sh"
-    command = load_command(relative_command_path, release)
-    result = run_command(command, relative_command_path, capture_output=True)
+def _run_command_and_return_stdout(command: str, command_name: str) -> str:
+    result = run_command(command, command_name, capture_output=True)
     if result.returncode != 0:
         raise AssertionError(
-            "The access-token command failed with exit code "
+            f"Command {command_name!r} failed with exit code "
             f"{result.returncode}:\n{result.stderr}"
         )
+    return result.stdout
 
-    access_token = result.stdout.strip()
+
+def get_access_token(release: str) -> str:
+    relative_command_path = "common/get_oneprovider_token.sh"
+    output = _run_command_and_return_stdout(
+        load_command(relative_command_path, release),
+        relative_command_path,
+    )
+
+    access_token = output.strip()
     if not access_token:
         raise AssertionError("The access-token command returned an empty result")
     return access_token
@@ -226,17 +234,12 @@ def get_onezone_url() -> str:
     """Run the common tutorial command and return its Onezone URL."""
     relative_command_path = "common/get_onezone_url.sh"
     command = command_path(relative_command_path).read_text(encoding="utf-8")
-    result = run_command(command, relative_command_path, capture_output=True)
-    if result.returncode != 0:
-        raise AssertionError(
-            "The Onezone URL command failed with exit code "
-            f"{result.returncode}:\n{result.stderr}"
-        )
+    output = _run_command_and_return_stdout(command, relative_command_path)
 
-    output_lines = result.stdout.splitlines()
+    output_lines = output.splitlines()
     if len(output_lines) != 1 or not output_lines[0].startswith(ONEZONE_URL_PREFIX):
         raise AssertionError(
-            f"The Onezone URL command returned unexpected output: {result.stdout!r}"
+            f"The Onezone URL command returned unexpected output: {output!r}"
         )
 
     onezone_url = output_lines[0].removeprefix(ONEZONE_URL_PREFIX)

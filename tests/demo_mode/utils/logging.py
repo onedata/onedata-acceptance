@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Generator, Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
 from functools import wraps
@@ -21,10 +21,7 @@ _current_command_logs_dir: ContextVar[Path] = ContextVar(
     "current_command_logs_dir",
     default=COMMAND_LOGS_DIR,
 )
-_command_log_counter = ContextVar(
-    "command_log_counter",
-    default=count(1),
-)
+_command_log_counter: ContextVar[Iterator[int]] = ContextVar("command_log_counter")
 P = ParamSpec("P")
 R = TypeVar("R")
 Step = Callable[P, R]
@@ -53,7 +50,12 @@ def _command_log_name(command_name: str) -> str:
 
 
 def _next_command_log_number() -> int:
-    return next(_command_log_counter.get())
+    try:
+        counter = _command_log_counter.get()
+    except LookupError:
+        counter = count(1)
+        _command_log_counter.set(counter)
+    return next(counter)
 
 
 @contextmanager

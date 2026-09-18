@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import subprocess
 
 import pytest
-from environment import docker  # pylint: disable=import-error
+from environment import docker
 
 from tests.demo_mode.constants import (
     FIRST_ONEPROVIDER_CONTAINER,

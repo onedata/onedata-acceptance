@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import subprocess
+from typing import Final
 
 import pytest
 
@@ -16,6 +17,8 @@ from tests.demo_mode.utils.examples import (
     run_python_access_command,
 )
 from tests.demo_mode.utils.logging import log_running_command, log_step
+
+MIN_FILENAME_MESSAGE_PARTS: Final = 3
 
 
 @log_step("Running comprehensive example")
@@ -60,7 +63,9 @@ def assert_comprehensive_example_message_contains_file_name(
     message_parts: list[str],
 ) -> None:
     """Assert that a comprehensive-example message contains a filename."""
-    assert len(message_parts) >= 3, f"Could not extract a filename from: {message!r}"
+    assert len(message_parts) >= MIN_FILENAME_MESSAGE_PARTS, (
+        f"Could not extract a filename from: {message!r}"
+    )
 
 
 @log_step("Checking comprehensive example filename")

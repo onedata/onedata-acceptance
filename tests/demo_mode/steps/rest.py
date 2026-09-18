@@ -78,10 +78,10 @@ def assert_file_content(
 @log_step("Asserting Oneprovider ID")
 def assert_oneprovider_id(provider_container: str, provider_id: object) -> None:
     """Assert that a Oneprovider exposes a valid ID."""
-    assert isinstance(provider_id, str) and provider_id, (
-        f"Expected {provider_container} to expose a non-empty provider ID, "
-        f"got {provider_id!r}"
+    assert isinstance(provider_id, str), (
+        f"Expected {provider_container} to expose a string provider ID, got {provider_id!r}"
     )
+    assert provider_id, f"Expected {provider_container} to expose a non-empty provider ID"
 
 
 @log_step("Asserting Oneprovider version")

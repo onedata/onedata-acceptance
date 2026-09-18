@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import warnings
 from collections.abc import Iterator
-from functools import partial
 from typing import cast
 
 import pytest
@@ -51,18 +50,20 @@ def suppress_unverified_https_warning() -> Iterator[None]:
 
 
 @pytest.fixture(autouse=True)
-def cleanup_demo_containers(
-    request: pytest.FixtureRequest,
-) -> None:
+def cleanup_demo_containers() -> Iterator[None]:
     remove_containers(CONTAINER_NAMES)
-    request.addfinalizer(partial(remove_containers, CONTAINER_NAMES))
     print(flush=True)
+    try:
+        yield
+    finally:
+        remove_containers(CONTAINER_NAMES)
 
 
 @pytest.fixture
-def isolated_persistence_directories(
-    request: pytest.FixtureRequest,
-) -> None:
+def isolated_persistence_directories() -> Iterator[None]:
     """Own and clean the fixed host paths used by persistence commands."""
-    request.addfinalizer(remove_demo_persistence)
-    prepare_demo_persistence()
+    try:
+        prepare_demo_persistence()
+        yield
+    finally:
+        remove_demo_persistence()
