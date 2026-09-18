@@ -61,9 +61,7 @@ def _assert_transfer(
             continue
 
         expected = (
-            hosts[configured_expected]["name"]
-            if key == "destination"
-            else configured_expected
+            hosts[configured_expected]["name"] if key == "destination" else configured_expected
         )
 
         column = key.replace(" ", "_")
