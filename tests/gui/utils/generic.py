@@ -323,6 +323,16 @@ def wait_for_visible_element_using_getter(
     )
 
 
+def wait_for_element_to_disappear_using_getter(
+    driver: WebDriver,
+    web_elem_getter: Callable[[WebDriver], SeleniumWebElement],
+    timeout: float = WAIT_FRONTEND,
+) -> None:
+    WebDriverWait(driver, timeout=timeout).until_not(
+        partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
+    )
+
+
 def wait_for_file_to_download(
     driver: WebDriver,
     downloaded_file: LocalPath,

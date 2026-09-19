@@ -12,6 +12,8 @@ from functools import partial
 import pytest
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
@@ -24,18 +26,21 @@ from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import (
+    click_accept_button_in_quota_editor_and_return_quota_editor_getter,
     click_change_quota_button,
     click_on_btn_in_space_support_form,
     click_on_navigation_tab_in_space,
+    click_start_cleaning_now,
     click_start_scan_button_in_sync_chart,
-    confirm_quota_value_change,
     copy_supported_space_id,
+    get_cleaning_reports_count,
     get_space_option_toggle,
     get_spaces_list_from_spaces_page,
     register_revoke_space_support_finalizer,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
+    wait_for_start_cleaning_confirmation,
     wait_for_start_scan_button_state,
     wait_for_storage_import_scan_start_confirmation,
     wt_assert_correct_supported_space_opened,
@@ -64,7 +69,10 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import wait_for_visible_element_using_getter
+from tests.gui.utils.generic import (
+    wait_for_element_to_disappear_using_getter,
+    wait_for_visible_element_using_getter,
+)
 from tests.gui.utils.onepanel.spaces import StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -410,6 +418,24 @@ def g_revoke_all_space_supports_using_rest(hosts: Hosts, users: Users, provider_
 
 @wt(
     parsers.parse(
+        "user of {browser_id} confirms changing value "
+        "of {quota_type} quota in auto-cleaning tab in Onepanel"
+    )
+)
+def confirm_quota_value_change(selenium: SeleniumDrivers, browser_id: str, quota_type: str) -> None:
+    driver = selenium[browser_id]
+    quota_editor_getter = click_accept_button_in_quota_editor_and_return_quota_editor_getter(
+        driver, quota_type
+    )
+
+    WebDriverWait(driver, WAIT_BACKEND).until(
+        lambda _: quota_editor_getter(driver).edit_button,
+        message=f"waiting for {quota_type.replace('_', ' ')} to finish saving",
+    )
+
+
+@wt(
+    parsers.parse(
         "user of {browser_id} sets {quota} quota to {value} value in auto-cleaning tab in Onepanel"
     )
 )
@@ -421,9 +447,33 @@ def set_quota_in_auto_cleaning(
     confirm_quota_value_change(selenium, browser_id, quota)
 
 
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "Start cleaning now" button '
+        "in auto-cleaning tab in Onepanel"
+    )
+)
+def click_start_cleaning_now_and_wait_until_finished(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+
+    def pacman_getter(driver: WebDriver) -> SeleniumWebElement:
+        return Onepanel(driver).content.spaces.space.auto_cleaning.pacman
+
+    click_start_cleaning_button_and_wait_for_its_state(driver)
+    wait_for_element_to_disappear_using_getter(driver, pacman_getter, WAIT_BACKEND * 2)
+
+
 def click_start_scan_button_and_wait_for_its_state(driver: WebDriver) -> None:
     click_start_scan_button_in_sync_chart(driver)
     wait_for_storage_import_scan_start_confirmation(driver)
+
+
+def click_start_cleaning_button_and_wait_for_its_state(driver: WebDriver) -> None:
+    previous_report_count = get_cleaning_reports_count(driver)
+    click_start_cleaning_now(driver)
+    wait_for_start_cleaning_confirmation(driver, previous_report_count)
 
 
 @wt(

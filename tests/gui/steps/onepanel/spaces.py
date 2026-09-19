@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from collections.abc import Callable
 from subprocess import CalledProcessError
 from typing import Any
 
@@ -19,6 +20,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import (
@@ -37,10 +39,16 @@ from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import (
     implicit_wait,
+    is_element_visible_using_getter,
     parse_elements_sequence,
     transform,
 )
-from tests.gui.utils.onepanel.spaces import SpaceRecord, StartScanState
+from tests.gui.utils.onepanel.spaces import (
+    QuotaEditor,
+    SpaceRecord,
+    StartCleaningState,
+    StartScanState,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import User, Users
@@ -673,29 +681,45 @@ def type_value_to_quota_input(
     )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} confirms changing value "
-        "of {quota} quota in auto-cleaning tab in Onepanel"
-    )
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_quota_value_change(selenium: SeleniumDrivers, browser_id: str, quota: str) -> None:
-    quota = f"{quota}_quota"
-    driver = selenium[browser_id]
-    getattr(Onepanel(driver).content.spaces.space.auto_cleaning, quota).accept_button()
+def click_accept_button_in_quota_editor_and_return_quota_editor_getter(
+    driver: WebDriver, quota_type: str
+) -> Callable[[WebDriver], QuotaEditor]:
+    quota = f"{quota_type}_quota"
+
+    def quota_editor_getter(driver: WebDriver) -> QuotaEditor:
+        return getattr(Onepanel(driver).content.spaces.space.auto_cleaning, quota)
+
+    quota_editor_getter(driver).accept_button()
+    return quota_editor_getter
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Start cleaning now" button '
-        "in auto-cleaning tab in Onepanel"
-    )
-)
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_start_cleaning_now(driver: WebDriver) -> None:
+    Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_control.start_cleaning_now.click()
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_start_cleaning_now(selenium: SeleniumDrivers, browser_id: str) -> None:
-    driver = selenium[browser_id]
-    Onepanel(driver).content.spaces.space.auto_cleaning.start_cleaning_now()
+def get_cleaning_reports_count(driver: WebDriver) -> int:
+    return len(Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_reports)
+
+
+@repeat_failed(timeout=WAIT_BACKEND, interval=0.01)
+def wait_for_start_cleaning_confirmation(driver: WebDriver, previous_report_count: int) -> None:
+    def cleaning_state_getter(driver: WebDriver) -> StartCleaningState:
+        return Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_control.state
+
+    def pacman_getter(driver: WebDriver) -> SeleniumWebElement:
+        return Onepanel(driver).content.spaces.space.auto_cleaning.pacman
+
+    auto_cleaning = Onepanel(driver).content.spaces.space.auto_cleaning
+    cleaning_started_or_finished = (
+        is_element_visible_using_getter(driver, pacman_getter)
+        or cleaning_state_getter(driver)
+        not in {StartCleaningState.READY, StartCleaningState.DISABLED}
+        or len(auto_cleaning.cleaning_reports) > previous_report_count
+    )
+    assert cleaning_started_or_finished
 
 
 @wt(parsers.parse("user of {browser_id} sees {size} released size in cleaning report in Onepanel"))
@@ -761,7 +785,7 @@ def click_start_scan_button_in_sync_chart(driver: WebDriver) -> None:
     sync_chart.start_scan.start_button.click()
 
 
-@repeat_failed(timeout=WAIT_BACKEND, interval=0.01, attempts=WAIT_BACKEND * 100)
+@repeat_failed(timeout=WAIT_BACKEND, interval=0.01)
 def wait_for_storage_import_scan_start_confirmation(driver: WebDriver) -> None:
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     # A short scan can return to READY before Selenium observes an intermediate
