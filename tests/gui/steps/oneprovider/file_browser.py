@@ -681,13 +681,13 @@ def assert_item_displayed_on_page(
             )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01, attempts=WAIT_FRONTEND * 100)
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01)
 def write_to_jump_input(browser_id: str, tmp_memory: TmpMemory, prefix: str) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     browser.jump_input = prefix
 
 
-@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01, attempts=WAIT_FRONTEND * 100)
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01)
 def wait_until_prefix_written_to_jump_input(
     browser_id: str, tmp_memory: TmpMemory, prefix: str
 ) -> None:

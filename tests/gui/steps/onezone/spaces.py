@@ -133,7 +133,12 @@ def create_new_space_by_click_on_create_new_space_button(
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_new_space_on_onezone_page(
-    selenium: SeleniumDrivers, browser_id: str, space_name: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    spaces: dict[str, str],
+    clipboard: Clipboard,
+    displays: dict[str, str],
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).data
     page.create_space_button()
@@ -146,6 +151,8 @@ def create_new_space_on_onezone_page(
         popup_expected=False,
         timeout=WAIT_FRONTEND,
     )
+    click_on_option_in_space_menu(selenium, browser_id, space_name, "Copy ID")
+    spaces[space_name] = clipboard.paste(display=displays[browser_id])
 
 
 @wt(

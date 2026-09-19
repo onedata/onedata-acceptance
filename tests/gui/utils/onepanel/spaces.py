@@ -74,6 +74,7 @@ class SpaceSupportForm(PageObject):
 class SpaceInfo(PageObject):
     space_name = Label(".space-name")
     space_id = Input(".space-info .content-row:nth-child(2) input[type=text]")
+    copy_space_id = Button(".copy-btn")
     storage_name = Label(".space-provider-storage")
     _storage_import = WebElement(".storage-import")
     size = Input(".size-number-input")
@@ -107,7 +108,7 @@ class StartScan(PageObject):
     details_button = Button(".oneicon-arrow-down")
 
     @property
-    @repeat_failed(timeout=1, interval=0.05, attempts=200)
+    @repeat_failed(timeout=1, interval=0.05)
     def state(self) -> StartScanState:
         start_button, stop_button = None, None
 
@@ -208,6 +209,44 @@ class SelectiveCleaningRecord(PageObject):
     value_limit = Label(".ember-power-select-selected-item")
 
 
+class StartCleaningState(Enum):
+    READY = "ready"
+    STARTING = "starting"
+    RUNNING = "running"
+    DISABLED = "disabled"
+
+
+class CleaningControl(PageObject):
+    start_cleaning_now = Button(".btn-clean-now")
+    stop_cleaning_now = Button(".btn-danger")
+
+    @property
+    @repeat_failed(timeout=1, interval=0.05)
+    def state(self) -> StartCleaningState:
+        start_button, stop_button = None, None
+
+        with suppress(NoSuchElementException):
+            stop_button = self.stop_cleaning_now
+
+        if stop_button is not None and stop_button.is_displayed():
+            if not element_has_class(stop_button.web_elem, "clickable"):
+                return StartCleaningState.STARTING
+            return StartCleaningState.RUNNING
+
+        with suppress(NoSuchElementException):
+            start_button = self.start_cleaning_now
+
+        if start_button is not None and start_button.is_displayed():
+            if element_has_class(start_button.web_elem, "disabled"):
+                return StartCleaningState.DISABLED
+            return StartCleaningState.READY
+
+        raise RuntimeError(
+            "Start scan controls have an unknown state; neither the start "
+            "nor stop button is visible"
+        )
+
+
 class AutoCleaning(PageObject):
     enable_auto_cleaning = Toggle(".cleaning-enabled-toggle")
     selective_cleaning = Toggle(".selective-cleaning-toggle .one-way-toggle-control")
@@ -215,7 +254,8 @@ class AutoCleaning(PageObject):
         ".selective-cleaning-rules-form > div", cls=SelectiveCleaningRecord
     )
 
-    start_cleaning_now = Button(".btn-clean-now")
+    cleaning_control = WebItem(".clean-now-row", cls=CleaningControl)
+    pacman = WebElement(".pacman")
 
     _soft_quota = WebElement(".soft-quota-editor")
     soft_quota = WebItem(".soft-quota-editor", cls=QuotaEditor)

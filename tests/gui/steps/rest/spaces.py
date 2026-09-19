@@ -133,3 +133,17 @@ def assert_no_space_supports_for_storage_using_rest(
     assert not get_space_ids_supported_by_storage(
         provider_hostname, onepanel_username, onepanel_password, storage_id
     )
+
+
+def get_space_details_in_oz(
+    zone_hostname: str,
+    owner_username: str,
+    owner_password: str,
+    space_id: str,
+) -> dict[str, Any]:
+    return http_get(
+        ip=zone_hostname,
+        port=OZ_REST_PORT,
+        path=get_zone_rest_path("spaces", space_id),
+        auth=(owner_username, owner_password),
+    ).json()

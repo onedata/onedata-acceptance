@@ -96,8 +96,10 @@ def get_visible_items_list(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
-    assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
+def wait_for_checking_toggle_with_getter(
+    toggle_getter: Callable[[WebDriver], Any], driver: WebDriver, toggle_name: str = ""
+) -> None:
+    assert toggle_getter(driver).is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
 def get_page_for_list(

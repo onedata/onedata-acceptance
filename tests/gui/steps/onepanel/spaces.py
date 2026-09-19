@@ -8,7 +8,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from collections.abc import Callable
 from subprocess import CalledProcessError
+from typing import Any
 
 import pytest
 import yaml
@@ -18,6 +20,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import (
@@ -25,25 +28,48 @@ from tests.gui.constants import (
     WAIT_BACKEND,
     WAIT_FRONTEND,
 )
-from tests.gui.steps.common.common import wait_for_checking_toggle
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
+from tests.gui.steps.rest.spaces import revoke_space_support_using_rest
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import (
     implicit_wait,
+    is_element_visible_using_getter,
     parse_elements_sequence,
     transform,
 )
-from tests.gui.utils.onepanel.spaces import SpaceRecord, StartScanState
+from tests.gui.utils.onepanel.spaces import (
+    QuotaEditor,
+    SpaceRecord,
+    StartCleaningState,
+    StartScanState,
+)
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.user_utils import Users
+from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
+
+
+def register_revoke_space_support_finalizer(
+    request: pytest.FixtureRequest,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+    space_id: str,
+) -> None:
+    request.addfinalizer(
+        lambda: revoke_space_support_using_rest(
+            hosts[provider]["hostname"],
+            onepanel_credentials.username,
+            onepanel_credentials.password,
+            space_id,
+        )
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -185,6 +211,12 @@ def wt_assert_correct_supported_space_opened(
     assert space_name == overview.space_name, (
         f'opened space "{overview.name}" instead of expected "{space_name}"'
     )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_supported_space_id(driver: WebDriver) -> None:
+    overview = Onepanel(driver).content.spaces.space.overview
+    overview.copy_space_id.click()
 
 
 @wt(
@@ -578,17 +610,10 @@ def cannot_click_on_navigation_tab_in_space(
         getattr(nav, tab).click()
 
 
-@wt(parsers.parse('user of {browser_id} enables {toggle_name} in "{space}" space in Onepanel'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def enable_space_option_in_onepanel(
-    selenium: SeleniumDrivers, browser_id: str, toggle_name: str
-) -> None:
-    driver = selenium[browser_id]
+def get_space_option_toggle(driver: WebDriver, toggle_name: str) -> Any:
     option = toggle_name.replace("-", "_")
     tab = getattr(Onepanel(driver).content.spaces.space, option)
-    toggle = getattr(tab, f"enable_{option}")
-    toggle.check()
-    wait_for_checking_toggle(toggle, toggle_name=toggle_name)
+    return getattr(tab, f"enable_{option}")
 
 
 @wt(parsers.parse("user of {browser_id} enables {option} in auto-cleaning tab in Onepanel"))
@@ -656,29 +681,45 @@ def type_value_to_quota_input(
     )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} confirms changing value "
-        "of {quota} quota in auto-cleaning tab in Onepanel"
-    )
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_quota_value_change(selenium: SeleniumDrivers, browser_id: str, quota: str) -> None:
-    quota = f"{quota}_quota"
-    driver = selenium[browser_id]
-    getattr(Onepanel(driver).content.spaces.space.auto_cleaning, quota).accept_button()
+def click_accept_button_in_quota_editor_and_return_quota_editor_getter(
+    driver: WebDriver, quota_type: str
+) -> Callable[[WebDriver], QuotaEditor]:
+    quota = f"{quota_type}_quota"
+
+    def quota_editor_getter(driver: WebDriver) -> QuotaEditor:
+        return getattr(Onepanel(driver).content.spaces.space.auto_cleaning, quota)
+
+    quota_editor_getter(driver).accept_button()
+    return quota_editor_getter
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Start cleaning now" button '
-        "in auto-cleaning tab in Onepanel"
-    )
-)
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_start_cleaning_now(driver: WebDriver) -> None:
+    Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_control.start_cleaning_now.click()
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_start_cleaning_now(selenium: SeleniumDrivers, browser_id: str) -> None:
-    driver = selenium[browser_id]
-    Onepanel(driver).content.spaces.space.auto_cleaning.start_cleaning_now()
+def get_cleaning_reports_count(driver: WebDriver) -> int:
+    return len(Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_reports)
+
+
+@repeat_failed(timeout=WAIT_BACKEND, interval=0.01)
+def wait_for_start_cleaning_confirmation(driver: WebDriver, previous_report_count: int) -> None:
+    def cleaning_state_getter(driver: WebDriver) -> StartCleaningState:
+        return Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_control.state
+
+    def pacman_getter(driver: WebDriver) -> SeleniumWebElement:
+        return Onepanel(driver).content.spaces.space.auto_cleaning.pacman
+
+    auto_cleaning = Onepanel(driver).content.spaces.space.auto_cleaning
+    cleaning_started_or_finished = (
+        is_element_visible_using_getter(driver, pacman_getter)
+        or cleaning_state_getter(driver)
+        not in {StartCleaningState.READY, StartCleaningState.DISABLED}
+        or len(auto_cleaning.cleaning_reports) > previous_report_count
+    )
+    assert cleaning_started_or_finished
 
 
 @wt(parsers.parse("user of {browser_id} sees {size} released size in cleaning report in Onepanel"))
@@ -744,7 +785,7 @@ def click_start_scan_button_in_sync_chart(driver: WebDriver) -> None:
     sync_chart.start_scan.start_button.click()
 
 
-@repeat_failed(timeout=WAIT_BACKEND, interval=0.01, attempts=WAIT_BACKEND * 100)
+@repeat_failed(timeout=WAIT_BACKEND, interval=0.01)
 def wait_for_storage_import_scan_start_confirmation(driver: WebDriver) -> None:
     sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     # A short scan can return to READY before Selenium observes an intermediate
