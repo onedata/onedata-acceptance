@@ -210,9 +210,7 @@ def assert_correct_supported_space_opened_and_get_its_id(
     wt_assert_correct_supported_space_opened(selenium, browser_id, space_name)
     copy_supported_space_id(selenium[browser_id])
     clip = clipboard.paste(display=displays[browser_id])
-    assert spaces[space_name] == clipboard.paste(display=displays[browser_id]), (
-        "space ID is different than actual"
-    )
+    assert spaces[space_name] == clip, "space ID is different than actual"
     return clip
 
 
