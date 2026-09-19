@@ -52,7 +52,12 @@ def remove_multiple_storages_in_op_panel_using_rest(
 
     storage_ids = get_storage_ids_by_name(storage_name, provider, hosts, onepanel_credentials)
     for storage_id in storage_ids:
-        remove_storage_by_id(provider_hostname, onepanel_username, onepanel_password, storage_id)
+        revoke_space_supports_for_storage_using_rest(
+            provider_hostname, onepanel_username, onepanel_password, storage_id
+        )
+        remove_storage_by_id_and_wait_until_absent(
+            provider_hostname, onepanel_username, onepanel_password, storage_id
+        )
 
 
 def remove_storage_by_id_and_wait_until_absent(
