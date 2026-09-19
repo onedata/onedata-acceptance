@@ -37,7 +37,6 @@ Feature: Quality of Service tests for 2 providers with auto-cleaning using multi
     And user of browser_emergency opens "space1" record on spaces list in Spaces page in Onepanel
     And user of browser_emergency clicks on File popularity navigation tab in space "space1"
     And user of browser_emergency enables file-popularity in "space1" space in Onepanel
-    And user of browser_emergency is idle for 8 seconds
     And user of browser_emergency clicks on "Auto cleaning" navigation tab in space "space1"
     And user of browser_emergency enables auto-cleaning in "space1" space in Onepanel
 
