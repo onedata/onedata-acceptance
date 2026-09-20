@@ -42,10 +42,12 @@ from tests.gui.type_definitions import (
     WebElementOrSelector,
     WebElemRoot,
 )
+from tests.gui.utils import text as text_utils
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
 suppress = contextlib_suppress
+transform = text_utils.transform
 
 # RE_URL regexp is matched as shown below:
 #
@@ -456,10 +458,6 @@ def redirect_display(new_display: str) -> Iterator[None]:
             os.environ["DISPLAY"] = old_display
         else:
             del os.environ["DISPLAY"]
-
-
-def transform(val: str, strip_char: str | None = None) -> str:
-    return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 
 def assert_each_event_is_gathered(

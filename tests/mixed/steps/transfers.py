@@ -14,14 +14,14 @@ from tests.gui.meta_steps.oneprovider.common import (
 )
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.meta_steps.oneprovider.transfers import (
+    assert_ended_transfer,
     evict_file,
     open_transfers_page,
     wait_for_all_transfers_to_start_and_finish,
 )
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
 from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
-from tests.gui.steps.oneprovider.transfers import assert_ended_transfer
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.type_definitions import TmpMemory, VisibleColumns
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,
     assert_recent_transfer_finished_rest,
@@ -173,12 +173,13 @@ def assert_details_of_recent_transfer_op(
     space: str,
     config: str,
     selenium: SeleniumDrivers,
+    visible_columns: VisibleColumns,
 ) -> None:
     if client.lower() == "rest":
         assert_recent_transfer_details_rest(user, users, host, hosts, space, spaces, config)
     elif client.lower() == "web gui":
         open_transfers_page(selenium, user, host, space, hosts)
-        assert_ended_transfer(selenium, user, item_type, config, hosts)
+        assert_ended_transfer(selenium, user, item_type, config, hosts, visible_columns)
     else:
         raise NoSuchClientException(f"Client {client} not found")
 

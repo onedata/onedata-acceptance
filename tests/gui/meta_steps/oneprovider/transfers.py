@@ -7,6 +7,14 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import cast
+
+import yaml
+from selenium.common.exceptions import NoSuchElementException
+
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
+    select_columns_to_be_visible_in_transfers,
+)
 from tests.gui.meta_steps.oneprovider.common import replicate_files_to_providers
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
@@ -20,20 +28,138 @@ from tests.gui.steps.oneprovider.data_tab import (
     click_choose_other_oneprovider_on_file_browser,
 )
 from tests.gui.steps.oneprovider.transfers import (
+    click_link_in_data_distribution_panel,
+    get_transfers,
     wait_for_ongoing_tranfers_to_finish,
     wait_for_transfers_page_to_load,
     wait_for_waiting_transfer_to_start,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.type_definitions import TmpMemory, VisibleColumns
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
-    transform,
 )
+from tests.gui.utils.oneprovider.transfers import TransferRecord, TransferRecordHistory
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
+
+
+def assert_transfer(
+    transfer: TransferRecord,
+    item_type: str,
+    desc: str,
+    sufix: str,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    visible_columns: VisibleColumns,
+) -> None:
+    assert getattr(transfer, f"is_{item_type}")(), f"Transferred item is not {item_type} in {sufix}"
+
+    parsed_desc = yaml.load(desc, yaml.Loader)
+    for field_name, configured_value in parsed_desc.items():
+        expected_value = (
+            hosts[configured_value]["name"] if field_name == "destination" else configured_value
+        )
+        attribute_name = field_name.replace(" ", "_")
+        transfer_val = None
+        try:
+            transfer_val = getattr(transfer, attribute_name)
+        except NoSuchElementException:
+            # if key differs from column name, consider creating suitable dict
+            if attribute_name in ["type", "destination"]:
+                select_columns_to_be_visible_in_transfers(
+                    selenium, browser_id, ["type_&_destination"], visible_columns
+                )
+            else:
+                select_columns_to_be_visible_in_transfers(
+                    selenium, browser_id, [attribute_name], visible_columns
+                )
+            transfer_val = getattr(transfer, attribute_name)
+        try:
+            assert transfer_val == str(expected_value), (
+                f"Transfer {field_name} is {transfer_val} instead of {expected_value} in {sufix}"
+            )
+        except AssertionError as e:
+            if "<" in expected_value:
+                symbol = expected_value.split(" ")[0]
+                size_value = float(expected_value.split(" ")[1])
+                unit = expected_value.split(" ")[2]
+                expected_size_mib = size_value if unit == "MiB" else size_value * 1024
+                actual_size_mib = float(transfer_val.split(" ")[0])
+                if symbol == "<=":
+                    assert actual_size_mib <= expected_size_mib, (
+                        f"{field_name}: {actual_size_mib} MiB is greater than "
+                        f"{expected_size_mib} MiB"
+                    )
+                else:
+                    assert actual_size_mib < expected_size_mib, (
+                        f"{field_name}: {actual_size_mib} MiB is no less than "
+                        f"{expected_size_mib} MiB"
+                    )
+            else:
+                raise e
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
+        r" in ended transfers:\n(?P<desc>(.|\s)*)"
+    )
+)
+@repeat_failed(interval=0.5, timeout=30)
+def assert_ended_transfer(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    item_type: str,
+    desc: str,
+    hosts: Hosts,
+    visible_columns: VisibleColumns,
+) -> None:
+    transfers = get_transfers(selenium[browser_id])
+    transfer = cast(TransferRecordHistory, transfers.ended[0])
+    assert_transfer(
+        transfer,
+        item_type,
+        desc,
+        "ended",
+        hosts,
+        selenium,
+        browser_id,
+        visible_columns,
+    )
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
+        r" in waiting transfers:\n(?P<desc>(.|\s)*)"
+    )
+)
+@repeat_failed(interval=0.5, timeout=40)
+def assert_waiting_transfer(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    item_type: str,
+    desc: str,
+    hosts: Hosts,
+    visible_columns: VisibleColumns,
+) -> None:
+    transfers = get_transfers(selenium[browser_id])
+    transfer = cast(TransferRecordHistory, transfers.waiting[0])
+    assert_transfer(
+        transfer,
+        item_type,
+        desc,
+        "waiting",
+        hosts,
+        selenium,
+        browser_id,
+        visible_columns,
+    )
 
 
 @wt(
@@ -59,7 +185,7 @@ def open_transfers_page(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) opens transfer page using "
-        r'"(?P<link>.*)" link on "Distribution" tab for "(?P<file>.*)" file'
+        r'"(?P<link>see ongoing transfers|see history)" link on "Distribution" tab for "(?P<file>.*)" file'
     )
 )
 def open_transfer_page_by_clicking_on_link(
@@ -69,13 +195,9 @@ def open_transfer_page_by_clicking_on_link(
     selenium: SeleniumDrivers,
     link: str,
 ) -> None:
-    option = "Data distribution"
     click_menu_for_elem_in_browser(browser_id, file, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
-    getattr(
-        Modals(selenium[browser_id]).details_modal.data_distribution,
-        transform(link),
-    )()
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, "Data distribution")
+    click_link_in_data_distribution_panel(selenium, browser_id, link)
     wait_for_transfers_page_to_load(selenium, browser_id)
 
 

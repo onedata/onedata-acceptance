@@ -7,11 +7,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections import defaultdict, namedtuple
 from collections.abc import Callable
+from dataclasses import dataclass
 from os import PathLike
-from typing import Any, Literal, Protocol, TypedDict
+from typing import Any, Literal, Protocol, Self, TypedDict
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
+from tests.gui.utils.generic import WhichBrowser
 
 
 class Checkable(Protocol):
@@ -21,8 +23,29 @@ class Checkable(Protocol):
 class Clickable(Protocol):
     def click(self) -> None: ...
 
+type BrowserColumn = Literal[
+      WhichBrowser.FILE_BROWSER,
+      WhichBrowser.ARCHIVE_BROWSER,
+      WhichBrowser.DATASET_BROWSER,
+]
+ 
+type ColumnTable = BrowserColumn | Literal["transfers"]
+
+@dataclass(frozen=True)
+class ColumnContext:
+    browser_id: str
+    column_view: ColumnTable
+    
+    @classmethod
+    def transfers(cls, browser_id: str) -> Self:
+        return cls(browser_id=browser_id, column_view="transfers")
+    
+    @classmethod
+    def browser(cls, browser_id: str, which_browser: BrowserColumn):
+        return cls(browser_id=browser_id, column_view=which_browser)
 
 type TmpMemory = defaultdict[str, dict[str, Any]]
+type VisibleColumns = dict[ColumnContext, set[str]]
 
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 type WebElemRoot = WebDriver | SeleniumWebElement

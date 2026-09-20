@@ -12,6 +12,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
+from tests.gui.utils.text import transform
 
 from .base import AbstractWebElement, AbstractWebItem, PageObject
 from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjectsSequence
@@ -120,6 +121,14 @@ class Label(WebElement):
     def __get__(self, instance: Any, owner: object) -> Any:
         item = super().__get__(instance, owner)
         return item.text if instance else item
+
+
+class TransformedLabel(Label):
+    """Return label text normalized with the standard GUI transformation."""
+
+    def __get__(self, instance: Any, owner: object) -> Any:
+        item: str = super().__get__(instance, owner)
+        return item if instance is None else transform(item)
 
 
 class Input(WebElement):

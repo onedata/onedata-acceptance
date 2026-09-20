@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import cast
 
 import pytest
-import yaml
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
@@ -17,9 +16,6 @@ from selenium.common.exceptions import (
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
-    select_columns_to_be_visible_in_transfers,
-)
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
     switch_to_iframe,
@@ -32,7 +28,6 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.gui.utils.oneprovider.transfers import (
-    TransferRecord,
     TransferRecordActive,
     TransferRecordHistory,
     _TransfersTab,
@@ -40,114 +35,6 @@ from tests.gui.utils.oneprovider.transfers import (
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-
-
-def _assert_transfer(
-    transfer: TransferRecord,
-    item_type: str,
-    desc: str,
-    sufix: str,
-    hosts: Hosts,
-    selenium: SeleniumDrivers,
-    browser_id: str,
-) -> None:
-    assert getattr(transfer, f"is_{item_type}")(), f"Transferred item is not {item_type} in {sufix}"
-
-    parsed_desc = yaml.load(desc, yaml.Loader)
-    for field_name, configured_value in parsed_desc.items():
-        expected_value = (
-            hosts[configured_value]["name"] if field_name == "destination" else configured_value
-        )
-        attribute_name = field_name.replace(" ", "_")
-        transfer_val = None
-        try:
-            transfer_val = getattr(transfer, attribute_name)
-        except NoSuchElementException:
-            # if key differs from column name, consider creating suitable dict
-            if attribute_name in ["type", "destination"]:
-                select_columns_to_be_visible_in_transfers(
-                    selenium, browser_id, ["type_&_destination"]
-                )
-            else:
-                select_columns_to_be_visible_in_transfers(selenium, browser_id, [attribute_name])
-            transfer_val = getattr(transfer, attribute_name)
-        try:
-            assert transfer_val == str(expected_value), (
-                f"Transfer {field_name} is {transfer_val} instead of {expected_value} in {sufix}"
-            )
-        except AssertionError as e:
-            if "<" in expected_value:
-                symbol = expected_value.split(" ")[0]
-                size_value = float(expected_value.split(" ")[1])
-                unit = expected_value.split(" ")[2]
-                expected_size_mib = size_value if unit == "MiB" else size_value * 1024
-                actual_size_mib = float(transfer_val.split(" ")[0])
-                if symbol == "<=":
-                    assert actual_size_mib <= expected_size_mib, (
-                        f"{field_name}: {actual_size_mib} MiB is greater than "
-                        f"{expected_size_mib} MiB"
-                    )
-                else:
-                    assert actual_size_mib < expected_size_mib, (
-                        f"{field_name}: {actual_size_mib} MiB is no less than "
-                        f"{expected_size_mib} MiB"
-                    )
-            else:
-                raise e
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
-        r" in ended transfers:\n(?P<desc>(.|\s)*)"
-    )
-)
-@repeat_failed(interval=0.5, timeout=30)
-def assert_ended_transfer(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    item_type: str,
-    desc: str,
-    hosts: Hosts,
-) -> None:
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    transfer = cast(TransferRecordHistory, transfers.ended[0])
-    _assert_transfer(
-        transfer,
-        item_type,
-        desc,
-        "ended",
-        hosts,
-        selenium,
-        browser_id,
-    )
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
-        r" in waiting transfers:\n(?P<desc>(.|\s)*)"
-    )
-)
-@repeat_failed(interval=0.5, timeout=40)
-def assert_waiting_transfer(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    item_type: str,
-    desc: str,
-    hosts: Hosts,
-) -> None:
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    transfer = cast(TransferRecordHistory, transfers.waiting[0])
-    _assert_transfer(
-        transfer,
-        item_type,
-        desc,
-        "waiting",
-        hosts,
-        selenium,
-        browser_id,
-    )
 
 
 @wt(
@@ -166,7 +53,7 @@ def assert_waiting_transfer(
 def cancel_or_rerun_transfer(
     selenium: SeleniumDrivers, browser_id: str, option: str, state: str
 ) -> None:
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
+    transfers = get_transfers(selenium[browser_id])
     if state == "waiting":
         try:
             getattr(transfers, state)[0].menu_button()
@@ -210,7 +97,7 @@ def wait_for_ongoing_tranfers_to_finish(selenium: SeleniumDrivers, browser_id: s
 @wt(parsers.re(r"user of (?P<browser_id>.*) expands first transfer record"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
+    transfers = get_transfers(selenium[browser_id])
     cast(TransferRecordHistory, transfers.ended[0]).expand()
 
 
@@ -222,7 +109,7 @@ def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_non_zero_transfer_speed(selenium: SeleniumDrivers, browser_id: str) -> None:
-    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
+    transfers = get_transfers(selenium[browser_id])
     chart = cast(TransferRecordHistory, transfers.ended[0]).get_chart()
     assert chart.get_speed() != "0", "Transfer throughput is 0"
 
@@ -291,6 +178,16 @@ def is_current_item_fully_on_provider(driver: WebDriver, provider_name: str) -> 
     return record.percentage_label == "100%"
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_link_in_data_distribution_panel(
+    selenium: SeleniumDrivers, browser_id: str, link: str
+) -> None:
+    getattr(
+        Modals(selenium[browser_id]).details_modal.data_distribution,
+        transform(link),
+    ).click()
+
+
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on menu button for "
@@ -328,7 +225,7 @@ def fail_to_click_option_in_data_distribution_popup(
 @repeat_failed(interval=1, timeout=90)
 def assert_see_history_btn_shown(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    button = Modals(driver).details_modal.data_distribution.see_history_btn
+    button = Modals(driver).details_modal.data_distribution.see_history
     assert button.is_displayed(), 'Button "see history" not found in data distribution modal'
 
 
@@ -359,9 +256,7 @@ def assert_option_in_provider_popup_menu(
     hosts: Hosts,
     option: str,
 ) -> None:
-
     driver = selenium[browser_id]
-
     provider_name = hosts[provider]["name"]
     Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button()
 
@@ -369,29 +264,8 @@ def assert_option_in_provider_popup_menu(
     assert option not in menu, f"{option} should not be in selection menu"
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _get_transfers_and_enable_initial_cols(
-    browser_id: str, selenium: SeleniumDrivers
-) -> _TransfersTab:
-    columns = ["user", "type & destination", "status"]
-    select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
-    return OPLoggedIn(selenium[browser_id]).transfers
-
-
-@wt(
-    parsers.re(
-        rf"user of (?P<browser_id>.*) enables only "
-        rf"(?P<columns>{ELEMENTS_SEQUENCE_PATTERN}) "
-        r"columns in columns configuration popover in transfers table"
-    ),
-    converters={
-        "columns": parse_elements_sequence,
-    },
-)
-def wt_select_columns_to_be_visible_in_transfers(
-    selenium: SeleniumDrivers, browser_id: str, columns: list[str]
-) -> None:
-    select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
+def get_transfers(driver: WebDriver) -> _TransfersTab:
+    return OPLoggedIn(driver).transfers
 
 
 @wt(
@@ -407,7 +281,7 @@ def wt_select_columns_to_be_visible_in_transfers(
 def assert_visible_columns_in_transfers(
     browser_id: str, columns: list[str], selenium: SeleniumDrivers
 ) -> None:
-    transfers = OPLoggedIn(selenium[browser_id]).transfers
+    transfers = get_transfers(selenium[browser_id])
     transfers_columns = transfers.column_headers
     transfers_columns = [x.name.lower() for x in transfers_columns]
     error_message = (
