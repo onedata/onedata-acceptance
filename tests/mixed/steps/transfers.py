@@ -14,13 +14,13 @@ from tests.gui.meta_steps.oneprovider.common import (
 )
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.meta_steps.oneprovider.transfers import (
-    assert_ended_transfer,
+    assert_ended_first_transfer,
     evict_file,
     open_transfers_page,
     wait_for_all_transfers_to_start_and_finish,
 )
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
-from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
+from tests.gui.steps.oneprovider.data_tab import upload_files_to_cwd_in_data_tab
 from tests.gui.type_definitions import TmpMemory, VisibleColumns
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,
@@ -179,7 +179,7 @@ def assert_details_of_recent_transfer_op(
         assert_recent_transfer_details_rest(user, users, host, hosts, space, spaces, config)
     elif client.lower() == "web gui":
         open_transfers_page(selenium, user, host, space, hosts)
-        assert_ended_transfer(selenium, user, item_type, config, hosts, visible_columns)
+        assert_ended_first_transfer(selenium, user, config, item_type, visible_columns)
     else:
         raise NoSuchClientException(f"Client {client} not found")
 
@@ -228,6 +228,6 @@ def upload_file_to_provider_browser(
 ) -> None:
     if client.lower() == "web gui":
         wt_visit_file_browser(selenium, [provider], [space], [user], tmp_memory, hosts)
-        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
+        upload_files_to_cwd_in_data_tab(selenium, user, [path], tmpdir)
     else:
         raise NoSuchClientException(f"Client {client} not found")

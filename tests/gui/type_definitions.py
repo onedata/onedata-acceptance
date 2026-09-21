@@ -58,7 +58,7 @@ class ColumnContext:
 
 
 type TmpMemory = defaultdict[str, dict[str, Any]]
-type VisibleColumns = dict[ColumnContext, set[str]]
+type VisibleColumns = defaultdict[ColumnContext, set[str]]
 
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 type WebElemRoot = WebDriver | SeleniumWebElement

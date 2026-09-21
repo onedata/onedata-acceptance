@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import cast
+from typing import Any
 
 import pytest
 from selenium.common.exceptions import (
@@ -14,6 +14,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import (
@@ -24,10 +25,13 @@ from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
+    TransferState,
     parse_elements_sequence,
     transform,
 )
 from tests.gui.utils.oneprovider.transfers import (
+    TransferItemType,
+    TransferRecord,
     TransferRecordActive,
     TransferRecordHistory,
     _TransfersTab,
@@ -35,6 +39,112 @@ from tests.gui.utils.oneprovider.transfers import (
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+def _get_transfer_record(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    transfer_name: str,
+    state: TransferState,
+) -> TransferRecord:
+    transfers = OPLoggedIn(selenium[browser_id]).transfers
+    return getattr(transfers, state.value)[transfer_name]
+
+
+def assert_transfer_item_type(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    transfer_name: str,
+    state: TransferState,
+    expected_item_type: TransferItemType,
+) -> None:
+    transfer = _get_transfer_record(selenium, browser_id, transfer_name, state)
+    match expected_item_type:
+        case TransferItemType.FILE:
+            is_expected_item_type = transfer.is_file()
+        case TransferItemType.DIRECTORY:
+            is_expected_item_type = transfer.is_directory()
+
+    assert is_expected_item_type, (
+        f"Transferred item is not {expected_item_type.value} in {state.value}"
+    )
+
+
+def assert_transfer_status(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    transfer_name: str,
+    state: TransferState,
+    expected_status: str,
+) -> None:
+    def has_expected_status(_: WebDriver) -> bool:
+        transfer = _get_transfer_record(selenium, browser_id, transfer_name, state)
+        return transfer.status == expected_status
+
+    WebDriverWait(
+        selenium[browser_id],
+        timeout=90,
+        poll_frequency=0.5,
+        ignored_exceptions=(
+            NoSuchElementException,
+            PageObjectNotFoundError,
+            StaleElementReferenceException,
+        ),
+    ).until(
+        has_expected_status,
+        message=(
+            f'Transfer "{transfer_name}" in {state.value} did not reach status "{expected_status}"'
+        ),
+    )
+
+
+def get_transfer_column_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    transfer_name: str,
+    state: TransferState,
+    column: str,
+) -> Any:
+    def get_column_value(_: WebDriver) -> Any:
+        transfer = _get_transfer_record(selenium, browser_id, transfer_name, state)
+        return getattr(transfer, column)
+
+    return WebDriverWait(
+        selenium[browser_id],
+        timeout=WAIT_FRONTEND,
+        poll_frequency=0.1,
+        ignored_exceptions=(
+            NoSuchElementException,
+            PageObjectNotFoundError,
+            StaleElementReferenceException,
+            ValueError,
+        ),
+    ).until(
+        get_column_value,
+        message=(
+            f'Column "{column}" for transfer "{transfer_name}" in {state.value} was not readable'
+        ),
+    )
+
+
+def assert_transfer_column_value(
+    column_name: str,
+    actual: Any,
+    expected: Any,
+    state: TransferState,
+) -> None:
+    if actual == str(expected):
+        return
+
+    error_message = f"Transfer {column_name} is {actual} instead of {expected} in {state.value}"
+    if not isinstance(expected, str) or not expected.startswith("<"):
+        raise AssertionError(error_message)
+
+    operator, value, unit = expected.split()
+    limit_mib = float(value) if unit == "MiB" else float(value) * 1024
+    actual_mib = float(actual.split()[0])
+    is_within_limit = actual_mib <= limit_mib if operator == "<=" else actual_mib < limit_mib
+    assert is_within_limit, error_message
 
 
 @wt(
@@ -62,7 +172,8 @@ def cancel_or_rerun_transfer(
             NoSuchElementException,
             PageObjectNotFoundError,
         ):
-            cast(TransferRecordActive, transfers.ongoing[0]).menu_button()
+            ongoing_transfer: TransferRecordActive = transfers.ongoing[0]
+            ongoing_transfer.menu_button()
     else:
         getattr(transfers, transform(state))[0].menu_button()
 
@@ -98,7 +209,8 @@ def wait_for_ongoing_tranfers_to_finish(selenium: SeleniumDrivers, browser_id: s
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
     transfers = get_transfers(selenium[browser_id])
-    cast(TransferRecordHistory, transfers.ended[0]).expand()
+    ended_transfer: TransferRecordHistory = transfers.ended[0]
+    ended_transfer.expand()
 
 
 @wt(
@@ -110,7 +222,8 @@ def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_non_zero_transfer_speed(selenium: SeleniumDrivers, browser_id: str) -> None:
     transfers = get_transfers(selenium[browser_id])
-    chart = cast(TransferRecordHistory, transfers.ended[0]).get_chart()
+    ended_transfer: TransferRecordHistory = transfers.ended[0]
+    chart = ended_transfer.get_chart()
     assert chart.get_speed() != "0", "Transfer throughput is 0"
 
 

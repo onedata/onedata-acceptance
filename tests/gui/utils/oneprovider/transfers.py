@@ -4,6 +4,7 @@ __author__ = "Michal Stanisz, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from enum import Enum
 from functools import partial
 
 from selenium.webdriver.common.by import By
@@ -38,30 +39,31 @@ TRANSFER_STATUS_LIST = [
 TRANSFER_TYPE_LIST = ["migration", "replication", "eviction"]
 
 
+class TransferItemType(Enum):
+    FILE = "file"
+    DIRECTORY = "directory"
+
+
 class TypeAndDestination(PageObject):
     destination = Label(".truncated-string")
     type_icon = Icon(".cell-type-destination")
 
 
 class TransferRecord(PageObject):
-    name = Label(".cell-data-name .transfer-file-name")
+    id = name = Label(".cell-data-name .transfer-file-name")
     file_icon = Icon(".cell-data-name .transfer-file-icon")
     username = Label("td:nth-of-type(2)")
     status_icon = Icon(".cell-status")
     menu_button = Button(".cell-actions")
-    type_destination = WebItem(".transfers-table-cell-typeDestination", cls=TypeAndDestination)
+    _type_and_destination = WebItem(".transfers-table-cell-typeDestination", cls=TypeAndDestination)
 
     @property
     def status(self) -> str:
         return self._get_icon_class(self.status_icon, TRANSFER_STATUS_LIST)
 
     @property
-    def type(self) -> str:
-        return self._get_icon_class(self.type_destination.type_icon, TRANSFER_TYPE_LIST)
-
-    @property
-    def destination(self) -> str:
-        return self.type_destination.destination
+    def type_and_destination(self) -> str:
+        return self._get_icon_class(self._type_and_destination.type_icon, TRANSFER_TYPE_LIST)
 
     def _get_icon_class(self, icon: SeleniumWebElement, expected_tokens: list[str]) -> str:
         icon_classes = icon.get_attribute("class").split()

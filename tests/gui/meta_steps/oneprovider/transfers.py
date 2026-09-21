@@ -7,10 +7,9 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import cast
+from typing import Any
 
 import yaml
-from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
     select_columns_to_be_visible_in_transfers,
@@ -28,7 +27,11 @@ from tests.gui.steps.oneprovider.data_tab import (
     click_choose_other_oneprovider_on_file_browser,
 )
 from tests.gui.steps.oneprovider.transfers import (
+    assert_transfer_column_value,
+    assert_transfer_item_type,
+    assert_transfer_status,
     click_link_in_data_distribution_panel,
+    get_transfer_column_value,
     get_transfers,
     wait_for_ongoing_tranfers_to_finish,
     wait_for_transfers_page_to_load,
@@ -39,94 +42,54 @@ from tests.gui.type_definitions import TmpMemory, VisibleColumns
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
+    TransferState,
     parse_elements_sequence,
 )
-from tests.gui.utils.oneprovider.transfers import TransferRecord, TransferRecordHistory
+from tests.gui.utils.oneprovider.transfers import TransferItemType, TransferRecordHistory
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
-def assert_transfer(
-    transfer: TransferRecord,
-    item_type: str,
-    desc: str,
-    sufix: str,
-    hosts: Hosts,
+def assert_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
+    descriptions: str,
+    state: TransferState,
     visible_columns: VisibleColumns,
 ) -> None:
-    assert getattr(transfer, f"is_{item_type}")(), f"Transferred item is not {item_type} in {sufix}"
+    parsed_desc = yaml.load(descriptions, yaml.Loader)
+    get_transfers(selenium[browser_id])
 
-    parsed_desc = yaml.load(desc, yaml.Loader)
-    for field_name, configured_value in parsed_desc.items():
-        expected_value = (
-            hosts[configured_value]["name"] if field_name == "destination" else configured_value
+    for name, description in parsed_desc.items():
+        assert_transfer(
+            name,
+            description,
+            state,
+            selenium,
+            browser_id,
+            visible_columns,
         )
-        attribute_name = field_name.replace(" ", "_")
-        transfer_val = None
-        try:
-            transfer_val = getattr(transfer, attribute_name)
-        except NoSuchElementException:
-            # if key differs from column name, consider creating suitable dict
-            if attribute_name in ["type", "destination"]:
-                select_columns_to_be_visible_in_transfers(
-                    selenium, browser_id, ["type_&_destination"], visible_columns
-                )
-            else:
-                select_columns_to_be_visible_in_transfers(
-                    selenium, browser_id, [attribute_name], visible_columns
-                )
-            transfer_val = getattr(transfer, attribute_name)
-        try:
-            assert transfer_val == str(expected_value), (
-                f"Transfer {field_name} is {transfer_val} instead of {expected_value} in {sufix}"
-            )
-        except AssertionError as e:
-            if "<" in expected_value:
-                symbol = expected_value.split(" ")[0]
-                size_value = float(expected_value.split(" ")[1])
-                unit = expected_value.split(" ")[2]
-                expected_size_mib = size_value if unit == "MiB" else size_value * 1024
-                actual_size_mib = float(transfer_val.split(" ")[0])
-                if symbol == "<=":
-                    assert actual_size_mib <= expected_size_mib, (
-                        f"{field_name}: {actual_size_mib} MiB is greater than "
-                        f"{expected_size_mib} MiB"
-                    )
-                else:
-                    assert actual_size_mib < expected_size_mib, (
-                        f"{field_name}: {actual_size_mib} MiB is no less than "
-                        f"{expected_size_mib} MiB"
-                    )
-            else:
-                raise e
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
-        r" in ended transfers:\n(?P<desc>(.|\s)*)"
-    )
-)
-@repeat_failed(interval=0.5, timeout=30)
-def assert_ended_transfer(
+def assert_first_transfer(
     selenium: SeleniumDrivers,
     browser_id: str,
+    description: str,
     item_type: str,
-    desc: str,
-    hosts: Hosts,
+    state: TransferState,
     visible_columns: VisibleColumns,
 ) -> None:
+    parsed_desc = yaml.load(description, yaml.Loader)
+    name = parsed_desc.pop("name")
+    parsed_desc["item_type"] = item_type
+
     transfers = get_transfers(selenium[browser_id])
-    transfer = cast(TransferRecordHistory, transfers.ended[0])
+    transfer: TransferRecordHistory = getattr(transfers, state.value)[0]
+    assert transfer.name == name, "First transfer is not the expected one"
     assert_transfer(
-        transfer,
-        item_type,
-        desc,
-        "ended",
-        hosts,
+        name,
+        parsed_desc,
+        state,
         selenium,
         browser_id,
         visible_columns,
@@ -135,29 +98,150 @@ def assert_ended_transfer(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) sees (?P<item_type>file|directory)"
-        r" in waiting transfers:\n(?P<desc>(.|\s)*)"
+        r"user of (?P<browser_id>.*) sees (?:files|directories)"
+        r" in ended transfers:\n(?P<descriptions>(.|\s)*)"
     )
 )
-@repeat_failed(interval=0.5, timeout=40)
-def assert_waiting_transfer(
+def assert_ended_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item_type: str,
-    desc: str,
-    hosts: Hosts,
+    descriptions: str,
     visible_columns: VisibleColumns,
 ) -> None:
-    transfers = get_transfers(selenium[browser_id])
-    transfer = cast(TransferRecordHistory, transfers.waiting[0])
-    assert_transfer(
-        transfer,
-        item_type,
-        desc,
-        "waiting",
-        hosts,
+    assert_transfers(
         selenium,
         browser_id,
+        descriptions,
+        TransferState.ENDED,
+        visible_columns,
+    )
+
+
+def assert_ended_first_transfer(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    description: str,
+    item_type: str,
+    visible_columns: VisibleColumns,
+) -> None:
+    assert_first_transfer(
+        selenium,
+        browser_id,
+        description,
+        item_type,
+        TransferState.ENDED,
+        visible_columns,
+    )
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees (?:files|directories)"
+        r" in waiting transfers:\n(?P<descriptions>(.|\s)*)"
+    )
+)
+def assert_waiting_transfers(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    descriptions: str,
+    visible_columns: VisibleColumns,
+) -> None:
+    assert_transfers(
+        selenium,
+        browser_id,
+        descriptions,
+        TransferState.WAITING,
+        visible_columns,
+    )
+
+
+def assert_transfer_column(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    transfer_name: str,
+    state: TransferState,
+    column_name: str,
+    expected: Any,
+    visible_columns: VisibleColumns,
+) -> None:
+    visible_column = column_name.replace(" ", "_")
+    column = column_name.replace(" & ", "_and_").replace(" ", "_")
+    select_columns_to_be_visible_in_transfers(
+        selenium,
+        browser_id,
+        [visible_column],
+        visible_columns,
+    )
+    actual = get_transfer_column_value(
+        selenium,
+        browser_id,
+        transfer_name,
+        state,
+        column,
+    )
+    assert_transfer_column_value(column_name, actual, expected, state)
+
+
+def assert_transfer(
+    transfer_name: str,
+    desc: dict[str, Any],
+    state: TransferState,
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    visible_columns: VisibleColumns,
+) -> None:
+    expected_status: str | None = desc.get("status")
+    if expected_status is not None:
+        select_columns_to_be_visible_in_transfers(
+            selenium,
+            browser_id,
+            ["status"],
+            visible_columns,
+        )
+        assert_transfer_status(
+            selenium,
+            browser_id,
+            transfer_name,
+            state,
+            expected_status,
+        )
+
+    assert_transfer_item_type(
+        selenium,
+        browser_id,
+        transfer_name,
+        state,
+        TransferItemType(desc["item_type"]),
+    )
+
+    for key, configured_expected in desc.items():
+        if key in ["item_type", "status"]:
+            continue
+
+        assert_transfer_column(
+            selenium,
+            browser_id,
+            transfer_name,
+            state,
+            key,
+            configured_expected,
+            visible_columns,
+        )
+
+
+def assert_waiting_first_transfer(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    description: str,
+    item_type: str,
+    visible_columns: VisibleColumns,
+) -> None:
+    assert_first_transfer(
+        selenium,
+        browser_id,
+        description,
+        item_type,
+        TransferState.WAITING,
         visible_columns,
     )
 
