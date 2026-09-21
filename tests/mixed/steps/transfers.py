@@ -6,22 +6,28 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections.abc import Mapping
 
+import yaml
 from _pytest._py.path import LocalPath
 
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
+    ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS,
+    select_columns_to_be_visible_in_transfers,
+)
 from tests.gui.meta_steps.oneprovider.common import (
     migrate_file_to_provider,
     replicate_files_to_providers,
 )
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.meta_steps.oneprovider.transfers import (
+    assert_first_transfer,
     evict_file,
     open_transfers_page,
     wait_for_all_transfers_to_start_and_finish,
 )
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
-from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
-from tests.gui.steps.oneprovider.transfers import assert_ended_transfer
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.steps.oneprovider.data_tab import upload_files_to_cwd_in_data_tab
+from tests.gui.type_definitions import TmpMemory, VisibleColumns
+from tests.gui.utils.generic import TransferState
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,
     assert_recent_transfer_finished_rest,
@@ -173,12 +179,25 @@ def assert_details_of_recent_transfer_op(
     space: str,
     config: str,
     selenium: SeleniumDrivers,
+    visible_columns: VisibleColumns,
 ) -> None:
     if client.lower() == "rest":
         assert_recent_transfer_details_rest(user, users, host, hosts, space, spaces, config)
     elif client.lower() == "web gui":
         open_transfers_page(selenium, user, host, space, hosts)
-        assert_ended_transfer(selenium, user, item_type, config, hosts)
+
+        yaml_config = yaml.load(config, yaml.Loader)
+        yaml_config["item_type"] = item_type
+
+        select_columns_to_be_visible_in_transfers(
+            selenium, user, ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS, visible_columns
+        )
+        assert_first_transfer(
+            selenium,
+            user,
+            yaml_config,
+            transfer_state=TransferState.ENDED,
+        )
     else:
         raise NoSuchClientException(f"Client {client} not found")
 
@@ -227,6 +246,6 @@ def upload_file_to_provider_browser(
 ) -> None:
     if client.lower() == "web gui":
         wt_visit_file_browser(selenium, [provider], [space], [user], tmp_memory, hosts)
-        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
+        upload_files_to_cwd_in_data_tab(selenium, user, [path], tmpdir)
     else:
         raise NoSuchClientException(f"Client {client} not found")

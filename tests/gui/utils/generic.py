@@ -42,10 +42,12 @@ from tests.gui.type_definitions import (
     WebElementOrSelector,
     WebElemRoot,
 )
+from tests.gui.utils import text as text_utils
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
 suppress = contextlib_suppress
+transform = text_utils.transform
 
 # RE_URL regexp is matched as shown below:
 #
@@ -458,10 +460,6 @@ def redirect_display(new_display: str) -> Iterator[None]:
             del os.environ["DISPLAY"]
 
 
-def transform(val: str, strip_char: str | None = None) -> str:
-    return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
-
-
 def assert_each_event_is_gathered(
     events: list[str],
     gathered_events: list[str],
@@ -517,19 +515,15 @@ def sort_json_from_string(value: str) -> JsonValue:
     return sort_json_keys(parsed_value)
 
 
-class WhichBrowser(Enum):
-    ARCHIVE_BROWSER = "archive browser"
-    ARCHIVE_FILE_BROWSER = "archive file browser"
-    DATASET_BROWSER = "dataset browser"
-    FILE_BROWSER = "file browser"
-    SHARES_FILE_BROWSER = "share's file browser"
-    DATASET_ARCHIVE_BROWSER = "dataset archive browser"
-    ARCHIVE_RECALL_BROWSER = "archive recall browser"
-
-
 class OnedataService(Enum):
     WORKERS = "workers"
     ONES3 = "ones3"
+
+
+class TransferState(Enum):
+    ENDED = "ended"
+    ONGOING = "ongoing"
+    WAITING = "waiting"
 
 
 class SpecialDir(Enum):

@@ -75,13 +75,13 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.type_definitions import (
     Clipboard,
     TmpMemory,
+    WhichBrowser,
 )
 from tests.gui.type_definitions import DataDirectoryContent as DirectoryContent
 from tests.gui.utils import Modals
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    WhichBrowser,
     parse_elements_sequence,
 )
 from tests.type_definitions import Hosts, SeleniumDrivers

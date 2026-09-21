@@ -46,22 +46,24 @@ Feature: Onepanel features auto-cleaning
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
     And user of space_owner_browser waits until "oneprovider-1" transfers complete for "space2" space
-    And user of space_owner_browser sees directory in ended transfers:
-            name: dir1
-            replicated: 100 MiB
-            type: replication
-            status: completed
+    And user of space_owner_browser sees files in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 100 MiB
+                type_&_destination: replication
+                status: completed
 
     # check data distribution
     And user of space_owner_browser clicks "Files" of "space2" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
-    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
+    And user of space_owner_browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+            large_file(1).txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
     # enable auto-cleaning
     And user of browser1 is idle for 2 seconds
@@ -82,12 +84,13 @@ Feature: Onepanel features auto-cleaning
     Then user of browser1 sees 100 MiB released size in cleaning report in Onepanel
 
     # check data distribution
-    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely empty
-            oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
-            oneprovider-1: entirely empty
-            oneprovider-2: entirely filled
+    And user of space_owner_browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely empty
+                oneprovider-2: entirely filled
+            large_file(1).txt:
+                oneprovider-1: entirely empty
+                oneprovider-2: entirely filled
 
     # revoke space support
     And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
@@ -117,22 +120,24 @@ Feature: Onepanel features auto-cleaning
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
     And user of space_owner_browser waits until "oneprovider-1" transfers complete for "space2" space
-    And user of space_owner_browser sees directory in ended transfers:
-            name: dir1
-            replicated: 100 MiB
-            type: replication
-            status: completed
+    And user of space_owner_browser sees files in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 100 MiB
+                type_&_destination: replication
+                status: completed
 
     # check data distribution
     And user of space_owner_browser clicks "Files" of "space2" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
-    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
+    And user of space_owner_browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+            large_file(1).txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
     # enable auto-cleaning and set selective cleaning
     And user of browser1 is idle for 8 seconds
@@ -150,12 +155,13 @@ Feature: Onepanel features auto-cleaning
     Then user of browser1 sees 0 B released size in cleaning report in Onepanel
 
     # check data distribution
-    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
+    And user of space_owner_browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+            large_file(1).txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
     # revoke space support
     And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
@@ -186,25 +192,27 @@ Feature: Onepanel features auto-cleaning
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
     And user of space_owner_browser waits until "oneprovider-1" transfers complete for "space2" space
-    And user of space_owner_browser sees directory in ended transfers:
-            name: dir1
-            replicated: 100 MiB
-            type: replication
-            status: completed
+    And user of space_owner_browser sees files in ended transfers:
+            dir1:
+                item_type: directory
+                replicated: 100 MiB
+                type_&_destination: replication
+                status: completed
 
     # check data distribution
     And user of space_owner_browser clicks "Files" of "space2" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
-    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
+    And user of space_owner_browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+            large_file(1).txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
     # enable auto-cleaning and set selective cleaning
     And user of browser1 is idle for 8 seconds
@@ -222,16 +230,16 @@ Feature: Onepanel features auto-cleaning
     Then user of browser1 sees 20 B released size in cleaning report in Onepanel
 
     # check data distribution
-    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
-    And user of space_owner_browser sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely empty
-            oneprovider-2: entirely filled
+    And user of space_owner_browser sees file chunks for files:
+            large_file.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+            large_file(1).txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
+            20B-0.txt:
+                oneprovider-1: entirely empty
+                oneprovider-2: entirely filled
 
     # revoke space support
     And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
-

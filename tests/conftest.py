@@ -30,6 +30,7 @@ from selenium.webdriver.support.events import EventFiringWebDriver
 from urllib3.exceptions import MaxRetryError
 
 from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
+from tests.gui.type_definitions import VisibleColumns
 from tests.type_definitions import (
     EnvDesc,
     FactoryCallable,
@@ -379,6 +380,11 @@ def inventories() -> dict[str, str]:
 @pytest.fixture
 def spaces() -> dict[str, str]:
     return {}
+
+
+@pytest.fixture
+def visible_columns() -> VisibleColumns:
+    return defaultdict(set)
 
 
 @pytest.fixture

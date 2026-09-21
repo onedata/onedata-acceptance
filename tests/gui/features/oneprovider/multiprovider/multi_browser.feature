@@ -28,22 +28,26 @@ Feature: Oneprovider functionality using multiple providers and multiple browser
     And user of space_owner_browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of space_owner_browser is idle for 90 seconds
-    Then user of space_owner_browser sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
+    Then user of space_owner_browser sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
 
     And user of browser1 opens oneprovider-2 Oneprovider file browser for "space1" space
-    And user of browser1 sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely empty
+    And user of browser1 sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
 
     And user of browser1 clicks and presses enter on item named "20B-0.txt" in file browser
     And user of browser1 sees that content of downloaded file "20B-0.txt" is equal to: "00000000000000000000"
-    And user of browser1 sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
+    And user of browser1 sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
     And user of space_owner_browser is idle for 90 seconds
-    And user of browser1 sees file chunks for file "20B-0.txt" as follows:
-            oneprovider-1: entirely filled
-            oneprovider-2: entirely filled
+    And user of browser1 sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
