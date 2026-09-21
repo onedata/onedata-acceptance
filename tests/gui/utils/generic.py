@@ -515,16 +515,6 @@ def sort_json_from_string(value: str) -> JsonValue:
     return sort_json_keys(parsed_value)
 
 
-class WhichBrowser(Enum):
-    ARCHIVE_BROWSER = "archive browser"
-    ARCHIVE_FILE_BROWSER = "archive file browser"
-    DATASET_BROWSER = "dataset browser"
-    FILE_BROWSER = "file browser"
-    SHARES_FILE_BROWSER = "share's file browser"
-    DATASET_ARCHIVE_BROWSER = "dataset archive browser"
-    ARCHIVE_RECALL_BROWSER = "archive recall browser"
-
-
 class OnedataService(Enum):
     WORKERS = "workers"
     ONES3 = "ones3"

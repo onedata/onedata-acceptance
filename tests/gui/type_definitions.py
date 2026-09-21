@@ -8,12 +8,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections import defaultdict, namedtuple
 from collections.abc import Callable
 from dataclasses import dataclass
+from enum import Enum
 from os import PathLike
 from typing import Any, Literal, Protocol, Self, TypedDict
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
-from tests.gui.utils.generic import WhichBrowser
 
 
 class Checkable(Protocol):
@@ -23,26 +23,39 @@ class Checkable(Protocol):
 class Clickable(Protocol):
     def click(self) -> None: ...
 
+
+class WhichBrowser(Enum):
+    ARCHIVE_BROWSER = "archive browser"
+    ARCHIVE_FILE_BROWSER = "archive file browser"
+    DATASET_BROWSER = "dataset browser"
+    FILE_BROWSER = "file browser"
+    SHARES_FILE_BROWSER = "share's file browser"
+    DATASET_ARCHIVE_BROWSER = "dataset archive browser"
+    ARCHIVE_RECALL_BROWSER = "archive recall browser"
+
+
 type BrowserColumn = Literal[
-      WhichBrowser.FILE_BROWSER,
-      WhichBrowser.ARCHIVE_BROWSER,
-      WhichBrowser.DATASET_BROWSER,
+    WhichBrowser.FILE_BROWSER,
+    WhichBrowser.ARCHIVE_BROWSER,
+    WhichBrowser.DATASET_BROWSER,
 ]
- 
+
 type ColumnTable = BrowserColumn | Literal["transfers"]
+
 
 @dataclass(frozen=True)
 class ColumnContext:
     browser_id: str
     column_view: ColumnTable
-    
+
     @classmethod
     def transfers(cls, browser_id: str) -> Self:
         return cls(browser_id=browser_id, column_view="transfers")
-    
+
     @classmethod
-    def browser(cls, browser_id: str, which_browser: BrowserColumn):
+    def browser(cls, browser_id: str, which_browser: BrowserColumn) -> Self:
         return cls(browser_id=browser_id, column_view=which_browser)
+
 
 type TmpMemory = defaultdict[str, dict[str, Any]]
 type VisibleColumns = dict[ColumnContext, set[str]]
