@@ -27,12 +27,11 @@ from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe,
 )
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.type_definitions import TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    WhichBrowser,
     parse_elements_sequence,
     parse_seq,
     transform,

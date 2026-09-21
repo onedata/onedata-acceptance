@@ -17,11 +17,16 @@ from tests.gui.steps.oneprovider.browser import (
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.steps.oneprovider.transfers import get_transfers
-from tests.gui.type_definitions import Clipboard, ColumnContext, TmpMemory, VisibleColumns
+from tests.gui.type_definitions import (
+    Clipboard,
+    ColumnContext,
+    TmpMemory,
+    VisibleColumns,
+    WhichBrowser,
+)
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    WhichBrowser,
     parse_elements_sequence,
     sort_json_from_string,
     transform,
