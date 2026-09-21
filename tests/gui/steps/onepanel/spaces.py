@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 import time
 from collections.abc import Callable
+from contextlib import suppress
 from subprocess import CalledProcessError
 from typing import Any
 
@@ -51,6 +52,7 @@ from tests.gui.utils.onepanel.spaces import (
 )
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.http_exceptions import HTTPInternalServerError
 from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
 
@@ -62,14 +64,18 @@ def register_revoke_space_support_finalizer(
     onepanel_credentials: User,
     space_id: str,
 ) -> None:
-    request.addfinalizer(
-        lambda: revoke_space_support_using_rest(
-            hosts[provider]["hostname"],
-            onepanel_credentials.username,
-            onepanel_credentials.password,
-            space_id,
-        )
-    )
+    def revoke_space_support() -> None:
+        # TODO VFS-13774: Suppress HTTPNotFound instead once Onepanel
+        # returns 404 for revoked support of a nonexistent space.
+        with suppress(HTTPInternalServerError):
+            revoke_space_support_using_rest(
+                hosts[provider]["hostname"],
+                onepanel_credentials.username,
+                onepanel_credentials.password,
+                space_id,
+            )
+
+    request.addfinalizer(revoke_space_support)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
