@@ -88,6 +88,7 @@ def assert_first_transfer(
     transfer_state: TransferState,
 ) -> None:
     transfer_id = 0
+    select_transfer_state_tab(selenium, browser_id, transfer_state)
     assert_transfer(
         transfer_id,
         yaml_config,
