@@ -62,20 +62,6 @@ def select_transfer_state_tab(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_transfer_name(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    transfer_id: str | int,
-    transfer_state: TransferState,
-    expected_name: str,
-) -> None:
-    transfer = get_transfer_record(selenium, browser_id, transfer_id, transfer_state)
-    assert transfer.name == expected_name, (
-        f'Transfer "{transfer_id}" is named "{transfer.name}" instead of "{expected_name}"'
-    )
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_transfer_item_type(
     selenium: SeleniumDrivers,
     browser_id: str,

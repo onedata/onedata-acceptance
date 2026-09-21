@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections.abc import Mapping
 
+import yaml
 from _pytest._py.path import LocalPath
 
 from tests.gui.meta_steps.oneprovider.common import (
@@ -180,11 +181,14 @@ def assert_details_of_recent_transfer_op(
         assert_recent_transfer_details_rest(user, users, host, hosts, space, spaces, config)
     elif client.lower() == "web gui":
         open_transfers_page(selenium, user, host, space, hosts)
+
+        yaml_config = yaml.load(config, yaml.Loader)
+        yaml_config["item type"] = item_type
+
         assert_first_transfer(
             selenium,
             user,
             config,
-            item_type,
             transfer_state=TransferState.ENDED,
             visible_columns=visible_columns,
         )

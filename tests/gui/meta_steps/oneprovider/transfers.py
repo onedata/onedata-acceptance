@@ -29,7 +29,6 @@ from tests.gui.steps.oneprovider.data_tab import (
 from tests.gui.steps.oneprovider.transfers import (
     assert_transfer_column_value,
     assert_transfer_item_type,
-    assert_transfer_name,
     assert_transfer_status,
     click_link_in_data_distribution_panel,
     get_transfer_column_value,
@@ -47,6 +46,7 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
 )
 from tests.gui.utils.oneprovider.transfers import TransferItemType
+from tests.gui.utils.text import transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -81,17 +81,14 @@ def assert_transfers(
 def assert_first_transfer(
     selenium: SeleniumDrivers,
     browser_id: str,
-    description: str,
-    item_type: str,
+    yaml_config: Any,
     transfer_state: TransferState,
     visible_columns: VisibleColumns,
 ) -> None:
-    parsed_desc = yaml.load(description, yaml.Loader)
-    parsed_desc["item type"] = item_type
-
+    transfer_id = 0
     assert_transfer(
-        0,
-        parsed_desc,
+        transfer_id,
+        yaml_config,
         transfer_state,
         selenium,
         browser_id,
@@ -107,13 +104,12 @@ def assert_transfer_column(
     column_name: str,
     expected: Any,
 ) -> None:
-    column = column_name.replace(" & ", "_and_").replace(" ", "_")
     actual = get_transfer_column_value(
         selenium,
         browser_id,
         transfer_id,
         transfer_state,
-        column,
+        column_name,
     )
     assert_transfer_column_value(column_name, actual, expected, transfer_state)
 
@@ -129,15 +125,10 @@ def assert_transfer(
     select_transfer_state_tab(selenium, browser_id, transfer_state)
 
     for key, configured_expected in desc.items():
-        if key == "name":
-            assert_transfer_name(
-                selenium,
-                browser_id,
-                transfer_id,
-                transfer_state,
-                configured_expected,
-            )
-        elif key == "item type":
+        # to handle case with 'type & destination'
+        key = transform(key.replace(" & ", "_and_"))
+        
+        if key == "item_type":
             assert_transfer_item_type(
                 selenium,
                 browser_id,
