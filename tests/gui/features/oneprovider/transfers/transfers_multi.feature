@@ -44,9 +44,9 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
     Then user of browser1 sees files in ended transfers:
             large_file.txt:
-                item type: file
+                item_type: file
                 replicated: 50 MiB
-                type & destination: replication
+                type_&_destination: replication
                 status: completed
 
     # Check transfer chart
@@ -87,9 +87,9 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
     Then user of browser1 sees files in ended transfers:
             dir1:
-                item type: directory
+                item_type: directory
                 replicated: 50 MiB
-                type & destination: replication
+                type_&_destination: replication
                 status: completed
 
     # Check transfer chart
@@ -126,9 +126,9 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
     Then user of browser1 sees files in ended transfers:
             large_file.txt:
-                item type: file
+                item_type: file
                 replicated: 50 MiB
-                type & destination: migration
+                type_&_destination: migration
                 status: completed
 
     # Check transfer chart
@@ -170,9 +170,9 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 waits until "oneprovider-1" transfers complete for "space1" space
     Then user of browser1 sees files in ended transfers:
             dir1:
-                item type: directory
+                item_type: directory
                 replicated: 50 MiB
-                type & destination: migration
+                type_&_destination: migration
                 status: completed
 
     # Check transfer chart

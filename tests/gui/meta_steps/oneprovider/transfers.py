@@ -48,7 +48,6 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
 )
 from tests.gui.utils.oneprovider.transfers import TransferItemType
-from tests.gui.utils.text import transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -116,39 +115,37 @@ def assert_transfer_column(
 
 def assert_transfer(
     transfer_id: str | int,
-    desc: dict[str, Any],
+    description: dict[str, Any],
     transfer_state: TransferState,
     selenium: SeleniumDrivers,
     browser_id: str,
 ) -> None:
-    for key, configured_expected in desc.items():
-        # to handle case with 'type & destination'
-        act_key = transform(key.replace(" & ", "_and_"))
-
-        if act_key in ALWAYS_VISIBLE_TRANSFER_COLUMNS:
-            if act_key == "item_type":
+    for column, expected_value in description.items():
+        actual_column = column.replace("&", "and") if column == "type_&_destination" else column
+        if actual_column in ALWAYS_VISIBLE_TRANSFER_COLUMNS:
+            if actual_column == "item_type":
                 assert_transfer_item_type(
                     selenium,
                     browser_id,
                     transfer_id,
                     transfer_state,
-                    TransferItemType(configured_expected),
+                    TransferItemType(expected_value),
                 )
-            elif act_key == "status":
+            elif actual_column == "status":
                 assert_transfer_status(
                     selenium,
                     browser_id,
                     transfer_id,
                     transfer_state,
-                    configured_expected,
+                    expected_value,
                 )
         else:
             assert_transfer_column(
                 selenium,
                 browser_id,
                 transfer_id,
-                key,
-                configured_expected,
+                actual_column,
+                expected_value,
             )
 
 

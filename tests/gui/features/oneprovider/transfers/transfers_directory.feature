@@ -51,9 +51,9 @@ Feature: Oneprovider transfers directories functionality
     Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
     And user of browser sees files in ended transfers:
             dir1:
-                item type: directory
+                item_type: directory
                 replicated: 50 MiB
-                type & destination: replication
+                type_&_destination: replication
                 status: completed
 
     # Check transfer chart
@@ -85,9 +85,9 @@ Feature: Oneprovider transfers directories functionality
     Then user of browser waits until "oneprovider-1" transfers complete for "smallSpace" space
     And user of browser sees files in ended transfers:
             dir1:
-                item type: directory
+                item_type: directory
                 replicated: 0 B
-                type & destination: migration
+                type_&_destination: migration
                 status: failed
 
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
@@ -115,9 +115,9 @@ Feature: Oneprovider transfers directories functionality
     Then user of browser waits until "oneprovider-1" transfers complete for "smallSpace" space
     And user of browser sees files in ended transfers:
             dir1:
-                item type: directory
+                item_type: directory
                 replicated: 0 B
-                type & destination: replication
+                type_&_destination: replication
                 status: failed
 
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
@@ -169,9 +169,9 @@ Feature: Oneprovider transfers directories functionality
     Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
     And user of browser sees files in ended transfers:
             dir1:
-                item type: directory
+                item_type: directory
                 replicated: 0 B
-                type & destination: replication
+                type_&_destination: replication
                 status: completed
 
     And user of browser clicks "Files" of "space1" space in the sidebar
@@ -203,9 +203,9 @@ Feature: Oneprovider transfers directories functionality
     Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
     And user of browser sees files in ended transfers:
             dir1:
-                item type: directory
+                item_type: directory
                 replicated: 50 MiB
-                type & destination: migration
+                type_&_destination: migration
                 status: completed
 
     And user of browser clicks "Files" of "space1" space in the sidebar

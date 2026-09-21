@@ -187,7 +187,7 @@ def assert_details_of_recent_transfer_op(
         open_transfers_page(selenium, user, host, space, hosts)
 
         yaml_config = yaml.load(config, yaml.Loader)
-        yaml_config["item type"] = item_type
+        yaml_config["item_type"] = item_type
 
         select_columns_to_be_visible_in_transfers(
             selenium, user, ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS, visible_columns

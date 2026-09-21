@@ -55,9 +55,9 @@ Feature: Oneprovider transfers files functionality
     And user of browser waits for all transfers to finish
     And user of browser sees files in ended transfers:
             large_file.txt:
-                item type: file
+                item_type: file
                 replicated: 50 MiB
-                type & destination: replication
+                type_&_destination: replication
                 status: completed
 
     # Check transfer chart
@@ -122,9 +122,9 @@ Feature: Oneprovider transfers files functionality
     And user of browser waits for all transfers to finish
     And user of browser sees files in ended transfers:
             large_file.txt:
-                item type: file
+                item_type: file
                 replicated: 50 MiB
-                type & destination: migration
+                type_&_destination: migration
                 status: completed
 
     # Check transfer chart
@@ -199,19 +199,19 @@ Feature: Oneprovider transfers files functionality
     And user of browser waits for all transfers to finish
     And user of browser sees files in ended transfers:
             large_file.txt:
-                item type: file
+                item_type: file
                 replicated: 50 MiB
-                type & destination: replication
+                type_&_destination: replication
                 status: completed
             file1.txt:
-                item type: file
+                item_type: file
                 replicated: 5 MiB
-                type & destination: replication
+                type_&_destination: replication
                 status: completed
             file2.txt:
-                item type: file
+                item_type: file
                 replicated: 5 MiB
-                type & destination: replication
+                type_&_destination: replication
                 status: completed
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page

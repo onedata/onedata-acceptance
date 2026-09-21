@@ -34,8 +34,8 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
-ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS = ["replicated", "type & destination"]
-ALWAYS_VISIBLE_TRANSFER_COLUMNS = ["item type", "status"]
+ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS = ["replicated", "type_&_destination"]
+ALWAYS_VISIBLE_TRANSFER_COLUMNS = ["item_type", "status"]
 
 
 def set_column_visibility_in_configure_columns_menu(
@@ -63,6 +63,7 @@ def select_columns_to_be_visible_in_transfers(
     columns: list[str],
     visible_columns: VisibleColumns,
 ) -> None:
+    # this function enables required columns and disables the rest
     columns = transform_columns(columns)
     driver = selenium[browser_id]
 
