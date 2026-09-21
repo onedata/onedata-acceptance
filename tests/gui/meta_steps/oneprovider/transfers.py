@@ -12,6 +12,8 @@ from typing import Any
 import yaml
 
 from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
+    ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS,
+    ALWAYS_VISIBLE_TRANSFER_COLUMNS,
     select_columns_to_be_visible_in_transfers,
 )
 from tests.gui.meta_steps.oneprovider.common import replicate_files_to_providers
@@ -66,7 +68,10 @@ def assert_transfers(
     visible_columns: VisibleColumns,
 ) -> None:
     parsed_desc = yaml.load(descriptions, yaml.Loader)
-
+    select_transfer_state_tab(selenium, browser_id, transfer_state)
+    select_columns_to_be_visible_in_transfers(
+        selenium, browser_id, ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS, visible_columns
+    )
     for name, description in parsed_desc.items():
         assert_transfer(
             name,
@@ -74,7 +79,6 @@ def assert_transfers(
             transfer_state,
             selenium,
             browser_id,
-            visible_columns,
         )
 
 
@@ -83,7 +87,6 @@ def assert_first_transfer(
     browser_id: str,
     yaml_config: Any,
     transfer_state: TransferState,
-    visible_columns: VisibleColumns,
 ) -> None:
     transfer_id = 0
     assert_transfer(
@@ -92,7 +95,6 @@ def assert_first_transfer(
         transfer_state,
         selenium,
         browser_id,
-        visible_columns,
     )
 
 
@@ -100,7 +102,6 @@ def assert_transfer_column(
     selenium: SeleniumDrivers,
     browser_id: str,
     transfer_id: str | int,
-    transfer_state: TransferState,
     column_name: str,
     expected: Any,
 ) -> None:
@@ -108,10 +109,9 @@ def assert_transfer_column(
         selenium,
         browser_id,
         transfer_id,
-        transfer_state,
         column_name,
     )
-    assert_transfer_column_value(column_name, actual, expected, transfer_state)
+    assert_transfer_column_value(column_name, actual, expected)
 
 
 def assert_transfer(
@@ -120,42 +120,33 @@ def assert_transfer(
     transfer_state: TransferState,
     selenium: SeleniumDrivers,
     browser_id: str,
-    visible_columns: VisibleColumns,
 ) -> None:
-    select_transfer_state_tab(selenium, browser_id, transfer_state)
-
     for key, configured_expected in desc.items():
         # to handle case with 'type & destination'
-        key = transform(key.replace(" & ", "_and_"))
-        
-        if key == "item_type":
-            assert_transfer_item_type(
-                selenium,
-                browser_id,
-                transfer_id,
-                transfer_state,
-                TransferItemType(configured_expected),
-            )
-        elif key == "status":
-            assert_transfer_status(
-                selenium,
-                browser_id,
-                transfer_id,
-                transfer_state,
-                configured_expected,
-            )
+        act_key = transform(key.replace(" & ", "_and_"))
+
+        if act_key in ALWAYS_VISIBLE_TRANSFER_COLUMNS:
+            if act_key == "item_type":
+                assert_transfer_item_type(
+                    selenium,
+                    browser_id,
+                    transfer_id,
+                    transfer_state,
+                    TransferItemType(configured_expected),
+                )
+            elif act_key == "status":
+                assert_transfer_status(
+                    selenium,
+                    browser_id,
+                    transfer_id,
+                    transfer_state,
+                    configured_expected,
+                )
         else:
-            select_columns_to_be_visible_in_transfers(
-                selenium,
-                browser_id,
-                [key],
-                visible_columns,
-            )
             assert_transfer_column(
                 selenium,
                 browser_id,
                 transfer_id,
-                transfer_state,
                 key,
                 configured_expected,
             )

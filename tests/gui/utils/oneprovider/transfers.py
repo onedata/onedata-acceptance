@@ -24,6 +24,7 @@ from tests.gui.utils.core.web_objects import (
     PageObjectNotFoundError,
     PageObjectsSequence,
 )
+from tests.gui.utils.generic import TransferState
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 
 TRANSFER_STATUS_LIST = [
@@ -153,28 +154,31 @@ class _TransfersTab(PageObject):
 
     @property
     def ongoing(self) -> PageObjectsSequence:
-        self["ongoing"].click()
+        self[TransferState.ONGOING].click()
         return self._ongoing_list
 
     @property
     def ended(self) -> PageObjectsSequence:
-        self["ended"].click()
+        self[TransferState.ENDED].click()
         return self._ended_list
 
     @property
     def waiting(self) -> PageObjectsSequence:
-        self["waiting"].click()
+        self[TransferState.WAITING].click()
         return self._waiting_list
 
     @property
     def certain_file(self) -> PageObjectsSequence:
         return self._transfers_list_for_certain_file
 
-    def __getitem__(self, name: str) -> TabHeader:
+    def __getitem__(self, state: TransferState) -> TabHeader:
         for tab in self.tabs:
-            if name in tab.name.lower():
+            if state.value in tab.name.lower():
                 return tab
-        raise PageObjectNotFoundError(f"no tab named {name} in transfer tab")
+        raise PageObjectNotFoundError(f"no tab named {state.value} in transfer tab")
+
+    def get_active_tab(self) -> TransferState:
+        return TransferState.WAITING
 
 
 TransfersTab = partial(WebItem, cls=_TransfersTab)

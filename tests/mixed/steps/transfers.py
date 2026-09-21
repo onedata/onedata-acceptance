@@ -9,6 +9,10 @@ from collections.abc import Mapping
 import yaml
 from _pytest._py.path import LocalPath
 
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
+    ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS,
+    select_columns_to_be_visible_in_transfers,
+)
 from tests.gui.meta_steps.oneprovider.common import (
     migrate_file_to_provider,
     replicate_files_to_providers,
@@ -185,12 +189,14 @@ def assert_details_of_recent_transfer_op(
         yaml_config = yaml.load(config, yaml.Loader)
         yaml_config["item type"] = item_type
 
+        select_columns_to_be_visible_in_transfers(
+            selenium, user, ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS, visible_columns
+        )
         assert_first_transfer(
             selenium,
             user,
-            config,
+            yaml_config,
             transfer_state=TransferState.ENDED,
-            visible_columns=visible_columns,
         )
     else:
         raise NoSuchClientException(f"Client {client} not found")
