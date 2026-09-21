@@ -35,7 +35,7 @@ Feature: Cancel transfer test
     And user of browser waits for all transfers to finish
     And user of browser sees files in ended transfers:
             "0":
-                item_type: file
+                item type: file
                 replicated: < 9.3 GB
                 type & destination: replication
                 status: cancelled
@@ -44,7 +44,7 @@ Feature: Cancel transfer test
     And user of browser waits for all transfers to finish
     And user of browser sees files in ended transfers:
             "0":
-                item_type: file
+                item type: file
                 replicated: <= 9.3 GB
                 type & destination: replication
                 status: completed

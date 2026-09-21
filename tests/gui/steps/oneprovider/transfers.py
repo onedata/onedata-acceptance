@@ -41,24 +41,49 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _get_transfer_record(
+def get_transfer_record(
     selenium: SeleniumDrivers,
     browser_id: str,
-    transfer_name: str,
-    state: TransferState,
+    transfer_id: str | int,
+    transfer_state: TransferState,
 ) -> TransferRecord:
     transfers = OPLoggedIn(selenium[browser_id]).transfers
-    return getattr(transfers, state.value)[transfer_name]
+    return getattr(transfers, transfer_state.value)[transfer_id]
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_transfer_state_tab(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    transfer_state: TransferState,
+) -> None:
+    transfers = OPLoggedIn(selenium[browser_id]).transfers
+    transfers[transfer_state.value].click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_transfer_name(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    transfer_id: str | int,
+    transfer_state: TransferState,
+    expected_name: str,
+) -> None:
+    transfer = get_transfer_record(selenium, browser_id, transfer_id, transfer_state)
+    assert transfer.name == expected_name, (
+        f'Transfer "{transfer_id}" is named "{transfer.name}" instead of "{expected_name}"'
+    )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_transfer_item_type(
     selenium: SeleniumDrivers,
     browser_id: str,
-    transfer_name: str,
-    state: TransferState,
+    transfer_id: str | int,
+    transfer_state: TransferState,
     expected_item_type: TransferItemType,
 ) -> None:
-    transfer = _get_transfer_record(selenium, browser_id, transfer_name, state)
+    transfer = get_transfer_record(selenium, browser_id, transfer_id, transfer_state)
     match expected_item_type:
         case TransferItemType.FILE:
             is_expected_item_type = transfer.is_file()
@@ -66,19 +91,19 @@ def assert_transfer_item_type(
             is_expected_item_type = transfer.is_directory()
 
     assert is_expected_item_type, (
-        f"Transferred item is not {expected_item_type.value} in {state.value}"
+        f"Transferred item is not {expected_item_type.value} in {transfer_state.value}"
     )
 
 
 def assert_transfer_status(
     selenium: SeleniumDrivers,
     browser_id: str,
-    transfer_name: str,
-    state: TransferState,
+    transfer_id: str | int,
+    transfer_state: TransferState,
     expected_status: str,
 ) -> None:
     def has_expected_status(_: WebDriver) -> bool:
-        transfer = _get_transfer_record(selenium, browser_id, transfer_name, state)
+        transfer = get_transfer_record(selenium, browser_id, transfer_id, transfer_state)
         return transfer.status == expected_status
 
     WebDriverWait(
@@ -93,7 +118,8 @@ def assert_transfer_status(
     ).until(
         has_expected_status,
         message=(
-            f'Transfer "{transfer_name}" in {state.value} did not reach status "{expected_status}"'
+            f'Transfer "{transfer_id}" in {transfer_state.value} '
+            f'did not reach status "{expected_status}"'
         ),
     )
 
@@ -101,12 +127,12 @@ def assert_transfer_status(
 def get_transfer_column_value(
     selenium: SeleniumDrivers,
     browser_id: str,
-    transfer_name: str,
-    state: TransferState,
+    transfer_id: str | int,
+    transfer_state: TransferState,
     column: str,
 ) -> Any:
     def get_column_value(_: WebDriver) -> Any:
-        transfer = _get_transfer_record(selenium, browser_id, transfer_name, state)
+        transfer = get_transfer_record(selenium, browser_id, transfer_id, transfer_state)
         return getattr(transfer, column)
 
     return WebDriverWait(
@@ -122,7 +148,8 @@ def get_transfer_column_value(
     ).until(
         get_column_value,
         message=(
-            f'Column "{column}" for transfer "{transfer_name}" in {state.value} was not readable'
+            f'Column "{column}" for transfer "{transfer_id}" '
+            f"in {transfer_state.value} was not readable"
         ),
     )
 
@@ -131,12 +158,14 @@ def assert_transfer_column_value(
     column_name: str,
     actual: Any,
     expected: Any,
-    state: TransferState,
+    transfer_state: TransferState,
 ) -> None:
     if actual == str(expected):
         return
 
-    error_message = f"Transfer {column_name} is {actual} instead of {expected} in {state.value}"
+    error_message = (
+        f"Transfer {column_name} is {actual} instead of {expected} in {transfer_state.value}"
+    )
     if not isinstance(expected, str) or not expected.startswith("<"):
         raise AssertionError(error_message)
 

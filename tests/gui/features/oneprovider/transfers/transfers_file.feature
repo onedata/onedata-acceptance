@@ -55,7 +55,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser waits for all transfers to finish
     And user of browser sees files in ended transfers:
             large_file.txt:
-                item_type: file
+                item type: file
                 replicated: 50 MiB
                 type & destination: replication
                 status: completed
@@ -122,7 +122,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser waits for all transfers to finish
     And user of browser sees files in ended transfers:
             large_file.txt:
-                item_type: file
+                item type: file
                 replicated: 50 MiB
                 type & destination: migration
                 status: completed
@@ -199,17 +199,17 @@ Feature: Oneprovider transfers files functionality
     And user of browser waits for all transfers to finish
     And user of browser sees files in ended transfers:
             large_file.txt:
-                item_type: file
+                item type: file
                 replicated: 50 MiB
                 type & destination: replication
                 status: completed
             file1.txt:
-                item_type: file
+                item type: file
                 replicated: 5 MiB
                 type & destination: replication
                 status: completed
             file2.txt:
-                item_type: file
+                item type: file
                 replicated: 5 MiB
                 type & destination: replication
                 status: completed

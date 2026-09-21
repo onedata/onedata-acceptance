@@ -49,9 +49,9 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
-    And user of browser sees directories in ended transfers:
+    And user of browser sees files in ended transfers:
             dir1:
-                item_type: directory
+                item type: directory
                 replicated: 50 MiB
                 type & destination: replication
                 status: completed
@@ -83,9 +83,9 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "smallSpace" space
-    And user of browser sees directories in ended transfers:
+    And user of browser sees files in ended transfers:
             dir1:
-                item_type: directory
+                item type: directory
                 replicated: 0 B
                 type & destination: migration
                 status: failed
@@ -113,9 +113,9 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "smallSpace" space
-    And user of browser sees directories in ended transfers:
+    And user of browser sees files in ended transfers:
             dir1:
-                item_type: directory
+                item type: directory
                 replicated: 0 B
                 type & destination: replication
                 status: failed
@@ -167,9 +167,9 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
-    And user of browser sees directories in ended transfers:
+    And user of browser sees files in ended transfers:
             dir1:
-                item_type: directory
+                item type: directory
                 replicated: 0 B
                 type & destination: replication
                 status: completed
@@ -201,9 +201,9 @@ Feature: Oneprovider transfers directories functionality
 
     # Check that transfer appeared in transfer tab
     Then user of browser waits until "oneprovider-1" transfers complete for "space1" space
-    And user of browser sees directories in ended transfers:
+    And user of browser sees files in ended transfers:
             dir1:
-                item_type: directory
+                item type: directory
                 replicated: 50 MiB
                 type & destination: migration
                 status: completed

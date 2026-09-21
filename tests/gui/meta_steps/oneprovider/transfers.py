@@ -29,10 +29,11 @@ from tests.gui.steps.oneprovider.data_tab import (
 from tests.gui.steps.oneprovider.transfers import (
     assert_transfer_column_value,
     assert_transfer_item_type,
+    assert_transfer_name,
     assert_transfer_status,
     click_link_in_data_distribution_panel,
     get_transfer_column_value,
-    get_transfers,
+    select_transfer_state_tab,
     wait_for_ongoing_tranfers_to_finish,
     wait_for_transfers_page_to_load,
     wait_for_waiting_transfer_to_start,
@@ -45,26 +46,32 @@ from tests.gui.utils.generic import (
     TransferState,
     parse_elements_sequence,
 )
-from tests.gui.utils.oneprovider.transfers import TransferItemType, TransferRecordHistory
+from tests.gui.utils.oneprovider.transfers import TransferItemType
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees files"
+        r" in (?P<transfer_state>ended|waiting) transfers:\n(?P<descriptions>(.|\s)*)"
+    ),
+    converters={"transfer_state": TransferState},
+)
 def assert_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
     descriptions: str,
-    state: TransferState,
+    transfer_state: TransferState,
     visible_columns: VisibleColumns,
 ) -> None:
     parsed_desc = yaml.load(descriptions, yaml.Loader)
-    get_transfers(selenium[browser_id])
 
     for name, description in parsed_desc.items():
         assert_transfer(
             name,
             description,
-            state,
+            transfer_state,
             selenium,
             browser_id,
             visible_columns,
@@ -76,81 +83,18 @@ def assert_first_transfer(
     browser_id: str,
     description: str,
     item_type: str,
-    state: TransferState,
+    transfer_state: TransferState,
     visible_columns: VisibleColumns,
 ) -> None:
     parsed_desc = yaml.load(description, yaml.Loader)
-    name = parsed_desc.pop("name")
-    parsed_desc["item_type"] = item_type
+    parsed_desc["item type"] = item_type
 
-    transfers = get_transfers(selenium[browser_id])
-    transfer: TransferRecordHistory = getattr(transfers, state.value)[0]
-    assert transfer.name == name, "First transfer is not the expected one"
     assert_transfer(
-        name,
+        0,
         parsed_desc,
-        state,
+        transfer_state,
         selenium,
         browser_id,
-        visible_columns,
-    )
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees (?:files|directories)"
-        r" in ended transfers:\n(?P<descriptions>(.|\s)*)"
-    )
-)
-def assert_ended_transfers(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    descriptions: str,
-    visible_columns: VisibleColumns,
-) -> None:
-    assert_transfers(
-        selenium,
-        browser_id,
-        descriptions,
-        TransferState.ENDED,
-        visible_columns,
-    )
-
-
-def assert_ended_first_transfer(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    description: str,
-    item_type: str,
-    visible_columns: VisibleColumns,
-) -> None:
-    assert_first_transfer(
-        selenium,
-        browser_id,
-        description,
-        item_type,
-        TransferState.ENDED,
-        visible_columns,
-    )
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees (?:files|directories)"
-        r" in waiting transfers:\n(?P<descriptions>(.|\s)*)"
-    )
-)
-def assert_waiting_transfers(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    descriptions: str,
-    visible_columns: VisibleColumns,
-) -> None:
-    assert_transfers(
-        selenium,
-        browser_id,
-        descriptions,
-        TransferState.WAITING,
         visible_columns,
     )
 
@@ -158,92 +102,72 @@ def assert_waiting_transfers(
 def assert_transfer_column(
     selenium: SeleniumDrivers,
     browser_id: str,
-    transfer_name: str,
-    state: TransferState,
+    transfer_id: str | int,
+    transfer_state: TransferState,
     column_name: str,
     expected: Any,
-    visible_columns: VisibleColumns,
 ) -> None:
-    visible_column = column_name.replace(" ", "_")
     column = column_name.replace(" & ", "_and_").replace(" ", "_")
-    select_columns_to_be_visible_in_transfers(
-        selenium,
-        browser_id,
-        [visible_column],
-        visible_columns,
-    )
     actual = get_transfer_column_value(
         selenium,
         browser_id,
-        transfer_name,
-        state,
+        transfer_id,
+        transfer_state,
         column,
     )
-    assert_transfer_column_value(column_name, actual, expected, state)
+    assert_transfer_column_value(column_name, actual, expected, transfer_state)
 
 
 def assert_transfer(
-    transfer_name: str,
+    transfer_id: str | int,
     desc: dict[str, Any],
-    state: TransferState,
+    transfer_state: TransferState,
     selenium: SeleniumDrivers,
     browser_id: str,
     visible_columns: VisibleColumns,
 ) -> None:
-    expected_status: str | None = desc.get("status")
-    if expected_status is not None:
-        select_columns_to_be_visible_in_transfers(
-            selenium,
-            browser_id,
-            ["status"],
-            visible_columns,
-        )
-        assert_transfer_status(
-            selenium,
-            browser_id,
-            transfer_name,
-            state,
-            expected_status,
-        )
-
-    assert_transfer_item_type(
-        selenium,
-        browser_id,
-        transfer_name,
-        state,
-        TransferItemType(desc["item_type"]),
-    )
+    select_transfer_state_tab(selenium, browser_id, transfer_state)
 
     for key, configured_expected in desc.items():
-        if key in ["item_type", "status"]:
-            continue
-
-        assert_transfer_column(
-            selenium,
-            browser_id,
-            transfer_name,
-            state,
-            key,
-            configured_expected,
-            visible_columns,
-        )
-
-
-def assert_waiting_first_transfer(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    description: str,
-    item_type: str,
-    visible_columns: VisibleColumns,
-) -> None:
-    assert_first_transfer(
-        selenium,
-        browser_id,
-        description,
-        item_type,
-        TransferState.WAITING,
-        visible_columns,
-    )
+        if key == "name":
+            assert_transfer_name(
+                selenium,
+                browser_id,
+                transfer_id,
+                transfer_state,
+                configured_expected,
+            )
+        elif key == "item type":
+            assert_transfer_item_type(
+                selenium,
+                browser_id,
+                transfer_id,
+                transfer_state,
+                TransferItemType(configured_expected),
+            )
+        elif key == "status":
+            assert_transfer_status(
+                selenium,
+                browser_id,
+                transfer_id,
+                transfer_state,
+                configured_expected,
+            )
+        else:
+            select_columns_to_be_visible_in_transfers(
+                selenium,
+                browser_id,
+                [key],
+                visible_columns,
+            )
+            assert_transfer_column(
+                selenium,
+                browser_id,
+                transfer_id,
+                transfer_state,
+                key,
+                configured_expected,
+            )
 
 
 @wt(
