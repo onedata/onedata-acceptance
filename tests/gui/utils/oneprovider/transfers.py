@@ -138,6 +138,7 @@ class _TransfersTab(PageObject):
     providers_table = WebElement(".providers-table")
     spaces = WebItemsSequence("ul.spaces-list li", cls=SpaceRecord)
     tabs = WebItemsSequence(".providers-table .nav-tabs li", cls=TabHeader)
+    active_tab = WebItem(".providers-table .nav-tabs li.active", cls=TabHeader)
     _ended_list = WebItemsSequence(".col-ended-transfers tr.data-row", cls=TransferRecordHistory)
     _ongoing_list = WebItemsSequence(".col-ongoing-transfers tr.data-row", cls=TransferRecordActive)
     _waiting_list = WebItemsSequence(
@@ -178,7 +179,7 @@ class _TransfersTab(PageObject):
         raise PageObjectNotFoundError(f"no tab named {state.value} in transfer tab")
 
     def get_active_tab(self) -> TransferState:
-        return TransferState.WAITING
+        return TransferState(self.active_tab.name.lower())
 
 
 TransfersTab = partial(WebItem, cls=_TransfersTab)

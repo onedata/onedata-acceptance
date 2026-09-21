@@ -58,7 +58,7 @@ def select_transfer_state_tab(
     transfer_state: TransferState,
 ) -> None:
     transfers = OPLoggedIn(selenium[browser_id]).transfers
-    transfers[transfer_state.value].click()
+    transfers[transfer_state].click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
