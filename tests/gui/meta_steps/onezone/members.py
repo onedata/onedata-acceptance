@@ -7,12 +7,13 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.steps.common.notifies import dismiss_notifies_if_present
 from tests.gui.steps.modals.modal import (
     assert_element_text_in_modal,
     wt_wait_for_modal_to_appear,
 )
-from tests.gui.steps.onezone.groups import go_to_group_subpage
+from tests.gui.steps.onezone.groups import open_group_subpage
 from tests.gui.steps.onezone.members import (
     _change_to_tab_name,
     _find_members_page,
@@ -29,7 +30,7 @@ from tests.gui.steps.onezone.members import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     MembersParentType,
@@ -59,10 +60,7 @@ def remove_member_from_parent(
     driver = selenium[browser_id]
     if where != "cluster":
         page_name: PageName = _change_to_tab_name(where)
-        oz_page = OZLoggedIn(selenium[browser_id])
-        page_cls = OZLoggedIn.get_page_class(page_name)
-        oz_page.open_panel(page_cls)
-        main_page = getattr(oz_page, page_name)
+        main_page = get_onezone_subpage(driver, page_name)
         list_name = f"{where}s_list"
         getattr(main_page, list_name)[name].click()
         getattr(main_page, list_name)[name].members()
@@ -201,7 +199,7 @@ def assert_cannot_view_group_membership(
     selenium: SeleniumDrivers, browser_ids: list[str], group: str
 ) -> None:
     for browser_id in browser_ids:
-        go_to_group_subpage(selenium, browser_id, group, "members")
+        open_group_subpage(selenium, browser_id, group, "members")
 
         expected_message = "Insufficient privileges to access this resource."
         assert_membership_access_denied_message_and_bulk_edit_button(
@@ -224,7 +222,7 @@ def choose_member_and_set_privileges_on_groups_subpage(
     member_type: str,
     config: str,
 ) -> None:
-    go_to_group_subpage(selenium, browser_id, group_name, "members")
+    open_group_subpage(selenium, browser_id, group_name, "members")
     click_element_in_members_list(selenium, browser_id, member_name, "group", f"{member_type}s")
     see_privileges_for_member(selenium, browser_id, "group", member_type, member_name)
     click_member_checkbox(selenium, browser_id, member_name, f"{member_type}s")
@@ -249,7 +247,7 @@ def choose_member_and_assert_privileges_on_groups_subpage(
     option: str,
     config: str,
 ) -> None:
-    go_to_group_subpage(selenium, browser_id, group_name, "members")
+    open_group_subpage(selenium, browser_id, group_name, "members")
     click_element_in_members_list(selenium, browser_id, member_name, "group", f"{member_type}s")
     assert_privileges_in_members_subpage(
         selenium, browser_id, member_name, member_type, "group", config, option

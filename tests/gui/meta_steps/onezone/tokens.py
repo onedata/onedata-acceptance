@@ -15,6 +15,7 @@ from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
 from tests.gui.steps.common.common import (
+    get_onezone_subpage,
     wait_for_error_modal_to_disappear,
     wait_for_sliding_panel_to_stop_moving,
     wait_till_error_modal_disappear,
@@ -70,7 +71,6 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
-from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -878,9 +878,7 @@ def remove_all_tokens(selenium: SeleniumDrivers, browser_id: str) -> None:
     modal = "Remove token"
 
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(TokensPage)
-    tokens = oz_page.tokens.sidebar.tokens
+    tokens = get_onezone_subpage(driver, "tokens").sidebar.tokens
     if len(tokens):
         tokens[0].click()
 

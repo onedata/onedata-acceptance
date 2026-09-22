@@ -32,7 +32,7 @@ from tests.gui.steps.onepanel.spaces import (
 from tests.gui.steps.onezone.documentation import (
     choose_rest_api_command_from_dropdown,
 )
-from tests.gui.steps.onezone.groups import go_to_group_subpage
+from tests.gui.steps.onezone.groups import open_group_subpage
 from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal,
 )
@@ -476,7 +476,7 @@ def add_group_to_space_or_group(
             selenium, browser_id, where_name, option_in_function
         )
     elif where == "group":
-        go_to_group_subpage(
+        open_group_subpage(
             selenium,
             browser_id,
             where_name,

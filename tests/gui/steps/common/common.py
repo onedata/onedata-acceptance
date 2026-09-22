@@ -8,7 +8,7 @@ import re
 import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
-from typing import Any
+from typing import Any, Literal, overload
 
 from selenium.common.exceptions import (
     StaleElementReferenceException,
@@ -45,11 +45,19 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.gui.utils.oneprovider.browser import Browser
+from tests.gui.utils.onezone.automation_page import AutomationPage
+from tests.gui.utils.onezone.clusters_page import ClustersPage
+from tests.gui.utils.onezone.data_page import DataPage
+from tests.gui.utils.onezone.discovery_page import DiscoveryPage
 from tests.gui.utils.onezone.generic_page import (
     ListPage,
     SidebarPanelPage,
     get_visible_elements_list,
 )
+from tests.gui.utils.onezone.groups.groups_page import GroupsPage
+from tests.gui.utils.onezone.providers_page import ProvidersPage
+from tests.gui.utils.onezone.shares_page import SharesPage
+from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -375,6 +383,44 @@ def parse_size(size: str) -> float:
     value = float(match.group("value"))
     unit = match.group("unit")
     return value * 1024 ** (units.index(unit))
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["data"]) -> DataPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["shares"]) -> SharesPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["providers"]) -> ProvidersPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["groups"]) -> GroupsPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["tokens"]) -> TokensPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["discovery"]) -> DiscoveryPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["automation"]) -> AutomationPage: ...
+
+
+@overload
+def get_onezone_subpage(
+    driver: WebDriver, page_name: Literal["clusters", "cluster"]
+) -> ClustersPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: PageName) -> SidebarPanelPage: ...
 
 
 def get_onezone_subpage(driver: WebDriver, page_name: PageName) -> SidebarPanelPage:

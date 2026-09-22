@@ -29,9 +29,9 @@ from tests.gui.steps.onezone.groups import (
     click_on_confirmation_button_to_rename_group,
     click_on_option_in_group_menu_and_get_group,
     confirm_name_input_on_main_groups_page,
-    go_to_group_subpage,
     input_name_into_input_box_on_main_groups_page,
     input_new_group_name_into_rename_group_inpux_box,
+    open_group_subpage,
     press_enter_on_active_element,
 )
 from tests.gui.steps.onezone.members import (
@@ -61,7 +61,7 @@ def get_group_and_click_menu_button(
     selenium: SeleniumDrivers, browser_id: str, option: str, group_name: str
 ) -> Group:
     driver = selenium[browser_id]
-    go_to_group_subpage(selenium, browser_id, group_name, "main")
+    open_group_subpage(selenium, browser_id, group_name, "main")
     return click_on_option_in_group_menu_and_get_group(driver, group_name, option)
 
 
@@ -232,7 +232,7 @@ def _open_member_from_list(selenium: SeleniumDrivers, user: str, parent: str) ->
     list_type = "users"
     subpage = "members"
 
-    go_to_group_subpage(selenium, user, parent, subpage)
+    open_group_subpage(selenium, user, parent, subpage)
     click_element_in_members_list(selenium, user, user, where, list_type)
 
 
@@ -277,7 +277,7 @@ def _create_group_token(
     modal = "Invite using token"
     subpage = "members"
 
-    go_to_group_subpage(selenium, user, name, subpage)
+    open_group_subpage(selenium, user, name, subpage)
     click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
     is_notify_popup_visible_and_close_all_alert_popups(

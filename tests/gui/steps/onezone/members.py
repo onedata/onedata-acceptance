@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import contextlib
 import time
+from typing import Protocol, cast
 
 import yaml
 from selenium.common.exceptions import NoSuchElementException
@@ -17,6 +18,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
+from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import (
     assert_element_text,
@@ -27,7 +29,7 @@ from tests.gui.steps.onezone.automation.automation_basic import (
     click_on_option_of_inventory_on_left_sidebar_menu,
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
-from tests.gui.steps.onezone.groups import go_to_group_subpage
+from tests.gui.steps.onezone.groups import open_group_subpage
 from tests.gui.steps.onezone.harvesters.discovery import (
     click_on_option_of_harvester_on_left_sidebar_menu,
 )
@@ -50,7 +52,6 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
-from tests.gui.utils.onezone.groups.groups_page import GroupsPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -66,6 +67,10 @@ MENU_ELEM_TO_TAB_NAME: dict[MembersParentType, PageName] = {
 }
 
 
+class MembersPageContainer(Protocol):
+    members_page: MembersPage
+
+
 def _change_to_tab_name(element: MembersParentType) -> PageName:
     return MENU_ELEM_TO_TAB_NAME[element]
 
@@ -74,7 +79,7 @@ def _find_members_page(driver: WebDriver, where: MembersParentType) -> MembersPa
     tab_name = _change_to_tab_name(where)
     if tab_name == "clusters":
         return Onepanel(driver).content.members
-    tab = getattr(OZLoggedIn(driver), tab_name)
+    tab = cast(MembersPageContainer, get_onezone_subpage(driver, tab_name))
     return tab.members_page
 
 
@@ -377,9 +382,7 @@ def click_element_in_members_list(
 def click_generate_token_in_subgroups_list(
     selenium: SeleniumDrivers, browser_id: str, group: str, member: str
 ) -> None:
-    oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.open_panel(GroupsPage)
-    page = oz_page.groups
+    page = get_onezone_subpage(selenium[browser_id], "groups")
     page.groups_list[group].click()
     page.groups_list[group].members()
     getattr(page.main_page.members, member).generate_token()
@@ -451,9 +454,7 @@ def assert_element_is_groups_child(
     child: str,
     parent: str,
 ) -> None:
-    oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.open_panel(GroupsPage)
-    page = oz_page.groups
+    page = get_onezone_subpage(selenium[browser_id], "groups")
     page.groups_list[parent].click()
     page.groups_list[parent].members()
 
@@ -636,9 +637,7 @@ def copy_invitation_token(
     tmp_memory: TmpMemory,
 ) -> None:
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(GroupsPage)
-    page = oz_page.groups
+    page = get_onezone_subpage(driver, "groups")
     page.groups_list[group].click()
 
     getattr(page.main_page.members, who + "s").header.menu_button()
@@ -1100,7 +1099,7 @@ def assert_privilege_config_for_user(
     elif item_type == "inventory":
         click_on_option_of_inventory_on_left_sidebar_menu(selenium, browser_id, item_name, option2)
     elif item_type == "group":
-        go_to_group_subpage(selenium, browser_id, item_name, option2.lower())
+        open_group_subpage(selenium, browser_id, item_name, option2.lower())
     elif item_type == "cluster":
         click_on_record_in_clusters_menu(selenium, browser_id, item_name, hosts)
         wt_click_on_subitem_for_item(selenium, [browser_id], option, option2, item_name, hosts)

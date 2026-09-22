@@ -13,13 +13,13 @@ from tests.gui.constants import (
     WAIT_BACKEND,
     WAIT_FRONTEND,
 )
+from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups, PrivacyPolicy, TermsOfUse
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import transform
-from tests.gui.utils.onezone.clusters_page import ClustersPage, MenuItem
-from tests.gui.utils.onezone.data_page import DataPage
+from tests.gui.utils.onezone.clusters_page import MenuItem
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -29,9 +29,8 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_button_in_cluster_page(selenium: SeleniumDrivers, browser_id: str, button: str) -> None:
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ClustersPage)
-    getattr(oz_page.clusters, transform(button)).click()
+    clusters_page = get_onezone_subpage(driver, "clusters")
+    getattr(clusters_page, transform(button)).click()
 
 
 @wt(parsers.parse("user of {browser_id} copies registration token from clusters page"))
@@ -60,9 +59,8 @@ def assert_record_in_clusters_menu(
 
 def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence[MenuItem]:
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ClustersPage)
-    return oz_page.clusters.menu
+    clusters_page = get_onezone_subpage(driver, "clusters")
+    return clusters_page.menu
 
 
 def _get_cluster_record(
@@ -333,8 +331,8 @@ def go_to_agreement_page(
     oz_page = OZLoggedIn(driver)
 
     # TODO: VFS-13725 user cannot go to terms of use while on Clusters Sidebar Panel page
-    if oz_page.is_panel_active(ClustersPage.panel_name):
-        oz_page.open_panel(DataPage)
+    if oz_page.is_panel_active("clusters"):
+        get_onezone_subpage(driver, "data")
 
     oz_page.expand_panel_if_needed()
     oz_page.profile.profile.click()
