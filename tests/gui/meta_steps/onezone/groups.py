@@ -44,7 +44,7 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.generic import MembersParentType, parse_elements_sequence
 from tests.gui.utils.onezone.groups.groups_page import Group
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -228,7 +228,7 @@ def leave_groups_using_op_gui(selenium: SeleniumDrivers, user: str, group_list: 
 
 
 def _open_member_from_list(selenium: SeleniumDrivers, user: str, parent: str) -> None:
-    where = "group"
+    where: MembersParentType = "group"
     list_type = "users"
     subpage = "members"
 
@@ -239,7 +239,7 @@ def _open_member_from_list(selenium: SeleniumDrivers, user: str, parent: str) ->
 def assert_subgroups_using_op_gui(
     selenium: SeleniumDrivers, user: str, group_list: list[str], parent: str
 ) -> None:
-    where = "group"
+    where: MembersParentType = "group"
 
     _open_member_from_list(selenium, user, parent)
     for group in group_list:
@@ -251,7 +251,7 @@ def assert_subgroups_using_op_gui(
 def fail_to_see_subgroups_using_op_gui(
     selenium: SeleniumDrivers, user: str, group_list: list[str], parent: str
 ) -> None:
-    where = "group"
+    where: MembersParentType = "group"
 
     _open_member_from_list(selenium, user, parent)
     for group in group_list:
@@ -271,7 +271,7 @@ def _create_group_token(
     member: str,
 ) -> None:
     item_type = "token"
-    where = "group"
+    where: MembersParentType = "group"
     button = f"Invite {member} using token"
     member += "s"
     modal = "Invite using token"
@@ -384,6 +384,7 @@ def remove_subgroups_using_op_gui(
     parent: str,
 ) -> None:
     member_type = "group"
+    where: MembersParentType = "group"
 
     for child in group_list:
         remove_member_from_parent(
@@ -393,7 +394,7 @@ def remove_subgroups_using_op_gui(
             member_type,
             parent,
             tmp_memory,
-            member_type,
+            where,
         )
 
 

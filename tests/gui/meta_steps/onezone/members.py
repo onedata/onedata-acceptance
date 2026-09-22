@@ -6,8 +6,6 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import cast
-
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.notifies import dismiss_notifies_if_present
 from tests.gui.steps.modals.modal import (
@@ -34,9 +32,10 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
+    MembersParentType,
+    PageName,
     parse_elements_sequence,
 )
-from tests.gui.utils.onezone import PageName
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -55,13 +54,14 @@ def remove_member_from_parent(
     member_type: str,
     name: str,
     tmp_memory: TmpMemory,
-    where: str,
+    where: MembersParentType,
 ) -> None:
     driver = selenium[browser_id]
     if where != "cluster":
-        page_name = cast(PageName, _change_to_tab_name(where))
+        page_name: PageName = _change_to_tab_name(where)
         oz_page = OZLoggedIn(selenium[browser_id])
-        oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
+        page_cls = OZLoggedIn.get_page_class(page_name)
+        oz_page.open_panel(page_cls)
         main_page = getattr(oz_page, page_name)
         list_name = f"{where}s_list"
         getattr(main_page, list_name)[name].click()
@@ -77,9 +77,8 @@ def remove_member_from_parent(
     else:
         modal_name = "remove subgroup from "
 
-    if where == "automation":
-        where = "atm. inventory"
-    modal_name += where
+    parent_label = "atm. inventory" if where == "automation" else where
+    modal_name += parent_label
 
     Popups(driver).menu_popup_with_text.menu["Remove this member"]()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
@@ -99,7 +98,7 @@ def fail_to_set_privileges_using_op_gui(
     button = "Members"
     option = "fails to set"
     list_type = "users"
-    where = "space"
+    where: MembersParentType = "space"
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, button)
     click_element_in_members_list(selenium, user, member_name, where, list_type)
@@ -124,7 +123,7 @@ def assert_privileges_in_space_using_op_gui(
 ) -> None:
     option = "Members"
     list_type = "users"
-    where = "space"
+    where: MembersParentType = "space"
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
     click_element_in_members_list(selenium, user, member_name, where, list_type)
     assert_privileges_in_members_subpage(
@@ -143,7 +142,7 @@ def fail_to_create_invitation_in_space_using_op_gui(
 ) -> None:
     option = "Members"
     button = "Invite user using token"
-    where = "space"
+    where: MembersParentType = "space"
     member = "users"
     modal = "Invite using token"
     text = "This resource could not be loaded"
@@ -158,7 +157,7 @@ def assert_not_user_in_space_using_op_gui(
 ) -> None:
     option = "does not see"
     member_type = "user"
-    parent_type = "space"
+    parent_type: MembersParentType = "space"
     assert_member_is_in_parent_members_list(
         selenium,
         user,
@@ -176,7 +175,7 @@ def assert_group_in_space_using_op_gui(
     option1 = "Members"
     option2 = "sees"
     member_type = "group"
-    parent_type = "space"
+    parent_type: MembersParentType = "space"
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option1)
     assert_member_is_in_parent_members_list(
         selenium,

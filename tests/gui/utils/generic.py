@@ -629,6 +629,16 @@ PageName = Literal[
 ]
 
 
+MembersParentType = Literal[
+    "space",
+    "harvester",
+    "automation",
+    "inventory",
+    "cluster",
+    "group",
+]
+
+
 class HostPattern(Enum):
     PROVIDER_PANEL = r"oneprovider-[0-9]+ provider panel"
     ZONE_PANEL = r"(?:onezone zone panel|[Oo]nezone panel)"

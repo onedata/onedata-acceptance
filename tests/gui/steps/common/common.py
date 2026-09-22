@@ -39,12 +39,17 @@ from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.generic import (
     ListElement,
     ListItemMainField,
+    PageName,
     get_visibility_condition,
     get_web_elem_or_locator,
     transform,
 )
 from tests.gui.utils.oneprovider.browser import Browser
-from tests.gui.utils.onezone.generic_page import ListPage, get_visible_elements_list
+from tests.gui.utils.onezone.generic_page import (
+    ListPage,
+    SidebarPanelPage,
+    get_visible_elements_list,
+)
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -370,3 +375,9 @@ def parse_size(size: str) -> float:
     value = float(match.group("value"))
     unit = match.group("unit")
     return value * 1024 ** (units.index(unit))
+
+
+def get_onezone_subpage(driver: WebDriver, page_name: PageName) -> SidebarPanelPage:
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
+    return getattr(oz_page, page_name)
