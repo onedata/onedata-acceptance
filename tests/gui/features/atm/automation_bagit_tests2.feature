@@ -10,7 +10,7 @@ Feature: Bagit uploader tests
             providers:
                 - oneprovider-1:
                     storage: s3
-                    size: 10000000
+                    size: 100000000000
             storage:
                 defaults:
                     provider: oneprovider-1
@@ -367,7 +367,52 @@ Feature: Bagit uploader tests
     And user of browser clicks on inherited status tag for "mid-covid6" in file browser
     And user of browser sees Dataset status tag for "mid-covid6" in file browser
 
-    # TODO: VFS-11705 implement test for following archives after workflow fix
-    # bagit_archive_5gbfile.zip
-    # bagit_archive_fetch.zip
-    # bagit_archive_unpack_and_fetch.zip
+
+  Scenario Outline: User sees successful execution of uploaded "BagIt Uploader" workflow with <input_archive>
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload archive "automation/bagit_test_archives/<input_archive>" to current dir
+    And user of browser sees that item named "<input_archive>" has appeared in file browser
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "BagIt Uploader" workflow
+    And user of browser chooses "<input_archive>" file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
+    And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
+    And user of browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser waits for all workflows to start
+    And user of browser waits extended time for all workflows to finish
+    And user of browser clicks on first executed workflow
+
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
+
+    And user of browser sees that audit log in task "bagit-uploader-unpack-data" in 1st parallel box in lane "unpack" contains following entry:
+      timestamp: today
+      source: user
+      severity: info
+      content:
+        status: Successfully unpacked <unpacked_files> files.
+        archive: "<input_archive>"
+    And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
+      timestamp: today
+      source: user
+      severity: info
+      content:
+        status: Found  <fetched_files> files to be downloaded.
+        archive: "<input_archive>"
+
+    And user of browser sees that number of elements in the content of the "files-to-download" store details modal is <fetched_files>
+    And user of browser closes "Store details" modal
+    And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is <uploaded_files>
+    And user of browser closes "Store details" modal
+
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees Dataset status tag for "dir1" in file browser
+
+    Examples:
+      | input_archive                      | unpacked_files | fetched_files | uploaded_files |
+      | bagit_archive_fetch.zip            | 0              | 18            | 18             |
+      | bagit_archive_unpack_and_fetch.zip | 64             | 8             | 72             |
+#      | bagit_archive_3gb.zip              | 0              | 1             | 1              |

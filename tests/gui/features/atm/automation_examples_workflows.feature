@@ -10,7 +10,7 @@ Feature: Automation examples tests
             providers:
                 - oneprovider-1:
                     storage: s3
-                    size: 10000000
+                    size: 100000000000
             storage:
                 defaults:
                     provider: oneprovider-1
@@ -282,8 +282,53 @@ Feature: Automation examples tests
           - file1
         - fetch_xrootd.txt
 
-    # TODO: VFS-11705 implement test for following archives after workflow fix
-    # fetch_multiple_files.txt
+  Scenario: User sees desirable files after executing uploaded "download-files" workflow using multiple-file fetch file
+    When user of browser clicks on "Automation" in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
+
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/fetch_multiple_files.txt" to current dir
+    And user of browser sees that item named "fetch_multiple_files.txt" has appeared in file browser
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "download-files" workflow
+    And user of browser chooses "fetch_multiple_files.txt" file as initial value of "fetch-files" store for workflow in "Select files" modal
+    And user of browser chooses "dir1" file as initial value of "destination" store for workflow in "Select files" modal
+    And user of browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser waits for all workflows to start
+    And user of browser waits extended time for all workflows to finish
+    And user of browser clicks on first executed workflow
+
+    Then user of browser sees that status of "download-files" workflow is "Finished"
+    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
+        timestamp: today
+        source: user
+        severity: info
+        content:
+            status: Found  17 files to be downloaded.
+            fetchFileName: fetch_multiple_files.txt
+
+    And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 17
+    And user of browser closes "Store details" modal
+
+    And user of browser opens file browser for "space1" space
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that the file structure in file browser is as follow:
+        - dir1:
+          - images: 1
+          - packages: 16
+          - file1
+          - file2
+          - file3
+          - file4
+          - file5
+        - dir2:
+          - file1
+        - fetch_multiple_files.txt
 
 
   Scenario: User sees exception after execution of uploaded "download-files" workflow finishes when using incorrect fetch file
