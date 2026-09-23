@@ -26,7 +26,7 @@ from tests.gui.meta_steps.oneprovider.transfers import (
 )
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
 from tests.gui.steps.oneprovider.data_tab import upload_files_to_cwd_in_data_tab
-from tests.gui.type_definitions import TmpMemory, VisibleColumns
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import TransferState
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,
@@ -179,7 +179,6 @@ def assert_details_of_recent_transfer_op(
     space: str,
     config: str,
     selenium: SeleniumDrivers,
-    visible_columns: VisibleColumns,
 ) -> None:
     if client.lower() == "rest":
         assert_recent_transfer_details_rest(user, users, host, hosts, space, spaces, config)
@@ -190,7 +189,7 @@ def assert_details_of_recent_transfer_op(
         yaml_config["item_type"] = item_type
 
         select_columns_to_be_visible_in_transfers(
-            selenium, user, ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS, visible_columns
+            selenium, user, ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS
         )
         assert_first_transfer(
             selenium,
