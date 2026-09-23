@@ -16,7 +16,7 @@ from enum import Enum
 from functools import partial
 from itertools import islice
 from time import sleep
-from typing import Literal, TypeVar, cast, overload
+from typing import Literal, Protocol, TypeVar, cast, overload
 
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
@@ -48,6 +48,11 @@ from tests.type_definitions import JsonValue
 T = TypeVar("T")
 suppress = contextlib_suppress
 transform = text_utils.transform
+
+
+class VisibleElement(Protocol):
+    def is_displayed(self) -> bool: ...
+
 
 # RE_URL regexp is matched as shown below:
 #
@@ -303,21 +308,22 @@ def get_visibility_condition(
             raise TypeError(f"Unsupported element or locator: {unsupported!r}")
 
 
-def is_element_visible_using_getter(
-    driver: WebDriver, web_elem_getter: Callable[[WebDriver], SeleniumWebElement]
-) -> SeleniumWebElement | None:
+def is_element_visible_using_getter[VisibleElementT: VisibleElement](
+    driver: WebDriver,
+    web_elem_getter: Callable[[WebDriver], VisibleElementT],
+) -> VisibleElementT | None:
     try:
         web_elem = web_elem_getter(driver)
-        return web_elem if visibility_of(web_elem)(driver) else None
+        return web_elem if web_elem.is_displayed() else None
     except (NoSuchElementException, StaleElementReferenceException):
         return None
 
 
-def wait_for_visible_element_using_getter(
+def wait_for_visible_element_using_getter[VisibleElementT: VisibleElement](
     driver: WebDriver,
-    web_elem_getter: Callable[[WebDriver], SeleniumWebElement],
+    web_elem_getter: Callable[[WebDriver], VisibleElementT],
     timeout: float = WAIT_FRONTEND,
-) -> SeleniumWebElement:
+) -> VisibleElementT:
     # Wait until the getter returns a visible element.
 
     return WebDriverWait(driver, timeout=timeout).until(
@@ -325,9 +331,9 @@ def wait_for_visible_element_using_getter(
     )
 
 
-def wait_for_element_to_disappear_using_getter(
+def wait_for_element_to_disappear_using_getter[VisibleElementT: VisibleElement](
     driver: WebDriver,
-    web_elem_getter: Callable[[WebDriver], SeleniumWebElement],
+    web_elem_getter: Callable[[WebDriver], VisibleElementT],
     timeout: float = WAIT_FRONTEND,
 ) -> None:
     WebDriverWait(driver, timeout=timeout).until_not(
@@ -637,6 +643,37 @@ MembersParentType = Literal[
     "cluster",
     "group",
 ]
+
+
+type SidebarMemberParent = Literal[
+    "space",
+    "group",
+    "harvester",
+    "automation",
+    "inventory",
+]
+
+
+type MemberType = Literal["group", "user"]
+
+
+MENU_ELEM_TO_TAB_NAME: dict[MembersParentType, PageName] = {
+    "space": "data",
+    "harvester": "discovery",
+    "automation": "automation",
+    "inventory": "automation",
+    "cluster": "clusters",
+    "group": "groups",
+}
+
+
+PARENT_LIST_NAMES: dict[SidebarMemberParent, str] = {
+    "space": "spaces_list",
+    "group": "groups_list",
+    "harvester": "harvesters_list",
+    "automation": "automations_list",
+    "inventory": "automations_list",
+}
 
 
 class HostPattern(Enum):

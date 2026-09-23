@@ -21,7 +21,7 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.constants import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     click_close_button_and_wait_to_disappear,
 )
@@ -122,7 +122,7 @@ def is_notify_popup_visible_and_close_all_alert_popups(
 
 def dismiss_notifies_if_present(
     driver: WebDriver,
-    timeout: float,
+    timeout: float = WAIT_FRONTEND,
 ) -> None:
     seen_popups: set[CapturedPopup] = set()
 
