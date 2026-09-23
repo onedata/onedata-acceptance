@@ -49,7 +49,7 @@ from tests.gui.steps.rest.provider import GuiMessageType, modify_gui_setting_mes
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import MemberType, MembersParentType
+from tests.gui.utils.generic import MembersParentType, MemberType
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User

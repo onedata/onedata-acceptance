@@ -44,7 +44,7 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import MemberType, MembersParentType, parse_elements_sequence
+from tests.gui.utils.generic import MembersParentType, MemberType, parse_elements_sequence
 from tests.gui.utils.onezone.groups.groups_page import Group
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
