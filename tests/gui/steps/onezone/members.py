@@ -50,6 +50,7 @@ from tests.gui.utils.generic import (
     MENU_ELEM_TO_TAB_NAME,
     PARENT_LIST_NAMES,
     MembersParentType,
+    MemberType,
     PageName,
     SidebarMemberParent,
     parse_elements_sequence,
@@ -106,6 +107,18 @@ def open_members_page_for_parent(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_remove_member_option(driver: WebDriver) -> None:
     Popups(driver).menu_popup_with_text.menu["Remove this member"].click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_member_menu(
+    driver: WebDriver,
+    member_parent: MembersParentType,
+    member_type: MemberType,
+    member_name: str,
+) -> None:
+    members_page = find_members_page(driver, member_parent)
+    members_list = getattr(members_page, f"{member_type}s")
+    members_list.items[member_name].header.click_menu(driver)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

@@ -21,10 +21,10 @@ from tests.gui.steps.onezone.members import (
     change_to_tab_name,
     click_element_in_members_list,
     click_member_checkbox,
+    click_member_menu,
     click_on_bulk_edit,
     click_on_option_in_members_list_menu,
     click_remove_member_option,
-    find_members_page,
     open_members_page_for_parent,
     see_privileges_for_member,
     set_privileges_in_members_subpage_on_modal,
@@ -38,7 +38,6 @@ from tests.gui.utils.generic import (
     MemberType,
     parse_elements_sequence,
 )
-from tests.gui.utils.onezone.members_subpage import MembersList
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -64,21 +63,16 @@ def remove_member_from_parent(
     if member_parent != "cluster":
         page_name = change_to_tab_name(member_parent)
         main_page = get_onezone_subpage(driver, page_name)
-        members_page = open_members_page_for_parent(driver, main_page, member_parent, parent_name)
-    else:
-        members_page = find_members_page(driver, member_parent)
+        open_members_page_for_parent(driver, main_page, member_parent, parent_name)
 
-    members_list: MembersList
     if member_type == "group":
-        members_list = members_page.groups
         modal_name_prefix = (
             "remove group from " if member_parent != "group" else "remove subgroup from "
         )
     else:
-        members_list = members_page.users
         modal_name_prefix = "remove user from "
 
-    members_list.items[member_name].header.click_menu(driver)
+    click_member_menu(driver, member_parent, member_type, member_name)
     click_remove_member_option(driver)
 
     parent_label = "atm. inventory" if member_parent == "automation" else member_parent
