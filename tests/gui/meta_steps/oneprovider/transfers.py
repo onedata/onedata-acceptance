@@ -40,7 +40,7 @@ from tests.gui.steps.oneprovider.transfers import (
     wait_for_waiting_transfer_to_start,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.type_definitions import TmpMemory, VisibleColumns
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
@@ -64,12 +64,11 @@ def assert_transfers(
     browser_id: str,
     descriptions: str,
     transfer_state: TransferState,
-    visible_columns: VisibleColumns,
 ) -> None:
     parsed_desc = yaml.load(descriptions, yaml.Loader)
     select_transfer_state_tab(selenium, browser_id, transfer_state)
     select_columns_to_be_visible_in_transfers(
-        selenium, browser_id, ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS, visible_columns
+        selenium, browser_id, ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS
     )
     for name, description in parsed_desc.items():
         assert_transfer(

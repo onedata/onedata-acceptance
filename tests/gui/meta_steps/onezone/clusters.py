@@ -49,6 +49,7 @@ from tests.gui.steps.rest.provider import GuiMessageType, modify_gui_setting_mes
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.generic import MembersParentType, MemberType
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
@@ -87,7 +88,7 @@ def invite_user_to_cluster(
     option = "Clusters"
     sub_item = "Members"
     button = "Invite user using token"
-    where = option.lower()[:-1]
+    where: MembersParentType = "cluster"
     member = "users"
     modal = "Invite using token"
     item_type = "token"
@@ -130,7 +131,7 @@ def join_to_cluster(
 def change_privilege_config_in_cluster(
     selenium: SeleniumDrivers,
     browser_id: str,
-    where: str,
+    where: MembersParentType,
     user_name: str,
     hosts: Hosts,
     config: str,
@@ -168,7 +169,7 @@ def add_group_to_cluster(
     sub_item = "Add one of your groups"
     button_name = "Add"
     modal = "Add one of groups"
-    where = "cluster"
+    where: MembersParentType = "cluster"
     member = "groups"
     modal_name = "add one of your groups"
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
@@ -211,10 +212,10 @@ def no_member_in_parent(
     selenium: SeleniumDrivers,
     browser_id: str,
     member_name: str,
-    member_type: str,
+    member_type: MemberType,
     name: str,
     tmp_memory: TmpMemory,
-    where: str,
+    where: MembersParentType,
 ) -> None:
     with contextlib.suppress(
         ElementNotInteractableException, NoSuchElementException, PageObjectNotFoundError

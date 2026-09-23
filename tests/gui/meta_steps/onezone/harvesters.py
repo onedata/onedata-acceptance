@@ -63,7 +63,7 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.steps.rest.harvesters import remove_harvester_using_rest
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup, CreatedItemAlertPopup
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.generic import MembersParentType, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import User
@@ -257,8 +257,8 @@ def add_group_to_harvester(
 ) -> None:
     option = "Members"
     button = "Add one of your groups"
-    where = "group"
-    member = "harvester"
+    member_type = "group"
+    where: MembersParentType = "harvester"
     button_in_modal = "Add"
     modal = "Add one of groups"
     modal_name = "Add one of your groups"
@@ -268,8 +268,8 @@ def add_group_to_harvester(
         selenium,
         browser_id,
         button,
-        member,
-        where + "s",
+        where,
+        member_type + "s",
     )
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
@@ -316,24 +316,22 @@ def send_invitation_token(
     displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
-    where = "Discovery"
-    list_type = "harvester"
+    sidebar = "Discovery"
+    where: MembersParentType = "harvester"
     option = "Members"
     button = "Invite user using token"
     member = "users"
     modal = "Invite using token"
     item_type = "token"
 
-    click_on_option_in_the_sidebar(selenium, browser_id1, where)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id1, list_type + "s", harvester_name
-    )
+    click_on_option_in_the_sidebar(selenium, browser_id1, sidebar)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id1, where + "s", harvester_name)
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id1, harvester_name, option)
     click_on_option_in_members_list_menu(
         selenium,
         browser_id1,
         button,
-        list_type,
+        where,
         member,
     )
     copy_token_from_modal(selenium, browser_id1)
@@ -365,7 +363,7 @@ def change_privilege_config_in_harvester(
     harvester_name: str,
     option: str,
 ) -> None:
-    where = "harvester"
+    where: MembersParentType = "harvester"
     list_type = "user"
     menu_option = "Members"
 

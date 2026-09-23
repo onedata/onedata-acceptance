@@ -13,7 +13,10 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
+from tests.gui.steps.common.common import (
+    get_onezone_subpage,
+    wait_for_sliding_panel_to_stop_moving,
+)
 from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.type_definitions import TmpMemory
@@ -27,7 +30,6 @@ from tests.gui.utils.generic import (
     upload_lambda_path,
     upload_workflow_path,
 )
-from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.gui.utils.onezone.lambdas_subpage import Lambda
 from tests.gui.utils.onezone.workflows_subpage import Workflow, WorkflowVisualiser
 from tests.type_definitions import SeleniumDrivers
@@ -46,9 +48,8 @@ def click_create_automation_button_in_sidebar(selenium: SeleniumDrivers, browser
 
 
 def get_oz_workflow_visualizer(driver: WebDriver) -> WorkflowVisualiser:
-    page = OZLoggedIn(driver)
-    page.open_panel(AutomationPage)
-    return page.automation.workflows_page.workflow_visualiser
+    automation_page = get_onezone_subpage(driver, "automation")
+    return automation_page.workflows_page.workflow_visualiser
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into inventory name text field'))
@@ -84,9 +85,7 @@ def click_option_in_inventory_menu(
     selenium: SeleniumDrivers, browser_id: str, option: str, inventory: str
 ) -> None:
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(AutomationPage)
-    page = oz_page.automation
+    page = get_onezone_subpage(driver, "automation")
     page.automations_list[inventory].click()
     page.automations_list[inventory].menu()
     Popups(driver).menu_popup_with_text.menu[option]()
@@ -147,9 +146,7 @@ def go_to_inventory_subpage(
     try:
         page = tmp_memory[browser_id]["oz_page"]
     except KeyError:
-        oz_page = OZLoggedIn(selenium[browser_id])
-        oz_page.open_panel(AutomationPage)
-        page = oz_page.automation
+        page = get_onezone_subpage(selenium[browser_id], "automation")
         tmp_memory[browser_id]["oz_page"] = page
     page.automations_list[inventory].click()
     if subpage != "main":
