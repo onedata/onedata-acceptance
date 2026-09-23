@@ -635,7 +635,7 @@ PageName = Literal[
 ]
 
 
-MembersParentType = Literal[
+type MembersParentType = Literal[
     "space",
     "harvester",
     "automation",

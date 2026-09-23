@@ -766,7 +766,7 @@ Onepanel members:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_members KEYWORDS=test_user_fails_to_remove_user_without_remove_user_privileges COUNT=10 test_gui_pkg
+          - make SUITE=test_onepanel_members test_gui_pkg
 
 Onepanel two hosts deployment:
   <<: *acceptance-tests-in-chrome-job
