@@ -415,4 +415,4 @@ Feature: Bagit uploader tests
       | input_archive                      | unpacked_files | fetched_files | uploaded_files |
       | bagit_archive_fetch.zip            | 0              | 18            | 18             |
       | bagit_archive_unpack_and_fetch.zip | 64             | 8             | 72             |
-#      | bagit_archive_3gb.zip              | 0              | 1             | 1              |
+      | bagit_archive_3gb.zip              | 0              | 1             | 1              |
