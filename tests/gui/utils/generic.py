@@ -500,6 +500,11 @@ class OnedataService(Enum):
     ONES3 = "ones3"
 
 
+class OnedataServiceState(Enum):
+    STARTED = "true"
+    STOPPED = "false"
+
+
 class SpecialDir(Enum):
     ARCHIVE_DIR = "archive directory"
     DATASET_ARCHIVES_DIR = "dataset archives directory"

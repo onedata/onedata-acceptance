@@ -10,7 +10,7 @@ from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
 from tests.gui.constants import WAIT_BACKEND
-from tests.gui.utils.generic import OnedataService
+from tests.gui.utils.generic import OnedataService, OnedataServiceState
 from tests.type_definitions import Hosts, JsonObject
 from tests.utils.rest_utils import (
     get_panel_rest_path,
@@ -113,13 +113,13 @@ def assert_provider_service_nodes_statuses(
     assert expected_statuses == actual_statuses, error_message
 
 
-def start_stop_provider_service_node(
+def set_provider_service_node_state(
     hosts: Hosts,
     host: str,
     provider: str,
     onepanel_credentials: User,
     service: OnedataService,
-    start: bool = True,
+    state: OnedataServiceState,
 ) -> Response:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
@@ -128,8 +128,7 @@ def start_stop_provider_service_node(
     return http_patch(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", service.value, host)
-        + f"?started={'true' if start else 'false'}",
+        path=get_panel_rest_path("provider", service.value, host) + f"?started={state.value}",
         auth=(onepanel_username, onepanel_password),
     )
 
