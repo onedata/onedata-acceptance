@@ -39,7 +39,7 @@ from tests.gui.meta_steps.oneprovider.metadata import (
     set_metadata_in_op_gui,
 )
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
-from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
+from tests.gui.steps.oneprovider.data_tab import upload_files_to_cwd_in_data_tab
 from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.oneclient.data_basic import (
     assert_metadata_in_op_oneclient,
@@ -1449,7 +1449,7 @@ def upload_local_file_to_op(
     client_lower = client.lower()
     if client_lower == "web gui":
         go_to_filebrowser(selenium, user, tmp_memory, space)
-        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
+        upload_files_to_cwd_in_data_tab(selenium, user, [path], tmpdir)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 

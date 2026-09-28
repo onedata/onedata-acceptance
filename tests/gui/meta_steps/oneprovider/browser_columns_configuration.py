@@ -1,7 +1,7 @@
 """Meta steps for browser columns configuration"""
 
 __author__ = "Jakub Karczewski"
-__copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
@@ -16,8 +16,15 @@ from tests.gui.steps.oneprovider.browser import (
     get_column_names_from_configure_columns_menu,
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
-from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils import OPLoggedIn, Popups
+from tests.gui.steps.oneprovider.transfers import get_transfers
+from tests.gui.type_definitions import (
+    Clipboard,
+    ColumnContext,
+    TmpMemory,
+    VisibleColumns,
+    WhichBrowser,
+)
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
@@ -27,6 +34,9 @@ from tests.gui.utils.generic import (
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
+ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS = ["replicated", "type_&_destination"]
+ALWAYS_VISIBLE_TRANSFER_COLUMNS = ["item_type", "status"]
+
 
 def set_column_visibility_in_configure_columns_menu(
     driver: WebDriver, column_name: str, visible: bool
@@ -35,21 +45,68 @@ def set_column_visibility_in_configure_columns_menu(
     change_column_visibility(column, column_name, visible)
 
 
-def select_columns_to_be_visible_in_transfers(
-    selenium: SeleniumDrivers, browser_id: str, columns: list[str]
+def set_exact_columns_visible_in_configure_columns_menu(
+    driver: WebDriver, expected_columns: list[str]
 ) -> None:
-    columns = [column.lower().replace(" ", "_") for column in columns]
-    driver = selenium[browser_id]
-    transfer = OPLoggedIn(driver).transfers
-    click_configure_columns_button(transfer)
-    column_names = get_column_names_from_configure_columns_menu(driver)
-    for column_name in column_names:
-        parsed_column_name = column_name.lower().replace(" ", "_")
+    available_columns = transform_columns(get_column_names_from_configure_columns_menu(driver))
+    expected_columns = transform_columns(expected_columns)
+
+    for current_column in available_columns:
         set_column_visibility_in_configure_columns_menu(
-            driver, column_name, parsed_column_name in columns
+            driver, current_column, current_column in expected_columns
         )
-    # hide columns menu popup
-    click_configure_columns_button(transfer)
+
+
+def select_columns_to_be_visible_in_transfers(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    columns: list[str],
+    visible_columns: VisibleColumns,
+) -> None:
+    # this function enables required columns and disables the rest
+    columns = transform_columns(columns)
+    driver = selenium[browser_id]
+
+    visible_columns[ColumnContext.transfers(browser_id)] = set(columns)
+
+    transfers = get_transfers(driver)
+    click_configure_columns_button(transfers)
+    set_exact_columns_visible_in_configure_columns_menu(driver, columns)
+    click_configure_columns_button(transfers)
+
+
+@wt(
+    parsers.re(
+        rf"user of (?P<browser_id>.*) enables only "
+        rf"(?P<columns>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"columns in columns configuration popover in transfers table"
+    ),
+    converters={
+        "columns": parse_elements_sequence,
+    },
+)
+def wt_select_columns_to_be_visible_in_transfers(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    columns: list[str],
+    visible_columns: VisibleColumns,
+) -> None:
+    select_columns_to_be_visible_in_transfers(selenium, browser_id, columns, visible_columns)
+
+
+def select_initial_columns_to_be_visible_in_transfers(
+    selenium: SeleniumDrivers, browser_id: str, visible_columns: VisibleColumns
+) -> None:
+    select_columns_to_be_visible_in_transfers(
+        selenium,
+        browser_id,
+        ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS,
+        visible_columns,
+    )
+
+
+def transform_columns(columns: list[str]) -> list[str]:
+    return [transform(column) for column in columns]
 
 
 @wt(
@@ -60,28 +117,27 @@ def select_columns_to_be_visible_in_transfers(
         r"(?P<which_browser>file browser|archive browser|"
         r"dataset browser) table"
     ),
-    converters={
-        "columns": parse_elements_sequence,
-    },
+    converters={"columns": parse_elements_sequence, "which_browser": WhichBrowser},
 )
 def select_columns_to_be_visible_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
     columns: list[str],
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
+    visible_columns: VisibleColumns,
 ) -> None:
     # This function enables the selected columns and disables the rest.
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
+
+    visible_columns[ColumnContext.browser(browser_id, which_browser)] = set(
+        transform_columns(columns)
+    )
+
     click_configure_columns_button(browser)
-    column_names = get_column_names_from_configure_columns_menu(driver)
-    parsed_columns = [column.lower() for column in columns]
-    for column_name in column_names:
-        set_column_visibility_in_configure_columns_menu(
-            driver, column_name, column_name.lower() in parsed_columns
-        )
-    # hide columns menu popup
+    set_exact_columns_visible_in_configure_columns_menu(
+        selenium[browser_id], expected_columns=columns
+    )
     click_configure_columns_button(browser)
 
 
@@ -93,32 +149,31 @@ def select_columns_to_be_visible_in_browser(
         r"(?P<which_browser>file browser|archive browser|"
         r"dataset browser) table"
     ),
-    converters={
-        "columns": parse_elements_sequence,
-    },
+    converters={"columns": parse_elements_sequence, "which_browser": WhichBrowser},
 )
 def change_visibility_for_browser_columns(
     selenium: SeleniumDrivers,
     browser_id: str,
     res: str,
     columns: list[str],
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
+    visible_columns: VisibleColumns,
 ) -> None:
     # This function updates only the specified columns (enable/disable).
     # All other columns remain unchanged.
 
-    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
     driver = selenium[browser_id]
     click_configure_columns_button(browser)
+    parsed_columns = transform_columns(columns)
+    available_columns = transform_columns(get_column_names_from_configure_columns_menu(driver))
 
-    parsed_columns = [column.lower() for column in columns]
-    column_names = get_column_names_from_configure_columns_menu(driver)
-    for column_name in column_names:
-        if column_name.lower() in parsed_columns:
-            set_column_visibility_in_configure_columns_menu(driver, column_name, res == "enables")
+    for column_name in set(available_columns) & set(parsed_columns):
+        if res == "enables":
+            visible_columns[ColumnContext.browser(browser_id, which_browser)].add(column_name)
+        set_column_visibility_in_configure_columns_menu(driver, column_name, res == "enables")
 
-    # hide columns menu popup
     click_configure_columns_button(browser)
 
 
@@ -127,17 +182,18 @@ def change_visibility_for_browser_columns(
         r"user of (?P<browser_id>.*) removes (?P<option>json|xattr) column "
         r'named "(?P<name>.*)" in columns configuration popover in (?P<which_browser>'
         r"file browser|archive browser|dataset browser) table"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def remove_column(
     selenium: SeleniumDrivers,
     browser_id: str,
     name: str,
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
 ) -> None:
     driver = selenium[browser_id]
-    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
     click_configure_columns_button(browser)
 
     wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
@@ -145,7 +201,6 @@ def remove_column(
     current_column = get_column_from_configure_columns_menu(driver, name)
     current_column.hover_to_button_and_click("remove", driver)
 
-    # hide columns menu popup
     click_configure_columns_button(browser)
 
 
@@ -155,12 +210,13 @@ def remove_column(
         r' "(?P<name>.*)" key by changing (?P<elem>label|key)'
         r' to "(?P<new_elem_name>.*)" in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def modify_props_of_xattr_column_in_columns_menu(
     selenium: SeleniumDrivers,
     browser_id: str,
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
     name: str,
     elem: str,
@@ -168,7 +224,7 @@ def modify_props_of_xattr_column_in_columns_menu(
 ) -> None:
 
     driver = selenium[browser_id]
-    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
 
     click_configure_columns_button(browser)
     wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
@@ -188,7 +244,6 @@ def modify_props_of_xattr_column_in_columns_menu(
 
     modify_xattr_column.apply_changes.click()
 
-    # hide columns menu popup
     click_configure_columns_button(browser)
 
 
@@ -198,14 +253,15 @@ def modify_props_of_xattr_column_in_columns_menu(
         r' name "(?P<col_name>.*)" in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
         r" by changing it as follows:\n(?P<config>(.|\s)*)"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def modify_json_column_in_columns_menu(
     selenium: SeleniumDrivers,
     browser_id: str,
     col_name: str,
     config: str,
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
 ) -> None:
     """
@@ -225,7 +281,7 @@ def modify_json_column_in_columns_menu(
     """
 
     driver = selenium[browser_id]
-    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
 
     click_configure_columns_button(browser)
     wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
@@ -252,7 +308,6 @@ def modify_json_column_in_columns_menu(
         Popups(driver).dropdown.options[config_dict["key"]].click()
 
     modify_json_column.apply_changes.click()
-    # hide columns menu popup
     click_configure_columns_button(browser)
 
 
@@ -262,13 +317,14 @@ def modify_json_column_in_columns_menu(
         r' for item "(?P<item_name>.*)" and sees that it is equal to'
         r" '(?P<value>.*)' in (?P<which_browser>file"
         r" browser|archive browser|dataset browser)"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def assert_json_column_content(
     selenium: SeleniumDrivers,
     browser_id: str,
     tmp_memory: TmpMemory,
-    which_browser: str,
+    which_browser: WhichBrowser,
     item_name: str,
     value: str,
     clipboard: Clipboard,
@@ -276,7 +332,7 @@ def assert_json_column_content(
 ) -> None:
 
     driver = selenium[browser_id]
-    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
     item = browser.data[item_name]
 
     item.hover_to_btn_and_click("copy_json_icon", driver)
@@ -296,26 +352,28 @@ def assert_json_column_content(
         r' column named "(?P<name>.*)" in '
         r"columns configuration popover in (?P<which_browser>file"
         r" browser|archive browser|dataset browser) table"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def assert_column_presence(
     selenium: SeleniumDrivers,
     browser_id: str,
     res: str,
     name: str,
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
     option: str,
 ) -> None:
 
-    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
     click_configure_columns_button(browser)
     column_names = get_column_names_from_configure_columns_menu(selenium[browser_id])
     if name in column_names:
         if res == "does not see":
             raise AssertionError(
-                f"{option} column named '{name}' exists, but it was expected not to."
+                f"{option} column named '{name}' is present, but it was expected not to."
             )
     elif res == "sees":
-        raise AssertionError(f"An xattr column with name: {name} does not exist")
+        raise AssertionError(f"An xattr column with name: {name} is not present")
+
     click_configure_columns_button(browser)

@@ -18,8 +18,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
@@ -121,19 +121,38 @@ def create_new_space_by_click_on_create_new_space_button(
 ) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).data.input_box.confirm()
-    close_alert_popup_if_present(driver, popup=CreatedItemAlertPopup.SPACE)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        CreatedItemAlertPopup.SPACE,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_new_space_on_onezone_page(
-    selenium: SeleniumDrivers, browser_id: str, space_name: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    spaces: dict[str, str],
+    clipboard: Clipboard,
+    displays: dict[str, str],
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).data
     page.create_space_button()
     page.input_box.value = space_name
     page.input_box.confirm()
-    close_alert_popup_if_present(selenium[browser_id], popup=CreatedItemAlertPopup.SPACE)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        CreatedItemAlertPopup.SPACE,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
+    click_on_option_in_space_menu(selenium, browser_id, space_name, "Copy ID")
+    spaces[space_name] = clipboard.paste(display=displays[browser_id])
 
 
 @wt(
@@ -827,7 +846,13 @@ def copy_token(selenium: SeleniumDrivers, browser_id: str) -> None:
 def confirm_create_new_space(selenium: SeleniumDrivers, browser_id: str, option: str) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
-        close_alert_popup_if_present(selenium[browser_id], popup=CreatedItemAlertPopup.SPACE)
+        is_notify_popup_visible_and_close_all_alert_popups(
+            selenium,
+            browser_id,
+            CreatedItemAlertPopup.SPACE,
+            popup_expected=False,
+            timeout=WAIT_FRONTEND,
+        )
     else:
         create_new_space_by_click_on_create_new_space_button(selenium, browser_id)
 

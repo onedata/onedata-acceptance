@@ -8,7 +8,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+)
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
@@ -16,11 +18,13 @@ from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     wait_for_sliding_panel_to_stop_moving,
 )
-from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import (
+    is_element_visible_using_getter,
+    transform,
+)
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow, TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -567,11 +571,14 @@ def click_on_token_containing_name(
     raise ValueError(f"token {token_name} not found")
 
 
-@wt(parsers.parse("user of {browser_id} clicks on Confirm button on consume token page"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_confirm_button_on_tokens_page(selenium: SeleniumDrivers, browser_id: str) -> None:
+def click_confirm_button_on_tokens_page(driver: WebDriver) -> None:
     # click the button without checking if a popup or error modal appeared
-    oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.tokens.confirm_button()
-    # it is needed to wait for the page refresh
-    wait_till_main_content_loaded(selenium[browser_id])
+    OZLoggedIn(driver).tokens.confirm_button.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_confirm_button_not_visible_on_tokens_page(driver: WebDriver) -> None:
+    assert not is_element_visible_using_getter(
+        driver, lambda driver: OZLoggedIn(driver).tokens.confirm_button.web_elem
+    )

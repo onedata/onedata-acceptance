@@ -13,7 +13,7 @@ import yaml
 
 from tests.gui.meta_steps.onezone.provider import send_copied_invite_token_in_oz_gui
 from tests.gui.steps.common.login import login_using_basic_auth
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.onepanel.deployment import (
     wt_assert_begin_of_cluster_deployment,
     wt_check_host_options_list_in_deployment_step1,
@@ -116,24 +116,22 @@ def _setup_onezone_in_step1(
 ) -> None:
     step = "step 1"
 
-    name_property = "name"
     name_input_box = "Zone name"
     wt_type_property_to_in_box_in_deployment_step(
         selenium,
         browser_id,
         zone_for_name,
-        name_property,
+        "name",
         name_input_box,
         step,
         hosts,
     )
-    hostname_property = "hostname"
     hostname_input_box = "Zone domain name"
     wt_type_property_to_in_box_in_deployment_step(
         selenium,
         browser_id,
         zone_for_domain,
-        hostname_property,
+        "hostname",
         hostname_input_box,
         step,
         hosts,
@@ -211,13 +209,12 @@ def _setup_step2(
     email = config["email"]
     step = "step 2"
 
-    name_property = "name"
     name_input_box = "Provider name"
     wt_type_property_to_in_box_in_deployment_step(
         selenium,
         browser_id,
         provider_for_name,
-        name_property,
+        "name",
         name_input_box,
         step,
         hosts,
@@ -226,13 +223,12 @@ def _setup_step2(
     if not request_a_subdomain:
         deactivate_request_subdomain_toggle(selenium, browser_id)
 
-    hostname_property = "hostname"
     hostname_input_box = "domain"
     wt_type_property_to_in_box_in_deployment_step(
         selenium,
         browser_id,
         provider_for_domain,
-        hostname_property,
+        "hostname",
         hostname_input_box,
         step,
         hosts,
@@ -282,4 +278,6 @@ def _add_storage_in_step5(selenium: SeleniumDrivers, browser_id: str, configurat
     wt_select_storage_type_in_deployment_step5(selenium, browser_id, storage_type)
     wt_type_text_to_in_box_in_deployment_step5(selenium, browser_id, name, storage_type, name_box)
     wt_click_on_add_btn_in_storage_add_form(selenium, browser_id)
-    notify_visible_with_text(selenium, browser_id, AlertPopup.STORAGE_ADDED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium, browser_id, AlertPopup.STORAGE_ADDED
+    )

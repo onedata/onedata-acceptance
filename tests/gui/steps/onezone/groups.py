@@ -9,11 +9,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import (
-    close_alert_popup_if_present,
-    get_visible_items_list,
-)
+from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
@@ -49,7 +47,13 @@ def input_name_into_input_box_on_main_groups_page(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_name_input_on_main_groups_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     OZLoggedIn(selenium[browser_id]).groups.input_box.confirm()
-    close_alert_popup_if_present(selenium[browser_id], popup=CreatedItemAlertPopup.GROUP)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        CreatedItemAlertPopup.GROUP,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
@@ -169,7 +173,13 @@ def assert_error_page_appeared(selenium: SeleniumDrivers, browser_id: str, text:
 def confirm_add_group(selenium: SeleniumDrivers, browser_id: str, option: str) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
-        close_alert_popup_if_present(selenium[browser_id], popup=CreatedItemAlertPopup.GROUP)
+        is_notify_popup_visible_and_close_all_alert_popups(
+            selenium,
+            browser_id,
+            CreatedItemAlertPopup.GROUP,
+            popup_expected=False,
+            timeout=WAIT_FRONTEND,
+        )
     else:
         confirm_name_input_on_main_groups_page(selenium, browser_id)
 

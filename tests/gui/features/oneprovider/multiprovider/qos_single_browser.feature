@@ -31,9 +31,10 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that all QoS requirements are fulfilled
     And user of browser clicks on "X" button in modal "File details"
-    Then user of browser sees file chunks for file "file1" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely filled
+    Then user of browser sees file chunks for files:
+            file1:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
 
   Scenario: File is replicated after eviction from one storage with QoS requirement with 2 replicas to another
@@ -42,15 +43,17 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that all QoS requirements are fulfilled
     And user of browser clicks on "X" button in modal "File details"
-    And user of browser sees file chunks for file "file1" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely filled
+    And user of browser sees file chunks for files:
+            file1:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
     And user of browser evicts file "file1" from provider oneprovider-2
     And user of browser waits for "file1" file eviction to finish
 
-    Then user of browser sees file chunks for file "file1" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely filled
+    Then user of browser sees file chunks for files:
+            file1:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
     And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
@@ -66,7 +69,8 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that all QoS requirements are fulfilled
     And user of browser clicks on "X" button in modal "File details"
-    And user of browser sees file chunks for file "file2" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely filled
+    And user of browser sees file chunks for files:
+            file2:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 

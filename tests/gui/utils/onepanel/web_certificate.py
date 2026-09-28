@@ -14,6 +14,8 @@ class WebCertificate(PageObject):
     use_lets_encrypt = Toggle(".letsEncrypt-field .one-way-toggle")
     dns_names = Label(".dnsNames-field .static-list-field-item")
     issuer = Label(".issuer-field .static-text-field")
+    creation_time = Label(".creationTime-field .datetime-field")
+    expiration_time = Label(".expirationTime-field .datetime-field")
     certificate_path = Label(".certPath-field .static-text-field")
     key_path = Label(".keyPath-field .static-text-field")
     certificate_chain_path = Label(".chainPath-field .static-text-field")

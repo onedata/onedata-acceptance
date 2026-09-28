@@ -236,6 +236,9 @@ def capabilities(
         options.binary_location = "/usr/local/bin/google-chrome"
 
         options.add_argument("--no-sandbox")
+        # This flag is needed for clipboard to work for Ubuntu 26.04 and newer,
+        # some functions are not compatible with Wayland, so we need to force X11
+        options.add_argument("--ozone-platform=x11")
         options.add_argument("--enable-popup-blocking")
         options.add_argument("--ignore-ssl-errors=yes")
         options.add_argument("--ignore-certificate-errors")

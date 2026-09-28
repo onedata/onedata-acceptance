@@ -15,11 +15,15 @@ from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
 from tests.gui.steps.common.common import (
-    close_alert_popup_if_present,
     wait_for_error_modal_to_disappear,
     wait_for_sliding_panel_to_stop_moving,
     wait_till_error_modal_disappear,
 )
+from tests.gui.steps.common.notifies import (
+    dismiss_notifies_if_present,
+    is_notify_popup_visible_and_close_all_alert_popups,
+)
+from tests.gui.steps.common.url import wait_till_main_content_loaded
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
@@ -31,6 +35,7 @@ from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.tokens import (
     assert_alert_on_tokens_page,
+    assert_confirm_button_not_visible_on_tokens_page,
     assert_invite_target,
     assert_invite_type,
     assert_token_name,
@@ -42,11 +47,11 @@ from tests.gui.steps.onezone.tokens import (
     choose_token_template,
     choose_token_type_to_create,
     click_and_get_create_token_button,
+    click_confirm_button_on_tokens_page,
     click_copy_button_in_token_view,
     click_create_custom_token,
     click_menu_button_of_tokens_page,
     click_on_button_in_tokens_sidebar,
-    click_on_confirm_button_on_tokens_page,
     click_on_token_containing_name,
     click_on_token_on_tokens_list,
     click_option_for_token_row_menu,
@@ -64,7 +69,6 @@ from tests.gui.steps.onezone.tokens import (
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import is_element_with_selector_visible_on_page
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -112,6 +116,16 @@ def click_create_token_button_in_create_token_page(
     wait_for_item_to_disappear(create_token_button, driver, timeout=2 * WAIT_FRONTEND)
 
 
+@wt(parsers.parse("user of {browser_id} clicks on Confirm button on consume token page"))
+def click_on_confirm_button_on_tokens_page(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    click_confirm_button_on_tokens_page(driver)
+    # it is needed to wait for the page refresh
+    wait_till_main_content_loaded(driver)
+
+    assert_confirm_button_not_visible_on_tokens_page(driver)
+
+
 @wt(parsers.parse('user of {browser_id} succeeds to consume token using "Confirm" button'))
 def succeed_to_consume_token_using_confirm_button(
     selenium: SeleniumDrivers,
@@ -119,11 +133,7 @@ def succeed_to_consume_token_using_confirm_button(
 ) -> None:
     driver = selenium[browser_id]
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
-    # Case when popup did not appear or the test didn't catch it in time
-    if not close_alert_popup_if_present(driver, AlertPopup.SUCCESSFULLY_JOINED):
-        assert not is_element_with_selector_visible_on_page(
-            driver, ".alert-global.modal.in .modal-dialog"
-        ), "Error modal appeared"
+    dismiss_notifies_if_present(driver, timeout=WAIT_FRONTEND)
 
 
 def fail_to_consume_token_using_confirm_button(
@@ -133,7 +143,7 @@ def fail_to_consume_token_using_confirm_button(
     close_error_modal: bool = True,
 ) -> None:
     driver = selenium[browser_id]
-    click_on_confirm_button_on_tokens_page(selenium, browser_id)
+    click_confirm_button_on_tokens_page(driver)
     assert_error_modal_with_text_appeared(selenium, browser_id, text=message)
     if close_error_modal:
         wait_for_error_modal_to_disappear(driver)
@@ -397,9 +407,10 @@ def consume_token_and_see_success_notify(
 ) -> None:
     _paste_copied_token_for_consumption(selenium, browser_id, clipboard, displays)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
-    # sometimes the popup appears and disappears too quickly to be catched
-    assert close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_JOINED), (
-        "Success notify did not appear"
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.SUCCESSFULLY_JOINED,
     )
 
 
@@ -421,7 +432,13 @@ def _create_token_of_type(
     if token_type == "invite":
         choose_invite_type_in_oz_token_page(selenium, browser_id, "Register Oneprovider")
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.TOKEN_CREATED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.TOKEN_CREATED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @wt(
@@ -552,7 +569,13 @@ def _create_token_with_config(
             tmp_memory,
         )
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.TOKEN_CREATED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.TOKEN_CREATED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 def _set_tokens_caveats(
@@ -927,7 +950,13 @@ def create_token_with_basic_template(
     choose_token_template(selenium, browser_id, template)
     type_new_token_name(selenium, browser_id, name)
     click_create_token_button_in_create_token_page(selenium, browser_id)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.TOKEN_CREATED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.TOKEN_CREATED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @wt(
