@@ -201,7 +201,7 @@ Feature: Bagit uploader tests
 
     And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 1
     And user of browser sees that element in the content of the "uploaded-files" store details modal contains following file names:
-      - LHC10c_pp_ESD_120076.json
+      - <fetched_file>
     And user of browser closes "Store details" modal
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
@@ -213,7 +213,7 @@ Feature: Bagit uploader tests
 
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 1
     And user of browser sees that element in the content of the "files-to-download" store details modal contains following destination path:
-      - LHC10c_pp_ESD_120076.json
+      - <fetched_file>
     And user of browser closes "Store details" modal
 
     # Checking if Dataset in file browser has correct content
@@ -223,18 +223,18 @@ Feature: Bagit uploader tests
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees that the file structure in file browser is as follow:
         - data:
-          - LHC10c_pp_ESD_120076.json
+          - <fetched_file>
 
     And user of browser clicks and presses enter on item named "data" in file browser
-    And user of browser sees inherited status tag for "LHC10c_pp_ESD_120076.json" in file browser
-    And user of browser clicks on inherited status tag for "LHC10c_pp_ESD_120076.json" in file browser
-    And user of browser sees Dataset status tag for "LHC10c_pp_ESD_120076.json" in file browser
+    And user of browser sees inherited status tag for <fetched_file> in file browser
+    And user of browser clicks on inherited status tag for <fetched_file> in file browser
+    And user of browser sees Dataset status tag for <fetched_file> in file browser
 
 
     Examples:
-      | xrootd_archive                   |
-      | "valid_with_xrootd.zip"          |
-      | "bagit_archive_fetch_xrootd.zip" |
+      | xrootd_archive                   | fetched_file                                  |
+      | "valid_with_xrootd.zip"          | "LHC10c_pp_ESD_120076.json"                   |
+      | "bagit_archive_fetch_xrootd.zip" | "python-rados_14.2.2-1bionic_amd64.deb"       |
 
 
   Scenario: User sees desirable exception in task audit log after executing BagIt Uploader with invalid archive - wrong_manifest_checksum.zip
