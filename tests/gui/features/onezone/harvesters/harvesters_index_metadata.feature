@@ -123,7 +123,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser changes indices to "index1" on GUI plugin tab for "harvester1"
 
     # change JSON metadata
-    And user of browser clicks on Data in the main menu
+    And user of browser clicks on "Data" in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -138,7 +138,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser clicks on "File ID" button in modal "Directory details"
     And user of browser clicks on "X" button in modal "Directory details"
 
-    And user of browser clicks on Discovery in the main menu
+    And user of browser clicks on "Discovery" in the main menu
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
@@ -154,7 +154,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser changes indices to "index1" on GUI plugin tab for "harvester1"
 
     # change JSON metadata
-    And user of browser clicks on Data in the main menu
+    And user of browser clicks on "Data" in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -163,7 +163,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser types '{"id": "one"}' to JSON textarea in metadata panel
     And user of browser clicks on "Save" button in metadata panel
 
-    And user of browser clicks on Discovery in the main menu
+    And user of browser clicks on "Discovery" in the main menu
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page

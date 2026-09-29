@@ -6,10 +6,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+from contextlib import suppress
+from enum import Enum
+from typing import cast
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
+from tests.gui.type_definitions import Checkable
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import (
@@ -23,6 +30,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.utils.utils import element_has_class, repeat_failed
 
 DEFAULT_IMPORT_STRATEGY_CONFIG = {
     "Mode": "auto",
@@ -36,9 +44,7 @@ DEFAULT_IMPORT_STRATEGY_CONFIG = {
 
 
 class StorageImportConfiguration(PageObject):
-    modes = WebItemsSequence(
-        ".field-mode-mode label.clickable", cls=ButtonWithTextPageObject
-    )
+    modes = WebItemsSequence(".field-mode-mode label.clickable", cls=ButtonWithTextPageObject)
     max_depth = Input(".field-generic-maxDepth")
     synchronize_acl = Toggle(".toggle-field-generic-syncAcl")
     detect_modifications = Toggle(".toggle-field-generic-detectModifications")
@@ -46,18 +52,16 @@ class StorageImportConfiguration(PageObject):
     continuous_scan = Toggle(".toggle-field-generic-continuousScan")
     scan_interval = Input(".field-continuous-scanInterval")
 
-    def is_toggle_checked(self, toggle):
-        toggle = getattr(self, toggle)
-        return toggle.is_checked()
+    def is_toggle_checked(self, toggle: str) -> bool:
+        checkable = cast(Checkable, getattr(self, toggle))
+        return checkable.is_checked()
 
 
 class SpaceSupportForm(PageObject):
     storage_selector = DropdownSelector(".ember-basic-dropdown-trigger")
     token = Input("input.field-main-token")
     size = Input("input.field-main-size")
-    units = WebItemsSequence(
-        ".field-main-sizeUnit label.clickable", cls=ButtonWithTextPageObject
-    )
+    units = WebItemsSequence(".field-main-sizeUnit label.clickable", cls=ButtonWithTextPageObject)
     import_storage_data = Toggle(".toggle-field-main-importEnabled")
 
     storage_import_configuration = WebItem(
@@ -70,23 +74,67 @@ class SpaceSupportForm(PageObject):
 class SpaceInfo(PageObject):
     space_name = Label(".space-name")
     space_id = Input(".space-info .content-row:nth-child(2) input[type=text]")
+    copy_space_id = Button(".copy-btn")
     storage_name = Label(".space-provider-storage")
     _storage_import = WebElement(".storage-import")
     size = Input(".size-number-input")
 
     @property
-    def import_strategy(self):
+    def import_strategy(self) -> dict[str, str]:
         values = DEFAULT_IMPORT_STRATEGY_CONFIG.copy()
         values.update(self._get_labels(self._storage_import))
         return values
 
     @staticmethod
-    def _get_labels(elem):
+    def _get_labels(elem: SeleniumWebElement) -> dict[str, str]:
         items = elem.find_elements(By.CSS_SELECTOR, "strong, .one-label")
         items.pop(0)  # pop redundant "Storage import:" label
         return {
-            attr.text.strip(":"): val.text for attr, val in zip(items[::2], items[1::2])
+            attribute.text.strip(":"): val.text
+            for attribute, val in zip(items[::2], items[1::2], strict=True)
         }
+
+
+class StartScanState(Enum):
+    READY = "ready"
+    RUNNING = "running"
+    PENDING = "pending"
+
+
+class StartScan(PageObject):
+    start_button = Button(".btn-primary")
+    stop_button = Button(".btn-danger")
+
+    details_button = Button(".oneicon-arrow-down")
+
+    @property
+    @repeat_failed(timeout=1, interval=0.05)
+    def state(self) -> StartScanState:
+        start_button, stop_button = None, None
+
+        with suppress(NoSuchElementException):
+            start_button = self.start_button
+
+        if (
+            start_button is not None
+            and start_button.is_displayed()
+            and element_has_class(start_button.web_elem, "pending")
+        ):
+            return StartScanState.PENDING
+
+        with suppress(NoSuchElementException):
+            stop_button = self.stop_button
+
+        if stop_button is not None and stop_button.is_displayed():
+            return StartScanState.RUNNING
+
+        if start_button is not None and start_button.is_displayed():
+            return StartScanState.READY
+
+        raise RuntimeError(
+            "Start scan controls have an unknown state; neither the start "
+            "nor stop button is visible"
+        )
 
 
 class SyncChart(PageObject):
@@ -98,7 +146,7 @@ class SyncChart(PageObject):
         cls=StorageImportConfiguration,
     )
     auto_import_scan = WebElement(".import-info-header")
-    start_scan = NamedButton("button", text="Start scan")
+    start_scan = WebItem(".one-collapsible-list-item-header .btn-toolbar", cls=StartScan)
 
     last_minute_view = Button(".btn-import-interval-minute")
     last_hour_view = Button(".btn-import-interval-hour")
@@ -106,38 +154,29 @@ class SyncChart(PageObject):
 
     save_configuration = Button(".btn-primary")
 
-    _inserted = WebElementsSequence(
-        ".storage-import-chart-operations g.ct-series-0 line"
-    )
-    _updated = WebElementsSequence(
-        ".storage-import-chart-operations g.ct-series-1 line"
-    )
-    _deleted = WebElementsSequence(
-        ".storage-import-chart-operations g.ct-series-2 line"
-    )
-
-    def start_scan_is_green(self):
-        return "btn-success" in self.start_scan.web_elem.get_attribute("class")
+    _inserted = WebElementsSequence(".storage-import-chart-operations g.ct-series-0 line")
+    _updated = WebElementsSequence(".storage-import-chart-operations g.ct-series-1 line")
+    _deleted = WebElementsSequence(".storage-import-chart-operations g.ct-series-2 line")
 
     @property
-    def inserted(self):
+    def inserted(self) -> int:
         return self._get_chart_bar_values(self._inserted)
 
     @property
-    def updated(self):
+    def updated(self) -> int:
         return self._get_chart_bar_values(self._updated)
 
     @property
-    def deleted(self):
+    def deleted(self) -> int:
         return self._get_chart_bar_values(self._deleted)
 
     @staticmethod
-    def _get_chart_bar_values(bars):
+    def _get_chart_bar_values(bars: list[SeleniumWebElement]) -> int:
         return sum(int(data.get_attribute("ct:value")) for data in bars)
 
 
 class FilePopularity(PageObject):
-    enable_file_popularity = Toggle(".one-way-toggle-control")
+    enable_file_popularity = Toggle(".file-popularity-enabled-toggle")
     advanced_settings = WebElement(".one-collapsible-list-item-header")
     file_popularity_documentation = WebElement(".documentation-link")
 
@@ -166,20 +205,57 @@ class SelectiveCleaningRecord(PageObject):
     checkbox = Toggle(".toggle-column")
     value_input = Input(".condition-number-input")
     dropdown_button = Button(".ember-power-select-trigger")
-    dropdown = WebItemsSequence(
-        "li.ember-power-select-option", cls=ButtonWithTextPageObject
-    )
+    dropdown = WebItemsSequence("li.ember-power-select-option", cls=ButtonWithTextPageObject)
     value_limit = Label(".ember-power-select-selected-item")
 
 
+class StartCleaningState(Enum):
+    READY = "ready"
+    STARTING = "starting"
+    RUNNING = "running"
+    DISABLED = "disabled"
+
+
+class CleaningControl(PageObject):
+    start_cleaning_now = Button(".btn-clean-now")
+    stop_cleaning_now = Button(".btn-danger")
+
+    @property
+    @repeat_failed(timeout=1, interval=0.05)
+    def state(self) -> StartCleaningState:
+        start_button, stop_button = None, None
+
+        with suppress(NoSuchElementException):
+            stop_button = self.stop_cleaning_now
+
+        if stop_button is not None and stop_button.is_displayed():
+            if not element_has_class(stop_button.web_elem, "clickable"):
+                return StartCleaningState.STARTING
+            return StartCleaningState.RUNNING
+
+        with suppress(NoSuchElementException):
+            start_button = self.start_cleaning_now
+
+        if start_button is not None and start_button.is_displayed():
+            if element_has_class(start_button.web_elem, "disabled"):
+                return StartCleaningState.DISABLED
+            return StartCleaningState.READY
+
+        raise RuntimeError(
+            "Start scan controls have an unknown state; neither the start "
+            "nor stop button is visible"
+        )
+
+
 class AutoCleaning(PageObject):
-    enable_auto_cleaning = Toggle(".cleaning-enabled-toggle .one-way-toggle-control")
+    enable_auto_cleaning = Toggle(".cleaning-enabled-toggle")
     selective_cleaning = Toggle(".selective-cleaning-toggle .one-way-toggle-control")
     selective_cleaning_form = WebItemsSequence(
         ".selective-cleaning-rules-form > div", cls=SelectiveCleaningRecord
     )
 
-    start_cleaning_now = Button(".btn-clean-now")
+    cleaning_control = WebItem(".clean-now-row", cls=CleaningControl)
+    pacman = WebElement(".pacman")
 
     _soft_quota = WebElement(".soft-quota-editor")
     soft_quota = WebItem(".soft-quota-editor", cls=QuotaEditor)
@@ -188,11 +264,11 @@ class AutoCleaning(PageObject):
 
     cleaning_reports = WebItemsSequence("tbody tr.data-item-base", cls=CleaningReport)
 
-    def click_rename_soft_quota_button(self, driver):
+    def click_rename_soft_quota_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self._soft_quota).perform()
         self.soft_quota.edit_button()
 
-    def click_rename_hard_quota_button(self, driver):
+    def click_rename_hard_quota_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self._hard_quota).perform()
         self.hard_quota.edit_button()
 
@@ -208,16 +284,12 @@ class SpaceRecord(PageObject, ExpandableMixin):
     name = id = Label(".item-icon-container + .one-label .item-name")
     toolbar = Button(".collapsible-toolbar-toggle")
 
-    _toolbar = WebElement(".one-collapsible-toolbar")
     _toggle = WebElement(".one-collapsible-list-item-header")
 
-    def is_expanded(self):
-        return bool(
-            re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
-        )
+    def is_expanded(self) -> bool:
+        return bool(re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class")))
 
-    def expand_menu(self, driver):
-        ActionChains(driver).move_to_element(self._toolbar).perform()
+    def expand_menu(self) -> None:
         self.toolbar.click()
 
 
@@ -232,9 +304,7 @@ class Space(PageObject):
 
 
 class SpacesContentPage(PageObject):
-    spaces = WebItemsSequence(
-        "ul.one-collapsible-list .cluster-spaces-table-item", cls=SpaceRecord
-    )
+    spaces = WebItemsSequence("ul.one-collapsible-list .cluster-spaces-table-item", cls=SpaceRecord)
     support_space = NamedButton(".btn-support-space", text="Support space")
     form = WebItem(
         # A hack to use storage import form in existing space support with
@@ -242,7 +312,5 @@ class SpacesContentPage(PageObject):
         ".support-space-form > form, .storage-import-form > form",
         cls=SpaceSupportForm,
     )
-    cancel_supporting_space = NamedButton(
-        ".btn-support-space", text="Cancel supporting space"
-    )
+    cancel_supporting_space = NamedButton(".btn-support-space", text="Cancel supporting space")
     space = WebItem(".content-clusters-spaces", cls=Space)

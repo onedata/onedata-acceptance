@@ -15,7 +15,7 @@ Feature: Basic management of harvester memberships privileges with users in Onez
     When user of browser1 creates "harvester10" harvester in Onezone page
 
     # copy invitation token
-    And user of browser1 clicks on Discovery in the main menu
+    And user of browser1 clicks on "Discovery" in the main menu
     And user of browser1 clicks "harvester10" on the harvesters list in the sidebar
     And user of browser1 clicks Members of "harvester10" harvester in the sidebar
     And user of browser1 clicks on "Invite user using token" button in users list menu in "harvester10" harvester members view
@@ -26,9 +26,6 @@ Feature: Basic management of harvester memberships privileges with users in Onez
     # join to harvester
     And user of browser2 joins to harvester in Onezone page
     Then user of browser2 sees that "harvester10" has appeared on the harvesters list in the sidebar
-    And user of browser1 removes "harvester10" harvester in Onezone page
-
-
   Scenario: User successfully generates invitation token for user with add user privilege
     When user of browser1 creates "harvester16" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester16" harvester to user of browser2
@@ -36,7 +33,7 @@ Feature: Basic management of harvester memberships privileges with users in Onez
     And user of browser2 sees that "harvester16" has appeared on the harvesters list in the sidebar
 
     # fail to generate invitation token for user
-    And user of browser2 clicks on Discovery in the main menu
+    And user of browser2 clicks on "Discovery" in the main menu
     And user of browser2 clicks "harvester16" on the harvesters list in the sidebar
     And user of browser2 clicks Members of "harvester16" harvester in the sidebar
     And user of browser2 clicks on "Invite user using token" button in users list menu in "harvester16" harvester members view
@@ -52,9 +49,6 @@ Feature: Basic management of harvester memberships privileges with users in Onez
     # generate invitation token for user
     Then user of browser2 clicks on "Invite user using token" button in users list menu in "harvester16" harvester members view
     And user of browser2 sees non-empty token in token area
-
-    And user of browser1 removes "harvester16" harvester in Onezone page
-
 
   Scenario: User successfully removes user from harvester with remove user privilege
     When user of browser1 creates "harvester17" harvester in Onezone page
@@ -81,7 +75,7 @@ Feature: Basic management of harvester memberships privileges with users in Onez
   Scenario: User fails to join to the harvester because the harvester was deleted
     When user of browser1 creates "harvester18" harvester in Onezone page
 
-    And user of browser1 clicks on Discovery in the main menu
+    And user of browser1 clicks on "Discovery" in the main menu
     And user of browser1 clicks "harvester18" on the harvesters list in the sidebar
     And user of browser1 clicks Members of "harvester18" harvester in the sidebar
     And user of browser1 clicks on "Invite user using token" button in users list menu in "harvester10" harvester members view
@@ -91,6 +85,6 @@ Feature: Basic management of harvester memberships privileges with users in Onez
 
     And user of browser1 removes "harvester18" harvester in Onezone page
 
-    Then user of browser2 tries to join harvester using received token
-    And user of browser2 sees error modal with info about invalid target with id of "harvester18" harvester
-
+    Then user of browser2 fails to join harvester using received token and sees error modal
+    And user of browser2 closes error modal with info about invalid target with id of "harvester18" harvester
+    

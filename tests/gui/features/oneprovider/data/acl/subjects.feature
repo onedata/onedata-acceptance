@@ -167,7 +167,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     And opened browser with space-owner-user signed in to "onezone" service
     When user of browser sets "file1" ACL [acl] privileges for user user4 in "space1"
     And user of browser sets "file1" ACL [acl] privileges for user space-owner-user in "space1"
-    And user of browser clicks on Data in the main menu
+    And user of browser clicks on "Data" in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser removes "user4" user from "space1" space members
     And user of browser opens file browser for "space1" space

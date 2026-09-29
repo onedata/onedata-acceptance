@@ -11,7 +11,7 @@ Feature: Basic creation/joining of groups with one user in Onezone GUI
 
 
   Scenario Outline: User creates group
-    When user of browser clicks on Create group button in groups sidebar
+    When user of browser clicks on "Create group" button in groups sidebar
     And user of browser writes "group1" into group name text field
     And user of browser confirms using <confirmation_method>
     Then user of browser sees group "group1" on groups list
@@ -22,12 +22,11 @@ Feature: Basic creation/joining of groups with one user in Onezone GUI
       | button              |
 
   Scenario: User fails to create unnamed group using button to confirm group name
-    When user of browser clicks on Create group button in groups sidebar
+    When user of browser clicks on "Create group" button in groups sidebar
     Then user of browser sees that create group button is inactive
 
 
   Scenario: User fails to create unnamed group using enter to confirm group name
-    When user of browser clicks on Create group button in groups sidebar
+    When user of browser clicks on "Create group" button in groups sidebar
     And user of browser presses enter on keyboard
     Then user of browser sees that error modal with text "Creating group failed" appeared
-

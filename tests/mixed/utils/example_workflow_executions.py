@@ -11,31 +11,37 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 
 from tests.gui.utils.generic import upload_workflow_path
+from tests.mixed.type_definitions import (
+    ExecutionResult,
+    InputFiles,
+    ResolveId,
+    UploadFile,
+)
 
 
 class ExampleWorkflowExecutionInitialStoreContent:
-
-    def __init__(self, resolve_file_id, upload_file, resolve_group_id=None):
+    def __init__(
+        self,
+        resolve_file_id: ResolveId,
+        upload_file: UploadFile,
+        resolve_group_id: ResolveId | None = None,
+    ) -> None:
         self.resolve_file_id = resolve_file_id
         self.upload_file = upload_file
         self.resolve_group_id = resolve_group_id
 
     @staticmethod
-    def gather_input_files(workflow):
-        return [
-            f
-            for f in os.listdir(upload_workflow_path(workflow))
-            if f != workflow + ".json"
-        ]
+    def gather_input_files(workflow: str) -> InputFiles:
+        return [f for f in os.listdir(upload_workflow_path(workflow)) if f != workflow + ".json"]
 
-    def bagit_uploader(self, input_file=None, dest_dir="space1/dir1"):
-        input_files = (
-            self.gather_input_files("bagit-uploader") if not input_file else input_file
-        )
+    def bagit_uploader(
+        self, input_file: InputFiles | None = None, dest_dir: str = "space1/dir1"
+    ) -> ExecutionResult:
+        input_files = input_file if input_file else self.gather_input_files("bagit-uploader")
         for file in input_files:
             path = upload_workflow_path("bagit-uploader") + "/" + file
             self.upload_file(path, file)
-        file_paths = [f'{dest_dir.split("/")[0]}/{file}' for file in input_files]
+        file_paths = [f"{dest_dir.split('/', maxsplit=1)[0]}/{file}" for file in input_files]
 
         return [
             {
@@ -45,44 +51,42 @@ class ExampleWorkflowExecutionInitialStoreContent:
             for path in file_paths
         ], input_files
 
-    def detect_file_formats(self, input_file=None, space="space1"):
-        input_files = (
-            self.gather_input_files("detect-file-formats")
-            if not input_file
-            else input_file
-        )
+    def detect_file_formats(
+        self, input_file: InputFiles | None = None, space: str = "space1"
+    ) -> ExecutionResult:
+        input_files = input_file if input_file else self.gather_input_files("detect-file-formats")
         for file in input_files:
             path = upload_workflow_path("detect-file-formats") + "/" + file
             self.upload_file(path, file)
         file_paths = [f"{space}/{file}" for file in input_files]
         return [
-            {"input-files": [{"fileId": self.resolve_file_id(path)}]}
-            for path in file_paths
+            {"input-files": [{"fileId": self.resolve_file_id(path)}]} for path in file_paths
         ], input_files
 
-    def detect_file_mime_formats(self, input_file=None, space="space1"):
+    def detect_file_mime_formats(
+        self, input_file: InputFiles | None = None, space: str = "space1"
+    ) -> ExecutionResult:
         input_files = (
-            self.gather_input_files("detect-file-mime-formats")
-            if not input_file
-            else input_file
+            input_file if input_file else self.gather_input_files("detect-file-mime-formats")
         )
         for file in input_files:
             path = upload_workflow_path("detect-file-mime-formats") + "/" + file
             self.upload_file(path, file)
         file_paths = [f"{space}/{file}" for file in input_files]
         return [
-            {"input-files": [{"fileId": self.resolve_file_id(path)}]}
-            for path in file_paths
+            {"input-files": [{"fileId": self.resolve_file_id(path)}]} for path in file_paths
         ], input_files
 
-    def download_files(self, input_file=None, destination="space1/dir1"):
-        input_files = (
-            self.gather_input_files("download-files") if not input_file else input_file
-        )
+    def download_files(
+        self,
+        input_file: InputFiles | None = None,
+        destination: str = "space1/dir1",
+    ) -> ExecutionResult:
+        input_files = input_file if input_file else self.gather_input_files("download-files")
         for file in input_files:
             path = upload_workflow_path("download-files") + "/" + file
             self.upload_file(path, file)
-        file_paths = [f'{destination.split("/")[0]}/{file}' for file in input_files]
+        file_paths = [f"{destination.split('/', maxsplit=1)[0]}/{file}" for file in input_files]
         return [
             {
                 "fetch-files": [{"fileId": self.resolve_file_id(path)}],
@@ -91,30 +95,26 @@ class ExampleWorkflowExecutionInitialStoreContent:
             for path in file_paths
         ], input_files
 
-    def calculate_checksums_mounted(self, input_file="space1/file1"):
-        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
-            input_file
-        ]
+    def calculate_checksums_mounted(self, input_file: str = "space1/file1") -> ExecutionResult:
+        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
-    def calculate_checksums_rest(self, input_file="space1/file1"):
-        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
-            input_file
-        ]
+    def calculate_checksums_rest(self, input_file: str = "space1/file1") -> ExecutionResult:
+        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
-    def demo(self, input_file="space1/dir1"):
-        return [{"input_files": [{"fileId": self.resolve_file_id(input_file)}]}], [
-            input_file
-        ]
+    def demo(self, input_file: str = "space1/dir1") -> ExecutionResult:
+        return [{"input_files": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
-    def echo(self, input_file="space1/file1"):
+    def echo(self, input_file: str = "space1/file1") -> ExecutionResult:
         return [{"input": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
-    def initialize_eureka3D_project(  # pylint: disable=invalid-name
+    def initialize_eureka3D_project(  # noqa: N802 - method name matches the external workflow identifier
         self,
-        parent_directory="space1/dir1",
-        project_name="hello",
-        group="group1",
-    ):
+        parent_directory: str = "space1/dir1",
+        project_name: str = "hello",
+        group: str = "group1",
+    ) -> ExecutionResult:
+        if self.resolve_group_id is None:
+            raise ValueError("Group ID resolver is required for this workflow")
         return [
             {
                 "Parent directory": {"fileId": self.resolve_file_id(parent_directory)},
@@ -123,19 +123,18 @@ class ExampleWorkflowExecutionInitialStoreContent:
             }
         ], []
 
-    def substitute_placeholders_example(self, name="Tom"):
+    def substitute_placeholders_example(self, name: str = "Tom") -> ExecutionResult:
         return [{"input-store": {"name": name}}], []
 
-    def annotate_images(self, input_file=None, space="space1"):
-        input_files = (
-            self.gather_input_files("annotate-images") if not input_file else input_file
-        )
+    def annotate_images(
+        self, input_file: InputFiles | None = None, space: str = "space1"
+    ) -> ExecutionResult:
+        input_files = input_file if input_file else self.gather_input_files("annotate-images")
         for file in input_files:
             path = upload_workflow_path("annotate-images") + "/" + file
             self.upload_file(path, file)
         file_paths = [f"{space}/{file}" for file in input_files]
 
         return [
-            {"Files to process": [{"fileId": self.resolve_file_id(path)}]}
-            for path in file_paths
+            {"Files to process": [{"fileId": self.resolve_file_id(path)}]} for path in file_paths
         ], [file_paths]

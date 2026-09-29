@@ -8,8 +8,9 @@ import re
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Icon,
@@ -21,7 +22,9 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
+from tests.utils.utils import element_has_class
 
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -29,22 +32,18 @@ from .space_configuration_subpage import SpaceConfigurationPage
 from .space_marketplace import SpaceMarketplacePage
 
 
-class Space(Element):
-    name = id = Label(".one-label")
-    support_size = Label(".status-toolbar-icon:first-of-type")
-    supporting_providers_number = Label(".status-toolbar-icon:last-of-type")
-    advertised_icon = Icon(".oneicon-cart-checked")
-    home_icon = WebElement(".status-toolbar-icon:first-of-type span")
+class Space(NamedElement):
+    name = id = Label(".item-name", scroll=False)
+    support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
+    supporting_providers_number = Label(".status-toolbar-icon:last-of-type", scroll=False)
+    advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
+    home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
 
     overview = NamedButton(".one-list-level-2 .item-header", text="Overview")
     files = NamedButton(".one-list-level-2 .item-header", text="Files")
-    shares_public_data = NamedButton(
-        ".one-list-level-2 .item-header", text="Shares, Public Data"
-    )
+    shares_public_data = NamedButton(".one-list-level-2 .item-header", text="Shares, Public Data")
     transfers = NamedButton(".one-list-level-2 .item-header", text="Transfers")
-    datasets_archives = NamedButton(
-        ".one-list-level-2 .item-header", text="Datasets, Archives"
-    )
+    datasets_archives = NamedButton(".one-list-level-2 .item-header", text="Datasets, Archives")
     providers = NamedButton(".one-list-level-2 .item-header", text="Providers")
     members = NamedButton(".one-list-level-2 .item-header", text="Members")
     harvesters_discovery = NamedButton(
@@ -56,23 +55,37 @@ class Space(Element):
     configuration = NamedButton(".one-list-level-2 .item-header", text="Configuration")
     menu_button = Button(".collapsible-toolbar-toggle")
 
-    def click_menu(self):
+    def click_menu(self) -> None:
         self.click()
         self.menu_button.click()
 
-    def is_element_disabled(self, element_name):
+    def is_element_disabled(self, element_name: str) -> bool:
         element = getattr(self, element_name)
         return "disabled" in element.web_elem.get_attribute("class")
 
-    def is_element_enabled(self, element_name):
+    def is_element_enabled(self, element_name: str) -> bool:
         element = getattr(self, element_name)
         return "disabled" not in element.web_elem.get_attribute("class")
 
-    def is_active(self):
-        return "active" in self.web_elem.get_attribute("class")
+    def is_active(self) -> bool:
+        return element_has_class(self.web_elem, "active")
 
 
-class Provider(Element):
+class SpaceHeader(NamedElement):
+    name = id = Label(".item-name", scroll=False)
+    support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
+    supporting_providers_number = Label(".status-toolbar-icon:last-of-type", scroll=False)
+    advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
+    home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
+    menu_button = Button(".collapsible-toolbar-toggle", scroll=False)
+    clickable_field = WebElement(".item-name", scroll=False)
+
+    def click_menu(self) -> None:
+        self.click()
+        self.menu_button.click()
+
+
+class Provider(NamedElement):
     id = name = Label(".one-label")
     support = Label(".outer-text")
     menu_button = Button(".provider-menu-toggle")
@@ -104,40 +117,43 @@ class SpaceMarketplaceTile(PageObject):
     show = Button(".more-link")
 
 
-class ProvidersMap(Element):
+class ProvidersMap(NamedElement):
+    name = id = Label(".one-label")
     providers = WebElementsSequence(".one-atlas-point")
 
-    def click_provider(self, provider_name, driver):
-        for prov in self.providers:
-            ActionChains(driver).move_to_element(prov).perform()
+    def click_provider(self, provider_name: str, driver: WebDriver) -> None:
+        for provider in self.providers:
+            ActionChains(driver).move_to_element(provider).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
             if name == provider_name:
-                prov.click()
+                provider.click()
                 return
 
-        raise RuntimeError(f"Provider {provider_name} was not found on the map")
+        raise PageObjectNotFoundError(f"Provider {provider_name} was not found on the map")
 
-    def hover_and_check_provider(self, provider_name, driver):
-        for prov in self.providers:
-            ActionChains(driver).move_to_element(prov).perform()
+    def hover_and_check_provider(self, provider_name: str, driver: WebDriver) -> None:
+        for provider in self.providers:
+            ActionChains(driver).move_to_element(provider).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
             if name == provider_name:
                 return
 
-        raise RuntimeError(f"Provider {provider_name} was not found on the map")
+        raise PageObjectNotFoundError(f"Provider {provider_name} was not found on the map")
 
-    def get_provider_horizontal_position(self, provider_name, driver):
-        for prov in self.providers:
-            ActionChains(driver).move_to_element(prov).perform()
+    def get_provider_horizontal_position(self, provider_name: str, driver: WebDriver) -> float:
+        for provider in self.providers:
+            ActionChains(driver).move_to_element(provider).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
             if name == provider_name:
-                style = prov.get_attribute("style")
-                position = re.search(r"left:\s*(\d+\.*\d*)px", style).group(1)
-                position = float(position)
+                style = provider.get_attribute("style")
+                match = re.search(r"left:\s*(\d+\.*\d*)px", style)
+                if match is None:
+                    raise ValueError(f"Cannot parse left position from style: {style}")
+                position = match.group(1)
 
-                return position
+                return float(position)
 
-        raise RuntimeError(f"Provider {provider_name} was not found on the map")
+        raise PageObjectNotFoundError(f"Provider {provider_name} was not found on the map")
 
 
 class SpaceOverviewPage(PageObject):
@@ -151,26 +167,22 @@ class SpaceOverviewPage(PageObject):
 
 class WelcomePage(PageObject):
     create_a_space = NamedButton(".info .ember-view", text="Create a space")
-    join_an_existing_space = NamedButton(
-        ".info .ember-view", text="join an existing space"
-    )
+    join_an_existing_space = NamedButton(".info .ember-view", text="join an existing space")
     join_group = NamedButton(".info .ember-view", text="join a group")
 
 
-class HarvesterRow(Element):
+class HarvesterRow(NamedElement):
     name = id = Label(".item-name")
     harvester = WebElement(".item-name")
     harvester_menu_button = WebElement(".collapsible-toolbar-toggle")
 
-    def click_harvester_menu_button(self, driver):
+    def click_harvester_menu_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.harvester).perform()
         self.harvester_menu_button.click()
 
 
 class HarvestersPage(PageObject):
-    harvesters_list = WebItemsSequence(
-        ".main-content .one-collapsible-list-item", cls=HarvesterRow
-    )
+    harvesters_list = WebItemsSequence(".main-content .one-collapsible-list-item", cls=HarvesterRow)
     add_one_of_harvesters = NamedButton(
         ".add-harvester-to-space-trigger.btn", text="Add one of your harvesters"
     )
@@ -182,9 +194,7 @@ class HarvestersPage(PageObject):
 class GetSupportPage(PageObject):
     request_support_modal = NamedButton(".nav-link", text="Request support")
     deploy_provider_modal = NamedButton(".nav-link", text="Deploy your own Oneprovider")
-    expose_existing_data_modal = NamedButton(
-        ".nav-link", text="Expose existing data set"
-    )
+    expose_existing_data_modal = NamedButton(".nav-link", text="Expose existing data set")
 
     token_textarea = Label(".active textarea")
     copy = Button(".request-support-tab .copy-btn")
@@ -192,12 +202,25 @@ class GetSupportPage(PageObject):
     insufficient_privileges = Label(".text-center .col-xs-12")
 
 
+class SpaceProvidersHeader(PageObject):
+    providers_tab = WebElementsSequence(".provider-online")
+    overview_tab = WebElement(".item-overview")
+
+    def get_current_active_tab(self) -> str | None:
+        for tab in self.providers_tab + [self.overview_tab]:
+            if "active" in tab.get_attribute("class"):
+                return tab.text
+        return None
+
+
 class SpaceProvidersPage(PageObject):
+    header = WebItem(".content-header-section", cls=SpaceProvidersHeader)
+    settings_message = Label(".space-settings-info")
     providers_list = WebItemsSequence(
         ".space-providers-list li.one-collapsible-list-item", cls=Provider
     )
-    add_support = Button(".btn-add-support")
     get_support_page = WebItem(".ember-view", cls=GetSupportPage)
+    add_support = Button(".btn-add-support")
     map = WebItem(".space-providers-atlas", cls=ProvidersMap)
 
 
@@ -214,19 +237,19 @@ class ArchiveHeader(PageObject):
     back_to_dataset_page = Button(".content-back-arrow-icon")
 
 
-class DataPage(GenericPage):
+class DataPage(SidebarPanelPage):
+    panel_name = "data"
+
     create_space_button = Button(".one-sidebar-toolbar-button .oneicon-add-filled")
 
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")
 
-    spaces_header_list = WebItemsSequence(
-        ".sidebar-spaces li.one-list-item.clickable .item-header", cls=Space
-    )
-    spaces_header_list_web_elems = WebElementsSequence(
-        ".sidebar-spaces li.one-list-item.clickable.data-row"
+    spaces_headers_list = WebItemsSequence(
+        ".sidebar-spaces li.one-list-item.clickable.resource-item .item-header:not(.truncate)",
+        cls=SpaceHeader,
     )
 
-    elements_list = WebItemsSequence(
+    spaces_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
     )
 
@@ -241,6 +264,7 @@ class DataPage(GenericPage):
     welcome_page = WebItem(".main-content", cls=WelcomePage)
     harvesters_page = WebItem(".main-content", cls=HarvestersPage)
     dataset_header = WebItem(".main-content", cls=DatasetHeader)
+    archive_header = WebItem(".main-content", cls=ArchiveHeader)
     configuration_page = WebItem(".main-content", cls=SpaceConfigurationPage)
     space_marketplace_page = WebItem(".main-content", cls=SpaceMarketplacePage)
 
@@ -256,13 +280,13 @@ class DataPage(GenericPage):
     choose_other_provider = Button(".choose-oneprovider-link")
     error_header = Label(".content-info-content-container h1")
 
-    def choose_space(self, name):
-        for space in self.elements_list:
+    def choose_space(self, name: str) -> None:
+        for space in self.spaces_list:
             if space.name in (name, ""):
                 space.click()
                 if space.name == name:
                     return
-        raise RuntimeError(f"{name} space not found")
+        raise PageObjectNotFoundError(f"{name} space not found")
 
-    def get_visible_spaces_list(self):
-        return [el for el in self.spaces_header_list_web_elems if el.text != ""]
+    def get_visible_spaces_list(self) -> list[SpaceHeader]:
+        return [space for space in self.spaces_headers_list if space.name != ""]

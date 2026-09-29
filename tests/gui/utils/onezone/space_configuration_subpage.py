@@ -6,7 +6,9 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from selenium.webdriver import ActionChains
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
@@ -59,5 +61,5 @@ class SpaceConfigurationPage(PageObject):
 
     header_label_warning = Label(".label.label-warning")
 
-    def move_to_toggle(self, driver):
+    def move_to_toggle(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.advertise_toggle_web).perform()

@@ -5,26 +5,35 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from abc import ABCMeta
+from collections.abc import Iterable
+from typing import ClassVar
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.utils.core.base import NamedElement, PageObject, PageObjectMeta
 from tests.gui.utils.core.web_elements import Label, NamedButton
+from tests.gui.utils.generic import ListItemMainField, PageName
+from tests.utils.utils import repeat_failed
 
 
-class Element(PageObject):
-    name = id = Label(".one-label")
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_visible_elements_list[T: NamedElement](
+    elements_list: Iterable[T],
+    main_field: ListItemMainField = "name",
+) -> list[T]:
+    return [element for element in elements_list if getattr(element, main_field)]
 
-    def __call__(self, *args, **kwargs):
-        self.web_elem.click()
 
-
-class GenericPage(PageObject):
-    __metaclass__ = ABCMeta
-
+class GenericPage(PageObject, metaclass=PageObjectMeta):
     name = id = Label(".row-heading .col-title")
     get_started = NamedButton(".btn-default", text="Get started")
 
-    def __getitem__(self, item):
-        if hasattr(self, "elements_list"):
-            return self.elements_list[item]
-        raise ValueError("there is not elements_list member in class instance")
+
+class ListPage(PageObject):
+    """
+    Base class for Onezone pages exposing one or more element lists.
+    This class is basically needed for function get_visible_items_list
+    """
+
+
+class SidebarPanelPage(GenericPage, ListPage):
+    panel_name: ClassVar[PageName]

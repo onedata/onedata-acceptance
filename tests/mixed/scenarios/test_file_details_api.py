@@ -15,13 +15,14 @@ from tests.gui.meta_steps.oneprovider.shares import *
 from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.rest.shares import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider_common import *
-from tests.gui.steps.rest.shares import *
 from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.group_basic import *
 from tests.mixed.steps.oneclient.data_basic import *
@@ -39,7 +40,7 @@ from tests.utils.entities_setup.users import *
 
 
 @pytest.fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0]
 
 

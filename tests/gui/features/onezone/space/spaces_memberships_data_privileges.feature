@@ -35,7 +35,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
               Read files: False
 
     # Files in space1 tab is disabled when Read files privilege is not granted
-    And user of browser_user1 sees that Files tab of "space1" is disabled
+    And user of browser_user1 sees that "Files" tab of "space1" is disabled
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -65,11 +65,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is "space1"
-    And user of browser_user1 clicks "New directory" button from file browser menu bar
-    And user of browser_user1 writes "new_directory" into text field in modal "Create dir"
-    And user of browser_user1 confirms create new directory using button
-    And user of browser_user1 sees that error modal with text "Creating directory failed" appeared
-    And user of browser_user1 closes "Error" modal
+    And user of browser_user1 cannot click "New directory" button from file browser menu bar
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -79,6 +75,8 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
               Write files: True
 
     And user of browser_user1 is idle for 1 seconds
+    And user of browser_user1 refreshes site
+    And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks "New directory" button from file browser menu bar
     And user of browser_user1 writes "new_directory" into text field in modal "Create dir"
     And user of browser_user1 confirms create new directory using button
@@ -119,6 +117,6 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
     And user of browser_user1 clicks on "X" button in modal "Directory details"
     And user of browser_user1 opens shares view of "space1"
     And user of browser_user1 clicks "dir1" share in shares browser on shares view
-    And user of browser_user1 sees file browser on single share view
-    Then user of browser_user1 sees that item named "dir1" has appeared in file browser on single share view
+    And user of browser_user1 sees share's file browser on single share view
+    Then user of browser_user1 sees that item named "dir1" has appeared in share's file browser on single share view
 

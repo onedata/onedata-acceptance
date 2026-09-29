@@ -4,11 +4,15 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from contextlib import suppress
+
 from tests import OZ_REST_PORT
+from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
+from tests.utils.user_utils import Users
 
 
-def get_user_groups(zone_hostname, user, users):
+def get_user_groups(zone_hostname: str, user: str, users: Users) -> list[str]:
     return http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -17,10 +21,25 @@ def get_user_groups(zone_hostname, user, users):
     ).json()["groups"]
 
 
-def leave_user_group(zone_hostname, user, users, group_id):
+def leave_user_group(zone_hostname: str, user: str, users: Users, group_id: str) -> None:
     http_delete(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("user", "groups", group_id),
         auth=(user, users[user].password),
     )
+
+
+def delete_group_if_present_using_rest(
+    zone_hostname: str,
+    admin_username: str,
+    admin_password: str,
+    group_id: str,
+) -> None:
+    with suppress(HTTPNotFound):
+        http_delete(
+            ip=zone_hostname,
+            port=OZ_REST_PORT,
+            path=get_zone_rest_path("groups", group_id),
+            auth=(admin_username, admin_password),
+        )

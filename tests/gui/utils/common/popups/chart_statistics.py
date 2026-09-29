@@ -12,5 +12,5 @@ from tests.gui.utils.core.web_elements import Label
 class ChartStatistics(PageObject):
     header = Label(".tooltip-header")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Chart Statistics"

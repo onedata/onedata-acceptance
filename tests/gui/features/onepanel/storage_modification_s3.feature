@@ -5,6 +5,7 @@ Feature: Storage S3 management using onepanel, REST
     Given initial users configuration in "onezone" Onezone service:
             - user1
     And there are no spaces supported by oneprovider-1 in Onepanel
+    And using REST, user creates S3 bucket "test"
     And "test_storage1" storage backend in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
           storage type: S3
           hostname: http://dev-volume-s3-krakow.default:9000
@@ -24,7 +25,6 @@ Feature: Storage S3 management using onepanel, REST
     And user opened browser window
     And user of browser opened Onezone page
     And user of browser logged as admin to Onezone service
-    And S3 host entry is added to /etc/hosts
 
 
   Scenario: User sees file's content after modifying storage backend by setting new S3 bucket with copied content from the previous bucket
@@ -32,12 +32,12 @@ Feature: Storage S3 management using onepanel, REST
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-1.txt" to current dir
     And user of browser clicks on "Information" in context menu for "20B-1.txt"
-    And user of browser sees physical location path in file details and copies it into the clipboard
+    And user of browser sees physical location path for provider "oneprovider-1" in file details and copies it into the clipboard
 
     And using REST, user creates S3 bucket "bucket2"
     And using REST, user of browser copies item with recently copied path from "test" bucket into "bucket2" bucket
 
-    And user of browser clicks on Clusters in the main menu
+    And user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 

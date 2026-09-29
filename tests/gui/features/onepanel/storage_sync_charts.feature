@@ -16,7 +16,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User configures storage sync and sees storage synchronization statistics
     Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is no "dir1", "dir2" in provider's storage mount point
+    And there is no ["dir1", "dir2"] in provider's storage mount point
     And "new_storage" storage backend in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
           storage type: POSIX
           mount point: /volumes/posix
@@ -43,7 +43,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir1 to provider's storage mount point
 
     # open chart tab
-    And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
     And user of browser1 clicks on storage import navigation tab in space "space1"
 
     Then user of browser1 clicks on last hour update view

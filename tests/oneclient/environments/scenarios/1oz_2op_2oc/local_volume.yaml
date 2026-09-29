@@ -43,6 +43,11 @@ oneprovider-1:
     batchConfig:
       createUsers: false
 
+  workerOverlayConfig: |-
+    [{op_worker, [
+        {file_access_audit_log_enabled, true}
+    ]}].
+
 oneprovider-2:
   batchConfig:
     createUsers: false
@@ -51,3 +56,8 @@ oneprovider-2:
     users: []
     wait_for_oneprovider:
       enabled: false
+
+  workerOverlayConfig: |-
+    [{op_worker, [
+        {file_access_audit_log_enabled, true}
+    ]}].

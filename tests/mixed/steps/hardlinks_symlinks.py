@@ -6,10 +6,17 @@ __author__ = "Jakub Karczewski"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Mapping
+
+import pytest
+
 from tests.gui.meta_steps.oneprovider.data import (
-    create_hardlinks_of_file_with_path,
+    create_hardlink_of_file_located_outside_current_location_and_place_it_in_path,
     create_symlinks_of_file_with_path,
 )
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.oneprovider.data import (
     _lookup_file_id,
     check_for_hardlink_between_files_rest,
@@ -19,18 +26,34 @@ from tests.mixed.steps.rest.oneprovider.data import (
     get_file_symlink_value_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException, login_to_provider
-from tests.utils.acceptance_utils import list_parser
+from tests.oneclient.steps.multi_file_steps import (
+    assert_hardlink_between_files,
+    assert_symlink_of_file,
+    create_hardlink,
+    create_symlink,
+)
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 
 
 @wt(
     parsers.re(
         r"using (?P<client>.*), user (?P<user>.+?) sees that "
-        r'"(?P<path1>.*)" symlink points to "(?P<path2>.*)" in "(?P<space>.*)"'
-        r" in (?P<host>.*)"
+        r'"(?P<path1>.*)" symlink points to "(?P<path2>.*)" in '
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def assert_file_symlink_value(client, users, user, hosts, host, space, path1, path2):
+def assert_file_symlink_value(
+    client: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    space: str,
+    path1: str,
+    path2: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
         user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
@@ -40,9 +63,9 @@ def assert_file_symlink_value(client, users, user, hosts, host, space, path1, pa
         path_splitted = target_path.split("/")
         cut_path = "/".join(path_splitted[1:])
 
-        assert (
-            cut_path == path2
-        ), f"given path: {path2} not equal to target path from endpoint: {cut_path}"
+        assert cut_path == path2, (
+            f"given path: {path2} not equal to target path from endpoint: {cut_path}"
+        )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -50,25 +73,30 @@ def assert_file_symlink_value(client, users, user, hosts, host, space, path1, pa
 @wt(
     parsers.re(
         r"using (?P<client>.*), user (?P<user>.+) sees that"
-        r' "(?P<file_path>.*)" hardlinks point to "(?P<paths_list>.*)"'
+        r' "(?P<file_path>.*)" hardlinks point to'
+        rf' "(?P<paths_list>{ELEMENTS_SEQUENCE_PATTERN})"'
         r' in space "(?P<space>.*)" in (?P<host>.*)'
-    )
+    ),
+    converters={"paths_list": parse_elements_sequence},
 )
 def assert_file_hardlinks(
-    client, users, user, hosts, host, file_path, space, paths_list
-):
+    client: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    file_path: str,
+    space: str,
+    paths_list: list[str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
         user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
         file_id = _lookup_file_id(f"{space}/{file_path}", user_client_op)
         actual_hardlinks = get_file_hardlinks_rest(users, user, hosts, host, file_id)
-        expected_ids = [
-            _lookup_file_id(f"{space}/{path}", user_client_op)
-            for path in list_parser(paths_list)
-        ]
+        expected_ids = [_lookup_file_id(f"{space}/{path}", user_client_op) for path in paths_list]
         assert set(actual_hardlinks) == set(expected_ids), (
-            "The IDs of hardlinks from endpoint are not the same as IDs of provided"
-            " files"
+            "The IDs of hardlinks from endpoint are not the same as IDs of provided files"
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -78,26 +106,22 @@ def assert_file_hardlinks(
     parsers.re(
         r"using (?P<client>.*), user( of)? (?P<user>.+) creates"
         r' symlink located in "(?P<path>.*)" pointing to "(?P<file_name>.*)" in'
-        r' "(?P<space>.*)" in file browser'
-        r" in (?P<host>.*)"
+        r' "(?P<space>.*)" in file browser in (?P<host>.*)'
     )
 )
 def create_file_symlink(
-    client,
-    users,
-    user,
-    hosts,
-    host,
-    selenium,
-    file_name,
-    path,
-    space,
-    spaces,
-    tmp_memory,
-    oz_page,
-    op_container,
-    popups,
-):
+    client: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    selenium: SeleniumDrivers,
+    file_name: str,
+    path: str,
+    space: str,
+    spaces: Mapping[str, str],
+    tmp_memory: TmpMemory,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         create_symlinks_of_file_with_path(
@@ -106,9 +130,6 @@ def create_file_symlink(
             file_name,
             space,
             tmp_memory,
-            oz_page,
-            op_container,
-            popups,
             path,
         )
     elif client_lower == "rest":
@@ -121,8 +142,36 @@ def create_file_symlink(
         target_path = f"{space_prefix}/{file_name}"
 
         destination_dir_id = _lookup_file_id(f"{space}/{parent_path}", user_client_op)
-        create_symlink_rest(
-            users, user, hosts, host, destination_dir_id, target_path, file_name
+        create_symlink_rest(users, user, hosts, host, destination_dir_id, target_path, file_name)
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.re(
+        r"using (?P<client>.*), user (?P<user>.+) creates"
+        r' symlink located in "(?P<symlink_path>.*)" pointing to '
+        r'"(?P<file_path>.*)" in "(?P<space>.*)"'
+    )
+)
+def create_symlink_oneclient(
+    client: str,
+    user: str,
+    users: Users,
+    symlink_path: str,
+    file_path: str,
+    space: str,
+) -> None:
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        file_name = file_path.rsplit("/", maxsplit=1)[-1]
+        create_symlink(
+            user,
+            f"{space}/{file_path}",
+            f"{space}/{symlink_path}/{file_name}",
+            oneclient_host,
+            users,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -131,48 +180,73 @@ def create_file_symlink(
 @wt(
     parsers.re(
         r"using (?P<client>.*), user( of)? (?P<user>.*) creates hardlink of "
-        r'"(?P<file_name>.*)" placed in "(?P<path>.*)" directory in "(?P<space>.*)"'
-        r" in (?P<host>.*)"
+        r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" directory in'
+        r' "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def create_file_hardlink(
-    client,
-    users,
-    user,
-    hosts,
-    host,
-    selenium,
-    file_name,
-    space,
-    tmp_memory,
-    oz_page,
-    op_container,
-    popups,
-    path,
-):
+    client: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    selenium: SeleniumDrivers,
+    file_path: str,
+    hardlink_path: str,
+    space: str,
+    tmp_memory: TmpMemory,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
-        create_hardlinks_of_file_with_path(
+        create_hardlink_of_file_located_outside_current_location_and_place_it_in_path(
             selenium,
             user,
-            file_name,
             space,
             tmp_memory,
-            oz_page,
-            op_container,
-            popups,
-            path,
+            file_path,
+            hardlink_path,
         )
     elif client_lower == "rest":
         user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+        file_name = file_path.rsplit("/", maxsplit=1)[-1]
         create_hardlink_rest(
             users,
             user,
             hosts,
             host,
-            _lookup_file_id(f"{space}/{path}", user_client_op),
-            _lookup_file_id(f"{space}/{file_name}", user_client_op),
+            _lookup_file_id(f"{space}/{hardlink_path}", user_client_op),
+            _lookup_file_id(f"{space}/{file_path}", user_client_op),
             file_name,
+        )
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.re(
+        r"using (?P<client>.*), user (?P<user>.*) creates hardlink of "
+        r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" '
+        r'directory in "(?P<space>.*)"'
+    )
+)
+def create_hardlink_oneclient(
+    client: str,
+    user: str,
+    users: Users,
+    file_path: str,
+    hardlink_path: str,
+    space: str,
+) -> None:
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        file_name = file_path.rsplit("/", maxsplit=1)[-1]
+        create_hardlink(
+            user,
+            f"{space}/{file_path}",
+            f"{space}/{hardlink_path}/{file_name}",
+            oneclient_host,
+            users,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -186,11 +260,61 @@ def create_file_hardlink(
     )
 )
 def assert_hardlink_between_files_rest(
-    users, user, hosts, host, file_path, hardlink_path, space
-):
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    file_path: str,
+    hardlink_path: str,
+    space: str,
+) -> None:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_id1 = _lookup_file_id(f"{space}/{file_path}", user_client_op)
     file_id2 = _lookup_file_id(f"{space}/{hardlink_path}", user_client_op)
-    assert check_for_hardlink_between_files_rest(
-        users, user, hosts, host, file_id1, file_id2
-    ), f"file: {hardlink_path} is not a hardlink to file: {file_path}"
+    assert check_for_hardlink_between_files_rest(users, user, hosts, host, file_id1, file_id2), (
+        f"file: {hardlink_path} is not a hardlink to file: {file_path}"
+    )
+
+
+@wt(
+    parsers.re(
+        r'using (?P<client>\w+), user (?P<user>\w+) can see that "(?P<file_path1>.*)"'
+        r' and "(?P<file_path2>.*)" are hardlinked'
+    )
+)
+def assert_hardlink_between_files_oneclient(
+    client: str,
+    user: str,
+    users: Users,
+    file_path1: str,
+    file_path2: str,
+    request: pytest.FixtureRequest,
+) -> None:
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        assert_hardlink_between_files(user, oneclient_host, users, file_path1, file_path2, request)
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.re(
+        r"using (?P<client>\w+), user (?P<user>\w+) can see that file"
+        r' "(?P<symlink_path>.*)" is a symlink and points to "(?P<file_path>.*)"'
+    )
+)
+def assert_file_is_symlink_and_where_it_points_oneclient(
+    client: str,
+    user: str,
+    users: Users,
+    file_path: str,
+    symlink_path: str,
+    request: pytest.FixtureRequest,
+) -> None:
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        assert_symlink_of_file(user, oneclient_host, users, symlink_path, file_path, request)
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")

@@ -4,6 +4,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Button, Label
 
@@ -14,5 +15,5 @@ class ExternalSymbolicLink(Modal):
     cancel = Button(".btn-cancel")
     download = Button(".btn-open")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "External symbolic link modal"

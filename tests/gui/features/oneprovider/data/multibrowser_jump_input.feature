@@ -31,5 +31,5 @@ Feature: Jump to file using jump input in two file browsers
     And user of browser2 uses upload button from file browser menu bar to upload local file "file_0011.txt" to remote current dir
     And user of browser1 scrolls to the bottom of file browser
     And user of browser1 clicks "Refresh" button from file browser menu bar
-    And user of browser1 writes "file_0011" to jump input in file browser
-    Then user of browser1 sees that item named "file_0011.txt" is currently visible in file browser
+    Then user of browser1 writes "file_0011" to jump input in file browser and expects "file_0011.txt" to be highlighted
+    And user of browser1 sees that item named "file_0011.txt" is currently visible in file browser

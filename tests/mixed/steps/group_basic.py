@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 
+import pytest
+
 from tests import OZ_REST_PORT
 from tests.gui.meta_steps.onezone.groups import (
     add_subgroups_using_op_gui,
@@ -25,6 +27,8 @@ from tests.gui.meta_steps.onezone.groups import (
     rename_groups_using_op_gui,
     see_groups_using_op_gui,
 )
+from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.mixed.steps.rest.onezone.group_management import (
     add_subgroups_using_rest,
     assert_subgroups_using_rest,
@@ -43,23 +47,57 @@ from tests.mixed.steps.rest.onezone.group_management import (
     see_groups_using_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup.groups import _register_group_finalizer
+from tests.utils.entities_setup.users import CredentialsLike
 from tests.utils.http_exceptions import HTTPUnauthorized
 from tests.utils.rest_utils import get_zone_rest_path, http_post
+from tests.utils.user_utils import Users
 
 
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates groups? "
-        '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
-def create_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
+def create_groups(
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    admin_credentials: CredentialsLike,
+) -> None:
+    def register_finalizer(group_id: str) -> None:
+        _register_group_finalizer(
+            request,
+            hosts[host]["hostname"],
+            admin_credentials,
+            group_id,
+        )
 
     if client.lower() == "rest":
-        create_groups_using_rest(user, users, hosts, group_list, host)
+        create_groups_using_rest(user, users, hosts, group_list, register_finalizer, host)
     elif client.lower() == "web gui":
-        create_groups_using_op_gui(selenium, user, group_list, oz_page)
+        create_groups_using_op_gui(
+            selenium,
+            user,
+            group_list,
+            clipboard,
+            displays,
+            register_finalizer,
+        )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -67,11 +105,17 @@ def create_groups(client, user, group_list, host, hosts, users, selenium, oz_pag
 @wt(
     parsers.re(
         r"(?P<user>\w+) creates group "
-        '"(?P<group_name>.*)" using REST using received token in '
-        '"(?P<host>.*)" Onezone service'
+        r'"(?P<group_name>.*)" using REST using received token in '
+        r'"(?P<host>.*)" Onezone service'
     )
 )
-def create_groups_with_token(user, group_name, host, tmp_memory, hosts):
+def create_groups_with_token(
+    user: str,
+    group_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    hosts: Hosts,
+) -> None:
     group_type = "team"
     zone_hostname = hosts[host]["hostname"]
     token = tmp_memory[user]["mailbox"].get("token", None)
@@ -89,34 +133,47 @@ def create_groups_with_token(user, group_name, host, tmp_memory, hosts):
 @wt(
     parsers.re(
         r'(?P<user>\w+) fails to create group "(?P<group_name>.*)" '
-        r'using REST using received token in "(?P<host>.*)" Onezone'
-        r" service"
+        r'using REST using received token in "(?P<host>.*)" Onezone service'
     )
 )
-def fail_to_create_group_with_token(user, group_name, host, tmp_memory, hosts):
+def fail_to_create_group_with_token(
+    user: str,
+    group_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    hosts: Hosts,
+) -> None:
     try:
         create_groups_with_token(user, group_name, host, tmp_memory, hosts)
-        raise AssertionError(
-            "function: create_groups_with_token worked but it should not"
-        )
-    except HTTPUnauthorized as err:
-        if err.status_code == 404:
-            pass
+        raise AssertionError("function: create_groups_with_token worked but it should not")
+    except HTTPUnauthorized:
+        pass
 
 
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees( that)?"
-        " groups? named (?P<group_list>.*?)( ha(s|ve) appeared)? in"
-        ' "(?P<host>.*)" Onezone service'
-    )
+        rf" groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN})( ha(s|ve)"
+        r' appeared)? in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
-def assert_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
+def assert_groups(
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
         see_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == "web gui":
-        see_groups_using_op_gui(selenium, user, oz_page, group_list)
+        see_groups_using_op_gui(selenium, user, group_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -124,29 +181,30 @@ def assert_groups(client, user, group_list, host, hosts, users, selenium, oz_pag
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) renames groups? "
-        "(?P<group_list>.*)to (?P<new_names>.*) in "
-        '"(?P<host>.*)" Onezone service'
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+        "new_names": parse_elements_sequence,
+    },
 )
 def rename_groups(
-    client,
-    user,
-    group_list,
-    new_names,
-    host,
-    hosts,
-    users,
-    selenium,
-    oz_page,
-    popups,
-):
+    client: str,
+    user: str,
+    group_list: list[str],
+    new_names: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
         rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
     elif client.lower() == "web gui":
-        rename_groups_using_op_gui(
-            selenium, user, oz_page, group_list, new_names, popups
-        )
+        rename_groups_using_op_gui(selenium, user, group_list, new_names)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -154,16 +212,27 @@ def rename_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) does not see "
-        'groups? named (?P<group_list>.*) in "(?P<host>.*)" '
-        "Onezone service"
-    )
+        rf"groups? named (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
-def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
+def fail_to_see_groups(
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
         fail_to_see_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == "web gui":
-        fail_to_see_groups_using_op_gui(selenium, user, oz_page, group_list)
+        fail_to_see_groups_using_op_gui(selenium, user, group_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -171,17 +240,27 @@ def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium, o
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes groups? "
-        '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def remove_groups(
-    client, user, group_list, host, hosts, users, selenium, oz_page, popups
-):
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
         remove_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == "web gui":
-        remove_group(selenium, user, group_list, oz_page, popups)
+        remove_group(selenium, user, group_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -189,17 +268,27 @@ def remove_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) leaves groups? "
-        '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def leave_groups(
-    client, user, group_list, host, hosts, users, selenium, oz_page, popups
-):
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
         leave_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == "web gui":
-        leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups)
+        leave_groups_using_op_gui(selenium, user, group_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -207,26 +296,26 @@ def leave_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) adds groups? "
-        '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" in'
-        ' "(?P<host>.*)" Onezone service'
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
+        r' "(?P<parent>.*)" in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def add_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    oz_page,
-    tmp_memory,
-    parent,
-    displays,
-    clipboard,
-    onepanel,
-    popups,
-):
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    parent: str,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
 
     if client.lower() == "rest":
         add_subgroups_using_rest(user, users, hosts, group_list, parent, host)
@@ -234,14 +323,11 @@ def add_subgroups(
         add_subgroups_using_op_gui(
             selenium,
             user,
-            oz_page,
             parent,
             group_list,
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -250,24 +336,24 @@ def add_subgroups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes subgroups? "
-        '(?P<group_list>.*) from group "(?P<parent>.*)" in'
-        ' "(?P<host>.*)" Onezone service'
-    )
+        rf'(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) from group "(?P<parent>.*)" in'
+        r' "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def remove_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    oz_page,
-    tmp_memory,
-    parent,
-    onepanel,
-    popups,
-):
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    parent: str,
+) -> None:
 
     if client.lower() == "rest":
         remove_subgroups_using_rest(user, users, hosts, group_list, parent, host)
@@ -275,12 +361,9 @@ def remove_subgroups(
         remove_subgroups_using_op_gui(
             selenium,
             user,
-            oz_page,
             group_list,
             tmp_memory,
             parent,
-            onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -289,29 +372,28 @@ def remove_subgroups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees groups? "
-        '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" '
-        'in "(?P<host>.*)" Onezone service'
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
+        r' "(?P<parent>.*)" in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def assert_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    parent,
-    oz_page,
-    onepanel,
-):
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    parent: str,
+) -> None:
 
     if client.lower() == "rest":
         assert_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == "web gui":
-        assert_subgroups_using_op_gui(
-            selenium, user, oz_page, group_list, parent, onepanel
-        )
+        assert_subgroups_using_op_gui(selenium, user, group_list, parent)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -319,29 +401,27 @@ def assert_subgroups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) does not see groups? "
-        '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)"'
-        ' in "(?P<host>.*)" Onezone service'
-    )
+        rf"(?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group"
+        r' "(?P<parent>.*)" in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def fail_to_see_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    oz_page,
-    parent,
-    onepanel,
-):
-
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    parent: str,
+) -> None:
     if client.lower() == "rest":
         fail_to_see_subgroups_using_rest(user, users, group_list, parent, hosts, host)
     elif client.lower() == "web gui":
-        fail_to_see_subgroups_using_op_gui(
-            selenium, user, oz_page, group_list, parent, onepanel
-        )
+        fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -349,43 +429,34 @@ def fail_to_see_subgroups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user1>\w+) invites "
-        r'(?P<user2>\w+) to group "(?P<group>.*)" in "(?P<host>.*)" '
-        r"Onezone service"
+        r'(?P<user2>\w+) to group "(?P<group>.*)" in "(?P<host>.*)" Onezone service'
     )
 )
 def invite_to_group(
-    client,
-    user1,
-    user2,
-    group,
-    host,
-    hosts,
-    users,
-    selenium,
-    oz_page,
-    tmp_memory,
-    displays,
-    clipboard,
-    onepanel,
-    popups,
-):
+    client: str,
+    user1: str,
+    user2: str,
+    group: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
 
     if client.lower() == "rest":
-        create_group_token_using_rest(
-            user1, user2, group, tmp_memory, users, hosts, host
-        )
+        create_group_token_using_rest(user1, user2, group, tmp_memory, users, hosts, host)
     elif client.lower() == "web gui":
         create_group_token_to_invite_user_using_op_gui(
             selenium,
             user1,
             user2,
-            oz_page,
             group,
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -394,15 +465,23 @@ def invite_to_group(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) joins group he "
-        'was invited to in "(?P<host>.*)" Onezone service'
+        r'was invited to in "(?P<host>.*)" Onezone service'
     )
 )
-def join_group(client, user, host, hosts, users, selenium, oz_page, tmp_memory):
+def join_group(
+    client: str,
+    user: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+) -> None:
 
     if client.lower() == "rest":
         join_group_using_rest(user, tmp_memory, hosts, users, host)
     elif client.lower() == "web gui":
-        join_group_using_op_gui(selenium, user, oz_page, tmp_memory)
+        join_group_using_op_gui(selenium, user, tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -410,31 +489,30 @@ def join_group(client, user, host, hosts, users, selenium, oz_page, tmp_memory):
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) fails to rename"
-        " groups? (?P<group_list>.*) to (?P<new_names>.*) in"
-        ' "(?P<host>.*)" Onezone service'
-    )
+        rf" groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) to "
+        rf"(?P<new_names>{ELEMENTS_SEQUENCE_PATTERN}) in"
+        r' "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+        "new_names": parse_elements_sequence,
+    },
 )
 def fail_to_rename_groups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    oz_page,
-    new_names,
-    popups,
-):
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    new_names: list[str],
+) -> None:
 
     if client.lower() == "rest":
-        fail_to_rename_groups_using_rest(
-            user, users, hosts, group_list, new_names, host
-        )
+        fail_to_rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
     elif client.lower() == "web gui":
-        fail_to_rename_groups_using_op_gui(
-            selenium, user, oz_page, group_list, new_names, popups
-        )
+        fail_to_rename_groups_using_op_gui(selenium, user, group_list, new_names)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -442,24 +520,28 @@ def fail_to_rename_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) fails to remove"
-        ' groups? (?P<group_list>.*?) in "(?P<host>.*)" Onezone service'
-    )
+        rf" groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) in "
+        r'"(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def fail_to_remove_groups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-):
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+) -> None:
 
     if client.lower() == "rest":
         fail_to_remove_groups_using_rest(user, users, hosts, group_list, host)
     # TODO VFS-12393 uncomment after implementing function: "fail_to_remove_groups_using_op_gui"
     #  and writing suitable scenario
     # elif client.lower() == 'web gui':
-    #     fail_to_remove_groups_using_op_gui(selenium, user, op_container, group_list,
+    #     fail_to_remove_groups_using_op_gui(selenium, user, group_list,
     #                                        tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -468,26 +550,26 @@ def fail_to_remove_groups(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) fails to join"
-        " groups? (?P<group_list>.*?) as subgroup to group "
-        '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'
-    )
+        rf" groups? (?P<group_list>{ELEMENTS_SEQUENCE_PATTERN}) as subgroup to group "
+        r'"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'
+    ),
+    converters={
+        "group_list": parse_elements_sequence,
+    },
 )
 def fail_to_add_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    oz_page,
-    parent,
-    tmp_memory,
-    displays,
-    clipboard,
-    onepanel,
-    popups,
-):
+    client: str,
+    user: str,
+    group_list: list[str],
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    parent: str,
+    tmp_memory: TmpMemory,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+) -> None:
 
     if client.lower() == "rest":
         fail_to_add_subgroups_using_rest(user, users, hosts, group_list, parent, host)
@@ -495,14 +577,11 @@ def fail_to_add_subgroups(
         fail_to_add_subgroups_using_op_gui(
             selenium,
             user,
-            oz_page,
             parent,
             group_list,
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

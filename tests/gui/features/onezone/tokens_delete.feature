@@ -14,7 +14,7 @@ Feature: Deleting and revoking tokens tests in Onezone GUI
 
 
   Scenario Outline: User successfully removes token
-    When user of browser clicks on Tokens in the main menu
+    When user of browser clicks on "Tokens" in the main menu
     And user of browser creates 1 <token type> token
     And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
     And user of browser clicks on remove button for token named "<token name>" on tokens list
@@ -29,7 +29,7 @@ Feature: Deleting and revoking tokens tests in Onezone GUI
 
 
   Scenario Outline: User successfully revokes and then activates created token
-    When user of browser clicks on Tokens in the main menu
+    When user of browser clicks on "Tokens" in the main menu
     And user of browser creates 1 <token type> token
     And user of browser sees that token named "<token name>" is marked as active
     And user of browser clicks on tokens view menu button

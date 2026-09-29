@@ -7,8 +7,8 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from pytest import fixture
-from pytest_bdd import scenario, scenarios
+from pytest import fixture, mark
+from pytest_bdd import scenario
 
 from tests.gui.meta_steps.onepanel.account_management import *
 from tests.gui.meta_steps.onepanel.provider import *
@@ -54,7 +54,7 @@ from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
-from tests.gui.steps.rest.provider import *
+from tests.gui.steps.rest.s3 import *
 from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
@@ -62,8 +62,11 @@ from tests.utils.entities_setup.users import *
 
 
 @fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0, 1]
 
 
-scenarios("../features/onepanel/deployment_s3.feature")
+@mark.usefixtures("clean_environment")
+@scenario("../features/onepanel/deployment_s3.feature", "Cluster deployment with OneS3")
+def test_cluster_deployment_with_ones3():
+    pass

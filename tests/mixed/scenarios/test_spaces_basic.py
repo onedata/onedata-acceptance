@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import pytest
 from pytest_bdd import scenarios
 
 from tests.gui.conftest import *
@@ -15,6 +16,7 @@ from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.rest.shares import *
 from tests.gui.steps.common.browser_creation import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
@@ -43,7 +45,6 @@ from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
-from tests.gui.steps.rest.shares import *
 from tests.mixed.steps.members import *
 from tests.mixed.steps.rest.onezone.special_dirs import *
 from tests.mixed.steps.space_basic import *
@@ -56,7 +57,7 @@ from tests.utils.entities_setup.users import *
 
 
 @pytest.fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0, 1]
 
 

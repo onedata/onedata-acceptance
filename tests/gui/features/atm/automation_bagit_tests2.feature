@@ -296,12 +296,12 @@ Feature: Bagit uploader tests
       severity: Error
       content:
         details:
-          reason: $(contains ["HTTPSConnectionPool(host='www.heh.xd', port=443)", "Max retries exceeded with url", "Caused by NewConnectionError", "Failed to establish a new connection", "[Errno -2] Name or service not known"])
+          reason: $(contains ["HTTPSConnectionPool(host='www.heh.xd', port=443)", "Max retries exceeded with url", "Caused by NameResolutionError", "Failed to resolve 'www.heh.xd'", "[Errno -2] Name or service not known"])
         description: Lambda exception occurred during item processing.
 
 
   Scenario: User sees successful execution of uploaded "BagIt Uploader" workflow and input file bagit_archive_unpack.tar
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "bagit-uploader" workflow from automation-examples repository to "inventory1" inventory
 
@@ -337,7 +337,7 @@ Feature: Bagit uploader tests
         status: Found  0 files to be downloaded.
         archive: "bagit_archive_unpack.tar"
 
-    And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 21
+    And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 64
     And user of browser closes "Store details" modal
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane

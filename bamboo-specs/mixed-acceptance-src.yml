@@ -57,6 +57,7 @@ stages:
         - _Codetag Tracker
         - _Autoformatter check
         - _Static analysis
+        - _Type_check
         - Access tokens
         - Access tokens id caveats
         - Access tokens path caveats
@@ -74,6 +75,7 @@ stages:
         - Directories set metadata
         - Directories times
         - File content
+        - File events
         - Files movement
         - Files multi
         - Files remove metadata
@@ -82,6 +84,7 @@ stages:
         - Groups basic
         - Hardlinks and Symlinks
         - LUMA
+        - Many archives
         - Nested directories create
         - Nested directories remove
         - Onepanel
@@ -94,12 +97,16 @@ stages:
         - Single directory
         - Single directory 2
         - Spaces basic
+        - Spaces operations
         - Spaces with same name
         - Spaces with same name 2 providers
         - Storage sync
         - Tokens
         - Transfers
-        - Workflows with input files
+        - Workflows bagit with 3gb archive
+        - Workflows bagit with fetch archives
+        - Workflows bagit with unpack archives
+        - Workflows without bagit
   - Qnthack - rerun:
       manual: false
       final: true
@@ -209,8 +216,8 @@ _Autoformatter check:
     - script:
         <<: *run-script-working-dir
         scripts:
-          - make black-check
-        description: Black formatting
+          - make format-check
+        description: Ruff formatting
 
 _Static analysis:
   key: STAN
@@ -222,6 +229,17 @@ _Static analysis:
         scripts:
           - make static-analysis
         description: Static analysis
+
+_Type_check:
+  key: TCH
+  other: *common-opts
+  tasks:
+    - checkout: *checkout-default-repository
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - make type-check
+        description: Type checker
 
 Access tokens: &acceptance-mixed-tests-in-chrome-job
   key: CLT
@@ -281,8 +299,8 @@ Access tokens: &acceptance-mixed-tests-in-chrome-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
         description: Download artifacts
     - script: &build-swaggers
         <<: *run-script-working-dir
@@ -319,7 +337,7 @@ Access tokens: &acceptance-mixed-tests-in-chrome-job
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/mixed/logs
-            cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/mixed/logs
+            cp onedata-acceptance/one-env/sources_info.yaml onedata-acceptance/tests/mixed/logs
             mv onedata-acceptance/tests/mixed/logs/report.* onedata-acceptance/tests/mixed/logs/gui_report
             mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
         description: Pack logs
@@ -604,6 +622,22 @@ File content:
         scripts:
           - make SUITE=test_file_content test_mixed_src
 
+File events:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CFEV
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_file_events ENV_FILE=1oz_2op_deployed test_mixed_src
+
 Files movement:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFMT2
@@ -731,6 +765,22 @@ LUMA:
         <<: *run-acceptance-tests
         scripts:
           - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma test_mixed_src
+
+Many archives:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CNMA
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_many_archives test_mixed_src
 
 Nested directories create:
   <<: *acceptance-mixed-tests-in-chrome-job
@@ -924,6 +974,22 @@ Spaces basic:
         scripts:
           - make SUITE=test_spaces_basic test_mixed_src
 
+Spaces operations:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CSO
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make ENV_FILE=1oz_1op_1oc_ones3 SUITE=test_spaces_operations test_mixed_src
+
 Spaces with same name:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CMSS
@@ -1004,7 +1070,7 @@ Transfers:
         scripts:
           - make SUITE=test_transfers ENV_FILE=1oz_2op_deployed test_mixed_src
 
-Workflows with input files:
+Workflows bagit with 3gb archive:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CWIF
   tasks:
@@ -1018,7 +1084,55 @@ Workflows with input files:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_workflows_with_input_files ENV_FILE=1oz_1op_openfaas test_mixed_src
+          - make SUITE=test_workflows_bagit_with_3gb_archive ENV_FILE=1oz_1op_openfaas test_mixed_src
+
+Workflows bagit with fetch archives:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CWIF2
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_workflows_bagit_with_fetch_archives ENV_FILE=1oz_1op_openfaas test_mixed_src
+
+Workflows bagit with unpack archives:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CWIF3
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_workflows_bagit_with_unpack_archives ENV_FILE=1oz_1op_openfaas test_mixed_src
+
+Workflows without bagit:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CWIF4
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_workflows_without_bagit ENV_FILE=1oz_1op_openfaas test_mixed_src
 
 
 Qnthack - rerun:

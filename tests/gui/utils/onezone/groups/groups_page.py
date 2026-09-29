@@ -5,28 +5,43 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
     Label,
     NamedButton,
-    WebElementsSequence,
     WebItem,
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import EditBox, InputBox
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import (
+    SidebarPanelPage,
+    get_visible_elements_list,
+)
 from tests.gui.utils.onezone.members_subpage import MembersPage
+from tests.utils.utils import element_has_class
 
 from .hierarchy_subpage import GroupHierarchyPage
 
 
-class Group(Element):
-    menu = Button(".collapsible-toolbar-toggle")
+class Group(NamedElement):
+    name = id = Label(".item-name", scroll=False)
+    menu = Button(".collapsible-toolbar-toggle", scroll=False)
     members = NamedButton(".one-list-level-2 .item-header", text="Members")
     hierarchy = NamedButton(".one-list-level-2 .item-header", text="Hierarchy")
     edit_box = WebItem(".name-editor", cls=EditBox)
+
+    def get_active_subpage(self) -> str | None:
+        for subpage in ["members", "hierarchy"]:
+            if element_has_class(getattr(self, subpage).web_elem, "active"):
+                return subpage
+        return None
+
+
+class GroupHeader(NamedElement):
+    name = id = Label(".item-name", scroll=False)
+    menu = Button(".collapsible-toolbar-toggle", scroll=False)
 
 
 class GroupDetailsPage(PageObject):
@@ -40,16 +55,16 @@ class GroupDetailsPage(PageObject):
 class MenuItem(PageObject):
     name = id = Label("a.clickable")
 
-    def __call__(self):
+    def __call__(self) -> None:
         self.click()
 
 
-class GroupsPage(GenericPage):
-    elements_list = WebItemsSequence(
-        ".sidebar-groups .one-list>.one-list-item.clickable", cls=Group
-    )
-    groups_list_web_elems = WebElementsSequence(
-        ".sidebar-groups .one-list>.one-list-item.clickable"
+class GroupsPage(SidebarPanelPage):
+    panel_name = "groups"
+
+    groups_list = WebItemsSequence(".sidebar-groups .one-list>.one-list-item.clickable", cls=Group)
+    groups_headers_list = WebItemsSequence(
+        ".sidebar-groups .one-list>.one-list-item.clickable", cls=GroupHeader
     )
 
     create_group = Button(".create-group-btn")
@@ -70,5 +85,9 @@ class GroupsPage(GenericPage):
 
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
 
-    def get_visible_groups_list(self):
-        return [el for el in self.groups_list_web_elems if el.text != ""]
+    def get_visible_active_group_name(self) -> str | None:
+        groups = get_visible_elements_list(self.groups_list)
+        for group in groups:
+            if element_has_class(group.web_elem, "active"):
+                return group.name
+        return None

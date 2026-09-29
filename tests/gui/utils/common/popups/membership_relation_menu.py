@@ -18,5 +18,5 @@ class Options(PageObject):
 class MembershipRelationMenu(PageObject):
     options = WebItemsSequence(".membership-visualiser-actions li", cls=Options)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Group relation membership menu"

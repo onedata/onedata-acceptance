@@ -12,5 +12,5 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 class DeregisterProvider(PageObject):
     buttons = WebItemsSequence("button", cls=ButtonWithTextPageObject)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Deregister provider popup"

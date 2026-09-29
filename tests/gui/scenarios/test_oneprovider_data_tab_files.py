@@ -13,6 +13,7 @@ from pytest import fixture, mark
 from pytest_bdd import scenario, scenarios
 
 from tests.gui.meta_steps.oneprovider.archives import *
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *
@@ -42,6 +43,7 @@ from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.permissions import *
+from tests.gui.steps.oneprovider.public_shares import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider_common import *
@@ -62,7 +64,7 @@ from . import BROWSER
 
 
 @fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0, 1]
 
 
@@ -70,4 +72,5 @@ scenarios("../features/oneprovider/data/single_file.feature")
 scenarios("../features/oneprovider/data/several_files.feature")
 scenarios("../features/oneprovider/data/file_management.feature")
 scenarios("../features/oneprovider/data/file_list_polling.feature")
-scenarios("../features/oneprovider/data/single_file_multibrowser.feature")
+scenarios("../features/oneprovider/data/single_user_multibrowser.feature")
+scenarios("../features/oneprovider/data/file_details_multibrowser.feature")

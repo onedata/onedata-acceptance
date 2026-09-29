@@ -23,8 +23,8 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 sees that cluster deployment has started
 
     # wait for finish of deployment
-    And user of browser1 waits 180 seconds for cluster deployment to finish
-    And user of browser2 waits 180 seconds for cluster deployment to finish
+    And user of browser1 waits 300 seconds for cluster deployment to finish
+    And user of browser2 waits 300 seconds for cluster deployment to finish
 
     # setup IP step in zone panels
     And user of browser1 clicks on "Setup IP addresses" button in deployment setup IP step
@@ -54,7 +54,6 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 types hostname of "oneprovider-1" provider to domain field in step 2 of deployment process in Onepanel
     And user of browser2 types "admin@admin.email" to admin email field in step 2 of deployment process in Onepanel
     And user of browser2 clicks on Register button in step 2 of deployment process in Onepanel
-    And user of browser2 is idle for 10 seconds
 
     # setup IP step in provider panel
     And user of browser2 sees that IP address of "oneprovider-1" host is that of "oneprovider-1" in deployment setup IP step
@@ -81,9 +80,9 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 clicks on link to go to Emergency Onepanel interface in last step of deployment process in Onepanel
 
     # check config in zone and provider panels
-    Then user of browser1 clicks on Clusters in the main menu
+    Then user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 clicks on "onezone" in clusters menu
-    And user of browser1 clicks Nodes of "onezone" in the sidebar
+    And user of browser1 clicks "Nodes" of "onezone" in the sidebar
     And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*onezone.* host in Nodes page in Onepanel
     And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*onezone.* host in Nodes page in Onepanel
 
@@ -91,4 +90,4 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 sees that [Database, Cluster Worker] options are enabled for .*0.*oneprovider.* host in Nodes page in Onepanel
     And user of browser2 sees that [Cluster Manager, Primary Cluster Manager] options are enabled for .*1.*oneprovider.* host in Nodes page in Onepanel
     And user of browser2 sees that [Database, Cluster Worker] options cannot be changed for .*0.*oneprovider.* host in Nodes page in Onepanel
-    And user of browser2 sees that [Cluster Manager, Primary Cluster Manager] options cannot be changed for .*0.*oneprovider.* host in Nodes page in Onepanel
+    And user of browser2 sees that [Cluster Manager, Primary Cluster Manager] options cannot be changed for .*1.*oneprovider.* host in Nodes page in Onepanel

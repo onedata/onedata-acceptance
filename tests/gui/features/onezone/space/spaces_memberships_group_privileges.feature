@@ -46,7 +46,7 @@ Feature: Basic management of group privileges for spaces in Onezone GUI
           Group management:
             granted: False
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     And user of browser_user1 clicks "space2" on the spaces list in the sidebar
     And user of browser_user1 clicks "Members" of "space2" space in the sidebar
     And user of browser_user1 clicks on "Invite group using token" button in groups list menu in "space2" space members view
@@ -63,7 +63,7 @@ Feature: Basic management of group privileges for spaces in Onezone GUI
             privilege subtypes:
               Add group: True
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     And user of browser_user1 clicks "space2" on the spaces list in the sidebar
     And user of browser_user1 clicks "Members" of "space2" space in the sidebar
     And user of browser_user1 clicks on "Invite group using token" button in groups list menu in "space2" space members view

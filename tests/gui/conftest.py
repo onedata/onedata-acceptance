@@ -6,53 +6,45 @@ __author__ = "Jakub Liput, Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
 import os
 import re
 import subprocess as sp
 from collections import defaultdict
+from collections.abc import Generator
+from typing import cast
 
-from pytest import fixture, hookimpl, skip
+import pytest
+from _pytest._py.path import LocalPath
+from _pytest.config.argparsing import Parser
+from _pytest.reports import TestReport
+from pytest_bdd.parser import Feature, Scenario, Step
 from selenium import webdriver
 
 from tests import LOGDIRS
 from tests.conftest import export_logs, get_log_dir_path
+from tests.gui.constants import SCREEN_PARAMETERS
+from tests.gui.sse_fixtures import (
+    async_loop_in_thread,  # noqa: F401 - register fixture
+    monitors,  # noqa: F401 - register fixtures
+    space_files_monitor_factory,  # noqa: F401 - register fixture
+)
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
+from tests.type_definitions import (
+    HookOutcome,
+    Hosts,
+    JsonObject,
+)
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
-from tests.utils.path_utils import format_valid_file_name, make_logdir
-
-SELENIUM_IMPLICIT_WAIT = 0
-
-# use this const when using: WebDriverWait(selenium, WAIT_FRONTEND).until(lambda s: ...)
-# when waiting for frontend changes
-WAIT_FRONTEND = 4
-
-# use this const when using: WebDriverWait(selenium, WAIT_BACKEND).until(lambda s: ...)
-# when waiting for backend changes
-WAIT_BACKEND = 15
-
-# use this const when using: WebDriverWait(selenium, WAIT_NORMAL_UPLOAD).until(lambda s: ...)
-# when waiting for normal uploads to finish
-WAIT_NORMAL_UPLOAD = 60
-
-# use this const when using: WebDriverWait(selenium, WAIT_EXTENDED_UPLOAD).until(lambda s: ...)
-# when waiting for extended uploads to finish
-WAIT_EXTENDED_UPLOAD = 600
-
-# number of times tests will try to start Webdriver instance
-DRIVER_CREATION_RETRIES = 5
-
-# use when waiting for normal download to finish
-WAIT_NORMAL_DOWNLOAD = 10
-
+from tests.utils.path_utils import build_test_dir_name, make_logdir
 
 # ============================================================================
 # PYTEST CONFIGURATION
 # =============================================================================
 
 
-def pytest_configure(config):
+def pytest_configure(config: pytest.Config) -> None:
     """Set default path for Selenium HTML report if explicit '--html=' not specified"""
     htmlpath = config.option.htmlpath
     if htmlpath is None:
@@ -61,7 +53,7 @@ def pytest_configure(config):
         config.option.htmlpath = os.path.join(_logdir, "report.html")
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser: Parser) -> None:
     selenium_group = parser.getgroup("selenium", "selenium")
     selenium_group.addoption("--xvfb", action="store_true", help="run Xvfb for tests")
     selenium_group.addoption(
@@ -71,70 +63,38 @@ def pytest_addoption(parser):
     )
 
 
-@hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport(item):
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item: pytest.Item) -> Generator[None, HookOutcome, None]:
     outcome = yield
-    rep = outcome.get_result()
+    rep = cast(TestReport, outcome.get_result())
     setattr(item, rep.when + "_xvfb_recorder", rep)
 
 
-def pytest_collection_modifyitems(items):
-    first = []
-    second = []
-    second_to_last = []
-    last = []
-    rest = []
-
-    run_first = ("test_cluster_deployment",)
-    run_second = ("test_support_space", "test_revoke_space_support")
-    run_second_to_last = ("test_user_changes_provider_name_and_domain",)
-    run_last = ("test_user_deregisters_provider",)
+def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     for item in items:
         item.name = re.sub("{.*}", "", item.name)
         item.name = re.sub("<.*>", "", item.name)
 
-    for item in items:
-        for suite_scenarios, run_suite in (
-            (run_first, first),
-            (run_second, second),
-            (run_second_to_last, second_to_last),
-            (run_last, last),
-        ):
-            found_suite = False
-            for scenario_name in suite_scenarios:
-                if scenario_name in item.nodeid:
-                    run_suite.append(item)
-                    found_suite = True
-                    break
 
-            if found_suite:
-                break
-        else:
-            rest.append(item)
-
-    first.extend(second)
-    first.extend(rest)
-    first.extend(second_to_last)
-    first.extend(last)
-    items[:] = first
-
-
-def pytest_bdd_before_scenario(request, feature, scenario):
-    RecorderManager(request).handle_start_recording()
-    print("\n=================================================================")
+def pytest_bdd_before_scenario(
+    request: pytest.FixtureRequest,
+    feature: Feature,
+    scenario: Scenario,
+) -> None:
+    RecorderManager(request).handle_start_recording(SCREEN_PARAMETERS)
+    print("\n" + "=" * 65)
     print(f"- Executing scenario '{scenario.name}'")
     print(f"- from feature '{feature.name}'")
-    print("-----------------------------------------------------------------")
+    print("-" * 65)
 
 
-def pytest_bdd_before_step_call(step):
+def pytest_bdd_before_step_call(step: Step) -> None:
     print(f"-- Executing step: {format_step_name(step)}")
 
 
-def pytest_bdd_after_scenario(request):
+def pytest_bdd_after_scenario(request: pytest.FixtureRequest) -> None:
     logdir_path = get_log_dir_path(request)
-    scenario_name = request.node.name
-    lambda_log_dir_name = format_valid_file_name(scenario_name)
+    lambda_log_dir_name = build_test_dir_name(request.node)
     onenv_utils.run_onenv_command(
         "export",
         [
@@ -154,13 +114,13 @@ def pytest_bdd_after_scenario(request):
     print("=================================================================")
 
 
-def pytest_bdd_step_error(step, exception):
+def pytest_bdd_step_error(step: Step, exception: BaseException) -> None:
     print(f"--- STEP FAILED on {step}")
     print(f"--- Exception: {exception}\n")
 
 
-def format_step_name(step_name):
-    step_name = step_name.name.split("\n")
+def format_step_name(step: Step) -> str:
+    step_name = step.name.split("\n")
     if len(step_name) > 1:
         return step_name[0] + " (...)"
     return step_name[0]
@@ -171,167 +131,49 @@ def format_step_name(step_name):
 # =============================================================================
 
 
-@fixture(autouse=True, scope="module")
-def finalize(request):
+@pytest.fixture(autouse=True, scope="module")
+def finalize(request: pytest.FixtureRequest) -> Generator[None, None, None]:
     yield
     export_logs(request)
 
 
-@fixture(scope="session")
-def numerals():
-    return {
-        "first": 0,
-        "second": 1,
-        "third": 2,
-        "fourth": 3,
-        "fifth": 4,
-        "sixth": 5,
-        "seventh": 6,
-        "eighth": 7,
-        "ninth": 8,
-        "tenth": 9,
-        "last": -1,
-    }
+@pytest.fixture(scope="session")
+def logdir(request: pytest.FixtureRequest) -> str:
+    return request.config.option.htmlpath.removesuffix("report.html")
 
 
-@fixture(scope="session")
-def logdir(request):
-    return request.config.option.htmlpath.rstrip("report.html")
-
-
-@fixture(scope="session")
-def driver_type(request):
+@pytest.fixture(scope="session")
+def driver_type(request: pytest.FixtureRequest) -> str:
     return request.config.getoption("--driver")
 
 
-@fixture(scope="session")
-def test_type(request):
+@pytest.fixture(scope="session")
+def test_type(request: pytest.FixtureRequest) -> str:
     return request.config.getoption("--test-type")
 
 
-@fixture(scope="session")
-def cdmi():
-    from tests.gui.utils import CDMIClient
-
-    return CDMIClient
-
-
-@fixture(scope="session")
-def onepage():
-    from tests.gui.utils import OnePage
-
-    return OnePage
-
-
-@fixture(scope="session")
-def public_onepage():
-    from tests.gui.utils import PublicOnePage
-
-    return PublicOnePage
-
-
-@fixture(scope="session")
-def onepanel():
-    from tests.gui.utils import Onepanel
-
-    return Onepanel
-
-
-@fixture(scope="session")
-def login_page():
-    from tests.gui.utils import LoginPage
-
-    return LoginPage
-
-
-@fixture(scope="session")
-def oz_page():
-    from tests.gui.utils import OZLoggedIn
-
-    return OZLoggedIn
-
-
-@fixture(scope="session")
-def op_container():
-    from tests.gui.utils import OPLoggedIn
-
-    return OPLoggedIn
-
-
-@fixture(scope="session")
-def public_share():
-    from tests.gui.utils import PublicShareView
-
-    return PublicShareView
-
-
-@fixture(scope="session")
-def private_share():
-    from tests.gui.utils import PrivateShareView
-
-    return PrivateShareView
-
-
-@fixture(scope="session")
-def privacy_policy():
-    from tests.gui.utils import PrivacyPolicy
-
-    return PrivacyPolicy
-
-
-@fixture(scope="session")
-def terms_of_use():
-    from tests.gui.utils import TermsOfUse
-
-    return TermsOfUse
-
-
-@fixture(scope="session")
-def data_discovery():
-    from tests.gui.utils import DataDiscoveryPage
-
-    return DataDiscoveryPage
-
-
-@fixture(scope="session")
-def modals():
-    from tests.gui.utils import Modals
-
-    return Modals
-
-
-@fixture(scope="session")
-def popups():
-    from tests.gui.utils import Popups
-
-    return Popups
-
-
-@fixture
-def tmp_memory():
+@pytest.fixture
+def tmp_memory() -> TmpMemory:
     """Dict to use when one wants to store sth between steps.
 
     Because of use of multiple browsers, the correct format would be:
      {'browser1': {...}, 'browser2': {...}, ...}
     """
-    return defaultdict(dict)
+    return cast(TmpMemory, defaultdict(dict))
 
 
-@fixture
-def displays():
+@pytest.fixture
+def displays() -> dict[str, str]:
     """Dict mapping browser to used display (e.g. {'browser1': ':0.0'} )"""
     return {}
 
 
-@fixture(scope="session")
-def clipboard():
+@pytest.fixture(scope="session")
+def clipboard() -> Clipboard:
     """utility simulating os clipboard"""
-    from collections import namedtuple
     from platform import system as get_system
 
-    cls = namedtuple("Clipboard", ["copy", "paste"])
-
-    def copy(text, display):
+    def copy(text: str, display: str) -> None:
         if get_system() == "Darwin":
             cmd = ["pbcopy"]
         else:
@@ -339,7 +181,7 @@ def clipboard():
         with sp.Popen(cmd, stdin=sp.PIPE, close_fds=True) as p:
             p.communicate(input=text.encode("utf-8"))
 
-    def paste(display):
+    def paste(display: str) -> str:
         if get_system() == "Darwin":
             cmd = ["pbpaste"]
         else:
@@ -348,22 +190,22 @@ def clipboard():
             stdout, _ = p.communicate()
         return stdout.decode("utf-8")
 
-    return cls(copy, paste)
+    return Clipboard(copy, paste)
 
 
-@fixture(scope="session")
-def base_url(hosts, maybe_start_env):
-    return f'https://{hosts["onezone"]["hostname"]}'
+@pytest.fixture(scope="session")
+def base_url(hosts: Hosts, maybe_start_env: object) -> str:
+    return f"https://{hosts['onezone']['hostname']}"
 
 
-@fixture(scope="function", autouse=True)
-def _skip_sensitive(request, sensitive_url):
+@pytest.fixture(autouse=True)
+def _skip_sensitive(request: pytest.FixtureRequest, sensitive_url: object) -> None:
     """Invert the default sensitivity behaviour: consider the test as destructive
     only if it has marker "destructive".
     """
     destructive = "destructive" in request.node.keywords
     if sensitive_url and destructive:
-        skip(
+        pytest.skip(
             "This test is destructive and the target URL is "
             "considered a sensitive environment. If this test is "
             "not destructive, add the 'nondestructive' marker to "
@@ -371,8 +213,12 @@ def _skip_sensitive(request, sensitive_url):
         )
 
 
-@fixture
-def capabilities(request, capabilities, tmpdir):
+@pytest.fixture
+def capabilities(
+    request: pytest.FixtureRequest,
+    capabilities: JsonObject,
+    tmpdir: LocalPath,
+) -> JsonObject:
     """Add --no-sandbox argument for Chrome headless
     Should be the same as adding
     capability: 'chromeOptions': {'args': ['--no-sandbox'], 'extensions': []}
@@ -390,6 +236,9 @@ def capabilities(request, capabilities, tmpdir):
         options.binary_location = "/usr/local/bin/google-chrome"
 
         options.add_argument("--no-sandbox")
+        # This flag is needed for clipboard to work for Ubuntu 26.04 and newer,
+        # some functions are not compatible with Wayland, so we need to force X11
+        options.add_argument("--ozone-platform=x11")
         options.add_argument("--enable-popup-blocking")
         options.add_argument("--ignore-ssl-errors=yes")
         options.add_argument("--ignore-certificate-errors")
@@ -437,28 +286,13 @@ def capabilities(request, capabilities, tmpdir):
 # ============================================================================
 
 
-@fixture(scope="session")
-def screen_width():
-    return 1366
-
-
-@fixture(scope="session")
-def screen_height():
-    return 1024
-
-
-@fixture(scope="session")
-def screen_depth():
-    return 24
-
-
-@fixture(scope="session")
-def screens():
+@pytest.fixture(scope="session")
+def screens() -> list[int]:
     return [0]
 
 
-@fixture(scope="session")
-def movie_dir(request):
+@pytest.fixture(scope="session")
+def movie_dir(request: pytest.FixtureRequest) -> str:
     log_dir = os.path.dirname(request.config.option.htmlpath)
     movie_subdir = os.path.join(log_dir, "movies")
     if not os.path.exists(movie_subdir):
@@ -466,12 +300,19 @@ def movie_dir(request):
     return movie_subdir
 
 
-@fixture(scope="module")
-def xvfb(request, screens, screen_width, screen_height, screen_depth):
+@pytest.fixture(scope="module")
+def xvfb(
+    request: pytest.FixtureRequest,
+    screens: list[int],
+) -> Generator[list[str], None, None]:
     if request.config.getoption("--xvfb"):
         display = xvfb_utils.find_free_display()
         xvfb_proc = xvfb_utils.start_session(
-            display, screens, screen_width, screen_height, screen_depth
+            display,
+            screens,
+            SCREEN_PARAMETERS["width"],
+            SCREEN_PARAMETERS["height"],
+            SCREEN_PARAMETERS["depth"],
         )
         try:
             yield [f":{display}.{screen}" for screen in screens]
@@ -481,12 +322,17 @@ def xvfb(request, screens, screen_width, screen_height, screen_depth):
         yield [os.environ.get("DISPLAY", "DUMMY_DISPLAY")]
 
 
+@pytest.fixture(scope="session")
+def should_record() -> bool:
+    return True
+
+
 # ============================================================================
 # Miscellaneous.
 # ============================================================================
 
 
-@fixture(name="run_unmock")
-def run_around_testcase(hosts):
+@pytest.fixture(name="run_unmock")
+def run_around_testcase(hosts: Hosts) -> Generator[None, None, None]:
     yield
     unmock_archive_verification("oneprovider-krakow", hosts)

@@ -62,6 +62,7 @@ stages:
         - _Codetag Tracker
         - _Autoformatter check
         - _Static analysis
+        - _Type_check
         - Atm examples workflows 1
         - Atm examples workflows 2
         - Atm pods
@@ -82,8 +83,10 @@ stages:
         - Onedata documentation
         - Onepanel basic
         - Onepanel deployment basic
+        - Onepanel deployment LE
         - Onepanel deployment OneS3
         - Onepanel login
+        - Onepanel LE and Subdomain Delegation
         - Onepanel members
         - Onepanel two hosts deployment
         - Onepanel different storages
@@ -259,8 +262,8 @@ _Autoformatter check:
     - script:
         <<: *run-script-working-dir
         scripts:
-          - make black-check
-        description: Black formatting
+          - make format-check
+        description: Ruff formatting
 
 _Static analysis:
   key: STAN
@@ -272,6 +275,18 @@ _Static analysis:
         scripts:
           - make static-analysis
         description: Static analysis
+
+_Type_check:
+  key: TCH
+  other: *common-opts
+  tasks:
+    - checkout: *checkout-default-repository
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - make type-check
+        description: Type checker
+
 
 Atm examples workflows 1: &acceptance-tests-in-chrome-job
   key: COAWEX
@@ -331,8 +346,8 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
         description: Download artifacts
     - script: &run-selenium-tests
         <<: *run-script-working-dir
@@ -678,6 +693,21 @@ Onepanel deployment basic:
         scripts:
           - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed test_gui_src
 
+Onepanel deployment LE:
+  <<: *acceptance-tests-in-chrome-job
+  key: CODLE
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_onepanel_deployment_with_le ENV_FILE=1oz_1op_le_not_deployed test_gui_src
+
 Onepanel deployment OneS3:
   <<: *acceptance-tests-in-chrome-job
   key: CODO
@@ -707,6 +737,21 @@ Onepanel login:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_onepanel_login test_gui_src
+
+Onepanel LE and Subdomain Delegation:
+  <<: *acceptance-tests-in-chrome-job
+  key: COLES
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_onepanel_le_and_subdomain_delegation ENV_FILE=1oz_1op_le test_gui_src
 
 Onepanel members:
   <<: *acceptance-tests-in-chrome-job

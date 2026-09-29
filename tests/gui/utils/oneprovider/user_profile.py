@@ -12,7 +12,7 @@ from tests.gui.utils.core.web_elements import NamedButton, WebElement
 
 
 class UserProfile(PageObject, ExpandableMixin):
-    _btn_css_sel = "ul.dropdown-menu-list li:not(.dropdown-menu-separator)"
-    log_out = NamedButton(_btn_css_sel, text="log out")
-    manage_account = NamedButton(_btn_css_sel, text="manage account")
+    _btn_css_selector = "ul.dropdown-menu-list li:not(.dropdown-menu-separator)"
+    log_out = NamedButton(_btn_css_selector, text="log out")
+    manage_account = NamedButton(_btn_css_selector, text="manage account")
     _toggle = WebElement("a.dropdown-toggle")

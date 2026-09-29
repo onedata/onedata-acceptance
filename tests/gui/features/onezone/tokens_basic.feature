@@ -14,11 +14,11 @@ Feature: Management of tokens basic features in Onezone GUI
 
 
   Scenario Outline: User successfully creates token with default settings
-    When user of browser clicks on Tokens in the main menu
+    When user of browser clicks on "Tokens" in the main menu
     And user of browser sees exactly 0 item(s) on tokens list in tokens sidebar
     And user of browser clicks on "Create new token" button in tokens sidebar
     And user of browser clicks on "Create custom token" option in "Create new token" view
-    And user of browser types "Token1" to token name input box in "Create new token" view
+    And user of browser succeeds to type "Token1" to token name input box in "Create new token" view
     And user of browser chooses <token type> token type in "Create new token" view
     And user of browser clicks on "Create token" button in "Create new token" view
     Then user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
@@ -32,11 +32,11 @@ Feature: Management of tokens basic features in Onezone GUI
 
 
   Scenario: User successfully creates oneprovider invite token
-    When user of browser clicks on Tokens in the main menu
+    When user of browser clicks on "Tokens" in the main menu
     And user of browser sees exactly 0 item(s) on tokens list in tokens sidebar
     And user of browser clicks on "Create new token" button in tokens sidebar
     And user of browser clicks on "Create custom token" option in "Create new token" view
-    And user of browser types "Token1" to token name input box in "Create new token" view
+    And user of browser succeeds to type "Token1" to token name input box in "Create new token" view
     And user of browser chooses invite token type in "Create new token" view
     And user of browser chooses "Register Oneprovider" invite type
     And user of browser clicks on "Create token" button in "Create new token" view
@@ -46,7 +46,7 @@ Feature: Management of tokens basic features in Onezone GUI
 
 
   Scenario Outline: User successfully renames token
-    When user of browser clicks on Tokens in the main menu
+    When user of browser clicks on "Tokens" in the main menu
     And user of browser creates 1 <token type> token
     And user of browser clicks on rename button for token named "<token name>" on tokens list
     And user of browser appends "-renamed" to name of token named "<token name>"
@@ -62,7 +62,7 @@ Feature: Management of tokens basic features in Onezone GUI
 
 
   Scenario: User sees right tokens after filtering them
-    When user of browser clicks on Tokens in the main menu
+    When user of browser clicks on "Tokens" in the main menu
     And user of browser creates 2 access tokens
     And user of browser creates 2 identity tokens
     And user of browser creates 2 invite tokens

@@ -6,17 +6,29 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
+
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     WebElement,
-    WebElementsSequence,
+    WebItemsSequence,
 )
+from tests.gui.utils.oneprovider.browser_row import BrowserRow
+from tests.utils.utils import repeat_failed
+
+
+class ErrorLogRow(BrowserRow):
+    source_file = Label(".cell-file", scroll=False)
+    time = Label(".timestamp-cell", scroll=False)
+    error_message = Label(".truncated-string", scroll=False)
 
 
 class ArchiveRecallInformation(Modal):
@@ -33,11 +45,11 @@ class ArchiveRecallInformation(Modal):
     recalling_oneprovider = Label(".recall-info-row-recalling-provider .property-value")
     recall_destination = Label(".recall-info-row-target-path .property-value")
     error_log = Button(".logs-nav-link")
-    error_file_row = WebElementsSequence(".table-entry.data-row")
+    error_file_rows = WebItemsSequence(".table-entry.data-row", cls=ErrorLogRow)
     error_log_table = WebElement(".infinite-scroll-table")
 
     @staticmethod
-    def parse_progress(progress_text_content):
+    def parse_progress(progress_text_content: str) -> tuple[str, str]:
         """Parses recall progress values in format: <current_value>/<target_value>,
         eg. "1 B / 3 B" to tuple containing two strings: (current_value, target_value).
         """
@@ -46,31 +58,51 @@ class ArchiveRecallInformation(Modal):
         total_info = total_info.strip()
         return (progress_info, total_info)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Archive recall information"
 
-    def get_progress_info(self, type):
+    def get_progress_info(self, progress_type: str) -> tuple[str, str]:
         """Returns a tuple with (currnet_value, total_value) for progress info.
         Return values are in string, because they can contain size with units, eg.
         ("3 B", "40 KiB").
 
-        :param str type: one of values that are in "<current> / <total>" format,
-                         eg. "files_recalled" or "data_recalled"
+        :param str progress_type: one of values that are in "<current> / <total>"
+                                  format, eg. "files_recalled" or "data_recalled"
         """
-        return ArchiveRecallInformation.parse_progress(getattr(self, type))
+        return ArchiveRecallInformation.parse_progress(getattr(self, progress_type))
 
-    def scroll_by_press_space(self):
+    def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()
 
-    def move_to_error_logs_table(self, driver):
+    def move_to_error_logs_table(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.error_log_table).perform()
 
-    def scroll_to_top(self):
-        try:
+    def scroll_to_top(self) -> None:
+        with contextlib.suppress(JavascriptException):
             self.driver.execute_script(
                 "document.querySelector('.infinite-scroll-table "
                 ".table-scrollable-container').scrollTo(0,0)"
             )
-        except JavascriptException:
-            pass
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_columns(
+        self, column_names: list[str] | None = None
+    ) -> dict[str, list[str]]:
+        # This function concerns browsing logs with errors in archive recall
+        temp_columns = list(set((column_names or []) + ["source_file"]))
+        column_values: dict[str, list[str]] = {column: [] for column in temp_columns}
+        for row in self.error_file_rows:
+            values_in_row = [getattr(row, column) for column in temp_columns]
+            if any(value_in_row == "" for value_in_row in values_in_row):
+                continue
+
+            for column, value in zip(temp_columns, values_in_row, strict=True):
+                column_values[column].append(value)
+
+        return column_values
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_single_column(self, param: str) -> list[str]:
+        column_values = self.get_visible_rows_of_columns([param])
+        return column_values[param]
