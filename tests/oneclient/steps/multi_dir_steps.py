@@ -146,10 +146,7 @@ def purge_all_spaces(client: Client) -> None:
                         # ignore permission errors during cleaning
                         space_purged = True
                     else:
-                        print(
-                            f"Unexpected error '{e.errno}' when cleaning space:"
-                            f" {space_path}"
-                        )
+                        print(f"Unexpected error '{e.errno}' when cleaning space: {space_path}")
                         raise e
     except FileNotFoundError:
         pass
