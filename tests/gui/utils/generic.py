@@ -11,11 +11,12 @@ import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from contextlib import suppress as contextlib_suppress
+from datetime import datetime
 from enum import Enum
 from functools import partial
 from itertools import islice
 from time import sleep
-from typing import Literal, TypeVar, cast, overload
+from typing import Literal, Protocol, TypeVar, cast, overload
 
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
@@ -41,10 +42,17 @@ from tests.gui.type_definitions import (
     WebElementOrSelector,
     WebElemRoot,
 )
+from tests.gui.utils import text as text_utils
 from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
 suppress = contextlib_suppress
+transform = text_utils.transform
+
+
+class VisibleElement(Protocol):
+    def is_displayed(self) -> bool: ...
+
 
 # RE_URL regexp is matched as shown below:
 #
@@ -163,6 +171,19 @@ def parse_elements_sequence(value: str) -> list[str]:
     return parse_seq(value)
 
 
+def parse_time(value: str) -> datetime:
+    date_match = re.match(
+        r"\d{4}-\d{2}-\d{2} at \d{1,2}:\d{2} \(UTC[+-]\d{2}:\d{2}\)",
+        value,
+    )
+    assert date_match, f'Invalid time format: "{value}"'
+
+    return datetime.strptime(
+        date_match.group(),
+        "%Y-%m-%d at %H:%M (UTC%z)",
+    )
+
+
 def upload_file_path(file_name: str) -> str:
     """Resolve an absolute path for file with name file_name stored
     in upload_files dir
@@ -251,10 +272,14 @@ def iter_ahead[T](iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
     yield from zip(iterable, read_ahead, strict=False)
 
 
-def is_element_with_selector_visible_on_page(driver: WebDriver, css_selector: str) -> bool:
+def is_element_visible_on_page(
+    driver: WebDriver,
+    web_elem_or_selector: WebElementOrSelector,
+) -> bool:
     try:
-        return bool(visibility_of_element_located((By.CSS_SELECTOR, css_selector))(driver))
-    except NoSuchElementException:
+        condition = get_visibility_condition(get_web_elem_or_locator(web_elem_or_selector))
+        return bool(condition(driver))
+    except (NoSuchElementException, StaleElementReferenceException):
         return False
 
 
@@ -283,20 +308,35 @@ def get_visibility_condition(
             raise TypeError(f"Unsupported element or locator: {unsupported!r}")
 
 
-def wait_for_visible_element_using_getter(
+def is_element_visible_using_getter[VisibleElementT: VisibleElement](
     driver: WebDriver,
-    web_elem_getter: Callable[[WebDriver], SeleniumWebElement],
+    web_elem_getter: Callable[[WebDriver], VisibleElementT],
+) -> VisibleElementT | None:
+    try:
+        web_elem = web_elem_getter(driver)
+        return web_elem if web_elem.is_displayed() else None
+    except (NoSuchElementException, StaleElementReferenceException):
+        return None
+
+
+def wait_for_visible_element_using_getter[VisibleElementT: VisibleElement](
+    driver: WebDriver,
+    web_elem_getter: Callable[[WebDriver], VisibleElementT],
     timeout: float = WAIT_FRONTEND,
-) -> SeleniumWebElement:
+) -> VisibleElementT:
     # Wait until the getter returns a visible element.
 
-    def is_element_visible_using_getter(
-        driver: WebDriver, web_elem_getter: Callable[[WebDriver], SeleniumWebElement]
-    ) -> SeleniumWebElement | None:
-        web_elem = web_elem_getter(driver)
-        return web_elem if visibility_of(web_elem)(driver) else None
-
     return WebDriverWait(driver, timeout=timeout).until(
+        partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
+    )
+
+
+def wait_for_element_to_disappear_using_getter[VisibleElementT: VisibleElement](
+    driver: WebDriver,
+    web_elem_getter: Callable[[WebDriver], VisibleElementT],
+    timeout: float = WAIT_FRONTEND,
+) -> None:
+    WebDriverWait(driver, timeout=timeout).until_not(
         partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
     )
 
@@ -426,10 +466,6 @@ def redirect_display(new_display: str) -> Iterator[None]:
             del os.environ["DISPLAY"]
 
 
-def transform(val: str, strip_char: str | None = None) -> str:
-    return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
-
-
 def assert_each_event_is_gathered(
     events: list[str],
     gathered_events: list[str],
@@ -485,19 +521,15 @@ def sort_json_from_string(value: str) -> JsonValue:
     return sort_json_keys(parsed_value)
 
 
-class WhichBrowser(Enum):
-    ARCHIVE_BROWSER = "archive browser"
-    ARCHIVE_FILE_BROWSER = "archive file browser"
-    DATASET_BROWSER = "dataset browser"
-    FILE_BROWSER = "file browser"
-    SHARES_FILE_BROWSER = "share's file browser"
-    DATASET_ARCHIVE_BROWSER = "dataset archive browser"
-    ARCHIVE_RECALL_BROWSER = "archive recall browser"
-
-
 class OnedataService(Enum):
     WORKERS = "workers"
     ONES3 = "ones3"
+
+
+class TransferState(Enum):
+    ENDED = "ended"
+    ONGOING = "ongoing"
+    WAITING = "waiting"
 
 
 class SpecialDir(Enum):
@@ -601,6 +633,47 @@ PageName = Literal[
     "clusters",
     "cluster",
 ]
+
+
+type MembersParentType = Literal[
+    "space",
+    "harvester",
+    "automation",
+    "inventory",
+    "cluster",
+    "group",
+]
+
+
+type SidebarMemberParent = Literal[
+    "space",
+    "group",
+    "harvester",
+    "automation",
+    "inventory",
+]
+
+
+type MemberType = Literal["group", "user"]
+
+
+MENU_ELEM_TO_TAB_NAME: dict[MembersParentType, PageName] = {
+    "space": "data",
+    "harvester": "discovery",
+    "automation": "automation",
+    "inventory": "automation",
+    "cluster": "clusters",
+    "group": "groups",
+}
+
+
+PARENT_LIST_NAMES: dict[SidebarMemberParent, str] = {
+    "space": "spaces_list",
+    "group": "groups_list",
+    "harvester": "harvesters_list",
+    "automation": "automations_list",
+    "inventory": "automations_list",
+}
 
 
 class HostPattern(Enum):

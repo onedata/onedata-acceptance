@@ -64,11 +64,6 @@ class _FileBrowser(Browser):
     def __str__(self) -> str:
         return f"file browser in {self.parent}"
 
-    def names_of_visible_elems(self) -> list[str]:
-        files = self.data
-        # make sure row is fully loaded in gui
-        return [f.text.split("\n")[0] for f in files if len(f.text.split("\n")) > 1]
-
     @contextmanager
     def select_files(self) -> Iterator[FileSelector]:
         ctrl_or_cmd_key = Keys.COMMAND if get_system() == "Darwin" else Keys.LEFT_CONTROL

@@ -8,9 +8,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import cast
+from typing import Literal, cast
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import (
@@ -27,7 +27,7 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    is_element_with_selector_visible_on_page,
+    is_element_visible_on_page,
     parse_elements_sequence,
     transform,
 )
@@ -150,7 +150,7 @@ def wt_type_property_to_in_box_in_deployment_step(
     selenium: SeleniumDrivers,
     browser_id: str,
     alias: str,
-    name_property: str,
+    name_property: Literal["name", "hostname"],
     input_box: str,
     step: str,
     hosts: Hosts,
@@ -167,31 +167,66 @@ def wt_type_property_to_in_box_in_deployment_step(
         r"step 5|last step) of deployment process in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_in_deployment_step(
     selenium: SeleniumDrivers, browser_id: str, btn: str, step: str
 ) -> None:
     driver = selenium[browser_id]
-    step = getattr(Onepanel(driver).content.deployment, step.lower().replace(" ", ""))
-    getattr(step, transform(btn)).click()
+    step = step.lower().replace(" ", "")
+    click_on_btn_in_deployment_step(driver, step, btn)
+
     if btn == "Add host":
-        for _ in range(10):
-            selector = driver.find_elements(
-                By.CSS_SELECTOR, ".cluster-host-table .cluster-host-table-row"
+        expected_number_of_hosts = 2
+
+        def is_second_host_added(_: WebDriver) -> bool:
+            host_row_selector = ".cluster-host-table .cluster-host-table-row"
+            return (
+                len(driver.find_elements(By.CSS_SELECTOR, host_row_selector))
+                == expected_number_of_hosts
             )
-            if len(selector) < MIN_CLUSTER_HOST_ROWS:
-                time.sleep(1)
-            else:
-                break
+
+        WebDriverWait(
+            driver,
+            WAIT_BACKEND * 2,
+            ignored_exceptions=[StaleElementReferenceException],
+        ).until(
+            is_second_host_added,
+            message=f"Did not manage to add 2nd host within {WAIT_BACKEND * 2}s time.",
+        )
+
+    elif btn == "Register":
+        onepanel = Onepanel(driver)
+
+        def is_setup_ip_step_ready(_: WebDriver) -> bool:
+            deployment = onepanel.content.deployment
+            return (
+                deployment.get_active_step() == "setup_ip"
+                and deployment.setup_ip.setup_ip_addresses.is_displayed()
+            )
+
+        WebDriverWait(
+            driver,
+            WAIT_BACKEND * 2,
+            ignored_exceptions=[StaleElementReferenceException],
+        ).until(
+            is_setup_ip_step_ready,
+            message=f"Registration did not finish within {WAIT_BACKEND * 2}s time.",
+        )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_btn_in_deployment_step(driver: WebDriver, step: str, btn: str) -> None:
+    deployment = Onepanel(driver).content.deployment
+    deployment_step = getattr(deployment, step)
+    getattr(deployment_step, transform(btn)).click()
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} tries to register provider using Register button in"
+        "user of {browser_id} tries to re-register provider using Register button in"
         " step 2 of deployment process in Onepanel"
     )
 )
-def register_prov_using_register_btn(selenium: SeleniumDrivers, browser_id: str) -> None:
+def reregister_provider_using_register_btn(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     step = Onepanel(driver).content.deployment.step2
 
@@ -215,13 +250,11 @@ def _check_error_modal_appeared_or_registration_finished(
     error_modal_css_selector = ".alert-global.modal.in .modal-dialog"
     sidebar_css_selector = ".one-sidebar.sidebar-clusters"
 
-    if is_element_with_selector_visible_on_page(
-        driver, error_modal_css_selector
-    ):  # error modal appeared
+    if is_element_visible_on_page(driver, error_modal_css_selector):  # error modal appeared
         wait_for_error_modal_to_disappear(driver)
         return False
 
-    if is_element_with_selector_visible_on_page(
+    if is_element_visible_on_page(
         driver, sidebar_css_selector
     ):  # sidebar is visible, it means we closed deployment page
         return True
@@ -257,17 +290,10 @@ def wt_await_finish_of_cluster_deployment(
     selenium: SeleniumDrivers, browser_id: str, timeout: int
 ) -> None:
     driver = selenium[browser_id]
-    limit = time.time() + timeout
-    while time.time() < limit:
-        try:
-            _ = Modals(driver).cluster_deployment
-        except NoSuchElementException:
-            break
-        else:
-            time.sleep(1)
-            continue
-    else:
-        raise TimeoutError(f"cluster deployment exceeded time limit: {timeout}")
+    WebDriverWait(driver, timeout, poll_frequency=1).until_not(
+        lambda _: Modals(driver).cluster_deployment,
+        f"cluster deployment exceeded time limit: {timeout}",
+    )
 
 
 @wt(

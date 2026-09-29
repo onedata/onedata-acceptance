@@ -14,14 +14,14 @@ import yaml
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.onepanel.common import (
     wt_click_on_btn_in_content,
     wt_click_on_subitem_for_item,
     wt_click_on_subitem_for_item_with_name,
 )
 from tests.gui.steps.onepanel.deployment import (
-    wt_click_on_btn_in_deployment_step,
+    reregister_provider_using_register_btn,
     wt_click_proceed_button_in_step2,
     wt_type_property_to_in_box_in_deployment_step,
     wt_type_registration_token_in_step2,
@@ -69,7 +69,7 @@ def succeed_to_save_changes_in_modify_provider_detail_form(
     )
     save_btn.click()
     wait_for_item_to_disappear(save_btn.web_elem, driver)
-    notify_visible_with_text(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
         AlertPopup.PROVIDER_DATA_MODIFIED,
@@ -139,14 +139,14 @@ def deregister_provider_in_op_panel_using_gui(
     wt_click_on_subitem_for_item(selenium, [browser_id], sidebar, sub_item, provider_name, hosts)
     wt_click_on_btn_in_content(selenium, [browser_id], "Deregister provider", content)
     wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup)
-    notify_visible_with_text(
+    is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
         AlertPopup.PROVIDER_DEREGISTERED,
     )
 
 
-def register_provider_in_op_using_gui(
+def reregister_provider_in_op_using_gui(
     selenium: SeleniumDrivers,
     user: str,
     hosts: Hosts,
@@ -203,7 +203,7 @@ def register_provider_in_op_using_gui(
         selenium, user, options["admin email"], "Admin email", step2
     )
 
-    wt_click_on_btn_in_deployment_step(selenium, user, "Register", step2)
+    reregister_provider_using_register_btn(selenium, user)
 
 
 @given(

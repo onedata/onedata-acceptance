@@ -9,11 +9,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import (
-    close_alert_popup_if_present,
-    get_visible_items_list,
-)
+from tests.gui.steps.common.common import get_onezone_subpage, get_visible_items_list
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
@@ -32,9 +30,8 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.re(r'user of (?P<browser_id>.*) clicks on "Create group" button in groups sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_group_button_in_panel(selenium: SeleniumDrivers, browser_id: str) -> None:
-    oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.open_panel(GroupsPage)
-    oz_page.groups.create_group()
+    groups_page = get_onezone_subpage(selenium[browser_id], "groups")
+    groups_page.create_group()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into group name text field'))
@@ -49,7 +46,13 @@ def input_name_into_input_box_on_main_groups_page(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_name_input_on_main_groups_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     OZLoggedIn(selenium[browser_id]).groups.input_box.confirm()
-    close_alert_popup_if_present(selenium[browser_id], popup=CreatedItemAlertPopup.GROUP)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        CreatedItemAlertPopup.GROUP,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
@@ -58,9 +61,7 @@ def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Group:
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(GroupsPage)
-    page = oz_page.groups
+    page = get_onezone_subpage(driver, "groups")
     return page.groups_list[group_name]
 
 
@@ -103,11 +104,10 @@ def assert_group_exists(
     group: str,
 ) -> None:
     for browser_id in browser_ids:
-        oz_page = OZLoggedIn(selenium[browser_id])
-        oz_page.open_panel(GroupsPage)
+        groups_page = get_onezone_subpage(selenium[browser_id], "groups")
         groups_count = len(
             _find_groups(
-                oz_page.groups,
+                groups_page,
                 group,
             )
         )
@@ -142,12 +142,10 @@ def assert_create_button_inactive(selenium: SeleniumDrivers, browser_id: str) ->
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_group_subpage(
+def open_group_subpage(
     selenium: SeleniumDrivers, browser_id: str, group_name: str, subpage: str
 ) -> None:
-    oz_page = OZLoggedIn(selenium[browser_id])
-    oz_page.open_panel(GroupsPage)
-    groups_page = oz_page.groups
+    groups_page = get_onezone_subpage(selenium[browser_id], "groups")
     group: Group = groups_page.groups_list[group_name]
 
     if groups_page.get_visible_active_group_name() != group_name:
@@ -169,7 +167,13 @@ def assert_error_page_appeared(selenium: SeleniumDrivers, browser_id: str, text:
 def confirm_add_group(selenium: SeleniumDrivers, browser_id: str, option: str) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
-        close_alert_popup_if_present(selenium[browser_id], popup=CreatedItemAlertPopup.GROUP)
+        is_notify_popup_visible_and_close_all_alert_popups(
+            selenium,
+            browser_id,
+            CreatedItemAlertPopup.GROUP,
+            popup_expected=False,
+            timeout=WAIT_FRONTEND,
+        )
     else:
         confirm_name_input_on_main_groups_page(selenium, browser_id)
 

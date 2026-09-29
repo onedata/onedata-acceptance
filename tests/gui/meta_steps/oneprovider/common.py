@@ -22,9 +22,13 @@ from tests.gui.steps.oneprovider.browser import (
 from tests.gui.steps.oneprovider.data_tab import (
     assert_provider_chunk_in_data_distribution_empty,
     assert_provider_chunk_in_data_distribution_filled,
+    choose_option_from_selection_menu,
     click_button_from_file_browser_menu_bar,
 )
-from tests.gui.steps.oneprovider.file_browser import confirm_create_new_directory
+from tests.gui.steps.oneprovider.file_browser import (
+    confirm_create_new_directory,
+    select_files_from_file_list_using_ctrl,
+)
 from tests.gui.steps.oneprovider.transfers import (
     assert_see_history_btn_shown,
     is_current_item_fully_on_provider,
@@ -140,36 +144,34 @@ def assert_eviction_done(
     click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees file chunks for file "
-        r'"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'
-    )
-)
+@wt(parsers.re(r"user of (?P<browser_id>.*) sees file chunks for files:\n(?P<desc>(.|\s)*)"))
 def wt_assert_file_chunks(
     selenium: SeleniumDrivers,
     browser_id: str,
-    file_name: str,
     desc: str,
     tmp_memory: TmpMemory,
     hosts: Hosts,
 ) -> None:
+    parsed_desc = yaml.load(desc, yaml.Loader)
     option = "Data distribution"
     details_modal = "Details modal"
     tab = "Distribution"
     close_button = "X"
-    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
-    assert_tab_in_modal(selenium, browser_id, tab, details_modal)
-    _assert_file_chunks(selenium, browser_id, hosts, desc)
-    click_modal_button(selenium, browser_id, close_button, details_modal)
+    for file_name, file_desc in parsed_desc.items():
+        click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
+        click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+        assert_tab_in_modal(selenium, browser_id, tab, details_modal)
+        _assert_file_chunks(selenium, browser_id, hosts, file_desc)
+        click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 def _assert_file_chunks(
-    selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, desc: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    hosts: Hosts,
+    desc: dict[str, str],
 ) -> None:
-    parsed_desc = yaml.load(desc, yaml.Loader)
-    for provider, chunks in parsed_desc.items():
+    for provider, chunks in desc.items():
         if chunks == "entirely empty":
             assert_provider_chunk_in_data_distribution_empty(selenium, browser_id, provider, hosts)
         elif chunks == "entirely filled":
@@ -255,3 +257,41 @@ def open_modal_on_tab(
     click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, modal_name)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.+?) selects"
+        rf" (?P<item_list>{ELEMENTS_SEQUENCE_PATTERN}) "
+        r"and (?P<result>replicates|fails to replicate) them to "
+        rf"(?:each provider: |provider )(?P<providers>{ELEMENTS_SEQUENCE_PATTERN})"
+    ),
+    converters={
+        "item_list": parse_elements_sequence,
+        "providers": parse_elements_sequence,
+    },
+)
+def select_files_and_replicate(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    item_list: list[str],
+    tmp_memory: TmpMemory,
+    providers: list[str],
+    hosts: Hosts,
+    result: str,
+) -> None:
+    select_files_from_file_list_using_ctrl(browser_id, item_list, tmp_memory)
+    choose_option_from_selection_menu(browser_id, selenium, "Data distribution", tmp_memory)
+
+    for provider in providers:
+        if is_current_item_fully_on_provider(selenium[browser_id], hosts[provider]["name"]):
+            assert_cannot_click_replicate_button(selenium, browser_id, provider, hosts)
+            continue
+        replicate_item(selenium, browser_id, provider, hosts)
+        if result == "fails to replicate":
+            assert_error_modal_with_text_appeared(
+                selenium, browser_id, "Starting replication failed!"
+            )
+            click_modal_button(selenium, browser_id, "Close", "Error")
+
+    click_modal_button(selenium, browser_id, "X", "Details modal")

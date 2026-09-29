@@ -18,8 +18,9 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import close_alert_popup_if_present
+from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
@@ -59,7 +60,7 @@ def get_space_names_from_sidebar(selenium: SeleniumDrivers, browser_id: str) -> 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
     # select data in main menu if not selected
-    OZLoggedIn(driver).open_panel(DataPage)
+    get_onezone_subpage(driver, "data")
     click_on_space_in_menu_list(driver, name)
 
 
@@ -121,19 +122,38 @@ def create_new_space_by_click_on_create_new_space_button(
 ) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).data.input_box.confirm()
-    close_alert_popup_if_present(driver, popup=CreatedItemAlertPopup.SPACE)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        CreatedItemAlertPopup.SPACE,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_new_space_on_onezone_page(
-    selenium: SeleniumDrivers, browser_id: str, space_name: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    spaces: dict[str, str],
+    clipboard: Clipboard,
+    displays: dict[str, str],
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).data
     page.create_space_button()
     page.input_box.value = space_name
     page.input_box.confirm()
-    close_alert_popup_if_present(selenium[browser_id], popup=CreatedItemAlertPopup.SPACE)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        CreatedItemAlertPopup.SPACE,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
+    click_on_option_in_space_menu(selenium, browser_id, space_name, "Copy ID")
+    spaces[space_name] = clipboard.paste(display=displays[browser_id])
 
 
 @wt(
@@ -240,10 +260,8 @@ def _click_on_option_in_the_sidebar(
 ) -> PageObject:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    oz_page = OZLoggedIn(driver)
     page_name = cast(PageName, option.lower())
-    oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
-    return getattr(oz_page, page_name)
+    return get_onezone_subpage(driver, page_name)
 
 
 @wt(
@@ -276,9 +294,7 @@ def get_list_element_on_subpage_in_oz_page(
     driver: WebDriver, page_name: str, option: ListElement, elem_name: str
 ) -> Any:
     page_name = cast(PageName, page_name)
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
-    page = getattr(oz_page, page_name)
+    page = get_onezone_subpage(driver, page_name)
     elements_list = getattr(page, f"{option.value}_list")
     return elements_list[elem_name]
 
@@ -510,9 +526,8 @@ def check_number_of_providers_on_the_map_on_data_page(
 ) -> None:
     expected_number = 0 if correct_number == "no" else int(correct_number)
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(DataPage)
-    current_page = getattr(oz_page.data, _get_subpage_name(page))
+    data_page = get_onezone_subpage(driver, "data")
+    current_page = getattr(data_page, _get_subpage_name(page))
     number_providers = len(current_page.map.providers)
     error_msg = f"found {number_providers} instead of {expected_number}"
     assert number_providers == expected_number, error_msg
@@ -827,7 +842,13 @@ def copy_token(selenium: SeleniumDrivers, browser_id: str) -> None:
 def confirm_create_new_space(selenium: SeleniumDrivers, browser_id: str, option: str) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
-        close_alert_popup_if_present(selenium[browser_id], popup=CreatedItemAlertPopup.SPACE)
+        is_notify_popup_visible_and_close_all_alert_popups(
+            selenium,
+            browser_id,
+            CreatedItemAlertPopup.SPACE,
+            popup_expected=False,
+            timeout=WAIT_FRONTEND,
+        )
     else:
         create_new_space_by_click_on_create_new_space_button(selenium, browser_id)
 

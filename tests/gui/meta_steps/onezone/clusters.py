@@ -17,11 +17,12 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.members import remove_member_from_parent
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
-from tests.gui.steps.common.common import close_alert_popup_if_present
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onezone.clusters import (
@@ -48,6 +49,7 @@ from tests.gui.steps.rest.provider import GuiMessageType, modify_gui_setting_mes
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.generic import MembersParentType, MemberType
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User
@@ -86,7 +88,7 @@ def invite_user_to_cluster(
     option = "Clusters"
     sub_item = "Members"
     button = "Invite user using token"
-    where = option.lower()[:-1]
+    where: MembersParentType = "cluster"
     member = "users"
     modal = "Invite using token"
     item_type = "token"
@@ -97,7 +99,13 @@ def invite_user_to_cluster(
 
     click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.SUCCESSFULLY_COPIED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.SUCCESSFULLY_COPIED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
     close_modal(selenium, browser_id, modal)
     send_copied_item_to_other_users(
         browser_id, item_type, [browser], tmp_memory, displays, clipboard
@@ -123,7 +131,7 @@ def join_to_cluster(
 def change_privilege_config_in_cluster(
     selenium: SeleniumDrivers,
     browser_id: str,
-    where: str,
+    where: MembersParentType,
     user_name: str,
     hosts: Hosts,
     config: str,
@@ -161,7 +169,7 @@ def add_group_to_cluster(
     sub_item = "Add one of your groups"
     button_name = "Add"
     modal = "Add one of groups"
-    where = "cluster"
+    where: MembersParentType = "cluster"
     member = "groups"
     modal_name = "add one of your groups"
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
@@ -184,7 +192,13 @@ def add_group_to_cluster(
 
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_name, modal)
-    close_alert_popup_if_present(selenium[browser_id], AlertPopup.MEMBER_ADDED)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.MEMBER_ADDED,
+        popup_expected=False,
+        timeout=WAIT_FRONTEND,
+    )
 
 
 @given(
@@ -198,10 +212,10 @@ def no_member_in_parent(
     selenium: SeleniumDrivers,
     browser_id: str,
     member_name: str,
-    member_type: str,
+    member_type: MemberType,
     name: str,
     tmp_memory: TmpMemory,
-    where: str,
+    where: MembersParentType,
 ) -> None:
     with contextlib.suppress(
         ElementNotInteractableException, NoSuchElementException, PageObjectNotFoundError

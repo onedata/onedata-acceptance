@@ -8,7 +8,7 @@ import re
 import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
-from typing import Any
+from typing import Any, Literal, overload
 
 from selenium.common.exceptions import (
     StaleElementReferenceException,
@@ -27,7 +27,7 @@ from tests.gui.type_definitions import (
     WebElementOrCssLocator,
     WebElementOrSelector,
 )
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
     ArchiveAuditLog,
@@ -35,17 +35,29 @@ from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
 from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
     ArchiveRecallInformation,
 )
-from tests.gui.utils.common.popups.generic import AlertPopupType
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.generic import (
     ListElement,
     ListItemMainField,
+    PageName,
     get_visibility_condition,
     get_web_elem_or_locator,
     transform,
 )
 from tests.gui.utils.oneprovider.browser import Browser
-from tests.gui.utils.onezone.generic_page import ListPage, get_visible_elements_list
+from tests.gui.utils.onezone.automation_page import AutomationPage
+from tests.gui.utils.onezone.clusters_page import ClustersPage
+from tests.gui.utils.onezone.data_page import DataPage
+from tests.gui.utils.onezone.discovery_page import DiscoveryPage
+from tests.gui.utils.onezone.generic_page import (
+    ListPage,
+    SidebarPanelPage,
+    get_visible_elements_list,
+)
+from tests.gui.utils.onezone.groups.groups_page import GroupsPage
+from tests.gui.utils.onezone.providers_page import ProvidersPage
+from tests.gui.utils.onezone.shares_page import SharesPage
+from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -97,8 +109,10 @@ def get_visible_items_list(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
-    assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
+def wait_for_checking_toggle_with_getter(
+    toggle_getter: Callable[[WebDriver], Any], driver: WebDriver, toggle_name: str = ""
+) -> None:
+    assert toggle_getter(driver).is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
 def get_page_for_list(
@@ -354,34 +368,6 @@ def wait_till_error_modal_disappear(
     return True
 
 
-def close_alert_popup_if_present(
-    driver: WebDriver,
-    popup: AlertPopupType,
-) -> bool:
-    # Close an alert identified by its enum value.
-    # If popup doesn't appear, don't throw an error.
-    # If it appeared and was not closed, raise.
-    alert_popup = Popups(driver).alert_popups.get_alert_popup(popup)
-    if alert_popup is None:
-        return False
-
-    def close_matching_popup() -> None:
-        current_popup = Popups(driver).alert_popups.find_alert_popup(popup)
-        if current_popup is not None:
-            current_popup.close.click()
-
-    try_click_without_throwing_error(close_matching_popup)
-
-    def is_popup_closed(driver: WebDriver) -> bool:
-        return Popups(driver).alert_popups.find_alert_popup(popup) is None
-
-    WebDriverWait(driver, WAIT_FRONTEND).until(
-        is_popup_closed,
-        message=f'Alert popup matching "{popup.message}" is still visible',
-    )
-    return True
-
-
 def parse_size(size: str) -> float:
     units = ["B", "KiB", "MiB", "GiB"]
     units_reg = "|".join(units)
@@ -397,3 +383,47 @@ def parse_size(size: str) -> float:
     value = float(match.group("value"))
     unit = match.group("unit")
     return value * 1024 ** (units.index(unit))
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["data"]) -> DataPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["shares"]) -> SharesPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["providers"]) -> ProvidersPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["groups"]) -> GroupsPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["tokens"]) -> TokensPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["discovery"]) -> DiscoveryPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["automation"]) -> AutomationPage: ...
+
+
+@overload
+def get_onezone_subpage(
+    driver: WebDriver, page_name: Literal["clusters", "cluster"]
+) -> ClustersPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: PageName) -> SidebarPanelPage: ...
+
+
+def get_onezone_subpage(driver: WebDriver, page_name: PageName) -> SidebarPanelPage:
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
+    return getattr(oz_page, page_name)

@@ -125,9 +125,10 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
      And user of browser_user1 refreshes site
      And user of browser_user1 clicks "Files" of "space1" space in the sidebar
      And user of browser_user1 sees file browser in files tab in Oneprovider page
-     And user of browser_user1 sees file chunks for file "file1" as follows:
-             oneprovider-1: entirely filled
-             oneprovider-2: entirely filled
+     And user of browser_user1 sees file chunks for files:
+             file1:
+                 oneprovider-1: entirely filled
+                 oneprovider-2: entirely filled
 
      Then user of browser_user1 evicts file "file1" from provider oneprovider-2
 
