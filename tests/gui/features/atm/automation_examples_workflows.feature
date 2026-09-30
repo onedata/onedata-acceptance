@@ -198,48 +198,6 @@ Feature: Automation examples tests
     And user of browser sees image named "apache_pb.png" in browser
 
 
-  Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using xrootd fetch file
-    When user of browser clicks on "Automation" in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
-
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/xrootd_fetch.txt" to current dir
-    And user of browser sees that item named "xrootd_fetch.txt" has appeared in file browser
-
-    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
-        fetch-files:
-          - xrootd_fetch.txt
-        destination:
-          - dir1
-
-    Then user of browser sees that status of "download-files" workflow is "Finished"
-    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
-        timestamp: today
-        source: user
-        severity: info
-        content:
-            status: Found  1 files to be downloaded.
-            fetchFileName: xrootd_fetch.txt
-
-    And user of browser opens file browser for "space1" space
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that the file structure in file browser is as follow:
-        - dir1:
-          - data:
-            - LHC10c_pp_ESD_120076.json
-          - file1
-          - file2
-          - file3
-          - file4
-          - file5
-        - dir2:
-          - file1
-        - xrootd_fetch.txt
-
-
   Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using fetch xrootd file
     When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
@@ -248,7 +206,7 @@ Feature: Automation examples tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/fetch_xrootd.txt" to current dir
+    And user of browser uses upload button from file browser menu bar to upload file "automation-examples/workflows/download-files/fetch_xrootd.txt" to current dir
     And user of browser sees that item named "fetch_xrootd.txt" has appeared in file browser
 
     And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
@@ -282,7 +240,7 @@ Feature: Automation examples tests
           - file1
         - fetch_xrootd.txt
 
-  Scenario: User sees desirable files after executing uploaded "download-files" workflow using multiple-file fetch file
+  Scenario: User sees desirable files after executing uploaded "download-files" workflow using "fetch_multiple_files" file
     When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory

@@ -48,9 +48,9 @@ Feature: Bagit uploader tests
         - "bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-sha256.txt not found"
       - "wrong_tagmanifest_checksums.zip":
         - "md5 checksum verification failed for macaroon_bag1/fetch.txt.\nExpected:
-           5e8594d60bc90071ae12ad9b589166be, Calculated: ceb502eb82f571ea033f743f3c3c9123"
+           5e8594d60bc90071ae12ad9b589166be, Calculated: 0492da30f0d70c6a55bce19e2cc2ca89"
         - "sha256 checksum verification failed for macaroon_bag1/fetch.txt.\nExpected:
-           a4127b2d0ced5571d738917292cb64ae686bea0c016d18a66029062b43dbd7eb, Calculated: 8db8b25444ca1130c2150fe622df8aac8e5604332cd0ec84e80adb9ce90240ab"
+           a4127b2d0ced5571d738917292cb64ae686bea0c016d18a66029062b43dbd7eb, Calculated: 791faa9883985faa1ddefd265f6946ab91664e147245ab9b49e3554e086d8a06"
       - "missing_payload.zip":
         - "Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n  Files
            in payload but not referenced: set()\n  Files
