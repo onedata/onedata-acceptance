@@ -13,7 +13,7 @@ from tests.gui.utils.core.web_elements import Button
 
 class DeleteQosPopup(PageObject):
     confirm = Button(".btn-danger")
-    cancel = Button(".btn-info")
+    cancel = Button(".btn-default")
 
     def __str__(self) -> str:
         return "Quality of Service popup"
