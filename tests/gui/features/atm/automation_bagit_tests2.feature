@@ -168,7 +168,7 @@ Feature: Bagit uploader tests
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload archive "automation/bagit_test_archives/<xrootd_archive>" to current dir
+    And user of browser uses upload button from file browser menu bar to upload archive <archive_path> to current dir
     And user of browser sees that item named <xrootd_archive> has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
@@ -232,9 +232,9 @@ Feature: Bagit uploader tests
 
 
     Examples:
-      | xrootd_archive                   | fetched_file                                  |
-      | "valid_with_xrootd.zip"          | "LHC10c_pp_ESD_120076.json"                   |
-      | "bagit_archive_fetch_xrootd.zip" | "python-rados_14.2.2-1bionic_amd64.deb"       |
+      | archive_path                                                                                        | xrootd_archive                   | fetched_file                            |
+      | "automation/bagit_test_archives/valid_with_xrootd.zip"                                              | "valid_with_xrootd.zip"          | "LHC10c_pp_ESD_120076.json"             |
+      | "automation-examples/workflows/bagit-uploader/bagit_archive_fetch_xrootd.zip"                       | "bagit_archive_fetch_xrootd.zip" | "python-rados_14.2.2-1bionic_amd64.deb" |
 
 
   Scenario: User sees desirable exception in task audit log after executing BagIt Uploader with invalid archive - wrong_manifest_checksum.zip
@@ -308,7 +308,7 @@ Feature: Bagit uploader tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload archive "automation/bagit_test_archives/bagit_archive_unpack.tar" to current dir
+    And user of browser uses upload button from file browser menu bar to upload archive "automation-examples/workflows/bagit-uploader/bagit_archive_unpack.tar" to current dir
     And user of browser sees that item named "bagit_archive_unpack.tar" has appeared in file browser
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
@@ -372,7 +372,7 @@ Feature: Bagit uploader tests
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload archive "automation/bagit_test_archives/<input_archive>" to current dir
+    And user of browser uses upload button from file browser menu bar to upload archive <archive_path> to current dir
     And user of browser sees that item named "<input_archive>" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
@@ -412,7 +412,7 @@ Feature: Bagit uploader tests
     And user of browser sees Dataset status tag for "dir1" in file browser
 
     Examples:
-      | input_archive                      | unpacked_files | fetched_files | uploaded_files |
-      | bagit_archive_fetch.zip            | 0              | 18            | 18             |
-      | bagit_archive_unpack_and_fetch.zip | 64             | 8             | 72             |
-      | bagit_archive_3gb.zip              | 0              | 1             | 1              |
+      | archive_path                                                                                        | input_archive                      | unpacked_files | fetched_files | uploaded_files |
+      | "automation/bagit_test_archives/bagit_archive_fetch.zip"                                            | bagit_archive_fetch.zip            | 0              | 18            | 18             |
+      | "automation-examples/workflows/bagit-uploader/bagit_archive_unpack_and_fetch.zip"                   | bagit_archive_unpack_and_fetch.zip | 64             | 8             | 72             |
+      | "automation-examples/workflows/bagit-uploader/bagit_archive_3gb.zip"                                | bagit_archive_3gb.zip              | 0              | 1             | 1              |

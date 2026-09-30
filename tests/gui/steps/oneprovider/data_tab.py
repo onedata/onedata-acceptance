@@ -36,6 +36,7 @@ from tests.gui.utils.generic import (
     parse_seq,
     transform,
     upload_file_path,
+    upload_workflow_path,
 )
 from tests.gui.utils.oneprovider.breadcrumbs import _Breadcrumbs
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -434,6 +435,26 @@ def upload_automation_file_to_cwd_in_file_browser(
     file_name = "automation/" + inner_dir + "/" + file_name.replace('"', "")
     driver = selenium[browser_id]
     OPLoggedIn(driver).file_browser.upload_files(upload_file_path(file_name))
+    wait_for_file_upload_to_finish(selenium, browser_id)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} uses upload button from file browser "
+        'menu bar to upload {option} "automation-examples/workflows/'
+        '{workflow_name}/{file_name}" to current dir'
+    )
+)
+@repeat_failed(timeout=2 * WAIT_BACKEND)
+def upload_automation_example_file_to_cwd_in_file_browser(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    workflow_name: str,
+    file_name: str,
+) -> None:
+    file_path = upload_workflow_path(f"{workflow_name}/{file_name}")
+    driver = selenium[browser_id]
+    OPLoggedIn(driver).file_browser.upload_files(file_path)
     wait_for_file_upload_to_finish(selenium, browser_id)
 
 
