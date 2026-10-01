@@ -415,4 +415,4 @@ Feature: Bagit uploader tests
       | archive_path                                                                                        | input_archive                      | unpacked_files | fetched_files | uploaded_files |
       | "automation/bagit_test_archives/bagit_archive_fetch.zip"                                            | bagit_archive_fetch.zip            | 0              | 18            | 18             |
       | "automation-examples/workflows/bagit-uploader/bagit_archive_unpack_and_fetch.zip"                   | bagit_archive_unpack_and_fetch.zip | 64             | 8             | 72             |
-      | "automation-examples/workflows/bagit-uploader/bagit_archive_3gb.zip"                                | bagit_archive_3gb.zip              | 0              | 1             | 1              |
+      # The 3 GB archive is covered by atm_workflows_execution_bagit_3gb_archive.feature.

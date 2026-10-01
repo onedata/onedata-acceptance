@@ -36,11 +36,11 @@ Feature: Automation examples input files test
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload input file "automation/input_files/<example_file_name>" to current dir
-    And user of browser sees that item named <example_file_name> has appeared in file browser
+    And user of browser sees that item named "<example_file_name>" has appeared in file browser
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "detect-file-formats" workflow
-    And user of browser chooses <example_file_name> file as initial value of "input-files" store for workflow in "Select files" modal
+    And user of browser chooses "<example_file_name>" file as initial value of "input-files" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
@@ -49,16 +49,16 @@ Feature: Automation examples input files test
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on "Metadata" in context menu for <example_file_name> in file browser
+    And user of browser clicks on "Metadata" in context menu for "<example_file_name>" in file browser
     And user of browser sees xattr metadata entry with key "format.mime-type" and value "<meta_entry_val1>"
     And user of browser sees xattr metadata entry with key "format.is-extension-matching-format" and value "True"
     And user of browser sees xattr metadata entry with key "format.format-name" and value "<meta_entry_val2>"
 
 
     Examples:
-    | example_file_name       | meta_entry_val1      | meta_entry_val2                      |
-    | "example_cpp_script"    | text/x-c++           | C++ source, ASCII text               |
-    | "example_python_script" | text/x-script.python | Python script, ASCII text executable |
+    | example_file_name     | meta_entry_val1      | meta_entry_val2                      |
+    | example_cpp_script    | text/x-c++           | C++ source, ASCII text               |
+    | example_python_script | text/x-script.python | Python script, ASCII text executable |
 
 
   Scenario Outline: User sees desirable information in file metadata after execution of uploaded "detect-file-mime-formats" workflow and input file <example_file_name>
@@ -70,11 +70,11 @@ Feature: Automation examples input files test
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload input file "automation/input_files/<example_file_name>" to current dir
-    And user of browser sees that item named <example_file_name> has appeared in file browser
+    And user of browser sees that item named "<example_file_name>" has appeared in file browser
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "detect-file-mime-formats" workflow
-    And user of browser chooses <example_file_name> file as initial value of "input-files" store for workflow in "Select files" modal
+    And user of browser chooses "<example_file_name>" file as initial value of "input-files" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
@@ -83,14 +83,14 @@ Feature: Automation examples input files test
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on "Metadata" in context menu for <example_file_name> in file browser
+    And user of browser clicks on "Metadata" in context menu for "<example_file_name>" in file browser
     And user of browser sees xattr metadata entry with key "format.mime-type" and value "<meta_entry_val1>"
 
 
     Examples:
-    | example_file_name          | meta_entry_val1    |
-    | "example_image.jpg"        | image/jpeg         |
-    | "example_python_script.py" | text/x-python      |
+    | example_file_name        | meta_entry_val1 |
+    | example_image.jpg        | image/jpeg      |
+    | example_python_script.py | text/x-python   |
 
 
   Scenario: User sees successful execution of uploaded "annotate-images" workflow

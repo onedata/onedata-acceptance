@@ -62,13 +62,13 @@ Feature: Bagit uploader tests
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload archive "automation/bagit_test_archives/<input_archive>" to current dir
-    And user of browser sees that item named <input_archive> has appeared in file browser
+    And user of browser sees that item named "<input_archive>" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "BagIt Uploader" workflow
     And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
-    And user of browser chooses <input_archive> file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
+    And user of browser chooses "<input_archive>" file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
@@ -81,8 +81,8 @@ Feature: Bagit uploader tests
       content:
         status: Invalid bagit archive
 
-    And user of browser sees that "archive" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate" is <input_archive>
-    And user of browser sees expected exception for <input_archive> in "reason" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate"
+    And user of browser sees that "archive" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate" is "<input_archive>"
+    And user of browser sees expected exception for "<input_archive>" in "reason" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate"
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser sees that time in right corner of chart with processing stats is around current time
@@ -115,13 +115,13 @@ Feature: Bagit uploader tests
 
     Examples:
         | input_archive                     |
-        | "invalid_bagit_txt.tgz"           |
-        | "unsupported_url.zip"             |
-        | "unsupported_archive_type.7z"     |
-        | "missing_manifest_file.tgz"       |
-        | "missing_data_dir.tar"            |
-        | "missing_bagit_txt.tar"           |
-        | "invalid_fetch_url.zip"           |
-        | "missing_fetch_txt.zip"           |
-        | "wrong_tagmanifest_checksums.zip" |
-        | "missing_payload.zip"             |
+        | invalid_bagit_txt.tgz             |
+        | unsupported_url.zip               |
+        | unsupported_archive_type.7z       |
+        | missing_manifest_file.tgz         |
+        | missing_data_dir.tar              |
+        | missing_bagit_txt.tar             |
+        | invalid_fetch_url.zip             |
+        | missing_fetch_txt.zip             |
+        | wrong_tagmanifest_checksums.zip   |
+        | missing_payload.zip               |

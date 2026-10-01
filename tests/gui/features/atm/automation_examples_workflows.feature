@@ -369,9 +369,7 @@ Feature: Automation examples tests
     And user of browser clicks on "echo" on workflow executions list
     And user of browser is idle for 5 seconds
     And user of browser sees that status of "echo" workflow is "Active"
-    # Wait extra 3 seconds to make it more stable
-    And user of browser is idle for 8 seconds
-    And user of browser sees that status of "echo" workflow is "Finished"
+    And user of browser awaits for status of "echo" workflow to be "Finished"
 
 
   Scenario: User sees desirable exception in task auditlog after changing exceptionProbability in echo lambda
