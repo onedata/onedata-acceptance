@@ -18,6 +18,7 @@ from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.transfers import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.groups import *
+from tests.gui.meta_steps.onezone.provider import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.common.browser_creation import *
@@ -65,7 +66,7 @@ from tests.utils.entities_setup.users import *
 
 
 @pytest.fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0]
 
 
@@ -73,3 +74,4 @@ scenarios("../features/oneprovider/multiprovider/cdmi.feature")
 scenarios("../features/oneprovider/multiprovider/upload_files.feature")
 scenarios("../features/oneprovider/multiprovider/providers_world_map.feature")
 scenarios("../features/oneprovider/multiprovider/stop_provider.feature")
+scenarios("../features/oneprovider/multiprovider/space_multiple_providers.feature")

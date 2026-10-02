@@ -4,6 +4,7 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -13,7 +14,9 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.gui.utils.onepanel.emergency_passphrase import EmergencyPassphrase
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
+from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
 class TokenPage(PageObject):
@@ -49,24 +52,26 @@ class MenuItem(PageObject):
     # conflicted clusters have 4-letter cluster id digest added to label
     id_hash = Label(".conflict-label")
 
-    def __call__(self):
+    def __call__(self) -> None:
         self.click()
 
-    def is_not_working(self):
+    def is_not_working(self) -> bool:
         return "error" in self.status_icon.get_attribute("class")
 
-    def is_working(self):
+    def is_working(self) -> bool:
         return not self.is_not_working()
 
 
 class SubmenuItem(PageObject):
     name = id = Label(".one-label")
 
-    def __call__(self):
+    def __call__(self) -> None:
         self.click()
 
 
-class ClustersPage(GenericPage):
+class ClustersPage(SidebarPanelPage):
+    panel_name = "clusters"
+
     add_new_provider_cluster = Button(".add-cluster-btn")
 
     token_page = WebItem(".main-content", cls=TokenPage)
@@ -84,8 +89,10 @@ class ClustersPage(GenericPage):
     confirm_deregistration = Button(".btn-danger.btn-deregister")
 
     edit_settings = NamedButton(".one-button.btn-default", text="Edit settings")
-    confirm_modify_provider_details = NamedButton(
-        "button", text="Modify provider details"
-    )
+    confirm_modify_provider_details = NamedButton("button", text="Modify provider details")
     gui_settings_page = WebItem(".content-clusters-gui-settings", cls=GuiSettingsPage)
+    members_page = WebItem(".content-clusters-members", cls=MembersPage)
+    emergency_passphrase_page = WebItem(
+        ".content-cluster-emergency-passphrase", cls=EmergencyPassphrase
+    )
     page_name = Label(".header-row .one-label")

@@ -9,14 +9,9 @@ plan-permissions:
   permissions:
   - view
 - users:
-  - wojciech
-  permissions:
-  - view
-  - build
-  - view-configuration
-- users:
   - plgmstanisz
   - plgagneska
+  - wojciech
   permissions:
   - view
   - edit

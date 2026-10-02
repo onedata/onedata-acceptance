@@ -47,5 +47,6 @@ oneprovider-1:
 
   workerOverlayConfig: |-
       [{op_worker, [
-          {skip_storage_detection, true}
+          {skip_storage_detection, true},
+          {file_access_audit_log_enabled, true}
       ]}].

@@ -54,7 +54,7 @@ Feature: Management of invite to atm tokens in Onezone GUI
 
     Then user of browser2 sees that "inventory1" has appeared on the automation list in the sidebar
 
-    And user of browser1 sees that inventory inventory1 has following privilege configuration for user user2:
+    And user of browser1 sees that inventory "inventory1" has following privilege configuration for user "user2":
           privileges:
             Inventory management:
               granted: Partially
@@ -101,11 +101,11 @@ Feature: Management of invite to atm tokens in Onezone GUI
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 succeeds to consume token for "group1" group
+    And user of browser2 opens token consume view for "group1" group, pastes token and proceeds
 
     Then user of browser2 sees that "inventory1" has appeared on the automation list in the sidebar
 
-    And user of browser1 sees that inventory inventory1 has following privilege configuration for group group1:
+    And user of browser1 sees that inventory "inventory1" has following privilege configuration for group "group1":
           privileges:
             Inventory management:
               granted: Partially

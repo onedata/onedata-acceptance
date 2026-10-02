@@ -7,9 +7,12 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import cast
 
 import yaml
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.onezone.automation.workflow_creation import (
@@ -22,28 +25,30 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_task_name_in_task_edition_text_field,
     write_text_into_editor_bracket,
 )
+from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.onezone.automation_page import AutomationPage
+from tests.type_definitions import JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) creates (?P<which>|another )task "
-        "using (?P<ordinal>1st|2nd|3rd|4th) revision of "
-        '"(?P<lambda_name>.*)" lambda in "(?P<lane_name>.*)" lane with '
+        r"user of (?P<browser_id>.*) creates (?P<which>|another )task "
+        r"using (?P<ordinal>1st|2nd|3rd|4th) revision of "
+        r'"(?P<lambda_name>.*)" lambda in "(?P<lane_name>.*)" lane with '
         r"following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def create_task_using_previously_created_lambda(
-    browser_id,
-    config,
-    selenium,
-    oz_page,
-    lane_name,
-    lambda_name,
-    ordinal,
-    popups,
-    which,
-):
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    lane_name: str,
+    lambda_name: str,
+    ordinal: str,
+    which: str,
+) -> None:
     """Create task using lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -77,26 +82,22 @@ def create_task_using_previously_created_lambda(
         browser_id,
         config,
         selenium,
-        oz_page,
         lane_name,
         lambda_name,
         ordinal,
-        popups,
         which,
     )
 
 
 def _create_task_using_previously_created_lambda(
-    browser_id,
-    config,
-    selenium,
-    oz_page,
-    lane_name,
-    lambda_name,
-    ordinal,
-    popups,
-    which,
-):
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    lane_name: str,
+    lambda_name: str,
+    ordinal: str,
+    which: str,
+) -> None:
     arg_type = "argument"
     res_type = "result"
     conf_param_option = "configuration parameters"
@@ -109,29 +110,23 @@ def _create_task_using_previously_created_lambda(
 
     if "another" in which:
         position = data["where parallel box"]
-        add_another_parallel_box_to_lane(
-            selenium, browser_id, oz_page, lane_name, position
-        )
+        add_another_parallel_box_to_lane(selenium, browser_id, lane_name, position)
     else:
-        add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name)
+        add_parallel_box_to_lane(selenium, browser_id, lane_name)
 
     time.sleep(0.5)
-    add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name)
+    add_task_to_empty_parallel_box(selenium, browser_id, lane_name)
     time.sleep(0.5)
-    add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name, ordinal)
+    add_lambda_revision_to_workflow(selenium, browser_id, lambda_name, ordinal)
 
     if task_name:
-        write_task_name_in_task_edition_text_field(
-            selenium, browser_id, oz_page, task_name
-        )
+        write_task_name_in_task_edition_text_field(selenium, browser_id, task_name)
 
     if configuration_parameters:
         for param_name, param in configuration_parameters.items():
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 param["value builder"],
                 param_name,
                 conf_param_option,
@@ -139,7 +134,6 @@ def _create_task_using_previously_created_lambda(
             write_text_into_editor_bracket(
                 selenium,
                 browser_id,
-                oz_page,
                 param["value"],
                 param_name,
                 conf_param_option,
@@ -150,8 +144,6 @@ def _create_task_using_previously_created_lambda(
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 arg["value builder"],
                 arg_name,
                 arg_type,
@@ -160,7 +152,6 @@ def _create_task_using_previously_created_lambda(
                 write_text_into_editor_bracket(
                     selenium,
                     browser_id,
-                    oz_page,
                     arg["value"],
                     arg_name,
                     arg_type,
@@ -171,97 +162,125 @@ def _create_task_using_previously_created_lambda(
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 res["target store"],
                 res_name,
                 res_type,
             )
 
-    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option)
+    confirm_lambda_creation_or_edition(selenium, browser_id, option)
 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) removes "(?P<task>.*)" task'
-        ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
+        r'user of (?P<browser_id>.*) removes "(?P<task>.*)" task'
+        r' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
     )
 )
-def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals, task):
+def remove_task_from_lane(selenium: SeleniumDrivers, browser_id: str, lane: str, task: str) -> None:
     modal = "Remove task"
     option = "Remove"
 
     driver = selenium[browser_id]
-    page = oz_page(driver)["automation"]
-    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane.parallel_box.task_list[task].menu_button()
-    popups(driver).menu_popup_with_label.menu[option]()
-    click_modal_button(selenium, browser_id, option, modal, modals)
+    page = OZLoggedIn(driver).automation
+    lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane_obj.parallel_box.task_list[task].menu_button()
+    Popups(driver).menu_popup_with_label.menu[option]()
+    click_modal_button(selenium, browser_id, option, modal)
 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) modifies "(?P<task>.*)" task in '
-        '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane by '
+        r'user of (?P<browser_id>.*) modifies "(?P<task>.*)" task in '
+        r'(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane by '
         r"(?P<option>adding|changing) following:\n(?P<config>(.|\s)*)"
     )
 )
 def modify_task_results(
-    oz_page, selenium, browser_id, lane, task, popups, config, option
-):
-    conf_param_option = "configuration parameters"
-    data = yaml.load(config, yaml.Loader)
-    results_conf = data.get("results", False)
-    lambda_conf = data.get("lambda", False)
-    configuration_parameters = data.get(conf_param_option, False)
-    button = "Modify"
-    task_option = "task"
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    lane: str,
+    task: str,
+    config: str,
+    option: str,
+) -> None:
+    data = cast(JsonObject, yaml.load(config, yaml.Loader))
+    driver, page = _open_task_form(selenium, browser_id, lane, task)
+    _change_task_lambda_revision(page, driver, cast(list[JsonObject], data.get("lambda", [])))
+    _modify_task_result_mappings(
+        page,
+        driver,
+        cast(list[dict[str, str]], data.get("results", [])),
+        option,
+    )
+    _modify_task_configuration_parameters(
+        selenium,
+        browser_id,
+        cast(dict[str, JsonObject], data.get("configuration parameters", {})),
+    )
+    confirm_lambda_creation_or_edition(selenium, browser_id, "task")
 
+
+def _open_task_form(
+    selenium: SeleniumDrivers, browser_id: str, lane: str, task: str
+) -> tuple[WebDriver, AutomationPage]:
     driver = selenium[browser_id]
-    page = oz_page(driver).get_page_and_click("automation")
-    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane.parallel_box.task_list[task].menu_button()
-    popups(driver).menu_popup_with_label.menu[button]()
+    page = get_onezone_subpage(driver, "automation")
+    lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane_obj.parallel_box.task_list[task].menu_button()
+    Popups(driver).menu_popup_with_label.menu["Modify"]()
     # wait for task form to open
     time.sleep(1)
+    return driver, page
 
-    if lambda_conf:
-        revision = from_ordinal_number_to_int(lambda_conf[0]["revision"])
-        page.workflows_page.task_form.lambda_revision.click()
-        popups(driver).power_select.choose_item(str(revision))
 
-    if results_conf:
-        for res in results_conf:
-            [(res_name, new_res)] = res.items()
-            try:
-                result = page.workflows_page.task_form.results[res_name]
-            except RuntimeError:
-                result = page.workflows_page.task_form.results[res_name + ":"]
-            if option == "adding":
-                result.add_mapping()
-            element = result.target_store_dropdown[-1]
-            driver.execute_script("arguments[0].scrollIntoView();", element)
-            result.target_store_dropdown[-1].click()
-            popups(driver).power_select.choose_item(new_res)
+def _change_task_lambda_revision(
+    page: AutomationPage, driver: WebDriver, lambda_config: list[JsonObject]
+) -> None:
+    if not lambda_config:
+        return
 
-    if configuration_parameters:
-        for param_name, param in configuration_parameters.items():
-            choose_option_in_dropdown_menu_in_task_page(
-                selenium,
-                browser_id,
-                oz_page,
-                popups,
-                param["value builder"],
-                param_name,
-                conf_param_option,
-            )
-            write_text_into_editor_bracket(
-                selenium,
-                browser_id,
-                oz_page,
-                param["value"],
-                param_name,
-                conf_param_option,
-            )
+    revision = from_ordinal_number_to_int(cast(str, lambda_config[0]["revision"]))
+    page.workflows_page.task_form.lambda_revision.click()
+    Popups(driver).power_select.choose_item(str(revision))
 
-    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, task_option)
+
+def _modify_task_result_mappings(
+    page: AutomationPage,
+    driver: WebDriver,
+    result_mappings: list[dict[str, str]],
+    option: str,
+) -> None:
+    for result_mapping in result_mappings:
+        [(result_name, target_store)] = result_mapping.items()
+        try:
+            result = page.workflows_page.task_form.results[result_name]
+        except PageObjectNotFoundError:
+            result = page.workflows_page.task_form.results[result_name + ":"]
+        if option == "adding":
+            result.add_mapping()
+        element = result.target_store_dropdown[-1]
+        driver.execute_script("arguments[0].scrollIntoView();", element)
+        result.target_store_dropdown[-1].click()
+        Popups(driver).power_select.choose_item(target_store)
+
+
+def _modify_task_configuration_parameters(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    parameters: dict[str, JsonObject],
+) -> None:
+    for parameter_name, parameter in parameters.items():
+        choose_option_in_dropdown_menu_in_task_page(
+            selenium,
+            browser_id,
+            cast(str, parameter["value builder"]),
+            parameter_name,
+            "configuration parameters",
+        )
+        write_text_into_editor_bracket(
+            selenium,
+            browser_id,
+            cast(str, parameter["value"]),
+            parameter_name,
+            "configuration parameters",
+        )

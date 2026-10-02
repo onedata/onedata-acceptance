@@ -229,8 +229,8 @@ Feature: Access tokens tests
     And using web GUI, user1 copies created token
     And user1 sends token to user2
 
-    Then user2 fails to create group "group1" using REST using received token in "onezone" Onezone service
-    And using web GUI, user1 does not see group named group1 in "onezone" Onezone service
+    Then user2 fails to create group "group2" using REST using received token in "onezone" Onezone service
+    And using web GUI, user2 does not see group named "group2" in "onezone" Onezone service
 
 
   Scenario Outline: Using <client1>, user fails to create file after getting token with caveat set only for "read only", created by web GUI

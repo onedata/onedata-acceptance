@@ -8,19 +8,81 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from collections.abc import Callable
+from contextlib import suppress
 from subprocess import CalledProcessError
+from typing import Any
 
+import pytest
 import yaml
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
+from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import (
+    SELENIUM_IMPLICIT_WAIT,
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+)
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.utils.generic import implicit_wait, parse_seq, transform
+from tests.gui.steps.rest.spaces import revoke_space_support_using_rest
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils import Modals, Onepanel, Popups
+from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.generic import (
+    implicit_wait,
+    is_element_visible_using_getter,
+    parse_elements_sequence,
+    transform,
+)
+from tests.gui.utils.onepanel.spaces import (
+    QuotaEditor,
+    SpaceRecord,
+    StartCleaningState,
+    StartScanState,
+)
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.http_exceptions import HTTPInternalServerError
+from tests.utils.user_utils import User, Users
 from tests.utils.utils import repeat_failed
+
+
+def register_revoke_space_support_finalizer(
+    request: pytest.FixtureRequest,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+    space_id: str,
+) -> None:
+    def revoke_space_support() -> None:
+        # TODO VFS-13774: Suppress HTTPNotFound instead once Onepanel
+        # returns 404 for revoked support of a nonexistent space.
+        with suppress(HTTPInternalServerError):
+            revoke_space_support_using_rest(
+                hosts[provider]["hostname"],
+                onepanel_credentials.username,
+                onepanel_credentials.password,
+                space_id,
+            )
+
+    request.addfinalizer(revoke_space_support)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_spaces_list_from_spaces_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> PageObjectsSequence[SpaceRecord]:
+    return Onepanel(selenium[browser_id]).content.spaces.spaces
 
 
 @wt(
@@ -30,65 +92,61 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_select_storage_in_support_space_form(selenium, browser_id, storage, onepanel):
-    storage_selector = onepanel(
-        selenium[browser_id]
-    ).content.spaces.form.storage_selector
+def wt_select_storage_in_support_space_form(
+    selenium: SeleniumDrivers, browser_id: str, storage: str
+) -> None:
+    storage_selector = Onepanel(selenium[browser_id]).content.spaces.form.storage_selector
     storage_selector.click()
-    popups = selenium["request"].getfixturevalue("popups")
-    popups(selenium[browser_id]).power_select.choose_item(storage)
+    Popups(selenium[browser_id]).power_select.choose_item(storage)
 
 
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on Support space button "
-        "in spaces page in Onepanel if there are some spaces "
-        "already supported"
+        "in spaces page in Onepanel if there are some spaces already supported"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_support_space_btn_on_condition(selenium, browser_id, onepanel):
+def wt_click_on_support_space_btn_on_condition(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     # set implicit wait in case spaces list take time to load,
     # otherwise one can miss it and not click the button
     with implicit_wait(driver, 1, SELENIUM_IMPLICIT_WAIT):
-        spaces_page = onepanel(driver).content.spaces
+        spaces_page = Onepanel(driver).content.spaces
         if spaces_page.spaces.count() > 0:
             spaces_page.support_space()
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) selects (?P<btn>MiB|GiB|TiB) "
-        "radio button in support space form in Onepanel"
+        r"user of (?P<browser_id>.+?) selects (?P<btn>MiB|GiB|TiB) "
+        r"radio button in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_select_unit_in_space_support_form(selenium, browser_id, btn, onepanel):
-    onepanel(selenium[browser_id]).content.spaces.form.units[btn].click()
+def wt_select_unit_in_space_support_form(
+    selenium: SeleniumDrivers, browser_id: str, btn: str
+) -> None:
+    Onepanel(selenium[browser_id]).content.spaces.form.units[btn].click()
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) selects (?P<btn>auto|manual) "
-        "radio button in support space form in Onepanel"
+        r"user of (?P<browser_id>.+?) selects (?P<btn>auto|manual) "
+        r"radio button in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_select_mode_in_space_support_form(selenium, browser_id, btn, onepanel):
-    form = onepanel(selenium[browser_id]).content.spaces.form
+def wt_select_mode_in_space_support_form(
+    selenium: SeleniumDrivers, browser_id: str, btn: str
+) -> None:
+    form = Onepanel(selenium[browser_id]).content.spaces.form
     form.storage_import_configuration.modes[btn].click()
 
 
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.+?) clicks on Support space "
-        "button in support space form in Onepanel"
-    )
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_space_support_form(selenium, browser_id, onepanel):
-    onepanel(selenium[browser_id]).content.spaces.form.support_space()
+def click_on_btn_in_space_support_form(selenium: SeleniumDrivers, browser_id: str) -> None:
+    Onepanel(selenium[browser_id]).content.spaces.form.support_space()
 
 
 @wt(
@@ -99,9 +157,9 @@ def wt_click_on_btn_in_space_support_form(selenium, browser_id, onepanel):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_received_token_to_support_token_field(
-    selenium, browser_id, onepanel, tmp_memory
-):
-    form = onepanel(selenium[browser_id]).content.spaces.form
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
+) -> None:
+    form = Onepanel(selenium[browser_id]).content.spaces.form
     form.token = tmp_memory[browser_id]["mailbox"]["token"]
 
 
@@ -113,9 +171,9 @@ def wt_type_received_token_to_support_token_field(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_input_box_in_space_support_form(
-    selenium, browser_id, text, input_box, onepanel
-):
-    form = onepanel(selenium[browser_id]).content.spaces.form
+    selenium: SeleniumDrivers, browser_id: str, text: str, input_box: str
+) -> None:
+    form = Onepanel(selenium[browser_id]).content.spaces.form
     setattr(form, transform(input_box), text)
 
 
@@ -127,15 +185,19 @@ def wt_type_text_to_input_box_in_space_support_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enable_option_box_in_space_support_form(selenium, browser_id, toggle, onepanel):
-    storage_import_configuration = onepanel(
+def wt_enable_option_box_in_space_support_form(
+    selenium: SeleniumDrivers, browser_id: str, toggle: str
+) -> None:
+    storage_import_configuration = Onepanel(
         selenium[browser_id]
     ).content.spaces.form.storage_import_configuration
     getattr(storage_import_configuration, transform(toggle)).check()
 
 
-def wt_disable_option_box_in_space_support_form(selenium, browser_id, toggle, onepanel):
-    storage_import_configuration = onepanel(
+def wt_disable_option_box_in_space_support_form(
+    selenium: SeleniumDrivers, browser_id: str, toggle: str
+) -> None:
+    storage_import_configuration = Onepanel(
         selenium[browser_id]
     ).content.spaces.form.storage_import_configuration
     getattr(storage_import_configuration, transform(toggle)).uncheck()
@@ -143,18 +205,24 @@ def wt_disable_option_box_in_space_support_form(selenium, browser_id, toggle, on
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that space support record for "
-        '"{space_name}" has appeared in Spaces page in Onepanel'
+        'user of {browser_id} sees that "{space_name}" space name is displayed in the'
+        " supported spaces overview panel in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
-def wt_assert_existence_of_space_support_record(
-    selenium, browser_id, space_name, onepanel
-):
-    spaces = {
-        space.name for space in onepanel(selenium[browser_id]).content.spaces.spaces
-    }
-    assert space_name in spaces, f'not found "{space_name}" in spaces in Onepanel'
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_assert_correct_supported_space_opened(
+    selenium: SeleniumDrivers, browser_id: str, space_name: str
+) -> None:
+    overview = Onepanel(selenium[browser_id]).content.spaces.space.overview
+    assert space_name == overview.space_name, (
+        f'opened space "{overview.name}" instead of expected "{space_name}"'
+    )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_supported_space_id(driver: WebDriver) -> None:
+    overview = Onepanel(driver).content.spaces.space.overview
+    overview.copy_space_id.click()
 
 
 @wt(
@@ -164,11 +232,9 @@ def wt_assert_existence_of_space_support_record(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_supported_spaces_list_is_empty(selenium, browser_id, onepanel):
-    count = onepanel(selenium[browser_id]).content.spaces.spaces.count()
-    assert (
-        count == 0
-    ), f"There is(are) {count} supported spaces instead of expected none"
+def wt_assert_supported_spaces_list_is_empty(selenium: SeleniumDrivers, browser_id: str) -> None:
+    count = Onepanel(selenium[browser_id]).content.spaces.spaces.count()
+    assert count == 0, f"There is(are) {count} supported spaces instead of expected none"
 
 
 @wt(
@@ -180,10 +246,10 @@ def wt_assert_supported_spaces_list_is_empty(selenium, browser_id, onepanel):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_strategy_in_conf_in_support_space_form(
-    selenium, browser_id, strategy, conf, onepanel
-):
+    selenium: SeleniumDrivers, browser_id: str, strategy: str, conf: str
+) -> None:
     config = getattr(
-        onepanel(selenium[browser_id]).content.spaces.form,
+        Onepanel(selenium[browser_id]).content.spaces.form,
         conf.lower() + "_configuration",
     )
     strategy_selector = config.strategy_selector
@@ -194,24 +260,21 @@ def wt_select_strategy_in_conf_in_support_space_form(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" '
-        r"to (?P<input_box>.*) input field in support space form "
-        r"in Onepanel"
+        r"to (?P<input_box>.*) input field in support space form in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_input_box_in_storage_import_configuration(
-    selenium, browser_id, text, input_box, onepanel
-):
+    selenium: SeleniumDrivers, browser_id: str, text: str, input_box: str
+) -> None:
     input_name = transform(input_box)
-    form = onepanel(selenium[browser_id]).content.spaces.form
+    form = Onepanel(selenium[browser_id]).content.spaces.form
     if hasattr(form, input_name):
         setattr(form, input_name, text)
     elif hasattr(form.storage_import_configuration, input_name):
         setattr(form.storage_import_configuration, input_name, text)
     else:
-        raise RuntimeError(
-            f"failed typing text into {input_box} input field in support space form "
-        )
+        raise ValueError(f"failed typing text into {input_box} input field in support space form ")
 
 
 @wt(
@@ -224,10 +287,10 @@ def wt_type_text_to_input_box_in_storage_import_configuration(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_strategy_in_conf_in_space_record(
-    selenium, browser_id, strategy, conf, onepanel
-):
+    selenium: SeleniumDrivers, browser_id: str, strategy: str, conf: str
+) -> None:
     config = getattr(
-        onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
+        Onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
         conf.lower() + "_configuration",
     )
     strategy_selector = config.strategy_selector
@@ -245,10 +308,14 @@ def wt_select_strategy_in_conf_in_space_record(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_input_box_in_conf_in_space_record(
-    selenium, browser_id, text, input_box, conf, onepanel
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    text: str,
+    input_box: str,
+    conf: str,
+) -> None:
     config = getattr(
-        onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
+        Onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
         conf.lower() + "_configuration",
     )
     setattr(config, transform(input_box), text)
@@ -261,21 +328,24 @@ def wt_type_text_to_input_box_in_conf_in_space_record(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_button_in_space_record(selenium, browser_id, onepanel, button):
+def wt_clicks_on_button_in_space_record(
+    selenium: SeleniumDrivers, browser_id: str, button: str
+) -> None:
     driver = selenium[browser_id]
-    sync_chart = onepanel(driver).content.spaces.space.sync_chart
+    sync_chart = Onepanel(driver).content.spaces.space.sync_chart
     getattr(sync_chart, transform(button)).click()
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} opens "{space}" record on '
-        "spaces list in Spaces page in Onepanel"
+        'user of {browser_id} opens "{space}" record on spaces list in Spaces page in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_open_space_item_in_spaces_page_op_panel(selenium, browser_id, space, onepanel):
-    onepanel(selenium[browser_id]).content.spaces.spaces[space].click()
+def wt_open_space_item_in_spaces_page_op_panel(
+    selenium: SeleniumDrivers, browser_id: str, space: str
+) -> None:
+    Onepanel(selenium[browser_id]).content.spaces.spaces[space].click()
 
 
 @wt(
@@ -286,8 +356,12 @@ def wt_open_space_item_in_spaces_page_op_panel(selenium, browser_id, space, onep
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_proper_space_configuration_in_panel(
-    selenium, browser_id, sync_type, space_name, conf, onepanel
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    sync_type: str,
+    space_name: str,
+    conf: str,
+) -> None:
     """Assert configuration displayed in space record in panel.
 
     conf should be in yaml format exactly as seen in panel, e.g.
@@ -302,28 +376,24 @@ def wt_assert_proper_space_configuration_in_panel(
     """
 
     driver = selenium[browser_id]
-    space = onepanel(driver).content.spaces.space
+    space = Onepanel(driver).content.spaces.space
     space.navigation.overview()
     displayed_conf = getattr(space.overview, sync_type.lower() + "_strategy")
 
-    for attr, val in yaml.load(conf, yaml.Loader).items():
-        displayed_val = displayed_conf[attr]
+    for attribute, val in yaml.load(conf, yaml.Loader).items():
+        displayed_val = displayed_conf[attribute]
         assert str(val).lower() == displayed_val.lower(), (
-            f"Displayed {displayed_val} as {attr} instead of expected {val} in"
+            f"Displayed {displayed_val} as {attribute} instead of expected {val} in"
             f' {sync_type} strategy of "{space_name}" configuration'
         )
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} copies Id of "{space}" space in Spaces page in Onepanel'
-    )
-)
+@wt(parsers.parse('user of {browser_id} copies Id of "{space}" space in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_copy_space_id_in_spaces_page_in_onepanel(
-    selenium, browser_id, space, onepanel, tmp_memory
-):
-    record = onepanel(selenium[browser_id]).content.spaces.space
+    selenium: SeleniumDrivers, browser_id: str, space: str, tmp_memory: TmpMemory
+) -> None:
+    record = Onepanel(selenium[browser_id]).content.spaces.space
     tmp_memory["spaces"][space] = record.overview.space_id
 
 
@@ -335,10 +405,10 @@ def wt_copy_space_id_in_spaces_page_in_onepanel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_expands_toolbar_icon_for_space_in_onepanel(
-    selenium, browser_id, space_name, onepanel
-):
+    selenium: SeleniumDrivers, browser_id: str, space_name: str
+) -> None:
     driver = selenium[browser_id]
-    onepanel(driver).content.spaces.spaces[space_name].expand_menu(driver)
+    Onepanel(driver).content.spaces.spaces[space_name].expand_menu()
 
 
 @wt(
@@ -351,12 +421,14 @@ def wt_expands_toolbar_icon_for_space_in_onepanel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option, popups):
-    toolbar = popups(selenium[browser_id]).toolbar
+def wt_clicks_on_btn_in_space_toolbar_in_panel(
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
+    toolbar = Popups(selenium[browser_id]).toolbar
     if toolbar.is_displayed():
         toolbar.options[option].click()
     else:
-        raise RuntimeError("no space toolbar found in Onepanel")
+        raise AssertionError("no space toolbar found in Onepanel")
 
 
 @wt(
@@ -367,8 +439,10 @@ def wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option, pop
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals):
-    modal = modals(selenium[browser_id]).cease_support_for_space
+def wt_clicks_on_btn_in_cease_support_modal(
+    selenium: SeleniumDrivers, browser_id: str, button: str
+) -> None:
+    modal = Modals(selenium[browser_id]).cease_support_for_space
     if button == "Cease support":
         modal.cease_support()
     else:
@@ -379,38 +453,41 @@ def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals
 @wt(
     parsers.re(
         r"user of (?P<browser_id>\S+) removes space using "
-        "delete space modal invoked from provided link"
+        r"delete space modal invoked from provided link"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_space_instead_of_revoke(selenium, browser_id, modals):
-    modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
+def remove_space_instead_of_revoke(selenium: SeleniumDrivers, browser_id: str) -> None:
+    Modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(2)
-    modals(selenium[browser_id]).remove_modal.understand_notice()
-    modals(selenium[browser_id]).remove_modal.remove()
+    Modals(selenium[browser_id]).remove_modal.understand_notice()
+    Modals(selenium[browser_id]).remove_modal.remove()
 
 
 # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
 @wt(
     parsers.parse(
         'user of {browser_id} logs in as "{user}" to Onezone service '
-        "and removes space using delete space modal invoked from "
-        "provided link"
+        "and removes space using delete space modal invoked from provided link"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def login_and_remove_space_instead_of_revoke(
-    selenium, browser_id, modals, user, login_page, users, tmp_memory
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    user: str,
+    users: Users,
+    tmp_memory: TmpMemory,
+) -> None:
     modal_name = "Cease oneprovider support for space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
+    Modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(3)
-    login_using_basic_auth(selenium, browser_id, user, login_page, users, "Onezone")
+    login_using_basic_auth(selenium, [browser_id], [user], users, ["Onezone"])
     modal_name = "Remove space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(selenium[browser_id]).remove_modal.understand_notice()
-    modals(selenium[browser_id]).remove_modal.remove()
+    Modals(selenium[browser_id]).remove_modal.understand_notice()
+    Modals(selenium[browser_id]).remove_modal.remove()
 
 
 @wt(
@@ -420,8 +497,10 @@ def login_and_remove_space_instead_of_revoke(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id, modals):
-    (modals(selenium[browser_id]).cease_support_for_space.understand_risk_checkbox())
+def wt_clicks_on_understand_risk_in_cease_support_modal(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    (Modals(selenium[browser_id]).cease_support_for_space.understand_risk_checkbox())
 
 
 @wt(
@@ -432,18 +511,14 @@ def wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id, mo
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_configure(selenium, browser_id, onepanel):
-    (onepanel(selenium[browser_id]).content.spaces.space.sync_chart.configure())
+def wt_clicks_on_configure(selenium: SeleniumDrivers, browser_id: str) -> None:
+    (Onepanel(selenium[browser_id]).content.spaces.space.sync_chart.configure())
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks settings in Storage import in Spaces page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks settings in Storage import in Spaces page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_option_in_spaces_page(selenium, browser_id, onepanel):
-    space = onepanel(selenium[browser_id]).content.spaces.space
+def wt_clicks_on_option_in_spaces_page(selenium: SeleniumDrivers, browser_id: str) -> None:
+    space = Onepanel(selenium[browser_id]).content.spaces.space
     space.sync_chart.import_settings_list[0].click()
 
 
@@ -458,8 +533,12 @@ def wt_clicks_on_option_in_spaces_page(selenium, browser_id, onepanel):
 )
 @repeat_failed(timeout=WAIT_BACKEND * 10, interval=2)
 def assert_correct_number_displayed_on_sync_charts(
-    selenium, browser_id, bar_type, onepanel, num, hosts
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    bar_type: str,
+    num: str,
+    hosts: Hosts,
+) -> None:
     files_mount_point = docker_ls("", hosts)
     try:
         files_dir1 = docker_ls("dir1", hosts)
@@ -469,11 +548,10 @@ def assert_correct_number_displayed_on_sync_charts(
         files_dir2 = docker_ls("dir2", hosts)
     except CalledProcessError:
         files_dir2 = []
-
-    num = int(num)
-    record = onepanel(selenium[browser_id]).content.spaces.space
+    expected_num = int(num)
+    record = Onepanel(selenium[browser_id]).content.spaces.space
     displayed_num = getattr(record.sync_chart, bar_type)
-    assert displayed_num == num, (
+    assert displayed_num == expected_num, (
         f"Displayed {displayed_num} as number of {bar_type} files on sync "
         f"chart instead of expected {num}. Files in mount point: "
         f"{files_mount_point}. Files in dir1: {files_dir1}."
@@ -483,83 +561,72 @@ def assert_correct_number_displayed_on_sync_charts(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees {tab_list} navigation tabs for space "{space_name}"'
-    )
+        "user of {browser_id} sees {tab_list:ElementsSequence} navigation tabs "
+        'for space "{space_name}"',
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_space_displayed(
-    selenium, browser_id, tab_list, space_name, onepanel
-):
-    nav = onepanel(selenium[browser_id]).content.spaces.spaces[space_name].navigation
+    selenium: SeleniumDrivers, browser_id: str, tab_list: list[str], space_name: str
+) -> None:
+    nav = Onepanel(selenium[browser_id]).content.spaces.spaces[space_name].navigation
 
-    for tab in parse_seq(tab_list):
-        assert (
-            getattr(nav, transform(tab, strip_char='"')) is not None
-        ), f"no navigation tab {tab} found"
+    for tab in tab_list:
+        assert getattr(nav, transform(tab, strip_char='"')) is not None, (
+            f"no navigation tab {tab} found"
+        )
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on {tab_name} navigation "
-        'tab in space "{space_name}"'
+        'user of {browser_id} clicks on {tab_name} navigation tab in space "{space_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium):
-    nav = onepanel(selenium[browser_id]).content.spaces.space.navigation
+def click_on_navigation_tab_in_space(
+    browser_id: str, tab_name: str, selenium: SeleniumDrivers
+) -> None:
+    nav = Onepanel(selenium[browser_id]).content.spaces.space.navigation
     tab = transform(tab_name, strip_char='"')
     getattr(nav, tab).click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on {interval} update view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_interval_update(browser_id, interval, onepanel, selenium):
+def click_on_interval_update(browser_id: str, interval: str, selenium: SeleniumDrivers) -> None:
     getattr(
-        onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
+        Onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
         transform(interval + " view"),
     ).click()
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} cannot click on {tab_name} "
-        'navigation tab in space "{space_name}"'
+        'user of {browser_id} cannot click on {tab_name} navigation tab in space "{space_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def cannot_click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium):
-    nav = onepanel(selenium[browser_id]).content.spaces.space.navigation
+def cannot_click_on_navigation_tab_in_space(
+    browser_id: str, tab_name: str, selenium: SeleniumDrivers
+) -> None:
+    nav = Onepanel(selenium[browser_id]).content.spaces.space.navigation
     tab = transform(tab_name, strip_char='"')
-    try:
+    with pytest.raises((ElementNotInteractableException, NoSuchElementException)):
         getattr(nav, tab).click()
-    except RuntimeError:
-        return
-    raise RuntimeError(f"can click on {tab_name}")
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} enables {option} in "{space}" space in Onepanel'
-    )
-)
+def get_space_option_toggle(driver: WebDriver, toggle_name: str) -> Any:
+    option = toggle_name.replace("-", "_")
+    tab = getattr(Onepanel(driver).content.spaces.space, option)
+    return getattr(tab, f"enable_{option}")
+
+
+@wt(parsers.parse("user of {browser_id} enables {option} in auto-cleaning tab in Onepanel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def enable_space_option_in_onepanel(selenium, browser_id, onepanel, option):
+def enable_option_in_auto_cleaning(selenium: SeleniumDrivers, browser_id: str, option: str) -> None:
     driver = selenium[browser_id]
-    option = option.replace("-", "_")
-    tab = getattr(onepanel(driver).content.spaces.space, option)
-    toggle = f"enable_{option}"
-    getattr(tab, toggle).check()
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} enables {option} in auto-cleaning tab in Onepanel"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def enable_option_in_auto_cleaning(selenium, browser_id, onepanel, option):
-    driver = selenium[browser_id]
-    tab = onepanel(driver).content.spaces.space.auto_cleaning
+    tab = Onepanel(driver).content.spaces.space.auto_cleaning
     if option == "selective cleaning":
         tab.selective_cleaning.check()
     else:
@@ -573,9 +640,11 @@ def enable_option_in_auto_cleaning(selenium, browser_id, onepanel, option):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_option_on_dropdown_rule(selenium, browser_id, onepanel, option, rule):
+def click_option_on_dropdown_rule(
+    selenium: SeleniumDrivers, browser_id: str, option: str, rule: str
+) -> None:
     driver = selenium[browser_id]
-    tab = onepanel(driver).content.spaces.space.auto_cleaning
+    tab = Onepanel(driver).content.spaces.space.auto_cleaning
     for _ in range(20):
         time.sleep(0.2)
         if tab.selective_cleaning_form[rule].value_limit != option:
@@ -584,21 +653,20 @@ def click_option_on_dropdown_rule(selenium, browser_id, onepanel, option, rule):
         else:
             break
     else:
-        err_msg = f"Failed do set {rule} for {option}"
-        assert tab.selective_cleaning_form[rule].value_limit == option, err_msg
+        error_message = f"Failed do set {rule} for {option}"
+        assert tab.selective_cleaning_form[rule].value_limit == option, error_message
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks change {quota} quota button "
-        "in auto-cleaning tab in Onepanel"
+        "user of {browser_id} clicks change {quota} quota button in auto-cleaning tab in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_change_quota_button(selenium, browser_id, quota, onepanel):
+def click_change_quota_button(selenium: SeleniumDrivers, browser_id: str, quota: str) -> None:
     button = f"click_rename_{quota}_quota_button"
     driver = selenium[browser_id]
-    getattr(onepanel(driver).content.spaces.space.auto_cleaning, button)(driver)
+    getattr(Onepanel(driver).content.spaces.space.auto_cleaning, button)(driver)
 
 
 @wt(
@@ -608,115 +676,142 @@ def click_change_quota_button(selenium, browser_id, quota, onepanel):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_value_to_quota_input(selenium, browser_id, quota, value, onepanel):
+def type_value_to_quota_input(
+    selenium: SeleniumDrivers, browser_id: str, quota: str, value: str
+) -> None:
     quota = f"{quota}_quota"
     driver = selenium[browser_id]
     _enter_text(
-        getattr(onepanel(driver).content.spaces.space.auto_cleaning, quota).edit_input,
+        getattr(Onepanel(driver).content.spaces.space.auto_cleaning, quota).edit_input,
         value,
     )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} confirms changing value "
-        "of {quota} quota in auto-cleaning tab in Onepanel"
-    )
-)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_quota_value_change(selenium, browser_id, quota, onepanel):
-    quota = f"{quota}_quota"
-    driver = selenium[browser_id]
-    getattr(onepanel(driver).content.spaces.space.auto_cleaning, quota).accept_button()
+def click_accept_button_in_quota_editor_and_return_quota_editor_getter(
+    driver: WebDriver, quota_type: str
+) -> Callable[[WebDriver], QuotaEditor]:
+    quota = f"{quota_type}_quota"
+
+    def quota_editor_getter(driver: WebDriver) -> QuotaEditor:
+        return getattr(Onepanel(driver).content.spaces.space.auto_cleaning, quota)
+
+    quota_editor_getter(driver).accept_button()
+    return quota_editor_getter
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Start cleaning now" button '
-        "in auto-cleaning tab in Onepanel"
-    )
-)
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_start_cleaning_now(driver: WebDriver) -> None:
+    Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_control.start_cleaning_now.click()
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_start_cleaning_now(selenium, browser_id, onepanel):
-    driver = selenium[browser_id]
-    onepanel(driver).content.spaces.space.auto_cleaning.start_cleaning_now()
+def get_cleaning_reports_count(driver: WebDriver) -> int:
+    return len(Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_reports)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees {size} released size in cleaning report in Onepanel"
+@repeat_failed(timeout=WAIT_BACKEND, interval=0.01)
+def wait_for_start_cleaning_confirmation(driver: WebDriver, previous_report_count: int) -> None:
+    def cleaning_state_getter(driver: WebDriver) -> StartCleaningState:
+        return Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_control.state
+
+    def pacman_getter(driver: WebDriver) -> SeleniumWebElement:
+        return Onepanel(driver).content.spaces.space.auto_cleaning.pacman
+
+    auto_cleaning = Onepanel(driver).content.spaces.space.auto_cleaning
+    cleaning_started_or_finished = (
+        is_element_visible_using_getter(driver, pacman_getter)
+        or cleaning_state_getter(driver)
+        not in {StartCleaningState.READY, StartCleaningState.DISABLED}
+        or len(auto_cleaning.cleaning_reports) > previous_report_count
     )
-)
+    assert cleaning_started_or_finished
+
+
+@wt(parsers.parse("user of {browser_id} sees {size} released size in cleaning report in Onepanel"))
 @repeat_failed(
     interval=1,
     timeout=220,
     exceptions=(AssertionError, StaleElementReferenceException),
 )
-def see_released_size_in_cleaning_report(selenium, browser_id, onepanel, size):
+def see_released_size_in_cleaning_report(
+    selenium: SeleniumDrivers, browser_id: str, size: str
+) -> None:
     driver = selenium[browser_id]
-    cleaning_reports = onepanel(
-        driver
-    ).content.spaces.space.auto_cleaning.cleaning_reports
+    cleaning_reports = Onepanel(driver).content.spaces.space.auto_cleaning.cleaning_reports
     for cleaning_report in cleaning_reports:
-        released_size = re.match(
+        match = re.match(
             r"((\d+) (MiB|B)) \(out of (\d*\.\d+|\d+) MiB\)",
             cleaning_report.released_size.text,
-        ).group(1)
+        )
+        if match is None:
+            raise ValueError(
+                f"Cannot parse released size from: {cleaning_report.released_size.text}"
+            )
+        released_size = match.group(1)
+
         if released_size == size:
             return
-    err_msg = f"released size: {released_size}  is not expected size: {size}"
-    assert False, err_msg
+    error_message = f"released size: {released_size}  is not expected size: {size}"
+    raise AssertionError(error_message)
 
 
 def toggle_in_storage_import_configuration_is_enabled(
-    selenium, browser_id, onepanel, toggle_name
-):
-    storage_import_conf = onepanel(
+    selenium: SeleniumDrivers, browser_id: str, toggle_name: str
+) -> bool:
+    storage_import_conf = Onepanel(
         selenium[browser_id]
     ).content.spaces.form.storage_import_configuration
     return storage_import_conf.is_toggle_checked(transform(toggle_name))
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Start scan" button '
-        "in storage import tab in Onepanel"
+def wait_for_start_scan_button_state(
+    driver: WebDriver,
+    state: StartScanState,
+    timeout: float = WAIT_BACKEND,
+) -> None:
+    def has_expected_state(driver: WebDriver) -> bool:
+        start_scan = Onepanel(driver).content.spaces.space.sync_chart.start_scan
+        return start_scan.state is state
+
+    WebDriverWait(
+        driver,
+        timeout=timeout,
+        poll_frequency=0.05,
+        ignored_exceptions=(StaleElementReferenceException),
+    ).until(
+        has_expected_state,
+        message=f"Waiting for start scan button to be {state.value} failed",
     )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_start_scan_button_in_sync_chart(driver: WebDriver) -> None:
+    sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+    sync_chart.start_scan.start_button.click()
+
+
+@repeat_failed(timeout=WAIT_BACKEND, interval=0.01)
+def wait_for_storage_import_scan_start_confirmation(driver: WebDriver) -> None:
+    sync_chart = Onepanel(driver).content.spaces.space.sync_chart
+    # A short scan can return to READY before Selenium observes an intermediate
+    # state, but the notification still proves that the click was accepted.
+    assert (
+        Popups(driver).alert_popups.find_alert_popup(AlertPopup.STORAGE_IMPORT_SCAN_STARTED)
+        is not None
+        or sync_chart.start_scan.state is not StartScanState.READY
+    ), "storage import scan has not started after clicking the start button"
+
+
+@wt(
+    parsers.parse("user of {browser_id} opens advanced settings in file popularity tab in Onepanel")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_start_scan_button_in_storage_import_tab(selenium, browser_id, onepanel):
+def open_advanced_settings_in_file_popularity_onepanel(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
-    onepanel(driver).content.spaces.space.sync_chart.start_scan()
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} waits until scanning is finished "
-        "in storage import tab in Onepanel"
-    )
-)
-@repeat_failed(timeout=WAIT_BACKEND, interval=4)
-def wait_until_scanning_is_finished_in_storage_import_tab(
-    selenium, browser_id, onepanel
-):
-    driver = selenium[browser_id]
-    assert onepanel(
-        driver
-    ).content.spaces.space.sync_chart.start_scan_is_green(), (
-        'Scanning did not finish correctly, "Start scan" button is not green'
-    )
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} opens advanced settings "
-        "in file popularity tab in Onepanel"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def open_advanced_settings_in_file_popularity_onepanel(selenium, browser_id, onepanel):
-    driver = selenium[browser_id]
-    onepanel(driver).content.spaces.space.file_popularity.advanced_settings.click()
+    Onepanel(driver).content.spaces.space.file_popularity.advanced_settings.click()
 
 
 @wt(
@@ -726,8 +821,6 @@ def open_advanced_settings_in_file_popularity_onepanel(selenium, browser_id, one
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_docs_link_in_file_popularity_onepanel(selenium, browser_id, onepanel):
+def click_docs_link_in_file_popularity_onepanel(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    onepanel(
-        driver
-    ).content.spaces.space.file_popularity.file_popularity_documentation.click()
+    Onepanel(driver).content.spaces.space.file_popularity.file_popularity_documentation.click()

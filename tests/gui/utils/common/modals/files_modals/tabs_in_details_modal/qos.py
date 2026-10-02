@@ -4,6 +4,9 @@ __author__ = "Michal Dronka"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
+from collections.abc import Sequence
+
 from selenium.common.exceptions import JavascriptException
 
 from tests.gui.utils.common.modals.modal import Modal
@@ -18,6 +21,33 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+
+
+class QoSValueOption(PageObject):
+    value_name = id = Label(".item-name")
+    qualifier = Label(".conflict-label")
+    label = Label(".storage-option-storage-line")
+
+    @staticmethod
+    def choose_value(
+        options: Sequence["QoSValueOption"],
+        expected_value_name: str,
+        expected_qualifier: str | None = None,
+    ) -> None:
+        for option in options:
+            # when qualifier(provider name) is not given this condition is always True
+            qualifier_matches = expected_qualifier is None or option.qualifier == expected_qualifier
+            if option.value_name == expected_value_name and qualifier_matches:
+                option.click()
+                return
+
+        qualifier_description = (
+            f' at provider "{expected_qualifier}"' if expected_qualifier is not None else ""
+        )
+        raise PageObjectNotFoundError(
+            f'QoS value "{expected_value_name}"{qualifier_description} not found'
+        )
 
 
 class Requirement(PageObject):
@@ -39,7 +69,7 @@ class AuditLogBrowser(PageObject):
     entries = WebItemsSequence(".table-entry.data-row.audit-log-table-entry", cls=Entry)
     empty_info = WebElement(".table-is-empty-cell")
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         return len(self.entries) == 0
 
 
@@ -65,14 +95,13 @@ class QoSTab(Modal):
     privileges_message = Label(".world-map .text-center")
     question_icon = Button(".oneicon-sign-question-rounded")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "QoS tab"
 
-    def scroll_to_top(self):
+    def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
-                "document.querySelector('.perfect-scrollbar-element"
-                ".ps--active-y').scrollTo(0, 0)"
+                "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
             )
         except JavascriptException as e:
             raise AssertionError(

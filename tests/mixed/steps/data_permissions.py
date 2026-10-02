@@ -7,8 +7,9 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from collections.abc import Mapping
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.permissions import (
     assert_ace_in_op_gui,
     assert_posix_permissions_in_op_gui,
@@ -16,6 +17,7 @@ from tests.gui.meta_steps.oneprovider.permissions import (
     grant_acl_privileges_in_op_gui,
     set_posix_permissions_in_op_gui,
 )
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.oneclient.data_basic import (
     assert_ace_in_op_oneclient,
@@ -30,42 +32,38 @@ from tests.mixed.steps.rest.oneprovider.data import (
     set_posix_permissions_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
-def _remove_parent_acl_from_string(priv):
-    return re.sub("[a-zA-Z]+:", "", priv)
+def _remove_parent_acl_from_string(privileges: str) -> str:
+    return re.sub("[a-zA-Z]+:", "", privileges)
 
 
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sets new ACE for "
-        '(?P<path>.*?) in space "(?P<space>.*)" with (?P<priv>.*) '
-        "privileges? set for (?P<item_type>.*?) (?P<name>.*) "
-        "in (?P<host>.*)"
+        r'(?P<path>.*?) in space "(?P<space>.*)" with (?P<privileges>.*) '
+        r"privileges? set for (?P<item_type>.*?) (?P<name>.*) in (?P<host>.*)"
     )
 )
 def grant_acl_privileges_in_op(
-    client,
-    selenium,
-    user,
-    cdmi,
-    op_container,
-    space,
-    path,
-    host,
-    hosts,
-    users,
-    priv,
-    item_type,
-    name,
-    groups,
-    tmp_memory,
-    popups,
-    modals,
-    oz_page,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space: str,
+    path: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    privileges: str,
+    item_type: str,
+    name: str,
+    groups: Mapping[str, str],
+    tmp_memory: TmpMemory,
+) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
 
@@ -74,38 +72,33 @@ def grant_acl_privileges_in_op(
             selenium,
             user,
             path,
-            priv,
+            privileges,
             name,
-            op_container,
             tmp_memory,
-            popups,
             space,
-            oz_page,
-            modals,
         )
     elif client_lower == "rest":
-        priv = _remove_parent_acl_from_string(priv)
+        privileges = _remove_parent_acl_from_string(privileges)
         grant_acl_privileges_in_op_rest(
             user,
             users,
             host,
             hosts,
-            cdmi,
             full_path,
-            priv,
+            privileges,
             item_type,
             name,
             groups,
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        priv = _remove_parent_acl_from_string(priv)
+        privileges = _remove_parent_acl_from_string(privileges)
         grant_acl_privileges_in_op_oneclient(
             user,
             users,
             oneclient_host,
             full_path,
-            priv,
+            privileges,
             item_type,
             groups,
             name,
@@ -117,32 +110,26 @@ def grant_acl_privileges_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that (?P<path>.*?)"
-        ' in space "(?P<space>.*)" (has|have) (?P<priv>.*) '
-        "privileges? set for (?P<item_type>.*?) (?P<name>.*) in "
-        "(?P<num>.*) ACL record in (?P<host>.*)"
+        r' in space "(?P<space>.*)" (has|have) (?P<privileges>.*) '
+        r"privileges? set for (?P<item_type>.*?) (?P<name>.*) in "
+        r"(?P<num>.*) ACL record in (?P<host>.*)"
     )
 )
 def assert_ace_in_op(
-    client,
-    selenium,
-    user,
-    cdmi,
-    op_container,
-    space,
-    path,
-    host,
-    hosts,
-    users,
-    num,
-    priv,
-    item_type,
-    name,
-    numerals,
-    tmp_memory,
-    modals,
-    oz_page,
-    popups,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space: str,
+    path: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    num: str,
+    privileges: str,
+    item_type: str,
+    name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
 
@@ -150,36 +137,29 @@ def assert_ace_in_op(
         assert_ace_in_op_gui(
             selenium,
             user,
-            priv,
+            privileges,
             item_type,
             name,
             num,
             space,
             path,
             tmp_memory,
-            modals,
-            numerals,
-            oz_page,
-            op_container,
-            popups,
         )
     elif client_lower == "rest":
-        priv = _remove_parent_acl_from_string(priv)
+        privileges = _remove_parent_acl_from_string(privileges)
         assert_ace_in_op_rest(
             user,
             users,
             host,
             hosts,
-            cdmi,
-            numerals,
             full_path,
             num,
-            priv,
+            privileges,
             item_type,
             name,
         )
     elif "oneclient" in client_lower:
-        priv = _remove_parent_acl_from_string(priv)
+        privileges = _remove_parent_acl_from_string(privileges)
         oneclient_host = change_client_name_to_hostname(client_lower)
         assert_ace_in_op_oneclient(
             user,
@@ -187,10 +167,9 @@ def assert_ace_in_op(
             oneclient_host,
             full_path,
             num,
-            priv,
+            privileges,
             item_type,
             name,
-            numerals,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found")
@@ -199,27 +178,23 @@ def assert_ace_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees "
-        'that POSIX permission for item named "(?P<item_path>.*)" in '
-        '"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'
+        r'that POSIX permission for item named "(?P<item_path>.*)" in '
+        r'"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op(
-    client,
-    user,
-    item_path,
-    space,
-    mode,
-    host,
-    selenium,
-    op_container,
-    tmp_memory,
-    modals,
-    users,
-    hosts,
-    oz_page,
-    popups,
-):
+    client: str,
+    user: str,
+    item_path: str,
+    space: str,
+    mode: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -229,19 +204,13 @@ def assert_posix_permissions_in_op(
             space,
             item_path,
             mode,
-            oz_page,
-            op_container,
             tmp_memory,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
         assert_posix_permissions_in_op_rest(full_path, mode, user, users, host, hosts)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_posix_permissions_in_op_oneclient(
-            user, full_path, mode, oneclient_host, users
-        )
+        assert_posix_permissions_in_op_oneclient(user, full_path, mode, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -249,27 +218,23 @@ def assert_posix_permissions_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to set "
-        '"(?P<mode>.*)" POSIX permission for item named '
-        '"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'
+        r'"(?P<mode>.*)" POSIX permission for item named '
+        r'"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def set_posix_permissions_in_op(
-    client,
-    user,
-    item_path,
-    space,
-    mode,
-    result,
-    host,
-    selenium,
-    op_container,
-    tmp_memory,
-    modals,
-    users,
-    hosts,
-    oz_page,
-    popups,
-):
+    client: str,
+    user: str,
+    item_path: str,
+    space: str,
+    mode: str,
+    result: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -280,11 +245,7 @@ def set_posix_permissions_in_op(
                 space,
                 item_path,
                 mode,
-                op_container,
                 tmp_memory,
-                modals,
-                oz_page,
-                popups,
             )
         else:
             set_posix_permissions_in_op_gui(
@@ -293,20 +254,12 @@ def set_posix_permissions_in_op(
                 space,
                 item_path,
                 mode,
-                op_container,
                 tmp_memory,
-                modals,
-                oz_page,
-                popups,
             )
     elif client_lower == "rest":
-        set_posix_permissions_in_op_rest(
-            full_path, mode, user, users, host, hosts, result
-        )
+        set_posix_permissions_in_op_rest(full_path, mode, user, users, host, hosts, result)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        set_posix_permissions_in_op_oneclient(
-            user, full_path, mode, oneclient_host, users, result
-        )
+        set_posix_permissions_in_op_oneclient(user, full_path, mode, oneclient_host, users, result)
     else:
         raise NoSuchClientException(f"Client: {client} not found")

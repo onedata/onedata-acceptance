@@ -4,6 +4,9 @@ __author__ = "Bartosz Walkowicz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.core.web_elements import WebItem
 
 from .archives_modals.archive_audit_log import ArchiveAuditLog
@@ -18,6 +21,7 @@ from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.add_one_of_elements import AddOneOfElementsModal
 from .basic_modals.create_group import CreateGroup
 from .basic_modals.delete_modal import DeleteModal
+from .basic_modals.download import FileDownloadModal
 from .basic_modals.leave_element import LeaveElementModal
 from .basic_modals.login import LoginFormModal
 from .basic_modals.remove import RemoveModal
@@ -51,11 +55,12 @@ from .tokens_modals.invite_using_token import InviteUsingTokenModal
 from .troubles_modals.dns_configuration_warning import DNSConfigurationWarningModal
 from .troubles_modals.emergency_interface import EmergencyInterface
 from .troubles_modals.error_modal import ErrorModal
+from .troubles_modals.warning_info_modal import WarningInfoModal
 from .troubles_modals.warning_modal import WarningModal
 from .workflows_modals.audit_log import AuditLog
 from .workflows_modals.create_new_lane import CreateNewLane
 from .workflows_modals.duplicate_revision import DuplicateRevision
-from .workflows_modals.function_pods_activity import FunctionPodsActivity
+from .workflows_modals.pods_activity import PodsActivity
 from .workflows_modals.select_files_directories_symlink import SelectFiles
 from .workflows_modals.select_groups import SelectGroups
 from .workflows_modals.store_details import StoreDetails
@@ -69,6 +74,7 @@ class Modals:
     # basic modals
     remove_modal = WebItem(".modal-dialog", cls=RemoveModal)
     leave_modal = WebItem(".modal-dialog", cls=LeaveElementModal)
+    file_download = WebItem(".modal-dialog", cls=FileDownloadModal)
     add_one_of_elements = WebItem(".modal-dialog", cls=AddOneOfElementsModal)
     delete_modal = WebItem(".modal-dialog", cls=DeleteModal)
     rename_modal = WebItem(".modal-dialog", cls=RenameModal)
@@ -95,6 +101,7 @@ class Modals:
     )
     error = WebItem(".alert-global.modal.in .modal-dialog", cls=ErrorModal)
     warning = WebItem(".question-modal", cls=WarningModal)
+    warning_info = WebItem(".modal-content", cls=WarningInfoModal)
 
     # tokens modals
     invite_using_token = WebItem(
@@ -111,9 +118,7 @@ class Modals:
     cancel_recall = WebItem(".cancel-recall-modal .modal-dialog", cls=CancelRecall)
     archive_details = WebItem(".modal-dialog", cls=ArchiveDetails)
     archive_audit_log = WebItem(".modal-dialog", cls=ArchiveAuditLog)
-    audit_log_entry_details = WebItem(
-        ".details-container.visible", cls=AuditLogEntryDetails
-    )
+    audit_log_entry_details = WebItem(".details-container.visible", cls=AuditLogEntryDetails)
     cancel_archive = WebItem(".modal-content", cls=CancelArchive)
 
     # datasets modals
@@ -130,7 +135,7 @@ class Modals:
     duplicate_revision = WebItem(".modal-dialog", cls=DuplicateRevision)
     select_files = WebItem(".modal-dialog", cls=SelectFiles)
     select_groups = WebItem(".modal-dialog", cls=SelectGroups)
-    function_pods_activity = WebItem(".modal-dialog", cls=FunctionPodsActivity)
+    pods_activity = WebItem(".modal-dialog", cls=PodsActivity)
     task_time_series = WebItem(".modal-dialog", cls=TaskTimeSeries)
     store_details = WebItem(".modal-dialog", cls=StoreDetails)
     audit_log = WebItem(".modal-dialog", cls=AuditLog)
@@ -142,18 +147,12 @@ class Modals:
     cluster_deployment = WebItem(
         ".new-cluster-deploy-progress.modal-body", cls=ClusterDeploymentModal
     )
-    cease_support_for_space = WebItem(
-        ".modal.in .modal-dialog", cls=CeaseSupportForSpaceModal
-    )
+    cease_support_for_space = WebItem(".modal.in .modal-dialog", cls=CeaseSupportForSpaceModal)
 
     rest_api_modal = WebItem(".modal-dialog", cls=RESTApiModal)
     configure_web_cert = WebItem("#configure-web-cert-modal", cls=ConfigureWebCertModal)
-    enable_directory_statistics = WebItem(
-        ".modal-dialog", cls=EnableDirectoryStatistics
-    )
-    disable_directory_statistics = WebItem(
-        ".modal-dialog", cls=DisableDirectoryStatistics
-    )
+    enable_directory_statistics = WebItem(".modal-dialog", cls=EnableDirectoryStatistics)
+    disable_directory_statistics = WebItem(".modal-dialog", cls=DisableDirectoryStatistics)
 
     # marketplace modals
     advertise_space = WebItem(".modal-dialog", cls=AdvertiseSpace)
@@ -162,9 +161,9 @@ class Modals:
     )
     there_are_unsaved_changes = WebItem(".modal-dialog", cls=ThereAreUnsavedChanges)
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = driver
         self.web_elem = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "modals"

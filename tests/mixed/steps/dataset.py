@@ -7,7 +7,11 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.conftest import WAIT_FRONTEND
+from collections.abc import Mapping
+
+from _pytest._py.path import LocalPath
+
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
 from tests.gui.meta_steps.oneprovider.dataset import (
     assert_dataset_detached_in_op_gui,
@@ -22,6 +26,7 @@ from tests.gui.meta_steps.oneprovider.dataset import (
 )
 from tests.gui.steps.oneprovider.browser import assert_status_tag_for_file_in_browser
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.datasets import (
     assert_dataset_detached_in_op_rest,
     assert_top_level_dataset_in_space_in_op_rest,
@@ -38,34 +43,32 @@ from tests.mixed.steps.rest.oneprovider.datasets import (
     set_protection_flags_for_dataset_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (user of )?(?P<user>.+?) creates dataset "
-        '(?P<option>.*)for item "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (user of )?(?P<user>.+?) creates dataset "
+        r'(?P<option>.*)for item "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_dataset_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    oz_page,
-    op_container,
-    modals,
-    users,
-    hosts,
-    option,
-    popups,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    option: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         create_dataset(
@@ -74,43 +77,33 @@ def create_dataset_in_op(
             item_name,
             space_name,
             selenium,
-            oz_page,
-            op_container,
-            modals,
-            popups,
             option=option,
         )
     elif client_lower == "rest":
-        create_dataset_in_op_rest(
-            user, users, hosts, host, space_name, item_name, option
-        )
+        create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, option)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) fails to create dataset for"
-        ' item "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) fails to create dataset for"
+        r' item "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_create_dataset_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    oz_page,
-    op_container,
-    modals,
-    users,
-    hosts,
-    popups,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         fail_to_create_dataset_in_op_gui(
@@ -119,50 +112,40 @@ def fail_to_create_dataset_in_op(
             item_name,
             space_name,
             selenium,
-            oz_page,
-            op_container,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
-        fail_to_create_dataset_in_op_rest(
-            user, users, hosts, host, space_name, item_name
-        )
+        fail_to_create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) (?P<option>does "
-        'not see|sees) dataset for item "(?P<item_name>.*)" in space'
-        ' "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) (?P<option>does "
+        r'not see|sees) dataset for item "(?P<item_name>.*)" in space'
+        r' "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_top_level_dataset_in_space_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    selenium,
-    oz_page,
-    op_container,
-    tmp_memory,
-    users,
-    hosts,
-    spaces,
-    option,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+    option: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_top_level_dataset_in_space_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
             option,
@@ -177,74 +160,61 @@ def assert_top_level_dataset_in_space_in_op(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) removes dataset for item "
-        '"(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) removes dataset for item "
+        r'"(?P<item_name>.*)" in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_dataset_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    selenium,
-    oz_page,
-    op_container,
-    tmp_memory,
-    modals,
-    users,
-    hosts,
-    spaces,
-    popups,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         remove_dataset_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
-        remove_dataset_in_op_rest(
-            user, users, hosts, host, space_name, item_name, spaces
-        )
+        remove_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, spaces)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees (?P<option>.*) write "
-        'protection flags? for dataset for item "(?P<item_name>.*)" in'
-        ' space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) sees (?P<option>.*) write "
+        r'protection flags? for dataset for item "(?P<item_name>.*)" in'
+        r' space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_write_protection_flag_for_dataset(
-    client,
-    user,
-    item_name,
-    option,
-    tmp_memory,
-    users,
-    hosts,
-    host,
-    space_name,
-    spaces,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    option: str,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
-        flags = [
-            item.replace("_protection", "_protected") for item in get_flags(option)
-        ]
+        flags = [item.replace("_protection", "_protected") for item in get_flags(option)]
         for flag in flags:
             assert_status_tag_for_file_in_browser(
                 user,
@@ -263,92 +233,75 @@ def assert_write_protection_flag_for_dataset(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that datasets "
-        'structure in space "(?P<space_name>.*)" in (?P<host>.*) '
+        r"using (?P<client>.*), (?P<user>.+?) sees that datasets "
+        r'structure in space "(?P<space_name>.*)" in (?P<host>.*) '
         r"is as follow:\n(?P<config>(.|\s)*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_dataset_structure_in_op(
-    client,
-    user,
-    space_name,
-    host,
-    config,
-    selenium,
-    oz_page,
-    op_container,
-    tmpdir,
-    tmp_memory,
-    users,
-    hosts,
-    spaces,
-):
+    client: str,
+    user: str,
+    space_name: str,
+    host: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    tmpdir: LocalPath,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
     # function checks only if what is in config exists, does not
     # fail if there are more datasets
     client_lower = client.lower()
     if client_lower == "web gui":
         option_in_submenu = "datasets, archives"
-        click_on_option_of_space_on_left_sidebar_menu(
-            selenium, user, space_name, option_in_submenu, oz_page
-        )
+        click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option_in_submenu)
         assert_space_content_in_op_gui(
             config,
             selenium,
             user,
-            op_container,
             tmp_memory,
             tmpdir,
             space_name,
-            oz_page,
             which_browser="dataset browser",
         )
     elif client_lower == "rest":
-        check_dataset_structure_in_op_rest(
-            user, users, hosts, host, spaces, space_name, config
-        )
+        check_dataset_structure_in_op_rest(user, users, hosts, host, spaces, space_name, config)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that item"
-        ' "(?P<item_name>.*)" has effective(?P<option>.*) '
-        'write protection flags? in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) sees that item"
+        r' "(?P<item_name>.*)" has effective(?P<option>.*) '
+        r'write protection flags? in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_effective_protection_flags_for_file(
-    client,
-    user,
-    item_name,
-    option,
-    space_name,
-    host,
-    selenium,
-    oz_page,
-    op_container,
-    tmp_memory,
-    modals,
-    users,
-    hosts,
-    popups,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    option: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         check_effective_protection_flags_for_file_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
             option,
-            popups,
         )
 
     elif client_lower == "rest":
@@ -361,42 +314,34 @@ def check_effective_protection_flags_for_file(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sets(?P<option>.*) "
-        'protection flags? for dataset "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>.+?) sets(?P<option>.*) "
+        r'protection flags? for dataset "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_protection_flags_for_dataset(
-    client,
-    user,
-    option,
-    item_name,
-    space_name,
-    host,
-    selenium,
-    oz_page,
-    op_container,
-    tmp_memory,
-    modals,
-    users,
-    hosts,
-    spaces,
-    popups,
-):
+    client: str,
+    user: str,
+    option: str,
+    item_name: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         set_protection_flags_for_dataset_in_op_gui(
             user,
             selenium,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
             option,
-            popups,
         )
 
     elif client_lower == "rest":
@@ -409,43 +354,34 @@ def set_protection_flags_for_dataset(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that dataset"
-        ' "(?P<item_name>.*)" has effective(?P<option>.*) '
-        'write protection flags? in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) sees that dataset"
+        r' "(?P<item_name>.*)" has effective(?P<option>.*) '
+        r'write protection flags? in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_effective_protection_flags_for_dataset(
-    client,
-    user,
-    item_name,
-    option,
-    space_name,
-    host,
-    selenium,
-    oz_page,
-    op_container,
-    tmp_memory,
-    modals,
-    users,
-    hosts,
-    spaces,
-    popups,
-):
+    client: str,
+    user: str,
+    item_name: str,
+    option: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         check_effective_protection_flags_for_file_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
             option,
-            popups,
         )
     elif client_lower == "rest":
         check_effective_protection_flags_for_dataset_in_op_rest(
@@ -458,130 +394,102 @@ def check_effective_protection_flags_for_dataset(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) detaches dataset "
-        'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) detaches dataset "
+        r'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def detach_dataset_in_op(
-    client,
-    user,
-    selenium,
-    space_name,
-    op_container,
-    tmp_memory,
-    item_name,
-    modals,
-    oz_page,
-    users,
-    hosts,
-    host,
-    spaces,
-    popups,
-):
+    client: str,
+    user: str,
+    selenium: SeleniumDrivers,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         detach_dataset_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
-        detach_dataset_in_op_rest(
-            user, users, hosts, host, item_name, spaces, space_name
-        )
+        detach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) sees that dataset for item"
-        ' "(?P<item_name>.*)" is detached in space "(?P<space_name>.*)"'
-        " in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) sees that dataset for item"
+        r' "(?P<item_name>.*)" is detached in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_dataset_detached_in_op(
-    client,
-    selenium,
-    user,
-    oz_page,
-    space_name,
-    op_container,
-    tmp_memory,
-    item_name,
-    users,
-    hosts,
-    host,
-    spaces,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_dataset_detached_in_op_gui(
             selenium,
             user,
-            oz_page,
             item_name,
             space_name,
-            op_container,
             tmp_memory,
         )
     elif client_lower == "rest":
-        assert_dataset_detached_in_op_rest(
-            user, users, hosts, host, item_name, spaces, space_name
-        )
+        assert_dataset_detached_in_op_rest(user, users, hosts, host, item_name, spaces, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) reattaches dataset for "
-        'item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-        "in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.+?) reattaches dataset for "
+        r'item "(?P<item_name>.*)" in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def reattach_dataset_in_op(
-    client,
-    user,
-    selenium,
-    space_name,
-    op_container,
-    tmp_memory,
-    item_name,
-    modals,
-    oz_page,
-    users,
-    hosts,
-    host,
-    spaces,
-    popups,
-):
+    client: str,
+    user: str,
+    selenium: SeleniumDrivers,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         reattach_dataset_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
-        reattach_dataset_in_op_rest(
-            user, users, hosts, host, item_name, spaces, space_name
-        )
+        reattach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")

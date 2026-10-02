@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2016-2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import contextlib
 import hashlib
 import os
 import random
@@ -12,28 +13,137 @@ import stat as stat_lib
 import string
 import subprocess
 import time
+from collections.abc import Callable, Mapping
+from typing import IO, Protocol, TypedDict, cast
 
+from tests.type_definitions import EnvDesc
 from tests.utils import ONECLIENT_LOGS_DIR, ONECLIENT_MOUNT_DIR
 from tests.utils.path_utils import escape_path
 from tests.utils.utils import log_exception
 
+type Command = str | list[str]
+type Condition = Callable[[], bool | None]
+type XattrValue = str | bytes
 
-class Client:
-    def __init__(self, rpyc_connection, timeout=40):
-        self._id = "".join(
-            random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
-        )
+
+class PathProxy(Protocol):
+    def samefile(self, path1: str, path2: str) -> bool: ...
+    def realpath(self, path: str) -> str: ...
+    def isdir(self, path: str) -> bool: ...
+
+
+class OsProxy(Protocol):
+    path: PathProxy
+    environ: dict[str, str]
+
+    def listdir(self, path: str) -> list[str]: ...
+    def rename(self, src: str, dest: str) -> None: ...
+    def chmod(self, path: str, mode: int) -> None: ...
+    def stat(self, path: str) -> os.stat_result: ...
+    def lstat(self, path: str) -> os.stat_result: ...
+    def remove(self, path: str) -> None: ...
+    def removedirs(self, path: str) -> None: ...
+    def rmdir(self, path: str) -> None: ...
+    def makedirs(self, path: str, exist_ok: bool = ...) -> None: ...
+    def mkdir(self, path: str) -> None: ...
+    def mknod(self, path: str, mode: int) -> None: ...
+    def link(self, src: str, dest: str) -> None: ...
+    def symlink(self, src: str, dest: str) -> None: ...
+    def utime(self, path: str, times: tuple[float, float] | None) -> None: ...
+
+
+class ShutilProxy(Protocol):
+    def move(self, src: str, dest: str) -> str: ...
+    def rmtree(
+        self,
+        path: str,
+        ignore_errors: bool = ...,
+        onerror: Callable[..., object] | None = ...,
+    ) -> None: ...
+    def copytree(self, src: str, dest: str) -> str: ...
+    def copy(self, src: str, dest: str) -> str: ...
+
+
+class ProcessProxy(Protocol):
+    stdout: IO[bytes]
+    stderr: IO[bytes]
+    returncode: int
+
+    def wait(self) -> int: ...
+
+
+class SubprocessProxy(Protocol):
+    def check_output(self, command: Command) -> bytes: ...
+    def call(self, command: Command) -> int: ...
+    def Popen(  # noqa: N802 - protocol mirrors subprocess.Popen
+        self,
+        command: Command,
+        stdout: int,
+        stderr: int,
+        shell: bool,
+    ) -> ProcessProxy: ...
+
+
+class TempfileProxy(Protocol):
+    def mkstemp(self, **kwargs: str | None) -> tuple[int, str]: ...
+    def mkdtemp(self, **kwargs: str | None) -> str: ...
+
+
+class XattrsProxy(Protocol):
+    def __getitem__(self, name: str) -> bytes: ...
+    def __setitem__(self, name: str, value: XattrValue) -> None: ...
+    def __delitem__(self, name: str) -> None: ...
+    def list(self) -> list[str]: ...
+    def clear(self) -> None: ...
+
+
+class XattrProxy(Protocol):
+    def xattr(self, file: str) -> XattrsProxy: ...
+
+
+class ModulesProxy(Protocol):
+    os: OsProxy
+    shutil: ShutilProxy
+    subprocess: SubprocessProxy
+    tempfile: TempfileProxy
+    xattr: XattrProxy
+
+
+class BuiltinsProxy(Protocol):
+    def open(self, file: str, mode: str = ...) -> IO: ...
+
+
+class RpycConnectionLike(Protocol):
+    modules: ModulesProxy
+    builtins: BuiltinsProxy
+    _config: dict[str, object]
+
+
+type CommandResult = int | str | None
+
+ClientConfig = TypedDict(
+    "ClientConfig",
+    {"id": str, "provider": str, "mode": str, "default timeout": int},
+    total=False,
+)
+
+
+class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
+    def __init__(self, rpyc_connection: RpycConnectionLike, timeout: int | None = 40) -> None:
+        self._id = "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         self._mount_path = os.path.join(ONECLIENT_MOUNT_DIR, self._id)
         self.rpyc_connection = rpyc_connection
-        self.timeout = timeout
-        self.opened_files = {}
-        self.file_stats = {}
+        self.timeout = timeout if timeout is not None else 40
+        self.opened_files: dict[str, IO] = {}
+        self.file_stats: dict[str, os.stat_result] = {}
 
-    def mount(self, mode, gdb=False, additional_opts=None):
-        if "proxy" in mode:
-            mode_flag = "--force-proxy-io"
-        else:
-            mode_flag = "--force-direct-io"
+    def mount(
+        self,
+        mode: str | None,
+        gdb: bool = False,
+        additional_opts: list[str] | None = None,
+    ) -> CommandResult:
+        mode_flag = "--force-proxy-io" if mode and "proxy" in mode else "--force-direct-io"
         if additional_opts is None:
             additional_opts = ["--message-trace-log"]
 
@@ -69,13 +179,12 @@ class Client:
         if ret == 0:
             self._wait_until(
                 10,
-                lambda: self.run_cmd(f"stat {self._mount_path}/.__onedata_mountpoint__")
-                == 0,
+                lambda: self.run_cmd(f"stat {self._mount_path}/.__onedata_mountpoint__") == 0,
             )
 
         return ret
 
-    def unmount(self):
+    def unmount(self) -> None:
         print(f"\nUnmounting client from {self._mount_path}\n")
         for opened_file in self.opened_files:
             self.close_file(opened_file)
@@ -83,16 +192,16 @@ class Client:
         self.fusermount(self._mount_path, unmount=True, lazy=True)
         self.rm(path=self._mount_path, recursive=True, force=True)
 
-    def absolute_path(self, path):
-        return os.path.join(self._mount_path, str(path))
+    def absolute_path(self, path: str) -> str:
+        return os.path.join(self._mount_path, path)
 
-    def perform(self, condition, timeout=None):
+    def perform(self, condition: Condition, timeout: int | None = None) -> bool:
         if timeout is None:
             timeout = self.timeout
         return self._repeat_until(condition, timeout)
 
     @staticmethod
-    def _wait_until(duration, condition, delay=1):
+    def _wait_until(duration: float, condition: Condition, delay: float = 1) -> None:
         wait_end = time.time() + duration
         while not condition():
             if time.time() > wait_end:
@@ -100,14 +209,13 @@ class Client:
             time.sleep(delay)
 
     @staticmethod
-    def _repeat_until(condition, timeout):
+    def _repeat_until(condition: Condition, timeout: int) -> bool:
         condition_satisfied = False
         while not condition_satisfied and timeout >= 0:
             try:
-                condition_satisfied = condition()
-                if condition_satisfied is None:
-                    condition_satisfied = True
-            except:  # pylint: disable=bare-except
+                result = condition()
+                condition_satisfied = True if result is None else bool(result)
+            except Exception:  # noqa: BLE001 - retry arbitrary callback failures
                 condition_satisfied = False
                 if timeout == 0:
                     log_exception()
@@ -118,63 +226,78 @@ class Client:
 
         return condition_satisfied
 
-    def list_spaces(self):
+    def list_spaces(self) -> list[str]:
         return self.ls(path=self._mount_path)
 
-    def ls(self, path="."):
+    def ls(self, path: str = ".") -> list[str]:
         res = self.rpyc_connection.modules.os.listdir(path)
-        _ = res.remove(".hardlinks") if ".hardlinks" in res else None
-        _ = res.remove(".symlinks") if ".symlinks" in res else None
+        if ".hardlinks" in res:
+            res.remove(".hardlinks")
+        if ".symlinks" in res:
+            res.remove(".symlinks")
         return res
 
-    def osrename(self, src, dest):
+    def osrename(self, src: str, dest: str) -> None:
         self.rpyc_connection.modules.os.rename(src, dest)
 
-    def mv(self, src, dest):
+    def mv(self, src: str, dest: str) -> None:
         self.rpyc_connection.modules.shutil.move(src, dest)
 
-    def chmod(self, mode, file_path):
+    def chmod(self, mode: int, file_path: str) -> None:
         self.rpyc_connection.modules.os.chmod(file_path, mode)
 
-    def stat(self, path):
+    def samefile(self, file_path1: str, file_path2: str) -> bool:
+        return self.rpyc_connection.modules.os.path.samefile(file_path1, file_path2)
+
+    def realpath(self, path: str) -> str:
+        return self.rpyc_connection.modules.os.path.realpath(path)
+
+    def stat(self, path: str) -> os.stat_result:
         return self.rpyc_connection.modules.os.stat(path)
 
-    def rm(self, path, recursive=False, force=False, onerror=None):
+    def lstat(self, path: str) -> os.stat_result:
+        return self.rpyc_connection.modules.os.lstat(path)
+
+    def rm(
+        self,
+        path: str,
+        recursive: bool = False,
+        force: bool = False,
+        onerror: Callable[..., object] | None = None,
+    ) -> None:
         if recursive and force:
-            self.rpyc_connection.modules.shutil.rmtree(
-                path, ignore_errors=True, onerror=onerror
-            )
+            self.rpyc_connection.modules.shutil.rmtree(path, ignore_errors=True, onerror=onerror)
         elif recursive:
             self.rpyc_connection.modules.shutil.rmtree(path, onerror=onerror)
         else:
             self.rpyc_connection.modules.os.remove(path)
 
-    def rmdir(self, dir_path, recursive=False):
+    def rmdir(self, dir_path: str, recursive: bool = False) -> None:
 
         if recursive:
             self.rpyc_connection.modules.os.removedirs(dir_path)
         else:
             self.rpyc_connection.modules.os.rmdir(dir_path)
 
-    def mkdir(self, dir_path, recursive=False, exist_ok=False):
+    def mkdir(self, dir_path: str, recursive: bool = False, exist_ok: bool = False) -> None:
         if recursive or exist_ok:
             self.rpyc_connection.modules.os.makedirs(dir_path, exist_ok=exist_ok)
         else:
             self.rpyc_connection.modules.os.mkdir(dir_path)
 
-    def create_file(self, file_path, mode=0o664):
+    def create_file(self, file_path: str, mode: int = 0o664) -> None:
         self.rpyc_connection.modules.os.mknod(file_path, mode | stat_lib.S_IFREG)
 
-    def create_hardlink(self, file_path, link_path):
+    def create_hardlink(self, file_path: str, link_path: str) -> None:
         self.rpyc_connection.modules.os.link(file_path, link_path)
 
-    def create_symlink(self, file_path, link_path):
+    def create_symlink(self, file_path: str, link_path: str) -> None:
         self.rpyc_connection.modules.os.symlink(file_path, link_path)
 
-    def touch(self, file_path):
+    def touch(self, file_path: str) -> None:
         self.rpyc_connection.modules.os.utime(file_path, None)
 
-    def cp(self, src, dest, recursive=False):
+    def cp(self, src: str, dest: str, recursive: bool = False) -> None:
         if recursive:
             if self.rpyc_connection.modules.os.path.isdir(dest):
                 # shutil.copytree fails if dest is an existing directory
@@ -185,93 +308,92 @@ class Client:
         else:
             self.rpyc_connection.modules.shutil.copy(src, dest)
 
-    def truncate(self, file_path, size):
+    def truncate(self, file_path: str, size: int) -> None:
         with self.rpyc_connection.builtins.open(file_path, "w") as f:
             f.truncate(size)
 
-    def write(self, text, file_path, mode="w"):
+    def write(self, text: str | bytes, file_path: str, mode: str = "w") -> None:
         with self.rpyc_connection.builtins.open(file_path, mode) as f:
-            f.write(text)
+            f.write(cast(str, text))
 
-    def read(self, file_path, mode="r"):
+    def read(self, file_path: str, mode: str = "r") -> str | bytes:
         with self.rpyc_connection.builtins.open(file_path, mode) as f:
-            read_text = f.read()
-        return read_text
+            return f.read()
 
-    def open_file(self, file, mode="w+"):
+    def open_file(self, file: str, mode: str = "w+") -> IO:
         return self.rpyc_connection.builtins.open(file, mode)
 
-    def close_file(self, file):
+    def close_file(self, file: str) -> None:
         self.opened_files[file].close()
 
-    def write_to_opened_file(self, file, text):
-        self.opened_files[file].write(text)
+    def write_to_opened_file(self, file: str, text: str | bytes) -> None:
+        self.opened_files[file].write(cast(str, text))
         self.opened_files[file].flush()
 
-    def read_from_opened_file(self, file):
+    def read_from_opened_file(self, file: str) -> str:
         return self.opened_files[file].read()
 
-    def seek(self, file, offset):
+    def seek(self, file: str, offset: int) -> None:
         self.opened_files[file].seek(offset)
 
-    def setxattr(self, file, name, value):
+    def setxattr(self, file: str, name: str, value: XattrValue) -> None:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         xattrs[name] = value
 
-    def getxattr(self, file, name):
+    def getxattr(self, file: str, name: str) -> bytes:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         return xattrs[name]
 
-    def get_all_xattr(self, file):
-        return self.rpyc_connection.modules.xattr.xattr(file)
+    def get_all_xattr(self, file: str) -> Mapping[str, str]:
+        return cast(Mapping[str, str], self.rpyc_connection.modules.xattr.xattr(file))
 
-    def listxattr(self, file):
+    def listxattr(self, file: str) -> list[str]:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         return xattrs.list()
 
-    def removexattr(self, file, name):
+    def removexattr(self, file: str, name: str) -> None:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         del xattrs[name]
 
-    def clear_xattr(self, file):
+    def clear_xattr(self, file: str) -> None:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
-        try:
+        with contextlib.suppress(KeyError):
             xattrs.clear()
-        except KeyError:
-            pass
 
-    def execute(self, command, output=False):
+    def execute(self, command: Command, output: bool = False) -> int | bytes:
         if output:
             return self.rpyc_connection.modules.subprocess.check_output(command)
         return self.rpyc_connection.modules.subprocess.call(command)
 
-    def md5sum(self, file_path):
+    def md5sum(self, file_path: str) -> str:
         m = hashlib.md5()
         with self.rpyc_connection.builtins.open(file_path, "r") as f:
             m.update(f.read().encode("utf-8"))
         return m.hexdigest()
 
-    def mkstemp(self, directory=None):
+    def mkstemp(self, directory: str | None = None) -> str:
         _handle, abs_path = self.rpyc_connection.modules.tempfile.mkstemp(dir=directory)
         return abs_path
 
-    def mkdtemp(self, directory=None):
+    def mkdtemp(self, directory: str | None = None) -> str:
         return self.rpyc_connection.modules.tempfile.mkdtemp(dir=directory)
 
-    def replace_pattern(self, file_path, pattern, new_text, output=False):
+    def replace_pattern(
+        self, file_path: str, pattern: str, new_text: str, output: bool = False
+    ) -> CommandResult:
         cmd = f"sed -i 's/{pattern}/{new_text}/g' {escape_path(file_path)}"
         return self.run_cmd(cmd, output=output)
 
     def dd(
         self,
-        block_size,
-        count,
-        output_file,
-        unit="M",
-        input_file="/dev/zero",
-        output=False,
-        error=False,
-    ):
+        block_size: int,
+        count: int,
+        output_file: str,
+        unit: str = "M",
+        input_file: str = "/dev/zero",
+        output: bool = False,
+        error: bool = False,
+    ) -> CommandResult:
         cmd = "dd {input} {output} {bs} {count}"
         cmd = cmd.format(
             input=f"if={escape_path(input_file)}",
@@ -281,24 +403,26 @@ class Client:
         )
         return self.run_cmd(cmd, output=output, error=error)
 
-    def fusermount(self, path, unmount=False, lazy=False, quiet=False):
-        unmount = "-u" if unmount else ""
-        lazy = "-z" if lazy else ""
-        quiet = "-q" if quiet else ""
+    def fusermount(
+        self, path: str, unmount: bool = False, lazy: bool = False, quiet: bool = False
+    ) -> None:
+        unmount_flag = "-u" if unmount else ""
+        lazy_flag = "-z" if lazy else ""
+        quiet_flag = "-q" if quiet else ""
         path = escape_path(path)
-        cmd = ["fusermount", unmount, lazy, quiet, path]
+        cmd = ["fusermount", unmount_flag, lazy_flag, quiet_flag, path]
         self.run_cmd(cmd)
 
     def run_cmd(
         self,
-        cmd,
-        output=False,
-        error=False,
-        retries=0,
-        retry_sleep=8,
-        on_retry=None,
-        verbose=False,
-    ):
+        cmd: Command,
+        output: bool = False,
+        error: bool = False,
+        retries: int = 0,
+        retry_sleep: int | float = 8,
+        on_retry: Callable[[], None] | None = None,
+        verbose: bool = False,
+    ) -> CommandResult:
         """Run command on oneself docker using rpyc
         :param self: instance of utils.client_utils.Client class
         :param cmd: command to be run, can be string or list of strings
@@ -338,7 +462,7 @@ class Client:
                 print(proc.stderr.read().decode())
         if retries > 0:
             if verbose:
-                print(f"Command {" ".join(cmd)} failed. Retries left: {retries}")
+                print(f"Command {' '.join(cmd)} failed. Retries left: {retries}")
             if on_retry:
                 on_retry()
             time.sleep(retry_sleep)
@@ -354,16 +478,20 @@ class Client:
 
         return None if output else proc.returncode
 
-    def get_mount_path(self):
+    def get_mount_path(self) -> str:
         return self._mount_path
 
 
-def user_home_dir(user="root"):
+def user_home_dir(user: str = "root") -> str:
     return os.path.join("/home", user)
 
 
-def get_client_conf(client_id, client_host_alias, env_desc):
-    client_host_conf = env_desc.get("oneclient").get(client_host_alias)
-    client_conf = client_host_conf.get("clients").get(client_id)
+def get_client_conf(client_id: str, client_host_alias: str, env_desc: EnvDesc) -> ClientConfig:
+    client_host_mapping = cast(Mapping[str, object], env_desc.get("oneclient") or {})
+    client_host_conf = cast(Mapping[str, object], client_host_mapping.get(client_host_alias) or {})
+    client_conf = cast(
+        ClientConfig,
+        cast(Mapping[str, object], client_host_conf.get("clients") or {}).get(client_id) or {},
+    )
     client_conf["id"] = client_id
     return client_conf

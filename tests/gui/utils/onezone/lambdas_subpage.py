@@ -6,7 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.common.common import Toggle
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
@@ -15,7 +15,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import InputBox
-from tests.gui.utils.onezone.generic_page import Element
+from tests.gui.utils.onezone.generic_page import ListPage
 
 
 class FileAttr(PageObject):
@@ -25,7 +25,7 @@ class FileAttr(PageObject):
 class ParameterSetting(PageObject):
     file_type = Button(".fileType-field .field-component")
     carried_file_attrs = Button(".fileAttributes-field .field-component")
-    attrs = WebItemsSequence(".tag-item", cls=FileAttr)
+    attributes = WebItemsSequence(".tag-item", cls=FileAttr)
 
 
 class LambdaParameter(PageObject):
@@ -57,7 +57,7 @@ class LambdaAddForm(PageObject):
     create_button = Button(".btn-primary")
 
 
-class Revision(Element):
+class Revision(NamedElement):
     number = id = Label(".revision-number")
     name = Label(".name")
     menu_button = Button(".one-menu-toggle")
@@ -65,7 +65,7 @@ class Revision(Element):
     add_to_workflow = Button(".add-to-workflow-action-trigger")
 
 
-class Lambda(Element):
+class Lambda(NamedElement):
     name = id = Label(".lambda-name")
     lambda_menu = Button(".atm-lambda-actions-trigger.one-menu-toggle")
     menu_button = Button(".one-menu-toggle")
@@ -76,8 +76,6 @@ class Lambda(Element):
     )
 
 
-class LambdasPage(PageObject):
-    elements_list = WebItemsSequence(
-        ".atm-lambdas-list .atm-lambdas-list-entry", cls=Lambda
-    )
+class LambdasPage(ListPage):
+    lambdas_list = WebItemsSequence(".atm-lambdas-list .atm-lambdas-list-entry", cls=Lambda)
     form = WebItem(".atm-lambda-form ", cls=LambdaAddForm)

@@ -33,7 +33,7 @@ Feature: Workflows execution
 
 
   Scenario: User sees finished state and output store content of executed "in-out" workflow created using GUI
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
 
     # User manually creates inout lambda
@@ -94,7 +94,7 @@ Feature: Workflows execution
 
 
   Scenario: User creates checksum-counting-oneclient workflow through GUI and executes it
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
 
     And user of browser creates lambda with following configuration:
@@ -176,7 +176,7 @@ Feature: Workflows execution
 
 
   Scenario: User sees that different checksums are well counted after execution of uploaded "counting-different-checksums" workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/counting-different-checksums.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"

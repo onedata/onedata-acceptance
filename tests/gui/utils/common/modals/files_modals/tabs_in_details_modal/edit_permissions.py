@@ -4,6 +4,7 @@ __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups import MenuPopupWithLabel
@@ -17,20 +18,18 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.utils.utils import element_has_class
 
 
 class ACLPermissionType(PageObject):
     name = id = Label(".checkbox-label")
     checkbox = Button(".permission-checkbox")
 
-    def is_checked(self):
-        classes = self.checkbox.get_attribute("class")
-        if "checked" in classes:
-            return True
-        return False
+    def is_checked(self) -> bool:
+        return element_has_class(self.checkbox, "checked")
 
-    def __str__(self):
-        return "permission type option {} in {}".format(self.name, self.parent)
+    def __str__(self) -> str:
+        return f"permission type option {self.name} in {self.parent}"
 
 
 class PosixPermissionList(PageObject):
@@ -45,8 +44,8 @@ class POSIX(PageObject):
         ".row entity-permissions-row", cls=PosixPermissionList
     )
 
-    def __str__(self):
-        return "POSIX permission in {}".format(self.parent)
+    def __str__(self) -> str:
+        return f"POSIX permission in {self.parent}"
 
 
 class AclPermission(PageObject):
@@ -60,15 +59,17 @@ class AclPermissionGroup(PageObject):
     toggle = Toggle(".one-tree-item-content .form-group .one-way-toggle")
     permissions = WebItemsSequence(".tree-expanded li", cls=AclPermission)
 
-    def is_expanded(self):
+    def is_expanded(self) -> bool:
         return "subtree-expanded" in self.web_elem.get_attribute("class")
 
-    def expand(self):
+    def expand(self) -> None:
         if not self.is_expanded():
             self.click()
 
-    def get_elem_id(self):
+    def get_elem_id(self) -> str:
         elem_id = self.web_elem.get_attribute("id")
+        if elem_id is None:
+            raise AttributeError(f"ACL permission group {self.name} has no id")
         return elem_id
 
 
@@ -90,26 +91,25 @@ class MemberAclPermission(PageObject):
     header = WebElement(".one-collapsible-list-item-header")
     subject_id = Label(".subject-identifier")
 
-    def expand(self):
+    def expand(self) -> None:
         self.click()
 
-    def subject_type(self):
+    def subject_type(self) -> str | None:
         classes = self._subject_type.get_attribute("class")
         if "oneicon-user" in classes:
             return "user"
-        elif "oneicon-group" in classes:
+        if "oneicon-group" in classes:
             return "group"
-        else:
-            return None
+        return None
 
-    def is_allow_option_checked(self):
+    def is_allow_option_checked(self) -> bool:
         return "active" in self.allow_option.get_attribute("class")
 
-    def scroll_to_elem_on_acl_permission_group(self, elem):
-        css_sel = "#" + elem.get_elem_id()
+    def scroll_to_elem_on_acl_permission_group(self, elem: AclPermissionGroup) -> None:
+        css_selector = "#" + elem.get_elem_id()
         self.driver.execute_script(
-            f"var el = (typeof $ === 'function' ? $('{css_sel}')[0] : "
-            f"document.querySelector('{css_sel}')); "
+            f"var el = (typeof $ === 'function' ? $('{css_selector}')[0] : "
+            f"document.querySelector('{css_selector}')); "
             "el && el.scrollIntoView(true);"
         )
 
@@ -119,8 +119,9 @@ class ACL(PageObject):
         ".acl-editor .ace.one-collapsible-list-item", cls=MemberAclPermission
     )
     _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
+    limited_privileges_warning = WebElement(".subjects-inferred-warning")
 
-    def expand_dropdown(self):
+    def expand_dropdown(self) -> None:
         toggle_class = self._toggle.get_attribute("class")
         if "ember-basic-dropdown-trigger--left" not in toggle_class:
             self._toggle.click()
@@ -143,9 +144,9 @@ class EditPermissionsTab(Modal):
     question_icon = Button(".oneicon-sign-question-rounded")
     close = Button(".close")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Edit permission tab"
 
-    def is_hidden(self, element_name):
+    def is_hidden(self, element_name: str) -> bool:
         element = getattr(self, element_name)
         return "hidden" in element.get_attribute("class")

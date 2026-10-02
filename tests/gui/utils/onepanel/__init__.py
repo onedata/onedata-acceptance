@@ -21,13 +21,14 @@ from .overview import ClusterOverviewPage
 from .provider import ProviderContentPage
 from .spaces import SpacesContentPage
 from .storages import StorageContentPage
+from .web_certificate import WebCertificate
 
 
 class Sidebar(PageObject):
     title = Label(".col-title")
     clusters = WebItem(".one-sidebar", cls=ClustersSidebar)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.title} sidebar in {self.parent}"
 
 
@@ -38,6 +39,7 @@ class Content(BaseContent):
     deployment = WebItem(_main_content, cls=Deployment)
     nodes = WebItem(_main_content, cls=NodesContentPage)
     dns_setup = WebItem(_main_content, cls=DNSSetup)
+    web_certificate = WebItem(_main_content, cls=WebCertificate)
     provider = WebItem(_main_content, cls=ProviderContentPage)
     storages = WebItem(_main_content, cls=StorageContentPage)
     spaces = WebItem(_main_content, cls=SpacesContentPage)
@@ -54,7 +56,7 @@ class Onepanel(OnePage):
     discard_button = Button(".modal-content .btn-toolbar button")
 
     @property
-    def sidebar(self):
+    def sidebar(self) -> Sidebar:
         sidebar = self._sub_sidebar
         if "ps-active-x" not in sidebar.get_attribute("class"):
             sidebar = self._main_sidebar

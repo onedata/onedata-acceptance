@@ -7,18 +7,31 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from contextlib import suppress
 from datetime import datetime
 
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import url_to_be
-from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import (
+    get_last_item_number_in_table,
+    scroll_to_bottom_of_the_table,
+)
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
     get_op_workflow_visualizer_page,
 )
-from tests.gui.utils.generic import parse_seq
+from tests.gui.type_definitions import Clipboard
+from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.modals.workflows_modals.audit_log import AuditLog, LogsEntry
+from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
+from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.oneprovider.automation import Task
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
@@ -26,10 +39,10 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse("user of {browser_id} sees that chart with processing stats exist"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_processing_chart(browser_id, selenium, modals):
+def assert_processing_chart(browser_id: str, selenium: SeleniumDrivers) -> None:
     switch_to_iframe(selenium, browser_id)
     time.sleep(1)
-    modal = modals(selenium[browser_id]).task_time_series
+    modal = Modals(selenium[browser_id]).task_time_series
     assert modal.chart, "chart with processing stats is not visible"
 
 
@@ -41,16 +54,16 @@ def assert_processing_chart(browser_id, selenium, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
-    browser_id, selenium, modals
-):
+    browser_id: str, selenium: SeleniumDrivers
+) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).task_time_series
+    modal = Modals(selenium[browser_id]).task_time_series
     chart_time_in_right_corner = modal.get_time_from_chart()[-1]
     now = datetime.now()
     ts = datetime.timestamp(now)
-    assert (
-        abs(chart_time_in_right_corner - ts) < 30 * 60
-    ), "Difference between current time and time on chart is greater than 30 min"
+    assert abs(chart_time_in_right_corner - ts) < 30 * 60, (
+        "Difference between current time and time on chart is greater than 30 min"
+    )
 
 
 @wt(
@@ -59,16 +72,18 @@ def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
         " with processing stats is greater than zero"
     )
 )
-def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium, modals):
+def assert_value_of_last_column_is_bigger_than_zero(
+    browser_id: str, selenium: SeleniumDrivers
+) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).task_time_series
+    modal = Modals(selenium[browser_id]).task_time_series
     values = modal.get_last_column_value()
-    err_msg = (
+    error_message = (
         f"Last column {values[0][1]} is {values[0][0]} and"
         f" {values[1][1]} is {values[1][0]} when one of them should be "
         "bigger than zero"
     )
-    assert values[0][0] > 0 or values[1][0] > 0, err_msg
+    assert values[0][0] > 0 or values[1][0] > 0, error_message
 
 
 @wt(
@@ -77,86 +92,101 @@ def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium, modals
         ' time resolution list in modal "{modal}"'
     )
 )
-def choose_time_resolution(selenium, browser_id, popups, resolution, modal):
+def choose_time_resolution(
+    selenium: SeleniumDrivers, browser_id: str, resolution: str, modal: str
+) -> None:
     driver = selenium[browser_id]
-    for option in popups(driver).time_resolutions_list:
+    for option in Popups(driver).time_resolutions_list:
         if option.text == resolution:
             option.click()
             break
     else:
-        raise RuntimeError(
-            f'There is no {resolution} in time resolution list in modal "{modal}".'
-        )
+        raise ValueError(f'There is no {resolution} in time resolution list in modal "{modal}".')
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees "{message}" message on chart with processing stats'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees "{message}" message on chart with processing stats'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_data_message_processing_chart(browser_id, selenium, modals, message):
+def assert_no_data_message_processing_chart(
+    browser_id: str, selenium: SeleniumDrivers, message: str
+) -> None:
     switch_to_iframe(selenium, browser_id)
-    actual_message = modals(selenium[browser_id]).task_time_series.no_data_message
-    err_msg = (
+    actual_message = Modals(selenium[browser_id]).task_time_series.no_data_message
+    error_message = (
         f'Actual message: "{actual_message}" on chart with processing'
         f' stats is not "{message}" as expected'
     )
-    assert actual_message == message, err_msg
+    assert actual_message == message, error_message
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that (?P<option>.*?) "
-        "processing speed (?P<compare_option>is greater or equal|is "
-        "equal|is greater than) (?P<number>.*?) per second on chart with processing "
-        "stats"
+        r"user of (?P<browser_id>.*?) sees that (?P<option>.*?) "
+        r"processing speed (?P<compare_option>is greater or equal|is "
+        r"equal|is greater than) (?P<number>.*?) per second on chart"
+        r" with processing stats"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_proceeded_files(
-    browser_id, selenium, modals, option, number, compare_option
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    option: str,
+    number: str,
+    compare_option: str,
+) -> None:
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).task_time_series
-    values = modal.get_last_column_value()
+    modal = Modals(selenium[browser_id]).task_time_series
+    values = modal.get_max_value()
     for value in values:
         if option in value[1].lower():
-            err_msg = (
+            error_message = (
                 f"Processing speed is {value[0]} {option} per second "
                 f"but expected value {compare_option} {number} per second."
             )
             if compare_option == "is greater or equal":
-                assert value[0] >= float(number), err_msg
+                assert value[0] >= float(number), error_message
             elif compare_option == "is greater than":
-                assert value[0] > float(number), err_msg
+                assert value[0] > float(number), error_message
             else:
-                assert value[0] == float(number), err_msg
+                assert value[0] == float(number), error_message
             break
     else:
-        raise RuntimeError(
+        raise AssertionError(
             f"There is no {option} processing speed on chart with processing stat."
         )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_task_audit_log(task):
+def click_on_task_audit_log(task: Task) -> None:
     if not check_if_task_is_opened(task):
         task.drag_handle.click()
     task.audit_log()
 
 
-def get_modal_and_logs_for_task(path, task, modals, driver):
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_log_in_workflow_audit_log(driver: WebDriver, severity: str, source: str) -> None:
+    modal = Modals(driver).audit_log
+    if severity in ["Error", "Debug"]:
+        modal.logs_entry[severity].click()
+    elif source == "user":
+        modal.user_log.click()
+    else:
+        modal.logs_entry[0].click()
+
+
+def get_modal_and_logs_for_task(
+    path: str, task: Task, driver: WebDriver
+) -> tuple[AuditLog, PageObjectsSequence]:
     append_log_to_file(path, task.name)
     click_on_task_audit_log(task)
     # wait a moment for audit log modal to appear
     time.sleep(1)
-    modal = modals(driver).audit_log
+    modal = Modals(driver).audit_log
     logs = modal.logs_entry
     return modal, logs
 
 
-def close_modal_and_task(modal, task):
+def close_modal_and_task(modal: AuditLog, task: Task) -> None:
     modal.x()
     task.drag_handle.click()
     # wait for task to close
@@ -165,8 +195,13 @@ def close_modal_and_task(modal, task):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_audit_log_json_and_write_to_file(
-    log, modal, clipboard, displays, browser_id, path
-):
+    log: LogsEntry,
+    modal: AuditLog,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    browser_id: str,
+    path: str,
+) -> None:
     log.click()
     modal.copy_json()
     audit_log = clipboard.paste(display=displays[browser_id])
@@ -175,52 +210,54 @@ def get_audit_log_json_and_write_to_file(
 
 @wt(parsers.parse('user of {browser_id} opens "{store_name}" store details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_store_details_modal(selenium, browser_id, op_container, modals, store_name):
+def open_store_details_modal(
+    selenium: SeleniumDrivers, browser_id: str, store_name: str
+) -> StoreDetails:
     driver = selenium[browser_id]
-    page = get_op_workflow_visualizer_page(op_container, driver)
+    page = get_op_workflow_visualizer_page(driver)
     page.stores_list[store_name].click()
     time.sleep(0.25)
-    return modals(driver).store_details
+    return Modals(driver).store_details
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_datasets_in_store_details_modal(item_list, modal, store_name):
-    item_list = parse_seq(item_list)
+def compare_datasets_in_store_details_modal(
+    item_list: list[str], modal: StoreDetails, store_name: str
+) -> None:
     actual_items = [elem.name for elem in modal.store_content_list]
     for item in item_list:
-        err_msg = f"{item} is not in Store details modal for {store_name} store"
-        assert item in actual_items, err_msg
+        error_message = f"{item} is not in Store details modal for {store_name} store"
+        assert item in actual_items, error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_booleans_in_store_details_modal(item_list, modal):
+def compare_booleans_in_store_details_modal(item_list: list[bool], modal: StoreDetails) -> None:
     actual = [elem.value for elem in modal.store_content_list]
-    err_msg = f"Actual boolean list {actual} does not match expected {item_list}"
-    assert actual.count("true") == item_list.count(True) and actual.count(
-        "false"
-    ) == item_list.count(False), err_msg
+    error_message = f"Actual boolean list {actual} does not match expected {item_list}"
+    assert actual.count("true") == item_list.count(True), error_message
+    assert actual.count("false") == item_list.count(False), error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_string_in_store_details_modal(item, modal, variable_type, store_name):
+def compare_string_in_store_details_modal(
+    item: str, modal: StoreDetails, variable_type: str, store_name: str
+) -> None:
     actual = modal.raw_view.replace('"', "")
-    err_msg = (
+    error_message = (
         f"expected {variable_type} {item} does not contain"
         f" {actual} in {store_name} store details modal"
     )
-    assert actual == str(item), err_msg
+    assert actual == str(item), error_message
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_array_in_store_details_modal(modal, item_list):
+def compare_array_in_store_details_modal(modal: StoreDetails, item_list: str) -> None:
     item_list = json.loads(item_list)
     expected_num = str(len(item_list))
     actual_num = modal.array_view.header.replace(")", "").split(" (")[1]
 
     assert expected_num == actual_num, (
-        f"expected number: {expected_num}"
-        " of element in array does not"
-        f" match actual: {actual_num}"
+        f"expected number: {expected_num} of element in array does not match actual: {actual_num}"
     )
     for i, item in enumerate(item_list):
         actual_elem = modal.array_view.items[i].text
@@ -232,28 +269,35 @@ def compare_array_in_store_details_modal(modal, item_list):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def open_raw_view_for_elem(store_content_list, index, modal):
-    for _ in range(10):
-        store_content_list[index].click()
-        try:
-            if modal.raw_view != "":
-                break
-        except AttributeError:
-            if modal.single_file_container.name != "":
-                break
-    else:
-        raise RuntimeError(
-            f"Did not manage to open raw view for {index} element in store content list"
-        )
+def open_raw_view_for_elem(
+    store_content_list: PageObjectsSequence, index: int, modal: StoreDetails
+) -> None:
+    store_content_list[index].click()
+    with suppress(NoSuchElementException):
+        if modal.raw_view:
+            return
+
+    with suppress(NoSuchElementException):
+        if modal.single_file_container.name:
+            return
+
+    raise TimeoutError(f"Did not manage to open raw view for {index} element in store content list")
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def get_store_content(modal, store_type, index, clipboard, displays, browser_id):
+def get_store_content(
+    modal: StoreDetails,
+    store_type: str,
+    index: int,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    browser_id: str,
+) -> str:
     store_content_type = "store_content_" + store_type
     store_content_list = getattr(modal, store_content_type)
     try:
         open_raw_view_for_elem(store_content_list, index, modal)
-    except RuntimeError:
+    except TimeoutError:
         # this closes the successful copy alert
         modal.name_header.click()
         open_raw_view_for_elem(store_content_list, index, modal)
@@ -268,19 +312,15 @@ def get_store_content(modal, store_type, index, clipboard, displays, browser_id)
     )
 )
 def open_url_from_store_content(
-    browser_id,
-    option,
-    store_name,
-    selenium,
-    modals,
-    op_container,
-    clipboard,
-    displays,
-):
+    browser_id: str,
+    option: str,
+    store_name: str,
+    selenium: SeleniumDrivers,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
 
-    modal = open_store_details_modal(
-        selenium, browser_id, op_container, modals, store_name
-    )
+    modal = open_store_details_modal(selenium, browser_id, store_name)
     modal.store_content_list[0].click()
     modal.copy_button()
     items = json.loads(clipboard.paste(display=displays[browser_id]))
@@ -289,17 +329,20 @@ def open_url_from_store_content(
     url = items[option]
     driver = selenium[browser_id]
     driver.get(url)
-    Wait(driver, WAIT_BACKEND).until(
+    WebDriverWait(driver, WAIT_BACKEND).until(
         url_to_be(url), message=f"waiting for page {url:s} to load"
     )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_number_of_elements_in_store_details_modal(modal, number, store_name):
-    actual_number = len(modal.store_content_object)
-    err_msg = (
+def check_number_of_elements_in_store_details_modal(
+    selenium: SeleniumDrivers, browser_id: str, number: int, store_name: str
+) -> None:
+    driver = selenium[browser_id]
+    scroll_to_bottom_of_the_table(driver)
+    actual_number = get_last_item_number_in_table(driver)
+    error_message = (
         f"Expected number of elements {number} is not equal to actual "
         f'number {actual_number} in "{store_name}" store details modal'
     )
-
-    assert actual_number == int(number), err_msg
+    assert actual_number == int(number), error_message

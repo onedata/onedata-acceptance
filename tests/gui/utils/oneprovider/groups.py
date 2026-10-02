@@ -14,12 +14,11 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.utils.utils import element_has_class
 
 
 class SettingDropdown(PageObject, ExpandableMixin):
-    options = WebItemsSequence(
-        "ul.dropdown-menu-list li.clickable", cls=ButtonWithTextPageObject
-    )
+    options = WebItemsSequence("ul.dropdown-menu-list li.clickable", cls=ButtonWithTextPageObject)
     _toggle = WebElement('.dropdown-toggle[data-toggle="dropdown"]')
 
 
@@ -28,8 +27,8 @@ class GroupSidebarRecord(PageObject):
     settings = WebItem(".settings-dropdown", cls=SettingDropdown)
     members = Button("ul li.members-permissions .item-click-area")
 
-    def is_selected(self):
-        return "active" in self.web_elem.get_attribute("class")
+    def is_selected(self) -> bool:
+        return element_has_class(self.web_elem, "active")
 
 
 class GroupsSidebar(PageObject):
@@ -58,6 +57,4 @@ class PermissionTable(PageObject):
 
 class GroupContentPage(PageObject):
     sidebar = WebItem(".secondary-sidebar", cls=GroupsSidebar)
-    permission_table = WebItem(
-        "#content-scroll .permissions-table", cls=PermissionTable
-    )
+    permission_table = WebItem("#content-scroll .permissions-table", cls=PermissionTable)

@@ -13,5 +13,5 @@ from ..modal import Modal
 class DetachDataset(Modal):
     proceed = Button(".question-yes")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Detach Dataset"

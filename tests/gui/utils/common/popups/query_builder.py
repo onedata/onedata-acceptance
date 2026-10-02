@@ -6,8 +6,12 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, WebItemsSequence
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.utils.utils import repeat_failed
 
 
 class Property(PageObject):
@@ -15,7 +19,7 @@ class Property(PageObject):
 
 
 class Item(PageObject):
-    def get_name(self):
+    def get_name(self) -> str:
         return self.web_elem.text
 
 
@@ -33,47 +37,51 @@ class ExpressionBuilderPopup(PageObject):
     )
     comparator_choice = Button(".comparator-selector.ember-basic-dropdown-trigger")
 
-    values = WebItemsSequence(
-        ".comparator-value-editor .ember-power-select-option", cls=Item
-    )
+    values = WebItemsSequence(".comparator-value-editor .ember-power-select-option", cls=Item)
+
     values_choice = Button(".comparator-value-editor .ember-basic-dropdown-trigger")
-    qos_values_choice = Button(".comparator-value-editor .ember-basic-dropdown-trigger")
 
     value = Input(".comparator-value")
     add_button = Button(".accept-condition")
 
-    def expand_properties(self):
+    def expand_properties(self) -> None:
         self.property_choice()
 
-    def choose_property(self, property_name):
+    def choose_property(self, property_name: str) -> None:
         self.expand_properties()
         self.properties[property_name].click()
 
-    def assert_property(self, property_name):
+    def assert_property(self, property_name: str) -> bool:
         try:
             self.properties[property_name]
         except IndexError:
             return False
         return True
 
-    def expand_comparators(self):
+    def expand_comparators(self) -> None:
         self.comparator_choice()
 
-    def choose_comparator(self, comparator_name):
+    def choose_comparator(self, comparator_name: str) -> None:
         self.expand_comparators()
         for comparator in self.comparators:
             if comparator.get_name() == comparator_name:
                 comparator.click()
                 return
-        raise RuntimeError(f"There is no comparator {comparator_name}")
+        raise PageObjectNotFoundError(f"There is no comparator {comparator_name}")
 
-    def expand_values(self):
-        self.values_choice()
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def expand_values(self) -> None:
+        if not self.is_values_dropdown_expanded():
+            self.values_choice.click()
+            assert self.is_values_dropdown_expanded(), "Values dropdown did not open"
 
-    def choose_value(self, value_name):
+    def is_values_dropdown_expanded(self) -> bool:
+        return self.values_choice.web_elem.get_attribute("aria-expanded") == "true"
+
+    def choose_value(self, value_name: str) -> None:
         self.expand_values()
         for value in self.values:
             if value.get_name() == value_name:
                 value.click()
                 return
-        raise RuntimeError(f"There is no value {value_name} available")
+        raise PageObjectNotFoundError(f"There is no value {value_name} available")

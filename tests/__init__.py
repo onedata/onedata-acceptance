@@ -25,12 +25,6 @@ ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, "scenarios")
 ONECLIENT_ENTITIES_CONFIG_DIR = os.path.join(ONECLIENT_ENV_DIR, "entities_config")
 ONECLIENT_LOGDIR = os.path.join(ONECLIENT_DIR, "logs")
 
-ONEDATA_FS_DIR = os.path.join(TEST_DIR, "onedata_fs")
-ONEDATA_FS_ENV_DIR = os.path.join(ONEDATA_FS_DIR, "environments")
-ONEDATA_FS_SCENARIO_DIR = os.path.join(ONEDATA_FS_ENV_DIR, "scenarios")
-ONEDATA_FS_PATCHES_DIR = os.path.join(ONEDATA_FS_ENV_DIR, "patches")
-ONEDATA_FS_LOGDIR = os.path.join(ONEDATA_FS_DIR, "logs")
-
 GUI_DIR = os.path.join(TEST_DIR, "gui")
 GUI_ENV_DIR = os.path.join(GUI_DIR, "environments")
 GUI_SCENARIO_DIR = os.path.join(GUI_ENV_DIR, "scenarios")
@@ -82,7 +76,6 @@ ENV_DIRS = {
     "oneclient": ONECLIENT_ENV_DIR,
     "gui": GUI_ENV_DIR,
     "mixed": MIXED_ENV_DIR,
-    "onedata_fs": ONEDATA_FS_ENV_DIR,
     "performance": PERFORMANCE_ENV_DIR,
     "upgrade": UPGRADE_TESTS_ENV_DIR,
 }
@@ -91,7 +84,6 @@ LOGDIRS = {
     "oneclient": ONECLIENT_LOGDIR,
     "mixed": MIXED_LOGDIR,
     "gui": GUI_LOGDIR,
-    "onedata_fs": ONEDATA_FS_LOGDIR,
     "performance": PERFORMANCE_LOGDIR,
     "upgrade": UPGRADE_TESTS_LOGDIR,
 }
@@ -100,13 +92,11 @@ SCENARIO_DIRS = {
     "oneclient": ONECLIENT_SCENARIO_DIR,
     "mixed": MIXED_SCENARIO_DIR,
     "gui": GUI_SCENARIO_DIR,
-    "onedata_fs": ONEDATA_FS_SCENARIO_DIR,
     "performance": PERFORMANCE_SCENARIO_DIR,
     "upgrade": UPGRADE_TESTS_SCENARIO_DIR,
 }
 
 PATCHES_DIR = {
-    "onedata_fs": ONEDATA_FS_PATCHES_DIR,
     "performance": PERFORMANCE_PATCHES_DIR,
     "upgrade": UPGRADE_TESTS_PATCHES_DIR,
 }

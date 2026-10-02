@@ -14,9 +14,8 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario Outline: User renames group
-    When user of browser clicks on "Rename" button in group "group1" menu in the sidebar
-    And user of browser writes "group2" into rename group text field
-    And user of browser confirms group rename using <confirmation_method>
+    When user of browser renames group "group1" to "group2" using <confirmation_method> to confirm
+    Then user of browser sees group "group2" on groups list
     Then user of browser sees group "group2" on groups list
     And user of browser does not see group "group1" on groups list
 
@@ -43,17 +42,11 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser copies invitation token from modal
     And user of browser closes "Invite using token" modal
 
-    And user of browser clicks on Tokens in the main menu
-    And user of browser clicks on "Consume token" button in tokens sidebar
-    And user of browser pastes copied token into token text field
-    And user of browser chooses "group1" group from dropdown on tokens page
-    And user of browser clicks on Confirm button on consume token page
-
-    Then user of browser sees that error modal with text "Consuming token failed" appeared
+    Then user of browser fails to add group "group1" as subgroup using copied token and sees error modal
 
 
   Scenario: User generates group invitation token
-    When user of browser clicks on Groups in the main menu
+    When user of browser clicks on "Groups" in the main menu
     And user of browser clicks "group1" on the groups list in the sidebar
     And user of browser clicks on "Invite group using token" button in groups list menu in "group1" group members view
     And user of browser sees that area with group invitation token has appeared
@@ -62,7 +55,7 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User generates user invitation token
-    When user of browser clicks on Groups in the main menu
+    When user of browser clicks on "Groups" in the main menu
     And user of browser clicks "group1" on the groups list in the sidebar
     And user of browser clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser sees that area with user invitation token has appeared
@@ -81,7 +74,5 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser refreshes site
 
     Then user of browser sees "YOU DON’T HAVE ACCESS TO THIS RESOURCE" error on groups page
-
-
 
 

@@ -46,6 +46,7 @@ stages:
         - _Codetag Tracker
         - _Autoformatter check
         - _Static analysis
+        - _Type_check
         - authorization
         - directory CRUD
         - directory CRUD hardlinks
@@ -158,9 +159,6 @@ stages:
         - singleprovider storage modification singleclient directio
         - singleprovider storage modification singleclient directio hardlinks
         - singleprovider storage modification singleclient directio symlinks
-        # tests applicable only to PKG mode - not present in SRC
-        # @TODO VFS-6710 fix onedata_fs tests
-        # - onedata_fs tests
   - Qnthack - rerun:
       manual: false
       final: true
@@ -270,8 +268,8 @@ _Autoformatter check:
     - script:
         <<: *run-script-working-dir
         scripts:
-          - make black-check
-        description: Black formatting
+          - make format-check
+        description: Ruff formatting
 
 _Static analysis:
   key: STAN
@@ -283,6 +281,17 @@ _Static analysis:
         scripts:
           - make static-analysis
         description: Static analysis
+
+_Type_check:
+  key: TCH
+  other: *common-opts
+  tasks:
+    - checkout: *checkout-default-repository
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - make type-check
+        description: Type checker
 
 authorization: &acceptance-oneclient-tests-job
   key: AUT
@@ -349,8 +358,8 @@ authorization: &acceptance-oneclient-tests-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
-            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+            echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+            one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
         description: Download artifacts
     - script: &run-acceptance-tests
         <<: *run-script-working-dir
@@ -382,7 +391,7 @@ authorization: &acceptance-oneclient-tests-job
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
-            cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
+            cp onedata-acceptance/one-env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
             mv onedata-acceptance/tests/oneclient/logs/*/*/images.yaml onedata-acceptance/tests/oneclient/logs
             tar czf test_logs.tar.gz onedata-acceptance/tests/oneclient/logs
         description: Pack logs
@@ -2089,23 +2098,6 @@ singleprovider storage modification singleclient directio symlinks:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_pkg FILE_MODE=symlink
-
-# tests applicable only to PKG mode - not present in SRC
-# @TODO VFS-6710 fix onedata_fs tests
-# onedata_fs tests:
-#   <<: *acceptance-oneclient-tests-job
-#   key: OT
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make test_onedata_fs
 
 
 Qnthack - rerun:

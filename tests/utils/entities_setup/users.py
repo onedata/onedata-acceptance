@@ -5,9 +5,12 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+from collections.abc import Generator, Mapping, MutableMapping
+from contextlib import suppress
+from typing import Protocol, TypedDict
 
+import pytest
 import yaml
-from pytest import skip
 from pytest_bdd import given
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT
@@ -26,13 +29,40 @@ from tests.utils.rest_utils import (
 from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
+HostsConfig = Mapping[str, Mapping[str, str]]
+type UsersDb = MutableMapping[str, User]
 
-@given(
-    parsers.parse('initial users configuration in "{host}" Onezone service:\n{config}')
+
+class CredentialsLike(Protocol):
+    username: str
+    password: str
+
+
+UserOptions = TypedDict(
+    "UserOptions",
+    {
+        "password": str,
+        "fullName": str,
+        "user role": str,
+        "cluster privileges": list[str],
+    },
+    total=False,
 )
+
+
+UserConfigEntry = str | dict[str, UserOptions]
+
+
+@given(parsers.parse('initial users configuration in "{host}" Onezone service:\n{config}'))
 def users_creation_with_cleanup_step(
-    host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
-):
+    host: str,
+    config: str,
+    admin_credentials: CredentialsLike,
+    onepanel_credentials: CredentialsLike,
+    hosts: HostsConfig,
+    users: UsersDb,
+    rm_users: bool,
+) -> Generator[None, None, None]:
     users_db, zone_hostname = users_creation_with_cleanup(
         host,
         yaml.load(config, yaml.Loader),
@@ -51,13 +81,18 @@ def users_creation_with_cleanup_step(
 
 @given(
     parsers.parse(
-        'initial user for future delete configuration in "{host}" '
-        "Onezone service:\n{config}"
+        'initial user for future delete configuration in "{host}" Onezone service:\n{config}'
     )
 )
 def users_creation_step(
-    host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
-):
+    host: str,
+    config: str,
+    admin_credentials: CredentialsLike,
+    onepanel_credentials: CredentialsLike,
+    hosts: HostsConfig,
+    users: UsersDb,
+    rm_users: bool,
+) -> tuple[dict[str, User], str]:
     return users_creation(
         host,
         yaml.load(config, yaml.Loader),
@@ -70,18 +105,30 @@ def users_creation_step(
 
 
 def users_creation_with_cleanup(
-    host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
-):
+    host: str,
+    config: list[UserConfigEntry],
+    admin_credentials: CredentialsLike,
+    onepanel_credentials: CredentialsLike,
+    hosts: HostsConfig,
+    users: UsersDb,
+    rm_users: bool,
+) -> tuple[dict[str, User], str]:
     return users_creation(
         host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
     )
 
 
 def users_creation(
-    host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
-):
+    host: str,
+    config: list[UserConfigEntry],
+    admin_credentials: CredentialsLike,
+    onepanel_credentials: CredentialsLike,
+    hosts: HostsConfig,
+    users: UsersDb,
+    rm_users: bool,
+) -> tuple[dict[str, User], str]:
     zone_hostname = hosts[host]["hostname"]
-    users_db = {}
+    users_db: dict[str, User] = {}
     for user_config in config:
         username, options = _parse_user_info(user_config)
         try:
@@ -102,17 +149,20 @@ def users_creation(
     return users_db, zone_hostname
 
 
-def _parse_user_info(user_config):
-    try:
-        [(username, options)] = user_config.items()
-    except AttributeError:
+def _parse_user_info(user_config: UserConfigEntry) -> tuple[str, UserOptions]:
+    if isinstance(user_config, str):
         return user_config, {}
+    [(username, options)] = user_config.items()
     return username, options
 
 
 def _create_new_user(
-    zone_hostname, onepanel_credentials, username, password, user_conf_details
-):
+    zone_hostname: str,
+    onepanel_credentials: CredentialsLike,
+    username: str,
+    password: str,
+    user_conf_details: Mapping[str, object],
+) -> User:
     http_post(
         ip=zone_hostname,
         port=PANEL_REST_PORT,
@@ -140,8 +190,13 @@ def _create_new_user(
 
 
 def _create_user(
-    zone_hostname, onepanel_credentials, admin_credentials, username, options, rm_users
-):
+    zone_hostname: str,
+    onepanel_credentials: CredentialsLike,
+    admin_credentials: CredentialsLike,
+    username: str,
+    options: UserOptions,
+    rm_users: bool,
+) -> User:
     password = options.get("password", "password")
     user_conf_details = {"username": username, "password": password, "groups": []}
 
@@ -149,13 +204,11 @@ def _create_user(
         return _create_new_user(
             zone_hostname, onepanel_credentials, username, password, user_conf_details
         )
-    except HTTPBadRequest:
+    except HTTPBadRequest as exc:
         # this error appear when trying to create user with name that already exist
         # (possible remnants from previous tests)
         if rm_users:
-            _remove_remnant_user(
-                username, zone_hostname, onepanel_credentials, admin_credentials
-            )
+            _remove_remnant_user(username, zone_hostname, onepanel_credentials, admin_credentials)
             return _create_new_user(
                 zone_hostname,
                 onepanel_credentials,
@@ -163,11 +216,19 @@ def _create_user(
                 password,
                 user_conf_details,
             )
-        skip(f'"{username}" user already exist')
-    return None
+        pytest.skip(f'"{username}" user already exist')
+        # type-checker expects the function to return something or raise an exception
+        raise RuntimeError(
+            f'Pytest failed to skip test when user "{username}" already exists'
+        ) from exc
 
 
-def _configure_user(zone_hostname, admin_credentials, user_cred, options):
+def _configure_user(
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    user_cred: User,
+    options: UserOptions,
+) -> None:
     full_name = options.get("fullName", user_cred.username.replace("_", " "))
     http_patch(
         ip=zone_hostname,
@@ -186,9 +247,13 @@ def _configure_user(zone_hostname, admin_credentials, user_cred, options):
 
 
 def _add_user_to_zone_cluster(
-    zone_hostname, admin_credentials, user_credentials, cluster_privileges
-):
-    username, password = user_credentials.username, user_credentials.password
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    user_credentials: User,
+    cluster_privileges: list[str] | None,
+) -> User:
+    username = user_credentials.username
+    password = user_credentials.password
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
 
@@ -227,28 +292,28 @@ def _add_user_to_zone_cluster(
 
 
 def _cleanup_users(
-    zone_hostname, admin_credentials, users_db, ignore_http_exceptions=False
-):
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    users_db: UsersDb,
+    ignore_http_exceptions: bool = False,
+) -> None:
     for user_credentials in users_db.values():
-        _rm_user(
-            zone_hostname, admin_credentials, user_credentials, ignore_http_exceptions
-        )
+        _rm_user(zone_hostname, admin_credentials, user_credentials, ignore_http_exceptions)
 
 
 def _rm_user(
-    zone_hostname, admin_credentials, user_credentials, ignore_http_exceptions=False
-):
-    try:
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    user_credentials: User,
+    ignore_http_exceptions: bool = False,
+) -> None:
+    ignored_exception = HTTPError if ignore_http_exceptions else HTTPNotFound
+    with suppress(ignored_exception):
         _rm_zone_user(zone_hostname, admin_credentials, user_credentials.user_id)
-    except HTTPNotFound:
-        pass
-    except HTTPError as ex:
-        if not ignore_http_exceptions:
-            raise ex
 
 
 @repeat_failed(attempts=5)
-def _rm_zone_user(zone_hostname, admin_credentials, user_id):
+def _rm_zone_user(zone_hostname: str, admin_credentials: CredentialsLike, user_id: str) -> None:
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
 
@@ -262,8 +327,11 @@ def _rm_zone_user(zone_hostname, admin_credentials, user_id):
 
 
 def _remove_remnant_user(
-    username, zone_hostname, onepanel_credentials, admin_credentials
-):
+    username: str,
+    zone_hostname: str,
+    onepanel_credentials: CredentialsLike,
+    admin_credentials: CredentialsLike,
+) -> None:
     users_list = http_get(
         ip=zone_hostname,
         port=PANEL_REST_PORT,
@@ -282,7 +350,9 @@ def _remove_remnant_user(
             _rm_zone_user(zone_hostname, admin_credentials, user_id)
 
 
-def _remove_user_spaces(zone_hostname, admin_credentials, owner_id):
+def _remove_user_spaces(
+    zone_hostname: str, admin_credentials: CredentialsLike, owner_id: str
+) -> None:
     spaces_list = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,

@@ -10,22 +10,23 @@ from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 
 
 class MenuItem(PageObject):
-    name = id = Label(".tag-label")
+    name = id = Label(".tag-label, .property-label")
 
-    def __call__(self):
+    def __call__(self) -> None:
         self.click()
 
 
 class OptionsSelector(PageObject):
     menu = WebItemsSequence(".selector-item", cls=MenuItem)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Options selector"
 
-    def choose_option(self, name):
+    def choose_option(self, name: str) -> None:
         self.hover_over()
         # max number of elements in popup list
         for _ in range(30):
@@ -34,10 +35,10 @@ class OptionsSelector(PageObject):
                     self.menu[item.name].click()
                     return
             self.scroll_down()
-        raise RuntimeError(f"item {name} not found in popup")
+        raise PageObjectNotFoundError(f"item {name} not found in popup")
 
-    def hover_over(self):
+    def hover_over(self) -> None:
         ActionChains(self.driver).move_to_element(self.menu[0].web_elem).perform()
 
-    def scroll_down(self):
+    def scroll_down(self) -> None:
         ActionChains(self.driver).key_down(Keys.DOWN).perform()

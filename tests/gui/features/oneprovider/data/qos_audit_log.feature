@@ -26,7 +26,7 @@ Feature: QoS Audit Logs
                             - file2
 
     And opened browser with user1 signed in to "onezone" service
-    When user of browser clicks on Providers in the main menu
+    When user of browser clicks on "Providers" in the main menu
     And user of browser clicks on provider "oneprovider-2" in providers sidebar
     And user of browser opens file browser for "space1" space
 
@@ -82,7 +82,7 @@ Feature: QoS Audit Logs
                         - file1
 
     And opened browser with user1 signed in to "onezone" service
-    When user of browser clicks on Providers in the main menu
+    When user of browser clicks on "Providers" in the main menu
     And user of browser clicks on provider "oneprovider-2" in providers sidebar
     And user of browser opens file browser for "space1" space
 
