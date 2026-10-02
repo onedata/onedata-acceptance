@@ -168,8 +168,11 @@ def setup_luma(
 def unmount_all_clients_and_purge_spaces(users: Users) -> None:
     for user in users.values():
         for client in user.clients.values():
-            purge_spaces(client)
-            client.unmount()
+            try:
+                purge_spaces(client)
+            finally:
+                # Ensure oneclient is always unmounted
+                client.unmount()
         user.clients.clear()
 
 
