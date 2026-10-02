@@ -16,6 +16,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import (
@@ -23,7 +24,6 @@ from tests.gui.utils.generic import (
     parse_elements_sequence,
     transform,
 )
-from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.onenv_utils import run_onenv_command
@@ -40,9 +40,8 @@ def open_provider_popover_on_world_map(
     selenium: SeleniumDrivers, browser_id: str, provider_name: str
 ) -> None:
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ProvidersPage)
-    oz_page.providers.providers_list[provider_name].web_elem.click()
+    providers_page = get_onezone_subpage(driver, "providers")
+    providers_page.providers_list[provider_name].web_elem.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -131,9 +130,7 @@ def assert_provider_hostname_matches_test_hostname(
 ) -> None:
     driver = selenium[browser_id]
     expected_domain = f"{hosts[provider]['hostname']}.test"
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ProvidersPage)
-    page = oz_page.providers
+    page = get_onezone_subpage(driver, "providers")
     page.providers_list[0].click()
     _click_copy_hostname(driver)
     displayed_domain = clipboard.paste(display=displays[browser_id])
@@ -238,9 +235,7 @@ def assert_provider_working_in_oz_panel(
 ) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ProvidersPage)
-    page = oz_page.providers
+    page = get_onezone_subpage(driver, "providers")
     providers = page.providers_list
     assert provider in providers, f'no provider "{provider}" found on providers list'
     providers[provider].click()
@@ -388,9 +383,7 @@ def wait_until_provider_goes_offline_by_gui(
 ) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider_name]["name"]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(ProvidersPage)
-    page = oz_page.providers
+    page = get_onezone_subpage(driver, "providers")
     time.sleep(0.5)
     provider_record = page.providers_list[provider]
     provider_record.click()

@@ -9,8 +9,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
-    Label,
     NamedButton,
+    TransformedLabel,
     WebElement,
     WebItem,
     WebItemsSequence,
@@ -23,7 +23,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 class ColumnOption(PageObject):
-    name = id = Label(".column-name-label .truncate")
+    name = id = TransformedLabel(".column-name-label .truncate")
     checkbox = WebElement(".filter-column-checkbox")
     modify_column_icon = Button(".modify-column .oneicon-browser-rename")
     remove_column_icon = Button(".remove-column .oneicon-close")

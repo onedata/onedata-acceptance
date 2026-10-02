@@ -4,6 +4,7 @@ __author__ = "Mateusz Zajac, Jakub Karczewski"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.rest.spaces import (
     revoke_space_supports_for_storage_using_rest,
 )
@@ -16,7 +17,13 @@ from tests.gui.steps.rest.storages import (
     storage_data_from_config,
 )
 from tests.type_definitions import Hosts
+from tests.utils.http_exceptions import HTTPBadRequest
 from tests.utils.user_utils import User
+from tests.utils.utils import repeat_failed
+
+
+class StorageInUseError(RuntimeError):
+    """A transient error raised while space-support removal is being propagated."""
 
 
 def get_storage_ids_by_name(
@@ -52,7 +59,12 @@ def remove_multiple_storages_in_op_panel_using_rest(
 
     storage_ids = get_storage_ids_by_name(storage_name, provider, hosts, onepanel_credentials)
     for storage_id in storage_ids:
-        remove_storage_by_id(provider_hostname, onepanel_username, onepanel_password, storage_id)
+        revoke_space_supports_for_storage_using_rest(
+            provider_hostname, onepanel_username, onepanel_password, storage_id
+        )
+        remove_storage_by_id_and_wait_until_absent(
+            provider_hostname, onepanel_username, onepanel_password, storage_id
+        )
 
 
 def remove_storage_by_id_and_wait_until_absent(
@@ -65,8 +77,26 @@ def remove_storage_by_id_and_wait_until_absent(
     if storage_id not in storage_ids:
         return
 
-    remove_storage_by_id(provider_hostname, onepanel_username, onepanel_password, storage_id)
+    remove_storage_by_id_when_unused(
+        provider_hostname, onepanel_username, onepanel_password, storage_id
+    )
     assert_storage_absence(provider_hostname, onepanel_username, onepanel_password, storage_id)
+
+
+@repeat_failed(timeout=WAIT_BACKEND, exceptions=StorageInUseError)
+def remove_storage_by_id_when_unused(
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: str,
+    storage_id: str,
+) -> None:
+    try:
+        remove_storage_by_id(provider_hostname, onepanel_username, onepanel_password, storage_id)
+    except HTTPBadRequest as exc:
+        error_id = exc.response.json().get("error", {}).get("id")
+        if error_id != "storageInUse":
+            raise
+        raise StorageInUseError(str(exc)) from exc
 
 
 def restore_config_and_remove_storage_by_id(

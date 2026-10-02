@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Protocol, cast
 
+import pytest
 from _pytest._py.path import LocalPath
 
 from tests.gui.constants import WAIT_BACKEND
@@ -27,7 +28,7 @@ from tests.gui.meta_steps.onepanel.spaces import (
     copy_id_of_space_gui,
     revoke_space_support_in_op_panel_using_gui,
     run_scan_and_wait_till_finished,
-    support_space_in_op_panel_using_gui,
+    wt_support_space_in_op_panel_using_gui,
 )
 from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
 from tests.gui.meta_steps.onezone.provider import (
@@ -502,6 +503,11 @@ def support_space_in_op_panel(
     host: str,
     config: str,
     space_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    onepanel_credentials: User,
+    spaces: dict[str, str],
 ) -> None:
     """Support space according to given config.
 
@@ -523,7 +529,7 @@ def support_space_in_op_panel(
     """
 
     if client.lower() == "web gui":
-        support_space_in_op_panel_using_gui(
+        wt_support_space_in_op_panel_using_gui(
             selenium,
             user,
             config,
@@ -531,6 +537,11 @@ def support_space_in_op_panel(
             space_name,
             host,
             hosts,
+            clipboard,
+            displays,
+            request,
+            onepanel_credentials,
+            spaces,
         )
     elif client.lower() == "rest":
         support_space_in_op_panel_using_rest(user, host, hosts, users, tmp_memory, config)

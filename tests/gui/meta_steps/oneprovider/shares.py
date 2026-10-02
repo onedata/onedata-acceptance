@@ -60,7 +60,7 @@ from tests.gui.steps.onezone.documentation import (
     choose_rest_api_command_from_dropdown,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory, WhichBrowser
 from tests.gui.utils import Modals
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.xml_addons import (
@@ -74,7 +74,6 @@ from tests.gui.utils.common.xml_addons import (
 )
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    WhichBrowser,
     parse_elements_sequence,
     transform,
 )

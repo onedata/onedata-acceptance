@@ -27,7 +27,7 @@ Scenario Outline: User of <client1> sets file replication to provider and using 
   Then using <client2>, user1 sees details about last transfer of file in space "space1" in provider oneprovider-1:
       name: large_file.txt
       replicated: 50 MiB
-      type: replication
+      type_&_destination: replication
       status: completed
 
   Examples:
@@ -43,7 +43,7 @@ Scenario Outline: User of <client1> sets file migration and using <client2> sees
   Then using <client2>, user1 sees details about last transfer of file in space "space1" in provider oneprovider-1:
       name: large_file.txt
       replicated: 50 MiB
-      type: migration
+      type_&_destination: migration
       status: completed
 
   Examples:
@@ -62,7 +62,7 @@ Scenario Outline: User of <client1> sets file eviction from provider and using <
   Then using <client2>, user1 sees details about last transfer of file in space "space1" in provider oneprovider-1:
       name: large_file.txt
       replicated: 0 B
-      type: eviction
+      type_&_destination: eviction
       status: completed
 
   Examples:

@@ -42,18 +42,20 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And user of browser_unified sees that "File details" modal has appeared
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "X" button in modal "Directory details"
-    Then user of browser_unified sees file chunks for file "20B-0.txt" as follows:
-        oneprovider-1: entirely filled
-        oneprovider-2: entirely filled
+    Then user of browser_unified sees file chunks for files:
+            20B-0.txt:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
 
   Scenario: File is replicated from one storage to storage which id was set as QoS requirement
     When user of browser_unified clicks "space1" on the spaces list in the sidebar
     And user of browser_unified clicks "Files" of "space1" space in the sidebar
     And user of browser_unified sees file browser in files tab in Oneprovider page
-    And user of browser_unified sees file chunks for file "file1" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely empty
+    And user of browser_unified sees file chunks for files:
+            file1:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely empty
 
     And user of browser_emergency clicks on Storage backends item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
@@ -63,6 +65,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And user of browser_unified sees that "File details" modal has appeared
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "X" button in modal "File details"
-    Then user of browser_unified sees file chunks for file "file1" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely filled
+    Then user of browser_unified sees file chunks for files:
+            file1:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled

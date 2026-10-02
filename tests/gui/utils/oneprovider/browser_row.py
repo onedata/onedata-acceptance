@@ -16,9 +16,11 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
 from tests.gui.utils.generic import click_on_web_elem, transform
+from tests.utils.utils import element_has_class
 
 
 class BrowserRow(NamedElement):
+    first_column = WebElement(".fb-table-col-files", scroll=False)
     name = id = Label(".file-name-inner", scroll=False)
     clickable_field = WebElement(".file-name", scroll=False)
     menu_button = Button(".file-row-actions-trigger", scroll=False)
@@ -28,13 +30,16 @@ class BrowserRow(NamedElement):
     _icon_tag = WebElement(".one-icon-tag")
 
     def is_selected(self) -> bool:
-        return "file-selected" in self.web_elem.get_attribute("class")
+        return element_has_class(self.web_elem, "file-selected")
+
+    def is_highlighted(self) -> bool:
+        return element_has_class(self.first_column, "animate-attention")
 
     def is_file(self) -> bool:
-        return "fb-table-row-file" in self.web_elem.get_attribute("class")
+        return element_has_class(self.web_elem, "fb-table-row-file")
 
     def is_directory(self) -> bool:
-        return "browser-directory" in self._icon.get_attribute("class")
+        return element_has_class(self.web_elem, "fb-table-row-dir")
 
     def wait_for_selected(self) -> None:
         for _ in range(30):

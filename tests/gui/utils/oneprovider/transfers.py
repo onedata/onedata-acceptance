@@ -4,6 +4,7 @@ __author__ = "Michal Stanisz, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from enum import Enum
 from functools import partial
 
 from selenium.webdriver.common.by import By
@@ -23,6 +24,7 @@ from tests.gui.utils.core.web_objects import (
     PageObjectNotFoundError,
     PageObjectsSequence,
 )
+from tests.gui.utils.generic import TransferState
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 
 TRANSFER_STATUS_LIST = [
@@ -38,30 +40,31 @@ TRANSFER_STATUS_LIST = [
 TRANSFER_TYPE_LIST = ["migration", "replication", "eviction"]
 
 
+class TransferItemType(Enum):
+    FILE = "file"
+    DIRECTORY = "directory"
+
+
 class TypeAndDestination(PageObject):
     destination = Label(".truncated-string")
     type_icon = Icon(".cell-type-destination")
 
 
 class TransferRecord(PageObject):
-    name = Label(".cell-data-name .transfer-file-name")
+    id = name = Label(".cell-data-name .transfer-file-name")
     file_icon = Icon(".cell-data-name .transfer-file-icon")
     username = Label("td:nth-of-type(2)")
     status_icon = Icon(".cell-status")
     menu_button = Button(".cell-actions")
-    type_destination = WebItem(".transfers-table-cell-typeDestination", cls=TypeAndDestination)
+    _type_and_destination = WebItem(".transfers-table-cell-typeDestination", cls=TypeAndDestination)
 
     @property
     def status(self) -> str:
         return self._get_icon_class(self.status_icon, TRANSFER_STATUS_LIST)
 
     @property
-    def type(self) -> str:
-        return self._get_icon_class(self.type_destination.type_icon, TRANSFER_TYPE_LIST)
-
-    @property
-    def destination(self) -> str:
-        return self.type_destination.destination
+    def type_and_destination(self) -> str:
+        return self._get_icon_class(self._type_and_destination.type_icon, TRANSFER_TYPE_LIST)
 
     def _get_icon_class(self, icon: SeleniumWebElement, expected_tokens: list[str]) -> str:
         icon_classes = icon.get_attribute("class").split()
@@ -135,6 +138,7 @@ class _TransfersTab(PageObject):
     providers_table = WebElement(".providers-table")
     spaces = WebItemsSequence("ul.spaces-list li", cls=SpaceRecord)
     tabs = WebItemsSequence(".providers-table .nav-tabs li", cls=TabHeader)
+    active_tab = WebItem(".providers-table .nav-tabs li.active", cls=TabHeader)
     _ended_list = WebItemsSequence(".col-ended-transfers tr.data-row", cls=TransferRecordHistory)
     _ongoing_list = WebItemsSequence(".col-ongoing-transfers tr.data-row", cls=TransferRecordActive)
     _waiting_list = WebItemsSequence(
@@ -151,28 +155,31 @@ class _TransfersTab(PageObject):
 
     @property
     def ongoing(self) -> PageObjectsSequence:
-        self["ongoing"].click()
+        self[TransferState.ONGOING].click()
         return self._ongoing_list
 
     @property
     def ended(self) -> PageObjectsSequence:
-        self["ended"].click()
+        self[TransferState.ENDED].click()
         return self._ended_list
 
     @property
     def waiting(self) -> PageObjectsSequence:
-        self["waiting"].click()
+        self[TransferState.WAITING].click()
         return self._waiting_list
 
     @property
     def certain_file(self) -> PageObjectsSequence:
         return self._transfers_list_for_certain_file
 
-    def __getitem__(self, name: str) -> TabHeader:
+    def __getitem__(self, state: TransferState) -> TabHeader:
         for tab in self.tabs:
-            if name in tab.name.lower():
+            if state.value in tab.name.lower():
                 return tab
-        raise PageObjectNotFoundError(f"no tab named {name} in transfer tab")
+        raise PageObjectNotFoundError(f"no tab named {state.value} in transfer tab")
+
+    def get_active_tab(self) -> TransferState:
+        return TransferState(self.active_tab.name.lower())
 
 
 TransfersTab = partial(WebItem, cls=_TransfersTab)

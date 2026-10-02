@@ -68,6 +68,7 @@ from tests.gui.type_definitions import (
     AuditLogValue,
     Clipboard,
     TmpMemory,
+    WhichBrowser,
 )
 from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.workflows_modals.audit_log import LogsEntry
@@ -75,7 +76,6 @@ from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDe
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    WhichBrowser,
     parse_elements_sequence,
     parse_seq,
 )

@@ -13,7 +13,7 @@ from tests.gui.steps.rest.spaces import (
     get_supported_space_ids,
     revoke_space_support_using_rest,
 )
-from tests.utils.http_exceptions import HTTPServerError
+from tests.utils.http_exceptions import HTTPInternalServerError
 
 
 def revoke_all_space_supports_using_rest(
@@ -26,7 +26,7 @@ def revoke_all_space_supports_using_rest(
     ):
         # TODO: VFS-13774 Replace with HTTPNotFound once Onepanel returns 404
         # for revoked space support instead of 500 when space does not exist
-        with suppress(HTTPServerError):
+        with suppress(HTTPInternalServerError):
             revoke_space_support_using_rest(
                 provider_hostname, onepanel_username, onepanel_password, space_id
             )
@@ -45,7 +45,7 @@ def revoke_space_supports_for_storage_using_rest(
     ):
         # TODO: VFS-13774 Replace with HTTPNotFound once Onepanel returns 404
         # for revoked space support instead of 500 when space does not exist
-        with suppress(HTTPServerError):
+        with suppress(HTTPInternalServerError):
             revoke_space_support_using_rest(
                 provider_hostname, onepanel_username, onepanel_password, space_id
             )

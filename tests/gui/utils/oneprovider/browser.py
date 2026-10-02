@@ -42,6 +42,10 @@ class Browser(ABC, PageObject):
 
     header = WebElement(".file-browser-head-container")
     browser_msg_header = Label(".content-info-content-container h1")
+    highlighted_item_name = Label(
+        ".fb-table-col-files.animate-attention .file-name-inner",
+        scroll=False,
+    )
     breadcrumbs = Breadcrumbs(".fb-breadcrumbs")
     refresh_button = Button(".toolbar-buttons .file-action-refresh")
     jump_input = Input(".jump-input", scroll=False)

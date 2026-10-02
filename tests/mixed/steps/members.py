@@ -195,13 +195,12 @@ def add_group_to_space_in_oz(
 ) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
-        where = "space"
         add_group_to_space_or_group(
             user,
             group_name,
             space_name,
             selenium,
-            where,
+            "space",
         )
     elif client_lower == "rest":
         add_group_to_space_using_rest(user, users, hosts, host, group_name, spaces, space_name)

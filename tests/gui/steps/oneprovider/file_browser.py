@@ -15,6 +15,8 @@ from typing import Protocol
 import yaml
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
@@ -22,12 +24,11 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.type_definitions import Clipboard, TarTree, TmpMemory
+from tests.gui.type_definitions import Clipboard, TarTree, TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    WhichBrowser,
     parse_elements_sequence,
     transform,
 )
@@ -674,14 +675,47 @@ def assert_item_displayed_on_page(
         if "not" in option:
             assert name not in data, f"{name} is displayed on page"
         else:
-            assert name in data, f"{name} is not displayed on page, displayed files: {data}"
+            assert name in visible_files, (
+                f"{name} is not displayed on page, displayed files: {visible_files}"
+            )
 
 
-@wt(parsers.parse('user of {browser_id} writes "{prefix}" to jump input in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01)
 def write_to_jump_input(browser_id: str, tmp_memory: TmpMemory, prefix: str) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     browser.jump_input = prefix
+
+
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.01)
+def wait_until_prefix_written_to_jump_input(
+    browser_id: str, tmp_memory: TmpMemory, prefix: str
+) -> None:
+    browser = tmp_memory[browser_id]["file_browser"]
+    assert browser.jump_input == prefix, f'Prefix "{prefix}" was not successfully written'
+
+
+def assert_item_is_highlighted_in_file_browser(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+) -> None:
+    browser = tmp_memory[browser_id]["file_browser"]
+
+    def is_item_highlighted(_: WebDriver) -> bool:
+        return browser.highlighted_item_name == item_name
+
+    WebDriverWait(
+        selenium[browser_id],
+        WAIT_FRONTEND,
+        poll_frequency=0.05,
+        ignored_exceptions=(StaleElementReferenceException,),
+    ).until(
+        is_item_highlighted,
+        message=(
+            f'item "{item_name}" was not found and highlighted after writing text to jump input'
+        ),
+    )
 
 
 @wt(

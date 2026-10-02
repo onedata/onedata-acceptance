@@ -29,9 +29,9 @@ from tests.gui.steps.onezone.groups import (
     click_on_confirmation_button_to_rename_group,
     click_on_option_in_group_menu_and_get_group,
     confirm_name_input_on_main_groups_page,
-    go_to_group_subpage,
     input_name_into_input_box_on_main_groups_page,
     input_new_group_name_into_rename_group_inpux_box,
+    open_group_subpage,
     press_enter_on_active_element,
 )
 from tests.gui.steps.onezone.members import (
@@ -44,7 +44,7 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.generic import MembersParentType, MemberType, parse_elements_sequence
 from tests.gui.utils.onezone.groups.groups_page import Group
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -61,7 +61,7 @@ def get_group_and_click_menu_button(
     selenium: SeleniumDrivers, browser_id: str, option: str, group_name: str
 ) -> Group:
     driver = selenium[browser_id]
-    go_to_group_subpage(selenium, browser_id, group_name, "main")
+    open_group_subpage(selenium, browser_id, group_name, "main")
     return click_on_option_in_group_menu_and_get_group(driver, group_name, option)
 
 
@@ -228,18 +228,18 @@ def leave_groups_using_op_gui(selenium: SeleniumDrivers, user: str, group_list: 
 
 
 def _open_member_from_list(selenium: SeleniumDrivers, user: str, parent: str) -> None:
-    where = "group"
+    where: MembersParentType = "group"
     list_type = "users"
     subpage = "members"
 
-    go_to_group_subpage(selenium, user, parent, subpage)
+    open_group_subpage(selenium, user, parent, subpage)
     click_element_in_members_list(selenium, user, user, where, list_type)
 
 
 def assert_subgroups_using_op_gui(
     selenium: SeleniumDrivers, user: str, group_list: list[str], parent: str
 ) -> None:
-    where = "group"
+    where: MembersParentType = "group"
 
     _open_member_from_list(selenium, user, parent)
     for group in group_list:
@@ -251,7 +251,7 @@ def assert_subgroups_using_op_gui(
 def fail_to_see_subgroups_using_op_gui(
     selenium: SeleniumDrivers, user: str, group_list: list[str], parent: str
 ) -> None:
-    where = "group"
+    where: MembersParentType = "group"
 
     _open_member_from_list(selenium, user, parent)
     for group in group_list:
@@ -271,13 +271,13 @@ def _create_group_token(
     member: str,
 ) -> None:
     item_type = "token"
-    where = "group"
+    where: MembersParentType = "group"
     button = f"Invite {member} using token"
     member += "s"
     modal = "Invite using token"
     subpage = "members"
 
-    go_to_group_subpage(selenium, user, name, subpage)
+    open_group_subpage(selenium, user, name, subpage)
     click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
     is_notify_popup_visible_and_close_all_alert_popups(
@@ -383,7 +383,8 @@ def remove_subgroups_using_op_gui(
     tmp_memory: TmpMemory,
     parent: str,
 ) -> None:
-    member_type = "group"
+    member_type: MemberType = "group"
+    where: MembersParentType = "group"
 
     for child in group_list:
         remove_member_from_parent(
@@ -393,7 +394,7 @@ def remove_subgroups_using_op_gui(
             member_type,
             parent,
             tmp_memory,
-            member_type,
+            where,
         )
 
 

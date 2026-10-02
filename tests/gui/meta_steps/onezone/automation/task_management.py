@@ -12,6 +12,7 @@ from typing import cast
 import yaml
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.onezone.automation.workflow_creation import (
@@ -223,9 +224,7 @@ def _open_task_form(
     selenium: SeleniumDrivers, browser_id: str, lane: str, task: str
 ) -> tuple[WebDriver, AutomationPage]:
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(AutomationPage)
-    page = oz_page.automation
+    page = get_onezone_subpage(driver, "automation")
     lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
     lane_obj.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu["Modify"]()
