@@ -123,11 +123,12 @@ def set_provider_service_node_state(
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
+    # API accepts query parameter "started" with boolean value only in lowercase
     return http_patch(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path("provider", service.value, host)
-        + f"?started={expected_state == 'started'}",
+        + f"?started={str(expected_state == 'started').lower()}",
         auth=(onepanel_username, onepanel_password),
     )
 
