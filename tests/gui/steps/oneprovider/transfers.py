@@ -61,7 +61,7 @@ def select_transfer_state_tab(
     transfers[transfer_state].click()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_transfer_item_type(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -122,7 +122,7 @@ def get_transfer_column_value(
 
     return WebDriverWait(
         selenium[browser_id],
-        timeout=WAIT_FRONTEND,
+        timeout=WAIT_BACKEND * 2,
         poll_frequency=0.1,
         ignored_exceptions=(
             NoSuchElementException,

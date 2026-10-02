@@ -19,9 +19,7 @@ from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.steps.oneprovider.transfers import get_transfers
 from tests.gui.type_definitions import (
     Clipboard,
-    ColumnContext,
     TmpMemory,
-    VisibleColumns,
     WhichBrowser,
 )
 from tests.gui.utils import Popups
@@ -61,13 +59,10 @@ def select_columns_to_be_visible_in_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
     columns: list[str],
-    visible_columns: VisibleColumns,
 ) -> None:
     # this function enables required columns and disables the rest
     columns = transform_columns(columns)
     driver = selenium[browser_id]
-
-    visible_columns[ColumnContext.transfers(browser_id)] = set(columns)
 
     transfers = get_transfers(driver)
     click_configure_columns_button(transfers)
@@ -89,19 +84,17 @@ def wt_select_columns_to_be_visible_in_transfers(
     selenium: SeleniumDrivers,
     browser_id: str,
     columns: list[str],
-    visible_columns: VisibleColumns,
 ) -> None:
-    select_columns_to_be_visible_in_transfers(selenium, browser_id, columns, visible_columns)
+    select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
 
 
 def select_initial_columns_to_be_visible_in_transfers(
-    selenium: SeleniumDrivers, browser_id: str, visible_columns: VisibleColumns
+    selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     select_columns_to_be_visible_in_transfers(
         selenium,
         browser_id,
         ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS,
-        visible_columns,
     )
 
 
@@ -125,14 +118,9 @@ def select_columns_to_be_visible_in_browser(
     columns: list[str],
     which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
-    visible_columns: VisibleColumns,
 ) -> None:
     # This function enables the selected columns and disables the rest.
     browser = tmp_memory[browser_id][transform(which_browser.value)]
-
-    visible_columns[ColumnContext.browser(browser_id, which_browser)] = set(
-        transform_columns(columns)
-    )
 
     click_configure_columns_button(browser)
     set_exact_columns_visible_in_configure_columns_menu(
@@ -158,7 +146,6 @@ def change_visibility_for_browser_columns(
     columns: list[str],
     which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
-    visible_columns: VisibleColumns,
 ) -> None:
     # This function updates only the specified columns (enable/disable).
     # All other columns remain unchanged.
@@ -170,8 +157,6 @@ def change_visibility_for_browser_columns(
     available_columns = transform_columns(get_column_names_from_configure_columns_menu(driver))
 
     for column_name in set(available_columns) & set(parsed_columns):
-        if res == "enables":
-            visible_columns[ColumnContext.browser(browser_id, which_browser)].add(column_name)
         set_column_visibility_in_configure_columns_menu(driver, column_name, res == "enables")
 
     click_configure_columns_button(browser)

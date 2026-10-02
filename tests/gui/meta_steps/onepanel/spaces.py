@@ -15,7 +15,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.rest.spaces import revoke_all_space_supports_using_rest
 from tests.gui.steps.common.common import wait_for_checking_toggle_with_getter
 from tests.gui.steps.common.notifies import (
@@ -484,7 +484,7 @@ def click_start_scan_button_in_storage_import_tab(
 ) -> None:
     driver = selenium[browser_id]
     click_start_scan_button_and_wait_for_its_state(driver)
-    dismiss_notifies_if_present(driver, timeout=WAIT_FRONTEND)
+    dismiss_notifies_if_present(driver)
 
 
 @wt(

@@ -32,7 +32,7 @@ from tests.gui.steps.onepanel.spaces import (
 from tests.gui.steps.onezone.documentation import (
     choose_rest_api_command_from_dropdown,
 )
-from tests.gui.steps.onezone.groups import go_to_group_subpage
+from tests.gui.steps.onezone.groups import open_group_subpage
 from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal,
 )
@@ -77,6 +77,7 @@ from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     ListElement,
+    MembersParentType,
     parse_elements_sequence,
 )
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -250,7 +251,7 @@ def invite_other_users_to_space_using_gui(
     option = "spaces"
     option_in_space = "Members"
     button = "Invite user using token"
-    where = "space"
+    where: MembersParentType = "space"
     item_type = "token"
     member = "users"
     modal = "Invite using token"
@@ -346,7 +347,7 @@ def assert_user_is_member_of_space_gui(
     where = "Members"
     option = "sees"
     member_type = "user"
-    parent_type = "space"
+    parent_type: MembersParentType = "space"
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, where)
 
@@ -461,7 +462,7 @@ def add_group_to_space_or_group(
     group_name: str,
     where_name: str,
     selenium: SeleniumDrivers,
-    where: str,
+    where: MembersParentType,
 ) -> None:
     option = where + "s"
     option_in_function = "Members"
@@ -475,7 +476,7 @@ def add_group_to_space_or_group(
             selenium, browser_id, where_name, option_in_function
         )
     elif where == "group":
-        go_to_group_subpage(
+        open_group_subpage(
             selenium,
             browser_id,
             where_name,
@@ -501,7 +502,7 @@ def copy_user_space_invite_token(
 ) -> None:
     option = "spaces"
     option_in_space = "Members"
-    where = "space"
+    where: MembersParentType = "space"
     member = "users"
     button = "Invite user using token"
     modal = "Invite using token"

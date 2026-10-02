@@ -16,6 +16,7 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
+    get_onezone_subpage,
     wait_for_sliding_panel_to_stop_moving,
 )
 from tests.gui.type_definitions import TmpMemory
@@ -26,7 +27,7 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.gui.utils.onezone.token_caveats import CaveatField
-from tests.gui.utils.onezone.tokens_page import TokenRow, TokensPage
+from tests.gui.utils.onezone.tokens_page import TokenRow
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -34,9 +35,8 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_token_by_name(driver: WebDriver, token_name: str) -> TokenRow:
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(TokensPage)
-    return oz_page.tokens.sidebar.tokens[token_name]
+    tokens_page = get_onezone_subpage(driver, "tokens")
+    return tokens_page.sidebar.tokens[token_name]
 
 
 def _open_menu_for_token(driver: WebDriver, token_name: str) -> None:
@@ -99,13 +99,12 @@ def click_on_button_in_tokens_sidebar(
     selenium: SeleniumDrivers, browser_id: str, button: str
 ) -> None:
     driver = selenium[browser_id]
-    oz_page = OZLoggedIn(driver)
-    oz_page.open_panel(TokensPage)
+    tokens_page = get_onezone_subpage(driver, "tokens")
 
     if button == "Create new token":
-        oz_page.tokens.sidebar.click_create_new_token(driver)
+        tokens_page.sidebar.click_create_new_token(driver)
     elif button == "Clean up obsolete tokens":
-        sidebar = oz_page.tokens.sidebar
+        sidebar = tokens_page.sidebar
         button_clean = getattr(sidebar, transform(button))
         for _ in range(50):
             if "clickable" in button_clean.web_elem.get_attribute("class"):
@@ -114,7 +113,7 @@ def click_on_button_in_tokens_sidebar(
             time.sleep(0.1)
         raise TimeoutError(f"Did not manage to click {button} button")
     else:
-        sidebar = oz_page.tokens.sidebar
+        sidebar = tokens_page.sidebar
         getattr(sidebar, transform(button))()
 
 

@@ -15,6 +15,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
@@ -29,7 +30,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonPageObject
-from tests.utils.utils import element_has_class
+from tests.utils.utils import element_has_class, repeat_failed
 
 
 class MembersHeaderRow(PageObject):
@@ -45,6 +46,7 @@ class MembersItemHeader(PageObject):
     save_button = NamedButton(".save-btn", text="Save")
     discard_button = NamedButton(".discard-btn", text="Discard changes")
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def click_menu(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.user).perform()
         self.menu_button.click()

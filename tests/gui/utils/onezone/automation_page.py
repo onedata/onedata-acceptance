@@ -25,9 +25,9 @@ from tests.gui.utils.onezone.workflows_subpage import WorkflowsPage
 class Inventory(NamedElement):
     name = id = Label(".item-name")
     menu = Button(".atm-inventory-menu-trigger")
-    workflows = NamedButton(".one-list-level-2 .item-header", text="Workflows")
-    lambdas = NamedButton(".one-list-level-2 .item-header", text="Lambdas")
-    members = NamedButton(".one-list-level-2 .item-header", text="Members")
+    workflows = NamedButton("ul li .one-list-level-2 .one-list-item", text="Workflows")
+    lambdas = NamedButton("ul li .one-list-level-2 .one-list-item", text="Lambdas")
+    members = NamedButton("ul li .one-list-level-2 .one-list-item", text="Members")
     edit_box = WebItem(".name-editor.atm-inventory-name", cls=EditBox)
 
 
