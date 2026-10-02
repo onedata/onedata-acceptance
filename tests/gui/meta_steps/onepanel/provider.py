@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
+from typing import Literal
 
 import pytest
 import yaml
@@ -49,10 +50,9 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     OnedataService,
-    OnedataServiceState,
     wait_for_visible_element_using_getter,
 )
-from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
+from tests.type_definitions import HostDescription, Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPConflict
 from tests.utils.user_utils import User
@@ -67,12 +67,7 @@ def _register_ones3_node_finalizer(
 ) -> None:
     request.addfinalizer(
         lambda: set_provider_service_node_state(
-            hosts,
-            host,
-            provider,
-            onepanel_credentials,
-            OnedataService.ONES3,
-            OnedataServiceState.STOPPED,
+            hosts, host, provider, onepanel_credentials, OnedataService.ONES3, "stopped"
         )
     )
 
@@ -282,14 +277,15 @@ def assert_provider_cluster_ones3_node_status_rest(
     )
 
 
-@wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
+@given(parsers.parse('there is oneS3 node in provider cluster in "{provider}"'))
 def add_provider_cluster_ones3_node_rest(
     request: pytest.FixtureRequest,
     hosts: Hosts,
     provider: str,
     onepanel_credentials: User,
 ) -> None:
-    host = f"{hosts[provider]['pod_name']}.{hosts[provider]['hostname']}"
+    desc: HostDescription = hosts[provider]
+    host = desc["pod_name"] + "." + desc["hostname"]
     data: JsonObject = {"hosts": [host]}
     try:
         add_provider_service_node(
@@ -306,7 +302,7 @@ def add_provider_cluster_ones3_node_rest(
             provider,
             onepanel_credentials,
             OnedataService.ONES3,
-            OnedataServiceState.STARTED,
+            "started",
         )
     _register_ones3_node_finalizer(
         request,
@@ -330,7 +326,7 @@ def stop_provider_cluster_ones3_node_rest(
     onepanel_credentials: User,
 ) -> None:
     host = f"{hosts[provider]['pod_name']}.{hosts[provider]['hostname']}"
-    state = OnedataServiceState.STARTED if option == "starts" else OnedataServiceState.STOPPED
+    state: Literal["started", "stopped"] = "started" if option == "starts" else "stopped"
     set_provider_service_node_state(
         hosts,
         host,

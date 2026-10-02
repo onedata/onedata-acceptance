@@ -521,8 +521,12 @@ class OnedataService(Enum):
 
 
 class OnedataServiceState(Enum):
-    STARTED = "true"
-    STOPPED = "false"
+    STOPPED = "stopped"
+    STARTING = "starting"
+    HEALTHY = "healthy"
+    UNHEALTHY = "unhealthy"
+    STOPPING = "stopping"
+    MISSING = "missing"
 
 
 class TransferState(Enum):

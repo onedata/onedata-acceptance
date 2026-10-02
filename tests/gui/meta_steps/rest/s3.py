@@ -4,16 +4,23 @@ __author__ = "Mateusz Zajac, Jakub Karczewski"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import time
+from contextlib import suppress
 from http import HTTPStatus
 
 from requests.exceptions import HTTPError
 
 from tests.gui.constants import WAIT_BACKEND
+from tests.gui.steps.rest.provider import get_provider_service_nodes_statuses
 from tests.gui.steps.rest.s3 import (
     assert_bucket_exists,
     create_bucket,
 )
+from tests.gui.utils.generic import OnedataService, OnedataServiceState
+from tests.type_definitions import HostDescription, Hosts
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.http_exceptions import HTTPNotFound
+from tests.utils.user_utils import User
 from tests.utils.utils import repeat_failed
 
 
@@ -35,3 +42,28 @@ def ensure_bucket_exists(bucket_name: str) -> None:
     # Do not trust the bucket initializer's exit status. It can succeed after
     # contacting an old MinIO pod during a rolling update.
     assert_bucket_exists(bucket_name)
+
+
+def provider_has_ones3_node(
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: User,
+) -> bool:
+    desc: HostDescription = hosts[provider]
+    host = desc["pod_name"] + "." + desc["hostname"]
+    start = time.time()
+
+    while time.time() - start < WAIT_BACKEND:
+        with suppress(HTTPNotFound):
+            statuses = get_provider_service_nodes_statuses(
+                hosts,
+                provider,
+                onepanel_credentials,
+                OnedataService.ONES3,
+            )
+            if host in statuses and statuses[host] == OnedataServiceState.HEALTHY.value:
+                return True
+
+        time.sleep(0.1)
+
+    return False
