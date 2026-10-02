@@ -78,9 +78,7 @@ def open_command_log(
 ) -> Generator[TextIO, None, None]:
     command_number = _next_command_log_number()
     log_name = _command_log_name(command_name)
-    log_path = (
-        _current_command_logs_dir.get() / f"command-{command_number:03d}-{log_name}.log"
-    )
+    log_path = _current_command_logs_dir.get() / f"command-{command_number:03d}-{log_name}.log"
     with log_path.open("w", encoding="utf-8") as log_file:
         log_file.write(f"Command:\n{command}\n\nOutput:\n")
         log_file.flush()

@@ -8,15 +8,8 @@ from functools import partial
 
 import pytest
 
-from tests.demo_mode.constants import (
-    DEMO_SPACE_NAME,
-    FIRST_ONEPROVIDER_CONTAINER,
-)
-from tests.demo_mode.utils.command_runner import (
-    assert_command_succeeded,
-    run_command_and_wait_to_finish,
-)
-from tests.demo_mode.utils.command_templates import load_command
+from tests.demo_mode.constants import DEMO_SPACE_NAME
+from tests.demo_mode.utils.commands import CommandTemplate
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.rest import (
     create_and_support_space,
@@ -31,31 +24,26 @@ from tests.demo_mode.utils.rest import (
 @log_step("Asserting Onezone name")
 def assert_onezone_name(actual_name: object, expected_name: str) -> None:
     """Assert that Onezone exposes the expected name."""
-    assert (
-        actual_name == expected_name
-    ), f"Expected Onezone name {expected_name!r}, got {actual_name!r}"
+    assert actual_name == expected_name, (
+        f"Expected Onezone name {expected_name!r}, got {actual_name!r}"
+    )
 
 
 @log_step("Asserting Onezone version")
 def assert_onezone_version(actual_version: object, expected_version: str) -> None:
     """Assert that Onezone exposes the expected version."""
-    assert (
-        actual_version == expected_version
-    ), f"Expected Onezone version {expected_version!r}, got {actual_version!r}"
+    assert actual_version == expected_version, (
+        f"Expected Onezone version {expected_version!r}, got {actual_version!r}"
+    )
 
 
 @log_step("Getting demo access token")
-def get_demo_access_token(release: str) -> str:
+def get_demo_access_token() -> str:
     """Get the access token exposed by the demo environment."""
     relative_command_path = "common/get_oneprovider_token.sh"
-    result = run_command_and_wait_to_finish(
-        load_command(relative_command_path, release),
-        relative_command_path,
-        capture_output=True,
-    )
-    assert_command_succeeded(result, relative_command_path)
+    command_output = CommandTemplate(relative_command_path).run()
 
-    access_token = result.stdout.strip()
+    access_token = command_output.strip()
     if not access_token:
         raise AssertionError("The access-token command returned an empty result")
     return access_token
@@ -85,8 +73,7 @@ def assert_file_content(
 ) -> None:
     """Assert that a downloaded file has the expected content."""
     assert actual_content == expected_content, (
-        f"{provider_container} returned {actual_content!r}, "
-        f"expected {expected_content!r}"
+        f"{provider_container} returned {actual_content!r}, expected {expected_content!r}"
     )
 
 
@@ -107,8 +94,7 @@ def assert_oneprovider_version(
 ) -> None:
     """Assert that a Oneprovider exposes the expected version."""
     assert actual_version == expected_version, (
-        f"Expected {provider_container} version {expected_version!r}, got"
-        f" {actual_version!r}"
+        f"Expected {provider_container} version {expected_version!r}, got {actual_version!r}"
     )
 
 
@@ -118,9 +104,9 @@ def assert_oneprovider_ids_are_distinct(
     second_provider_id: str,
 ) -> None:
     """Assert that two Oneprovider IDs are distinct."""
-    assert (
-        first_provider_id != second_provider_id
-    ), f"Distributed Oneproviders expose the same ID: {first_provider_id}"
+    assert first_provider_id != second_provider_id, (
+        f"Distributed Oneproviders expose the same ID: {first_provider_id}"
+    )
 
 
 @log_step("Creating provider space")
@@ -135,11 +121,12 @@ def create_space_for_provider(
 
 @log_step("Getting REST space ID")
 def get_rest_space_id(
+    provider_container: str,
     access_token: str,
 ) -> str:
-    """Get the ID of the demo space accessible through the first Oneprovider."""
+    """Get the ID of the demo space accessible through a Oneprovider."""
     return get_space_id(
-        FIRST_ONEPROVIDER_CONTAINER,
+        provider_container,
         DEMO_SPACE_NAME,
         access_token,
     )
@@ -178,6 +165,6 @@ def assert_provider_does_not_support_space(
         provider_container,
         access_token,
     )
-    assert (
-        space_id not in supported_space_ids
-    ), f"{provider_container} unexpectedly supports space {space_id}"
+    assert space_id not in supported_space_ids, (
+        f"{provider_container} unexpectedly supports space {space_id}"
+    )

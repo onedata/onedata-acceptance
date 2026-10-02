@@ -5,37 +5,17 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
-from functools import partial
 from pathlib import Path
 from shutil import rmtree
 from typing import Final
 
-import pytest
-
 from tests.demo_mode.constants import CONTAINER_NAMES
-from tests.demo_mode.type_definitions import PersistentService
-from tests.demo_mode.utils.command_runner import start_command, stop_command
-from tests.demo_mode.utils.command_templates import load_command
 from tests.utils.docker_utils import remove_containers
 
 HOST_TMP_ENVIRONMENT_VARIABLE: Final = "DEMO_MODE_HOST_TMP"
 PERSISTENCE_DIRECTORY_NAMES: Final = ("oz-pers", "op-pers", "op-storage")
 OWNERSHIP_MARKER_NAME: Final = ".onedata-demo-mode-persistence-test-owned"
 OWNERSHIP_MARKER_CONTENT: Final = "onedata-demo-mode-persistence-test-v1\n"
-
-
-def start_persistent_service(
-    command_path: str,
-    release: str,
-    container_name: str,
-    request: pytest.FixtureRequest,
-) -> PersistentService:
-    """Start a persistent service without waiting and register its cleanup."""
-    command = load_command(command_path, release)
-    process = start_command(command, command_path)
-    request.addfinalizer(partial(stop_command, process))
-
-    return PersistentService(container_name=container_name, process=process)
 
 
 def _host_tmp_path() -> Path:
@@ -71,9 +51,7 @@ def _assert_and_get_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:
 
     if marker_exists:
         if not _is_valid_ownership_marker(marker):
-            raise AssertionError(
-                f"Invalid demo-mode persistence test ownership marker: {marker}"
-            )
+            raise AssertionError(f"Invalid demo-mode persistence test ownership marker: {marker}")
     elif existing_paths:
         formatted_paths = ", ".join(str(path) for path in existing_paths)
         raise AssertionError(

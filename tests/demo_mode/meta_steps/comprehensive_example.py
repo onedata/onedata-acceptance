@@ -15,9 +15,7 @@ def get_comprehensive_example_file_name(command_output: str) -> str:
     """Extract the validated filename from comprehensive-example output."""
     success_message_prefix = "All done! Created a file called "
     output_lines = [
-        line
-        for line in command_output.splitlines()
-        if line.startswith(success_message_prefix)
+        line for line in command_output.splitlines() if line.startswith(success_message_prefix)
     ]
     assert_comprehensive_example_success_message_count(output_lines, command_output)
 

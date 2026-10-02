@@ -7,6 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import subprocess
 from dataclasses import dataclass
 
+from tests.demo_mode.utils.commands import Command
+
 
 @dataclass(frozen=True)
 class RestEndpoint:
@@ -17,11 +19,34 @@ class RestEndpoint:
 
 
 @dataclass(frozen=True)
-class PersistentService:
-    """A persistent demo-mode service and its Docker container."""
+class DemoService:
+    """A demo-mode service, its Docker container, and optional launcher process."""
 
-    container_name: str
-    process: subprocess.Popen[str]
+    container: str
+    process: subprocess.Popen[str] | None = None
+
+    def stop_process(self, timeout: float = 10) -> None:
+        """Stop the launcher process when this service has one."""
+        if self.process is not None:
+            Command.stop_process(self.process, timeout)
+
+
+@dataclass(frozen=True)
+class Onezone(DemoService):
+    """Onezone service in a demo-mode environment."""
+
+
+@dataclass(frozen=True)
+class Oneprovider(DemoService):
+    """Oneprovider service in a demo-mode environment."""
+
+
+@dataclass(frozen=True)
+class DemoEnvironment:
+    """Services that comprise one demo-mode environment."""
+
+    onezone: Onezone
+    oneproviders: tuple[Oneprovider, ...]
 
 
 @dataclass(frozen=True)

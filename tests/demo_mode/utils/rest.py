@@ -10,11 +10,7 @@ from urllib.parse import urlsplit
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.demo_mode.type_definitions import RestEndpoint
-from tests.demo_mode.utils.command_runner import (
-    assert_command_succeeded,
-    run_command_and_wait_to_finish,
-)
-from tests.demo_mode.utils.command_templates import command_path
+from tests.demo_mode.utils.commands import CommandTemplate
 from tests.type_definitions import JsonObject
 from tests.utils.docker_utils import docker_ip
 from tests.utils.rest_utils import (
@@ -39,18 +35,12 @@ def _authorization_headers(access_token: str) -> dict[str, str]:
 
 def _get_onezone_url() -> str:
     relative_command_path = "common/get_onezone_url.sh"
-    command = command_path(relative_command_path).read_text(encoding="utf-8")
-    result = run_command_and_wait_to_finish(
-        command,
-        relative_command_path,
-        capture_output=True,
-    )
-    assert_command_succeeded(result, relative_command_path)
+    command_output = CommandTemplate(relative_command_path).run()
 
-    output_lines = result.stdout.splitlines()
+    output_lines = command_output.splitlines()
     if len(output_lines) != 1 or not output_lines[0].startswith(ONEZONE_URL_PREFIX):
         raise AssertionError(
-            f"The Onezone URL command returned unexpected output: {result.stdout!r}"
+            f"The Onezone URL command returned unexpected output: {command_output!r}"
         )
 
     onezone_url = output_lines[0].removeprefix(ONEZONE_URL_PREFIX)
@@ -70,12 +60,8 @@ def _get_onezone_rest_endpoint() -> RestEndpoint:
             f"The Onezone URL command returned an invalid URL: {onezone_url!r}"
         ) from error
 
-    assert parsed_url.scheme == "https", (
-        f"Expected an HTTPS Onezone URL, got {onezone_url!r}"
-    )
-    assert hostname, (
-        f"Expected the Onezone URL to contain a hostname, got {onezone_url!r}"
-    )
+    assert parsed_url.scheme == "https", f"Expected an HTTPS Onezone URL, got {onezone_url!r}"
+    assert hostname, f"Expected the Onezone URL to contain a hostname, got {onezone_url!r}"
     assert parsed_url.username is None, (
         f"Expected the Onezone URL not to contain a username, got {onezone_url!r}"
     )
@@ -240,9 +226,9 @@ def _wait_for_accessible_space(
     space_id: str,
     access_token: str,
 ) -> str:
-    assert space_id in _list_accessible_space_ids(
-        provider_container, access_token
-    ), f"Space {space_id} has not appeared in {provider_container}"
+    assert space_id in _list_accessible_space_ids(provider_container, access_token), (
+        f"Space {space_id} has not appeared in {provider_container}"
+    )
     return space_id
 
 

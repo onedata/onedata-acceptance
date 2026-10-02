@@ -6,10 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.demo_mode.constants import (
-    FIRST_ONEPROVIDER_CONTAINER,
-    SECOND_ONEPROVIDER_CONTAINER,
-)
 from tests.demo_mode.meta_steps.environment import start_distributed_environment
 from tests.demo_mode.meta_steps.rest import (
     assert_oneproviders_are_distinct,
@@ -32,23 +28,30 @@ def test_distributed_environment(
     second_file_name = "second-provider-rest-test.txt"
     second_file_content = b"Data stored through the second Oneprovider\n"
 
-    start_distributed_environment(release, request)
+    environment = start_distributed_environment(release, request)
+    first_provider, second_provider = environment.oneproviders
     assert_onezone_configuration(release)
 
-    assert_oneproviders_are_distinct(release)
+    assert_oneproviders_are_distinct(
+        first_provider.container,
+        second_provider.container,
+        release,
+    )
 
-    access_token = get_demo_access_token(release)
+    access_token = get_demo_access_token()
     first_space_id = create_space_for_provider(
-        FIRST_ONEPROVIDER_CONTAINER,
+        first_provider.container,
         "demo-mode-first-provider-space",
         access_token,
     )
     second_space_id = create_space_for_provider(
-        SECOND_ONEPROVIDER_CONTAINER,
+        second_provider.container,
         "demo-mode-second-provider-space",
         access_token,
     )
     assert_space_support_is_isolated(
+        first_provider.container,
+        second_provider.container,
         first_space_id,
         second_space_id,
         access_token,
@@ -60,7 +63,7 @@ def test_distributed_environment(
         access_token,
         first_file_content,
         request,
-        provider_container=FIRST_ONEPROVIDER_CONTAINER,
+        provider_container=first_provider.container,
     )
     upload_and_verify_rest_file_content(
         second_space_id,
@@ -68,5 +71,5 @@ def test_distributed_environment(
         access_token,
         second_file_content,
         request,
-        provider_container=SECOND_ONEPROVIDER_CONTAINER,
+        provider_container=second_provider.container,
     )

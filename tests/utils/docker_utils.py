@@ -106,8 +106,7 @@ def remove_containers(
     )
     if remaining_containers:
         raise AssertionError(
-            "Could not remove demo-mode containers within "
-            f"{timeout}s: {', '.join(container_names)}"
+            f"Could not remove demo-mode containers within {timeout}s: {', '.join(container_names)}"
         ) from last_error
 
 

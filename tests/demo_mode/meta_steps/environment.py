@@ -18,72 +18,71 @@ from tests.demo_mode.steps.environment import (
     run_foreground_oneprovider,
     run_foreground_onezone,
 )
+from tests.demo_mode.type_definitions import DemoEnvironment
 
 
 def start_foreground_environment(
     release: str,
     request: pytest.FixtureRequest,
-) -> None:
+) -> DemoEnvironment:
     """Start and await a foreground Onezone and Oneprovider."""
-    onezone_process = run_foreground_onezone(release, request)
-    oneprovider_process = run_foreground_oneprovider(
+    onezone = run_foreground_onezone(release, request)
+    oneprovider = run_foreground_oneprovider(
         release,
         FIRST_ONEPROVIDER_CONTAINER,
-        onezone_process,
+        onezone,
         request,
     )
 
-    await_onezone(release, onezone_process)
-    await_oneprovider(
-        release,
-        FIRST_ONEPROVIDER_CONTAINER,
-        oneprovider_process,
+    await_onezone(onezone)
+    await_oneprovider(oneprovider)
+    return DemoEnvironment(
+        onezone=onezone,
+        oneproviders=(oneprovider,),
     )
 
 
 def start_distributed_environment(
     release: str,
     request: pytest.FixtureRequest,
-) -> None:
+) -> DemoEnvironment:
     """Start and await a foreground Onezone and two Oneproviders."""
-    onezone_process = run_foreground_onezone(release, request)
-    first_oneprovider_process = run_foreground_oneprovider(
+    onezone = run_foreground_onezone(release, request)
+    first_oneprovider = run_foreground_oneprovider(
         release,
         FIRST_ONEPROVIDER_CONTAINER,
-        onezone_process,
+        onezone,
         request,
     )
-    second_oneprovider_process = run_foreground_oneprovider(
+    second_oneprovider = run_foreground_oneprovider(
         release,
         SECOND_ONEPROVIDER_CONTAINER,
-        onezone_process,
+        onezone,
         request,
     )
 
-    await_onezone(release, onezone_process)
-    await_oneprovider(
-        release,
-        FIRST_ONEPROVIDER_CONTAINER,
-        first_oneprovider_process,
-    )
-    await_oneprovider(
-        release,
-        SECOND_ONEPROVIDER_CONTAINER,
-        second_oneprovider_process,
+    await_onezone(onezone)
+    await_oneprovider(first_oneprovider)
+    await_oneprovider(second_oneprovider)
+    return DemoEnvironment(
+        onezone=onezone,
+        oneproviders=(first_oneprovider, second_oneprovider),
     )
 
 
 def start_background_environment(
     release: str,
-    request: pytest.FixtureRequest,
-) -> None:
+) -> DemoEnvironment:
     """Start and await a detached Onezone and Oneprovider."""
-    run_background_onezone(release, request)
-    run_background_oneprovider(
+    onezone = run_background_onezone(release)
+    oneprovider = run_background_oneprovider(
         release,
         FIRST_ONEPROVIDER_CONTAINER,
-        request,
     )
 
-    await_onezone(release)
-    await_oneprovider(release, FIRST_ONEPROVIDER_CONTAINER)
+    await_onezone(onezone)
+    await_oneprovider(oneprovider)
+    return DemoEnvironment(
+        onezone=onezone,
+        oneproviders=(oneprovider,),
+    )

@@ -13,10 +13,9 @@ from tests.demo_mode.constants import (
     FIRST_ONEPROVIDER_CONTAINER,
     ONEZONE_CONTAINER,
 )
-from tests.demo_mode.type_definitions import PersistentService
-from tests.demo_mode.utils.command_runner import stop_command
+from tests.demo_mode.type_definitions import DemoEnvironment, Oneprovider, Onezone
+from tests.demo_mode.utils.commands import CommandTemplate
 from tests.demo_mode.utils.logging import log_step
-from tests.demo_mode.utils.persistence import start_persistent_service
 from tests.demo_mode.utils.rest import get_provider_supported_space_ids
 
 
@@ -24,52 +23,60 @@ from tests.demo_mode.utils.rest import get_provider_supported_space_ids
 def start_persistent_onezone(
     release: str,
     request: pytest.FixtureRequest,
-) -> PersistentService:
+) -> Onezone:
     """Start Onezone using the unmodified persistence command."""
-    return start_persistent_service(
-        "persistency/run_onezone.sh",
-        release,
-        ONEZONE_CONTAINER,
-        request,
+    onezone = Onezone(
+        container=ONEZONE_CONTAINER,
+        process=CommandTemplate(
+            "persistency/run_onezone.sh",
+            release,
+        ).start(),
     )
+    request.addfinalizer(onezone.stop_process)
+    return onezone
 
 
 @log_step("Starting persistent Oneprovider")
 def start_persistent_oneprovider(
     release: str,
-    onezone: PersistentService,
+    onezone: Onezone,
     request: pytest.FixtureRequest,
-) -> PersistentService:
+) -> Oneprovider:
     """Start Oneprovider using the unmodified persistence command."""
-    if onezone.process.poll() is not None:
+    if onezone.process is None or onezone.process.poll() is not None:
         raise AssertionError("Onezone stopped before Oneprovider could be started")
 
-    return start_persistent_service(
-        "persistency/run_oneprovider.sh",
-        release,
-        FIRST_ONEPROVIDER_CONTAINER,
-        request,
+    oneprovider = Oneprovider(
+        container=FIRST_ONEPROVIDER_CONTAINER,
+        process=CommandTemplate(
+            "persistency/run_oneprovider.sh",
+            release,
+        ).start(),
     )
+    request.addfinalizer(oneprovider.stop_process)
+    return oneprovider
 
 
 @log_step("Stopping persistent demo-mode environment")
 def stop_persistent_environment(
-    services: list[PersistentService],
+    environment: DemoEnvironment,
     timeout: float = 60,
 ) -> None:
     """Gracefully stop and reap a persistent demo-mode environment."""
+    services = (*environment.oneproviders, environment.onezone)
     for service in services:
         docker.stop(
-            service.container_name,
+            service.container,
             command_timeout=timeout,
         )
+        if service.process is None:
+            raise AssertionError(f"Persistent service {service.container} has no launcher process")
         try:
             service.process.wait(timeout=timeout)
         except subprocess.TimeoutExpired as error:
-            stop_command(service.process)
+            service.stop_process()
             raise AssertionError(
-                "The command running "
-                f"{service.container_name} did not exit after Docker stop"
+                f"The command running {service.container} did not exit after Docker stop"
             ) from error
 
 
@@ -92,8 +99,7 @@ def assert_provider_id_is_persistent(
 ) -> None:
     """Assert that a provider ID persisted across a restart."""
     assert actual_provider_id == expected_provider_id, (
-        f"Expected provider ID {expected_provider_id!r} after restart, "
-        f"got {actual_provider_id!r}"
+        f"Expected provider ID {expected_provider_id!r} after restart, got {actual_provider_id!r}"
     )
 
 
@@ -108,6 +114,6 @@ def assert_space_support_is_persistent(
         provider_container,
         access_token,
     )
-    assert (
-        space_id in supported_space_ids
-    ), f"Space {space_id} is no longer supported by {provider_container} after restart"
+    assert space_id in supported_space_ids, (
+        f"Space {space_id} is no longer supported by {provider_container} after restart"
+    )

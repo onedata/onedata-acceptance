@@ -24,15 +24,17 @@ def test_run_in_background(
     test_file_name = "background-rest-test.txt"
     test_file_content = b"Onedata demo-mode background REST test\n"
 
-    start_background_environment(release, request)
+    environment = start_background_environment(release)
+    provider_container = environment.oneproviders[0].container
     assert_onezone_configuration(release)
 
-    access_token = get_demo_access_token(release)
-    space_id = get_rest_space_id(access_token)
+    access_token = get_demo_access_token()
+    space_id = get_rest_space_id(provider_container, access_token)
     upload_and_verify_rest_file_content(
         space_id,
         test_file_name,
         access_token,
         test_file_content,
         request,
+        provider_container=provider_container,
     )

@@ -23,13 +23,13 @@ from tests.demo_mode.steps.rest import (
     get_demo_access_token,
     upload_rest_file,
 )
-from tests.demo_mode.type_definitions import PersistentService, PersistentState
+from tests.demo_mode.type_definitions import DemoEnvironment, PersistentState
 
 
 def start_persistent_environment(
     release: str,
     request: pytest.FixtureRequest,
-) -> tuple[PersistentService, PersistentService]:
+) -> DemoEnvironment:
     """Start both persistent commands before awaiting their services."""
     onezone = start_persistent_onezone(release, request)
     oneprovider = start_persistent_oneprovider(
@@ -38,13 +38,12 @@ def start_persistent_environment(
         request,
     )
 
-    await_onezone(release, onezone.process)
-    await_oneprovider(
-        release,
-        oneprovider.container_name,
-        oneprovider.process,
+    await_onezone(onezone)
+    await_oneprovider(oneprovider)
+    return DemoEnvironment(
+        onezone=onezone,
+        oneproviders=(oneprovider,),
     )
-    return onezone, oneprovider
 
 
 def save_persistent_state(
@@ -54,7 +53,7 @@ def save_persistent_state(
 ) -> PersistentState:
     """Create and return state that must survive a demo-mode restart."""
     file_name = "persistence-rest-test.txt"
-    access_token = get_demo_access_token(release)
+    access_token = get_demo_access_token()
     provider_id = get_oneprovider_id(FIRST_ONEPROVIDER_CONTAINER, release)
     space_id = create_space_for_provider(
         FIRST_ONEPROVIDER_CONTAINER,
@@ -83,7 +82,7 @@ def assert_persistence_state(
     state: PersistentState,
 ) -> None:
     """Assert that demo credentials, configuration, and data survived restart."""
-    restarted_access_token = get_demo_access_token(release)
+    restarted_access_token = get_demo_access_token()
     assert_access_token_is_persistent(state.access_token, restarted_access_token)
 
     restarted_provider_id = get_oneprovider_id(FIRST_ONEPROVIDER_CONTAINER, release)

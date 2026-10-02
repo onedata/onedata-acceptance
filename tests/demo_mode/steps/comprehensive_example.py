@@ -4,15 +4,10 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import subprocess
 from typing import Final
 
-from tests.demo_mode.utils.command_runner import (
-    assert_command_succeeded,
-    run_command_and_wait_to_finish,
-)
-from tests.demo_mode.utils.command_templates import load_command
-from tests.demo_mode.utils.logging import log_running_command, log_step
+from tests.demo_mode.utils.commands import CommandTemplate
+from tests.demo_mode.utils.logging import log_step
 
 MIN_FILENAME_MESSAGE_PARTS: Final = 3
 
@@ -20,22 +15,8 @@ MIN_FILENAME_MESSAGE_PARTS: Final = 3
 @log_step("Running comprehensive example")
 def run_comprehensive_example(release: str, timeout: float = 600) -> str:
     """Run the comprehensive example command and return its output."""
-    command = load_command("comprehensive_example/example.sh", release)
-    log_running_command(command)
-    try:
-        result = run_command_and_wait_to_finish(
-            command,
-            "comprehensive_example/example.sh",
-            timeout=timeout,
-            capture_output=True,
-        )
-    except subprocess.TimeoutExpired as error:
-        raise AssertionError(
-            f"Comprehensive example did not finish within {timeout}s"
-        ) from error
-    assert_command_succeeded(result, "comprehensive_example/example.sh")
-
-    return result.stdout
+    command = CommandTemplate("comprehensive_example/example.sh", release)
+    return command.run(timeout=timeout)
 
 
 @log_step("Checking comprehensive example success message")
@@ -64,6 +45,6 @@ def assert_comprehensive_example_message_contains_file_name(
 @log_step("Checking comprehensive example filename")
 def assert_comprehensive_example_file_name(file_name: str) -> None:
     """Assert that the comprehensive example created a text file."""
-    assert file_name.endswith(
-        ".txt"
-    ), f"Expected comprehensive example to create a .txt file, got {file_name!r}"
+    assert file_name.endswith(".txt"), (
+        f"Expected comprehensive example to create a .txt file, got {file_name!r}"
+    )

@@ -40,6 +40,20 @@ The test code is divided into:
 * [meta_steps](meta_steps) - reusable sequences of steps,
 * [utils](utils) - Docker command, REST, logging, and persistence helpers.
 
+Shell examples remain ordinary files under [commands](commands). Python code
+accesses them through `CommandTemplate`, which validates paths and fills in the
+release and container placeholders. The resulting `Command` owns execution,
+logging, timeouts, retries, and process termination. It is also used for the
+dynamically composed Python-access command, so there is no parallel procedural
+command-runner API.
+
+Started services are represented by `Onezone` and `Oneprovider`. Composite
+startup steps return a `DemoEnvironment`, so callers can use the actual service
+containers and launcher processes without relying on parallel tuples or
+repeating fixed container names. A `None` process means that the launch command
+finished after starting a detached container, or that an all-in-one example
+script owns the service lifecycle.
+
 
 ## Steps and meta steps
 

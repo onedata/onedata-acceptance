@@ -21,9 +21,9 @@ def assert_python_access_example_output(
     expected_output: str,
 ) -> None:
     """Assert that the Python access example returned the expected output."""
-    assert (
-        command_output == expected_output
-    ), f"Expected Python access output {expected_output!r}, got {command_output!r}"
+    assert command_output == expected_output, (
+        f"Expected Python access output {expected_output!r}, got {command_output!r}"
+    )
 
 
 @log_step("Running Python access example")
@@ -35,13 +35,10 @@ def run_python_access_example(
     environment_root = prepare_python_access_directory(request)
     setup_log_path = environment_root / "setup.log"
     command = build_python_access_command(setup_log_path)
-    result = run_python_access_command(command, environment_root, timeout)
-    setup_log = read_setup_log(setup_log_path)
-
-    assert result.returncode == 0, (
-        "Python access example failed with exit code "
-        f"{result.returncode}:\nsetup output:\n{setup_log}\n"
-        f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
-    )
-
-    return result.stdout
+    try:
+        return run_python_access_command(command, environment_root, timeout)
+    except AssertionError as error:
+        setup_log = read_setup_log(setup_log_path)
+        raise AssertionError(
+            f"Python access example failed:\nsetup output:\n{setup_log}\n{error}"
+        ) from error

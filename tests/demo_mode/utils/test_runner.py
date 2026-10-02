@@ -18,9 +18,7 @@ def _read_host_id(variable: str) -> int:
     try:
         return int(os.environ.pop(variable))
     except KeyError as error:
-        raise RuntimeError(
-            f"Required environment variable {variable} is not set"
-        ) from error
+        raise RuntimeError(f"Required environment variable {variable} is not set") from error
 
 
 def _prepare_runner_home(host_uid: int, host_gid: int) -> None:
