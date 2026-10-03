@@ -12,7 +12,7 @@ from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from contextlib import suppress as contextlib_suppress
 from datetime import datetime
-from enum import Enum
+from enum import Enum, StrEnum
 from functools import partial
 from itertools import islice
 from time import sleep
@@ -526,7 +526,7 @@ class OnedataService(Enum):
     ONES3 = "ones3"
 
 
-class OnedataServiceState(Enum):
+class OneS3ServiceState(StrEnum):
     STOPPED = "stopped"
     STARTING = "starting"
     HEALTHY = "healthy"

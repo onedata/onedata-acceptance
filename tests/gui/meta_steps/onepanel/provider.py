@@ -43,6 +43,7 @@ from tests.gui.steps.oneprovider.common import (
 from tests.gui.steps.rest.provider import (
     add_provider_service_node,
     assert_provider_service_nodes_statuses,
+    get_provider_service_nodes_statuses,
     set_provider_service_node_state,
 )
 from tests.gui.type_definitions import TmpMemory
@@ -50,6 +51,7 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.generic import (
     OnedataService,
+    OneS3ServiceState,
     wait_for_visible_element_using_getter,
 )
 from tests.type_definitions import HostDescription, Hosts, JsonObject, SeleniumDrivers
@@ -257,7 +259,7 @@ def change_provider_name_if_name_is_different_than_given(
 
 @wt(
     parsers.parse(
-        'user {user} sees that oneS3 node in provider cluster in {provider} is of status "{status}"'
+        'user {user} sees that oneS3 node in provider cluster in "{provider}" is of status "{status}"'
     )
 )
 def assert_provider_cluster_ones3_node_status_rest(
@@ -267,7 +269,7 @@ def assert_provider_cluster_ones3_node_status_rest(
     status: str,
 ) -> None:
     host = f"{hosts[provider]['pod_name']}.{hosts[provider]['hostname']}"
-    expected_statuses = {host: status}
+    expected_statuses = {host: OneS3ServiceState(status)}
     assert_provider_service_nodes_statuses(
         hosts,
         provider,
@@ -287,6 +289,7 @@ def add_provider_cluster_ones3_node_rest(
     desc: HostDescription = hosts[provider]
     host = desc["pod_name"] + "." + desc["hostname"]
     data: JsonObject = {"hosts": [host]}
+
     try:
         add_provider_service_node(
             hosts,
@@ -296,14 +299,23 @@ def add_provider_cluster_ones3_node_rest(
             OnedataService.ONES3,
         )
     except HTTPConflict:
-        set_provider_service_node_state(
+        statuses = get_provider_service_nodes_statuses(
             hosts,
-            host,
             provider,
             onepanel_credentials,
             OnedataService.ONES3,
-            "started",
         )
+
+        if statuses.get(host) == OneS3ServiceState.STOPPED:
+            set_provider_service_node_state(
+                hosts,
+                host,
+                provider,
+                onepanel_credentials,
+                OnedataService.ONES3,
+                "started",
+            )
+
     _register_ones3_node_finalizer(
         request,
         hosts,
@@ -316,7 +328,7 @@ def add_provider_cluster_ones3_node_rest(
 @wt(
     parsers.re(
         r"user (?P<user>.*?) (?P<option>starts|stops) oneS3 node in provider "
-        r"cluster in (?P<provider>.*?)"
+        r'cluster in "(?P<provider>.*?)"'
     )
 )
 def stop_provider_cluster_ones3_node_rest(

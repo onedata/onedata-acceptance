@@ -10,7 +10,7 @@ from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
 from tests.gui.constants import WAIT_BACKEND
-from tests.gui.utils.generic import OnedataService
+from tests.gui.utils.generic import OnedataService, OneS3ServiceState
 from tests.type_definitions import Hosts, JsonObject
 from tests.utils.rest_utils import (
     get_panel_rest_path,
@@ -82,7 +82,7 @@ def get_provider_service_nodes_statuses(
     provider: str,
     onepanel_credentials: User,
     service: OnedataService,
-) -> dict[str, str]:
+) -> dict[str, OneS3ServiceState]:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -93,7 +93,7 @@ def get_provider_service_nodes_statuses(
         path=get_panel_rest_path("provider", service.value),
         auth=(onepanel_username, onepanel_password),
     )
-    return res.json()
+    return {host: OneS3ServiceState(status) for host, status in res.json().items()}
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -102,7 +102,7 @@ def assert_provider_service_nodes_statuses(
     provider: str,
     onepanel_credentials: User,
     service: OnedataService,
-    expected_statuses: dict[str, str],
+    expected_statuses: dict[str, OneS3ServiceState],
 ) -> None:
     actual_statuses = get_provider_service_nodes_statuses(
         hosts, provider, onepanel_credentials, service

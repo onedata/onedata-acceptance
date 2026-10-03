@@ -16,7 +16,7 @@ from tests.gui.steps.rest.s3 import (
     assert_bucket_exists,
     create_bucket,
 )
-from tests.gui.utils.generic import OnedataService, OnedataServiceState
+from tests.gui.utils.generic import OnedataService, OneS3ServiceState
 from tests.type_definitions import HostDescription, Hosts
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPNotFound
@@ -61,7 +61,7 @@ def provider_has_ones3_node(
                 onepanel_credentials,
                 OnedataService.ONES3,
             )
-            if host in statuses and statuses[host] == OnedataServiceState.HEALTHY.value:
+            if statuses.get(host) == OneS3ServiceState.HEALTHY:
                 return True
 
         time.sleep(0.1)
