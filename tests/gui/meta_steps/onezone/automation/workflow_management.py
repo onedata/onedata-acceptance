@@ -9,10 +9,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 from ast import literal_eval
+from typing import cast
 
 import yaml
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,
     choose_file_as_initial_workflow_value_for_store,
@@ -44,6 +48,7 @@ from tests.gui.steps.onezone.automation.automation_basic import (
     go_to_inventory_subpage,
     upload_workflow_as_json,
     upload_workflow_from_repository,
+    wait_for_workflow_editor_to_expand,
 )
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar,
@@ -55,19 +60,21 @@ from tests.gui.steps.onezone.spaces import (
     click_on_automation_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.oneprovider.automation import NumberInput
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def create_workflow_using_gui(selenium, browser_id, workflow_name):
+def create_workflow_using_gui(
+    selenium: SeleniumDrivers, browser_id: str, workflow_name: str
+) -> None:
     click_add_new_button_in_menu_bar(selenium, browser_id, "Add new workflow")
-    write_text_into_workflow_name_on_main_workflows_page(
-        selenium, browser_id, workflow_name
-    )
+    write_text_into_workflow_name_on_main_workflows_page(selenium, browser_id, workflow_name)
 
     confirm_workflow_creation(selenium, browser_id)
 
@@ -79,19 +86,20 @@ def create_workflow_using_gui(selenium, browser_id, workflow_name):
     )
 )
 def upload_and_assert_workflow_to_inventory_using_gui(
-    selenium,
-    browser_id,
-    inventory,
-    workflow,
-    file_name,
-    tmp_memory,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    file_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     driver = selenium[browser_id]
     click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
     upload_workflow_as_json(selenium, browser_id, file_name)
     _wait_for_modal_to_appear(driver, browser_id, "Upload workflow", tmp_memory)
     click_modal_button(selenium, browser_id, "Apply", "Upload workflow")
+    wait_for_workflow_editor_to_expand(driver)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
 
     assert_workflow_exists(selenium, browser_id, workflow, "sees")
@@ -104,11 +112,13 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     )
 )
 def given_upload_workflow_from_automation_examples(
-    selenium, browser_id, inventory, workflow, tmp_memory
-):
-    upload_workflow_from_automation_examples(
-        selenium, browser_id, inventory, workflow, tmp_memory
-    )
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    upload_workflow_from_automation_examples(selenium, browser_id, inventory, workflow, tmp_memory)
 
 
 @wt(
@@ -118,11 +128,13 @@ def given_upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples(
-    selenium, browser_id, inventory, workflow, tmp_memory
-):
-    _upload_workflow_from_automation_examples(
-        selenium, browser_id, inventory, workflow, tmp_memory
-    )
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    _upload_workflow_from_automation_examples(selenium, browser_id, inventory, workflow, tmp_memory)
 
 
 @wt(
@@ -132,13 +144,13 @@ def upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples_with_given_method(
-    selenium,
-    browser_id,
-    inventory,
-    workflow,
-    tmp_memory,
-    method,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+    method: str,
+) -> None:
     _upload_workflow_from_automation_examples(
         selenium,
         browser_id,
@@ -150,13 +162,13 @@ def upload_workflow_from_automation_examples_with_given_method(
 
 
 def _upload_workflow_from_automation_examples(
-    selenium,
-    browser_id,
-    inventory,
-    workflow,
-    tmp_memory,
-    method=None,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+    method: str | None = None,
+) -> None:
     subpage = "workflows"
     modal = "Upload workflow"
     button = "Apply"
@@ -178,7 +190,7 @@ def _upload_workflow_from_automation_examples(
     assert_workflow_exists(selenium, browser_id, visible_workflow_name, "sees")
 
 
-def change_workflow_dump_name_to_visible_name(workflow_name):
+def change_workflow_dump_name_to_visible_name(workflow_name: str) -> str:
     data = get_workflow_dump(workflow_name)
     return data["name"]
 
@@ -191,13 +203,13 @@ def change_workflow_dump_name_to_visible_name(workflow_name):
     )
 )
 def execute_workflow_with_input_config(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    config,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space: str,
+    ordinal: str,
+    workflow: str,
+    config: str,
+) -> None:
     """Adjust configuration of input values for stores according to given config.
 
     Config format given in yaml is as follows:
@@ -225,25 +237,31 @@ def execute_workflow_with_input_config(
 
 
 def _execute_workflow_with_input_config(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    config,
-):
-    spaces = "spaces"
-    automation_workflows = "Automation Workflows"
-    tab_name = "Run workflow"
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space: str,
+    ordinal: str,
+    workflow: str,
+    config: str,
+) -> None:
+    driver = selenium[browser_id]
 
     try:
-        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, spaces, space)
+        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, "spaces", space)
     except IndexError:
         pass
+    except (
+        ElementNotInteractableException,
+        NoSuchElementException,
+        PageObjectNotFoundError,
+    ):
+        driver.switch_to.default_content()
+        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, "spaces", space)
+
     click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, automation_workflows
+        selenium, browser_id, space, "Automation Workflows"
     )
-    click_button_in_navigation_tab(selenium, browser_id, tab_name)
+    click_button_in_navigation_tab(selenium, browser_id, "Run workflow")
     choose_workflow_revision_to_run(selenium, browser_id, ordinal, workflow)
 
     # wait a moment for workflow revision to open
@@ -296,22 +314,21 @@ def _execute_workflow_with_input_config(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
-        ' of "(?P<workflow>.*)" and waits extended time for workflow '
-        "to finish, using (?P<data_type>.*) as initial "
-        'value: "(?P<item_list>.*)" in "(?P<space>.*)" '
-        "space"
+        r"user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
+        r' of "(?P<workflow>.*)" and waits extended time for workflow '
+        r"to finish, using (?P<data_type>.*) as initial "
+        r'value: "(?P<serialized_value>.*)" in "(?P<space>.*)" space'
     )
 )
 def execute_workflow_and_wait(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    item_list,
-    data_type,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space: str,
+    ordinal: str,
+    workflow: str,
+    serialized_value: str,
+    data_type: str,
+) -> None:
 
     execute_workflow(
         browser_id,
@@ -319,7 +336,7 @@ def execute_workflow_and_wait(
         space,
         ordinal,
         workflow,
-        item_list,
+        serialized_value,
         data_type,
     )
 
@@ -327,68 +344,96 @@ def execute_workflow_and_wait(
     expand_first_executed_workflow_record(selenium, browser_id)
 
 
+def _provide_range_initial_workflow_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    serialized_value: str,
+) -> None:
+    parsed_range_values = literal_eval(serialized_value)
+    if isinstance(parsed_range_values, list):
+        for range_value in parsed_range_values:
+            choose_range_as_initial_workflow_value(
+                selenium, browser_id, cast(dict[str, object], range_value)
+            )
+    else:
+        choose_range_as_initial_workflow_value(
+            selenium,
+            browser_id,
+            cast(dict[str, object], parsed_range_values),
+            False,
+        )
+
+
+def _provide_number_initial_workflow_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    serialized_value: str,
+) -> None:
+    driver = selenium[browser_id]
+    parsed_number_values = literal_eval(serialized_value)
+    if isinstance(parsed_number_values, list):
+        for number_value in parsed_number_values:
+            number_inputs = get_input_element(driver, "numbers_input")
+            cast(NumberInput, number_inputs[len(number_inputs) - 1]).input = str(number_value)
+    else:
+        number_inputs = OPLoggedIn(driver).automation_page.numbers_input
+        cast(NumberInput, number_inputs[len(number_inputs) - 1]).input = serialized_value
+
+
+def _provide_boolean_initial_workflow_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    serialized_value: str,
+) -> None:
+    driver = selenium[browser_id]
+    parsed_boolean_values = json.loads(serialized_value)
+    if isinstance(parsed_boolean_values, list):
+        for boolean_value in parsed_boolean_values:
+            boolean_inputs = get_input_element(driver, "booleans_input")
+            boolean_inputs[len(boolean_inputs) - 1].click()
+            Popups(driver).boolean_values.options[str(boolean_value).lower()].click()
+
+
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
-        ' of "(?P<workflow>.*)", using (?P<data_type>.*) as initial '
-        'value: "(?P<item_list>.*)" in "(?P<space>.*)" '
-        "space"
+        r"user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision"
+        r' of "(?P<workflow>.*)", using (?P<data_type>.*) as initial '
+        r'value: "(?P<serialized_value>.*)" in "(?P<space>.*)" space'
     )
 )
 def execute_workflow(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    item_list,
-    data_type,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space: str,
+    ordinal: str,
+    workflow: str,
+    serialized_value: str,
+    data_type: str,
+) -> None:
     spaces = "spaces"
     automation_workflows = "Automation Workflows"
     tab_name = "Run workflow"
     driver = selenium[browser_id]
 
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, spaces, space)
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, automation_workflows
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space, automation_workflows)
     click_button_in_navigation_tab(selenium, browser_id, tab_name)
     choose_workflow_revision_to_run(selenium, browser_id, ordinal, workflow)
     # wait a moment for workflow revision to open
     time.sleep(1)
     if "range" in data_type:
-        item_list = literal_eval(item_list)
-        if isinstance(item_list, list):
-            for item in item_list:
-                choose_range_as_initial_workflow_value(selenium, browser_id, item)
-        else:
-            choose_range_as_initial_workflow_value(
-                selenium, browser_id, item_list, False
-            )
+        _provide_range_initial_workflow_value(selenium, browser_id, serialized_value)
     elif "number" in data_type:
-        items = literal_eval(item_list)
-        if isinstance(items, list):
-            for number in items:
-                numbers = get_input_element(driver, "numbers_input")
-                numbers[len(numbers) - 1].input = str(number)
-        else:
-            numbers = OPLoggedIn(driver).automation_page.numbers_input
-            numbers[len(numbers) - 1].input = str(item_list)
+        _provide_number_initial_workflow_value(selenium, browser_id, serialized_value)
     elif "string" in data_type:
-        OPLoggedIn(driver).automation_page.string_input.input = item_list
+        OPLoggedIn(driver).automation_page.string_input.input = serialized_value
     elif "boolean" in data_type:
-        items = json.loads(item_list)
-        if isinstance(items, list):
-            for boolean in items:
-                booleans = get_input_element(driver, "booleans_input")
-                booleans[len(booleans) - 1].click()
-                Popups(driver).boolean_values.options[str(boolean).lower()].click()
+        _provide_boolean_initial_workflow_value(selenium, browser_id, serialized_value)
     else:
         choose_file_as_initial_workflow_value(
             selenium,
             browser_id,
-            item_list,
+            serialized_value,
             data_type,
         )
 
@@ -402,13 +447,13 @@ def execute_workflow(
     )
 )
 def modify_data_type_in_store(
-    selenium,
-    browser_id,
-    store_name,
-    value,
-    menu,
-    tmp_memory,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    store_name: str,
+    value: str,
+    menu: str,
+    tmp_memory: TmpMemory,
+) -> None:
     driver = selenium[browser_id]
     dropdown_menu = f"{menu} dropdown menu"
     button = "OK"

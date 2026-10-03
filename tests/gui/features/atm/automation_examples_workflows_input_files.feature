@@ -27,7 +27,7 @@ Feature: Automation examples input files test
 
 
   Scenario Outline: User sees desirable information in file metadata after execution of uploaded "detect-file-formats" workflow and input file <example_file_name>
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
     And user of browser uploads "bagit-uploader" workflow from automation-examples repository to "inventory1" inventory
@@ -62,7 +62,7 @@ Feature: Automation examples input files test
 
 
   Scenario Outline: User sees desirable information in file metadata after execution of uploaded "detect-file-mime-formats" workflow and input file <example_file_name>
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-mime-formats" workflow from automation-examples repository to "inventory1" inventory
 
@@ -94,7 +94,7 @@ Feature: Automation examples input files test
 
 
   Scenario: User sees successful execution of uploaded "annotate-images" workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "annotate-images" workflow from automation-examples repository to "inventory1" inventory
 

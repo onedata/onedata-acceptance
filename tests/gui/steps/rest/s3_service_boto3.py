@@ -1,20 +1,23 @@
-"""This module contains gherkin steps to run acceptance tests featuring
-OneS3 calls using boto3 lib.
-"""
+# ruff: noqa: N803 - boto3 keyword names are part of the external API
+"""Low-level OneS3 helpers using the boto3 library."""
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
+from collections.abc import Callable
+from typing import Any, Protocol, TypedDict, cast
 
-import boto3  # pylint: disable=import-error
+import boto3
 import pytest
-from botocore.config import Config  # pylint: disable=import-error
+from botocore.config import Config
 from botocore.exceptions import ClientError  # pylint: disable=import-error
 
 from tests import ONES3_PORT
-from tests.gui.utils.generic import parse_seq
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq
+from tests.type_definitions import Hosts, Tokens
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -28,7 +31,13 @@ SECRET_KEY = "secretKey"
 S3_REGION_NAME = "pl-reg-k1"
 
 
-def expect_error(operation, *args, error_code=None, message_contains=None, **kwargs):
+def expect_error(
+    operation: Callable[..., Any],
+    *args: Any,
+    error_code: int | None = None,
+    message_contains: str | None = None,
+    **kwargs,
+):
     with pytest.raises(ClientError) as exc:
         operation(*args, **kwargs)
 
@@ -37,9 +46,9 @@ def expect_error(operation, *args, error_code=None, message_contains=None, **kwa
     message = error.get("Message", "")
 
     if error_code is not None:
-        assert (
-            code == error_code
-        ), f"Expected error code {error_code}, got {code}, full error: {exc.value}"
+        assert code == error_code, (
+            f"Expected error code {error_code}, got {code}, full error: {exc.value}"
+        )
 
     if message_contains is not None:
         assert message_contains in message, (
@@ -49,12 +58,12 @@ def expect_error(operation, *args, error_code=None, message_contains=None, **kwa
 
 
 def run_ones3_operation(
-    tmp_memory,
-    tokens,
-    hosts,
-    operation,
-    *operation_args,
-    expected_error=None,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+    operation: Callable[..., Any],
+    *operation_args: Any,
+    expected_error: dict[str, Any] | None = None,
 ):
     s3 = get_s3client(tmp_memory, tokens, hosts)
 
@@ -64,7 +73,37 @@ def run_ones3_operation(
     return operation(s3, *operation_args)
 
 
-def create_s3client(s3_endpoint, access_token, secret_key):
+class S3Bucket(TypedDict):
+    Name: str
+
+
+class ObjectDescription(TypedDict):
+    Key: str
+
+
+class ResponseMetadata(TypedDict):
+    HTTPStatusCode: int
+
+
+class ReadableBody(Protocol):
+    def read(self) -> bytes: ...
+
+
+class S3Client(Protocol):
+    def list_buckets(self) -> dict[str, list[S3Bucket]]: ...
+
+    def head_bucket(self, *, Bucket: str) -> dict[str, ResponseMetadata]: ...
+
+    def download_file(self, *, Bucket: str, Key: str, Filename: str) -> None: ...
+
+    def put_object(self, *, Bucket: str, Key: str, Body: bytes) -> object: ...
+
+    def get_object(self, *, Bucket: str, Key: str) -> dict[str, ReadableBody]: ...
+
+    def list_objects_v2(self, *, Bucket: str) -> dict[str, list[ObjectDescription]]: ...
+
+
+def create_s3client(s3_endpoint: str, access_token: str, secret_key: str) -> S3Client:
     s3_config = Config(
         # currently region_name can be set arbitrarily
         region_name=S3_REGION_NAME,
@@ -75,22 +114,25 @@ def create_s3client(s3_endpoint, access_token, secret_key):
         s3={"addressing_style": "path"},
     )
 
-    return boto3.client(
-        service_name="s3",
-        endpoint_url=s3_endpoint,
-        verify=False,
-        region_name=S3_REGION_NAME,
-        config=s3_config,
-        aws_access_key_id=access_token,
-        aws_secret_access_key=secret_key,
+    return cast(
+        S3Client,
+        boto3.client(
+            service_name="s3",
+            endpoint_url=s3_endpoint,
+            verify=False,
+            region_name=S3_REGION_NAME,
+            config=s3_config,
+            aws_access_key_id=access_token,
+            aws_secret_access_key=secret_key,
+        ),
     )
 
 
-def get_s3client(tmp_memory, tokens, hosts):
+def get_s3client(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts):
     token_name = S3_CONFIG["token"]
     if token_name in tmp_memory["s3 client"]:
         return tmp_memory["s3 client"][token_name]
-    s3_endpoint = f"https://{hosts["oneprovider-1"]["hostname"]}:{ONES3_PORT}"
+    s3_endpoint = f"https://{hosts['oneprovider-1']['hostname']}:{ONES3_PORT}"
     tmp_memory["s3 client"][token_name] = create_s3client(
         s3_endpoint, tokens[token_name]["token"], SECRET_KEY
     )
@@ -98,42 +140,41 @@ def get_s3client(tmp_memory, tokens, hosts):
 
 
 @wt(parsers.parse('user starts using token "{token_name}" in OneS3'))
-def wt_start_using_token_for_s3_client(token_name):
+def wt_start_using_token_for_s3_client(token_name: str):
     S3_CONFIG["token"] = token_name
 
 
-def download_file_from_bucket(s3, bucket_name, file_path, tmpdir, user):
+def download_file_from_bucket(
+    s3: S3Client, bucket_name: str, file_path: str, tmpdir: str, user: str
+):
     home_dir = tmpdir.join(user, "download")
     os.makedirs(home_dir, exist_ok=True)
     local_path = os.path.join(home_dir, file_path)
     s3.download_file(Bucket=bucket_name, Key=file_path, Filename=local_path)
 
 
-@wt(
-    parsers.parse(
-        'using OneS3, user {user} downloads "{file_name}" from "{space_name}"'
-    )
-)
-def wt_download_file_from_bucket(
-    space_name, file_name, tmpdir, user, tmp_memory, tokens, hosts
-):
+@wt(parsers.parse('using OneS3, user {user} downloads "{file_name}" from "{space_name}"'))
+def wt_download_file_from_bucket(space_name, file_name, tmpdir, user, tmp_memory, tokens, hosts):
     s3 = get_s3client(tmp_memory, tokens, hosts)
     download_file_from_bucket(s3, space_name, file_name, tmpdir, user)
 
 
-def list_buckets(s3):
+def list_buckets(s3: S3Client) -> list[str]:
     return [bucket["Name"] for bucket in s3.list_buckets()["Buckets"]]
 
 
 @wt(
-    parsers.parse(
-        "using OneS3 and list buckets boto3 function, user {user} can see spaces"
-        ' "{spaces_list}"'
+    parsers.re(
+        rf"using OneS3 and list buckets boto3 function, user (?P<browser_id>\w+?) can see spaces (?P<spaces_list>{ELEMENTS_SEQUENCE_PATTERN})"
     )
 )
-@wt(parsers.parse('using OneS3, user {user} can see spaces "{spaces_list}"'))
+@wt(
+    parsers.re(
+        rf"using OneS3, user (?P<browser_id>\w+?) can see spaces (?P<spaces_list>{ELEMENTS_SEQUENCE_PATTERN})"
+    )
+)
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
-def wt_assert_listed_buckets(spaces_list, tmp_memory, tokens, hosts):
+def wt_assert_listed_buckets(spaces_list: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts):
     actual_spaces = run_ones3_operation(
         tmp_memory,
         tokens,
@@ -143,13 +184,13 @@ def wt_assert_listed_buckets(spaces_list, tmp_memory, tokens, hosts):
 
     spaces_list = parse_seq(spaces_list)
 
-    assert set(actual_spaces) == set(
-        spaces_list
-    ), f"Expected spaces: {spaces_list}, got: {actual_spaces}"
+    assert set(actual_spaces) == set(spaces_list), (
+        f"Expected spaces: {spaces_list}, got: {actual_spaces}"
+    )
 
 
 @wt(parsers.parse("using OneS3, user {user} fails to list spaces"))
-def wt_fail_list_buckets(tmp_memory, tokens, hosts):
+def wt_fail_list_buckets(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts):
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -159,10 +200,9 @@ def wt_fail_list_buckets(tmp_memory, tokens, hosts):
     )
 
 
-def does_bucket_exist(s3, bucket_name):
-    return (
-        s3.head_bucket(Bucket=bucket_name)["ResponseMetadata"]["HTTPStatusCode"] == 200
-    )
+def does_bucket_exist(s3: S3Client, bucket_name: str) -> bool:
+    success_code = 200
+    return s3.head_bucket(Bucket=bucket_name)["ResponseMetadata"]["HTTPStatusCode"] == success_code
 
 
 @wt(
@@ -171,7 +211,7 @@ def does_bucket_exist(s3, bucket_name):
         ' space "{space_name}"'
     )
 )
-def wt_assert_bucket_exists(space_name, tmp_memory, tokens, hosts):
+def wt_assert_bucket_exists(space_name: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts):
     exists = run_ones3_operation(
         tmp_memory,
         tokens,
@@ -198,9 +238,7 @@ def create_file_in_bucket(s3, bucket_name, file_name, file_content):
         '"{file_content}" in "{space_name}"'
     )
 )
-def wt_create_file_in_bucket(
-    space_name, file_name, file_content, tmp_memory, tokens, hosts
-):
+def wt_create_file_in_bucket(space_name, file_name, file_content, tmp_memory, tokens, hosts):
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -274,11 +312,7 @@ def wt_delete_file_in_bucket(space_name, file_name, tmp_memory, tokens, hosts):
     )
 
 
-@wt(
-    parsers.parse(
-        'using OneS3, user {user} fails to delete "{file_name}" in "{space_name}"'
-    )
-)
+@wt(parsers.parse('using OneS3, user {user} fails to delete "{file_name}" in "{space_name}"'))
 def wt_fail_to_delete_file_in_bucket(space_name, file_name, tmp_memory, tokens, hosts):
     run_ones3_operation(
         tmp_memory,
@@ -335,8 +369,7 @@ def wt_assert_file_content_read_from_bucket(
     )
 
     assert actual_content == file_content, (
-        f"Actual content:\n{actual_content}\n!= expected:\n{file_content}\n"
-        f"for file {file_name}"
+        f"Actual content:\n{actual_content}\n!= expected:\n{file_content}\nfor file {file_name}"
     )
 
 
@@ -348,11 +381,7 @@ def list_bucket_content(s3, bucket_name):
 
 
 @wt(parsers.parse('using OneS3, user {user} can see items {items} in "{space_name}"'))
-@wt(
-    parsers.parse(
-        'using OneS3, user {user} can see only items {items} in "{space_name}"'
-    )
-)
+@wt(parsers.parse('using OneS3, user {user} can see only items {items} in "{space_name}"'))
 def wt_assert_bucket_content(space_name, items, tmp_memory, tokens, hosts):
     actual_content = run_ones3_operation(
         tmp_memory,
@@ -497,11 +526,7 @@ def delete_file_tagging_in_bucket(s3, bucket_name, file_name):
     )
 
 
-@wt(
-    parsers.parse(
-        'using OneS3, user {user} deletes tags from "{file_name}" in "{space_name}"'
-    )
-)
+@wt(parsers.parse('using OneS3, user {user} deletes tags from "{file_name}" in "{space_name}"'))
 def wt_delete_file_tagging_in_bucket(space_name, file_name, tmp_memory, tokens, hosts):
     run_ones3_operation(
         tmp_memory,
@@ -515,13 +540,10 @@ def wt_delete_file_tagging_in_bucket(space_name, file_name, tmp_memory, tokens, 
 
 @wt(
     parsers.parse(
-        'using OneS3, user {user} fails to delete tags from "{file_name}" '
-        'in "{space_name}"'
+        'using OneS3, user {user} fails to delete tags from "{file_name}" in "{space_name}"'
     )
 )
-def wt_fail_to_delete_file_tagging_in_bucket(
-    space_name, file_name, tmp_memory, tokens, hosts
-):
+def wt_fail_to_delete_file_tagging_in_bucket(space_name, file_name, tmp_memory, tokens, hosts):
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -542,11 +564,7 @@ def put_file_acl_in_bucket(s3, bucket_name, file_name, acl):
     )
 
 
-@wt(
-    parsers.parse(
-        'using OneS3, user {user} puts ACL "{acl}" on "{file_name}" in "{space_name}"'
-    )
-)
+@wt(parsers.parse('using OneS3, user {user} puts ACL "{acl}" on "{file_name}" in "{space_name}"'))
 def wt_put_file_acl_in_bucket(space_name, file_name, acl, tmp_memory, tokens, hosts):
     run_ones3_operation(
         tmp_memory,
@@ -561,13 +579,10 @@ def wt_put_file_acl_in_bucket(space_name, file_name, acl, tmp_memory, tokens, ho
 
 @wt(
     parsers.parse(
-        'using OneS3, user {user} fails to put ACL "{acl}" '
-        'on "{file_name}" in "{space_name}"'
+        'using OneS3, user {user} fails to put ACL "{acl}" on "{file_name}" in "{space_name}"'
     )
 )
-def wt_fail_to_put_file_acl_in_bucket(
-    space_name, file_name, acl, tmp_memory, tokens, hosts
-):
+def wt_fail_to_put_file_acl_in_bucket(space_name, file_name, acl, tmp_memory, tokens, hosts):
     run_ones3_operation(
         tmp_memory,
         tokens,

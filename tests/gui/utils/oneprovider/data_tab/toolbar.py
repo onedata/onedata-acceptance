@@ -25,7 +25,7 @@ class DataTopToolBar(PageObject):
 
     _upload_input = WebElement("input#toolbar-file-browse")
 
-    def upload_files(self, files):
+    def upload_files(self, files: str) -> None:
         """This interaction is very hacky, because uploading files with Selenium
         needs to use input element, but we do not use it directly in frontend.
         So we unhide an input element for a while and pass a local file path to it.

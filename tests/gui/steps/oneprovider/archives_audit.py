@@ -7,60 +7,70 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from collections import Counter
+from collections.abc import Callable
 from datetime import datetime
-from typing import Union
+from typing import cast
 
 import yaml
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    transform,
+)
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+ARCHIVE_PATH_SEPARATOR: str = "›"
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees non-empty "
-        "(?P<fields>( |.)*) field(s)? of first (?P<number>.*) files and "
-        "directories in archive audit log"
-    )
+        r"user of (?P<browser_id>.*) sees non-empty "
+        rf"(?P<fields>{ELEMENTS_SEQUENCE_PATTERN}) field(s)? of first "
+        r"(?P<number>.*) files and "
+        r"directories in archive audit log"
+    ),
+    converters={
+        "fields": parse_elements_sequence,
+    },
 )
 def assert_number_of_first_non_empty_column_content(
-    selenium, fields, browser_id, number: int
-):
+    selenium: SeleniumDrivers, fields: list[str], browser_id: str, number: str
+) -> None:
+    expected_number = int(number)
     driver = selenium[browser_id]
-    modal = Modals(driver).archive_audit_log
-    fields = parse_seq(fields)
-    # Because files` names repeat, files` names must be first loaded in order to
+    columns_names = [transform(field) for field in fields]
+
+    # Because files names repeat, files names must be first loaded in order to
     # add annotations to them
-
-    def condition(index=0):
-        _ = index
-
-    _scroll_and_check_condition(browser_id, selenium, condition)
+    modal = Modals(driver).archive_audit_log
+    _ = scroll_and_get_columns(modal, columns_names)
     scroll_to_top_in_archive_audit_log(browser_id, selenium)
 
-    def condition2(index=0):
-        for field in fields:
-            elems_to_check = modal.get_rows_of_column(field)[index:]
-            for elem in elems_to_check:
-                assert (
-                    elem != ""
-                ), f"there is empty {field} field: {elem} in archive audit log"
+    checked_elems = scroll_and_get_columns(modal, columns_names)
+    elems_counter = Counter(checked_elems)
+    non_unique_elems = [elem for elem in elems_counter if elems_counter[elem] > 1]
 
-    checked_elems = _scroll_and_check_condition(browser_id, selenium, condition2)
-    assert (
-        len(checked_elems) == number
-    ), f"there is {len(checked_elems)} entries instead of {number} in archive audit log"
+    assert len(checked_elems) == expected_number, (
+        f"There are {len(checked_elems)} entries instead of {number} "
+        "in archive audit log.\n\n"
+        f"Number of non unique entries: {len(non_unique_elems)}\n\n"
+        f"Entries: {sorted(checked_elems)}\n\n"
+        f"Non Unique entries: {sorted(non_unique_elems)}"
+    )
 
 
 @wt(
     parsers.parse(
         "user of {browser_id} sees entries ordered from shortest to "
-        'longest times in column "{column_name}" in archive '
-        "audit log"
+        'longest times in column "{column_name}" in archive audit log'
     )
 )
 @wt(
@@ -70,31 +80,34 @@ def assert_number_of_first_non_empty_column_content(
     )
 )
 def assert_decreasing_creation_times_in_archives_audit_log(
-    browser_id, column_name, selenium
-):
+    browser_id: str, column_name: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
-    start_value: Union[datetime, int]
-    if column_name == "Time":
+    start_value: datetime | int
+    column_name = transform(column_name)
+    if column_name == "time":
         start_value = datetime.strptime("1 Dec 9999 1:1:1.1", "%d %b %Y %H:%M:%S.%f")
-    elif column_name == "Time taken":
+    elif column_name == "time_taken":
         start_value = 1000000000
     else:
         raise ValueError(f"Unknown column: {column_name}")
 
-    def condition(last, index=0):
-        currents = modal.get_rows_of_column(column_name)[index:]
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def condition(last: datetime | int, index: int = 0) -> None:
+        rows_of_columns: dict[str, list[str]] = modal.get_visible_rows_of_columns([column_name])
+        currents = rows_of_columns[column_name][index:]
         for current in currents:
-            current_ = None
-            if column_name == "Time":
-                current_ = datetime.strptime(current + "000", "%d %b %Y %H:%M:%S.%f")
-                err_msg = f"time {current_} following {last} is not smaller"
-                assert current_ <= last, err_msg
-            elif column_name == "Time taken":
-                current_ = parse_time(current)
-                err_msg = f"time {current_} following {last} is not smaller"
-                assert current_ <= last, err_msg
-            last = current_
+            if column_name == "time":
+                current_time = datetime.strptime(current + "000", "%d %b %Y %H:%M:%S.%f")
+                error_message = f"time {current_time} following {last} is not smaller"
+                assert current_time <= cast(datetime, last), error_message
+                last = current_time
+            elif column_name == "time_taken":
+                current_duration = parse_time(current)
+                error_message = f"time {current_duration} following {last} is not smaller"
+                assert current_duration <= cast(int | float, last), error_message
+                last = cast(int, current_duration)
 
     _scroll_and_check_condition(browser_id, selenium, condition, start_value)
 
@@ -102,21 +115,24 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 @wt(
     parsers.parse(
         "user of {browser_id} sees logs about directories or files "
-        "ordered ascendingly by name index with prefix dir_ or file_ "
-        "in archive audit log"
+        "ordered ascendingly by name index with prefix dir_ or "
+        "file_ in archive audit log"
     )
 )
-def assert_ascending_file_or_dir_names(browser_id, selenium):
+def assert_ascending_file_or_dir_names(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     start_value = -1
 
-    def condition(last, index=0):
-        currents = modal.get_rows_of_column("File")[index:]
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def condition(last: int, index: int = 0) -> None:
+        currents = modal.get_visible_rows_of_single_column("file")[index:]
         for current in currents:
-            current_ = int(current.strip("dirfile_"))
-            err_msg = f"index {current_} following {last} is not bigger"
-            assert current_ > last, err_msg
+            match = re.fullmatch(r"(?:dir|file)_(\d+)", current)
+            assert match, f"unexpected file or directory name: {current}"
+            current_ = int(match.group(1))
+            error_message = f"index {current_} following {last} is not bigger"
+            assert current_ > last, error_message
             last = current_
 
     _scroll_and_check_condition(browser_id, selenium, condition, start_value)
@@ -129,7 +145,10 @@ def assert_ascending_file_or_dir_names(browser_id, selenium):
         "or symbolic links in archive audit log"
     )
 )
-def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium):
+def assert_n_logs_about_archivisation_finished(
+    browser_id: str, number: str, selenium: SeleniumDrivers
+) -> None:
+    expected_number = int(number)
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     expected_events = [
@@ -138,37 +157,47 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
         "Regular file archivisation finished.",
     ]
 
-    def condition(index=0):
-        visible_events = modal.get_rows_of_column("Event")[index:]
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def condition(index: int = 0) -> None:
+        visible_events: list[str] = modal.get_visible_rows_of_single_column("event")[index:]
         for event in visible_events:
-            err_msg = f"visible event {event} is not expected"
-            assert event in expected_events, err_msg
+            error_message = f"visible event {event} is not expected"
+            assert event in expected_events, error_message
 
     checked_elems = _scroll_and_check_condition(browser_id, selenium, condition)
-    assert (
-        len(checked_elems) == number
-    ), f"there are {len(checked_elems)} items instead of {number} in archive audit log"
+    assert len(checked_elems) == expected_number, (
+        f"there are {len(checked_elems)} items instead of {number} in archive audit log"
+    )
 
 
-def _scroll_and_check_condition(browser_id, selenium, condition, *args):
+def _scroll_and_check_condition(
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    condition: Callable[..., None],
+    *args: object,
+) -> list[str]:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
-    visible_elems = modal.get_rows_of_column("File")
+    visible_elems = modal.get_visible_rows_of_single_column("file")
     new_elems = visible_elems
-    index = 0
-    while new_elems:
-        condition(*args, index=index)
+    last_index = 0
 
-        modal.scroll_by_press_space()
+    while new_elems:
+        condition(*args, index=last_index)
         checked_elems.extend(new_elems)
-        visible_elems = modal.get_rows_of_column("File")
-        index = 0
-        for elem in visible_elems:
+        driver.execute_script(
+            "arguments[0].scrollIntoView();",
+            modal.data_row[new_elems[-1]].clickable_field,
+        )
+        visible_elems = modal.get_visible_rows_of_single_column("file")
+        for index, elem in enumerate(visible_elems):
             if elem not in checked_elems:
+                last_index = index
                 break
-            index += 1
-        new_elems = visible_elems[index:]
+        else:
+            last_index = len(visible_elems)
+        new_elems = visible_elems[last_index:]
     return checked_elems
 
 
@@ -178,7 +207,9 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
         "contain following File and Event data:\n{config}"
     )
 )
-def check_entries_in_archive_audit_log(browser_id, config, selenium):
+def check_entries_in_archive_audit_log(
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     """
     There are only checked visible entries (without scrolling)
     There can be more entries than given (no error)
@@ -192,23 +223,24 @@ def check_entries_in_archive_audit_log(browser_id, config, selenium):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _check_entries_in_archive_audit_log(browser_id, config, selenium):
+def _check_entries_in_archive_audit_log(
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     visible_logs = modal.data_row
     data = yaml.load(config, yaml.Loader)
-    for item in data.keys():
-        err_msg = f"there is no visible log: {item}: {data[item]} in archive audit log"
-        assert item in visible_logs and data[item] == visible_logs[item].event, err_msg
+    for item in data:
+        error_message = f"there is no visible log: {item}: {data[item]} in archive audit log"
+        assert item in visible_logs, error_message
+        assert data[item] == visible_logs[item].event, error_message
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on item "{item_name}" in archive audit log'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on item "{item_name}" in archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_item_in_archive_audit_log(browser_id, item_name, selenium):
+def click_on_item_in_archive_audit_log(
+    browser_id: str, item_name: str | int, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log.data_row[item_name]
     modal.click()
@@ -216,13 +248,12 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, selenium):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on item "{file_name}" using scroll in archive'
-        " audit log"
+        'user of {browser_id} clicks on item "{file_name}" using scroll in archive audit log'
     )
 )
 def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
-    browser_id, file_name, selenium
-):
+    browser_id: str, file_name: str, selenium: SeleniumDrivers
+) -> None:
 
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
@@ -230,81 +261,65 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
     seen_rows = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        try:
-            new_rows_names = []
-            for row in modal.data_row:
-                if row.name:
-                    new_rows_names.append(row.name)
-
-        except StaleElementReferenceException:
-            pass
-
-            # This try/except block handles cases where some rows exist in the `data_row` structure,
-            # but not all of their fields are fully loaded.
-            # This can result in the following exception:
-            # "StaleElementReferenceException:
-            #  Message: stale element reference: stale element not found in the current frame"
+        new_rows_names = modal.get_visible_rows_of_single_column("file")
 
         if file_name in new_rows_names:
-            try:
-                modal.data_row[file_name].clickable_field.click()
-            except StaleElementReferenceException:
-                modal.scroll_by_press_space()
-                modal.data_row[file_name].clickable_field.click()
-
-                # This try/except block handles cases where the page doesn't load properly.
-                # Sometimes, when the user tries to click on one of the
-                # last elements in the audit log,
-                # the clickable area is hidden, causing an exception.
-                # To work around this, the page is scrolled down one more time.
+            driver.execute_script(
+                "arguments[0].scrollIntoView();",
+                modal.data_row[file_name].clickable_field,
+            )
+            modal.data_row[file_name].clickable_field.click()
             return
 
-        # if there are at least 1 new row keep scrolling
         stop_scrolling_flag = not any(el not in seen_rows for el in new_rows_names)
         seen_rows.update(new_rows_names)
-        modal.scroll_by_press_space()
+
+        driver.execute_script(
+            "arguments[0].scrollIntoView();",
+            modal.data_row[new_rows_names[-1]].clickable_field,
+        )
 
     raise AssertionError(f"entry {file_name} not found in archive audit log")
 
 
 @wt(parsers.parse("user of {browser_id} clicks on top item in archive audit log"))
-def click_on_top_item_in_archive_audit_log(browser_id, selenium):
+def click_on_top_item_in_archive_audit_log(browser_id: str, selenium: SeleniumDrivers) -> None:
     click_on_item_in_archive_audit_log(browser_id, 0, selenium)
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that exactly {number} items "
-        "are visible in archive audit log"
+        "user of {browser_id} sees that exactly {number} items are visible in archive audit log"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_items_in_archive_audit_log(browser_id, number: int, selenium):
+def assert_number_of_items_in_archive_audit_log(
+    browser_id: str, number: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
-    visible_items = Modals(driver).archive_audit_log.get_rows_of_column("File")
-    assert number == len(visible_items), (
-        f"there are {len(visible_items)} "
-        f"items visible instead of {number} "
-        "in archive audit log"
+    visible_items: list[str] = Modals(driver).archive_audit_log.get_visible_rows_of_single_column(
+        "file"
+    )
+    assert int(number) == len(visible_items), (
+        f"there are {len(visible_items)} items visible instead of {number} in archive audit log"
     )
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees message "{message}" at field '
-        '"{field_name}" in archive audit log'
+        'user of {browser_id} sees message "{message}" at field "{field_name}" in archive audit log'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_message_at_field_in_archive_audit_log(
-    browser_id, field_name, message, selenium
-):
+    browser_id: str, field_name: str, message: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).audit_log_entry_details
     visible_message = getattr(modal, transform(field_name))
-    assert (
-        visible_message == message
-    ), f"expected {message} instead of {visible_message} message, at field {field_name}"
+    assert visible_message == message, (
+        f"expected {message} instead of {visible_message} message, at field {field_name}"
+    )
 
 
 @wt(
@@ -314,7 +329,9 @@ def assert_message_at_field_in_archive_audit_log(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_details_for_archived_item(browser_id, config, selenium):
+def check_details_for_archived_item(
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     """
     Config format given in yaml:
     Possible fields, each of them is optional
@@ -344,10 +361,12 @@ def check_details_for_archived_item(browser_id, config, selenium):
     _check_details_for_archived_item(browser_id, config, selenium)
 
 
-def _check_details_for_archived_item(browser_id, config, selenium):
+def _check_details_for_archived_item(
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     data = yaml.load(config, yaml.Loader)
 
-    for field in data.keys():
+    for field in data:
         if isinstance(data[field], dict):
             mes_type = data[field]["type"]
             assert_pattern_at_field_in_archive_audit_log(
@@ -368,8 +387,8 @@ def _check_details_for_archived_item(browser_id, config, selenium):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_pattern_at_field_in_archive_audit_log(
-    browser_id, mes_type, field_name, selenium
-):
+    browser_id: str, mes_type: str, field_name: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).audit_log_entry_details
     visible_message = getattr(modal, field_name)
@@ -382,14 +401,13 @@ def assert_pattern_at_field_in_archive_audit_log(
     if mes_type not in patterns:
         raise AssertionError("Empty pattern, unknown this message type")
     pattern = patterns[mes_type]
-    err_msg = (
-        f"message at field is {visible_message}, which does not"
-        f" correspond to the type {mes_type}"
+    error_message = (
+        f"message at field is {visible_message}, which does not correspond to the type {mes_type}"
     )
-    assert pattern.fullmatch(visible_message), err_msg
+    assert pattern.fullmatch(visible_message), error_message
 
 
-def parse_time(str_time):
+def parse_time(str_time: str) -> int | float:
     n = len(str_time)
     if str_time[n - 2 : n] == "ms":
         return int(str_time[: n - 2])
@@ -405,7 +423,9 @@ def parse_time(str_time):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_field_in_details_archive_audit_log(browser_id, field_name, selenium):
+def click_on_field_in_details_archive_audit_log(
+    browser_id: str, field_name: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).audit_log_entry_details
     elem_to_click = getattr(modal, transform(field_name))
@@ -414,38 +434,46 @@ def click_on_field_in_details_archive_audit_log(browser_id, field_name, selenium
 
 @wt(parsers.parse("user of {browser_id} scrolls to top in archive audit log"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def scroll_to_top_in_archive_audit_log(browser_id, selenium):
+def scroll_to_top_in_archive_audit_log(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     modal.scroll_to_top()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that path in Entry Details in archive audit log is:"
-        ' "{path}" and displayed archive name is correct'
-    )
-)
+def extract_archive_name_and_path(file_path: str) -> tuple[str | None, str]:
+    file_path = file_path.replace("\n", "")
+
+    if ARCHIVE_PATH_SEPARATOR not in file_path:
+        return None, file_path.partition("/")[2]
+
+    archive_info, _, path = file_path.partition("/")
+    archive_name = archive_info.partition(ARCHIVE_PATH_SEPARATOR)[2]
+
+    return archive_name, path
+
+
+def assert_archive_names_match(
+    archive_name_in_audit_log: str,
+    archive_name_in_entry_details: str | None,
+) -> None:
+    # Depending on window size, the archive name may not be present in details.
+    if archive_name_in_entry_details is not None:
+        assert archive_name_in_audit_log == archive_name_in_entry_details, (
+            "Archive name in archive audit log modal "
+            f"({archive_name_in_audit_log!r}) differs from the one shown "
+            f"in audit log entry details ({archive_name_in_entry_details!r})"
+        )
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_archived_file_path_and_archive_name(browser_id, selenium, path):
-    driver = selenium[browser_id]
-    modal_details = Modals(driver).audit_log_entry_details
+def get_loaded_archive_file_path(
+    driver: WebDriver,
+) -> str:
+    entry_details = Modals(driver).audit_log_entry_details
+    entry_details_file_path = entry_details.file_path.text
 
-    details_file_path = modal_details.file_path.text.replace("\n", "").split("/")
-    details_archive_name = details_file_path[0].split("›")[1]
-    # Depending on window size, name of archive may not be present and it raises exception
-    details_file_path = "/".join(details_file_path[1:])
-    # Depending on window size, could be without [1:], if archive name is not present
-
-    assert (
-        path == details_file_path
-    ), f"given path: {path} is different than actual file path: {details_file_path}"
-
-    modal = Modals(driver).archive_audit_log
-    assert modal.archive_name == details_archive_name, (
-        f"name of archive in archive audit log modal: {modal.archive_name} is different"
-        f" than shown in audit log entry details:  {details_archive_name}"
-    )
+    assert entry_details_file_path != "Loading path..."
+    return entry_details_file_path
 
 
 @wt(
@@ -456,19 +484,17 @@ def assert_archived_file_path_and_archive_name(browser_id, selenium, path):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_unique_hashes_and_number_of_logs(
-    browser_id, selenium, file_name, number: int
-):
+    browser_id: str, selenium: SeleniumDrivers, file_name: str, number: str
+) -> None:
     driver = selenium[browser_id]
     logs = Modals(driver).archive_audit_log.data_row
     hashes = []
     for log in logs:
-        if log.name == file_name:
+        if log.file == file_name:
             log_hash = log.duplicated_name_hash
-            assert (
-                log_hash not in hashes
-            ), f"There are at least two identical hashes: {log_hash}"
+            assert log_hash not in hashes, f"There are at least two identical hashes: {log_hash}"
             hashes.append(log_hash)
 
-    assert (
-        len(hashes) == number
-    ), f"Expected number of logs: {number} is different than actual: {len(hashes)}"
+    assert len(hashes) == int(number), (
+        f"Expected number of logs: {number} is different than actual: {len(hashes)}"
+    )

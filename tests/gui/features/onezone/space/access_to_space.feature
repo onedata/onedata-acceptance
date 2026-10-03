@@ -51,5 +51,5 @@ Feature: Test user has access to space via group membership
     And user of space_owner_browser sends copied token to user of browser1
     And user of space_owner_browser removes "space1" spaces in Onezone page
 
-    Then user of browser1 tries to join space using received token
-    And user of browser1 sees error modal with info about invalid target with id of "space1" space
+    Then user of browser1 fails to join space using received token and sees error modal
+    And user of browser1 closes error modal with info about invalid target with id of "space1" space

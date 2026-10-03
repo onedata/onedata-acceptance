@@ -39,7 +39,7 @@ Feature: Basic shares operations in Onezone GUI featuring shares sidebar
     And user of browser opens file browser for "space2" space
     And user of browser creates "share_dir2" share of "dir2" directory
 
-    And user of browser clicks on Shares in the main menu
+    And user of browser clicks on "Shares" in the main menu
     Then user of browser sees share name "share_dir1" in the shares list in the sidebar
     And user of browser sees space name "space1" of "share_dir1" share in shares list in the sidebar
     And user of browser sees share name "share_dir2" in the shares list in the sidebar

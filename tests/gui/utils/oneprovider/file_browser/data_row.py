@@ -19,6 +19,7 @@ class DataRow(BrowserRow):
     changed = Label(".fb-table-col-ctime .file-item-text")
 
     shared_tag = WebElement(".file-status-shared")
+    public_data_tag = WebElement(".file-public-data-icon")
     metadata_tag = WebElement(".file-status-metadata")
     qos_tag = WebElement(".file-status-qos")
     dataset_tag = WebElement(".file-status-dataset")
@@ -36,25 +37,25 @@ class DataRow(BrowserRow):
     json = Label(".table-cell-json-info")
     copy_json_icon = Button(".oneicon-browser-copy")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} in {self.parent}"
 
-    def is_symbolic_link(self):
+    def is_symbolic_link(self) -> bool:
         return "browser-file" in self._icon.get_attribute(
             "class"
         ) and "oneicon-shortcut" in self._icon_tag.get_attribute("class")
 
-    def is_directory_symbolic_link(self):
+    def is_directory_symbolic_link(self) -> bool:
         return "browser-directory" in self._icon.get_attribute(
             "class"
         ) and "oneicon-shortcut" in self._icon_tag.get_attribute("class")
 
-    def is_malformed_symbolic_link(self):
+    def is_malformed_symbolic_link(self) -> bool:
         return "browser-file" in self._icon.get_attribute(
             "class"
         ) and "oneicon-x" in self._icon_tag.get_attribute("class")
 
-    def is_malformed_directory_symbolic_link(self):
+    def is_malformed_directory_symbolic_link(self) -> bool:
         return "browser-directory" in self._icon.get_attribute(
             "class"
         ) and "oneicon-x" in self._icon_tag.get_attribute("class")

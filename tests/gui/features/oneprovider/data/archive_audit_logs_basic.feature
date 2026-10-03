@@ -142,7 +142,12 @@ Feature: Archive audit logs
     And user of browser clicks "Show audit log" option in data row menu in archive browser
 
     And user of browser clicks on item "very-long-file_20" using scroll in archive audit log
-    Then user of browser sees that path in Entry Details in archive audit log is: ".../very-long-file_20" and displayed archive name is correct
+
+    Then user of browser sees that path in Entry Details in archive audit log matches the config and displayed archive name is correct for different screen sizes:
+        First directory index: 0
+        Last directory index: 19
+        Directory prefix: long-directory
+        File name: very-long-file_20
 
 
   Scenario: User creates nested archive with duplicated file names and sees that their entries in archive audit log have different hashes

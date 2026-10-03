@@ -1,12 +1,13 @@
 {
   "makefile.extensionOutputFolder": "./.vscode",
   "editor.rulers": [
-    88,
+    100,
   ],
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter",
-    "editor.formatOnSave": true
-  },
-  "black-formatter.args": ["--config", "tests/configs/.pyproject.toml"],
-  "pylint.args": ["--rcfile=tests/configs/.pylintrc"]
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": "explicit"
+    }
+  }
 }

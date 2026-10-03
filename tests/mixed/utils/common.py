@@ -6,8 +6,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import subprocess as sp
+from collections.abc import Mapping
+from typing import Any, Protocol
 
 import yaml
+from _pytest._py.path import LocalPath
 
 from tests import (
     CDMI_REST_PATH_PREFIX,
@@ -17,6 +20,7 @@ from tests import (
     PANEL_REST_PORT,
     PROVIDER_REST_PATH_PREFIX,
 )
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.mixed.cdmi_client import ApiClient as ApiClient_CDMI
 from tests.mixed.cdmi_client.configuration import Configuration as Conf_CDMI
 from tests.mixed.onepanel_client import ApiClient as ApiClient_panel
@@ -25,6 +29,7 @@ from tests.mixed.oneprovider_client import ApiClient as ApiClient_provider
 from tests.mixed.oneprovider_client.configuration import Configuration as Conf_provider
 from tests.mixed.onezone_client import ApiClient as ApiClient_OZ
 from tests.mixed.onezone_client.configuration import Configuration as Conf_OZ
+from tests.mixed.type_definitions import Resolver
 from tests.mixed.utils.privileges import (
     space_manager_privileges,
     space_member_privileges,
@@ -33,17 +38,39 @@ from tests.mixed.utils.privileges import (
 from tests.utils.bdd_utils import parsers, wt
 
 
+class ConfigurationLike(Protocol):
+    username: str
+    password: str
+    verify_ssl: bool
+    safe_chars_for_path_param: str
+    host: str
+
+
+class FixtureRequestLike(Protocol):
+    def getfixturevalue(self, argname: str) -> Any: ...
+
+
+class TokenUserLike(Protocol):
+    @property
+    def token(self) -> str: ...
+
+
 class NoSuchClientException(Exception):
-    def __init__(self, value):
+    def __init__(self, value: object) -> None:
         self.value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return repr(self.value)
 
 
 def setup_basic_configuration(
-    configuration, host, port, path_prefix, username="", password=""
-):
+    configuration: ConfigurationLike,
+    host: str,
+    port: int,
+    path_prefix: str,
+    username: str = "",
+    password: str = "",
+) -> None:
     configuration.username = username
     configuration.password = password
     configuration.verify_ssl = False
@@ -51,7 +78,7 @@ def setup_basic_configuration(
     configuration.host = f"https://{host}:{port}{path_prefix}"
 
 
-def login_to_oz(username, password, host):
+def login_to_oz(username: str, password: str, host: str) -> ApiClient_OZ:
 
     configuration = Conf_OZ()
     setup_basic_configuration(
@@ -66,7 +93,7 @@ def login_to_oz(username, password, host):
     return ApiClient_OZ(configuration=configuration)
 
 
-def login_to_panel(username, password, host):
+def login_to_panel(username: str, password: str, host: str) -> ApiClient_panel:
 
     configuration = Conf_panel()
     setup_basic_configuration(
@@ -81,7 +108,13 @@ def login_to_panel(username, password, host):
     return ApiClient_panel(configuration=configuration)
 
 
-def login_to_cdmi(username, users, host, access_token=None, identity_token=None):
+def login_to_cdmi(
+    username: str,
+    users: Mapping[str, TokenUserLike],
+    host: str,
+    access_token: str | None = None,
+    identity_token: str | None = None,
+) -> ApiClient_CDMI:
 
     configuration = Conf_CDMI()
     setup_basic_configuration(configuration, host, OZ_REST_PORT, CDMI_REST_PATH_PREFIX)
@@ -99,14 +132,17 @@ def login_to_cdmi(username, users, host, access_token=None, identity_token=None)
     return client
 
 
-def login_to_provider(username, users, host, access_token=None):
+def login_to_provider(
+    username: str,
+    users: Mapping[str, TokenUserLike],
+    host: str,
+    access_token: str | None = None,
+) -> ApiClient_provider:
 
     header_value = access_token if access_token else users[username].token
 
     configuration = Conf_provider()
-    setup_basic_configuration(
-        configuration, host, OZ_REST_PORT, PROVIDER_REST_PATH_PREFIX
-    )
+    setup_basic_configuration(configuration, host, OZ_REST_PORT, PROVIDER_REST_PATH_PREFIX)
 
     return ApiClient_provider(
         configuration=configuration,
@@ -115,23 +151,23 @@ def login_to_provider(username, users, host, access_token=None):
     )
 
 
-def construct_curl_get_cmd(link: str):
+def construct_curl_get_cmd(link: str) -> str:
     return f"curl -X GET {link}"
 
 
 @wt(parsers.parse("{sender} sends token to {receiver}"))
-def send_copied_token_to_other_user(sender, receiver, tmp_memory):
+def send_copied_token_to_other_user(sender: str, receiver: str, tmp_memory: TmpMemory) -> None:
     tmp_memory[receiver]["mailbox"]["token"] = tmp_memory[sender]["token"]
 
 
 @wt(parsers.parse("user of {browser_id} executes copied command"))
 def execute_copied_curl_command(
-    browser_id,
-    displays,
-    clipboard,
-    tmp_memory,
-    config=None,
-):
+    browser_id: str,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+    tmp_memory: TmpMemory,
+    config: Mapping[str, str] | None = None,
+) -> None:
     _execute_curl_command(
         clipboard.paste(display=displays[browser_id]),
         tmp_memory,
@@ -141,11 +177,11 @@ def execute_copied_curl_command(
 
 def _execute_curl_command(
     command: str,
-    tmp_memory,
-    config,
+    tmp_memory: TmpMemory,
+    config: Mapping[str, str] | None,
     flags: list[str] | None = None,
-    file_out: str | None = None,
-):
+    file_out: str | LocalPath | None = None,
+) -> None:
     cmd = (
         replace_vars_in_cmd_if_exist(command, config=config)
         + " -k"  # ignore ssl certs and get http status code
@@ -154,9 +190,7 @@ def _execute_curl_command(
         + (f" -o {file_out}" if file_out else "")
     )
 
-    output = sp.run(
-        cmd, capture_output=True, text=True, shell=True, check=True, timeout=60
-    )
+    output = sp.run(cmd, capture_output=True, text=True, shell=True, check=True, timeout=60)
 
     output_message, http_status_code = output.stdout.split("http status code:")
     tmp_memory["http status code"] = http_status_code
@@ -166,28 +200,30 @@ def _execute_curl_command(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} executes copied command with environment"
-        " variables:\n{config}"
+        "user of {browser_id} executes copied command with environment variables:\n{config}"
     )
 )
 def execute_copied_curl_command_with_env_vars(
-    browser_id, displays, clipboard, tmp_memory, selenium, config
-):
+    browser_id: str,
+    displays: dict[str, str],
+    clipboard: Clipboard,
+    tmp_memory: TmpMemory,
+    selenium: Mapping[str, FixtureRequestLike],
+    config: str,
+) -> None:
     """
     config is in following format:
     ENV_VAR1: VAL1 or $(resolve_... VAL1)
     ...
     """
-    config = yaml.load(config, yaml.Loader)
-    config = {
-        k: try_to_resolve_items(v, selenium["request"]) for k, v in config.items()
+    loaded_config = yaml.load(config, yaml.Loader)
+    resolved_config = {
+        k: try_to_resolve_items(v, selenium["request"]) for k, v in loaded_config.items()
     }
-    execute_copied_curl_command(
-        browser_id, displays, clipboard, tmp_memory, config=config
-    )
+    execute_copied_curl_command(browser_id, displays, clipboard, tmp_memory, config=resolved_config)
 
 
-def replace_vars_in_cmd_if_exist(cmd, config=None):
+def replace_vars_in_cmd_if_exist(cmd: str, config: Mapping[str, str] | None = None) -> str:
     if config is None:
         return cmd
     new_cmd = cmd
@@ -196,7 +232,7 @@ def replace_vars_in_cmd_if_exist(cmd, config=None):
     return new_cmd
 
 
-def try_to_resolve_items(val: str, request):
+def try_to_resolve_items(val: str, request: FixtureRequestLike) -> str:
     if not isinstance(val, str):
         val = str(val)
     users = request.getfixturevalue("users")
@@ -205,29 +241,27 @@ def try_to_resolve_items(val: str, request):
     tmp_memory = request.getfixturevalue("tmp_memory")
 
     # dict to store mapping resolve type into resolve function
-    s = {
-        "resolve_user_id": lambda x: users[x].user_id,
-        "resolve_group_id": lambda x: groups[x],
-        "resolve_share_id": lambda x: shares[x],
-        "resolve_token": lambda _: tmp_memory["copied_token"],
+    resolvers: dict[str, Resolver] = {
+        "resolve_user_id": lambda x: str(users[x].user_id),
+        "resolve_group_id": lambda x: str(groups[x]),
+        "resolve_share_id": lambda x: str(shares[x]),
+        "resolve_token": lambda _: str(tmp_memory["copied_token"]),
         "space_owner_privileges": lambda _: space_owner_privileges,
         "space_manager_privileges": lambda _: space_manager_privileges,
         "space_member_privileges": lambda _: space_member_privileges,
-        "resolve_compose_json": lambda x: json.dumps(
-            {x.split(",")[0]: x.split(",")[1]}
-        ),
+        "resolve_compose_json": lambda x: json.dumps({x.split(",")[0]: x.split(",")[1]}),
         "resolve_compose_list": lambda x: json.dumps([x]),
     }
 
-    def _resolve(text):
+    def _resolve(text: str) -> str:
         new_text = text
-        for k, v in s.items():
+        for k, v in resolvers.items():
             if k in text:
                 if "resolve" not in k:
                     new_text = new_text.replace(f"<{k}>", str(v(k)))
                 else:
                     item = new_text.split(f"$({k} ")[1].split(")")[0]
-                    new_text = new_text.replace(f"$({k} {item})", v(item))
+                    new_text = new_text.replace(f"$({k} {item})", str(v(item)))
         return new_text
 
     prev_val = None
@@ -237,62 +271,57 @@ def try_to_resolve_items(val: str, request):
     return val
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that output of executed command contains:\n{config}"
-    )
-)
-def assert_command_output_contains(request, tmp_memory, config):
+@wt(parsers.parse("user of {browser_id} sees that output of executed command contains:\n{config}"))
+def assert_command_output_contains(
+    request: FixtureRequestLike, tmp_memory: TmpMemory, config: str
+) -> None:
     output = tmp_memory["output"]
     output = yaml.load(output, yaml.Loader)
     expected = yaml.load(config, yaml.Loader)
     for k, v in expected.items():
         if isinstance(v, list):
             assert len(v) == len(output[k]), (
-                f"expected {len(v)} elements from REST command in output,"
-                f" but got {len(output[k])}."
+                f"expected {len(v)} elements from REST command in output, but got {len(output[k])}."
             )
-            for el in v:
-                el = try_to_resolve_items(str(el), request)
-                assert el in output[k], f"item {el} not in output command {output[k]}"
+            for configured_element in v:
+                resolved_element = try_to_resolve_items(str(configured_element), request)
+                assert resolved_element in output[k], (
+                    f"item {resolved_element} not in output command {output[k]}"
+                )
         else:
             val = try_to_resolve_items(str(v), request)
-            err_msg = (
-                f"expected {k}: {val} from REST command in output, but got {output[k]}"
-            )
-            assert str(output[k]) == str(val), err_msg
+            error_message = f"expected {k}: {val} from REST command in output, but got {output[k]}"
+            assert str(output[k]) == str(val), error_message
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that output of executed command is equal to:"
-        ' "{expected_output}"'
+        'user of {browser_id} sees that output of executed command is equal to: "{expected_output}"'
     )
 )
-def assert_command_output_equals(tmp_memory, expected_output):
+def assert_command_output_equals(tmp_memory: TmpMemory, expected_output: str) -> None:
     output = tmp_memory["output"]
-    err_msg = f"expected command output to be {expected_output}, but got {output}"
-    assert expected_output == output, err_msg
+    error_message = f"expected command output to be {expected_output}, but got {output}"
+    assert expected_output == output, error_message
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that executed curl command returned successful HTTP"
-        " code"
+        "user of {browser_id} sees that executed curl command returned successful HTTP code"
     )
 )
-def assert_curl_command_successful_http_code(tmp_memory):
+def assert_curl_command_successful_http_code(tmp_memory: TmpMemory) -> None:
     http_status_code = tmp_memory["http status code"]
     command_output = tmp_memory["output"]
     command_stderr = tmp_memory["stderr"]
-    err_msg = (
+    error_message = (
         f"Expected 2xx http status code but got: {http_status_code}\n"
         "--- Captured curl stdout ---\n"
         f"{command_output}\n"
         "--- Captured curl stderr ---\n"
         f"{command_stderr}"
     )
-    assert http_status_code.startswith("2"), err_msg
+    assert http_status_code.startswith("2"), error_message
 
 
 @wt(
@@ -302,14 +331,14 @@ def assert_curl_command_successful_http_code(tmp_memory):
     )
 )
 def wt_download_using_curl_with_forward(
-    browser_id,
-    tmp_memory,
-    clipboard,
-    displays,
-    tmpdir,
-    browsers_to_users,
-    file_out,
-):
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    tmpdir: LocalPath,
+    browsers_to_users: Mapping[str, str],
+    file_out: str,
+) -> None:
     download_using_curl_with_forward(
         browser_id, tmp_memory, clipboard, displays, tmpdir, browsers_to_users, file_out
     )
@@ -317,8 +346,13 @@ def wt_download_using_curl_with_forward(
 
 @wt(parsers.parse("user of {browser_id} uses curl to get content from copied link"))
 def download_using_curl(
-    browser_id, tmp_memory, clipboard, displays, tmpdir, browsers_to_users
-):
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    tmpdir: LocalPath,
+    browsers_to_users: Mapping[str, str],
+) -> None:
     download_using_curl_with_forward(
         browser_id,
         tmp_memory,
@@ -331,22 +365,23 @@ def download_using_curl(
 
 
 def download_using_curl_with_forward(
-    browser_id,
-    tmp_memory,
-    clipboard,
-    displays,
-    tmpdir,
-    browsers_to_users,
-    file_out,
-):
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    tmpdir: LocalPath,
+    browsers_to_users: Mapping[str, str],
+    file_out: str | None,
+) -> None:
     download_link = clipboard.paste(display=displays[browser_id])
+    output_path: str | LocalPath | None = file_out
     if file_out is not None:
-        file_out = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
+        output_path = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
 
     _execute_curl_command(
         construct_curl_get_cmd(download_link),
         tmp_memory,
         None,
         flags=["L"],  # -L flag is required to follow redirects (e.g., HTTP 307)
-        file_out=file_out,
+        file_out=output_path,
     )

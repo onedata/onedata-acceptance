@@ -7,9 +7,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import xml.etree.ElementTree as ET
 
-from tests.gui.conftest import WAIT_FRONTEND
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import PublicShareView as public_share
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.utils import repeat_failed
 
 NAMESPACES_OPENAIRE = {
@@ -55,17 +59,13 @@ SELECTABLE_FIELDS = {
 }
 
 
-def register_namespace_by_metadata_type(metadata_type):
-    namespaces = (
-        NAMESPACES_OPENAIRE
-        if metadata_type.lower() == "openaire"
-        else NAMESPACES_DATACITE
-    )
+def register_namespace_by_metadata_type(metadata_type: str) -> None:
+    namespaces = NAMESPACES_OPENAIRE if metadata_type.lower() == "openaire" else NAMESPACES_DATACITE
     for prefix, uri in namespaces.items():
         ET.register_namespace(prefix, uri)
 
 
-def map_namespace_prefix_to_uri(prefix, metadata_type):
+def map_namespace_prefix_to_uri(prefix: str, metadata_type: str) -> str | None:
     prefix = prefix.lower()
     if metadata_type.lower() == "openaire":
         return NAMESPACES_OPENAIRE.get(prefix)
@@ -77,7 +77,7 @@ def map_namespace_prefix_to_uri(prefix, metadata_type):
     return NAMESPACES_DATACITE.get(prefix)
 
 
-def resolve_xml_tag_for_et_search(tag, metadata_type):
+def resolve_xml_tag_for_et_search(tag: str, metadata_type: str) -> str:
     if tag.startswith("{") or ":" not in tag:
         # If the tag is already in the format {uri}local_name or
         # doesn't contain a colon, that is possibly a namespace separator
@@ -93,13 +93,13 @@ def resolve_xml_tag_for_et_search(tag, metadata_type):
     return f"{{{uri}}}{local_name}"
 
 
-def get_xml_editor_data(driver):
+def get_xml_editor_data(driver: WebDriver) -> str:
     return driver.execute_script(
         "return ace.edit(document.querySelector('.ace_editor')).getValue()"
     )
 
 
-def replace_xml_editor_data(driver, new_data):
+def replace_xml_editor_data(driver: WebDriver, new_data: str) -> None:
     driver.execute_script(
         """
         var editor = ace.edit(document.querySelector('.ace_editor'));
@@ -109,23 +109,23 @@ def replace_xml_editor_data(driver, new_data):
     )
 
 
-def check_ace_editor_appeared(selenium, browser_id):
+def check_ace_editor_appeared(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     try:
         _ = get_xml_data_openaire(driver)
-    except RuntimeError:
+    except NoSuchElementException:
         switch_to_iframe(selenium, browser_id)
         _ = get_xml_data_openaire(driver)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_xml_data_openaire(driver):
+def get_xml_data_openaire(driver: WebDriver) -> str:
     return public_share(driver).xml_data_ace_editor
 
 
-def is_metadata_field_option_selectable_edm(field_name):
+def is_metadata_field_option_selectable_edm(field_name: str) -> bool:
     return field_name.lower() in SELECTABLE_FIELDS["edm"]
 
 
-def is_name_in_initial_form_fields(field_name, metadata_type):
+def is_name_in_initial_form_fields(field_name: str, metadata_type: str) -> bool:
     return field_name.lower() in INITIAL_FIELDS[metadata_type.lower()]

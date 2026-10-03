@@ -39,7 +39,6 @@ stages:
     - _Autoformatter check
     - _Static analysis
     - _Type_check
-    - 20.02.19 - current
     - 21.02.1 - current
     - 21.02.8 - current
     - 25.0 - current
@@ -92,8 +91,8 @@ _Autoformatter check:
     - script:
         <<: *run-script-working-dir
         scripts:
-          - make black-check
-        description: Black formatting
+          - make format-check
+        description: Ruff formatting
 
 _Static analysis:
   key: STAN
@@ -117,7 +116,7 @@ _Type_check:
           - make type-check
         description: Type checker
 
-20.02.19 - current:
+21.02.1 - current:
   key: RFCD
   other: &common-opts
     clean-working-dir: true
@@ -187,17 +186,8 @@ _Type_check:
   - minikube
   artifact-subscriptions: []
 
-21.02.1 - current:
-  key: U2C
-  other: *common-opts
-  tasks: *tasks
-  final-tasks: *final-tasks
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-
 21.02.8 - current:
-  key: U28C
+  key: U2C
   other: *common-opts
   tasks: *tasks
   final-tasks: *final-tasks

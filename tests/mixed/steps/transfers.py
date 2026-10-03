@@ -4,26 +4,39 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Mapping
+
+import yaml
+from _pytest._py.path import LocalPath
+
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import (
+    ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS,
+    select_columns_to_be_visible_in_transfers,
+)
 from tests.gui.meta_steps.oneprovider.common import (
     migrate_file_to_provider,
-    replicate_file_to_provider,
+    replicate_files_to_providers,
 )
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.meta_steps.oneprovider.transfers import (
+    assert_first_transfer,
     evict_file,
     open_transfers_page,
     wait_for_all_transfers_to_start_and_finish,
 )
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
-from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
-from tests.gui.steps.oneprovider.transfers import assert_ended_transfer
+from tests.gui.steps.oneprovider.data_tab import upload_files_to_cwd_in_data_tab
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils.generic import TransferState
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,
     assert_recent_transfer_finished_rest,
     create_transfer_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 
 
 @wt(
@@ -33,16 +46,16 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def replicate_file_to_provider_op(
-    client,
-    user,
-    path,
-    space,
-    provider_to,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: str,
+    user: str,
+    path: str,
+    space: str,
+    provider_to: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+) -> None:
     transfer_type = "replication"
     if client.lower() == "rest":
         path = space + "/" + path
@@ -58,8 +71,8 @@ def replicate_file_to_provider_op(
     elif client.lower() == "web gui":
         result = "replicates"
         go_to_filebrowser(selenium, user, tmp_memory, space)
-        replicate_file_to_provider(
-            selenium, user, path, tmp_memory, provider_to, hosts, result
+        replicate_files_to_providers(
+            selenium, user, [path], tmp_memory, [provider_to], hosts, result
         )
     else:
         raise NoSuchClientException(f"Client {client} not found")
@@ -72,17 +85,17 @@ def replicate_file_to_provider_op(
     )
 )
 def migrate_file_to_provider_op(
-    client,
-    user,
-    path,
-    space,
-    provider_to,
-    provider_from,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: str,
+    user: str,
+    path: str,
+    space: str,
+    provider_to: str,
+    provider_from: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+) -> None:
     transfer_type = "migration"
     if client.lower() == "rest":
         path = space + "/" + path
@@ -120,16 +133,16 @@ def migrate_file_to_provider_op(
     )
 )
 def evict_file_to_provider_op(
-    client,
-    user,
-    path,
-    space,
-    provider_from,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: str,
+    user: str,
+    path: str,
+    space: str,
+    provider_from: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+) -> None:
     transfer_type = "eviction"
     if client.lower() == "rest":
         path = space + "/" + path
@@ -156,37 +169,54 @@ def evict_file_to_provider_op(
     )
 )
 def assert_details_of_recent_transfer_op(
-    client,
-    user,
-    users,
-    host,
-    hosts,
-    spaces,
-    item_type,
-    space,
-    config,
-    selenium,
-):
+    client: str,
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+    item_type: str,
+    space: str,
+    config: str,
+    selenium: SeleniumDrivers,
+) -> None:
     if client.lower() == "rest":
-        assert_recent_transfer_details_rest(
-            user, users, host, hosts, space, spaces, config
-        )
+        assert_recent_transfer_details_rest(user, users, host, hosts, space, spaces, config)
     elif client.lower() == "web gui":
         open_transfers_page(selenium, user, host, space, hosts)
-        assert_ended_transfer(selenium, user, item_type, config, hosts)
+
+        yaml_config = yaml.load(config, yaml.Loader)
+        yaml_config["item_type"] = item_type
+
+        select_columns_to_be_visible_in_transfers(
+            selenium, user, ADDITIONAL_TRANSFER_COLUMNS_USED_IN_TESTS
+        )
+        assert_first_transfer(
+            selenium,
+            user,
+            yaml_config,
+            transfer_state=TransferState.ENDED,
+        )
     else:
         raise NoSuchClientException(f"Client {client} not found")
 
 
 @wt(
     parsers.parse(
-        'using {client}, {user} waits for last transfer to finish in space "{space}" in'
-        " provider {host}"
+        "using {client}, {user} waits for last transfer to finish in space "
+        '"{space}" in provider {host}'
     )
 )
 def wait_for_recent_transfer_to_finish_op(
-    client, user, users, host, hosts, space, spaces, selenium
-):
+    client: str,
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: Mapping[str, str],
+    selenium: SeleniumDrivers,
+) -> None:
     if client.lower() == "rest":
         assert_recent_transfer_finished_rest(user, users, host, hosts, spaces, space)
     elif client.lower() == "web gui":
@@ -203,18 +233,18 @@ def wait_for_recent_transfer_to_finish_op(
     )
 )
 def upload_file_to_provider_browser(
-    selenium,
-    client,
-    user,
-    path,
-    provider,
-    space,
-    tmp_memory,
-    hosts,
-    tmpdir,
-):
+    selenium: SeleniumDrivers,
+    client: str,
+    user: str,
+    path: str,
+    provider: str,
+    space: str,
+    tmp_memory: TmpMemory,
+    hosts: Hosts,
+    tmpdir: LocalPath,
+) -> None:
     if client.lower() == "web gui":
-        wt_visit_file_browser(selenium, provider, space, user, tmp_memory, hosts)
-        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
+        wt_visit_file_browser(selenium, [provider], [space], [user], tmp_memory, hosts)
+        upload_files_to_cwd_in_data_tab(selenium, user, [path], tmpdir)
     else:
         raise NoSuchClientException(f"Client {client} not found")

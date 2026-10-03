@@ -8,19 +8,22 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
+from typing import Literal
 
+import pytest
 import yaml
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.onepanel.common import (
     wt_click_on_btn_in_content,
     wt_click_on_subitem_for_item,
     wt_click_on_subitem_for_item_with_name,
 )
 from tests.gui.steps.onepanel.deployment import (
-    wt_click_on_btn_in_deployment_step,
+    reregister_provider_using_register_btn,
     wt_click_proceed_button_in_step2,
     wt_type_property_to_in_box_in_deployment_step,
     wt_type_registration_token_in_step2,
@@ -28,85 +31,147 @@ from tests.gui.steps.onepanel.deployment import (
 )
 from tests.gui.steps.onepanel.provider import (
     deactivate_request_subdomain_toggle,
+    get_provider_name_from_provider_panel,
     wt_assert_value_of_provider_attribute,
     wt_click_on_discard_btn_in_domain_change_modal,
-    wt_save_changes_in_modify_provider_detail_form,
     wt_type_val_to_in_box_in_provider_details_form,
+)
+from tests.gui.steps.oneprovider.common import (
+    wait_for_item_to_appear,
+    wait_for_item_to_disappear,
 )
 from tests.gui.steps.rest.provider import (
     add_provider_service_node,
+    assert_provider_service_nodes_statuses,
     get_provider_service_nodes_statuses,
-    start_stop_provider_service_node,
+    set_provider_service_node_state,
 )
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
-from tests.gui.utils.generic import OnedataService
+from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.generic import (
+    OnedataService,
+    OneS3ServiceState,
+    wait_for_visible_element_using_getter,
+)
+from tests.type_definitions import HostDescription, Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.http_exceptions import HTTPConflict
+from tests.utils.user_utils import User
+
+
+def _register_ones3_node_finalizer(
+    request: pytest.FixtureRequest,
+    hosts: Hosts,
+    host: str,
+    provider: str,
+    onepanel_credentials: User,
+) -> None:
+    request.addfinalizer(
+        lambda: set_provider_service_node_state(
+            hosts, host, provider, onepanel_credentials, OnedataService.ONES3, "stopped"
+        )
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} succeeds to save changes in provider details form in Provider panel"
+    )
+)
+def succeed_to_save_changes_in_modify_provider_detail_form(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    save_btn = wait_for_visible_element_using_getter(
+        driver, lambda current_driver: Onepanel(current_driver).content.provider.form.save
+    )
+    save_btn.click()
+    wait_for_item_to_disappear(save_btn.web_elem, driver)
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.PROVIDER_DATA_MODIFIED,
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} fails to save changes in provider details form in Provider panel"
+    )
+)
+def fail_to_save_changes_in_modify_provider_detail_form(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    driver = selenium[browser_id]
+    save_btn = Onepanel(driver).content.provider.form.save
+    wait_for_item_to_appear(save_btn.web_elem)
+    save_btn.click()
+    wait_for_error_modal_to_appear(driver, timeout=WAIT_FRONTEND)
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(
-    selenium,
-    user,
-    provider_name,
-    new_provider_name,
-    new_domain,
-    browser_id,
-):
+    selenium: SeleniumDrivers,
+    user: str,
+    provider_name: str,
+    new_provider_name: str,
+    new_domain: str,
+    browser_id: str,
+) -> None:
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
     button = "Edit settings"
     content = "provider"
     prov_name_attr = "Provider name"
     red_point_attr = "Domain"
-    notify_type = "info"
-    notify_text_regexp = ".*[Pp]rovider.*data.*modified.*"
 
-    wt_click_on_subitem_for_item_with_name(
-        selenium, user, sidebar, sub_item, provider_name
-    )
+    wt_click_on_subitem_for_item_with_name(selenium, [user], sidebar, sub_item, provider_name)
 
-    wt_click_on_btn_in_content(selenium, user, button, content)
+    wt_click_on_btn_in_content(selenium, [user], button, content)
     wt_type_val_to_in_box_in_provider_details_form(
         selenium, user, new_provider_name, prov_name_attr
     )
-    wt_type_val_to_in_box_in_provider_details_form(
-        selenium, user, new_domain, red_point_attr
-    )
-    wt_save_changes_in_modify_provider_detail_form(selenium, user)
-    notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+    wt_type_val_to_in_box_in_provider_details_form(selenium, user, new_domain, red_point_attr)
+    succeed_to_save_changes_in_modify_provider_detail_form(selenium, user)
     wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id)
-    wt_assert_value_of_provider_attribute(
-        selenium, user, prov_name_attr, new_provider_name
-    )
+    wt_assert_value_of_provider_attribute(selenium, user, prov_name_attr, new_provider_name)
     wt_assert_value_of_provider_attribute(selenium, user, red_point_attr, new_domain)
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) deregisters "
-        'provider in "(?P<provider_name>.+?)" Oneprovider panel '
-        "service"
+        r"user of (?P<browser_id>.*?) deregisters "
+        r'provider in "(?P<provider_name>.+?)" Oneprovider panel service'
     )
 )
 def deregister_provider_in_op_panel_using_gui(
-    selenium, browser_id, provider_name, hosts
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider_name: str,
+    hosts: Hosts,
+) -> None:
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
     content = "provider"
     popup = "Deregister provider"
 
-    wt_click_on_subitem_for_item(
-        selenium, browser_id, sidebar, sub_item, provider_name, hosts
-    )
-    wt_click_on_btn_in_content(selenium, browser_id, "Deregister provider", content)
+    wt_click_on_subitem_for_item(selenium, [browser_id], sidebar, sub_item, provider_name, hosts)
+    wt_click_on_btn_in_content(selenium, [browser_id], "Deregister provider", content)
     wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup)
-    notify_visible_with_text(
-        selenium, browser_id, "info", ".*[Pp]rovider.*deregistered.*"
+    is_notify_popup_visible_and_close_all_alert_popups(
+        selenium,
+        browser_id,
+        AlertPopup.PROVIDER_DEREGISTERED,
     )
 
 
-def register_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory):
+def reregister_provider_in_op_using_gui(
+    selenium: SeleniumDrivers,
+    user: str,
+    hosts: Hosts,
+    config: str,
+    tmp_memory: TmpMemory,
+) -> None:
     step2 = "step 2"
     options = yaml.load(config, yaml.Loader)
 
@@ -157,30 +222,28 @@ def register_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory)
         selenium, user, options["admin email"], "Admin email", step2
     )
 
-    wt_click_on_btn_in_deployment_step(selenium, user, "Register", step2)
+    reregister_provider_using_register_btn(selenium, user)
 
 
 @given(
     parsers.re(
-        'provider name set to name of "(?P<provider>.+?)" '
-        "(?P<by>by user of|by) (?P<browser_id>.+?) in Onepanel"
+        r'provider name set to name of "(?P<provider>.+?)" '
+        r"(?P<by>by user of|by) (?P<browser_id>.+?) in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(
-    selenium, browser_id, provider, hosts
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider: str,
+    hosts: Hosts,
+) -> None:
     sub_item = "Provider configuration"
     record = 0
     sidebar = "CLUSTERS"
 
-    wt_click_on_subitem_for_item_with_name(
-        selenium, browser_id, sidebar, sub_item, record
-    )
+    wt_click_on_subitem_for_item_with_name(selenium, [browser_id], sidebar, sub_item, record)
 
-    current_provider = Onepanel(
-        selenium[browser_id]
-    ).content.provider.details.provider_name
+    current_provider = get_provider_name_from_provider_panel(selenium, browser_id)
     domain = hosts[provider]["hostname"]
     provider = hosts[provider]["name"]
     if current_provider != provider:
@@ -196,47 +259,91 @@ def change_provider_name_if_name_is_different_than_given(
 
 @wt(
     parsers.parse(
-        "user {user} sees that oneS3 node in provider cluster in {provider} is of"
-        ' status "{status}"'
+        'user {user} sees that oneS3 node in provider cluster in "{provider}" is of status "{status}"'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_cluster_ones3_node_status_rest(
-    hosts, provider, onepanel_credentials, status
-):
-    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
-    res = get_provider_service_nodes_statuses(
-        hosts, provider, onepanel_credentials, OnedataService.ONES3
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: User,
+    status: str,
+) -> None:
+    host = f"{hosts[provider]['pod_name']}.{hosts[provider]['hostname']}"
+    expected_statuses = {host: OneS3ServiceState(status)}
+    assert_provider_service_nodes_statuses(
+        hosts,
+        provider,
+        onepanel_credentials,
+        OnedataService.ONES3,
+        expected_statuses,
     )
-    exp_res = {host: status}
-    err_msg = f"expected {exp_res}, but got {res}"
-    assert exp_res == res, err_msg
 
 
-@wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
-def add_provider_cluster_ones3_node_rest(hosts, provider, onepanel_credentials):
-    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
-    data = {"hosts": [host]}
-    add_provider_service_node(
-        hosts, provider, onepanel_credentials, data, OnedataService.ONES3
+@given(parsers.parse('there is oneS3 node in provider cluster in "{provider}"'))
+def add_provider_cluster_ones3_node_rest(
+    request: pytest.FixtureRequest,
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: User,
+) -> None:
+    desc: HostDescription = hosts[provider]
+    host = desc["pod_name"] + "." + desc["hostname"]
+    data: JsonObject = {"hosts": [host]}
+
+    try:
+        add_provider_service_node(
+            hosts,
+            provider,
+            onepanel_credentials,
+            data,
+            OnedataService.ONES3,
+        )
+    except HTTPConflict:
+        statuses = get_provider_service_nodes_statuses(
+            hosts,
+            provider,
+            onepanel_credentials,
+            OnedataService.ONES3,
+        )
+
+        if statuses.get(host) == OneS3ServiceState.STOPPED:
+            set_provider_service_node_state(
+                hosts,
+                host,
+                provider,
+                onepanel_credentials,
+                OnedataService.ONES3,
+                "started",
+            )
+
+    _register_ones3_node_finalizer(
+        request,
+        hosts,
+        host,
+        provider,
+        onepanel_credentials,
     )
 
 
 @wt(
     parsers.re(
-        "user (?P<user>.*?) (?P<option>starts|stops) oneS3 node in provider cluster in"
-        " (?P<provider>.*?)"
+        r"user (?P<user>.*?) (?P<option>starts|stops) oneS3 node in provider "
+        r'cluster in "(?P<provider>.*?)"'
     )
 )
 def stop_provider_cluster_ones3_node_rest(
-    option, hosts, provider, onepanel_credentials
-):
-    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
-    start_stop_provider_service_node(
+    option: str,
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: User,
+) -> None:
+    host = f"{hosts[provider]['pod_name']}.{hosts[provider]['hostname']}"
+    state: Literal["started", "stopped"] = "started" if option == "starts" else "stopped"
+    set_provider_service_node_state(
         hosts,
         host,
         provider,
         onepanel_credentials,
         OnedataService.ONES3,
-        start=option == "starts",
+        state,
     )

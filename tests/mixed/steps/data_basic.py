@@ -8,8 +8,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 import re
+from collections.abc import Mapping
+from typing import cast
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+import pytest
+from _pytest._py.path import LocalPath
+
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     assert_file_content_in_op_gui,
     assert_mtime_not_earlier_than_op_gui,
@@ -34,7 +39,8 @@ from tests.gui.meta_steps.oneprovider.metadata import (
     set_metadata_in_op_gui,
 )
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
-from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
+from tests.gui.steps.oneprovider.data_tab import upload_files_to_cwd_in_data_tab
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.oneclient.data_basic import (
     assert_metadata_in_op_oneclient,
     assert_no_such_metadata_in_op_oneclient,
@@ -81,37 +87,50 @@ from tests.mixed.steps.rest.oneprovider.data import (
     write_to_file_in_op_rest,
 )
 from tests.mixed.steps.rest.oneprovider.metadata import (
+    HostsConfig as MetadataHostsConfig,
+)
+from tests.mixed.steps.rest.oneprovider.metadata import (
     assert_metadata_in_op_rest,
     assert_no_such_metadata_in_op_rest,
     remove_all_metadata_in_op_rest,
     set_metadata_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.type_definitions import EnvDesc, Hosts, SeleniumDrivers, Tokens
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPBadRequest
 from tests.utils.path_utils import get_first_path_element
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
+
+
+def _as_metadata_users(users: Users) -> Users:
+    return users
+
+
+def _as_metadata_hosts(hosts: Hosts) -> MetadataHostsConfig:
+    return cast(MetadataHostsConfig, hosts)
 
 
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create "
-        'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
+        r'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def create_file_in_op(
-    client,
-    user,
-    users,
-    space,
-    name,
-    hosts,
-    tmp_memory,
-    host,
-    selenium,
-    result,
-    request,
-):
+    client: str,
+    user: str,
+    users: Users,
+    space: str,
+    name: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    host: str,
+    selenium: SeleniumDrivers,
+    result: str,
+    request: pytest.FixtureRequest,
+) -> None:
     full_path = f"{space}/{name}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -129,9 +148,7 @@ def create_file_in_op(
         create_file_in_op_rest(user, users, host, hosts, full_path, result)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        create_file_in_op_oneclient(
-            user, full_path, users, result, oneclient_host, request
-        )
+        create_file_in_op_oneclient(user, full_path, users, result, oneclient_host, request)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -144,18 +161,18 @@ def create_file_in_op(
     )
 )
 def create_file_in_op_with_token(
-    client,
-    user,
-    users,
-    space,
-    name,
-    hosts,
-    tmp_memory,
-    host,
-    result,
-    env_desc,
-    request,
-):
+    client: str,
+    user: str,
+    users: Users,
+    space: str,
+    name: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    host: str,
+    result: str,
+    env_desc: EnvDesc,
+    request: pytest.FixtureRequest,
+) -> None:
     full_path = f"{space}/{name}"
     client_lower = client.lower()
     if client_lower == "rest":
@@ -185,17 +202,23 @@ def create_file_in_op_with_token(
     )
 )
 def assert_file_in_op_with_token(
-    client, user, name, space, host, tmp_memory, users, hosts, result
-):
+    client: str,
+    user: str,
+    name: str,
+    space: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    result: str,
+) -> None:
 
     client_lower = client.lower()
     if client_lower == "rest":
-        see_item_in_op_rest_using_token(
-            user, name, space, host, tmp_memory, users, hosts, result
-        )
+        see_item_in_op_rest_using_token(user, name, space, host, tmp_memory, users, hosts, result)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        see_items_in_op_oneclient(name, space, user, users, result, oneclient_host)
+        see_items_in_op_oneclient([name], space, user, users, result, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -204,23 +227,23 @@ def assert_file_in_op_with_token(
     parsers.re(
         r"using (?P<client>.*) with identity token, (?P<user>\w+) ("
         r'?P<result>\w+) to create file named "(?P<name>.*)" using '
-        'received token in "(?P<space>.*)" in (?P<host>.*)'
+        r'received token in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def create_file_in_op_with_tokens(
-    client,
-    user,
-    users,
-    space,
-    name,
-    hosts,
-    tmp_memory,
-    host,
-    result,
-    env_desc,
-    tokens,
-    request,
-):
+    client: str,
+    user: str,
+    users: Users,
+    space: str,
+    name: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    host: str,
+    result: str,
+    env_desc: EnvDesc,
+    tokens: Tokens,
+    request: pytest.FixtureRequest,
+) -> None:
     full_path = f"{space}/{name}"
     client_lower = client.lower()
     if client_lower == "rest":
@@ -256,22 +279,21 @@ def create_file_in_op_with_tokens(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create "
-        'directory named "/(?P<abs_path>.*)" in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r'directory named "/(?P<abs_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def create_dir_in_op(
-    client,
-    user,
-    users,
-    space,
-    abs_path,
-    hosts,
-    tmp_memory,
-    host,
-    selenium,
-    result,
-):
+    client: str,
+    user: str,
+    users: Users,
+    space: str,
+    abs_path: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    host: str,
+    selenium: SeleniumDrivers,
+    result: str,
+) -> None:
     cwd = "space root"
     full_path = f"{space}/{abs_path}"
     client_lower = client.lower()
@@ -313,58 +335,60 @@ def create_dir_in_op(
 @wt(
     parsers.re(
         r"using web GUI, (?P<user>\w+) clicks and presses enter on item "
-        'named "(?P<item_name>.*)" in "(?P<space>.*)"'
+        r'named "(?P<item_name>.*)" in "(?P<space>.*)"'
     )
 )
-def go_to_dir(selenium, user, item_name, tmp_memory, space):
+def go_to_dir(
+    selenium: SeleniumDrivers,
+    user: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+    space: str,
+) -> None:
     go_to_filebrowser(selenium, user, tmp_memory, space)
-    click_and_press_enter_on_item_in_browser(
-        selenium, user, item_name, tmp_memory, "file browser"
-    )
+    click_and_press_enter_on_item_in_browser(selenium, user, item_name, tmp_memory, "file browser")
 
 
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see "
-        'item named (?P<name>[^ ]+) in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r'item named "(?P<name>[^ ]+)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def see_item_in_op(
-    client,
-    user,
-    users,
-    result,
-    name,
-    space,
-    host,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: str,
+    user: str,
+    users: Users,
+    result: str,
+    name: str,
+    space: str,
+    host: str,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
-        item_name = name
-        name_list = name.replace('"', "")
+        name_list = name
         path = ""
         if "/" in name_list:
-            item_name = name_list.split("/")[-1]
-            path = name_list.replace(item_name, "")[:-1]
+            name = name_list.split("/")[-1]
+            path = name_list.replace(name, "")[:-1]
 
         see_items_in_op_gui(
             selenium,
             user,
             path,
-            item_name,
+            [name],
             tmp_memory,
             result,
             space,
         )
     elif client_lower == "rest":
-        see_items_in_op_rest(user, users, host, hosts, name, result, space)
+        see_items_in_op_rest(user, users, host, hosts, [name], result, space)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        see_items_in_op_oneclient(name, space, user, users, result, oneclient_host)
+        see_items_in_op_oneclient([name], space, user, users, result, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -373,21 +397,21 @@ def see_item_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to "
         r'remove directory \(rmdir\) named "(?P<name>.*)" in '
-        '"(?P<space>.*)" in (?P<host>.*)'
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_empty_dir_in_op(
-    client,
-    user,
-    users,
-    result,
-    space,
-    name,
-    hosts,
-    selenium,
-    tmp_memory,
-    host,
-):
+    client: str,
+    user: str,
+    users: Users,
+    result: str,
+    space: str,
+    name: str,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    host: str,
+) -> None:
     full_path = f"{space}/{name}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -403,9 +427,7 @@ def remove_empty_dir_in_op(
         remove_dir_in_op_rest(user, users, host, hosts, full_path)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        delete_empty_directory_in_op_oneclient(
-            full_path, user, users, result, oneclient_host
-        )
+        delete_empty_directory_in_op_oneclient(full_path, user, users, result, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -413,21 +435,20 @@ def remove_empty_dir_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes directory "
-        r'\(rmdir -p\) named "(?P<name>.*)" in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r'\(rmdir -p\) named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_empty_dir_and_parents_in_op(
-    client,
-    user,
-    users,
-    space,
-    name,
-    hosts,
-    selenium,
-    tmp_memory,
-    host,
-):
+    client: str,
+    user: str,
+    users: Users,
+    space: str,
+    name: str,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    host: str,
+) -> None:
     first_path_elem = get_first_path_element(name)
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -451,21 +472,20 @@ def remove_empty_dir_and_parents_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes directory "
-        r'\(rm -rf\) named "(?P<name>.*)" in "(?P<space>.*)" in '
-        r"(?P<host>.*)"
+        r'\(rm -rf\) named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_dir_in_op(
-    client,
-    user,
-    users,
-    space,
-    name,
-    hosts,
-    selenium,
-    tmp_memory,
-    host,
-):
+    client: str,
+    user: str,
+    users: Users,
+    space: str,
+    name: str,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    host: str,
+) -> None:
     full_path = f"{space}/{name}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -489,22 +509,21 @@ def remove_dir_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) "
-        'to remove file named "(?P<name>.*)" in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r'to remove file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_file_in_op(
-    client,
-    user,
-    name,
-    space,
-    host,
-    users,
-    hosts,
-    tmp_memory,
-    selenium,
-    result,
-):
+    client: str,
+    user: str,
+    name: str,
+    space: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    result: str,
+) -> None:
     full_path = f"{space}/{name}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -528,19 +547,25 @@ def remove_file_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) "
-        'to remove file named "(?P<name>.*)" using received token in '
-        '"(?P<space>.*)" in (?P<host>.*)'
+        r'to remove file named "(?P<name>.*)" using received token in '
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def remove_file_using_token_in_op(
-    client, user, name, space, host, users, hosts, tmp_memory, result
-):
+    client: str,
+    user: str,
+    name: str,
+    space: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    result: str,
+) -> None:
     full_path = f"{space}/{name}"
     client_lower = client.lower()
     if client_lower == "rest":
-        remove_file_using_token_in_op_rest(
-            user, users, host, hosts, full_path, result, tmp_memory
-        )
+        remove_file_using_token_in_op_rest(user, users, host, hosts, full_path, result, tmp_memory)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         remove_file_in_op_oneclient(user, full_path, oneclient_host, users, result)
@@ -556,17 +581,17 @@ def remove_file_using_token_in_op(
     )
 )
 def rename_item_in_op(
-    client,
-    user,
-    users,
-    space,
-    old_name,
-    new_name,
-    hosts,
-    tmp_memory,
-    host,
-    selenium,
-):
+    client: str,
+    user: str,
+    users: Users,
+    space: str,
+    old_name: str,
+    new_name: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    host: str,
+    selenium: SeleniumDrivers,
+) -> None:
     old_path = f"{space}/{old_name}"
     new_path = f"{space}/{new_name}"
     client_lower = client.lower()
@@ -594,21 +619,20 @@ def rename_item_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) "
         r'renames item named "(?P<old_name>.*)" to "(?P<new_name>.*)" '
-        r'using received access token in "(?P<space>.*)" '
-        r"in (?P<host>.*)"
+        r'using received access token in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def rename_item_in_op_using_token(
-    client,
-    user,
-    users,
-    space,
-    old_name,
-    new_name,
-    hosts,
-    tmp_memory,
-    host,
-):
+    client: str,
+    user: str,
+    users: Users,
+    space: str,
+    old_name: str,
+    new_name: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    host: str,
+) -> None:
     old_path = f"{space}/{old_name}"
     new_path = f"{space}/{new_name}"
     client_lower = client.lower()
@@ -634,22 +658,21 @@ def rename_item_in_op_using_token(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that there "
-        r'(is 1|are (?P<num>\d+)) items? in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r'(is 1|are (?P<num>\d+)) items? in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def see_num_of_items_in_op(
-    client,
-    user,
-    num,
-    space,
-    host,
-    users,
-    hosts,
-    tmp_memory,
-    selenium,
-):
-    num = int(num) if num is not None else 1
+    client: str,
+    user: str,
+    num: str | None,
+    space: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+) -> None:
+    num_value = int(num) if num is not None else 1
     client_lower = client.lower()
     if client_lower == "web gui":
         see_num_of_items_in_path_in_op_gui(
@@ -657,17 +680,15 @@ def see_num_of_items_in_op(
             user,
             tmp_memory,
             "",
-            num,
+            num_value,
             host,
             hosts,
         )
     elif client_lower == "rest":
-        assert_num_of_files_in_path_in_op_rest(num, space, user, users, host, hosts)
+        assert_num_of_files_in_path_in_op_rest(num_value, space, user, users, host, hosts)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_num_of_files_in_path_in_op_oneclient(
-            num, space, user, users, oneclient_host
-        )
+        assert_num_of_files_in_path_in_op_oneclient(num_value, space, user, users, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -679,7 +700,16 @@ def see_num_of_items_in_op(
         r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def write_to_file_in_op(client, user, text, file_name, space, host, users, hosts):
+def write_to_file_in_op(
+    client: str,
+    user: str,
+    text: str,
+    file_name: str,
+    space: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
@@ -694,24 +724,24 @@ def write_to_file_in_op(client, user, text, file_name, space, host, users, hosts
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) reads "(?P<text>.*)" '
-        'from file named "(?P<file_name>.*)" in '
-        '"(?P<space>.*)" in (?P<host>.*)'
+        r'from file named "(?P<file_name>.*)" in '
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def read_from_file_in_op(
-    client,
-    user,
-    text,
-    file_name,
-    space,
-    host,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-    tmpdir,
-):
+    client: str,
+    user: str,
+    text: str,
+    file_name: str,
+    space: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+) -> None:
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -736,14 +766,21 @@ def read_from_file_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>(succeeds|fails)) to append"
-        r' "(?P<text>.*)" '
-        r'to file under a path "(?P<file_name>.*)" in '
+        r' "(?P<text>.*)" to file under a path "(?P<file_name>.*)" in '
         r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def append_to_file_in_op(
-    client, user, result, text, file_name, space, host, users, hosts
-):
+    client: str,
+    user: str,
+    result: str,
+    text: str,
+    file_name: str,
+    space: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
@@ -753,9 +790,7 @@ def append_to_file_in_op(
             try:
                 append_to_file_in_op_rest(user, users, host, hosts, full_path, text)
                 raise AssertionError("The append operation was supposed to fail")
-            except (
-                HTTPBadRequest
-            ):  # If file is data write protected this exception will be thrown
+            except HTTPBadRequest:  # If file is data write protected this exception will be thrown
                 pass
 
     elif "oneclient" in client_lower:
@@ -776,14 +811,20 @@ def append_to_file_in_op(
         r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def replace_in_file_in_op(client, user, old_text, new_text, file_name, space, users):
+def replace_in_file_in_op(
+    client: str,
+    user: str,
+    old_text: str,
+    new_text: str,
+    file_name: str,
+    space: str,
+    users: Users,
+) -> None:
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        multi_reg_file_steps.replace(
-            user, old_text, new_text, full_path, oneclient_host, users
-        )
+        multi_reg_file_steps.replace(user, old_text, new_text, full_path, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -791,19 +832,25 @@ def replace_in_file_in_op(client, user, old_text, new_text, file_name, space, us
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to move "
-        '"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
-        "in (?P<host>.*)"
+        r'"(?P<src_path>.*)" to "(?P<dst_path>.*)" in (?P<host>.*)'
     )
 )
-def move_file_in_op(client, user, result, src_path, dst_path, host, users, hosts):
+def move_file_in_op(
+    client: str,
+    user: str,
+    result: str,
+    src_path: str,
+    dst_path: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
         move_item_in_op_rest(src_path, dst_path, result, host, hosts, user, users)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        move_item_in_op_oneclient(
-            user, src_path, dst_path, users, result, oneclient_host
-        )
+        move_item_in_op_oneclient(user, src_path, dst_path, users, result, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -812,19 +859,25 @@ def move_file_in_op(client, user, result, src_path, dst_path, host, users, hosts
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) copies "
         r"(?P<item_type>(directory|file)) named "
-        r'"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
-        r"in (?P<host>.*)"
+        r'"(?P<src_path>.*)" to "(?P<dst_path>.*)" in (?P<host>.*)'
     )
 )
-def copy_item_in_op(client, user, item_type, src_path, dst_path, host, users, hosts):
+def copy_item_in_op(
+    client: str,
+    user: str,
+    item_type: str,
+    src_path: str,
+    dst_path: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     client_lower = client.lower()
     if client_lower == "rest":
         copy_item_in_op_rest(src_path, dst_path, host, hosts, user, users)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        copy_item_in_op_oneclient(
-            item_type, src_path, dst_path, user, users, oneclient_host
-        )
+        copy_item_in_op_oneclient(item_type, src_path, dst_path, user, users, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -832,22 +885,22 @@ def copy_item_in_op(client, user, item_type, src_path, dst_path, host, users, ho
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates directory "
-        'structure in "(?P<space>.*)" space on (?P<host>.*) '
+        r'structure in "(?P<space>.*)" space on (?P<host>.*) '
         r"as follow:\n(?P<config>(.|\s)*)"
     )
 )
 def create_directory_structure_in_op(
-    selenium,
-    user,
-    config,
-    space,
-    tmp_memory,
-    users,
-    hosts,
-    host,
-    client,
-    request,
-):
+    selenium: SeleniumDrivers,
+    user: str,
+    config: str,
+    space: str,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    client: str,
+    request: pytest.FixtureRequest,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         create_directory_structure_in_op_gui(
@@ -858,9 +911,7 @@ def create_directory_structure_in_op(
             tmp_memory,
         )
     elif client_lower == "rest":
-        create_directory_structure_in_op_rest(
-            user, users, hosts, host, config, space, request
-        )
+        create_directory_structure_in_op_rest(user, users, hosts, host, config, space, request)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         create_directory_structure_in_op_oneclient(
@@ -875,23 +926,23 @@ def create_directory_structure_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) "
-        'time of item named "(?P<file_name>.*)" in "(?P<space>.*)" '
-        "space is (?P<comparator>.*) "
-        "(?P<time2>.*) time in (?P<host>.*)"
+        r'time of item named "(?P<file_name>.*)" in "(?P<space>.*)" '
+        r"space is (?P<comparator>.*) "
+        r"(?P<time2>.*) time in (?P<host>.*)"
     )
 )
 def assert_time_relation(
-    user,
-    time1,
-    file_name,
-    space,
-    comparator,
-    time2,
-    client,
-    users,
-    host,
-    hosts,
-):
+    user: str,
+    time1: str,
+    file_name: str,
+    space: str,
+    comparator: str,
+    time2: str,
+    client: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+) -> None:
     client_lower = client.lower()
     full_path = f"{space}/{file_name}"
     comparator = re.sub(r"( than| to)", "", comparator)
@@ -911,27 +962,25 @@ def assert_time_relation(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) copies "
-        '(?P<time_name>.*) time of item named "(?P<file_name>.*)" in '
-        '"(?P<space>.*)" space in (?P<host>.*)'
+        r'(?P<time_name>.*) time of item named "(?P<file_name>.*)" in '
+        r'"(?P<space>.*)" space in (?P<host>.*)'
     )
 )
 def remember_time_for_file(
-    user,
-    time_name,
-    file_name,
-    space,
-    client,
-    users,
-    host,
-    hosts,
-    tmp_memory,
-):
+    user: str,
+    time_name: str,
+    file_name: str,
+    space: str,
+    client: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+) -> None:
     client_lower = client.lower()
     full_path = f"{space}/{file_name}"
     if client_lower == "rest":
-        file_time = get_time_for_file_in_op_rest(
-            full_path, user, users, host, hosts, time_name
-        )
+        file_time = get_time_for_file_in_op_rest(full_path, user, users, host, hosts, time_name)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         file_time = get_time_for_file_in_op_oneclient(
@@ -946,24 +995,24 @@ def remember_time_for_file(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that "
-        '(?P<time_name1>.*) time of item named "(?P<file_name>.*)" '
-        'in space "(?P<space>.*)" is (?P<comparator>.*) (than|to) '
-        "(?P<time_name2>.*) time that was copied in (?P<host>.*)"
+        r'(?P<time_name1>.*) time of item named "(?P<file_name>.*)" '
+        r'in space "(?P<space>.*)" is (?P<comparator>.*) (than|to) '
+        r"(?P<time_name2>.*) time that was copied in (?P<host>.*)"
     )
 )
 def compare_file_time_with_copied_time(
-    user,
-    time_name1,
-    time_name2,
-    file_name,
-    space,
-    client,
-    users,
-    host,
-    hosts,
-    tmp_memory,
-    comparator,
-):
+    user: str,
+    time_name1: str,
+    time_name2: str,
+    file_name: str,
+    space: str,
+    client: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    comparator: str,
+) -> None:
     client_lower = client.lower()
     full_path = f"{space}/{file_name}"
     time2 = tmp_memory[time_name1]
@@ -998,24 +1047,24 @@ def compare_file_time_with_copied_time(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) "
-        'time of item named "(?P<file_name>.*)" is (?P<comparator>.*) '
-        "(than|to) (?P<time2>.*) time of item named "
-        '"(?P<file2_name>.*)" in "(?P<space>.*)" space in (?P<host>.*)'
+        r'time of item named "(?P<file_name>.*)" is (?P<comparator>.*) '
+        r"(than|to) (?P<time2>.*) time of item named "
+        r'"(?P<file2_name>.*)" in "(?P<space>.*)" space in (?P<host>.*)'
     )
 )
 def assert_files_time_relation(
-    user,
-    time1,
-    file_name,
-    space,
-    comparator,
-    time2,
-    client,
-    file2_name,
-    users,
-    host,
-    hosts,
-):
+    user: str,
+    time1: str,
+    file_name: str,
+    space: str,
+    comparator: str,
+    time2: str,
+    client: str,
+    file2_name: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+) -> None:
     client_lower = client.lower()
     full_path = f"{space}/{file_name}"
     full_path2 = f"{space}/{file2_name}"
@@ -1044,25 +1093,28 @@ def assert_files_time_relation(
             users,
         )
     else:
-        raise NoSuchClientException(
-            f"Client: {client} is not supported for this assertion"
-        )
+        raise NoSuchClientException(f"Client: {client} is not supported for this assertion")
 
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.*) sees that "
-        '(?P<time_name>.*) time of item named "(?P<file_path>.*)" '
-        "in current space is not earlier than "
-        "(?P<time>[0-9]*) seconds ago in (?P<host>.*)"
+        r"using (?P<client>.*), (?P<user>.*) sees that "
+        r'(?P<time_name>.*) time of item named "(?P<file_path>.*)" '
+        r"in current space is not earlier than "
+        r"(?P<time>[0-9]*) seconds ago in (?P<host>.*)"
     )
 )
-def assert_mtime_not_earlier_than(client, file_path, selenium, user, time, tmp_memory):
+def assert_mtime_not_earlier_than(
+    client: str,
+    file_path: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    time: str,
+    tmp_memory: TmpMemory,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
-        assert_mtime_not_earlier_than_op_gui(
-            file_path, time, user, tmp_memory, selenium
-        )
+        assert_mtime_not_earlier_than_op_gui(file_path, time, user, tmp_memory, selenium)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -1070,23 +1122,22 @@ def assert_mtime_not_earlier_than(client, file_path, selenium, user, time, tmp_m
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that directory "
-        'structure in "(?P<space>.*)" space in (?P<host>.*) is as '
-        "previously created"
+        r'structure in "(?P<space>.*)" space in (?P<host>.*) is as previously created'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_directory_structure_is_as_previous_in_op(
-    client,
-    selenium,
-    user,
-    tmp_memory,
-    tmpdir,
-    space,
-    host,
-    spaces,
-    hosts,
-    users,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    space: str,
+    host: str,
+    spaces: Mapping[str, str],
+    hosts: Hosts,
+    users: Users,
+) -> None:
     config = tmp_memory["config"]
     client_lower = client.lower()
 
@@ -1116,18 +1167,18 @@ def assert_directory_structure_is_as_previous_in_op(
     )
 )
 def assert_directory_structure_in_op(
-    client,
-    selenium,
-    user,
-    tmp_memory,
-    tmpdir,
-    space,
-    host,
-    spaces,
-    hosts,
-    users,
-    config,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    space: str,
+    host: str,
+    spaces: Mapping[str, str],
+    hosts: Hosts,
+    users: Users,
+    config: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_space_content_in_op_gui(
@@ -1150,25 +1201,24 @@ def assert_directory_structure_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sets new "
-        '(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)"'
-        ' (?P<item>file|directory) in space "(?P<space>.*)" '
-        "in (?P<host>.*)"
+        r'(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)"'
+        r' (?P<item>file|directory) in space "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def set_metadata_in_op(
-    client,
-    selenium,
-    user,
-    tab_name,
-    val,
-    space,
-    path,
-    host,
-    hosts,
-    users,
-    tmp_memory,
-    item,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    tab_name: str,
+    val: str,
+    space: str,
+    path: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    tmp_memory: TmpMemory,
+    item: str,
+) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -1185,15 +1235,21 @@ def set_metadata_in_op(
             item,
         )
     elif client_lower == "rest":
-        set_metadata_in_op_rest(user, users, host, hosts, full_path, tab_name, val)
+        set_metadata_in_op_rest(
+            user,
+            _as_metadata_users(users),
+            host,
+            _as_metadata_hosts(hosts),
+            full_path,
+            tab_name,
+            val,
+        )
     elif "oneclient" in client_lower:
         if tab_name.lower() == "rdf":
             val = val.replace('"', '\\"')
             val = '"' + val + '"'
         oneclient_host = change_client_name_to_hostname(client_lower)
-        set_metadata_in_op_oneclient(
-            val, tab_name, full_path, user, users, oneclient_host
-        )
+        set_metadata_in_op_oneclient(val, tab_name, full_path, user, users, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -1201,25 +1257,25 @@ def set_metadata_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that "
-        '(?P<tab_name>.*) metadata for "(?P<path>.*?)" '
-        "(?P<item>file|directory) is "
-        '(?P<val>.*) in space "(?P<space>.*)" in (?P<host>.*)'
+        r'(?P<tab_name>.*) metadata for "(?P<path>.*?)" '
+        r"(?P<item>file|directory) is "
+        r'(?P<val>.*) in space "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def assert_metadata_in_op(
-    client,
-    selenium,
-    user,
-    tab_name,
-    val,
-    space,
-    path,
-    host,
-    hosts,
-    users,
-    tmp_memory,
-    item,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    tab_name: str,
+    val: str,
+    space: str,
+    path: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    tmp_memory: TmpMemory,
+    item: str,
+) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -1236,12 +1292,18 @@ def assert_metadata_in_op(
             item,
         )
     elif client_lower == "rest":
-        assert_metadata_in_op_rest(user, users, host, hosts, full_path, tab_name, val)
+        assert_metadata_in_op_rest(
+            user,
+            _as_metadata_users(users),
+            host,
+            _as_metadata_hosts(hosts),
+            full_path,
+            tab_name,
+            val,
+        )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_metadata_in_op_oneclient(
-            val, tab_name, full_path, user, users, oneclient_host
-        )
+        assert_metadata_in_op_oneclient(val, tab_name, full_path, user, users, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -1250,22 +1312,21 @@ def assert_metadata_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes all "
         r'"(?P<path>.*)" (?P<item>file|directory) '
-        r'metadata in space "(?P<space>\w+)" '
-        "in (?P<host>.*)"
+        r'metadata in space "(?P<space>\w+)" in (?P<host>.*)'
     )
 )
 def remove_all_metadata_in_op(
-    client,
-    selenium,
-    user,
-    users,
-    space,
-    tmp_memory,
-    path,
-    host,
-    hosts,
-    item,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    users: Users,
+    space: str,
+    tmp_memory: TmpMemory,
+    path: str,
+    host: str,
+    hosts: Hosts,
+    item: str,
+) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -1278,7 +1339,9 @@ def remove_all_metadata_in_op(
             item,
         )
     elif client_lower == "rest":
-        remove_all_metadata_in_op_rest(user, users, host, hosts, full_path)
+        remove_all_metadata_in_op_rest(
+            user, _as_metadata_users(users), host, _as_metadata_hosts(hosts), full_path
+        )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         remove_all_metadata_in_op_oneclient(user, users, oneclient_host, full_path)
@@ -1289,26 +1352,25 @@ def remove_all_metadata_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that "
-        '(?P<tab_name>.*) metadata for "(?P<path>.*)" '
-        "(?P<item>file|directory) in space "
-        '"(?P<space>.*)" does not contain (?P<val>.*) in '
-        "(?P<host>.*)"
+        r'(?P<tab_name>.*) metadata for "(?P<path>.*)" '
+        r"(?P<item>file|directory) in space "
+        r'"(?P<space>.*)" does not contain (?P<val>.*) in (?P<host>.*)'
     )
 )
 def assert_no_such_metadata_in_op(
-    client,
-    selenium,
-    user,
-    users,
-    space,
-    tmp_memory,
-    path,
-    host,
-    hosts,
-    val,
-    tab_name,
-    item,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    users: Users,
+    space: str,
+    tmp_memory: TmpMemory,
+    path: str,
+    host: str,
+    hosts: Hosts,
+    val: str,
+    tab_name: str,
+    item: str,
+) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -1325,7 +1387,13 @@ def assert_no_such_metadata_in_op(
         )
     elif client_lower == "rest":
         assert_no_such_metadata_in_op_rest(
-            user, users, host, hosts, full_path, tab_name, val
+            user,
+            _as_metadata_users(users),
+            host,
+            _as_metadata_hosts(hosts),
+            full_path,
+            tab_name,
+            val,
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -1339,17 +1407,17 @@ def assert_no_such_metadata_in_op(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) uploads "(?P<path>.*)" '
-        'to "(?P<space>.*)" in (?P<host>.*)'
+        r'to "(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def upload_file_to_op(
-    client,
-    selenium,
-    user,
-    path,
-    space,
-    tmp_memory,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    path: str,
+    space: str,
+    tmp_memory: TmpMemory,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         successfully_upload_file_to_op_gui(
@@ -1370,18 +1438,18 @@ def upload_file_to_op(
     )
 )
 def upload_local_file_to_op(
-    client,
-    selenium,
-    user,
-    path,
-    tmpdir,
-    space,
-    tmp_memory,
-):
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    path: str,
+    tmpdir: LocalPath,
+    space: str,
+    tmp_memory: TmpMemory,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         go_to_filebrowser(selenium, user, tmp_memory, space)
-        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
+        upload_files_to_cwd_in_data_tab(selenium, user, [path], tmpdir)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -1394,7 +1462,16 @@ def upload_local_file_to_op(
         r"(?P<gid>[\d]+) respectively"
     )
 )
-def assert_file_stats(client, user, path, space, uid, gid, res, users):
+def assert_file_stats(
+    client: str,
+    user: str,
+    path: str,
+    space: str,
+    uid: str,
+    gid: str,
+    res: str,
+    users: Users,
+) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
     if "oneclient" in client_lower:
@@ -1432,7 +1509,7 @@ def assert_file_stats(client, user, path, space, uid, gid, res, users):
         r'in space "(?P<space>[\w-]+)" in (?P<host>.*)'
     )
 )
-def open_path_in_space(client, user, path, space, users):
+def open_path_in_space(client: str, user: str, path: str, space: str, users: Users) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
     if "oneclient" in client_lower:
@@ -1442,8 +1519,12 @@ def open_path_in_space(client, user, path, space, users):
         raise NoSuchClientException(f"Client: {client} not found")
 
 
-@wt(
-    parsers.parse('using web GUI, {user} sees that "{owner}" is owner of "{file_name}"')
-)
-def check_file_owner_web_gui(selenium, user, owner, file_name, tmp_memory):
+@wt(parsers.parse('using web GUI, {user} sees that "{owner}" is owner of "{file_name}"'))
+def check_file_owner_web_gui(
+    selenium: SeleniumDrivers,
+    user: str,
+    owner: str,
+    file_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     check_file_owner(selenium, user, owner, file_name, tmp_memory)

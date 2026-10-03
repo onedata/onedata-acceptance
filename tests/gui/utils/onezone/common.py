@@ -15,7 +15,7 @@ class OZPanel(PageObject, ExpandableMixin):
     name = Label("a.main-accordion-toggle", parent_name="oz panel")
     _toggle = WebElement("a.main-accordion-toggle")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} panel in {self.parent}"
 
 

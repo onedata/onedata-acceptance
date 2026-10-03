@@ -216,8 +216,8 @@ _Autoformatter check:
     - script:
         <<: *run-script-working-dir
         scripts:
-          - make black-check
-        description: Black formatting
+          - make format-check
+        description: Ruff formatting
 
 _Static analysis:
   key: STAN

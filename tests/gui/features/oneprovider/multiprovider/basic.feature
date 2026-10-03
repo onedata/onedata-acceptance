@@ -16,7 +16,7 @@ Feature: Oneprovider functionality using multiple providers
   Scenario: User supports space by two providers and sees that there are two provider in file browser
     Given there are no spaces supported by oneprovider-1 in Onepanel
     When user of space_owner_browser sends support token for "space1" to user of browser1
-    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 clicks on "oneprovider-2" in clusters menu
     And user of browser1 supports "space1" space in "oneprovider-2" Oneprovider panel service with following configuration:
           storage: posix

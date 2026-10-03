@@ -21,7 +21,7 @@ class _DatasetBrowser(Browser):
     row_cls = DataRow
     column_header_cls = DatasetColumnHeader
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"dataset browser in {self.parent}"
 
 

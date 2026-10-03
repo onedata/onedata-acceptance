@@ -4,6 +4,19 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
+import re
+import time
+
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+    TimeoutException,
+)
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
+
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.web_elements import (
     Label,
@@ -11,8 +24,10 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.utils.utils import repeat_failed
 
+from .alert_info_popup import AlertInfoPopup
 from .archive_row_menu import ArchiveRowMenu
 from .boolean_values import BooleanValues
 from .chart_statistics import ChartStatistics
@@ -23,6 +38,7 @@ from .data_distribution_popup import DataDistributionPopup
 from .data_row_menu import DataRowMenu
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .deregister_provider import DeregisterProvider
+from .generic import AlertPopupType
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .handle_service import HandleService
 from .info import Info
@@ -47,22 +63,56 @@ from .workflow_creation_alert import WorkflowCreationAlert
 from .workflow_menu import WorkflowMenu
 
 
+class AlertPopups:
+    info = WebItemsSequence(".ember-notify-cn .alert-info", cls=AlertInfoPopup)
+    success = WebItemsSequence(".ember-notify-cn .alert-success", cls=AlertInfoPopup)
+
+    def __init__(self, driver: WebDriver) -> None:
+        self.driver = self.web_elem = driver
+
+    def __str__(self) -> str:
+        return "alert popups"
+
+    def get_all_alert_popups(self) -> list[AlertInfoPopup]:
+        return [
+            *self.info,
+            *self.success,
+        ]
+
+    def find_alert_popup(self, alert_popup: AlertPopupType) -> AlertInfoPopup | None:
+        """Return the currently displayed alert matching the expected message."""
+        regexp = re.compile(alert_popup.message)
+        for popup in self.get_all_alert_popups():
+            try:
+                if regexp.match(popup.message):
+                    return popup
+            except (StaleElementReferenceException, NoSuchElementException):
+                # Alert popups disappear automatically. Ignore elements that
+                # vanish while their messages are being read.
+                continue
+        return None
+
+    def get_alert_popup(self, alert_popup: AlertPopupType) -> AlertInfoPopup | None:
+        try:
+            return WebDriverWait(
+                self.driver,
+                timeout=1,
+                poll_frequency=0.05,
+            ).until(lambda _: self.find_alert_popup(alert_popup))
+        except TimeoutException:
+            return None
+
+
 class Popups:
     toolbar = WebItem(".webui-popover.in ul.dropdown-menu", cls=ToolbarPopup)
-    deregister_provider = WebItem(
-        ".popover-deregister-provider", cls=DeregisterProvider
-    )
-    user_account_menu = WebItem(
-        ".webui-popover-content .user-account-menu", cls=UserAccountPopup
-    )
-    upload_presenter = WebItemsSequence(
-        ".hidden-xs .up-single-upload", cls=UploadPresenter
-    )
+    deregister_provider = WebItem(".popover-deregister-provider", cls=DeregisterProvider)
+    user_account_menu = WebItem(".webui-popover-content .user-account-menu", cls=UserAccountPopup)
+    upload_presenter = WebItemsSequence(".hidden-xs .up-single-upload", cls=UploadPresenter)
     menu_popup = WebItem("#webuiPopover1", cls=MenuPopupWithLabel)
     menu_popup_with_label = WebItem(".webui-popover.in", cls=MenuPopupWithLabel)
     menu_popup_with_text = WebItem(".webui-popover.in", cls=MenuPopupWithText)
     selector_popup = WebItem(".webui-popover.in", cls=SelectorPopup)
-    consumer_caveat_popup = WebItem(".webui-popover-tags-selector", cls=ConsumerCaveat)
+    consumer_caveat_popup = WebItem(".webui-popover-tags-selector.in", cls=ConsumerCaveat)
     user_delete_account_popover_menu = WebItem(
         ".in .webui-popover-inner", cls=UserDeleteAccountPopoverMenu
     )
@@ -76,27 +126,19 @@ class Popups:
         ".webui-popover-qos-expression-info-list", cls=MatchingStoragesPopup
     )
     cookies = WebItem(".cookies-consent", cls=Cookies)
-    group_hierarchy_menu = WebItem(
-        ".group-actions.one-webui-popover", cls=GroupHierarchyMenu
-    )
+    group_hierarchy_menu = WebItem(".group-actions.one-webui-popover", cls=GroupHierarchyMenu)
     relation_menu = WebItem(".line-actions.one-webui-popover", cls=GroupHierarchyMenu)
 
     membership_relation_menu = WebItem(
         ".relation-actions.one-webui-popover", cls=MembershipRelationMenu
     )
 
-    provider_details = WebItem(
-        ".webui-popover-content .provider-info-content", cls=ProviderDetails
-    )
-    provider_map_popover = WebItem(
-        ".webui-popover .provider-place-drop", cls=ProviderMapPopover
-    )
+    provider_details = WebItem(".webui-popover-content .provider-info-content", cls=ProviderDetails)
+    provider_map_popover = WebItem(".webui-popover .provider-place-drop", cls=ProviderMapPopover)
     dropdown = DropdownSelector(".ember-basic-dropdown-content")
     migrate_dropdown = MigrateDropdownSelector(".ember-basic-dropdown-content")
     data_row_menu = WebItem(".file-actions.dropdown-menu", cls=DataRowMenu)
-    dataset_row_menu = WebItem(
-        ".left-bottom .file-actions.dropdown-menu", cls=DataRowMenu
-    )
+    dataset_row_menu = WebItem(".left-bottom .file-actions.dropdown-menu", cls=DataRowMenu)
     archive_row_menu = WebItem(
         ".in.webui-popover .dropdown-menu",
         cls=ArchiveRowMenu,
@@ -134,19 +176,21 @@ class Popups:
     options_selector = WebItem(".webui-popover.in", cls=OptionsSelector)
     workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
     info = WebItem(".switchable-popover-body", cls=Info)
+    space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
+        self.alert_popups = AlertPopups(driver)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "popups"
 
-    def is_upload_presenter(self):
+    def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0
 
     @repeat_failed(timeout=10)
-    def get_query_builder_not_hidden_popup(self):
+    def get_query_builder_not_hidden_popup(self) -> ExpressionBuilderPopup:
         for popup in self.query_builder_popups:
             if popup.web_elem.is_displayed():
                 return popup
-        raise RuntimeError("No query builder popups visible")
+        raise PageObjectNotFoundError("No query builder popups visible")

@@ -6,19 +6,27 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import re
 
+import pytest
 import yaml
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
 
 from tests import PANEL_REST_PORT
-from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.steps.common.miscellaneous import (
-    _camel_transform,
-    type_string_into_active_element,
+from tests.gui.constants import WAIT_BACKEND
+from tests.gui.meta_steps.rest.storages import (
+    get_storage_ids_by_name,
+    remove_multiple_storages_in_op_panel_using_rest,
+    restore_config_and_remove_storage_by_id,
 )
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.common import wait_for_error_modal_to_appear
+from tests.gui.steps.common.miscellaneous import type_string_into_active_element
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     wait_for_named_modal_to_disappear,
@@ -29,28 +37,62 @@ from tests.gui.steps.onepanel.common import (
 )
 from tests.gui.steps.onepanel.storages import (
     assert_storage_disappeared_from_list,
+    click_add_button_in_storage_form,
     click_modify_storage_in_onepanel,
     click_value_in_posix_storage_edit_page,
+    copy_storage_id,
     delete_additional_param_in_posix_storage_edit_page,
     enable_import_in_add_storage_form,
+    get_first_expanded_storage,
+    get_storages_page,
+    register_revoke_space_supports_finalizer,
     save_changes_in_posix_storage_edit_page,
     type_key_in_posix_storage_edit_page,
-    wt_click_on_add_btn_in_storage_add_form_in_storage_page,
     wt_clicks_on_btn_in_storage_toolbar_in_panel,
     wt_expands_toolbar_for_storage_in_onepanel,
     wt_select_storage_type_in_storage_page_op_panel,
-    wt_type_text_to_in_box_in_storages_page_op_panel,
+    wt_type_text_to_input_box_in_storages_page_op_panel,
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.rest.storages import storage_data_from_config
+from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel
+from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.onepanel.storages import StorageContentPage
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
-from tests.utils.utils import repeat_failed
+from tests.utils.rest_utils import get_panel_rest_path, http_post
+from tests.utils.user_utils import User
+
+REQUIRED_POSIX_STORAGE_PARAMS_COUNT = 2
+
+
+def _register_storage_finalizer(
+    request: pytest.FixtureRequest,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+    storage_id: str,
+    storage_name: str,
+    config: str,
+) -> None:
+    request.addfinalizer(
+        lambda: restore_config_and_remove_storage_by_id(
+            hosts[provider]["hostname"],
+            onepanel_credentials.username,
+            onepanel_credentials.password,
+            storage_id,
+            storage_name,
+            config,
+        )
+    )
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
-def remove_storage_in_op_panel_using_gui(selenium, browser_id, name):
+def remove_storage_in_op_panel_using_gui(
+    selenium: SeleniumDrivers, browser_id: str, name: str
+) -> None:
     option = "Remove storage backend"
     button = "Remove"
     modal = "REMOVE STORAGE BACKEND"
@@ -63,15 +105,23 @@ def remove_storage_in_op_panel_using_gui(selenium, browser_id, name):
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.+?) adds "(?P<name>.*)" storage '
-        'in "(?P<provider_name>.+?)" Oneprovider panel service '
-        "with following configuration:\n"
-        r"(?P<config>(.|\s)*)"
+        r'user of (?P<browser_id>.+?) adds "(?P<storage_name>.*)" storage '
+        r'in "(?P<provider_name>.+?)" Oneprovider panel service '
+        r"with following configuration:\n(?P<config>(.|\s)*)"
     )
 )
 def add_storage_in_op_panel_using_gui(
-    selenium, browser_id, name, provider_name, config, hosts
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    storage_name: str,
+    provider_name: str,
+    config: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+    request: pytest.FixtureRequest,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+) -> None:
     """Create storage according to given config.
 
     Config format given in yaml is as follows:
@@ -81,10 +131,43 @@ def add_storage_in_op_panel_using_gui(
         imported storage: true                 --> optional
     """
     _go_to_storage_view_in_clusters(selenium, browser_id, provider_name, hosts)
-    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, name)
+    _add_storage_in_op_panel_using_gui(
+        selenium,
+        browser_id,
+        config,
+        storage_name,
+        clipboard,
+        displays,
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
+    )
+
+    storage_id = copy_storage_id(selenium, browser_id, storage_name, clipboard, displays)
+
+    _register_storage_finalizer(
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
+        storage_id,
+        storage_name,
+        config,
+    )
+
+    register_revoke_space_supports_finalizer(
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
+        storage_id,
+    )
 
 
-def _go_to_storage_view_in_clusters(selenium, browser_id, provider_name, hosts):
+def _go_to_storage_view_in_clusters(
+    selenium: SeleniumDrivers, browser_id: str, provider_name: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     onezone_url_pattern = "https?://[^/]*/ozw/.*"
     sidebar = "Clusters"
@@ -94,39 +177,49 @@ def _go_to_storage_view_in_clusters(selenium, browser_id, provider_name, hosts):
         click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
         click_on_record_in_clusters_menu(selenium, browser_id, provider_name, hosts)
 
-    wt_click_on_subitem_for_item(
-        selenium, browser_id, sidebar, sub_item, provider_name, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, [browser_id], sidebar, sub_item, provider_name, hosts)
 
 
-def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, storage_name):
-    content = "storages"
-    btn = "Add storage backend"
+def _add_storage_in_op_panel_using_gui(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    config: str,
+    storage_name: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    provider_name: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+) -> None:
     form = "POSIX"
-    input_box = "Storage name"
-    mount_point_option = "mount point"
-    notify_type = "info"
-    text_regexp = ".*[Ss]torage.*added.*"
     options = yaml.load(config, yaml.Loader)
 
-    try:
-        wt_click_on_btn_in_content(selenium, browser_id, btn, content)
-    except RuntimeError:
-        pass
+    with contextlib.suppress(ElementNotInteractableException, NoSuchElementException):
+        wt_click_on_btn_in_content(selenium, [browser_id], "Add storage backend", "storages")
 
     storage_type = options["storage type"]
     wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id, storage_type)
-    wt_type_text_to_in_box_in_storages_page_op_panel(
-        selenium, browser_id, storage_name, form, input_box
+    wt_type_text_to_input_box_in_storages_page_op_panel(
+        selenium, browser_id, storage_name, form, "Storage name"
     )
-    mount_point = options[mount_point_option]
-    wt_type_text_to_in_box_in_storages_page_op_panel(
-        selenium, browser_id, mount_point, form, mount_point_option
+    mount_point = options["mount point"]
+    wt_type_text_to_input_box_in_storages_page_op_panel(
+        selenium, browser_id, mount_point, form, "mount point"
     )
     if options.get("imported storage", False):
         enable_import_in_add_storage_form(selenium, browser_id)
-    wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium, browser_id)
-    notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
+    wt_click_on_add_btn_in_storage_add_form_in_storage_page(
+        selenium,
+        browser_id,
+        clipboard,
+        displays,
+        request,
+        "succeeds",
+        provider_name,
+        hosts,
+        onepanel_credentials,
+    )
 
 
 @given(
@@ -137,8 +230,13 @@ def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, storage_nam
     )
 )
 def safely_create_storage_rest(
-    storage_name, provider, config, hosts, onepanel_credentials
-):
+    storage_name: str,
+    provider: str,
+    config: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+    request: pytest.FixtureRequest,
+) -> None:
     """Create storage according to given config.
 
     Config format given in yaml is as follows:
@@ -149,122 +247,74 @@ def safely_create_storage_rest(
         LUMA feed: local                       --> optional, 'auto' by
                                                    default
     """
-    _remove_storage_in_op_panel_using_rest(
+    remove_multiple_storages_in_op_panel_using_rest(
         storage_name, provider, hosts, onepanel_credentials
     )
-    _add_storage_in_op_panel_using_rest(
+    storage_id = _add_storage_in_op_panel_using_rest(
         config, storage_name, provider, hosts, onepanel_credentials
+    )
+    _register_storage_finalizer(
+        request,
+        provider,
+        hosts,
+        onepanel_credentials,
+        storage_id,
+        storage_name,
+        config,
     )
 
 
 @given(
-    parsers.parse(
-        'there is no "{storage_name}" storage in "{provider}" Oneprovider panel service'
-    )
+    parsers.parse('there is no "{storage_name}" storage in "{provider}" Oneprovider panel service')
 )
-def remove_all_storages_named(storage_name, provider, hosts, onepanel_credentials):
-    _remove_storage_in_op_panel_using_rest(
+def remove_all_storages_named(
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
+) -> None:
+    remove_multiple_storages_in_op_panel_using_rest(
         storage_name, provider, hosts, onepanel_credentials
-    )
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
-def _remove_storage_in_op_panel_using_rest(
-    storage_name, provider, hosts, onepanel_credentials
-):
-    provider_hostname = hosts[provider]["hostname"]
-    onepanel_username = onepanel_credentials.username
-    onepanel_password = onepanel_credentials.password
-
-    storage_ids = _get_storage_id_list_by_name(
-        storage_name, provider, hosts, onepanel_credentials
-    )
-    for storage_id in storage_ids:
-        _remove_storage_by_id(
-            provider_hostname, onepanel_username, onepanel_password, storage_id
-        )
-
-
-def _remove_storage_by_id(
-    provider_hostname, onepanel_username, onepanel_password, storage_id
-):
-    http_delete(
-        ip=provider_hostname,
-        port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "storages", storage_id),
-        auth=(onepanel_username, onepanel_password),
     )
 
 
 @given(parsers.parse('there is no "{name}" storage in "{provider}" Oneprovider panel'))
-def remove_storage_in_op_panel_rest(onepanel_credentials, hosts, provider, name):
-    _remove_storage_in_op_panel_using_rest(name, provider, hosts, onepanel_credentials)
+def remove_storage_in_op_panel_rest(
+    onepanel_credentials: User, hosts: Hosts, provider: str, name: str
+) -> None:
+    remove_multiple_storages_in_op_panel_using_rest(name, provider, hosts, onepanel_credentials)
 
 
-def _get_storages_ids(provider_hostname, onepanel_username, onepanel_password):
-    return http_get(
-        ip=provider_hostname,
-        port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "storages"),
-        auth=(onepanel_username, onepanel_password),
-    ).json()["ids"]
+def get_first_storage_id_by_name(
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: User
+) -> str:
+    ids = get_storage_ids_by_name(storage_name, provider, hosts, onepanel_credentials)
+    return ids[0]
 
 
-def _get_storage_id_list_by_name(storage_name, provider, hosts, onepanel_credentials):
-    provider_hostname = hosts[provider]["hostname"]
-    onepanel_username = onepanel_credentials.username
-    onepanel_password = onepanel_credentials.password
-
-    storage_ids = _get_storages_ids(
-        provider_hostname, onepanel_username, onepanel_password
-    )
-    selected_ids = []
-    for storage_id in storage_ids:
-        response = http_get(
-            ip=provider_hostname,
-            port=PANEL_REST_PORT,
-            path=get_panel_rest_path("provider", "storages", storage_id),
-            auth=(onepanel_username, onepanel_password),
-        ).json()
-        if storage_name == response["name"]:
-            selected_ids.append(storage_id)
-    return selected_ids
-
-
-def get_first_storage_id_by_name(storage_name, provider, hosts, onepanel_credentials):
-    return _get_storage_id_list_by_name(
-        storage_name, provider, hosts, onepanel_credentials
-    )[0]
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
 def _add_storage_in_op_panel_using_rest(
-    config, storage_name, provider, hosts, onepanel_credentials
-):
-    storage_config = {}
-    options = yaml.load(config, yaml.Loader)
-
-    for key, val in options.items():
-        if key == "storage type":
-            storage_config["type"] = val.lower()
-        elif key == "imported storage":
-            storage_config["importedStorage"] = True
-        else:
-            storage_config[_camel_transform(key)] = val
+    config: str,
+    storage_name: str,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+) -> str:
+    storage_data = storage_data_from_config(config, storage_name)
 
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
-    storage_data = {storage_name: storage_config}
-
-    http_post(
+    response = http_post(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
         path=get_panel_rest_path("provider", "storages"),
         auth=(onepanel_username, onepanel_password),
         data=json.dumps(storage_data),
     )
+
+    storage_id = response.json()[storage_name]["id"]
+
+    if not isinstance(storage_id, str):
+        raise TypeError("Storage creation response contains an invalid storage ID")
+    return storage_id
 
 
 @wt(
@@ -273,7 +323,9 @@ def _add_storage_in_op_panel_using_rest(
         "QoS parameters form in storage edit page"
     )
 )
-def add_key_value_in_storage_page(selenium, browser_id, key, val):
+def add_key_value_in_storage_page(
+    selenium: SeleniumDrivers, browser_id: str, key: str, val: str
+) -> None:
 
     type_key_in_posix_storage_edit_page(selenium, browser_id, key)
     click_value_in_posix_storage_edit_page(selenium, browser_id)
@@ -283,14 +335,16 @@ def add_key_value_in_storage_page(selenium, browser_id, key, val):
 
 
 @wt(parsers.parse("user of {browser_id} deletes additional param in storage edit page"))
-def delete_additional_param_in_storage_page(selenium, browser_id):
+def delete_additional_param_in_storage_page(selenium: SeleniumDrivers, browser_id: str) -> None:
 
     delete_additional_param_in_posix_storage_edit_page(selenium, browser_id)
     save_changes_in_posix_storage_edit_page(selenium, browser_id)
     _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)
 
 
-def _delete_all_additional_params_in_storage_page(selenium, browser_id):
+def _delete_all_additional_params_in_storage_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     deleted = False
     name = "posix"
 
@@ -298,7 +352,8 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id):
         click_modify_storage_in_onepanel(selenium, browser_id, name)
         driver = selenium[browser_id]
         storage = Onepanel(driver).content.storages.storages["posix"]
-        if storage.edit_form.posix_editor.params.get_key_values_count() == 2:
+        key_values_count = storage.edit_form.posix_editor.params.get_key_values_count()
+        if key_values_count == REQUIRED_POSIX_STORAGE_PARAMS_COUNT:
             deleted = True
         if not deleted:
             delete_additional_param_in_posix_storage_edit_page(selenium, browser_id)
@@ -312,7 +367,9 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id):
         "in storage edit page used by {browser_id}"
     )
 )
-def g_delete_all_additional_params_in_storage_page(selenium, browser_id):
+def g_delete_all_additional_params_in_storage_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     _delete_all_additional_params_in_storage_page(selenium, browser_id)
 
 
@@ -322,11 +379,15 @@ def g_delete_all_additional_params_in_storage_page(selenium, browser_id):
         "QoS parameters form in storage edit page"
     )
 )
-def wt_delete_all_additional_params_in_storage_page(selenium, browser_id):
+def wt_delete_all_additional_params_in_storage_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     _delete_all_additional_params_in_storage_page(selenium, browser_id)
 
 
-def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id):
+def _try_confirm_changes_in_modify_storage_modal(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     button = "Proceed"
     checkbox = "Understand checkbox"
     modal = "Modify Storage"
@@ -334,17 +395,77 @@ def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id):
     try:
         click_modal_button(selenium, browser_id, checkbox, modal)
         click_modal_button(selenium, browser_id, button, modal)
-        wait_for_named_modal_to_disappear(
-            selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5
-        )
-    except (NoSuchElementException, RuntimeError):
+        wait_for_named_modal_to_disappear(selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5)
+    except NoSuchElementException:
         pass
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} confirms committed changes in modal "Modify Storage"'
+def _register_revoke_space_supports_finalizer_if_storage_successfully_added(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    storages: StorageContentPage,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    provider_name: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+) -> None:
+    storage = get_first_expanded_storage(storages)
+    storage_id = copy_storage_id(selenium, browser_id, storage.name, clipboard, displays)
+
+    register_revoke_space_supports_finalizer(
+        request,
+        provider_name,
+        hosts,
+        onepanel_credentials,
+        storage_id,
     )
-)
-def confirm_changes_in_modify_storage_modal(selenium, browser_id):
+
+
+@wt(parsers.parse('user of {browser_id} confirms committed changes in modal "Modify Storage"'))
+def confirm_changes_in_modify_storage_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>\w+?) (?P<result>fails|succeeds) to click on "Add"'
+        r" button in add storage"
+        r' form in storages page in Onepanel for provider "(?P<provider_name>[^"]+)"'
+    ),
+)
+def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    request: pytest.FixtureRequest,
+    result: str,
+    provider_name: str,
+    hosts: Hosts,
+    onepanel_credentials: User,
+) -> None:
+    storages = get_storages_page(selenium, browser_id)
+    click_add_button_in_storage_form(storages)
+
+    if result == "succeeds":
+        is_notify_popup_visible_and_close_all_alert_popups(
+            selenium,
+            browser_id,
+            AlertPopup.STORAGE_ADDED,
+        )
+
+        _register_revoke_space_supports_finalizer_if_storage_successfully_added(
+            selenium,
+            browser_id,
+            storages,
+            clipboard,
+            displays,
+            request,
+            provider_name,
+            hosts,
+            onepanel_credentials,
+        )
+    else:
+        wait_for_error_modal_to_appear(selenium[browser_id], timeout=WAIT_BACKEND * 5)

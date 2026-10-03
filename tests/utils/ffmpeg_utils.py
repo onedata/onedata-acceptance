@@ -14,15 +14,34 @@ import errno
 import os
 import subprocess as sp
 import time
+from collections.abc import Iterator
 from contextlib import contextmanager
 from itertools import chain, repeat
 from math import sqrt
-from typing import Any
+from typing import ClassVar, TypedDict
+
+import pytest
+from _pytest.reports import TestReport
+
+FfmpegProcess = sp.Popen[str]
+MoviePaths = list[str]
+Offset = tuple[int, int]
+MAX_RECORDING_FILE_NAME_LENGTH = 180
+
+
+class FfmpegDetails(TypedDict, total=False):
+    proc: FfmpegProcess
+    movies: MoviePaths
 
 
 def start_recording(
-    movie_dir, movie_name, displays, screen_width, screen_height, mosaic_filter=True
-):
+    movie_dir: str,
+    movie_name: str,
+    displays: list[str],
+    screen_width: int,
+    screen_height: int,
+    mosaic_filter: bool = True,
+) -> tuple[FfmpegProcess, MoviePaths]:
     if not os.path.exists(movie_dir):
         os.makedirs(movie_dir)
 
@@ -34,8 +53,8 @@ def start_recording(
         with _suppress(OSError, errnos=(errno.ENOENT, errno.ENAMETOOLONG)):
             os.remove(path)
 
-    with open(os.devnull, "w") as dev_null:
-        proc = sp.Popen(  # pylint: disable=consider-using-with
+    with open(os.devnull, "w", encoding="utf-8") as dev_null:
+        proc = sp.Popen(
             cmd,
             stdin=sp.PIPE,
             stdout=dev_null,
@@ -52,11 +71,11 @@ def start_recording(
         time.sleep(0.1)
     if proc.poll() is not None:
         _, err = proc.communicate()
-        raise RuntimeError(f"ffmpeg did not start successfully, err:\n{err}")
+        raise ChildProcessError(f"ffmpeg did not start successfully, err:\n{err}")
     return proc, paths
 
 
-def stop_recording(proc):
+def stop_recording(proc: FfmpegProcess) -> None:
     proc.terminate()
     try:
         proc.wait(timeout=10)  # Wait for process to exit
@@ -66,12 +85,13 @@ def stop_recording(proc):
 
 
 class RecorderManager:
-    ffmpeg_details: dict[str, Any] = {}
+    # Recording starts and stops in separate manager instances created by pytest hooks.
+    ffmpeg_details: ClassVar[FfmpegDetails] = {}
 
-    def __init__(self, request):
+    def __init__(self, request: pytest.FixtureRequest) -> None:
         self.request = request
 
-    def handle_start_recording(self):
+    def handle_start_recording(self, screen_parameters: dict[str, int]) -> None:
         should_record = self.request.getfixturevalue("should_record")
 
         recording = self.request.config.getoption("--xvfb-recording")
@@ -81,30 +101,32 @@ class RecorderManager:
             # add timestamp to video name
             file_name = f"{self.request.node.name}.{int(time.time())}"
 
-            # for len(file_name) > 180 ffmpeg is not starting
-            file_name = file_name[:180] if len(file_name) > 180 else file_name
+            # ffmpeg does not start when the output name exceeds its limit.
+            file_name = (
+                file_name[:MAX_RECORDING_FILE_NAME_LENGTH]
+                if len(file_name) > MAX_RECORDING_FILE_NAME_LENGTH
+                else file_name
+            )
 
             # if there is '/' in file name ffmpeg is not starting
             file_name = file_name.replace("/", "_")
 
             movie_dir = self.request.getfixturevalue("movie_dir")
             xvfb = self.request.getfixturevalue("xvfb")
-            screen_width = self.request.getfixturevalue("screen_width")
-            screen_height = self.request.getfixturevalue("screen_height")
 
             ffmpeg_proc, movies = start_recording(
                 movie_dir,
                 file_name,
                 xvfb,
-                screen_width,
-                screen_height,
+                screen_parameters["width"],
+                screen_parameters["height"],
                 mosaic_filter,
             )
             self.ffmpeg_details["proc"] = ffmpeg_proc
             self.ffmpeg_details["movies"] = movies
-            self.request.node._movies = movies  # pylint: disable=protected-access
+            self.request.node._movies = movies  # noqa: SLF001 - pytest node stores recording artifacts
 
-    def handle_stop_recording(self, status):
+    def handle_stop_recording(self, status: TestReport) -> None:
         recording = self.request.config.getoption("--xvfb-recording")
         if "proc" in self.ffmpeg_details:
             stop_recording(self.ffmpeg_details["proc"])
@@ -118,7 +140,7 @@ class RecorderManager:
                 for movie in self.ffmpeg_details["movies"]:
                     try:
                         os.remove(movie)
-                    except IOError as ex:
+                    except OSError as ex:
                         if ex.errno not in (errno.ENOENT, errno.ENAMETOOLONG):
                             raise
 
@@ -129,7 +151,7 @@ class RecorderManager:
 
 
 @contextmanager
-def _suppress(exception, errnos):
+def _suppress(exception: type[OSError], errnos: tuple[int, ...]) -> Iterator[None]:
     try:
         yield
     except exception as e:
@@ -138,8 +160,14 @@ def _suppress(exception, errnos):
 
 
 def _create_ffmpeg_cmd(
-    displays, width, height, dir_path, file_name, mosaic_filter, qp=1
-):
+    displays: list[str],
+    width: int,
+    height: int,
+    dir_path: str,
+    file_name: str,
+    mosaic_filter: bool,
+    qp: int = 1,
+) -> tuple[list[str], MoviePaths]:
     cmd = ["ffmpeg"]
 
     wh = f"{width}x{height}"
@@ -169,11 +197,11 @@ def _create_ffmpeg_cmd(
         else:
             tagged_streams, tags = _tag_streams(display_num)
             cmd.append(tagged_streams)
-            for tag in tags:
-                tag = f"[{tag}]"
-                path = file_path.format(tag)
+            for stream_tag in tags:
+                bracketed_tag = f"[{stream_tag}]"
+                path = file_path.format(bracketed_tag)
                 paths.append(path)
-                cmd.extend(output_fmt + ["-map", tag, path])
+                cmd.extend(output_fmt + ["-map", bracketed_tag, path])
 
     if display_num == 1 or mosaic_filter:
         path = file_path.format("")
@@ -183,7 +211,7 @@ def _create_ffmpeg_cmd(
     return cmd, paths
 
 
-def _create_mosaic_filter(displays, width, height):
+def _create_mosaic_filter(displays: list[str], width: int, height: int) -> str:
     filter_fmt = "nullsrc=size={width}x{height} [{base}]; {stream};{overlay}"
     available_screens = _gen_offsets(len(displays), width, height)
     full_width, full_height = next(available_screens)
@@ -198,37 +226,34 @@ def _create_mosaic_filter(displays, width, height):
     )
 
 
-def _overlay_streams(tags, offsets):
+def _overlay_streams(tags: list[str], offsets: Iterator[Offset]) -> tuple[str, str]:
     overlay_fmt = "[{base}][{tag}] overlay=shortest=1:x={x}:y={y} [{new_base}]"
     last_overlay_fmt = "[{base}][{tag}] overlay=shortest=1:x={x}:y={y}"
     base_fmt = "base{num}"
 
     formats = chain(repeat(overlay_fmt, len(tags) - 1), [last_overlay_fmt])
-    bases = (
-        (base_fmt.format(num=num), base_fmt.format(num=num + 1))
-        for num in range(len(tags))
-    )
+    bases = ((base_fmt.format(num=num), base_fmt.format(num=num + 1)) for num in range(len(tags)))
     offsets = iter(offsets)
 
     return (
         ";".join(
             fmt.format(base=base, tag=tag, x=x, y=y, new_base=new_base)
-            for fmt, tag, (x, y), (base, new_base) in zip(formats, tags, offsets, bases)
+            for fmt, tag, (x, y), (base, new_base) in zip(
+                formats, tags, offsets, bases, strict=True
+            )
         ),
         base_fmt.format(num=0),
     )
 
 
-def _tag_streams(input_streams_num):
+def _tag_streams(input_streams_num: int) -> tuple[str, list[str]]:
     tags = [f"v{num}" for num in range(input_streams_num)]
     fmt = "[{stream}:v] setpts=PTS-STARTPTS [{tag}]"
-    tagged_streams = ";".join(
-        fmt.format(stream=i, tag=tag) for i, tag in enumerate(tags)
-    )
+    tagged_streams = ";".join(fmt.format(stream=i, tag=tag) for i, tag in enumerate(tags))
     return tagged_streams, tags
 
 
-def _gen_offsets(screen_num, width, height):
+def _gen_offsets(screen_num: int, width: int, height: int) -> Iterator[Offset]:
     a = b = int(round(sqrt(screen_num)))
     if a * b < screen_num:
         a += 1

@@ -43,10 +43,7 @@ def test_big_transfer_and_md5_check(env_description_file):
     pass
 
 
-@scenario(
-    "Create nonempty file on one provider and override its contents on "
-    "the other provider"
-)
+@scenario("Create nonempty file on one provider and override its contents on the other provider")
 def test_remote_file_override(env_description_file):
     pass
 

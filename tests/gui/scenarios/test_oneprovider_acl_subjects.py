@@ -13,6 +13,7 @@ from pytest_bdd import scenario, scenarios
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.members import *
 from tests.gui.steps.common.browser_creation import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
@@ -46,7 +47,7 @@ from tests.utils.entities_setup.users import *
 
 
 @fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0, 1]
 
 

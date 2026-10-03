@@ -6,6 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 import yaml
 
 from tests.gui.steps.modals.modal import (
@@ -15,17 +16,18 @@ from tests.gui.steps.modals.modal import (
     write_name_into_text_field_in_modal,
 )
 from tests.gui.steps.onezone.automation.workflow_creation import click_add_store_button
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) creates (input|output) store for "
-        'workflow "(?P<workflow>.*)" with following configuration:'
-        r"\n(?P<config>(.|\s)*)"
+        r"user of (?P<browser_id>.*) creates (input|output) store for "
+        r'workflow "(?P<workflow>.*)" with following '
+        r"configuration:\n(?P<config>(.|\s)*)"
     )
 )
-def create_store_for_workflow(browser_id, config, selenium):
+def create_store_for_workflow(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
     """Create store according to given config.
 
     Config format given in yaml is as follows:
@@ -43,7 +45,7 @@ def create_store_for_workflow(browser_id, config, selenium):
     _create_store_for_workflow(browser_id, config, selenium)
 
 
-def _create_store_for_workflow(browser_id, config, selenium):
+def _create_store_for_workflow(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
     data = yaml.load(config, yaml.Loader)
     name = data["name"]
 
@@ -60,9 +62,7 @@ def _create_store_for_workflow(browser_id, config, selenium):
     button = "Create"
 
     click_add_store_button(selenium, browser_id)
-    write_name_into_text_field_in_modal(
-        selenium, browser_id, name, modal_name, name_textfield
-    )
+    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name, name_textfield)
     choose_option_in_dropdown_menu_in_modal(
         selenium,
         browser_id,

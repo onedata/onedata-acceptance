@@ -34,12 +34,14 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates QoS requirement with copied storageId for "file1" from file browser
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "X" button in modal "File details"
     And user of browser_unified migrates "file1" from provider "oneprovider-1" to provider "oneprovider-2"
-    Then user of browser_unified sees file chunks for file "file1" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely filled
+    Then user of browser_unified sees file chunks for files:
+            file1:
+                oneprovider-1: entirely filled
+                oneprovider-2: entirely filled
 
 
   Scenario: User successfully adds "anyStorage - storageId" QoS requirement
@@ -48,10 +50,12 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates "anyStorage \ storageId=" QoS requirement and pastes storage id from clipboard for "file1" from file browser
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "X" button in modal "File details"
-    Then user of browser_unified sees file chunks for file "file1" as follows:
-          oneprovider-2: entirely filled
+    Then user of browser_unified sees file chunks for files:
+            file1:
+                oneprovider-2: entirely filled
 
 
   Scenario: User can select one of storages of supporting providers in QoS graphical editor and it causes to match this storage

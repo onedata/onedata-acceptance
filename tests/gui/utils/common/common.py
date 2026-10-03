@@ -9,6 +9,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from functools import partial
 
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
+
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -20,6 +24,8 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.utils.entities_setup.spaces import WAIT_BACKEND
+from tests.utils.utils import element_has_class
 
 from .account_management import AccountManagementContentPage
 
@@ -28,7 +34,7 @@ class BaseContent(PageObject):
     _main_content = ".main-content"
     account_management = WebItem(_main_content, cls=AccountManagementContentPage)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"content in {self.parent}"
 
 
@@ -48,56 +54,67 @@ class OnePage:
     )
     warning_bar = WebItem(".one-warning-bar", cls=EmergencyInterfaceWarningBar)
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "OnePage"
 
 
 class PublicOnePage:
     loading_error = Label(".application-error-message")
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "public onedata page"
 
 
 class _Toggle(PageObject):
     _lock = WebElement(".one-way-toggle-readonly-icon")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"toggle switch in {self.parent}"
 
-    def is_checked(self):
-        class_attrs = self.web_elem.get_attribute("class")
-        return "checked" in class_attrs and "in-progress" not in class_attrs
+    def is_checked(self) -> bool:
+        web_elem = self.web_elem
+        return element_has_class(web_elem, "checked") and not element_has_class(
+            web_elem, "in-progress"
+        )
 
-    def is_partial_checked(self):
-        return "maybe" in self.web_elem.get_attribute("class")
+    def is_partial_checked(self) -> bool:
+        return element_has_class(self.web_elem, "maybe")
 
-    def is_unchecked(self):
+    def is_unchecked(self) -> bool:
         return not self.is_checked() and not self.is_partial_checked()
 
-    def check(self):
+    def check(self) -> None:
         if not self.is_checked():
             self.click()
 
-    def uncheck(self):
+    def uncheck(self) -> None:
         if self.is_checked():
             self.click()
         elif self.is_partial_checked():
             self.click()
             self.click()
 
-    def is_enabled(self):
+    def is_enabled(self) -> bool:
         try:
-            self._lock
-        except RuntimeError:
+            _ = self._lock
+        except NoSuchElementException:
             return True
         return False
+
+    def wait_for_status(self, is_checked: bool) -> None:
+        WebDriverWait(self.driver, WAIT_BACKEND).until(
+            lambda _: self.is_checked() == is_checked,
+            message=(
+                f"waited too long for the {str(self)} toggle to be"
+                f" {'checked' if is_checked else 'unchecked'}"
+            ),
+        )
 
 
 class _DropdownSelector(PageObject, ExpandableMixin):
@@ -108,9 +125,7 @@ class _DropdownSelector(PageObject, ExpandableMixin):
 
 class _MigrateDropdownSelector(PageObject, ExpandableMixin):
     selected = Label(".ember-power-select-trigger")
-    providers_list = WebItemsSequence(
-        "ul li .oneprovider-name", cls=ButtonWithTextPageObject
-    )
+    providers_list = WebItemsSequence("ul li .oneprovider-name", cls=ButtonWithTextPageObject)
     _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
 
 
@@ -126,12 +141,12 @@ class LoginPage:
     password = Input('input[placeholder="Password"]')
     passphrase = Input('input[placeholder="Passphrase"]')
     sign_in = NamedButton("button", text="Sign in")
-    err_msg = Label(".login-error-message")
+    error_message = Label(".login-error-message")
     open_in_onezone = Button(".btn-login-onezone")
     login_notification_message = WebElement(".login-notification")
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.web_elem = self.driver = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Onezone Login page"

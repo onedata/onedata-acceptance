@@ -4,6 +4,9 @@ __author__ = "Bartosz Walkowicz, Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
@@ -53,12 +56,11 @@ class PublicShareView:
     files_tab = Button(".nav-link-files")
     dublin_core_metadata_data = WebElementsSequence(".public-data-value")
     copy_link = Button(
-        ".clipboard-btn-input[data-clipboard-target~="
-        '".clipboard-line-public-url-input"]'
+        '.clipboard-btn-input[data-clipboard-target~=".clipboard-line-public-url-input"]'
     )
 
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver) -> None:
         self.web_elem = self.driver = driver
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Public share View"

@@ -4,36 +4,89 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Dict, List
+import re
+import time
+from collections.abc import Callable, Sequence
+from contextlib import suppress
+from typing import Any, Literal, overload
 
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import (
+    StaleElementReferenceException,
+    TimeoutException,
+)
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
+from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.type_definitions import (
+    Clickable,
+    VisibilityCondition,
+    WebElementOrCssLocator,
+    WebElementOrSelector,
+)
 from tests.gui.utils import OZLoggedIn
+from tests.gui.utils.common.modals import Modals
+from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
+    ArchiveAuditLog,
+)
+from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
+    ArchiveRecallInformation,
+)
+from tests.gui.utils.core.base import NamedElement
+from tests.gui.utils.generic import (
+    ListElement,
+    ListItemMainField,
+    PageName,
+    get_visibility_condition,
+    get_web_elem_or_locator,
+    transform,
+)
+from tests.gui.utils.oneprovider.browser import Browser
+from tests.gui.utils.onezone.automation_page import AutomationPage
+from tests.gui.utils.onezone.clusters_page import ClustersPage
+from tests.gui.utils.onezone.data_page import DataPage
+from tests.gui.utils.onezone.discovery_page import DiscoveryPage
+from tests.gui.utils.onezone.generic_page import (
+    ListPage,
+    SidebarPanelPage,
+    get_visible_elements_list,
+)
+from tests.gui.utils.onezone.groups.groups_page import GroupsPage
+from tests.gui.utils.onezone.providers_page import ProvidersPage
+from tests.gui.utils.onezone.shares_page import SharesPage
+from tests.gui.utils.onezone.tokens_page import TokensPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page, selenium, browser_id, number: int, items_names, transform_fun=None
-):
+    page: ListPage | Browser,
+    selenium: dict[str, WebDriver],
+    browser_id: str,
+    number: int,
+    items_type: ListElement,
+    main_field: ListItemMainField,
+) -> None:
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
-    if not transform_fun:
-        transform_fun = lambda item: item.text.split("\n")[0]
-    while not stop_scrolling_flag:
-        new_items = _get_visible_items_list(page, items_names)
-        new_items_names = [
-            transform_fun(el) for el in new_items if transform_fun(el) != ""
-        ]
 
-        # if there are at least 1 new item keep scrolling
-        stop_scrolling_flag = not any(el not in seen_items for el in new_items_names)
-        seen_items.update(new_items_names)
-        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1])
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        lambda _: len(get_visible_items_list(page, items_type, main_field)) > 0,
+        message=f"Waiting for initial {items_type.value} to appear failed",
+    )
+
+    while not stop_scrolling_flag:
+        new_items = get_visible_items_list(page, items_type, main_field)
+        new_items_fields = [getattr(el, main_field) for el in new_items]
+
+        stop_scrolling_flag = not any(el not in seen_items for el in new_items_fields)
+        seen_items.update(new_items_fields)
+        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
+
     assert len(seen_items) == number, (
         f"There are {len(seen_items)} items, but should be: {number}. All found"
         f" items:\n {seen_items}"
@@ -43,61 +96,91 @@ def assert_n_items_in_items_list(
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def _get_visible_items_list(page, items_names):
-    return getattr(page, f"get_visible_{items_names}_list")()
+def get_visible_items_list(
+    page: ListPage | Browser,
+    items_type: ListElement,
+    main_field: ListItemMainField = "name",
+) -> Sequence[NamedElement]:
+    items_type_str = transform(items_type.value)
+    elements_list = getattr(page, f"{items_type_str}_list")
+    if isinstance(page, Browser):
+        return page.get_visible_file_rows(elements_list, main_field)
+    return get_visible_elements_list(elements_list, main_field)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_checking_toggle(toggle, toggle_name=""):
-    assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
+def wait_for_checking_toggle_with_getter(
+    toggle_getter: Callable[[WebDriver], Any], driver: WebDriver, toggle_name: str = ""
+) -> None:
+    assert toggle_getter(driver).is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page(where, driver):
-    if where == "shares":
-        return OZLoggedIn(driver)["shares"]
-    if where == "groups":
-        return OZLoggedIn(driver)["groups"]
-    if where == "spaces":
-        return OZLoggedIn(driver)["data"]
-    raise AssertionError(f"page {where} not found")
+def get_page_for_list(
+    list_element: ListElement,
+    driver: WebDriver,
+) -> ListPage:
+    oz = OZLoggedIn(driver)
+
+    match list_element:
+        case ListElement.SPACES | ListElement.SPACES_HEADERS:
+            return oz.data
+        case ListElement.GROUPS_HEADERS:
+            return oz.groups
+        case ListElement.SHARES_SIDEBAR:
+            return oz.shares
+        case ListElement.WORKFLOWS:
+            return oz.automation.workflows_page
+        case ListElement.LAMBDAS:
+            return oz.automation.lambdas_page
+        case _:
+            return getattr(oz, list_element.value)
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} {items} on the {where} list in"
-        " the sidebar"
-    )
+    parsers.re(
+        r"user of (?P<browser_id>.*) can see there are (?P<number>\d+)"
+        r" (?P<items_type>.*) on the (?P<list_type>.*) list in the sidebar",
+    ),
+    converters={
+        "number": int,
+        "items_type": ListElement,
+        "list_type": ListElement,
+    },
 )
-def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items, where):
+def wt_assert_n_items_in_items_list(
+    selenium: dict[str, WebDriver],
+    browser_id: str,
+    number: int,
+    items_type: ListElement,
+    list_type: ListElement,
+) -> None:
     driver = selenium[browser_id]
-    page = _get_page(where, driver)
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+    page = get_page_for_list(list_type, driver)
+    assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 
-def get_last_item_number_in_table(driver):
+def get_last_item_number_in_table(driver: WebDriver) -> int:
     last_item = get_last_item_in_table(driver)
     if last_item is None:
         return 0
     return int(last_item.get_attribute("data-row-id")) + 1
 
 
-def get_last_item_in_table(driver):
+def get_last_item_in_table(driver: WebDriver) -> SeleniumWebElement | None:
     entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
     return entries[-1] if len(entries) > 0 else None
 
 
-def scroll_to_bottom_of_the_table(driver):
+def scroll_to_bottom_of_the_table(driver: WebDriver) -> int:
     while True:
         count = get_last_item_number_in_table(driver)
         if count == 0:
             return count
         # Scroll to last
-        driver.execute_script(
-            "arguments[0].scrollIntoView();", get_last_item_in_table(driver)
-        )
+        driver.execute_script("arguments[0].scrollIntoView();", get_last_item_in_table(driver))
         try:
             WebDriverWait(driver, 2).until(
-                lambda d: get_last_item_number_in_table(d) > count
+                lambda d, previous_count=count: get_last_item_number_in_table(d) > previous_count
             )
         except TimeoutException:
             break
@@ -105,8 +188,8 @@ def scroll_to_bottom_of_the_table(driver):
 
 
 def assert_logs_order_with_optional_logs(
-    logs_expected: List[Dict[str, str]], logs_actual: List[str]
-):
+    logs_expected: list[dict[str, str]], logs_actual: list[str]
+) -> None:
     """
 
     This function takes as a first argument list of dictionaries as in example below:
@@ -138,14 +221,209 @@ def assert_logs_order_with_optional_logs(
             severity[v] = k
             logs_expected_list.append(v)
 
-    idx, n = 0, len(logs_expected_list)
+    idx = 0
+    actual_logs_count = len(logs_actual)
     for expected_log in logs_expected_list:
         if severity[expected_log] == "Required":
-            assert idx < n and expected_log == logs_actual[idx], (
-                f"expected logs: {logs_expected_list}\n"
-                f"do not match actual logs: {logs_actual}"
+            error_message = (
+                f"expected logs: {logs_expected_list}\ndo not match actual logs: {logs_actual}"
             )
+            assert idx < actual_logs_count, error_message
+            assert expected_log == logs_actual[idx], error_message
             idx += 1
-        if severity[expected_log] == "Optional":
-            if idx < n and expected_log == logs_actual[idx]:
-                idx += 1
+        if (
+            severity[expected_log] == "Optional"
+            and idx < actual_logs_count
+            and expected_log == logs_actual[idx]
+        ):
+            idx += 1
+
+
+def scroll_and_get_columns(
+    modal: ArchiveRecallInformation | ArchiveAuditLog,
+    columns: list[str],
+    main_column: str = "file",
+) -> list[str]:
+    # The modal has to be a class that implements get_visible_rows_of_columns
+    checked_names = set()
+    columns = [transform(column) for column in columns]
+    stop_scrolling_flag = False
+    while not stop_scrolling_flag:
+        visible_elems = modal.get_visible_rows_of_columns(columns)
+        visible_names = visible_elems[main_column]
+
+        modal.scroll_by_press_space()
+        stop_scrolling_flag = not any(name not in checked_names for name in visible_names)
+        checked_names.update(visible_names)
+    return list(checked_names)
+
+
+def element_rect_stable(
+    css_selector: str, checks: int = 5, interval: float = 0.1
+) -> Callable[[WebDriver], bool]:
+    def _predicate(driver: WebDriver) -> bool:
+        web_element = driver.find_element(By.CSS_SELECTOR, css_selector)
+
+        last_rect = web_element.rect
+        for _ in range(checks):
+            time.sleep(interval)
+            current_rect = web_element.rect
+            if current_rect != last_rect:
+                return False
+            last_rect = current_rect
+
+        return True
+
+    return _predicate
+
+
+# TODO: VFS-12424 Add class to fully-transitioned file details panel
+def wait_for_sliding_panel_to_stop_moving(
+    driver: WebDriver, timeout: int, css_selector: str
+) -> None:
+    WebDriverWait(driver=driver, timeout=timeout).until(
+        element_rect_stable(css_selector=css_selector)
+    )
+
+
+def wait_for_error_modal_to_disappear(driver: WebDriver) -> bool:
+    """Close the error modal and return whether it appeared."""
+
+    def get_error_modal_close_button(driver: WebDriver) -> Clickable:
+        return Modals(driver).error.close
+
+    return wait_till_error_modal_disappear(
+        driver,
+        ".alert-global.modal.in .modal-dialog",
+        get_error_modal_close_button,
+    )
+
+
+def try_click_without_throwing_error(
+    action: Callable[[], object], timeout: float = WAIT_FRONTEND // 2
+) -> None:
+
+    @repeat_failed(timeout=timeout)
+    def perform(_action: Callable[[], object]) -> None:
+        _action()
+
+    with suppress(Exception):
+        perform(action)
+
+
+def wait_for_element_to_appear(
+    driver: WebDriver,
+    web_elem_or_selector: WebElementOrSelector,
+    timeout: float = WAIT_FRONTEND,
+) -> bool:
+    """Return whether the element appeared before the timeout."""
+    web_elem_or_locator: WebElementOrCssLocator = get_web_elem_or_locator(web_elem_or_selector)
+    visibility_condition: VisibilityCondition = get_visibility_condition(web_elem_or_locator)
+    try:
+        # selenium function visibility_of does not ignore StaleElementReferenceException
+        WebDriverWait(driver, timeout, ignored_exceptions=[StaleElementReferenceException]).until(
+            visibility_condition
+        )
+    except TimeoutException:
+        return False
+    return True
+
+
+def wait_for_error_modal_to_appear(driver: WebDriver, timeout: float) -> bool:
+    """Return whether the error modal appeared before the timeout."""
+    return wait_for_element_to_appear(
+        driver,
+        ".alert-global.modal.in .modal-dialog",
+        timeout,
+    )
+
+
+def click_close_button_and_wait_to_disappear(
+    driver: WebDriver,
+    web_elem_or_locator: WebElementOrCssLocator,
+    get_close_button: Callable[[WebDriver], Clickable],
+) -> bool:
+    try_click_without_throwing_error(lambda: get_close_button(driver).click())
+    WebDriverWait(driver, WAIT_FRONTEND).until(
+        invisibility_of_element(web_elem_or_locator),
+        message="Popup or modal is still visible",
+    )
+    return True
+
+
+def wait_till_error_modal_disappear(
+    driver: WebDriver,
+    web_elem_or_selector: WebElementOrSelector,
+    get_close_button: Callable[[WebDriver], Clickable],
+) -> bool:
+    if not wait_for_element_to_appear(driver, web_elem_or_selector, WAIT_FRONTEND // 4):
+        return False
+    web_elem_or_locator = get_web_elem_or_locator(web_elem_or_selector)
+
+    click_close_button_and_wait_to_disappear(
+        driver,
+        web_elem_or_locator,
+        get_close_button,
+    )
+    return True
+
+
+def parse_size(size: str) -> float:
+    units = ["B", "KiB", "MiB", "GiB"]
+    units_reg = "|".join(units)
+
+    match = re.fullmatch(
+        rf"\s*(?P<value>\d+(?:\.\d+)?)\s*(?P<unit>{units_reg})\s*",
+        size,
+    )
+
+    if match is None:
+        raise ValueError(f"Unsupported size format: {size!r}")
+
+    value = float(match.group("value"))
+    unit = match.group("unit")
+    return value * 1024 ** (units.index(unit))
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["data"]) -> DataPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["shares"]) -> SharesPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["providers"]) -> ProvidersPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["groups"]) -> GroupsPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["tokens"]) -> TokensPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["discovery"]) -> DiscoveryPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: Literal["automation"]) -> AutomationPage: ...
+
+
+@overload
+def get_onezone_subpage(
+    driver: WebDriver, page_name: Literal["clusters", "cluster"]
+) -> ClustersPage: ...
+
+
+@overload
+def get_onezone_subpage(driver: WebDriver, page_name: PageName) -> SidebarPanelPage: ...
+
+
+def get_onezone_subpage(driver: WebDriver, page_name: PageName) -> SidebarPanelPage:
+    oz_page = OZLoggedIn(driver)
+    oz_page.open_panel(OZLoggedIn.get_page_class(page_name))
+    return getattr(oz_page, page_name)

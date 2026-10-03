@@ -46,12 +46,12 @@ from tests.utils.entities_setup.users import *
 
 
 @pytest.fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0]
 
 
 @pytest.fixture(scope="module")
-def should_record():
+def should_record() -> bool:
     return False
 
 

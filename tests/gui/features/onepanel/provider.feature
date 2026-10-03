@@ -33,8 +33,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency clicks on Edit settings button in provider page in Onepanel
     And user of browser_emergency types "pro1" to Provider name input box in modify provider details form in Provider panel
     And user of browser_emergency types test hostname of "oneprovider-1" to Domain input box in modify provider details form in Provider panel
-    And user of browser_emergency saves changes in provider details form in Provider panel
-    And user of browser_emergency sees an info notify with text matching to: .*[Pp]rovider.*data.*modified.*
+    And user of browser_emergency succeeds to save changes in provider details form in Provider panel
     And user of browser_emergency clicks on Discard button in the configure web cert modal
     And user of browser_emergency sees that Provider name attribute is equal to "pro1" in Provider panel
     And user of browser_emergency sees that Domain attribute is equal to test hostname of "oneprovider-1" in Provider panel
@@ -42,7 +41,7 @@ Feature: Provider management in Onepanel GUI
     # check if provider details were modified also in oz and op
     Then user of space_owner_browser sees that current provider is "pro1" on file browser page
 
-    And user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser sees that "space1" has appeared on the spaces list in the sidebar
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Providers" of "space1" space in the sidebar
@@ -53,15 +52,14 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency clicks on Edit settings button in provider page in Onepanel
     And user of browser_emergency types name of "oneprovider-1" provider to Provider name input box in modify provider details form in Provider panel
     And user of browser_emergency types hostname of "oneprovider-1" provider to Domain input box in modify provider details form in Provider panel
-    And user of browser_emergency saves changes in provider details form in Provider panel
-    And user of browser_emergency sees an info notify with text matching to: .*[Pp]rovider.*data.*modified.*
+    And user of browser_emergency succeeds to save changes in provider details form in Provider panel
     And user of browser_emergency is idle for 2 seconds
 
 
   Scenario: User deregisters provider, registers it again and sees that provider is working
     Given provider name set to name of "oneprovider-1" by user of browser_emergency in Onepanel
 
-    When user of space_owner_browser clicks on Data in the main menu
+    When user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Providers" of "space1" space in the sidebar
     And user of space_owner_browser sees "oneprovider-1" is on the providers list
@@ -82,7 +80,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency deactivates Request a subdomain toggle
     And user of browser_emergency types hostname of "oneprovider-1" provider to domain field in step 2 of deployment process in Onepanel
     And user of browser_emergency types "admin@admin.email" to admin email field in step 2 of deployment process in Onepanel
-    And user of browser_emergency tries to register provider using Register button in step 2 of deployment process in Onepanel
+    And user of browser_emergency tries to re-register provider using Register button in step 2 of deployment process in Onepanel
     
     And user of browser_emergency adds "posix" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
@@ -100,7 +98,7 @@ Feature: Provider management in Onepanel GUI
     # check that provider is working
     And user of space_owner_browser sees that provider "oneprovider-1" in Onezone is working
 
-    And user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks on "Data" in the main menu
     And user of space_owner_browser clicks "helloworld" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Files" of "helloworld" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page

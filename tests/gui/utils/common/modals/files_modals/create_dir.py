@@ -14,5 +14,5 @@ class CreateDir(Modal):
     create = NamedButton("button", text="Create")
     cancel = NamedButton("button", text="Cancel")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Create dir"

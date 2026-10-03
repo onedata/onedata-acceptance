@@ -26,7 +26,7 @@ Feature: Workflow cancelling and pausing tests
 
 
   Scenario: User sees status "Paused" in "Lane1" and "Unscheduled" in "Lane2" after pausing execution of created "workflow-with-sleep-two-lanes" workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser creates lambda with following configuration:
         name: "echo"
@@ -109,7 +109,7 @@ Feature: Workflow cancelling and pausing tests
 
 
   Scenario Outline: User sees status "<status>" in "Lane2" after stopping execution of uploaded "workflow-with-sleep-two-lanes" workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-two-lanes.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
@@ -139,7 +139,7 @@ Feature: Workflow cancelling and pausing tests
 
 
   Scenario Outline: User sees status "<status>" in "Lane1" after stopping execution of uploaded "workflow-with-sleep-two-lanes" workflow while "Lane1" had "Preparing" status
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-two-lanes.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
@@ -168,7 +168,7 @@ Feature: Workflow cancelling and pausing tests
 
 
   Scenario: User sees status "Cancelled" in "Lane1" and "Unscheduled" in "Lane2" after cancelling execution of uploaded "workflow-with-sleep-two-lanes" workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-two-lanes.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
@@ -195,7 +195,7 @@ Feature: Workflow cancelling and pausing tests
 
 
   Scenario: User sees that workflow is cancelled after cancelling workflow that is paused
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
@@ -221,7 +221,7 @@ Feature: Workflow cancelling and pausing tests
 
 
   Scenario: User sees that tasks are cancelled after cancelling workflow while task was pausing
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"

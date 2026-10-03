@@ -1,6 +1,7 @@
-"""Utils and fixtures to facilitate provider operations in Onepanel
-using REST API.
-"""
+"""Utils and fixtures to facilitate provider operations in Onepanel using REST API."""
+
+from tests.mixed.type_definitions import HostsConfig
+from tests.utils.user_utils import Users
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
@@ -8,8 +9,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 def modify_provider_in_op_panel_using_rest(
-    user, users, provider_host, hosts, new_provider_name, new_domain
-):
+    user: str,
+    users: Users,
+    provider_host: str,
+    hosts: HostsConfig,
+    new_provider_name: str,
+    new_domain: str,
+) -> None:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
     # user_client = login_to_panel(
@@ -23,7 +29,9 @@ def modify_provider_in_op_panel_using_rest(
     # provider_api.modify_provider(provider_mod_rq)
 
 
-def deregister_provider_in_op_panel_using_rest(user, users, provider_host, hosts):
+def deregister_provider_in_op_panel_using_rest(
+    user: str, users: Users, provider_host: str, hosts: HostsConfig
+) -> None:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
     # user_client = login_to_panel(
@@ -33,7 +41,9 @@ def deregister_provider_in_op_panel_using_rest(user, users, provider_host, hosts
     # provider_api.remove_provider()
 
 
-def register_provider_in_op_using_rest(user, users, hosts, config):
+def register_provider_in_op_using_rest(
+    user: str, users: Users, hosts: HostsConfig, config: str
+) -> None:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
     # options = yaml.load(config, yaml.Loader)

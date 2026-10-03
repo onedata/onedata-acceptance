@@ -15,9 +15,12 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-
-from .nodes import HostRecord
-from .storages import StorageContentPage
+from tests.gui.utils.onepanel.deployment_steps import (
+    DEPLOYMENT_STEP_TITLE_PATTERNS,
+    DeploymentStep,
+)
+from tests.gui.utils.onepanel.nodes import HostRecord
+from tests.gui.utils.onepanel.storages import StorageContentPage
 
 
 class Step1(PageObject):
@@ -32,7 +35,7 @@ class Step1(PageObject):
     hostname_label = Label(".cluster-host-table-row .one-label")
     hostname = Input("input.input-add-host")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -47,13 +50,11 @@ class Step2(PageObject):
     longitude = Input("input.field-editBottom-geoLongitude")
     admin_email = Input("input.field-editBottom-adminEmail")
     register = NamedButton("button", text="Register")
-    subdomain_delegation = Toggle(
-        ".one-way-toggle.toggle-field-editTop-subdomainDelegation"
-    )
+    subdomain_delegation = Toggle(".one-way-toggle.toggle-field-editTop-subdomainDelegation")
     token = Input(".zone-token-textarea")
     proceed = NamedButton("button", text="Proceed")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -66,7 +67,7 @@ class SetupIP(PageObject):
     setup_ip_addresses = NamedButton("button", text="Setup IP adresses")
     nodes = WebItemsSequence("tr.cluster-host-ip-form-row", cls=NodeIP)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -79,7 +80,7 @@ class StepWebCert(PageObject):
     next_step = Button("button.btn-cert-next")
     lets_encrypt_toggle = Toggle(".toggle-field-letsEncrypt.one-way-toggle")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
@@ -88,25 +89,23 @@ class Step5(StorageContentPage):
 
     finish = NamedButton("button", text="Finish")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
 class LastStep(PageObject):
     """Used in both provider and zone panel"""
 
-    manage_cluster_via_onezone = NamedButton(
-        "button", text="Manage cluster via Onezone"
-    )
+    manage_cluster_via_onezone = NamedButton("button", text="Manage cluster via Onezone")
     link = Button(".info a")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.parent)
 
 
 class Deployment(PageObject):
     num = Label("ul.one-steps li.one-step.active .step-number")
-    title = Label(
+    current_step = Label(
         "ul.one-steps li.one-step.active .step-title",
         parent_name="cluster deployment step",
     )
@@ -120,5 +119,12 @@ class Deployment(PageObject):
     step5 = WebItem(_deployment_step_css, cls=Step5)
     laststep = WebItem(_deployment_step_css, cls=LastStep)
 
-    def __str__(self):
-        return f"{self.title} deployment step in {self.parent}"
+    def __str__(self) -> str:
+        return f"{self.current_step} deployment step in {self.parent}"
+
+    def get_active_step(self) -> DeploymentStep | None:
+        current_step = self.current_step
+        for pattern, step in DEPLOYMENT_STEP_TITLE_PATTERNS:
+            if pattern.search(current_step):
+                return step
+        return None

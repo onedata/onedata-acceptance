@@ -8,16 +8,19 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from typing import Final
 
 import yaml
+from selenium.common.exceptions import NoSuchElementException
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import RESPONSIVE_LAYOUT_DELAY, WAIT_FRONTEND, ScreenSize
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
 )
 from tests.gui.meta_steps.oneprovider.dataset import get_item_name_from_path
 from tests.gui.steps.common.common import assert_n_items_in_items_list
+from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     write_name_into_text_field_in_modal,
@@ -34,8 +37,14 @@ from tests.gui.steps.oneprovider.archives import (
     write_description_in_create_archive_modal,
     write_in_confirmation_input,
 )
+from tests.gui.steps.oneprovider.archives_audit import (
+    assert_archive_names_match,
+    extract_archive_name_and_path,
+    get_loaded_archive_file_path,
+)
 from tests.gui.steps.oneprovider.archives_recall import (
     assert_recall_duration_in_archive_recall_information_modal,
+    get_archive_recall_information_property_without_whitespace,
 )
 from tests.gui.steps.oneprovider.browser import (
     assert_items_presence_in_browser,
@@ -45,6 +54,7 @@ from tests.gui.steps.oneprovider.browser import (
 )
 from tests.gui.steps.oneprovider.data_tab import (
     assert_browser_in_tab_in_op,
+    check_content_for_provider,
     check_size_statistic_in_dir_details,
     check_size_stats_for_provider,
 )
@@ -53,15 +63,21 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.type_definitions import Clipboard, TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.generic import WhichBrowser, transform
+from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.shortened_path import (
+    IndexedPathSequence,
+    parse_indexed_path_sequence,
+)
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
-OPTION_IN_SPACE = "Datasets, Archives"
-DATASET_BROWSER = "dataset browser"
-ARCHIVE_BROWSER = "archive browser"
-ARCHIVE_FILE_BROWSER = "archive file browser"
+OPTION_IN_SPACE: Final[str] = "Datasets, Archives"
+DATASET_BROWSER: Final[str] = "dataset browser"
+ARCHIVE_BROWSER: Final[str] = "archive browser"
+ARCHIVE_FILE_BROWSER: Final[str] = "archive file browser"
 
 
 @wt(
@@ -71,18 +87,17 @@ ARCHIVE_FILE_BROWSER = "archive file browser"
         "configuration:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive(
-    browser_id,
-    selenium,
-    config,
-    item_name,
-    space_name,
-    tmp_memory,
-    clipboard,
-    displays,
-    option,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    config: str,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    option: str,
+) -> None:
     """Create archive according to given config.
 
     Config format given in yaml is as follows:
@@ -122,20 +137,19 @@ def create_archive(
         " {follow_symbolic_links}:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive_with_follow_symbolic_link(
-    browser_id,
-    selenium,
-    config,
-    item_name,
-    space_name,
-    tmp_memory,
-    clipboard,
-    displays,
-    option,
-    follow_symbolic_links,
-):
-    follow_symbolic_links = follow_symbolic_links == "true"
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    config: str,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    option: str,
+    follow_symbolic_links: str,
+) -> None:
+    should_follow_symbolic_links = follow_symbolic_links == "true"
 
     _create_archive(
         browser_id,
@@ -147,28 +161,28 @@ def create_archive_with_follow_symbolic_link(
         clipboard,
         displays,
         option,
-        follow_symbolic_links,
+        should_follow_symbolic_links,
     )
 
 
 def _create_archive(
-    browser_id,
-    selenium,
-    config,
-    item_name,
-    space_name,
-    tmp_memory,
-    clipboard,
-    displays,
-    option,
-    follow_symbolic_links=True,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    config: str,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    option: str,
+    follow_symbolic_links: bool = True,
+) -> None:
     option_in_data_row_menu = "Create archive"
     button_name = "Create"
     option_state = "disabled"
     try:
-        OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
-    except RuntimeError:
+        _ = OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
+    except NoSuchElementException:
         click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space_name, OPTION_IN_SPACE
         )
@@ -182,7 +196,7 @@ def _create_archive(
             item_name,
             DATASET_BROWSER,
         )
-        item_name = item_name.split("/")[-1]
+        item_name = item_name.rsplit("/", maxsplit=1)[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, DATASET_BROWSER)
     if option in ("succeeds", "tries"):
         click_option_in_data_row_menu_in_browser(
@@ -208,10 +222,9 @@ def _create_archive(
         if create_nested_archives:
             option = "create_nested_archives"
             check_toggle_in_create_archive_modal(browser_id, selenium, option)
-        if incremental:
-            if incremental["enabled"]:
-                option = "incremental"
-                check_toggle_in_create_archive_modal(browser_id, selenium, option)
+        if incremental and incremental["enabled"]:
+            option = "incremental"
+            check_toggle_in_create_archive_modal(browser_id, selenium, option)
         if include_dip:
             option = "include_dip"
             check_toggle_in_create_archive_modal(browser_id, selenium, option)
@@ -230,8 +243,6 @@ def _create_archive(
                 displays,
                 description,
             )
-            # wait for "archive id copied to clipboard" message to disappear
-            time.sleep(5)
     elif option == "fails":
         assert_option_state_in_data_row_menu(
             selenium,
@@ -242,16 +253,15 @@ def _create_archive(
         )
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def copy_archive_id_to_tmp_memory(
-    selenium,
-    browser_id,
-    client,
-    tmp_memory,
-    clipboard,
-    displays,
-    description,
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    client: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: dict[str, str],
+    description: str,
+) -> None:
     if client.lower() == "web gui":
         option_in_menu = "Copy archive ID"
         assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, ARCHIVE_BROWSER)
@@ -259,18 +269,25 @@ def copy_archive_id_to_tmp_memory(
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
         )
+        is_notify_popup_visible_and_close_all_alert_popups(
+            selenium,
+            browser_id,
+            AlertPopup.SUCCESSFULLY_COPIED,
+            popup_expected=False,
+            timeout=WAIT_FRONTEND,
+        )
         tmp_memory[description] = clipboard.paste(display=displays[browser_id])
 
 
 def assert_archive_in_op_gui(
-    browser_id,
-    selenium,
-    item_name,
-    space_name,
-    tmp_memory,
-    option,
-    description,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    option: str,
+    description: str,
+) -> None:
     go_to_and_assert_browser(
         selenium,
         browser_id,
@@ -298,9 +315,7 @@ def assert_archive_in_op_gui(
             tmp_memory,
             item_browser=ARCHIVE_BROWSER,
         )
-        click_and_press_enter_on_archive(
-            browser_id, tmp_memory, description, ARCHIVE_BROWSER
-        )
+        click_and_press_enter_on_archive(browser_id, tmp_memory, description, ARCHIVE_BROWSER)
         assert_browser_in_tab_in_op(
             selenium,
             browser_id,
@@ -310,15 +325,15 @@ def assert_archive_in_op_gui(
         assert_items_presence_in_browser(
             selenium,
             browser_id,
-            item_name,
+            [item_name],
             tmp_memory,
             which_browser=ARCHIVE_FILE_BROWSER,
         )
     else:
         try:
-            number = "0"
+            number = 0
             assert_number_of_archives_for_item_in_dataset_browser(
-                browser_id, item_name, number, tmp_memory
+                browser_id, item_name, str(number), tmp_memory
             )
         except AssertionError:
             click_on_dataset(browser_id, tmp_memory, item_name)
@@ -332,14 +347,14 @@ def assert_archive_in_op_gui(
 
 
 def remove_archive_in_op_gui(
-    browser_id,
-    selenium,
-    item_name,
-    space_name,
-    tmp_memory,
-    description,
-    option,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    option: str,
+) -> None:
     option_in_menu = "Delete archive"
     text = "I understand that data of the archive will be lost"
     button_name = "Delete archive"
@@ -381,14 +396,14 @@ def remove_archive_in_op_gui(
 
 
 def assert_archive_with_option_in_op_gui(
-    browser_id,
-    selenium,
-    space_name,
-    tmp_memory,
-    item_name,
-    option,
-    description,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    option: str,
+    description: str,
+) -> None:
     tag_type = transform(option)
     go_to_and_assert_browser(
         selenium,
@@ -405,19 +420,17 @@ def assert_archive_with_option_in_op_gui(
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
-    assert_tag_for_archive_in_archive_browser(
-        browser_id, tag_type, tmp_memory, description
-    )
+    assert_tag_for_archive_in_archive_browser(browser_id, tag_type, tmp_memory, description)
 
 
 def assert_number_of_archive_in_op_gui(
-    browser_id,
-    selenium,
-    item_name,
-    space_name,
-    tmp_memory,
-    number,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    number: int,
+) -> None:
     go_to_and_assert_browser(
         selenium,
         browser_id,
@@ -437,42 +450,38 @@ def assert_number_of_archive_in_op_gui(
             DATASET_BROWSER,
         )
     assert_number_of_archives_for_item_in_dataset_browser(
-        browser_id, item_name, number, tmp_memory
+        browser_id, item_name, str(number), tmp_memory
     )
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} can see {number} of archives in"
-        " {which_browser:WhichBrowser}",
+        "user of {browser_id} can see {number} of archives in {which_browser:WhichBrowser}",
         extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 def assert_number_of_archives_with_scrolling(
-    browser_id,
-    selenium,
-    number: int,
-    tmp_memory,
-    which_browser,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    number: str,
+    tmp_memory: TmpMemory,
+    which_browser: WhichBrowser,
+) -> None:
     browser = tmp_memory[browser_id][transform(which_browser.value)]
-    transform_fun = lambda item: (
-        item.text.split("\n")[1] if len(item.text.split("\n")) > 2 else ""
-    )
     assert_n_items_in_items_list(
-        browser, selenium, browser_id, number, "items", transform_fun=transform_fun
+        browser, selenium, browser_id, int(number), ListElement.FILES, "description"
     )
 
 
 def assert_base_archive_for_archive_in_op_gui(
-    browser_id,
-    selenium,
-    item_name,
-    space_name,
-    tmp_memory,
-    description,
-    base_description,
-):
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    base_description: str,
+) -> None:
     go_to_and_assert_browser(
         selenium,
         browser_id,
@@ -490,67 +499,65 @@ def assert_base_archive_for_archive_in_op_gui(
     )
     browser = tmp_memory[browser_id]["archive_browser"]
     archive = get_archive_with_description(browser, description)
-    err_msg = (
+    error_message = (
         f"Base archive: {archive.base_archive} does not match expected "
         f"archive with description {base_description}"
     )
-    assert base_description in archive.base_archive_description, err_msg
+    assert base_description in archive.base_archive_description, error_message
 
 
 def assert_archive_callback_in_op_gui(
-    browser_id,
-    tmp_memory,
-    description,
-    selenium,
-    expected,
-    option,
-):
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    selenium: SeleniumDrivers,
+    expected: str,
+    option: str,
+) -> None:
     modal = "Archive Details"
     option_in_menu = "Properties"
     info = f"{option} callback URL"
     button_name = "X"
     click_menu_for_archive(browser_id, tmp_memory, description, selenium)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_menu, ARCHIVE_BROWSER)
     assert_archive_info_in_properties_modal(selenium, browser_id, expected, info)
     click_modal_button(selenium, browser_id, button_name, modal)
 
 
 def recall_archive_for_archive_in_op_gui(
-    browser_id, description, tmp_memory, selenium, name
-):
+    browser_id: str,
+    description: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    name: str,
+) -> None:
     option_in_menu = "Recall to..."
     modal_name = "Recall archive"
     name_textfield = "target name input"
     button_name = "Recall"
     click_menu_for_archive(browser_id, tmp_memory, description, selenium)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
-    )
-    write_name_into_text_field_in_modal(
-        selenium, browser_id, name, modal_name, name_textfield
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_menu, ARCHIVE_BROWSER)
+    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name, name_textfield)
     click_modal_button(selenium, browser_id, button_name, modal_name)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(
-    browser_id, item_name, tmp_memory, data, selenium
-):
+    browser_id: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+    data: dict[str, str],
+    selenium: SeleniumDrivers,
+) -> None:
     status_type = "recalled"
-    click_on_status_tag_for_file_in_file_browser(
-        browser_id, status_type, item_name, tmp_memory
-    )
-    recall_modal = Modals(selenium[browser_id]).archive_recall_information
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type, item_name, tmp_memory)
 
     for key, expected_value in data.items():
         if key == "time":
-            expected_value = expected_value.split(" >= ")
-            start = expected_value[-1]
-            stop = expected_value[0]
-            if "cancelled" in expected_value:
-                cancelled = expected_value[1]
+            expected_times = expected_value.split(" >= ")
+            start = expected_times[-1]
+            stop = expected_times[0]
+            if "cancelled" in expected_times:
+                cancelled = expected_times[1]
                 assert_recall_duration_in_archive_recall_information_modal(
                     selenium, browser_id, start, cancelled
                 )
@@ -561,35 +568,46 @@ def recalled_archive_details_in_op_gui(
                 selenium, browser_id, start, stop
             )
         else:
-            value = re.sub(r"\s*", "", getattr(recall_modal, key))
-            expected_value = re.sub(r"\s*", "", expected_value)
-            err_msg = (
-                f'{key} for archive recall "{item_name}" is {value} '
-                f"but expected value is {expected_value} "
-            )
-            if expected_value == "Cancelled":
-                assert expected_value in value, err_msg
-            elif "<=" in expected_value:
-                characters = "[\nMBGi ]"
-                err_msg = (
-                    f'{key} for archive recall "{item_name}" is {value} '
-                    "and is not lower or equal to expected value: "
-                    f"{expected_value} "
+            actual_value_without_whitespace = (
+                get_archive_recall_information_property_without_whitespace(
+                    selenium, browser_id, key
                 )
-                value = re.sub(characters, "", value).split("/")[0]
-                expected_value = re.sub(characters, "", expected_value).split("<=")[-1]
-                assert int(value) <= int(expected_value), err_msg
+            )
+            expected_value_without_whitespace = re.sub(r"\s*", "", expected_value)
+            error_message = (
+                f'{key} for archive recall "{item_name}" is {actual_value_without_whitespace} '
+                f"but expected value is {expected_value_without_whitespace} "
+            )
+            if expected_value_without_whitespace == "Cancelled":
+                assert expected_value_without_whitespace in actual_value_without_whitespace, (
+                    error_message
+                )
+            elif "<=" in expected_value_without_whitespace:
+                size_unit_and_whitespace_pattern = "[\nMBGi ]"
+                error_message = (
+                    f'{key} for archive recall "{item_name}" is {actual_value_without_whitespace} '
+                    "and is not lower or equal to expected value: "
+                    f"{expected_value_without_whitespace} "
+                )
+                actual_value_without_unit = re.sub(
+                    size_unit_and_whitespace_pattern, "", actual_value_without_whitespace
+                ).split("/")[0]
+                expected_upper_bound_without_unit = re.sub(
+                    size_unit_and_whitespace_pattern, "", expected_value_without_whitespace
+                ).split("<=")[-1]
+                assert int(actual_value_without_unit) <= int(expected_upper_bound_without_unit), (
+                    error_message
+                )
             else:
-                assert value == expected_value, err_msg
+                assert actual_value_without_whitespace == expected_value_without_whitespace, (
+                    error_message
+                )
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that current size statistics are "
-        "as follow:\n{config}"
-    )
+    parsers.parse("user of {browser_id} sees that current size statistics are as follow:\n{config}")
 )
-def check_size_stats_for_archive(selenium, browser_id, config):
+def check_size_stats_for_archive(selenium: SeleniumDrivers, browser_id: str, config: str) -> None:
     """Check size stats in directory details according to given config.
 
     Config format given in yaml is as follows:
@@ -601,20 +619,21 @@ def check_size_stats_for_archive(selenium, browser_id, config):
 
     size_statistics = yaml.load(config, yaml.Loader)
     for stat_type, expected_value in size_statistics.items():
-        check_size_statistic_in_dir_details(
-            selenium, browser_id, stat_type, expected_value
-        )
+        check_size_statistic_in_dir_details(selenium, browser_id, stat_type, expected_value)
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that size statistics for "
-        "{provider} are as follow:\n{config}"
+        "user of {browser_id} sees that size statistics for {provider} are as follow:\n{config}"
     )
 )
 def check_size_stats_for_archive_per_provider(
-    selenium, browser_id, hosts, config, provider
-):
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    hosts: Hosts,
+    config: str,
+    provider: str,
+) -> None:
     """Check size stats in directory details for specified provider according
     to given config.
 
@@ -627,11 +646,58 @@ def check_size_stats_for_archive_per_provider(
 
     size_statistics = yaml.load(config, yaml.Loader)
     for stat_type, expected_value in size_statistics.items():
-        check_size_stats_for_provider(
-            selenium,
-            hosts,
-            browser_id,
-            stat_type,
-            provider,
-            expected_value,
+        if stat_type != "content":
+            check_size_stats_for_provider(
+                selenium,
+                hosts,
+                browser_id,
+                stat_type,
+                [provider],
+                [expected_value],
+            )
+        else:
+            check_content_for_provider(selenium, hosts, browser_id, provider, expected_value)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that path in Entry Details in archive audit log"
+        " matches the config and displayed archive name is correct for different screen"
+        " sizes:\n{config}"
+    )
+)
+def assert_archive_name_and_shortened_path_for_screen_sizes(
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    config: str,
+) -> None:
+    """
+    Example shortened path:
+    long-directory_0\n›\n25 Aug 2026 21:21\n/\n...\n/\n 'long-directory_19\n/\nvery-long-file_20
+    """
+    driver = selenium[browser_id]
+    expected_path = IndexedPathSequence.from_yaml_dict(yaml.safe_load(config))
+
+    for screen_size in ScreenSize:
+        size = screen_size.value
+        driver.set_window_size(size.width, size.height)
+
+        # WebDriver waits for the window resize, but not for the frontend's
+        # asynchronous responsive-layout update.
+        time.sleep(RESPONSIVE_LAYOUT_DELAY)
+
+        audit_log = Modals(driver).archive_audit_log
+        details_text = get_loaded_archive_file_path(driver)
+        details_archive_name, displayed_path = extract_archive_name_and_path(details_text)
+
+        assert_archive_names_match(
+            audit_log.archive_name,
+            details_archive_name,
+        )
+
+        actual_path = parse_indexed_path_sequence(displayed_path)
+        assert actual_path.matches(expected_path), (
+            "Path shown in audit log entry details for "
+            f"{screen_size.name.lower()} screen size does not match: "
+            f"actual={actual_path!r}, expected={expected_path!r}"
         )

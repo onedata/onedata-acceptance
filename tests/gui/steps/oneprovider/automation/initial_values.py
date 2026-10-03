@@ -6,15 +6,34 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Protocol, cast
 
-from tests.gui.conftest import WAIT_FRONTEND
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.oneprovider.automation import InitialValueStore
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+class InitialValueOption(Protocol):
+    name: str
+
+    def click(self) -> None: ...
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_range_as_initial_workflow_value(selenium, browser_id, item, add_new=True):
+def choose_range_as_initial_workflow_value(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    item: dict[str, object],
+    add_new: bool = True,
+) -> None:
     driver = selenium[browser_id]
     if add_new:
         OPLoggedIn(driver).automation_page.input_link.click()
@@ -26,18 +45,16 @@ def choose_range_as_initial_workflow_value(selenium, browser_id, item, add_new=T
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_if_select_files_modal_disappeared(driver, files):
+def check_if_select_files_modal_disappeared(driver: WebDriver, files: str | list[str]) -> None:
     try:
-        Modals(driver).select_files  # pylint: disable=expression-not-assigned
-        raise AssertionError(
-            f"Files: {files} as initial value for workflow was not selected"
-        )
-    except RuntimeError:
+        _ = Modals(driver).select_files
+        raise AssertionError(f"Files: {files} as initial value for workflow was not selected")
+    except NoSuchElementException:
         pass
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_files_modal(driver, store_name=False):
+def open_select_initial_files_modal(driver: WebDriver, store_name: str | None = None) -> None:
     option = "Select/upload file"
 
     click_input_link_in_automation_page(driver, store_name)
@@ -48,16 +65,14 @@ def open_select_initial_files_modal(driver, store_name=False):
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    Modals(driver).select_files  # pylint: disable=expression-not-assigned
+    _ = Modals(driver).select_files
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "Add groups..." link in "{store_name}" store'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "Add groups..." link in "{store_name}" store'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_groups_modal(selenium, browser_id, store_name):
+def open_select_initial_groups_modal(
+    selenium: SeleniumDrivers, browser_id: str, store_name: str
+) -> None:
     option = "Select groups"
     driver = selenium[browser_id]
 
@@ -69,37 +84,46 @@ def open_select_initial_groups_modal(selenium, browser_id, store_name):
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    Modals(driver).select_groups  # pylint: disable=expression-not-assigned
+    _ = Modals(driver).select_groups
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_datasets_modal(driver):
+def select_groups_from_select_groups_modal(driver: WebDriver, group_list: str | list[str]) -> None:
+    parsed_list = parse_seq(group_list) if isinstance(group_list, str) else group_list
+    Modals(driver).select_groups.select(parsed_list)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_select_initial_datasets_modal(driver: WebDriver) -> None:
     option = "Select datasets"
     OPLoggedIn(driver).automation_page.input_link()
     time.sleep(1)
     Popups(driver).workflow_dataset_initial_value.menu[option].click()
     time.sleep(1)
     # check if modal opened
-    Modals(driver).select_dataset  # pylint: disable=expression-not-assigned
+    _ = Modals(driver).select_dataset
 
 
-def get_select_option_from_initial_value_popup(option, popup_menu):
+def get_select_option_from_initial_value_popup(
+    option: str, popup_menu: PageObjectsSequence
+) -> InitialValueOption:
     for elem in popup_menu:
-        if option in elem.name:
-            return elem
+        option_elem = cast(InitialValueOption, elem)
+        if option in option_elem.name:
+            return option_elem
     raise ValueError(f"{option} not found in popup menu")
 
 
-def get_initial_value_store(driver, store_name):
+def get_initial_value_store(driver: WebDriver, store_name: str) -> InitialValueStore:
     initial_value_stores = OPLoggedIn(driver).automation_page.initial_value_store
     if store_name + ":" in initial_value_stores:
         return initial_value_stores[store_name + ":"]
     if store_name + ": " in initial_value_stores:
         return initial_value_stores[store_name + ": "]
-    raise ValueError()
+    raise ValueError
 
 
-def click_input_link_in_automation_page(driver, store_name):
+def click_input_link_in_automation_page(driver: WebDriver, store_name: str | None) -> None:
     if store_name:
         store = get_initial_value_store(driver, store_name)
         store.input_link.click()
@@ -107,7 +131,7 @@ def click_input_link_in_automation_page(driver, store_name):
         try:
             # for input store type Single Value this Button does not work
             OPLoggedIn(driver).automation_page.files_input_link.click()
-        except RuntimeError:
+        except NoSuchElementException:
             # for adding another files to input store (type List) this Button
             # does not work because it finds two links (one for changing file,
             # another for adding)
@@ -115,12 +139,12 @@ def click_input_link_in_automation_page(driver, store_name):
             OPLoggedIn(driver).automation_page.single_file_input_link.click()
 
 
-def get_data_type_in_initial_value_store(driver, store_name):
+def get_data_type_in_initial_value_store(driver: WebDriver, store_name: str) -> str:
     store = get_initial_value_store(driver, store_name)
     return store.data_type
 
 
-def get_data_type_of_array_initial_value_store(driver, store_name):
+def get_data_type_of_array_initial_value_store(driver: WebDriver, store_name: str) -> str:
     store = get_initial_value_store(driver, store_name)
     link_name = store.input_link.web_elem.text
 
@@ -133,16 +157,18 @@ def get_data_type_of_array_initial_value_store(driver, store_name):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) (?P<option>sees|does not see) "
-        '"(?P<group>.*)" group in "Select groups" modal'
+        r"user of (?P<browser_id>.*) (?P<option>sees|does not see) "
+        r'"(?P<group>.*)" group in "Select groups" modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_group_in_select_initial_groups_modal(selenium, browser_id, option, group):
+def assert_group_in_select_initial_groups_modal(
+    selenium: SeleniumDrivers, browser_id: str, option: str, group: str
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).select_groups
-    err_msg = "there {} visible {} in select groups modal, but should {}"
+    error_message = "there {} visible {} in select groups modal, but should {}"
     if option == "sees":
-        assert group in modal.groups, err_msg.format("is not", group, "be")
+        assert group in modal.groups, error_message.format("is not", group, "be")
     else:
-        assert group not in modal.groups, err_msg.format("is", group, "not be")
+        assert group not in modal.groups, error_message.format("is", group, "not be")

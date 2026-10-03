@@ -6,6 +6,7 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 import yaml
 
 from tests.gui.steps.onezone.marketplace import (
@@ -17,13 +18,12 @@ from tests.gui.steps.onezone.space_configuration import (
     set_description_of_a_space,
     set_space_data_in_configuration_tab,
 )
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 
-@wt(
-    parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}")
-)
-def configure_space_manually(browser_id, config, selenium):
+@wt(parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}"))
+def configure_space_manually(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as follows:
@@ -54,11 +54,12 @@ def configure_space_manually(browser_id, config, selenium):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} provides space configuration without "
-        "saving as follows:\n{config}"
+        "user of {browser_id} provides space configuration without saving as follows:\n{config}"
     )
 )
-def configure_space_manually_without_saving(browser_id, config, selenium):
+def configure_space_manually_without_saving(
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as in the previous function:
@@ -66,7 +67,12 @@ def configure_space_manually_without_saving(browser_id, config, selenium):
     _configure_space_manually(browser_id, config, selenium, with_save=False)
 
 
-def _configure_space_manually(browser_id, config, selenium, with_save=True):
+def _configure_space_manually(
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    with_save: bool = True,
+) -> None:
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"
@@ -117,12 +123,13 @@ def _configure_space_manually(browser_id, config, selenium, with_save=True):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees advertised space "
-        "on Space Marketplace "
+        "user of {browser_id} sees advertised space on Space Marketplace "
         "subpage with following parameters:\n{config}"
     )
 )
-def assert_space_in_marketplace_with_config(browser_id, selenium, config):
+def assert_space_in_marketplace_with_config(
+    browser_id: str, selenium: SeleniumDrivers, config: str
+) -> None:
     """Assert space advertised in marketplace according to given config.
 
     Config format given in yaml is as follows:
@@ -152,7 +159,9 @@ def assert_space_in_marketplace_with_config(browser_id, selenium, config):
     _assert_space_in_marketplace_with_config(browser_id, config, selenium)
 
 
-def _assert_space_in_marketplace_with_config(browser_id, config, selenium):
+def _assert_space_in_marketplace_with_config(
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"
@@ -176,9 +185,7 @@ def _assert_space_in_marketplace_with_config(browser_id, config, selenium):
     )
 
     if tags:
-        assert_elements_list_in_space_marketplace(
-            selenium, browser_id, space_name, "tag", tags
-        )
+        assert_elements_list_in_space_marketplace(selenium, browser_id, space_name, "tag", tags)
 
     assert_element_in_space_marketplace(
         selenium,

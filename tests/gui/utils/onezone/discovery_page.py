@@ -4,8 +4,10 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.common.exceptions import NoSuchElementException
+
 from tests.gui.utils.common.common import DropdownSelector, Toggle
-from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
@@ -16,15 +18,13 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.onezone.common import InputBox
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
 class WelcomePage(PageObject):
     create_harvester = NamedButton(".info .ember-view", text="Create a harvester")
-    join_existing_harvester = NamedButton(
-        ".info .ember-view", text="join an existing harvester"
-    )
+    join_existing_harvester = NamedButton(".info .ember-view", text="join an existing harvester")
     join_group = NamedButton(".info .ember-view", text="join a group")
 
 
@@ -38,10 +38,10 @@ class Index(PageObject):
     progress_values = WebItemsSequence(".progress-row", cls=ProgressRow)
     used_by_gui_tag = WebElement(".index-labels-container")
 
-    def is_used_by_gui_tag_visible(self):
+    def is_used_by_gui_tag_visible(self) -> bool:
         try:
-            self.used_by_gui_tag
-        except RuntimeError:
+            _ = self.used_by_gui_tag
+        except NoSuchElementException:
             return False
         return True
 
@@ -58,9 +58,7 @@ class IncludeFileDetails(PageObject):
     space_id = Toggle(".spaceId-field .one-way-toggle-control")
     dataset_info = Toggle(".datasetInfo-field .one-way-toggle-control")
     archive_info = Toggle(".archiveInfo-field .one-way-toggle-control")
-    metadata_existence_flags = Toggle(
-        ".metadataExistenceFlags-field .one-way-toggle-control"
-    )
+    metadata_existence_flags = Toggle(".metadataExistenceFlags-field .one-way-toggle-control")
 
 
 class IndicesPage(PageObject):
@@ -75,9 +73,7 @@ class IndicesPage(PageObject):
     include_metadata = WebItem(".includeMetadata-field", cls=IncludeMetadata)
     include_file_details = WebItem(".includeFileDetails-field", cls=IncludeFileDetails)
 
-    include_rejection_reason = Toggle(
-        ".includeRejectionReason-field .one-way-toggle-control"
-    )
+    include_rejection_reason = Toggle(".includeRejectionReason-field .one-way-toggle-control")
     retry_on_rejection = Toggle(".retryOnRejection-field .one-way-toggle-control")
 
 
@@ -101,12 +97,8 @@ class GUIPluginTab(PageObject):
     injected_config = Label(".json-editor-textarea")
     version = Label(".gui-version")
     indices = WebItemsSequence(".indices-table tbody tr", cls=GUIPluginIndex)
-    indices_edit = NamedButton(
-        ".harvester-configuration-gui-indices .btn-default", text="Edit"
-    )
-    indices_save = NamedButton(
-        ".harvester-configuration-gui-indices .btn-primary", text="Save"
-    )
+    indices_edit = NamedButton(".harvester-configuration-gui-indices .btn-default", text="Edit")
+    indices_save = NamedButton(".harvester-configuration-gui-indices .btn-primary", text="Save")
     choose_indices_expand = Button(".form-group .ember-power-select-trigger")
 
 
@@ -120,22 +112,21 @@ class ConfigurationPage(PageObject):
     gui_plugin_button = NamedButton(".nav-link", text="GUI plugin")
 
 
-class Harvester(Element):
+class Harvester(NamedElement):
+    name = id = Label(".one-label")
     menu_button = Button(".collapsible-toolbar-toggle")
 
     spaces = NamedButton(".one-list-level-2 .item-header", text="Spaces")
     indices = NamedButton(".one-list-level-2 .item-header", text="Indices")
     members = NamedButton(".one-list-level-2 .item-header", text="Members")
-    data_discovery = NamedButton(
-        ".one-list-level-2 .item-header", text="Data discovery"
-    )
+    data_discovery = NamedButton(".one-list-level-2 .item-header", text="Data discovery")
     configuration = NamedButton(".one-list-level-2 .item-header", text="Configuration")
 
 
 class MenuItem(PageObject):
     name = id = Label("a.clickable")
 
-    def __call__(self):
+    def __call__(self) -> None:
         self.click()
 
 
@@ -144,17 +135,17 @@ class Space(PageObject):
 
     menu_button = Button(".collapsible-toolbar-toggle")
 
-    def click_menu(self):
+    def click_menu(self) -> None:
         self.menu_button.click()
 
 
-class DiscoveryPage(GenericPage):
-    add_one_of_your_spaces_button = NamedButton("button", text="Add one of your spaces")
-    invite_space_using_token_button = NamedButton(
-        "button", text="Invite space using token"
-    )
+class DiscoveryPage(SidebarPanelPage):
+    panel_name = "discovery"
 
-    elements_list = WebItemsSequence(
+    add_one_of_your_spaces_button = NamedButton("button", text="Add one of your spaces")
+    invite_space_using_token_button = NamedButton("button", text="Invite space using token")
+
+    harvesters_list = WebItemsSequence(
         ".sidebar-harvesters li.one-list-item.clickable", cls=Harvester
     )
 
@@ -168,9 +159,7 @@ class DiscoveryPage(GenericPage):
     menu_button = Button(".with-menu .collapsible-toolbar-toggle")
 
     get_started = Button(".btn.btn-default.hide-sm-active.ember-view")
-    create_new_harvester_button = Button(
-        ".one-sidebar-toolbar-button.create-harvester-btn"
-    )
+    create_new_harvester_button = Button(".one-sidebar-toolbar-button.create-harvester-btn")
 
     name = WebElement(".name-field .form-control")
     plugin_selector = DropdownSelector(".type-field")
@@ -180,9 +169,7 @@ class DiscoveryPage(GenericPage):
     rename_input = WebElement(".name-editor input")
     rename_button = Button(".save-icon")
 
-    spaces_list = WebItemsSequence(
-        ".content-harvesters-spaces .row.list-header-row", cls=Space
-    )
+    spaces_list = WebItemsSequence(".content-harvesters-spaces .row.list-header-row", cls=Space)
 
     input_box = WebItem(".content-info-content-container", cls=InputBox)
 

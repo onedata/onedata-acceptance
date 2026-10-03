@@ -76,7 +76,7 @@ Feature: Basic management of space management privileges for spaces in Onezone G
             privilege subtypes:
               Modify space: False
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     And user of browser_user1 clicks "space1" on the spaces list in the sidebar
     And user of browser_user1 clicks "Overview" of "space1" space in the sidebar
     And user of browser_user1 writes "space2" into rename space text field
@@ -109,7 +109,7 @@ Feature: Basic management of space management privileges for spaces in Onezone G
           Space management:
             granted: True
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     Then user of browser_user1 sees that "space1" has appeared on the spaces list in the sidebar
 
 
@@ -121,7 +121,7 @@ Feature: Basic management of space management privileges for spaces in Onezone G
           Space management:
             granted: False
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     Then user of browser_user1 sees that ["Members", "Shares, Public Data", "Harvesters, Discovery"] of "space1" in the sidebar are disabled
 
 
@@ -136,7 +136,7 @@ Feature: Basic management of space management privileges for spaces in Onezone G
               View privileges: True
               Set privileges: True
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     And user of browser_user1 clicks "space1" on the spaces list in the sidebar
     And user of browser_user1 clicks "Members" of "space1" space in the sidebar
     And user of browser_user1 clicks "user2" user in "space1" space members users list
@@ -167,7 +167,7 @@ Feature: Basic management of space management privileges for spaces in Onezone G
               View privileges: True
               Set privileges: False
 
-    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on "Data" in the main menu
     And user of browser_user1 clicks "space1" on the spaces list in the sidebar
     And user of browser_user1 clicks "Members" of "space1" space in the sidebar
     And user of browser_user1 clicks "user2" user in "space1" space members users list

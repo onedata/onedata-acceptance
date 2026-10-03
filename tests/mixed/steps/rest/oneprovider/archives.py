@@ -5,11 +5,14 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from collections.abc import Mapping, MutableMapping
+from http import HTTPStatus
+from typing import NotRequired, Protocol, TypedDict, cast
 
 import yaml
-from oneprovider_client.rest import ApiException as OPException
 
-from tests.gui.conftest import WAIT_FRONTEND
+from oneprovider_client.rest import ApiException as OPException
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.mixed.oneprovider_client.api.archive_api import ArchiveApi
 from tests.mixed.oneprovider_client.api.basic_file_operations_api import (
@@ -18,48 +21,71 @@ from tests.mixed.oneprovider_client.api.basic_file_operations_api import (
 from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.steps.rest.oneprovider.datasets import get_dataset_id
+from tests.mixed.type_definitions import (
+    ArchiveConfig,
+    IdMap,
+)
+from tests.mixed.type_definitions import ArchiveTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_provider
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
 
 
-def translate_config_for_archive(config, tmp_memory):
-    for item in config:
-        if isinstance(config[item], str):
-            config[item] = config[item].lower()
+class ArchiveData(TypedDict):
+    datasetId: str
+    config: ArchiveConfig
+    description: NotRequired[str]
+
+
+class ArchiveInfoConfig(Protocol):
+    layout: str
+    include_dip: bool
+
+
+class ArchiveInfo(Protocol):
+    config: ArchiveInfoConfig
+    base_archive_id: str
+
+
+def translate_config_for_archive(config: ArchiveConfig, tmp_memory: TmpMemory) -> None:
+    for item, value in list(config.items()):
+        if isinstance(value, str):
+            config[item] = value.lower()
     if "create nested archives" in config:
         del config["create nested archives"]
         config["createNestedArchives"] = "true"
     if "include DIP" in config:
         del config["include DIP"]
         config["includeDip"] = "true"
-    if "incremental" in config and config["incremental"]["basedOn"]:
-        config["incremental"]["basedOn"] = tmp_memory[config["incremental"]["basedOn"]]
+    incremental_config = config.get("incremental")
+    if isinstance(incremental_config, MutableMapping) and incremental_config["basedOn"]:
+        incremental_config["basedOn"] = tmp_memory[incremental_config["basedOn"]]
 
 
 def create_archive_in_op_rest(
-    user,
-    users,
-    hosts,
-    host,
-    space_name,
-    item_name,
-    config,
-    spaces,
-    tmp_memory,
-    option,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    item_name: str,
+    config: str,
+    spaces: IdMap,
+    tmp_memory: TmpMemory,
+    option: str,
+) -> None:
 
-    config = yaml.load(config, yaml.Loader)
-    translate_config_for_archive(config, tmp_memory)
+    archive_config = cast(ArchiveConfig, yaml.load(config, yaml.Loader))
+    translate_config_for_archive(archive_config, tmp_memory)
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
-    data = {"datasetId": dataset_id, "config": config}
-    if "description" in config:
-        description = config["description"]
-        del config["description"]
+    data: ArchiveData = {"datasetId": dataset_id, "config": archive_config}
+    if "description" in archive_config:
+        description = cast(str, archive_config.pop("description"))
         data["description"] = description
     else:
         description = "latest_created_archive"
@@ -70,22 +96,31 @@ def create_archive_in_op_rest(
             _ = archive_api.create_archive(data).archive_id
             raise AssertionError("function: create_archive worked but it should not")
         except OPException as err:
-            if err.status == 400:
+            if err.status == HTTPStatus.BAD_REQUEST:
                 pass
             else:
                 raise OPException from err
 
 
 def create_n_archives_in_op_rest(
-    user, users, hosts, host, space_name, item_name, config, spaces, tmp_memory, number
-):
-    config = yaml.load(config, yaml.Loader)
-    translate_config_for_archive(config, tmp_memory)
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    item_name: str,
+    config: str,
+    spaces: IdMap,
+    tmp_memory: TmpMemory,
+    number: int,
+) -> None:
+    archive_config = cast(ArchiveConfig, yaml.load(config, yaml.Loader))
+    translate_config_for_archive(archive_config, tmp_memory)
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
-    data = {"datasetId": dataset_id, "config": config}
+    data: ArchiveData = {"datasetId": dataset_id, "config": archive_config}
 
     for i in range(number):
         description = f"archive number {i}"
@@ -94,17 +129,17 @@ def create_n_archives_in_op_rest(
 
 
 def assert_archive_in_op_rest(
-    user,
-    users,
-    hosts,
-    host,
-    space_name,
-    item_name,
-    spaces,
-    tmp_memory,
-    option,
-    description,
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    item_name: str,
+    spaces: IdMap,
+    tmp_memory: TmpMemory,
+    option: str,
+    description: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
@@ -124,24 +159,36 @@ def assert_archive_in_op_rest(
 
 
 def assert_number_of_archive_in_op_rest(
-    user, users, hosts, host, space_name, item_name, spaces, number
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    item_name: str,
+    spaces: IdMap,
+    number: int,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
     dataset_archive = archive_api.list_dataset_archives(dataset_id)
     number_of_archives = len(dataset_archive.archives)
-    err_msg = (
-        f"number of archives {number_of_archives}, "
-        f"expected number of archives: {number}"
+    error_message = (
+        f"number of archives {number_of_archives}, expected number of archives: {number}"
     )
-    assert int(number) == number_of_archives, err_msg
+    assert int(number) == number_of_archives, error_message
 
 
 def remove_archive_in_op_rest(
-    user, users, hosts, host, description, tmp_memory, option
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    description: str,
+    tmp_memory: TmpMemory,
+    option: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
@@ -152,53 +199,78 @@ def remove_archive_in_op_rest(
             archive_api.delete_archive(archive_id)
             raise AssertionError("removing archive worked but it should not")
         except OPException as err:
-            if err.status == 400:
+            if err.status == HTTPStatus.BAD_REQUEST:
                 pass
             else:
                 raise OPException from err
 
 
-def get_archive_info(user, users, hosts, host, tmp_memory, description):
+def get_archive_info(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+) -> ArchiveInfo:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
-    return archive_api.get_archive(archive_id)
+    return cast(ArchiveInfo, archive_api.get_archive(archive_id))
 
 
 def assert_archive_with_option_in_op_rest(
-    user, users, hosts, host, option, tmp_memory, description
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    option: str,
+    tmp_memory: TmpMemory,
+    description: str,
+) -> None:
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
-    err_msg = f"archive is not {option}"
+    error_message = f"archive is not {option}"
     if transform(option) == "bagit":
-        assert info.config.layout == transform(option), err_msg
+        assert info.config.layout == transform(option), error_message
     elif transform(option) == "dip":
-        assert info.config.include_dip, err_msg
+        assert info.config.include_dip, error_message
 
 
 def assert_base_archive_for_archive_in_op_rest(
-    user, users, hosts, host, tmp_memory, description, base_description
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    base_description: str,
+) -> None:
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
-    err_msg = (
+    error_message = (
         f"Base archive: {info.base_archive_id} does not match expected "
         f"archive {tmp_memory[base_description]}"
     )
-    assert tmp_memory[base_description] == info.base_archive_id, err_msg
+    assert tmp_memory[base_description] == info.base_archive_id, error_message
 
 
 @wt(
     parsers.re(
-        "using REST, (?P<user>.+?) changes archive description to "
-        '"(?P<new_description>.*)" for archive with description '
-        '"(?P<description>.*)" for item "(?P<item_name>.*)" in space '
-        '"(?P<space_name>.*)" in (?P<host>.*)'
+        r"using REST, (?P<user>.+?) changes archive description to "
+        r'"(?P<new_description>.*)" for archive with description '
+        r'"(?P<description>.*)" for item "(?P<item_name>.*)" in space '
+        r'"(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_archive_description_in_op_rest(
-    user, users, hosts, host, tmp_memory, description, new_description
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    new_description: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
@@ -210,16 +282,23 @@ def change_archive_description_in_op_rest(
 
 @wt(
     parsers.re(
-        "using REST, (?P<user>.+?) changes archive (?P<option>.*) "
-        'callback to "(?P<new_callback>.*)" for archive with '
-        'description "(?P<description>.*)" for item "(?P<item_name>.*)" '
-        'in space "(?P<space_name>.*)" in (?P<host>.*)'
+        r"using REST, (?P<user>.+?) changes archive (?P<option>.*) "
+        r'callback to "(?P<new_callback>.*)" for archive with '
+        r'description "(?P<description>.*)" for item "(?P<item_name>.*)" '
+        r'in space "(?P<space_name>.*)" in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_archive_callback(
-    user, users, hosts, host, tmp_memory, description, option, new_callback
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    option: str,
+    new_callback: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
@@ -228,24 +307,38 @@ def change_archive_callback(
 
 
 def assert_archive_callback_in_op_rest(
-    user, users, hosts, host, tmp_memory, description, option, expected_callback
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    option: str,
+    expected_callback: str,
+) -> None:
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     callback = f"{option}_callback"
-    err_msg = (
-        f"callback {getattr(info, callback)} does "
-        f"not match expected: {expected_callback}"
+    error_message = (
+        f"callback {getattr(info, callback)} does not match expected: {expected_callback}"
     )
     if getattr(info, callback) is None:
-        assert expected_callback == "None", err_msg
+        assert expected_callback == "None", error_message
     else:
-        assert getattr(info, callback) == expected_callback, err_msg
+        assert getattr(info, callback) == expected_callback, error_message
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recall_archive_for_archive_in_op_rest(
-    user, users, hosts, host, tmp_memory, description, name, space_name, spaces
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    name: str,
+    space_name: str,
+    spaces: IdMap,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
@@ -257,8 +350,15 @@ def recall_archive_for_archive_in_op_rest(
 
 
 def recalled_archive_details_in_op_rest(
-    user, users, hosts, host, data, name, space_name, spaces
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    data: Mapping[str, str],
+    name: str,
+    space_name: str,
+    spaces: IdMap,
+) -> None:
 
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_api = ArchiveApi(client)
@@ -267,46 +367,49 @@ def recalled_archive_details_in_op_rest(
     recall_details = archive_api.get_archive_recall_details(file_id)
     dataset_api = DatasetApi(client)
 
-    err_msg = (
-        '{key} for archive recall "{name}" is {value} '
-        "but expected value is {expected_value} "
+    error_message = (
+        '{key} for archive recall "{name}" is {value} but expected value is {expected_value} '
     )
-    expected_dataset_id = get_dataset_id(
-        data["dataset"], spaces, space_name, dataset_api
-    )
+    expected_dataset_id = get_dataset_id(data["dataset"], spaces, space_name, dataset_api)
     dataset_id = recall_details.dataset_id
     expected_files = int(data["files_recalled"].split(" / ")[0])
     files = recall_details.total_file_count
     expected_data = int(data["data_recalled"].split(" / ")[0].replace("B", ""))
-    data = recall_details.total_byte_size
+    size_data = recall_details.total_byte_size
 
-    assert dataset_id == expected_dataset_id, err_msg.format(
+    assert dataset_id == expected_dataset_id, error_message.format(
         key="dataset",
         name=name,
         value=dataset_id,
         expected_value=expected_dataset_id,
     )
 
-    assert files == expected_files, err_msg.format(
+    assert files == expected_files, error_message.format(
         key="files recalled",
         name=name,
         value=files,
         expected_value=expected_files,
     )
 
-    assert data == expected_data, err_msg.format(
-        key="data recalled", name=name, value=data, expected_value=expected_data
+    assert size_data == expected_data, error_message.format(
+        key="data recalled", name=name, value=size_data, expected_value=expected_data
     )
 
-    assert (
-        recall_details.finish_time >= recall_details.start_time
-    ), f'archive recall "{name}" finish time is not greater or equal recall start time'
+    assert recall_details.finish_time >= recall_details.start_time, (
+        f'archive recall "{name}" finish time is not greater or equal recall start time'
+    )
 
 
 def assert_progress_of_recall_in_op_rest(
-    user, name, space_name, host, hosts, users, config
-):
-    data = yaml.load(config, yaml.Loader)
+    user: str,
+    name: str,
+    space_name: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    config: str,
+) -> None:
+    data = cast(Mapping[str, str], yaml.load(config, yaml.Loader))
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_api = ArchiveApi(client)
     path = f"{space_name}/{name}"
@@ -319,18 +422,21 @@ def assert_progress_of_recall_in_op_rest(
     files_copied = recall_progress.files_copied
     expected_files_copied = int(data["files copied"].split()[-1])
     assert bytes_copied <= expected_bytes_copied, (
-        f"Bytes copied:{bytes_copied} are not <= expected bytes "
-        f"copied:{expected_bytes_copied}"
+        f"Bytes copied:{bytes_copied} are not <= expected bytes copied:{expected_bytes_copied}"
     )
     assert files_copied <= expected_files_copied, (
-        f"Files copied:{files_copied} are not <= expected files "
-        f"copied:{expected_files_copied}"
+        f"Files copied:{files_copied} are not <= expected files copied:{expected_files_copied}"
     )
 
 
 def cancel_archive_for_archive_in_op_rest(
-    user, users, hosts, host, space_name, target_name
-):
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    target_name: str,
+) -> None:
 
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_api = ArchiveApi(client)

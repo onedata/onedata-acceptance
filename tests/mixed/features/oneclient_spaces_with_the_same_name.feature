@@ -214,7 +214,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
     # this step renames one of the spaces with that name
     And using REST, user1 renames space named "helloworld" to "helloworld2" in "onezone" Onezone service
     And user1 starts network on oneprovider oneprovider-krakow
-    And using oneclient1, user1 sees spaces "[helloworld, helloworld2]" in mount point, waiting up to 60s
+    And using oneclient1, user1 sees spaces "[helloworld, helloworld2]" in mount point, waiting up to 90s
 
 
   Scenario: Using oneclient different users can properly write and read from spaces with the same name

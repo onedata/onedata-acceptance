@@ -27,7 +27,7 @@ Feature: Lambda`s pods
 
 
   Scenario: User sees desirable pods statuses after execution of uploaded "echo" workflow finishes
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks "space1" on the spaces list in the sidebar
@@ -53,7 +53,7 @@ Feature: Lambda`s pods
 
 
   Scenario: User checks "Pods activity" events after checksum-counting-different-lambdas workflow execution
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/checksum-counting-different-lambdas.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
@@ -108,7 +108,7 @@ Feature: Lambda`s pods
 
 
   Scenario: User can not remove uploaded "workflow-with-sleep-one-lane.json" workflow while it is still running
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
