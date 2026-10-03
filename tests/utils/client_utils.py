@@ -178,8 +178,8 @@ class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
 
         if ret == 0:
             self._wait_until(
-                10,
-                lambda: self.run_cmd(f"stat {self._mount_path}/.__onedata_mountpoint__") == 0,
+                self.timeout,
+                lambda: self.run_cmd(["mountpoint", "-q", self._mount_path]) == 0,
             )
 
         return ret
