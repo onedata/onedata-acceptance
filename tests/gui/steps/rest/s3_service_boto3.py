@@ -13,10 +13,11 @@ import boto3
 import pytest
 from botocore.config import Config
 from botocore.exceptions import ClientError  # pylint: disable=import-error
+from plumbum import LocalPath
 
 from tests import ONES3_PORT
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_seq
+from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
 from tests.type_definitions import Hosts, Tokens
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -36,8 +37,8 @@ def expect_error(
     *args: Any,
     error_code: int | None = None,
     message_contains: str | None = None,
-    **kwargs,
-):
+    **kwargs: dict[str, Any],
+) -> None:
     with pytest.raises(ClientError) as exc:
         operation(*args, **kwargs)
 
@@ -64,7 +65,7 @@ def run_ones3_operation(
     operation: Callable[..., Any],
     *operation_args: Any,
     expected_error: dict[str, Any] | None = None,
-):
+) -> Any:
     s3 = get_s3client(tmp_memory, tokens, hosts)
 
     if expected_error is not None:
@@ -102,6 +103,18 @@ class S3Client(Protocol):
 
     def list_objects_v2(self, *, Bucket: str) -> dict[str, list[ObjectDescription]]: ...
 
+    def delete_object(self, *, Bucket: str, Key: str) -> object: ...
+
+    def copy_object(self, *, Bucket: str, CopySource: dict[str, str], Key: str) -> object: ...
+
+    def put_object_tagging(
+        self, *, Bucket: str, Key: str, Tagging: dict[str, list[dict[str, str]]]
+    ) -> object: ...
+
+    def delete_object_tagging(self, *, Bucket: str, Key: str) -> object: ...
+
+    def put_object_acl(self, *, Bucket: str, Key: str, ACL: str) -> object: ...
+
 
 def create_s3client(s3_endpoint: str, access_token: str, secret_key: str) -> S3Client:
     s3_config = Config(
@@ -128,7 +141,7 @@ def create_s3client(s3_endpoint: str, access_token: str, secret_key: str) -> S3C
     )
 
 
-def get_s3client(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts):
+def get_s3client(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts) -> S3Client:
     token_name = S3_CONFIG["token"]
     if token_name in tmp_memory["s3 client"]:
         return tmp_memory["s3 client"][token_name]
@@ -140,13 +153,13 @@ def get_s3client(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts):
 
 
 @wt(parsers.parse('user starts using token "{token_name}" in OneS3'))
-def wt_start_using_token_for_s3_client(token_name: str):
+def wt_start_using_token_for_s3_client(token_name: str) -> None:
     S3_CONFIG["token"] = token_name
 
 
 def download_file_from_bucket(
-    s3: S3Client, bucket_name: str, file_path: str, tmpdir: str, user: str
-):
+    s3: S3Client, bucket_name: str, file_path: str, tmpdir: LocalPath, user: str
+) -> None:
     home_dir = tmpdir.join(user, "download")
     os.makedirs(home_dir, exist_ok=True)
     local_path = os.path.join(home_dir, file_path)
@@ -154,7 +167,15 @@ def download_file_from_bucket(
 
 
 @wt(parsers.parse('using OneS3, user {user} downloads "{file_name}" from "{space_name}"'))
-def wt_download_file_from_bucket(space_name, file_name, tmpdir, user, tmp_memory, tokens, hosts):
+def wt_download_file_from_bucket(
+    space_name: str,
+    file_name: str,
+    tmpdir: LocalPath,
+    user: str,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+) -> None:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     download_file_from_bucket(s3, space_name, file_name, tmpdir, user)
 
@@ -166,15 +187,23 @@ def list_buckets(s3: S3Client) -> list[str]:
 @wt(
     parsers.re(
         rf"using OneS3 and list buckets boto3 function, user (?P<browser_id>\w+?) can see spaces (?P<spaces_list>{ELEMENTS_SEQUENCE_PATTERN})"
-    )
+    ),
+    converters={
+        "spaces_list": parse_elements_sequence,
+    },
 )
 @wt(
     parsers.re(
         rf"using OneS3, user (?P<browser_id>\w+?) can see spaces (?P<spaces_list>{ELEMENTS_SEQUENCE_PATTERN})"
-    )
+    ),
+    converters={
+        "spaces_list": parse_elements_sequence,
+    },
 )
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
-def wt_assert_listed_buckets(spaces_list: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts):
+def wt_assert_listed_buckets(
+    spaces_list: list[str], tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     actual_spaces = run_ones3_operation(
         tmp_memory,
         tokens,
@@ -182,15 +211,13 @@ def wt_assert_listed_buckets(spaces_list: str, tmp_memory: TmpMemory, tokens: To
         list_buckets,
     )
 
-    spaces_list = parse_seq(spaces_list)
-
     assert set(actual_spaces) == set(spaces_list), (
         f"Expected spaces: {spaces_list}, got: {actual_spaces}"
     )
 
 
 @wt(parsers.parse("using OneS3, user {user} fails to list spaces"))
-def wt_fail_list_buckets(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts):
+def wt_fail_list_buckets(tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -211,7 +238,9 @@ def does_bucket_exist(s3: S3Client, bucket_name: str) -> bool:
         ' space "{space_name}"'
     )
 )
-def wt_assert_bucket_exists(space_name: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts):
+def wt_assert_bucket_exists(
+    space_name: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     exists = run_ones3_operation(
         tmp_memory,
         tokens,
@@ -224,7 +253,9 @@ def wt_assert_bucket_exists(space_name: str, tmp_memory: TmpMemory, tokens: Toke
 
 
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
-def create_file_in_bucket(s3, bucket_name, file_name, file_content):
+def create_file_in_bucket(
+    s3: S3Client, bucket_name: str, file_name: str, file_content: str
+) -> None:
     s3.put_object(
         Bucket=bucket_name,
         Key=file_name,
@@ -238,7 +269,14 @@ def create_file_in_bucket(s3, bucket_name, file_name, file_content):
         '"{file_content}" in "{space_name}"'
     )
 )
-def wt_create_file_in_bucket(space_name, file_name, file_content, tmp_memory, tokens, hosts):
+def wt_create_file_in_bucket(
+    space_name: str,
+    file_name: str,
+    file_content: str,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -257,8 +295,13 @@ def wt_create_file_in_bucket(space_name, file_name, file_content, tmp_memory, to
     )
 )
 def wt_fail_to_create_file_in_bucket(
-    space_name, file_name, file_content, tmp_memory, tokens, hosts
-):
+    space_name: str,
+    file_name: str,
+    file_content: str,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -278,8 +321,13 @@ def wt_fail_to_create_file_in_bucket(
     )
 )
 def wt_fail_to_create_file_in_bucket_nosuchbucket_error(
-    space_name, file_name, file_content, tmp_memory, tokens, hosts
-):
+    space_name: str,
+    file_name: str,
+    file_content: str,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -293,7 +341,7 @@ def wt_fail_to_create_file_in_bucket_nosuchbucket_error(
 
 
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
-def delete_file_in_bucket(s3, bucket_name, file_name):
+def delete_file_in_bucket(s3: S3Client, bucket_name: str, file_name: str) -> None:
     s3.delete_object(
         Bucket=bucket_name,
         Key=file_name,
@@ -301,7 +349,9 @@ def delete_file_in_bucket(s3, bucket_name, file_name):
 
 
 @wt(parsers.parse('using OneS3, user {user} deletes "{file_name}" in "{space_name}"'))
-def wt_delete_file_in_bucket(space_name, file_name, tmp_memory, tokens, hosts):
+def wt_delete_file_in_bucket(
+    space_name: str, file_name: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -313,7 +363,9 @@ def wt_delete_file_in_bucket(space_name, file_name, tmp_memory, tokens, hosts):
 
 
 @wt(parsers.parse('using OneS3, user {user} fails to delete "{file_name}" in "{space_name}"'))
-def wt_fail_to_delete_file_in_bucket(space_name, file_name, tmp_memory, tokens, hosts):
+def wt_fail_to_delete_file_in_bucket(
+    space_name: str, file_name: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -332,8 +384,8 @@ def wt_fail_to_delete_file_in_bucket(space_name, file_name, tmp_memory, tokens, 
     )
 )
 def wt_fail_to_delete_file_in_bucket_nosuchbucket_error(
-    space_name, file_name, tmp_memory, tokens, hosts
-):
+    space_name: str, file_name: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -345,7 +397,7 @@ def wt_fail_to_delete_file_in_bucket_nosuchbucket_error(
     )
 
 
-def read_file_content_from_bucket(s3, bucket_name, file_path):
+def read_file_content_from_bucket(s3: S3Client, bucket_name: str, file_path: str) -> str:
     response = s3.get_object(Bucket=bucket_name, Key=file_path)
     return response["Body"].read().decode("utf-8")
 
@@ -357,8 +409,13 @@ def read_file_content_from_bucket(s3, bucket_name, file_path):
     )
 )
 def wt_assert_file_content_read_from_bucket(
-    space_name, file_name, file_content, tmp_memory, tokens, hosts
-):
+    space_name: str,
+    file_name: str,
+    file_content: str,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+) -> None:
     actual_content = run_ones3_operation(
         tmp_memory,
         tokens,
@@ -373,8 +430,8 @@ def wt_assert_file_content_read_from_bucket(
     )
 
 
-def list_bucket_content(s3, bucket_name):
-    response = s3.list_objects_v2(Bucket=bucket_name)
+def list_bucket_content(s3: S3Client, bucket_name: str) -> list[str]:
+    response: dict[str, list[ObjectDescription]] = s3.list_objects_v2(Bucket=bucket_name)
     if "Contents" in response:
         return [obj["Key"] for obj in response["Contents"]]
     return []
@@ -382,7 +439,9 @@ def list_bucket_content(s3, bucket_name):
 
 @wt(parsers.parse('using OneS3, user {user} can see items {items} in "{space_name}"'))
 @wt(parsers.parse('using OneS3, user {user} can see only items {items} in "{space_name}"'))
-def wt_assert_bucket_content(space_name, items, tmp_memory, tokens, hosts):
+def wt_assert_bucket_content(
+    space_name: str, items: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     actual_content = run_ones3_operation(
         tmp_memory,
         tokens,
@@ -398,7 +457,9 @@ def wt_assert_bucket_content(space_name, items, tmp_memory, tokens, hosts):
 
 
 @wt(parsers.parse('using OneS3, user {user} fails to list items in "{space_name}"'))
-def wt_fail_list_bucket_content(space_name, tmp_memory, tokens, hosts):
+def wt_fail_list_bucket_content(
+    space_name: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -410,7 +471,9 @@ def wt_fail_list_bucket_content(space_name, tmp_memory, tokens, hosts):
 
 
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
-def copy_file_in_bucket(s3, bucket_name, source_file_name, target_file_name):
+def copy_file_in_bucket(
+    s3: S3Client, bucket_name: str, source_file_name: str, target_file_name: str
+) -> None:
     s3.copy_object(
         Bucket=bucket_name,
         CopySource={"Bucket": bucket_name, "Key": source_file_name},
@@ -425,8 +488,13 @@ def copy_file_in_bucket(s3, bucket_name, source_file_name, target_file_name):
     )
 )
 def wt_copy_file_in_bucket(
-    space_name, source_file_name, target_file_name, tmp_memory, tokens, hosts
-):
+    space_name: str,
+    source_file_name: str,
+    target_file_name: str,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -445,8 +513,13 @@ def wt_copy_file_in_bucket(
     )
 )
 def wt_fail_to_copy_file_in_bucket(
-    space_name, source_file_name, target_file_name, tmp_memory, tokens, hosts
-):
+    space_name: str,
+    source_file_name: str,
+    target_file_name: str,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -460,7 +533,9 @@ def wt_fail_to_copy_file_in_bucket(
 
 
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
-def put_file_tagging_in_bucket(s3, bucket_name, file_name, tag_key, tag_value):
+def put_file_tagging_in_bucket(
+    s3: S3Client, bucket_name: str, file_name: str, tag_key: str, tag_value: str
+) -> None:
     s3.put_object_tagging(
         Bucket=bucket_name,
         Key=file_name,
@@ -482,8 +557,14 @@ def put_file_tagging_in_bucket(s3, bucket_name, file_name, tag_key, tag_value):
     )
 )
 def wt_put_file_tagging_in_bucket(
-    space_name, file_name, tag_key, tag_value, tmp_memory, tokens, hosts
-):
+    space_name: str,
+    file_name: str,
+    tag_key: str,
+    tag_value: str,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -503,8 +584,14 @@ def wt_put_file_tagging_in_bucket(
     )
 )
 def wt_fail_to_put_file_tagging_in_bucket(
-    space_name, file_name, tag_key, tag_value, tmp_memory, tokens, hosts
-):
+    space_name: str,
+    file_name: str,
+    tag_key: str,
+    tag_value: str,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    hosts: Hosts,
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -519,7 +606,7 @@ def wt_fail_to_put_file_tagging_in_bucket(
 
 
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
-def delete_file_tagging_in_bucket(s3, bucket_name, file_name):
+def delete_file_tagging_in_bucket(s3: S3Client, bucket_name: str, file_name: str) -> None:
     s3.delete_object_tagging(
         Bucket=bucket_name,
         Key=file_name,
@@ -527,7 +614,9 @@ def delete_file_tagging_in_bucket(s3, bucket_name, file_name):
 
 
 @wt(parsers.parse('using OneS3, user {user} deletes tags from "{file_name}" in "{space_name}"'))
-def wt_delete_file_tagging_in_bucket(space_name, file_name, tmp_memory, tokens, hosts):
+def wt_delete_file_tagging_in_bucket(
+    space_name: str, file_name: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -543,7 +632,9 @@ def wt_delete_file_tagging_in_bucket(space_name, file_name, tmp_memory, tokens, 
         'using OneS3, user {user} fails to delete tags from "{file_name}" in "{space_name}"'
     )
 )
-def wt_fail_to_delete_file_tagging_in_bucket(space_name, file_name, tmp_memory, tokens, hosts):
+def wt_fail_to_delete_file_tagging_in_bucket(
+    space_name: str, file_name: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -556,7 +647,7 @@ def wt_fail_to_delete_file_tagging_in_bucket(space_name, file_name, tmp_memory, 
 
 
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
-def put_file_acl_in_bucket(s3, bucket_name, file_name, acl):
+def put_file_acl_in_bucket(s3: S3Client, bucket_name: str, file_name: str, acl: str) -> None:
     s3.put_object_acl(
         Bucket=bucket_name,
         Key=file_name,
@@ -565,7 +656,9 @@ def put_file_acl_in_bucket(s3, bucket_name, file_name, acl):
 
 
 @wt(parsers.parse('using OneS3, user {user} puts ACL "{acl}" on "{file_name}" in "{space_name}"'))
-def wt_put_file_acl_in_bucket(space_name, file_name, acl, tmp_memory, tokens, hosts):
+def wt_put_file_acl_in_bucket(
+    space_name: str, file_name: str, acl: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
@@ -582,7 +675,9 @@ def wt_put_file_acl_in_bucket(space_name, file_name, acl, tmp_memory, tokens, ho
         'using OneS3, user {user} fails to put ACL "{acl}" on "{file_name}" in "{space_name}"'
     )
 )
-def wt_fail_to_put_file_acl_in_bucket(space_name, file_name, acl, tmp_memory, tokens, hosts):
+def wt_fail_to_put_file_acl_in_bucket(
+    space_name: str, file_name: str, acl: str, tmp_memory: TmpMemory, tokens: Tokens, hosts: Hosts
+) -> None:
     run_ones3_operation(
         tmp_memory,
         tokens,
