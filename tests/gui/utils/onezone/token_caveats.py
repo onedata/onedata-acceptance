@@ -4,7 +4,7 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from datetime import datetime, timedelta
 from typing import Protocol, TypedDict
 
@@ -307,14 +307,19 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         selenium: SeleniumDrivers,
         browser_id: str,
         service_caveats: dict[str, list[str]],
+        get_caveat_field: Callable[[], "CaveatField"],
     ) -> None:
         self.activate()
         service_cav = service_caveats.get("Service", [])
         service_onepanel_cav = service_caveats.get("Service Onepanel", [])
         for service in service_cav:
-            self.set_service_in_service_caveat(selenium, browser_id, "Service", service)
+            self.set_service_in_service_caveat(
+                selenium, browser_id, "Service", service, get_caveat_field
+            )
         for service in service_onepanel_cav:
-            self.set_service_in_service_caveat(selenium, browser_id, "Service Onepanel", service)
+            self.set_service_in_service_caveat(
+                selenium, browser_id, "Service Onepanel", service, get_caveat_field
+            )
 
     def set_service_in_service_caveat(
         self,
@@ -322,15 +327,15 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         browser_id: str,
         consumer_type: str,
         value: str,
+        get_caveat_field: Callable[[], "CaveatField"],
     ) -> None:
-        self.click_new_item()
+        get_caveat_field().click_new_item()
         driver = selenium[browser_id]
         popup = Popups(driver).consumer_caveat_popup
 
         popup.expand_consumer_types()
         popup.select_consumer_type(consumer_type)
-        popup.expand_consumers()
-        popup.consumers[value].click()
+        popup.choose_exact_consumer_value(get_caveat_field, value)
 
     # interface caveat
     def set_interface_caveat(self, caveat: str) -> None:
