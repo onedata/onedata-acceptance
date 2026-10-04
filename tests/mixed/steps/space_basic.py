@@ -57,7 +57,6 @@ from tests.mixed.type_definitions import MutableSpaces as Spaces
 from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps.multi_file_steps import ls_present_spaces
 from tests.type_definitions import Hosts, SeleniumDrivers
-from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
     CredentialsLike,
@@ -636,26 +635,32 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
         raise NoSuchClientException(f"Client: {client} not found.")
 
 
-@wt(parsers.parse('using {client}, {user} sees spaces "{expected_spaces}" in mount point'))
+@wt(
+    parsers.parse(
+        "using {client}, {user} sees spaces {expected_spaces:ElementsSequence} in mount point",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    )
+)
 def assert_spaces_in_mount_point(
-    client: str, user: str, users: Users, expected_spaces: str
+    client: str, user: str, users: Users, expected_spaces: list[str]
 ) -> None:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        ls_present_spaces(user, list_parser(expected_spaces), oneclient_host, users)
+        ls_present_spaces(user, expected_spaces, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
 
 @wt(
     parsers.parse(
-        'using {client}, {user} sees spaces "{expected_spaces}" in mount point, '
-        "waiting up to {timeout:d}s"
+        "using {client}, {user} sees spaces {expected_spaces:ElementsSequence} in mount point, "
+        "waiting up to {timeout:d}s",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     )
 )
 def assert_spaces_in_mount_point_with_waiting(
-    client: str, user: str, users: Users, expected_spaces: str, timeout: int
+    client: str, user: str, users: Users, expected_spaces: list[str], timeout: int
 ) -> None:
     @repeat_failed(timeout=timeout)
     def assert_with_timeout() -> None:
@@ -666,15 +671,16 @@ def assert_spaces_in_mount_point_with_waiting(
 
 @wt(
     parsers.parse(
-        'using {client}, {user} sees spaces "{expected_spaces}" from "{zone_name}"'
-        " Onezone service, annotated with their ids in mount point"
+        'using {client}, {user} sees spaces {expected_spaces:ElementsSequence} from "{zone_name}"'
+        " Onezone service, annotated with their ids in mount point",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     )
 )
 def assert_spaces_with_ids_in_mount_point(
     client: str,
     user: str,
     users: Users,
-    expected_spaces: str,
+    expected_spaces: list[str],
     zone_name: str,
     hosts: Hosts,
 ) -> None:
@@ -687,10 +693,9 @@ def assert_spaces_with_ids_in_mount_point(
         user_spaces = user_api.list_user_spaces().spaces
 
         space_names_with_ids = []
-        expected_space_names = list_parser(expected_spaces)
         for sid in user_spaces:
             space = user_api.get_user_space(sid)
-            if space.name in expected_space_names:
+            if space.name in expected_spaces:
                 space_names_with_ids.append(f"{space.name}@{space.space_id}")
 
         ls_present_spaces(user, space_names_with_ids, oneclient_host, users)
@@ -700,16 +705,17 @@ def assert_spaces_with_ids_in_mount_point(
 
 @wt(
     parsers.parse(
-        'using {client}, {user} sees spaces "{expected_spaces}" from "{zone_name}"'
+        'using {client}, {user} sees spaces {expected_spaces:ElementsSequence} from "{zone_name}"'
         " Onezone service, annotated with their ids in mount point, "
-        "waiting up to {timeout:d}s"
+        "waiting up to {timeout:d}s",
+        extra_types={"ElementsSequence": parse_elements_sequence},
     )
 )
 def assert_spaces_with_ids_in_mount_point_with_waiting(
     client: str,
     user: str,
     users: Users,
-    expected_spaces: str,
+    expected_spaces: list[str],
     zone_name: str,
     hosts: Hosts,
     timeout: int,
