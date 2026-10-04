@@ -18,13 +18,13 @@ Feature: Basic management of space in Onezone using REST and OneS3
 
   Scenario: User can see correct spaces in mount mount after renaming one space
     When using REST, user1 renames space named "space1" to "space2" in "onezone" Onezone service
-    Then using OneS3, user user1 can see spaces "[space2]"
+    Then using OneS3, user user1 can see spaces ["space2"]
 
 
   Scenario: User can see correct spaces in mount mount after removing one space
-    When using OneS3, user user1 can see spaces "[space1]"
+    When using OneS3, user user1 can see spaces ["space1"]
     And using REST, user1 removes space named "space1" in "onezone" Onezone service
-    Then using OneS3, user user1 can see spaces "[]"
+    Then using OneS3, user user1 can see spaces []
 
 
   Scenario: User can see correct spaces in mount mount after adding support
@@ -33,7 +33,7 @@ Feature: Basic management of space in Onezone using REST and OneS3
     And using REST, onepanel supports "helloworld" space in "oneprovider-1" Oneprovider panel service with following configuration:
         storage: posix
         size: 1000000
-    Then using OneS3, user user1 can see spaces "[helloworld, space1]"
+    Then using OneS3, user user1 can see spaces ["helloworld", "space1"]
 
 
   Scenario: User can see correct spaces content after removing a space and creating a new one with the same name
@@ -44,9 +44,9 @@ Feature: Basic management of space in Onezone using REST and OneS3
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    When using OneS3, user user1 can see spaces "[space1, space3]"
+    When using OneS3, user user1 can see spaces ["space1", "space3"]
     And using REST, user1 removes space named "space3" in "onezone" Onezone service
-    And using OneS3, user user1 can see spaces "[space1]"
+    And using OneS3, user user1 can see spaces ["space1"]
 
     And using REST, user1 creates space "space3" in "onezone" Onezone service
     And using REST, user1 generates space support token for space named "space3" in "onezone" Onezone service and sends it to onepanel
@@ -62,6 +62,6 @@ Feature: Basic management of space in Onezone using REST and OneS3
 
 
   Scenario: User can see correct spaces in mount mount after removing support
-    When using OneS3, user user1 can see spaces "[space1]"
+    When using OneS3, user user1 can see spaces ["space1"]
     And using REST, admin removes support from provider "oneprovider-1" for space named "space1" in "onezone" Onezone service
-    Then using OneS3, user user1 can see spaces "[]"
+    Then using OneS3, user user1 can see spaces []
