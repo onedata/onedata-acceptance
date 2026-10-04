@@ -42,7 +42,7 @@ Feature: Advanced management of space using OneS3 and boto3
   Scenario: User renames spaces using REST and can see correct spaces listed in OneS3 service
     When using REST, user1 renames space named "space1" to "helloworld1" in "onezone" Onezone service
     And using REST, user1 renames space named "space2" to "helloworld2" in "onezone" Onezone service
-    Then using OneS3 and list buckets boto3 function, user user1 can see spaces "[helloworld1, helloworld2]"
+    Then using OneS3 and list buckets boto3 function, user user1 can see spaces ["helloworld1", "helloworld2"]
 
 
   Scenario: User renames spaces using Web GUI and can see correct spaces listed in OneS3 service
@@ -50,14 +50,14 @@ Feature: Advanced management of space using OneS3 and boto3
 
     When using web GUI, user1 renames space named "space1" to "helloworld1" in "onezone" Onezone service
     And using web GUI, user1 renames space named "space2" to "helloworld2" in "onezone" Onezone service
-    Then using OneS3 and list buckets boto3 function, user user1 can see spaces "[helloworld1, helloworld2]"
+    Then using OneS3 and list buckets boto3 function, user user1 can see spaces ["helloworld1", "helloworld2"]
 
 
   Scenario: User recreates spaces using REST and can see correct spaces listed in OneS3 service
     When using REST, user1 removes space named "space1" in "onezone" Onezone service
     And using REST, user1 removes space named "space2" in "onezone" Onezone service
-    Then using OneS3 and list buckets boto3 function, user user1 can see spaces "[]"
+    Then using OneS3 and list buckets boto3 function, user user1 can see spaces []
     And using REST, user1 creates space "space1" in "onezone" Onezone service
     And using REST, user1 creates space "space2" in "onezone" Onezone service
-    And using OneS3 and list buckets boto3 function, user user1 can see spaces "[space1, space2]"
+    And using OneS3 and list buckets boto3 function, user user1 can see spaces ["space1", "space2"]
 

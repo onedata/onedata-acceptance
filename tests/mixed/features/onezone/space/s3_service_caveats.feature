@@ -78,7 +78,7 @@ Feature: Advanced management of space using OneS3 and boto3 with set token cavea
               path: /dir1
     And user starts using token "new_token" in OneS3
 
-    Then using OneS3, user user1 can see spaces "[space1]"
+    Then using OneS3, user user1 can see spaces ["space1"]
     And using OneS3, user user1 can see only items ["dir1/file1"] in "space1"
 
     # cannot modify content outside token scope
@@ -151,14 +151,14 @@ Feature: Advanced management of space using OneS3 and boto3 with set token cavea
               consumer name: user1
     And user starts using token "new_token" in OneS3
 
-    Then using OneS3, user user1 can see spaces "[space1]"
+    Then using OneS3, user user1 can see spaces ["space1"]
     And using OneS3, user user1 can see items ["file1", "dir1/file1"] in "space1"
 
     And using OneS3, user user1 creates "new_file" with content "22222" in "space1"
     And using OneS3, user user1 deletes "file1" in "space1"
     And using OneS3, user user1 copies "file1" to "file2" in "space1"
     And using OneS3, user user1 puts tag "env"="prod" on "file1" in "space1"
-    And using OneS3, user user1 deletes tags from "file1" in "space1
+    And using OneS3, user user1 deletes tags from "file1" in "space1"
     And using OneS3, user user1 puts ACL "public-read" on "file1" in "space1"
 
 
@@ -172,7 +172,7 @@ Feature: Advanced management of space using OneS3 and boto3 with set token cavea
             after: 10
     And user starts using token "new_token" in OneS3
 
-    Then using OneS3, user user1 can see spaces "[space1, space2]"
+    Then using OneS3, user user1 can see spaces ["space1", "space2"]
     And using OneS3, user user1 can see items ["file1", "dir1/file1"] in "space1"
 
     And using OneS3, user user1 creates "new_file" with content "22222" in "space1"
