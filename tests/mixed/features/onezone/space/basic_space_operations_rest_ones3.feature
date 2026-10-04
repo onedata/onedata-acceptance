@@ -57,7 +57,7 @@ Feature: Basic management of space in Onezone using REST and OneS3
     And using REST, user1 succeeds to create file named "file1.txt" in "space3" in oneprovider-1
     And using REST, user1 writes "TEST TEXT" to file named "file1.txt" in "space3" in oneprovider-1
 
-    Then using OneS3, user user1 can see spaces "[space1, space3]"
+    Then using OneS3, user user1 can see spaces ["space1", "space3"]
     And using OneS3, user user1 can see that "file1.txt" content is "TEST TEXT" in "space3"
 
 
