@@ -334,9 +334,9 @@ def wait_for_visible_element_using_getter[VisibleElementT: VisibleElement](
 
 def perform_action[ActionResultT](
     action: Callable[[], ActionResultT],
-    *,
+    /,
     assertion: Callable[[], None] | None = None,
-    timeout: float = WAIT_FRONTEND // 2,
+    timeout: float = WAIT_FRONTEND,
 ) -> ActionResultT:
     @repeat_failed(timeout=timeout)
     def attempt() -> ActionResultT:
