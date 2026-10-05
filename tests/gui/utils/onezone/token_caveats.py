@@ -22,6 +22,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.generic import perform_action
+from tests.gui.utils.text import transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
@@ -291,10 +292,10 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         driver = selenium[browser_id]
         popup = Popups(driver).consumer_caveat_popup
         popup.expand_consumer_types()
-        popup.select_type(consumer_type)
+        popup.select_consumer_type(consumer_type)
         if method == "name":
             perform_action(popup.list_option.click)
-            perform_action(popup.consumers[value].click)
+            perform_action(popup.consumers[transform(value)].click)
         else:
             perform_action(popup.id_option.click)
             popup.input = value

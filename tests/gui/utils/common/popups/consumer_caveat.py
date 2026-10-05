@@ -22,6 +22,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.text import transform
 
 if TYPE_CHECKING:
     from tests.gui.utils.onezone.token_caveats import CaveatField
@@ -63,13 +64,9 @@ class ConsumerCaveat(PageObject):
         self.wait_for_consumer_types_state(is_open=True)
 
     def wait_for_consumer_types_state(self, is_open: bool) -> None:
-        def assert_consumer_types_state() -> None:
-            assert (len(self.consumer_types) > 0) == is_open, (
-                f"Consumer types dropdown in {self} did not {'open' if is_open else 'close'}"
-            )
-
-        WebDriverWait(self.driver, WAIT_FRONTEND, ignored_exceptions=[AssertionError]).until(
-            lambda _: assert_consumer_types_state()
+        WebDriverWait(self.driver, WAIT_FRONTEND).until(
+            lambda _: (len(self.consumer_types) > 0) == is_open,
+            message=f"Consumer types dropdown in {self} did not {'open' if is_open else 'close'}",
         )
 
     def choose_exact_consumer_value(
@@ -85,7 +82,7 @@ class ConsumerCaveat(PageObject):
 
         def get_consumer_by_value() -> Consumer:
             try:
-                return self.consumers[consumer_value]
+                return self.consumers[transform(consumer_value)]
             except KeyError as exc:
                 raise ValueError(
                     f"Consumer with value {consumer_value!r} not found in {self}"
@@ -100,11 +97,13 @@ class ConsumerCaveat(PageObject):
         )
 
     def select_consumer_type(self, consumer_type: str) -> None:
+        consumer_type = transform(consumer_type)
+
         @repeat_failed(timeout=WAIT_FRONTEND)
-        def choose_consumer_type(consumer_type: str) -> None:
+        def choose_consumer_type() -> None:
             self.consumer_types[consumer_type].click()
 
-        choose_consumer_type(consumer_type)
+        choose_consumer_type()
         self.wait_for_consumer_types_state(is_open=False)
 
     def expand_consumers(self) -> None:
