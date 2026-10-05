@@ -44,6 +44,7 @@ from tests.gui.type_definitions import (
 )
 from tests.gui.utils import text as text_utils
 from tests.type_definitions import JsonValue
+from tests.utils.utils import repeat_failed
 
 T = TypeVar("T")
 suppress = contextlib_suppress
@@ -329,6 +330,22 @@ def wait_for_visible_element_using_getter[VisibleElementT: VisibleElement](
     return WebDriverWait(driver, timeout=timeout).until(
         partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
     )
+
+
+def perform_action[ActionResultT](
+    action: Callable[[], ActionResultT],
+    /,
+    assertion: Callable[[], None] | None = None,
+    timeout: float = WAIT_FRONTEND,
+) -> ActionResultT:
+    @repeat_failed(timeout=timeout)
+    def attempt() -> ActionResultT:
+        result = action()
+        if assertion is not None:
+            assertion()
+        return result
+
+    return attempt()
 
 
 def wait_for_element_to_disappear_using_getter[VisibleElementT: VisibleElement](

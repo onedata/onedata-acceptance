@@ -1,5 +1,7 @@
 """Utils and fixtures to facilitate operations on consumer caveat popup."""
 
+from __future__ import annotations
+
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -16,18 +18,20 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
-    Label,
+    TransformedLabel,
     WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.text import transform
 
 if TYPE_CHECKING:
     from tests.gui.utils.onezone.token_caveats import CaveatField
+from tests.gui.utils.generic import perform_action, wait_for_visible_element_using_getter
 from tests.utils.utils import repeat_failed
 
 
 class TypeItem(PageObject):
-    name = id = Label(".text")
+    name = id = TransformedLabel(".text")
 
     def __call__(self) -> None:
         self.web_elem.click()
@@ -37,7 +41,7 @@ class TypeItem(PageObject):
 
 
 class Consumer(PageObject):
-    name = id = Label(".tag-label")
+    name = id = TransformedLabel(".tag-label")
 
     def __call__(self) -> None:
         self.click()
@@ -55,68 +59,70 @@ class ConsumerCaveat(PageObject):
     input = Input(".record-id")
     add_button = Button(".add-id")
 
-    user_consumer = Button(".option-container .oneicon-user")
-    group_consumer = Button(".option-container .oneicon-groups")
-    oneprovider_consumer = Button(".option-container .oneicon-provider")
-
     def expand_consumer_types(self) -> None:
         self.consumer_type.click()
         self.wait_for_consumer_types_state(is_open=True)
 
-    @repeat_failed(timeout=WAIT_FRONTEND)
     def wait_for_consumer_types_state(self, is_open: bool) -> None:
-        assert (len(self.consumer_types) > 0) == is_open, (
-            f"Consumer types dropdown in {self} did not {'open' if is_open else 'close'}"
+        WebDriverWait(self.driver, WAIT_FRONTEND).until(
+            lambda _: (len(self.consumer_types) > 0) == is_open,
+            message=f"Consumer types dropdown in {self} did not {'open' if is_open else 'close'}",
         )
 
-    @repeat_failed(timeout=WAIT_FRONTEND)
     def choose_exact_consumer_value(
-        self, get_caveat_field: Callable[[], "CaveatField"], consumer_value: str
+        self, get_caveat_field: Callable[[], CaveatField], consumer_value: str
     ) -> None:
-        caveat_field = get_caveat_field()
+        caveat_field: CaveatField = wait_for_visible_element_using_getter(
+            self.driver, lambda _: get_caveat_field()
+        )
+        # ensure caveat field is already present
         if consumer_value in caveat_field.tags:
             return
         self.expand_consumers()
-        try:
-            consumer = self.consumers[consumer_value]
-        except KeyError as exc:
-            raise ValueError(f"Consumer with value {consumer_value!r} not found in {self}") from exc
 
-        consumer.click()
-        WebDriverWait(self.driver, 1).until(
+        def get_consumer_by_value() -> Consumer:
+            try:
+                return self.consumers[transform(consumer_value)]
+            except KeyError as exc:
+                raise ValueError(
+                    f"Consumer with value {consumer_value!r} not found in {self}"
+                ) from exc
+
+        consumer = perform_action(get_consumer_by_value, timeout=WAIT_FRONTEND)
+        perform_action(consumer.click, timeout=WAIT_FRONTEND)
+
+        WebDriverWait(self.driver, WAIT_FRONTEND).until(
             lambda _: consumer_value in get_caveat_field().tags,
             message=f"Consumer {consumer_value!r} was not selected",
         )
 
     def select_consumer_type(self, consumer_type: str) -> None:
-        self.choose_consumer_type(consumer_type)
-        self.wait_for_consumer_types_state(is_open=False)
+        consumer_type = transform(consumer_type)
 
-    @repeat_failed(timeout=WAIT_FRONTEND)
-    def choose_consumer_type(self, consumer_type: str) -> None:
-        self.consumer_types[consumer_type].click()
+        @repeat_failed(timeout=WAIT_FRONTEND)
+        def choose_consumer_type() -> None:
+            self.consumer_types[consumer_type].click()
+
+        choose_consumer_type()
+        self.wait_for_consumer_types_state(is_open=False)
 
     def expand_consumers(self) -> None:
         # only try to expand if no consumer loaded within 1 second
         try:
-            WebDriverWait(self.driver, 1).until(lambda _: len(self.consumers) > 0)
+            WebDriverWait(self.driver, WAIT_FRONTEND).until(lambda _: len(self.consumers) > 0)
         except TimeoutException:
             self.list_option.click()
             self.wait_for_consumers_to_load()
 
-    def are_all_consumers_loaded(self) -> bool:
-        return len(self.consumers) > 0 and all(consumer.name for consumer in self.consumers)
-
-    @repeat_failed(timeout=WAIT_FRONTEND)
     def wait_for_consumers_to_load(self) -> None:
-        assert self.are_all_consumers_loaded(), (
-            f"Consumers in {self} did not load properly, got: {self.consumers}"
-        )
+        def assert_consumers_loaded() -> None:
+            message = f"Consumers in {self} did not load properly, got: {self.consumers}"
+            assert len(self.consumers) > 0, message
+            assert all(consumer.name for consumer in self.consumers), message
 
-    @repeat_failed(timeout=20)
-    def select_type(self, consumer_type: str) -> None:
-        button = getattr(self, f"{consumer_type}_consumer")
-        button.click()
+        WebDriverWait(self.driver, WAIT_FRONTEND, ignored_exceptions=[AssertionError]).until(
+            lambda _: assert_consumers_loaded()
+        )
 
     def __str__(self) -> str:
         return "Consumer caveat popup"
