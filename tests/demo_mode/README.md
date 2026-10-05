@@ -1,218 +1,144 @@
 # Demo-mode acceptance tests
 
-Acceptance tests for the commands and examples used to start Onezone and
-Oneprovider in demo mode. The tests run the example commands against real Docker
-containers and verify the resulting configuration, REST access, data transfer,
-and persistence.
+This suite runs the commands published in the
+[demo-mode admin guide](https://onedata.org/docs/25/admin-guide/demo-mode/) and
+checks the resulting Onezone and Oneprovider services through their REST APIs.
 
+It covers foreground and detached startup, a two-provider environment,
+persistent state, Python access through `fs.onedatarestfs`, and the complete
+Docker/REST example.
 
-# Development
+## Quick start
 
-Please read this document before writing or modifying demo-mode tests.
+Docker must be available through `/var/run/docker.sock`, and the selected
+Onezone and Oneprovider images must be accessible locally or from their image
+registry.
 
-
-## Tutorial commands
-
-The commands are based on the
-[demo-mode admin guide](https://onedata.org/docs/25/admin-guide/demo-mode/).
-The shell commands under [commands](commands) are the examples exercised by the
-tests. When commands are loaded, `xRELEASExVERSIONx` is replaced by the release
-supplied on the command line. Reusable container commands also contain
-`xCONTAINERxNAMEx`, which is replaced by the target container name. Keep these
-commands suitable for use as standalone examples.
-
-
-## Docker terminal options
-
-The original documentation used `docker run -it`. The `-t` option, which
-allocates a pseudo-TTY, was intentionally removed because no terminal is
-available when the commands run in automated tests. The examples retain `-i`
-where standard input must remain open. Do not restore `-t` unless the test
-execution model is changed to provide a TTY.
-
-
-## Code organization
-
-The test code is divided into:
-
-* [scenarios](scenarios) - pytest scenarios and their high-level assertions,
-* [steps](steps) - individual test operations and assertions,
-* [meta_steps](meta_steps) - reusable sequences of steps,
-* [utils](utils) - Docker command, REST, logging, and persistence helpers.
-
-Shell examples remain ordinary files under [commands](commands). Python code
-accesses them through `CommandTemplate`, which validates paths and fills in the
-release and container placeholders. The resulting `Command` owns execution,
-logging, timeouts, retries, and process termination. It is also used for the
-dynamically composed Python-access command, so there is no parallel procedural
-command-runner API.
-
-Started services are represented by `Onezone` and `Oneprovider`. Composite
-startup steps return a `DemoEnvironment`, so callers can use the actual service
-containers and launcher processes without relying on parallel tuples or
-repeating fixed container names. A `None` process means that the launch command
-finished after starting a detached container, or that an all-in-one example
-script owns the service lifecycle.
-
-
-## Steps and meta steps
-
-A step represents one logical test operation and must not import or call meta
-steps. A meta step combines at least two steps; it may call both steps and other
-meta steps. Accordingly, `meta_steps` modules may import `steps` modules, but
-`steps` modules must never import `meta_steps`. Supporting functions that are
-neither steps nor meta steps belong in `utils`.
-
-
-# Prerequisites
-
-* Docker with access to `/var/run/docker.sock`,
-* access to the `onedata/onezone` and `onedata/oneprovider` images for the
-  selected release,
-* enough free space under `/tmp` for the persistence scenario.
-
-The recommended Makefile target runs pytest in the repository's acceptance-test
-image, so no local Python environment is required.
-
-
-# Running tests using Makefile
-
-
-## Complete suite
-
-Run the complete demo-mode suite from the repository root:
+Run the complete suite from the repository root:
 
 ```bash
 make test_demo_mode RELEASE=25.1
 ```
 
-`RELEASE` is required and is used as the tag for both demo-mode service images.
-
-
-## Single scenario
-
-To run one scenario, pass its file name without the `.py` extension:
+Run one scenario by passing its filename without `.py`:
 
 ```bash
 make test_demo_mode RELEASE=25.1 SCENARIO=test_python_access
 ```
 
-
-## Docker API compatibility
-
-The Docker client in the acceptance-test image communicates with the host
-Docker daemon through `/var/run/docker.sock`. Normally, Docker negotiates a
-compatible API version automatically. If the client is newer than the daemon
-and negotiation fails, set `DOCKER_API_VERSION` to the maximum API version
-supported by the daemon:
-
-```bash
-make test_demo_mode RELEASE=25.1 DOCKER_API_VERSION=1.41
-```
-
-The demo-mode Bamboo plan supplies this override because its agents use a
-daemon that supports Docker API version 1.41. Local runs can omit it and use
-normal API negotiation.
-
-
-## Test runner container
-
-The Makefile target itself runs pytest in an acceptance-test runner container.
-Through the mounted Docker socket, that runner starts Onezone and Oneprovider
-as sibling containers on the host Docker daemon. As in the GUI, mixed, and
-Oneclient test runner, the container starts as root, adds the Docker socket's
-group, and switches to the invoking host user's UID and GID before replacing
-itself with pytest. Consequently, logs and reports created in bind-mounted
-directories belong to the local or Bamboo user and can be cleaned normally.
-The switched user receives an ephemeral writable home directory inside the
-runner container, so command-line tools do not try to access root's config.
-
-`RUNNER_NAME` can optionally assign a name to the runner:
-
-```bash
-make test_demo_mode RELEASE=25.1 RUNNER_NAME=my-demo-mode-runner
-```
-
-Bamboo gives every runner a unique name based on the build result key. Its
-final cleanup task uses that name to remove a runner left behind by a cancelled
-or interrupted build, before removing the fixed `oz_test`, `op_test1`, and
-`op_test2` service containers. Local runs do not need `RUNNER_NAME`; Docker
-assigns an automatic name and `--rm` removes the runner after it exits normally.
-
-
-## Container and service readiness
-
-Except for the comprehensive example, each scenario starts its Onezone and all
-required Oneprovider commands before awaiting any service. The Oneprovider
-commands can start immediately because they wait internally for the Onezone
-container IP. The distributed scenario starts both Oneproviders this way.
-
-After launching all commands, the tests poll Docker until each exact-name
-container is running. Foreground startup commands are monitored during this
-stage so an early command exit fails immediately. Only then do the tests run
-the tutorial's `await` or `await-demo` command. These commands retain their
-retries because a running container does not yet imply that the Onezone or
-Oneprovider service is ready. Foreground commands remain active until cleanup;
-detached launch commands are instead required to finish successfully.
-
-
-## Command logs and artifacts
-
-The test runner keeps printing its normal pytest and demo-mode progress to the
-terminal. Output produced by each shell or Docker command is written separately
-to numbered and named files. A timestamped
-`tests/demo_mode/logs/report.<timestamp>` directory represents the pytest run
-and contains a separate subdirectory for each test. Command logs are stored
-directly in that test directory. For example, the first `run_onezone.sh`
-invocation is stored as
-`python_access/command-001-run_onezone.log`. Repeated attempts of the same
-command retain distinct sequence numbers. The `.sh` suffix is omitted from
-log-file names. This is
-consistent with the GUI and mixed tests and keeps scenarios separate when the
-complete suite is run without `SCENARIO`. The Bamboo plan publishes the report
-directory as the `command-logs` artifact belonging to that job result.
-
-
-## Execution model
-
-Unlike the GUI, mixed, and Oneclient suites, demo-mode tests do not use an
-`ENV_FILE` or `test_run.py`. Each scenario starts the required Onezone and
-Oneprovider containers directly.
-
-
-# Running tests directly (advanced)
-
-When the repository's Python test dependencies are installed locally, the suite
-can be invoked with pytest:
+When running directly in a prepared Python environment:
 
 ```bash
 python3 -m pytest --confcutdir=tests/demo_mode -rs -s -v \
     tests/demo_mode/scenarios --release=25.1
 ```
 
-To run a single scenario:
+## Adding or changing a scenario
 
-```bash
-python3 -m pytest --confcutdir=tests/demo_mode -rs -s -v \
-    tests/demo_mode/scenarios/test_run_in_foreground.py --release=25.1
+1. Put the tutorial command in [commands](commands). Keep it usable as a
+   standalone example. Use `xRELEASExVERSIONx` and `xCONTAINERxNAMEx` where the
+   test must supply those values.
+2. Register its `CommandTemplate` in `utils/commands.py` and expose it through
+   `DemoCommands`. No other module should contain command paths or instantiate
+   templates.
+3. Add an operation to `steps` if the scenario needs a reusable external
+   action. A step may run a command, wait for a service, or perform a REST
+   request; a plain equality assertion is not a step.
+4. Compose operations in `meta_steps` when the sequence is reused, then keep
+   the scenario focused on the behavior being verified.
+
+For example, command scripts are bound centrally and only the resulting
+`Command` is executable:
+
+```python
+command = demo_commands.foreground_oneprovider(provider.container)
+process = command.start()
 ```
 
+REST calls use clients that retain their service and access token:
 
-# Covered scenarios
+```python
+provider = OneproviderRestClient(service, access_token)
+provider.upload(space_id=space_id, file_name=file_name, content=content)
+```
 
-* foreground and detached demo-mode startup,
-* a distributed environment with two Oneproviders,
-* state preservation across container restarts,
-* Python access through `fs.onedatarestfs`,
-* the comprehensive Docker and REST example.
+Use keyword arguments for REST resource identifiers and payloads. This keeps
+upload, download, removal, and support operations consistent and readable.
 
+## Code organization
 
-# Cleanup and fixed names
+- `commands/` contains the unmodified shell and Python examples under test.
+- `scenarios/` contains pytest scenarios and their high-level assertions.
+- `steps/` contains externally observable operations.
+- `meta_steps/` combines operations and performs behavior-level checks.
+- `utils/commands.py` owns command templates, binding, execution, and process
+  lifecycle.
+- `utils/rest.py` provides `OnezoneRestClient` and `OneproviderRestClient`.
+- `utils/` also contains logging and persistence-directory support.
 
-The tests use the fixed container names `oz_test`, `op_test1`, and `op_test2`.
-These containers are removed before and after every scenario, so do not use the
-same names for containers that must remain running.
+`CommandTemplate` only loads a script and binds its placeholders. It produces a
+`Command`, which is the sole execution interface for `run`, `start`, retry,
+logging, timeouts, and process termination. The `demo_commands` fixture supplies
+the release-bound `DemoCommands` catalog to scenarios.
 
-The persistence scenario uses `/tmp/oz-pers`, `/tmp/op-pers`, and
-`/tmp/op-storage`. Cleanup removes these directories only when their test-owned
-marker is present; the test fails instead of removing unrecognized paths.
+Started services are represented by `Onezone` and `Oneprovider`. Composite
+startup operations return a `DemoEnvironment`. A service process is `None` when
+the launch command exited after creating a detached container or an all-in-one
+example owns the lifecycle.
+
+## Test conventions
+
+- A step performs an external action; it is not a wrapper around one `assert`.
+- A meta step combines operations or validates a complete behavior.
+- Steps never import meta steps.
+- Scenarios and steps do not instantiate `CommandTemplate` or contain command
+  paths.
+- REST code passes a client first and uses keyword-only operation arguments.
+- Foreground launcher processes are registered for cleanup immediately.
+- All providers are started before service readiness checks begin.
+
+The tutorial's `docker run -i` is intentional. Do not add `-t`: automated tests
+do not provide a terminal.
+
+## Debugging failures
+
+Each test receives a directory under
+`tests/demo_mode/logs/report.<timestamp>`. Every command invocation has a
+numbered log containing the rendered command and its output. Repeated readiness
+attempts receive separate files.
+
+JUnit results are written to `test-reports/results-demo-mode.xml`. Bamboo also
+publishes the command-log directory as the `command-logs` artifact.
+
+If Docker reports an API compatibility error, specify the newest API supported
+by the daemon:
+
+```bash
+make test_demo_mode RELEASE=25.1 DOCKER_API_VERSION=1.41
+```
+
+An interrupted local run can leave the fixed `oz_test`, `op_test1`, or
+`op_test2` container names occupied. Remove those test containers before
+retrying. The suite normally removes them before and after every scenario.
+
+The persistence scenario additionally uses `/tmp/oz-pers`, `/tmp/op-pers`, and
+`/tmp/op-storage`. It removes these paths only when their test ownership marker
+is valid.
+
+## Runner internals
+
+`make test_demo_mode` starts pytest in the acceptance-test image and mounts the
+host Docker socket. Service containers are therefore siblings of the test
+runner. The runner temporarily starts as root to gain socket access, then
+switches to the invoking UID and GID so reports and logs remain owned by the
+developer or Bamboo user.
+
+`RUNNER_NAME` is optional locally and lets Bamboo identify a runner left after
+cancellation:
+
+```bash
+make test_demo_mode RELEASE=25.1 RUNNER_NAME=my-demo-mode-runner
+```
+
+Unlike the GUI, mixed, and Oneclient suites, demo-mode tests do not use an
+`ENV_FILE` or `test_run.py`; every scenario starts its own services directly.
