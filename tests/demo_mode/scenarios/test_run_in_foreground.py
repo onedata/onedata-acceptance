@@ -27,7 +27,7 @@ def test_run_in_foreground(
     test_file_content = b"Onedata demo-mode foreground REST test\n"
 
     environment = start_foreground_environment(demo_commands, request)
-    access_token = environment.oneproviders[0].demo_access_token()
+    access_token = environment.oneproviders[0].demo_access_token(demo_commands)
     onezone = OnezoneRestClient(environment.onezone, access_token)
     provider = OneproviderRestClient(environment.oneproviders[0], access_token)
     assert_onezone_configuration(onezone, release=release)

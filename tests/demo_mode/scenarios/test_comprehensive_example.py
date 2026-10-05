@@ -27,7 +27,7 @@ def test_comprehensive_example(
     assert_onezone_configuration(onezone, release=release)
     file_name = get_comprehensive_example_file_name(command_output)
     provider_service = Oneprovider(FIRST_ONEPROVIDER_CONTAINER)
-    access_token = provider_service.demo_access_token()
+    access_token = provider_service.demo_access_token(demo_commands)
     provider = OneproviderRestClient(provider_service, access_token)
     downloaded_content = download_rest_file(
         provider,

@@ -31,7 +31,7 @@ def test_distributed_environment(
     second_file_content = b"Data stored through the second Oneprovider\n"
 
     environment = start_distributed_environment(demo_commands, request)
-    access_token = environment.oneproviders[0].demo_access_token()
+    access_token = environment.oneproviders[0].demo_access_token(demo_commands)
     onezone = OnezoneRestClient(environment.onezone, access_token)
     first_provider = OneproviderRestClient(environment.oneproviders[0], access_token)
     second_provider = OneproviderRestClient(environment.oneproviders[1], access_token)

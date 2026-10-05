@@ -33,6 +33,7 @@ def test_persistency(
 
     persistence_state = save_persistent_state(
         environment,
+        demo_commands,
         release=release,
         file_content=test_file_content,
         request=request,
@@ -45,6 +46,7 @@ def test_persistency(
     )
     assert_persistence_state(
         restarted_environment,
+        demo_commands,
         release=release,
         file_content=test_file_content,
         state=persistence_state,

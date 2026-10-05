@@ -7,9 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import subprocess
 from dataclasses import dataclass
 
-from environment import docker
-
-from tests.demo_mode.utils.commands import Command
+from tests.demo_mode.utils.commands import Command, DemoCommands
 
 
 @dataclass(frozen=True)
@@ -42,13 +40,9 @@ class Onezone(DemoService):
 class Oneprovider(DemoService):
     """Oneprovider service in a demo-mode environment."""
 
-    def demo_access_token(self) -> str:
+    def demo_access_token(self, commands: DemoCommands) -> str:
         """Return the access token exposed by the demo environment."""
-        access_token = docker.exec_(
-            container=self.container,
-            command=["demo-access-token"],
-            output=True,
-        )
+        access_token = commands.access_token(self.container).run().strip()
         if not access_token:
             raise AssertionError("The access-token command returned an empty result")
         return access_token

@@ -44,6 +44,7 @@ def start_persistent_environment(
 
 def save_persistent_state(
     environment: DemoEnvironment,
+    commands: DemoCommands,
     *,
     release: str,
     file_content: bytes,
@@ -51,7 +52,7 @@ def save_persistent_state(
 ) -> PersistentState:
     """Create and return state that must survive a demo-mode restart."""
     file_name = "persistence-rest-test.txt"
-    access_token = environment.oneproviders[0].demo_access_token()
+    access_token = environment.oneproviders[0].demo_access_token(commands)
     onezone = OnezoneRestClient(environment.onezone, access_token)
     provider = OneproviderRestClient(environment.oneproviders[0], access_token)
     provider_id = get_oneprovider_id(provider, release=release)
@@ -77,13 +78,14 @@ def save_persistent_state(
 
 def assert_persistence_state(
     environment: DemoEnvironment,
+    commands: DemoCommands,
     *,
     release: str,
     file_content: bytes,
     state: PersistentState,
 ) -> None:
     """Assert that demo credentials, configuration, and data survived restart."""
-    restarted_access_token = environment.oneproviders[0].demo_access_token()
+    restarted_access_token = environment.oneproviders[0].demo_access_token(commands)
     assert restarted_access_token == state.access_token, (
         "Demo access token changed after restart: "
         f"expected {state.access_token!r}, got {restarted_access_token!r}"
