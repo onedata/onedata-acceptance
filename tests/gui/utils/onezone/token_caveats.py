@@ -10,7 +10,7 @@ from typing import Protocol, TypedDict
 
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.steps.common.miscellaneous import perform_action
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.popups import Popups
@@ -498,8 +498,3 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
 
     def assert_object_id_caveat(self, object_id: str) -> None:
         assert object_id in self.object_id_entries, f"Object id {object_id} not in object ids"
-
-
-@repeat_failed(timeout=WAIT_FRONTEND // 2)
-def perform_action(action: Callable[[], None]) -> None:
-    action()
