@@ -270,19 +270,19 @@ Feature: Bagit uploader tests
         description: Lambda exception occurred during item processing.
 
 
-  Scenario: User sees desirable exception in task audit log after executing BagIt Uploader with invalid archive - wrong_fetch.zip
+  Scenario: User sees desirable exception in task audit log after BagIt Uploader fails to download unavailable_fetch_url.zip
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "automation/bagit_test_archives/wrong_fetch.zip" to current dir
-    And user of browser sees that item named "wrong_fetch.zip" has appeared in file browser
+    And user of browser uses upload button from file browser menu bar to upload file "automation/bagit_test_archives/unavailable_fetch_url.zip" to current dir
+    And user of browser sees that item named "unavailable_fetch_url.zip" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser executes 1st revision of "BagIt Uploader" workflow in "space1" space with the following initial values:
       destination-directory:
         - dir1
       input-bagit-archives:
-        - wrong_fetch.zip
+        - unavailable_fetch_url.zip
 
     Then user of browser sees "Failed" status in status bar in workflow visualizer
     And user of browser sees that status of "validate" lane in "BagIt Uploader" is "Finished"
@@ -411,8 +411,9 @@ Feature: Bagit uploader tests
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees Dataset status tag for "dir1" in file browser
 
+    # TODO VFS-13914: uncomment and fix bagit_archive_3gb.zip test
     Examples:
       | archive_path                                                                                        | input_archive                      | unpacked_files | fetched_files | uploaded_files |
       | "automation/bagit_test_archives/bagit_archive_fetch.zip"                                            | bagit_archive_fetch.zip            | 0              | 18            | 18             |
       | "automation-examples/workflows/bagit-uploader/bagit_archive_unpack_and_fetch.zip"                   | bagit_archive_unpack_and_fetch.zip | 64             | 8             | 72             |
-      # The 3 GB archive is covered by atm_workflows_execution_bagit_3gb_archive.feature.
+#     | "automation-examples/workflows/bagit-uploader/bagit_archive_3gb.zip"                                | bagit_archive_3gb.zip              | 0              | 1             | 1              |

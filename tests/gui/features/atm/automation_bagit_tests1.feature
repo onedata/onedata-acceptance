@@ -41,7 +41,7 @@ Feature: Bagit uploader tests
         - "Payload directory not found"
       - "missing_bagit_txt.tar":
         - "Bagit directory not found"
-      - "invalid_fetch_url.zip":
+      - "fetch_path_outside_data.zip":
         - "File path not within data/ directory (fetch.txt line 1)"
       - "missing_fetch_txt.zip":
         - "bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-md5.txt not found"
@@ -121,7 +121,7 @@ Feature: Bagit uploader tests
         | missing_manifest_file.tgz         |
         | missing_data_dir.tar              |
         | missing_bagit_txt.tar             |
-        | invalid_fetch_url.zip             |
+        | fetch_path_outside_data.zip       |
         | missing_fetch_txt.zip             |
         | wrong_tagmanifest_checksums.zip   |
         | missing_payload.zip               |
