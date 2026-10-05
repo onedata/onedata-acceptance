@@ -9,7 +9,7 @@ from typing import Final
 import pytest
 
 from tests.demo_mode.constants import ONEZONE_CONTAINER
-from tests.demo_mode.type_definitions import DemoService, Oneprovider, Onezone
+from tests.demo_mode.models import DemoService, Oneprovider, Onezone
 from tests.demo_mode.utils.commands import Command, DemoCommands
 from tests.demo_mode.utils.logging import log_step
 from tests.utils.docker_utils import wait_for_running_container

@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 
 from tests.demo_mode.meta_steps.rest import get_oneprovider_id
+from tests.demo_mode.models import DemoEnvironment, PersistentState
 from tests.demo_mode.steps.environment import await_oneprovider, await_onezone
 from tests.demo_mode.steps.persistence import (
     start_persistent_oneprovider,
@@ -15,10 +16,8 @@ from tests.demo_mode.steps.persistence import (
 from tests.demo_mode.steps.rest import (
     create_space_for_provider,
     download_rest_file,
-    get_demo_access_token,
     upload_rest_file,
 )
-from tests.demo_mode.type_definitions import DemoEnvironment, PersistentState
 from tests.demo_mode.utils.commands import DemoCommands
 from tests.demo_mode.utils.rest import OneproviderRestClient, OnezoneRestClient
 
@@ -45,7 +44,6 @@ def start_persistent_environment(
 
 def save_persistent_state(
     environment: DemoEnvironment,
-    commands: DemoCommands,
     *,
     release: str,
     file_content: bytes,
@@ -53,8 +51,8 @@ def save_persistent_state(
 ) -> PersistentState:
     """Create and return state that must survive a demo-mode restart."""
     file_name = "persistence-rest-test.txt"
-    access_token = get_demo_access_token(commands)
-    onezone = OnezoneRestClient(commands, access_token)
+    access_token = environment.oneproviders[0].demo_access_token()
+    onezone = OnezoneRestClient(environment.onezone, access_token)
     provider = OneproviderRestClient(environment.oneproviders[0], access_token)
     provider_id = get_oneprovider_id(provider, release=release)
     space_id = create_space_for_provider(
@@ -79,14 +77,13 @@ def save_persistent_state(
 
 def assert_persistence_state(
     environment: DemoEnvironment,
-    commands: DemoCommands,
     *,
     release: str,
     file_content: bytes,
     state: PersistentState,
 ) -> None:
     """Assert that demo credentials, configuration, and data survived restart."""
-    restarted_access_token = get_demo_access_token(commands)
+    restarted_access_token = environment.oneproviders[0].demo_access_token()
     assert restarted_access_token == state.access_token, (
         "Demo access token changed after restart: "
         f"expected {state.access_token!r}, got {restarted_access_token!r}"

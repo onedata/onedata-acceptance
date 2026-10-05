@@ -15,7 +15,6 @@ from tests.demo_mode.meta_steps.rest import (
 )
 from tests.demo_mode.steps.rest import (
     create_space_for_provider,
-    get_demo_access_token,
 )
 from tests.demo_mode.utils.commands import DemoCommands
 from tests.demo_mode.utils.rest import OneproviderRestClient, OnezoneRestClient
@@ -32,8 +31,8 @@ def test_distributed_environment(
     second_file_content = b"Data stored through the second Oneprovider\n"
 
     environment = start_distributed_environment(demo_commands, request)
-    access_token = get_demo_access_token(demo_commands)
-    onezone = OnezoneRestClient(demo_commands, access_token)
+    access_token = environment.oneproviders[0].demo_access_token()
+    onezone = OnezoneRestClient(environment.onezone, access_token)
     first_provider = OneproviderRestClient(environment.oneproviders[0], access_token)
     second_provider = OneproviderRestClient(environment.oneproviders[1], access_token)
     assert_onezone_configuration(onezone, release=release)

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import cast
 
 from tests import OP_REST_PORT, PANEL_REST_PORT
-from tests.demo_mode.type_definitions import Oneprovider
+from tests.demo_mode.models import Oneprovider
 from tests.demo_mode.utils.rest.helpers import (
     SPACE_APPEARANCE_TIMEOUT,
     SPACE_SUPPORT_SIZE,

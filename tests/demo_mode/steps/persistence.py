@@ -13,7 +13,7 @@ from tests.demo_mode.constants import (
     FIRST_ONEPROVIDER_CONTAINER,
     ONEZONE_CONTAINER,
 )
-from tests.demo_mode.type_definitions import DemoEnvironment, Oneprovider, Onezone
+from tests.demo_mode.models import DemoEnvironment, Oneprovider, Onezone
 from tests.demo_mode.utils.commands import DemoCommands
 from tests.demo_mode.utils.logging import log_step
 

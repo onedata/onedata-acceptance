@@ -19,9 +19,6 @@ _AWAIT_ONEZONE = CommandTemplate("run_in_background/await_onezone.sh")
 _AWAIT_ONEPROVIDER = CommandTemplate("run_in_background/await_oneprovider.sh")
 _PERSISTENT_ONEZONE = CommandTemplate("persistency/run_onezone.sh")
 _PERSISTENT_ONEPROVIDER = CommandTemplate("persistency/run_oneprovider.sh")
-_ONEZONE_URL = CommandTemplate("common/get_onezone_url.sh")
-_ONEZONE_ACCESS_TOKEN = CommandTemplate("common/get_onezone_token.sh")
-_ONEPROVIDER_ACCESS_TOKEN = CommandTemplate("common/get_oneprovider_token.sh")
 _COMPREHENSIVE_EXAMPLE = CommandTemplate("comprehensive_example/example.sh")
 _PYTHON_SETUP = CommandTemplate("python_access/setup_environment.sh")
 _PYTHON_ACCESS = CommandTemplate("python_access/check_python_access.py")
@@ -62,15 +59,6 @@ class DemoCommands:
 
     def persistent_oneprovider(self) -> Command:
         return _PERSISTENT_ONEPROVIDER.bind(release=self.release)
-
-    def onezone_url(self) -> Command:
-        return _ONEZONE_URL.bind()
-
-    def onezone_access_token(self) -> Command:
-        return _ONEZONE_ACCESS_TOKEN.bind()
-
-    def oneprovider_access_token(self) -> Command:
-        return _ONEPROVIDER_ACCESS_TOKEN.bind()
 
     def comprehensive_example(self) -> Command:
         return _COMPREHENSIVE_EXAMPLE.bind(release=self.release)

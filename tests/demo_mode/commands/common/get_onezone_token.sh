@@ -1,1 +1,0 @@
-docker exec oz_test demo-access-token

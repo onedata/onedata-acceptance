@@ -10,6 +10,7 @@ from tests.demo_mode.constants import (
     FIRST_ONEPROVIDER_CONTAINER,
     SECOND_ONEPROVIDER_CONTAINER,
 )
+from tests.demo_mode.models import DemoEnvironment
 from tests.demo_mode.steps.environment import (
     await_oneprovider,
     await_onezone,
@@ -18,7 +19,6 @@ from tests.demo_mode.steps.environment import (
     run_foreground_oneprovider,
     run_foreground_onezone,
 )
-from tests.demo_mode.type_definitions import DemoEnvironment
 from tests.demo_mode.utils.commands import DemoCommands
 
 

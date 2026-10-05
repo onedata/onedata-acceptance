@@ -9,18 +9,8 @@ from functools import partial
 import pytest
 
 from tests.demo_mode.constants import DEMO_SPACE_NAME
-from tests.demo_mode.utils.commands import DemoCommands
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.rest import OneproviderRestClient, OnezoneRestClient
-
-
-@log_step("Getting demo access token")
-def get_demo_access_token(commands: DemoCommands) -> str:
-    """Get the access token exposed by the demo environment."""
-    access_token = commands.oneprovider_access_token().run().strip()
-    if not access_token:
-        raise AssertionError("The access-token command returned an empty result")
-    return access_token
 
 
 @log_step("Creating provider space")

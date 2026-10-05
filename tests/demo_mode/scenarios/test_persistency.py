@@ -27,13 +27,12 @@ def test_persistency(
 
     environment = start_persistent_environment(demo_commands, request)
     assert_onezone_configuration(
-        OnezoneRestClient(demo_commands),
+        OnezoneRestClient(environment.onezone),
         release=release,
     )
 
     persistence_state = save_persistent_state(
         environment,
-        demo_commands,
         release=release,
         file_content=test_file_content,
         request=request,
@@ -41,12 +40,11 @@ def test_persistency(
     stop_persistent_environment(environment)
     restarted_environment = start_persistent_environment(demo_commands, request)
     assert_onezone_configuration(
-        OnezoneRestClient(demo_commands),
+        OnezoneRestClient(restarted_environment.onezone),
         release=release,
     )
     assert_persistence_state(
         restarted_environment,
-        demo_commands,
         release=release,
         file_content=test_file_content,
         state=persistence_state,

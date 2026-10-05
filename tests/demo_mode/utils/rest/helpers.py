@@ -8,7 +8,6 @@ from typing import Final
 
 SPACE_SUPPORT_SIZE: Final = 1024**3
 SPACE_APPEARANCE_TIMEOUT: Final = 60.0
-ONEZONE_URL_PREFIX: Final = "URL: "
 
 
 def _authorization_headers(access_token: str) -> dict[str, str]:
