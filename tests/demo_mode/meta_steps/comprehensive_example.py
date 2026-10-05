@@ -4,11 +4,9 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.demo_mode.steps.comprehensive_example import (
-    assert_comprehensive_example_file_name,
-    assert_comprehensive_example_message_contains_file_name,
-    assert_comprehensive_example_success_message_count,
-)
+from typing import Final
+
+MIN_FILENAME_MESSAGE_PARTS: Final = 3
 
 
 def get_comprehensive_example_file_name(command_output: str) -> str:
@@ -17,12 +15,19 @@ def get_comprehensive_example_file_name(command_output: str) -> str:
     output_lines = [
         line for line in command_output.splitlines() if line.startswith(success_message_prefix)
     ]
-    assert_comprehensive_example_success_message_count(output_lines, command_output)
+    assert len(output_lines) == 1, (
+        "Expected one comprehensive-example success message, got "
+        f"{output_lines!r} in output:\n{command_output}"
+    )
 
     message = output_lines[0]
     message_parts = message.split('"')
-    assert_comprehensive_example_message_contains_file_name(message, message_parts)
+    assert len(message_parts) >= MIN_FILENAME_MESSAGE_PARTS, (
+        f"Could not extract a filename from: {message!r}"
+    )
 
     file_name = message_parts[1]
-    assert_comprehensive_example_file_name(file_name)
+    assert file_name.endswith(".txt"), (
+        f"Expected comprehensive example to create a .txt file, got {file_name!r}"
+    )
     return file_name

@@ -19,23 +19,24 @@ from tests.demo_mode.steps.environment import (
     run_foreground_onezone,
 )
 from tests.demo_mode.type_definitions import DemoEnvironment
+from tests.demo_mode.utils.commands import DemoCommands
 
 
 def start_foreground_environment(
-    release: str,
+    commands: DemoCommands,
     request: pytest.FixtureRequest,
 ) -> DemoEnvironment:
     """Start and await a foreground Onezone and Oneprovider."""
-    onezone = run_foreground_onezone(release, request)
+    onezone = run_foreground_onezone(commands, request)
     oneprovider = run_foreground_oneprovider(
-        release,
+        commands,
         FIRST_ONEPROVIDER_CONTAINER,
         onezone,
         request,
     )
 
-    await_onezone(onezone)
-    await_oneprovider(oneprovider)
+    await_onezone(commands, onezone)
+    await_oneprovider(commands, oneprovider)
     return DemoEnvironment(
         onezone=onezone,
         oneproviders=(oneprovider,),
@@ -43,27 +44,27 @@ def start_foreground_environment(
 
 
 def start_distributed_environment(
-    release: str,
+    commands: DemoCommands,
     request: pytest.FixtureRequest,
 ) -> DemoEnvironment:
     """Start and await a foreground Onezone and two Oneproviders."""
-    onezone = run_foreground_onezone(release, request)
+    onezone = run_foreground_onezone(commands, request)
     first_oneprovider = run_foreground_oneprovider(
-        release,
+        commands,
         FIRST_ONEPROVIDER_CONTAINER,
         onezone,
         request,
     )
     second_oneprovider = run_foreground_oneprovider(
-        release,
+        commands,
         SECOND_ONEPROVIDER_CONTAINER,
         onezone,
         request,
     )
 
-    await_onezone(onezone)
-    await_oneprovider(first_oneprovider)
-    await_oneprovider(second_oneprovider)
+    await_onezone(commands, onezone)
+    await_oneprovider(commands, first_oneprovider)
+    await_oneprovider(commands, second_oneprovider)
     return DemoEnvironment(
         onezone=onezone,
         oneproviders=(first_oneprovider, second_oneprovider),
@@ -71,17 +72,17 @@ def start_distributed_environment(
 
 
 def start_background_environment(
-    release: str,
+    commands: DemoCommands,
 ) -> DemoEnvironment:
     """Start and await a detached Onezone and Oneprovider."""
-    onezone = run_background_onezone(release)
+    onezone = run_background_onezone(commands)
     oneprovider = run_background_oneprovider(
-        release,
+        commands,
         FIRST_ONEPROVIDER_CONTAINER,
     )
 
-    await_onezone(onezone)
-    await_oneprovider(oneprovider)
+    await_onezone(commands, onezone)
+    await_oneprovider(commands, oneprovider)
     return DemoEnvironment(
         onezone=onezone,
         oneproviders=(oneprovider,),

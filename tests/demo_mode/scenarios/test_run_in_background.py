@@ -15,26 +15,29 @@ from tests.demo_mode.steps.rest import (
     get_demo_access_token,
     get_rest_space_id,
 )
+from tests.demo_mode.utils.commands import DemoCommands
+from tests.demo_mode.utils.rest import OneproviderRestClient, OnezoneRestClient
 
 
 def test_run_in_background(
     release: str,
+    demo_commands: DemoCommands,
     request: pytest.FixtureRequest,
 ) -> None:
     test_file_name = "background-rest-test.txt"
     test_file_content = b"Onedata demo-mode background REST test\n"
 
-    environment = start_background_environment(release)
-    provider_container = environment.oneproviders[0].container
-    assert_onezone_configuration(release)
+    environment = start_background_environment(demo_commands)
+    access_token = get_demo_access_token(demo_commands)
+    onezone = OnezoneRestClient(demo_commands, access_token)
+    provider = OneproviderRestClient(environment.oneproviders[0], access_token)
+    assert_onezone_configuration(onezone, release=release)
 
-    access_token = get_demo_access_token()
-    space_id = get_rest_space_id(provider_container, access_token)
+    space_id = get_rest_space_id(provider)
     upload_and_verify_rest_file_content(
-        space_id,
-        test_file_name,
-        access_token,
-        test_file_content,
-        request,
-        provider_container=provider_container,
+        provider,
+        space_id=space_id,
+        file_name=test_file_name,
+        content=test_file_content,
+        request=request,
     )

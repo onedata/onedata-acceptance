@@ -17,10 +17,13 @@ from tests.demo_mode.steps.rest import (
     create_space_for_provider,
     get_demo_access_token,
 )
+from tests.demo_mode.utils.commands import DemoCommands
+from tests.demo_mode.utils.rest import OneproviderRestClient, OnezoneRestClient
 
 
 def test_distributed_environment(
     release: str,
+    demo_commands: DemoCommands,
     request: pytest.FixtureRequest,
 ) -> None:
     first_file_name = "first-provider-rest-test.txt"
@@ -28,48 +31,47 @@ def test_distributed_environment(
     second_file_name = "second-provider-rest-test.txt"
     second_file_content = b"Data stored through the second Oneprovider\n"
 
-    environment = start_distributed_environment(release, request)
-    first_provider, second_provider = environment.oneproviders
-    assert_onezone_configuration(release)
+    environment = start_distributed_environment(demo_commands, request)
+    access_token = get_demo_access_token(demo_commands)
+    onezone = OnezoneRestClient(demo_commands, access_token)
+    first_provider = OneproviderRestClient(environment.oneproviders[0], access_token)
+    second_provider = OneproviderRestClient(environment.oneproviders[1], access_token)
+    assert_onezone_configuration(onezone, release=release)
 
     assert_oneproviders_are_distinct(
-        first_provider.container,
-        second_provider.container,
-        release,
+        first_provider,
+        second_provider,
+        release=release,
     )
 
-    access_token = get_demo_access_token()
     first_space_id = create_space_for_provider(
-        first_provider.container,
-        "demo-mode-first-provider-space",
-        access_token,
+        onezone,
+        first_provider,
+        space_name="demo-mode-first-provider-space",
     )
     second_space_id = create_space_for_provider(
-        second_provider.container,
-        "demo-mode-second-provider-space",
-        access_token,
+        onezone,
+        second_provider,
+        space_name="demo-mode-second-provider-space",
     )
     assert_space_support_is_isolated(
-        first_provider.container,
-        second_provider.container,
-        first_space_id,
-        second_space_id,
-        access_token,
+        first_provider,
+        second_provider,
+        first_space_id=first_space_id,
+        second_space_id=second_space_id,
     )
 
     upload_and_verify_rest_file_content(
-        first_space_id,
-        first_file_name,
-        access_token,
-        first_file_content,
-        request,
-        provider_container=first_provider.container,
+        first_provider,
+        space_id=first_space_id,
+        file_name=first_file_name,
+        content=first_file_content,
+        request=request,
     )
     upload_and_verify_rest_file_content(
-        second_space_id,
-        second_file_name,
-        access_token,
-        second_file_content,
-        request,
-        provider_container=second_provider.container,
+        second_provider,
+        space_id=second_space_id,
+        file_name=second_file_name,
+        content=second_file_content,
+        request=request,
     )

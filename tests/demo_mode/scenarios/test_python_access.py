@@ -9,18 +9,20 @@ import pytest
 from tests.demo_mode.constants import DEMO_SPACE_NAME
 from tests.demo_mode.meta_steps.environment import start_foreground_environment
 from tests.demo_mode.steps.python_access import (
-    assert_python_access_example_output,
     run_python_access_example,
 )
+from tests.demo_mode.utils.commands import DemoCommands
 
 
 def test_python_access(
-    release: str,
+    demo_commands: DemoCommands,
     request: pytest.FixtureRequest,
 ) -> None:
     expected_output = f"['{DEMO_SPACE_NAME}']\nTEST\n"
 
-    start_foreground_environment(release, request)
+    start_foreground_environment(demo_commands, request)
 
-    command_output = run_python_access_example(request)
-    assert_python_access_example_output(command_output, expected_output)
+    command_output = run_python_access_example(demo_commands, request)
+    assert command_output == expected_output, (
+        f"Expected Python access output {expected_output!r}, got {command_output!r}"
+    )

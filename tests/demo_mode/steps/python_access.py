@@ -6,37 +6,29 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
+from tests.demo_mode.utils.commands import DemoCommands
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.python_access import (
-    build_python_access_command,
     prepare_python_access_directory,
     read_setup_log,
-    run_python_access_command,
 )
-
-
-@log_step("Checking Python access example output")
-def assert_python_access_example_output(
-    command_output: str,
-    expected_output: str,
-) -> None:
-    """Assert that the Python access example returned the expected output."""
-    assert command_output == expected_output, (
-        f"Expected Python access output {expected_output!r}, got {command_output!r}"
-    )
 
 
 @log_step("Running Python access example")
 def run_python_access_example(
+    commands: DemoCommands,
     request: pytest.FixtureRequest,
     timeout: float = 600,
 ) -> str:
     """Prepare and run the Python access example in its generated venv."""
     environment_root = prepare_python_access_directory(request)
     setup_log_path = environment_root / "setup.log"
-    command = build_python_access_command(setup_log_path)
+    command = commands.python_access(
+        environment_root=environment_root,
+        setup_log_path=setup_log_path,
+    )
     try:
-        return run_python_access_command(command, environment_root, timeout)
+        return command.run(timeout=timeout)
     except AssertionError as error:
         setup_log = read_setup_log(setup_log_path)
         raise AssertionError(
