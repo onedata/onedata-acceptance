@@ -10,7 +10,6 @@ from typing import Protocol, TypedDict
 
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.steps.common.miscellaneous import perform_action
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.popups import Popups
@@ -22,6 +21,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.generic import perform_action
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed

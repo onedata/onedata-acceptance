@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import os
 import subprocess
-from collections.abc import Callable
 
 import yaml
 from selenium.common.exceptions import NoSuchElementException
@@ -216,18 +215,3 @@ def network_throttling_download(driver: WebDriver) -> None:
         download_throughput=float(download_kb) / 8 * 1024,
         upload_throughput=500 * 1024,
     )
-
-
-def perform_action(
-    action: Callable[[], None],
-    *,
-    assertion: Callable[[], None] | None = None,
-    timeout: float = WAIT_FRONTEND // 2,
-) -> None:
-    @repeat_failed(timeout=timeout)
-    def attempt() -> None:
-        action()
-        if assertion is not None:
-            assertion()
-
-    attempt()
