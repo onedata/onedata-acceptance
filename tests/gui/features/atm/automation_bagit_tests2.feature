@@ -234,7 +234,7 @@ Feature: Bagit uploader tests
     Examples:
       | archive_path                                                                                        | xrootd_archive                   | fetched_file                            |
       | "automation/bagit_test_archives/valid_with_xrootd.zip"                                              | "valid_with_xrootd.zip"          | "LHC10c_pp_ESD_120076.json"             |
-      | "automation-examples/workflows/bagit-uploader/bagit_archive_fetch_xrootd.zip"                       | "bagit_archive_fetch_xrootd.zip" | "python-rados_14.2.2-1bionic_amd64.deb" |
+      | "automation-examples/workflows/bagit-uploader/bagit_archive_fetch_xrootd.zip"                       | "bagit_archive_fetch_xrootd.zip" | "LHC10c_pp_ESD_120076.json"             |
 
 
   Scenario: User sees desirable exception in task audit log after executing BagIt Uploader with invalid archive - wrong_manifest_checksum.zip
