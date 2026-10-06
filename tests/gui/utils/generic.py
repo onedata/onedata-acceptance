@@ -19,6 +19,7 @@ from typing import Literal, Protocol, TypeVar, cast, overload
 
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import (
+    ElementClickInterceptedException,
     ElementNotInteractableException,
     NoSuchElementException,
     StaleElementReferenceException,
@@ -422,6 +423,14 @@ def find_web_elem_with_text(
     raise NoSuchElementException(f'Css element with "{text}" text not found. {error_message}')
 
 
+@repeat_failed(
+    timeout=0.5,
+    interval=0.05,
+    exceptions=(
+        ElementNotInteractableException,
+        ElementClickInterceptedException,
+    ),
+)
 def click_on_web_elem(
     web_elem: SeleniumWebElement,
     error_message: str | Callable[[], str],
