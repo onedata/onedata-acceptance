@@ -75,7 +75,7 @@ Feature: Basic files tab operations on single directory in file browser
     And user of browser clicks "Rename" option in data row menu in file browser
     And user of browser sees that "Rename" modal has appeared
     And user of browser writes ".." into text field in modal "Rename modal"
-    And user of browser clicks "Rename" button in displayed modal
+    And user of browser clicks on "Rename" button in modal "Rename modal"
     Then user of browser sees that error modal with text "Renaming the file failed!" appeared
     And user of browser refreshes site
     And user of browser sees file browser in files tab in Oneprovider page

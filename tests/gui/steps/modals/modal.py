@@ -242,48 +242,6 @@ def g_wait_for_modal_to_disappear(
     _wait_for_modal_to_disappear(driver, browser_id, tmp_memory)
 
 
-def _click_on_confirmation_btn_in_modal(
-    browser_id: str, button_name: str, tmp_memory: TmpMemory
-) -> None:
-    @repeat_failed(attempts=WAIT_BACKEND, timeout=True)
-    def click_on_btn(elem: SeleniumWebElement, msg: str) -> None:
-        click_on_web_elem(elem, msg)
-
-    button_name = button_name.lower()
-    modal = tmp_memory[browser_id]["window"]["modal"]
-    buttons = modal.find_elements(By.CSS_SELECTOR, "button")
-    error_message = f"clicking on {button_name} in displayed modal disabled"
-    for btn in buttons:
-        if btn.text.lower() == button_name:
-            click_on_btn(btn, error_message)
-            break
-    else:
-        raise AssertionError(f"no button named {button_name} found")
-
-
-@wt(
-    parsers.re(
-        r'user of (?P<browser_id>\w+) clicks "(?P<button_name>.*)" '
-        r"(confirmation )?button in displayed modal"
-    )
-)
-def wt_click_on_confirmation_btn_in_modal(
-    browser_id: str, button_name: str, tmp_memory: TmpMemory
-) -> None:
-    _click_on_confirmation_btn_in_modal(browser_id, button_name, tmp_memory)
-
-
-@given(
-    parsers.parse(
-        'user of {browser_id} clicked "{button_name}" confirmation button in displayed modal'
-    )
-)
-def g_click_on_confirmation_btn_in_modal(
-    browser_id: str, button_name: str, tmp_memory: TmpMemory
-) -> None:
-    _click_on_confirmation_btn_in_modal(browser_id, button_name, tmp_memory)
-
-
 @wt(parsers.parse("user of {browser_id} sees that message displayed in modal matches: {regexp}"))
 def is_modal_msg_matching(browser_id: str, regexp: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
