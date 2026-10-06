@@ -27,7 +27,7 @@ from tests.gui.utils.common.modals.files_modals.details_modal import NavigationT
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.web_elem_utils import click_on_web_elem
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -91,7 +91,9 @@ def assert_non_empty_token_in_add_storage_modal(browser_id: str, tmp_memory: Tmp
     tmp_memory[browser_id]["token"] = token
 
 
-def _find_modal(driver: WebDriver, modal_name: str) -> SeleniumWebElement:
+def find_modal(
+    driver: WebDriver, modal_name: str, expected: bool = True, timeout: float = WAIT_BACKEND
+) -> SeleniumWebElement | None:
 
     # TODO: VFS-13648 Refactor find modal function
 
@@ -122,6 +124,7 @@ def _find_modal(driver: WebDriver, modal_name: str) -> SeleniumWebElement:
             "unlink",
             "download",
             "function pods activity",
+            "warning"
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(By.CSS_SELECTOR, ".modal, .modal .modal-header h1")
@@ -133,24 +136,34 @@ def _find_modal(driver: WebDriver, modal_name: str) -> SeleniumWebElement:
         for name, modal in zip(modals[1::2], modals[::2], strict=True):
             if name.text.lower() == modal_name.lower():
                 return modal
-        raise NoSuchElementException(f"modal {modal_name} not found")
+        if expected:
+            raise NoSuchElementException(f"modal {modal_name} not found")
+        return None
 
     modal_name = modal_name.lower()
-    return WebDriverWait(driver, WAIT_BACKEND).until(
-        lambda _: _find(),
-        message=f"waiting for {modal_name:s} modal to appear",
-    )
+    try:
+        return WebDriverWait(driver, timeout, ignored_exceptions=[ValueError]).until(
+            lambda _: _find(),
+            message=f"waiting for {modal_name:s} modal to appear",
+        )
+    except TimeoutException as e:
+        if not expected:
+            return None
+        raise e
 
 
 def get_modal[T: Modal](driver: WebDriver, modal_name: str, modal_type: type[T]) -> T:
-    modal_web_elem = _find_modal(driver, modal_name)
+    modal_web_elem = find_modal(driver, modal_name)
     return modal_type(driver, modal_web_elem)
 
 
-def _wait_for_modal_to_appear(
-    driver: WebDriver, browser_id: str, modal_name: str, tmp_memory: TmpMemory
+def wait_for_modal_to_appear(
+    driver: WebDriver,
+    browser_id: str,
+    modal_name: str,
+    tmp_memory: TmpMemory,
 ) -> None:
-    modal = _find_modal(driver, modal_name)
+    modal = find_modal(driver, modal_name)
     tmp_memory[browser_id]["window"]["modal"] = modal
 
 
@@ -165,7 +178,7 @@ def assert_modal_does_not_appear(
 ) -> None:
     driver = selenium[browser_id]
     try:
-        _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+        wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
         raise AssertionError(f"Modal {modal_name} has appeared")
     except TimeoutException:
         pass
@@ -182,7 +195,7 @@ def wt_wait_for_modal_to_appear(
     selenium: SeleniumDrivers, browser_id: str, modal_name: str, tmp_memory: TmpMemory
 ) -> None:
     driver = selenium[browser_id]
-    _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+    wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
 
 
 @given(parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared'))
@@ -190,7 +203,7 @@ def g_wait_for_modal_to_appear(
     selenium: SeleniumDrivers, browser_id: str, modal_name: str, tmp_memory: TmpMemory
 ) -> None:
     driver = selenium[browser_id]
-    _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+    wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
 
 
 def _wait_for_modal_to_disappear(driver: WebDriver, browser_id: str, tmp_memory: TmpMemory) -> None:
@@ -441,14 +454,13 @@ def assert_there_is_no_button_in_panel(
         r'button in modal "(?P<modal_name>.*?)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(
     selenium: SeleniumDrivers, browser_id: str, button: str, modal_name: str
 ) -> None:
-    modal_attribute_name = resolve_modal_attribute_name(modal_name)
-    modal = getattr(Modals(selenium[browser_id]), modal_attribute_name)
     button = button.replace(".", "")
-    getattr(modal, transform(button)).click()
+    modal_attribute_name = resolve_modal_attribute_name(modal_name)
+    modal = perform_action(lambda: getattr(Modals(selenium[browser_id]), modal_attribute_name))
+    perform_action(getattr(modal, transform(button)).click)
     if modal_attribute_name == "create_group" and transform(button) == "create":
         is_notify_popup_visible_and_close_all_alert_popups(
             selenium,

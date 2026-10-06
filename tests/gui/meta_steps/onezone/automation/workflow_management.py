@@ -26,9 +26,9 @@ from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     wait_for_workflow_execution_in_atm_subpage,
 )
 from tests.gui.steps.modals.modal import (
-    _wait_for_modal_to_appear,
     choose_option_in_dropdown_menu_in_modal,
     click_modal_button,
+    wait_for_modal_to_appear,
 )
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     choose_workflow_revision_to_run,
@@ -97,7 +97,7 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
     upload_workflow_as_json(selenium, browser_id, file_name)
-    _wait_for_modal_to_appear(driver, browser_id, "Upload workflow", tmp_memory)
+    wait_for_modal_to_appear(driver, browser_id, "Upload workflow", tmp_memory)
     click_modal_button(selenium, browser_id, "Apply", "Upload workflow")
     wait_for_workflow_editor_to_expand(driver)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
@@ -177,7 +177,7 @@ def _upload_workflow_from_automation_examples(
     click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory)
     upload_workflow_from_repository(selenium, browser_id, workflow)
-    _wait_for_modal_to_appear(driver, browser_id, modal, tmp_memory)
+    wait_for_modal_to_appear(driver, browser_id, modal, tmp_memory)
     if method == "as new workflow":
         method_button = "Persist as new workflow"
         click_modal_button(selenium, browser_id, method_button, modal)
@@ -465,7 +465,7 @@ def modify_data_type_in_store(
 
     if "data" in menu:
         # wait a moment for modal to open
-        _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+        wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
         Modals(driver).modify_store.data_type_remove()
 
     split_value = value.replace(")", "").split(" (")

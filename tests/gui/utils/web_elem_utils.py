@@ -163,7 +163,7 @@ def find_web_elem_with_text(
 
 
 @repeat_failed(
-    timeout=0.5,
+    timeout=1,
     interval=0.05,
     exceptions=(
         ElementNotInteractableException,
