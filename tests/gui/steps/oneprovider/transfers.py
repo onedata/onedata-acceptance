@@ -23,9 +23,9 @@ from tests.gui.steps.common.miscellaneous import (
 )
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.enums import TransferState
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    TransferState,
     parse_elements_sequence,
     transform,
 )

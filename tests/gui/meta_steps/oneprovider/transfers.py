@@ -42,9 +42,9 @@ from tests.gui.steps.oneprovider.transfers import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.enums import TransferState
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    TransferState,
     parse_elements_sequence,
 )
 from tests.gui.utils.oneprovider.transfers import TransferItemType

@@ -10,7 +10,7 @@ from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
 from tests.gui.constants import WAIT_BACKEND
-from tests.gui.utils.generic import OnedataService, OneS3ServiceState
+from tests.gui.utils.enums import OnedataService, OneS3ServiceState
 from tests.type_definitions import Hosts, JsonObject
 from tests.utils.rest_utils import (
     get_panel_rest_path,

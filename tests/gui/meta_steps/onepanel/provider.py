@@ -49,11 +49,8 @@ from tests.gui.steps.rest.provider import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import (
-    OnedataService,
-    OneS3ServiceState,
-    wait_for_visible_element_using_getter,
-)
+from tests.gui.utils.enums import OnedataService, OneS3ServiceState
+from tests.gui.utils.generic import wait_for_visible_element_using_getter
 from tests.type_definitions import HostDescription, Hosts, JsonObject, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPConflict

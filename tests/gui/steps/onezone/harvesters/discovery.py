@@ -11,7 +11,8 @@ from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.enums import ListElement
+from tests.gui.utils.generic import transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

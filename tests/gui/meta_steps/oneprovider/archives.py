@@ -66,7 +66,8 @@ from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_side
 from tests.gui.type_definitions import Clipboard, TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.enums import ListElement
+from tests.gui.utils.generic import transform
 from tests.gui.utils.shortened_path import (
     IndexedPathSequence,
     parse_indexed_path_sequence,

@@ -15,9 +15,9 @@ from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_al
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
+from tests.gui.utils.enums import ListElement
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    ListElement,
     parse_elements_sequence,
     transform,
 )

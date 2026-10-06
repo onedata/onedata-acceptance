@@ -74,9 +74,9 @@ from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.enums import ListElement
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
-    ListElement,
     MembersParentType,
     parse_elements_sequence,
 )

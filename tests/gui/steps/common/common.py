@@ -36,8 +36,8 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
     ArchiveRecallInformation,
 )
 from tests.gui.utils.core.base import NamedElement
+from tests.gui.utils.enums import ListElement
 from tests.gui.utils.generic import (
-    ListElement,
     ListItemMainField,
     PageName,
     get_visibility_condition,
