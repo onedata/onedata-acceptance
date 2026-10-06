@@ -98,6 +98,14 @@ def find_modal(
     # TODO: VFS-13648 Refactor find modal function
 
     def _find() -> SeleniumWebElement:
+        if modal_name == "warning":
+            for modal in reversed(driver.find_elements(By.CSS_SELECTOR, ".question-modal")):
+                if modal.is_displayed():
+                    return modal
+            if expected:
+                raise NoSuchElementException(f"modal {modal_name} not found")
+            return None
+
         elements_list = [
             "group",
             "token",
@@ -124,7 +132,6 @@ def find_modal(
             "unlink",
             "download",
             "function pods activity",
-            "warning"
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(By.CSS_SELECTOR, ".modal, .modal .modal-header h1")

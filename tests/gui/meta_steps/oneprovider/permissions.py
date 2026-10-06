@@ -23,6 +23,7 @@ from tests.gui.steps.modals.modal import (
     click_panel_button,
     close_first_modal_if_present,
     find_modal,
+    wait_for_named_modal_to_disappear,
 )
 from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
 from tests.gui.steps.oneprovider.data_tab import (
@@ -234,6 +235,7 @@ def _set_acl_privileges_for_selected(
     modal = find_modal(selenium[browser_id], warning_modal, expected=False, timeout=WAIT_FRONTEND)
     if modal is not None:
         click_modal_button(selenium, browser_id, proceed_button, warning_modal)
+        wait_for_named_modal_to_disappear(selenium, browser_id, warning_modal)
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 

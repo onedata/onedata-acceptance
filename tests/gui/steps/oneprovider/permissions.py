@@ -22,7 +22,10 @@ from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.edit_permi
 )
 from tests.gui.utils.generic import perform_action
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
-from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
+from tests.gui.utils.web_elem_utils import (
+    wait_for_element_to_disappear_using_getter,
+    wait_for_visible_element_using_getter,
+)
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import SeleniumWebElement, repeat_failed
@@ -459,6 +462,14 @@ def click_on_record_header_in_edit_permissions_modal(
 ) -> None:
     driver = selenium[browser_id]
     Modals(driver).details_modal.edit_permissions.acl.member_permission_list[subject].header.click()
+    wait_for_element_to_disappear_using_getter(
+        driver,
+        lambda web_driver: (
+            Modals(web_driver)
+            .details_modal.edit_permissions.acl.member_permission_list[subject]
+            .content
+        ),
+    )
 
 
 def check_permission_denied_alert_in_edit_permissions_modal(
