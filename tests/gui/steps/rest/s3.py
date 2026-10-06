@@ -229,8 +229,8 @@ def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
 
 @wt(
     parsers.parse(
-        "using REST, user of {browser_id} copies item with "
-        'recently copied path from "{src_bucket}" bucket into "{dst_bucket}" bucket'
+        "using REST, user of {browser_id} copies item (identified "
+        'by copied location) from "{src_bucket}" bucket into "{dst_bucket}" bucket'
     )
 )
 def copy_item_s3_bucket(

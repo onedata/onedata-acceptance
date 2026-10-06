@@ -4,13 +4,12 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from datetime import datetime, timedelta
 from typing import Protocol, TypedDict
 
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.popups import Popups
@@ -22,6 +21,8 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.generic import perform_action
+from tests.gui.utils.text import transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
@@ -134,7 +135,7 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         browser_id: str,
     ) -> None:
         if not self.is_allow():
-            self.expander()
+            perform_action(self.expander.click)
             Popups(selenium[browser_id]).power_select.choose_item("Allow")
 
     def set_deny(
@@ -143,7 +144,7 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         browser_id: str,
     ) -> None:
         if self.is_allow():
-            self.expander()
+            perform_action(self.expander.click)
             Popups(selenium[browser_id]).power_select.choose_item("Deny")
 
     def set_allowance(
@@ -175,7 +176,7 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
     def set_item_in_inner_input(
         self, selenium: SeleniumDrivers, browser_id: str, item: str
     ) -> None:
-        self.new_item()
+        perform_action(self.new_item.click)
         self.inner_input = item
         driver = selenium[browser_id]
         driver.switch_to.active_element.send_keys(Keys.RETURN)
@@ -218,9 +219,9 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         browser_id: str,
         region: str,
     ) -> None:
-        self.new_item()
+        perform_action(self.new_item.click)
         driver = selenium[browser_id]
-        Popups(driver).selector_popup.selectors[region]()
+        perform_action(Popups(driver).selector_popup.selectors[region].click)
 
     # country caveat
     def set_country_caveats(
@@ -279,7 +280,6 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
             self.set_consumer_in_consumer_caveat(selenium, browser_id, consumer_type, method, value)
         create_token_page.expand_caveats()
 
-    @repeat_failed(timeout=WAIT_FRONTEND)
     def set_consumer_in_consumer_caveat(
         self,
         selenium: SeleniumDrivers,
@@ -288,18 +288,18 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         method: str,
         value: str,
     ) -> None:
-        self.new_item()
+        perform_action(self.new_item.click)
         driver = selenium[browser_id]
         popup = Popups(driver).consumer_caveat_popup
         popup.expand_consumer_types()
-        popup.select_type(consumer_type)
+        popup.select_consumer_type(consumer_type)
         if method == "name":
-            popup.list_option()
-            popup.consumers[value]()
+            perform_action(popup.list_option.click)
+            perform_action(popup.consumers[transform(value)].click)
         else:
-            popup.id_option()
+            perform_action(popup.id_option.click)
             popup.input = value
-            popup.add_button()
+            perform_action(popup.add_button.click)
 
     # service caveat
     def set_service_caveats(
@@ -307,14 +307,19 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         selenium: SeleniumDrivers,
         browser_id: str,
         service_caveats: dict[str, list[str]],
+        get_caveat_field: Callable[[], "CaveatField"],
     ) -> None:
         self.activate()
         service_cav = service_caveats.get("Service", [])
         service_onepanel_cav = service_caveats.get("Service Onepanel", [])
         for service in service_cav:
-            self.set_service_in_service_caveat(selenium, browser_id, "Service", service)
+            self.set_service_in_service_caveat(
+                selenium, browser_id, "Service", service, get_caveat_field
+            )
         for service in service_onepanel_cav:
-            self.set_service_in_service_caveat(selenium, browser_id, "Service Onepanel", service)
+            self.set_service_in_service_caveat(
+                selenium, browser_id, "Service Onepanel", service, get_caveat_field
+            )
 
     def set_service_in_service_caveat(
         self,
@@ -322,15 +327,15 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         browser_id: str,
         consumer_type: str,
         value: str,
+        get_caveat_field: Callable[[], "CaveatField"],
     ) -> None:
-        self.click_new_item()
+        get_caveat_field().click_new_item()
         driver = selenium[browser_id]
         popup = Popups(driver).consumer_caveat_popup
 
         popup.expand_consumer_types()
         popup.select_consumer_type(consumer_type)
-        popup.expand_consumers()
-        popup.consumers[value].click()
+        popup.choose_exact_consumer_value(get_caveat_field, value)
 
     # interface caveat
     def set_interface_caveat(self, caveat: str) -> None:
@@ -350,11 +355,11 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
     def set_path_caveat(self, path_caveat: PathCaveatConfig) -> None:
         space = path_caveat["space"]
         path = path_caveat["path"]
-        self.add_item()
+        perform_action(self.add_item.click)
         if self.item_label != space:
-            self.expander()
+            perform_action(self.expander.click)
             if hasattr(self, "options"):
-                self.options[space]()
+                perform_action(self.options[space].click)
             else:
                 raise ValueError("there is not options member in class instance")
         self.input = path
@@ -366,7 +371,7 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
             self.set_object_id_caveat(object_id)
 
     def set_object_id_caveat(self, object_id: str) -> None:
-        self.add_item()
+        perform_action(self.add_item.click)
         self.input_object_id = str(object_id)
 
     # assertions

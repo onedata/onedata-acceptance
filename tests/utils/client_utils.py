@@ -160,12 +160,29 @@ class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
             )
         else:
             cmd = " ".join(
-                ["oneclient", "--log-dir", logdir, mode_flag, "-v2", "--insecure"]
+                [
+                    "oneclient",
+                    "--log-dir",
+                    logdir,
+                    mode_flag,
+                    "-v2",
+                    "--insecure",
+                ]
                 + additional_opts
                 + [self._mount_path]
             )
 
-        return self.run_cmd(cmd, verbose=True)
+        print(f"Mount command: {cmd}")
+
+        ret = self.run_cmd(cmd, verbose=True)
+
+        if ret == 0:
+            self._wait_until(
+                self.timeout,
+                lambda: self.run_cmd(["mountpoint", "-q", self._mount_path]) == 0,
+            )
+
+        return ret
 
     def unmount(self) -> None:
         print(f"\nUnmounting client from {self._mount_path}\n")
@@ -182,6 +199,14 @@ class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
         if timeout is None:
             timeout = self.timeout
         return self._repeat_until(condition, timeout)
+
+    @staticmethod
+    def _wait_until(duration: float, condition: Condition, delay: float = 1) -> None:
+        wait_end = time.time() + duration
+        while not condition():
+            if time.time() > wait_end:
+                raise TimeoutError
+            time.sleep(delay)
 
     @staticmethod
     def _repeat_until(condition: Condition, timeout: int) -> bool:

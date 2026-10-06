@@ -26,13 +26,13 @@ from tests.utils.utils import repeat_failed
 @wt(
     parsers.parse(
         "using OneS3 and list buckets boto3 function, user {user} can see spaces"
-        ' "{spaces_list:ElementsSequence}"',
+        " {spaces_list:ElementsSequence}",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
 @wt(
     parsers.parse(
-        'using OneS3, user {user} can see spaces "{spaces_list:ElementsSequence}"',
+        "using OneS3, user {user} can see spaces {spaces_list:ElementsSequence}",
         extra_types={"ElementsSequence": parse_elements_sequence},
     ),
 )
