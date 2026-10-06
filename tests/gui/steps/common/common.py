@@ -23,6 +23,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import (
     Clickable,
+    ListItemMainField,
+    PageName,
     VisibilityCondition,
     WebElementOrCssLocator,
     WebElementOrSelector,
@@ -37,13 +39,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
 )
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.enums import ListElement
-from tests.gui.utils.generic import (
-    ListItemMainField,
-    PageName,
-    get_visibility_condition,
-    get_web_elem_or_locator,
-    transform,
-)
+from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.gui.utils.onezone.clusters_page import ClustersPage
@@ -58,6 +54,7 @@ from tests.gui.utils.onezone.groups.groups_page import GroupsPage
 from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.gui.utils.onezone.shares_page import SharesPage
 from tests.gui.utils.onezone.tokens_page import TokensPage
+from tests.gui.utils.web_elem_utils import get_visibility_condition, get_web_elem_or_locator
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

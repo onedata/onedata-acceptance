@@ -14,7 +14,7 @@ from tests.gui.steps.rest.harvesters import (
     get_user_harvester_ids,
     remove_harvester_using_rest,
 )
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import (
     get_zone_rest_path,

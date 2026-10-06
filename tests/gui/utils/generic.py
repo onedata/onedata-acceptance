@@ -7,180 +7,25 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import os
-import re
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from contextlib import suppress as contextlib_suppress
-from datetime import datetime
-from functools import partial
 from itertools import islice
-from typing import Literal, Protocol, TypeVar, cast, overload
+from typing import TypeVar
 
 from _pytest._py.path import LocalPath
-from selenium.common.exceptions import (
-    ElementClickInterceptedException,
-    ElementNotInteractableException,
-    NoSuchElementException,
-    StaleElementReferenceException,
-)
-from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
-from selenium.webdriver.support.expected_conditions import (
-    visibility_of,
-    visibility_of_element_located,
-)
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests import gui
 from tests.gui.constants import WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
-from tests.gui.type_definitions import (
-    VisibilityCondition,
-    WebElementOrCssLocator,
-    WebElementOrSelector,
-    WebElemRoot,
-)
 from tests.gui.utils import text as text_utils
 from tests.type_definitions import JsonValue
-from tests.utils.utils import element_has_class, repeat_failed
+from tests.utils.utils import repeat_failed
 
 T = TypeVar("T")
 suppress = contextlib_suppress
 transform = text_utils.transform
-
-
-class VisibleElement(Protocol):
-    def is_displayed(self) -> bool: ...
-
-
-# RE_URL regexp is matched as shown below:
-#
-# https://172.18.0.8/#/onedata/data/small_space/g2gDZAAEZ3VpZG0AAAAkZzJnQ
-# \       \        /   \     / \  / \         /                        /
-#  \        domain      \   /   tab  \___id__/                        /
-#   \            /      access                                       /
-#    \_base_url_/         \_________________method__________________/
-
-RE_URL = re.compile(
-    r"(?P<base_url>https?://(?P<domain>.*?)"
-    r"(/(?P<where>[^/]*)/(?P<cluster>[^/]*))?)"
-    r"(/i#)?(?P<method>/(?P<access>[^/]*)/(?P<tab>[^/]*)"
-    r"(/(?P<id>[^/]*).*)?)"
-)
-
-
-def parse_url(url: str) -> re.Match[str]:
-    match = RE_URL.match(url)
-    if match is None:
-        raise ValueError(f"Invalid URL: {url}")
-    return match
-
-
-def go_to_relative_url(selenium: WebDriver, relative_url: str) -> None:
-    match = parse_url(selenium.current_url)
-    new_url = match.group("base_url") + relative_url
-    selenium.get(new_url)
-
-
-@overload
-def parse_seq(
-    seq: str,
-    pattern: str | None = None,
-    separator: str | None = None,
-) -> list[str]: ...
-
-
-@overload
-def parse_seq[T](
-    seq: str,
-    pattern: str | None = None,
-    separator: str | None = None,
-    *,
-    default: Callable[[str], T],
-) -> list[T]: ...
-
-
-@overload
-def parse_seq[T](
-    seq: str,
-    pattern: str | None,
-    separator: str | None,
-    default: Callable[[str], T],
-) -> list[T]: ...
-
-
-def parse_seq[T](
-    seq: str,
-    pattern: str | None = None,
-    separator: str | None = None,
-    default: Callable[[str], T] | None = None,
-) -> list[T]:
-    """Parses regex-matched or separator-delimited values into a list,
-    e.g. '["1", "2"]', '"1"', '1,2', or '1'.
-    """
-    item_parser = cast(Callable[[str], T], str) if default is None else default
-    if pattern is not None:
-        return [item_parser(el.group()) for el in re.finditer(pattern, seq)]
-    separator = "," if separator is None else separator
-    return [
-        item_parser(el.strip().strip('"')) for el in seq.strip("[]").split(separator) if el != ""
-    ]
-
-
-# An empty sequence, e.g. []
-EMPTY_SEQUENCE = r"\[\]"
-
-# A quoted element, including spaces and special characters, e.g. "dev-oneprovider-0"
-QUOTED_ELEMENT = r'"[^"\n]+"'
-
-# A single unquoted element without separators or whitespace, e.g. new_space1
-UNQUOTED_ELEMENT = r'[^,\[\]"\s]+'
-
-# An element inside a sequence can be quoted or contain unquoted whitespace,
-# see BRACKETED_SEQUENCE
-SEQUENCE_ELEMENT = rf'(?:{QUOTED_ELEMENT}|[^,\]"\n]+)'
-
-# A comma-separated sequence of elements enclosed in square brackets.
-# Examples:
-#   [abc]                  -> element 1: abc
-#   [abc, def]             -> element 1: abc       | element 2: def
-#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
-#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
-#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
-BRACKETED_SEQUENCE = rf"\[\s*{SEQUENCE_ELEMENT}" rf"(?:\s*,\s*{SEQUENCE_ELEMENT})*\s*\]"
-
-# An element sequence can be:
-#   abc                    -> element 1: abc
-#   abc-def                -> element 1: abc-def
-#   "abc def"              -> element 1: abc def
-#   "abc, def"             -> element 1: abc, def
-#   [abc]                  -> element 1: abc
-#   [abc, def]             -> element 1: abc       | element 2: def
-#   [abc def, ghi]         -> element 1: abc def   | element 2: ghi
-#   ["abc", "def ghi"]     -> element 1: abc       | element 2: def ghi
-#   ["abc, def", ghi]      -> element 1: abc, def  | element 2: ghi
-ELEMENTS_SEQUENCE_PATTERN = (
-    rf"(?:{QUOTED_ELEMENT}|{UNQUOTED_ELEMENT}|{BRACKETED_SEQUENCE}|{EMPTY_SEQUENCE})"
-)
-
-
-def parse_elements_sequence(value: str) -> list[str]:
-    if re.fullmatch(ELEMENTS_SEQUENCE_PATTERN, value) is None:
-        raise ValueError(f"Invalid elements sequence: {value!r}")
-    return parse_seq(value)
-
-
-def parse_time(value: str) -> datetime:
-    date_match = re.match(
-        r"\d{4}-\d{2}-\d{2} at \d{1,2}:\d{2} \(UTC[+-]\d{2}:\d{2}\)",
-        value,
-    )
-    assert date_match, f'Invalid time format: "{value}"'
-
-    return datetime.strptime(
-        date_match.group(),
-        "%Y-%m-%d at %H:%M (UTC%z)",
-    )
 
 
 def upload_file_path(file_name: str) -> str:
@@ -271,65 +116,6 @@ def iter_ahead[T](iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
     yield from zip(iterable, read_ahead, strict=False)
 
 
-def is_element_visible_on_page(
-    driver: WebDriver,
-    web_elem_or_selector: WebElementOrSelector,
-) -> bool:
-    try:
-        condition = get_visibility_condition(get_web_elem_or_locator(web_elem_or_selector))
-        return bool(condition(driver))
-    except (NoSuchElementException, StaleElementReferenceException):
-        return False
-
-
-def get_web_elem_or_locator(
-    web_elem_or_selector: WebElementOrSelector,
-) -> WebElementOrCssLocator:
-    match web_elem_or_selector:
-        case SeleniumWebElement():
-            return web_elem_or_selector
-        case str():
-            return By.CSS_SELECTOR, web_elem_or_selector
-    raise TypeError(f"Unsupported element or selector: {web_elem_or_selector!r}")
-
-
-def get_visibility_condition(
-    web_elem_or_locator: WebElementOrCssLocator,
-) -> VisibilityCondition:
-    match web_elem_or_locator:
-        case SeleniumWebElement() as element:
-            return visibility_of(element)
-
-        case (By.CSS_SELECTOR, str()) as locator:
-            return visibility_of_element_located(locator)
-
-        case unsupported:
-            raise TypeError(f"Unsupported element or locator: {unsupported!r}")
-
-
-def is_element_visible_using_getter[VisibleElementT: VisibleElement](
-    driver: WebDriver,
-    web_elem_getter: Callable[[WebDriver], VisibleElementT],
-) -> VisibleElementT | None:
-    try:
-        web_elem = web_elem_getter(driver)
-        return web_elem if web_elem.is_displayed() else None
-    except (NoSuchElementException, StaleElementReferenceException):
-        return None
-
-
-def wait_for_visible_element_using_getter[VisibleElementT: VisibleElement](
-    driver: WebDriver,
-    web_elem_getter: Callable[[WebDriver], VisibleElementT],
-    timeout: float = WAIT_FRONTEND,
-) -> VisibleElementT:
-    # Wait until the getter returns a visible element.
-
-    return WebDriverWait(driver, timeout=timeout).until(
-        partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
-    )
-
-
 def perform_action[ActionResultT](
     action: Callable[[], ActionResultT],
     /,
@@ -346,16 +132,6 @@ def perform_action[ActionResultT](
     return attempt()
 
 
-def wait_for_element_to_disappear_using_getter[VisibleElementT: VisibleElement](
-    driver: WebDriver,
-    web_elem_getter: Callable[[WebDriver], VisibleElementT],
-    timeout: float = WAIT_FRONTEND,
-) -> None:
-    WebDriverWait(driver, timeout=timeout).until_not(
-        partial(is_element_visible_using_getter, web_elem_getter=web_elem_getter)
-    )
-
-
 def wait_for_file_to_download(
     driver: WebDriver,
     downloaded_file: LocalPath,
@@ -366,102 +142,6 @@ def wait_for_file_to_download(
         lambda _: downloaded_file.isfile(),
         message=f"File {file_name} did not finish downloading",
     )
-
-
-def get_element_css_classes_when_visible(
-    driver: WebDriver,
-    web_elem: SeleniumWebElement,
-    timeout: float = WAIT_FRONTEND // 4,
-) -> list[str]:
-    def get_element_classes(driver: WebDriver) -> list[str] | None:
-        return web_elem.get_attribute("class").split() if visibility_of(web_elem)(driver) else None
-
-    return WebDriverWait(
-        driver,
-        timeout=timeout,
-        poll_frequency=0.05,
-        ignored_exceptions=[
-            ElementNotInteractableException,
-            StaleElementReferenceException,
-        ],
-    ).until(get_element_classes)
-
-
-def find_web_elem(
-    web_elem_root: WebElemRoot,
-    css_selector: str,
-    error_message: str | Callable[[], str],
-    scroll: bool = True,
-) -> SeleniumWebElement:
-    try:
-        if scroll:
-            _scroll_to_css_selector(web_elem_root, css_selector)
-        item = web_elem_root.find_element(By.CSS_SELECTOR, css_selector)
-    except NoSuchElementException as exc:
-        if callable(error_message):
-            error_message = error_message()
-        raise NoSuchElementException(error_message) from exc
-    return item
-
-
-def find_web_elem_with_text(
-    web_elem_root: WebElemRoot,
-    css_selector: str,
-    text: str,
-    error_message: str | Callable[[], str],
-    scroll: bool = True,
-) -> SeleniumWebElement:
-    items = web_elem_root.find_elements(By.CSS_SELECTOR, css_selector)
-    if scroll:
-        _scroll_to_css_selector(web_elem_root, css_selector)
-    for item in items:
-        if item.text.lower() == text.lower():
-            return item
-    if callable(error_message):
-        error_message = error_message()
-    raise NoSuchElementException(f'Css element with "{text}" text not found. {error_message}')
-
-
-@repeat_failed(
-    timeout=0.5,
-    interval=0.05,
-    exceptions=(
-        ElementNotInteractableException,
-        ElementClickInterceptedException,
-    ),
-)
-def click_on_web_elem(
-    web_elem: SeleniumWebElement,
-    error_message: str | Callable[[], str],
-) -> None:
-    if (
-        not web_elem.is_enabled()
-        or not web_elem.is_displayed()
-        or element_has_class(web_elem, "disabled")
-    ):
-        message = error_message() if callable(error_message) else error_message
-        raise ElementNotInteractableException(message)
-
-    web_elem.click()
-
-
-def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> None:
-    driver = getattr(web_elem_root, "parent", web_elem_root)
-    driver.execute_script(
-        "var el = (typeof $ === 'function' ? "
-        f"$('{css_selector}')[0] : "
-        f"document.querySelector('{css_selector}')); "
-        "el && el.scrollIntoView(true);"
-    )
-
-
-@contextmanager
-def rm_css_cls(
-    driver: WebDriver, web_elem: SeleniumWebElement, css_cls: str
-) -> Iterator[SeleniumWebElement]:
-    driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
-    yield web_elem
-    driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)
 
 
 def nth[T](seq: Iterable[T], idx: int) -> T | None:
@@ -535,60 +215,3 @@ def sort_json_keys(obj: JsonValue) -> JsonValue:
 def sort_json_from_string(value: str) -> JsonValue:
     parsed_value = json.loads(value)
     return sort_json_keys(parsed_value)
-
-
-ListItemMainField = Literal["name", "description"]
-
-
-PageName = Literal[
-    "data",
-    "shares",
-    "providers",
-    "groups",
-    "tokens",
-    "discovery",
-    "automation",
-    "clusters",
-    "cluster",
-]
-
-
-type MembersParentType = Literal[
-    "space",
-    "harvester",
-    "automation",
-    "inventory",
-    "cluster",
-    "group",
-]
-
-
-type SidebarMemberParent = Literal[
-    "space",
-    "group",
-    "harvester",
-    "automation",
-    "inventory",
-]
-
-
-type MemberType = Literal["group", "user"]
-
-
-MENU_ELEM_TO_TAB_NAME: dict[MembersParentType, PageName] = {
-    "space": "data",
-    "harvester": "discovery",
-    "automation": "automation",
-    "inventory": "automation",
-    "cluster": "clusters",
-    "group": "groups",
-}
-
-
-PARENT_LIST_NAMES: dict[SidebarMemberParent, str] = {
-    "space": "spaces_list",
-    "group": "groups_list",
-    "harvester": "harvesters_list",
-    "automation": "automations_list",
-    "inventory": "automations_list",
-}

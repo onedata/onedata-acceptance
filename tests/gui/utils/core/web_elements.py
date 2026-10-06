@@ -11,8 +11,8 @@ from typing import Any
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
 from tests.gui.utils.text import transform
+from tests.gui.utils.web_elem_utils import find_web_elem, find_web_elem_with_text
 
 from .base import AbstractWebElement, AbstractWebItem, PageObject
 from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjectsSequence

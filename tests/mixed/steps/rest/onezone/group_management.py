@@ -8,10 +8,7 @@ import pytest
 
 from onezone_client import GroupApi, UserApi
 from onezone_client.rest import ApiException
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-)
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.mixed.steps.rest.onezone.common import get_group
 from tests.mixed.type_definitions import RestOnezoneTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz

@@ -31,13 +31,8 @@ from tests.gui.steps.onezone.members import (
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    MembersParentType,
-    MemberType,
-    parse_elements_sequence,
-)
+from tests.gui.type_definitions import MembersParentType, MemberType, TmpMemory
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 

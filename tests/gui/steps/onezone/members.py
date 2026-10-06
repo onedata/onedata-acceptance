@@ -37,7 +37,15 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.type_definitions import (
+    MENU_ELEM_TO_TAB_NAME,
+    PARENT_LIST_NAMES,
+    MembersParentType,
+    MemberType,
+    PageName,
+    SidebarMemberParent,
+    TmpMemory,
+)
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
@@ -45,19 +53,10 @@ from tests.gui.utils.core.web_objects import (
     PageObjectNotFoundError,
     PageObjectsSequence,
 )
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    MENU_ELEM_TO_TAB_NAME,
-    PARENT_LIST_NAMES,
-    MembersParentType,
-    MemberType,
-    PageName,
-    SidebarMemberParent,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import element_has_class, repeat_failed

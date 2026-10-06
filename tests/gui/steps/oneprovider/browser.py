@@ -21,16 +21,11 @@ from tests.gui.type_definitions import Clickable, TmpMemory, WhichBrowser
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.common.popups.configure_columns_menu import ColumnOption
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    parse_seq,
-    sort_json_from_string,
-    transform,
-    wait_for_visible_element_using_getter,
-)
+from tests.gui.utils.generic import sort_json_from_string, transform
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

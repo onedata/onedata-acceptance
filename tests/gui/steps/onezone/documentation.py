@@ -8,13 +8,10 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils import Homepage, Modals, Popups
 from tests.gui.utils.common.modals.files_modals.details_modal import ApiTab
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
 from tests.gui.utils.homepage.api import GuiRestCommand
 from tests.gui.utils.homepage.documentation_base import BaseDocumentationPage
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

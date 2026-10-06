@@ -15,7 +15,8 @@ from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import Popups
-from tests.gui.utils.generic import parse_elements_sequence, transform
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

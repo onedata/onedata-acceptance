@@ -17,12 +17,9 @@ from tests.gui.steps.common.url import (
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.utils import LoginPage, OnePage
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-    wait_for_visible_element_using_getter,
-)
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users

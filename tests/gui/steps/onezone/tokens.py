@@ -22,12 +22,10 @@ from tests.gui.steps.common.common import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
-from tests.gui.utils.generic import (
-    is_element_visible_using_getter,
-    transform,
-)
+from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow
+from tests.gui.utils.web_elem_utils import is_element_visible_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

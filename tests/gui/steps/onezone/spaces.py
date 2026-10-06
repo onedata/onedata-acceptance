@@ -22,19 +22,15 @@ from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, PageName, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.enums import ListElement
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-)
-from tests.gui.utils.onezone import PageName
+from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.data_page import DataPage, Space
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

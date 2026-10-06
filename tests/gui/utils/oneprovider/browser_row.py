@@ -15,7 +15,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
-from tests.gui.utils.generic import click_on_web_elem, transform
+from tests.gui.utils.generic import transform
+from tests.gui.utils.web_elem_utils import click_on_web_elem
 from tests.utils.utils import element_has_class
 
 

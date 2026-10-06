@@ -61,5 +61,52 @@ PrivilegeGroupConfig = TypedDict(
 )
 type PrivilegesConfig = dict[str, PrivilegeGroupConfig]
 
+ListItemMainField = Literal["name", "description"]
+type PageName = Literal[
+    "data",
+    "shares",
+    "providers",
+    "groups",
+    "tokens",
+    "discovery",
+    "automation",
+    "clusters",
+    "cluster",
+]
+type MembersParentType = Literal[
+    "space",
+    "harvester",
+    "automation",
+    "inventory",
+    "cluster",
+    "group",
+]
+type SidebarMemberParent = Literal[
+    "space",
+    "group",
+    "harvester",
+    "automation",
+    "inventory",
+]
+type MemberType = Literal["group", "user"]
+
+
+MENU_ELEM_TO_TAB_NAME: dict[MembersParentType, PageName] = {
+    "space": "data",
+    "harvester": "discovery",
+    "automation": "automation",
+    "inventory": "automation",
+    "cluster": "clusters",
+    "group": "groups",
+}
+
+PARENT_LIST_NAMES: dict[SidebarMemberParent, str] = {
+    "space": "spaces_list",
+    "group": "groups_list",
+    "harvester": "harvesters_list",
+    "automation": "automations_list",
+    "inventory": "automations_list",
+}
+
 
 Clipboard = namedtuple("Clipboard", ["copy", "paste"])

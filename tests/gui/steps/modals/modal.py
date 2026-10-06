@@ -27,7 +27,8 @@ from tests.gui.utils.common.modals.files_modals.details_modal import NavigationT
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import click_on_web_elem, transform
+from tests.gui.utils.generic import transform
+from tests.gui.utils.web_elem_utils import click_on_web_elem
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

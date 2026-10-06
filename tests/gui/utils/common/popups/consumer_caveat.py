@@ -26,7 +26,8 @@ from tests.gui.utils.text import transform
 
 if TYPE_CHECKING:
     from tests.gui.utils.onezone.token_caveats import CaveatField
-from tests.gui.utils.generic import perform_action, wait_for_visible_element_using_getter
+from tests.gui.utils.generic import perform_action
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.utils.utils import repeat_failed
 
 

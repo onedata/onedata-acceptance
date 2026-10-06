@@ -1,5 +1,9 @@
 """Enums shared by GUI tests and utilities."""
 
+__author__ = "Jakub Karczewski"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
 from enum import Enum, StrEnum
 
 

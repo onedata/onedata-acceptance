@@ -38,18 +38,15 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import (
-    implicit_wait,
-    is_element_visible_using_getter,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import implicit_wait, transform
 from tests.gui.utils.onepanel.spaces import (
     QuotaEditor,
     SpaceRecord,
     StartCleaningState,
     StartScanState,
 )
+from tests.gui.utils.text import parse_elements_sequence
+from tests.gui.utils.web_elem_utils import is_element_visible_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPInternalServerError

@@ -25,12 +25,9 @@ from tests.gui.steps.common.common import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    is_element_visible_on_page,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.web_elem_utils import is_element_visible_on_page
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries

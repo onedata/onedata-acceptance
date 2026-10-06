@@ -18,7 +18,7 @@ from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_al
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.enums import HostPattern
-from tests.gui.utils.generic import (
+from tests.gui.utils.text import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
     parse_seq,

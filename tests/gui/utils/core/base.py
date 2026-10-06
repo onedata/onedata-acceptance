@@ -7,7 +7,7 @@ from abc import ABC, ABCMeta, abstractmethod
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.utils.generic import click_on_web_elem
+from tests.gui.utils.web_elem_utils import click_on_web_elem
 from tests.utils.utils import element_has_class
 
 __author__ = "Bartosz Walkowicz"

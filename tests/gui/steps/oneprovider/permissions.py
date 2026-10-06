@@ -20,11 +20,7 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.edit_permissions import (
     MemberAclPermission,
 )
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    parse_seq,
-)
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

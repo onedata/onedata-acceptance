@@ -24,11 +24,7 @@ from tests.gui.steps.common.miscellaneous import (
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.enums import TransferState
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.transfers import (
     TransferItemType,
     TransferRecord,
@@ -36,6 +32,7 @@ from tests.gui.utils.oneprovider.transfers import (
     TransferRecordHistory,
     _TransfersTab,
 )
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

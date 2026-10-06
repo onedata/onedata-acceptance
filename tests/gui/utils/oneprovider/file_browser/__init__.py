@@ -22,7 +22,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItem,
 )
-from tests.gui.utils.generic import rm_css_cls
+from tests.gui.utils.web_elem_utils import rm_css_cls
 
 from ..browser import Browser
 from ..browser_row import BrowserRow
