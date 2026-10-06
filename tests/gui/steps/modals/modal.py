@@ -243,11 +243,11 @@ def g_wait_for_modal_to_disappear(
 
 
 def _click_on_confirmation_btn_in_modal(
-    driver: WebDriver, browser_id: str, button_name: str, tmp_memory: TmpMemory
+    browser_id: str, button_name: str, tmp_memory: TmpMemory
 ) -> None:
     @repeat_failed(attempts=WAIT_BACKEND, timeout=True)
-    def click_on_btn(d: WebDriver, elem: SeleniumWebElement, msg: str) -> None:
-        click_on_web_elem(d, elem, msg)
+    def click_on_btn(elem: SeleniumWebElement, msg: str) -> None:
+        click_on_web_elem(elem, msg)
 
     button_name = button_name.lower()
     modal = tmp_memory[browser_id]["window"]["modal"]
@@ -255,7 +255,7 @@ def _click_on_confirmation_btn_in_modal(
     error_message = f"clicking on {button_name} in displayed modal disabled"
     for btn in buttons:
         if btn.text.lower() == button_name:
-            click_on_btn(driver, btn, error_message)
+            click_on_btn(btn, error_message)
             break
     else:
         raise AssertionError(f"no button named {button_name} found")
@@ -268,10 +268,9 @@ def _click_on_confirmation_btn_in_modal(
     )
 )
 def wt_click_on_confirmation_btn_in_modal(
-    selenium: SeleniumDrivers, browser_id: str, button_name: str, tmp_memory: TmpMemory
+    browser_id: str, button_name: str, tmp_memory: TmpMemory
 ) -> None:
-    driver = selenium[browser_id]
-    _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory)
+    _click_on_confirmation_btn_in_modal(browser_id, button_name, tmp_memory)
 
 
 @given(
@@ -280,10 +279,9 @@ def wt_click_on_confirmation_btn_in_modal(
     )
 )
 def g_click_on_confirmation_btn_in_modal(
-    selenium: SeleniumDrivers, browser_id: str, button_name: str, tmp_memory: TmpMemory
+    browser_id: str, button_name: str, tmp_memory: TmpMemory
 ) -> None:
-    driver = selenium[browser_id]
-    _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory)
+    _click_on_confirmation_btn_in_modal(browser_id, button_name, tmp_memory)
 
 
 @wt(parsers.parse("user of {browser_id} sees that message displayed in modal matches: {regexp}"))
@@ -320,10 +318,7 @@ def activate_input_box_in_modal(browser_id: str, in_type: str, tmp_memory: TmpMe
 
 
 @wt(parsers.parse("user of {browser_id} clicks on {option} button in active modal"))
-def click_on_button_in_active_modal(
-    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory, option: str
-) -> None:
-    driver = selenium[browser_id]
+def click_on_button_in_active_modal(browser_id: str, tmp_memory: TmpMemory, option: str) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
     if option == "copy":
         button = modal.find_element(By.CSS_SELECTOR, "button.copy-btn")
@@ -331,10 +326,10 @@ def click_on_button_in_active_modal(
         button = modal.find_element(By.CSS_SELECTOR, ".modal-footer button.btn-default")
 
     @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
-    def click_on_btn(d: WebDriver, btn: SeleniumWebElement, error_message: str) -> None:
-        click_on_web_elem(d, btn, error_message)
+    def click_on_btn(btn: SeleniumWebElement, error_message: str) -> None:
+        click_on_web_elem(btn, error_message)
 
-    click_on_btn(driver, button, f"{option} btn for displayed modal disabled")
+    click_on_btn(button, f"{option} btn for displayed modal disabled")
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{text}" option in modal is not selected'))

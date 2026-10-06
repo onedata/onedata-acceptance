@@ -79,7 +79,7 @@ def remove_member_from_parent(
     modal_name = modal_name_prefix + parent_label
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Remove", tmp_memory)
+    wt_click_on_confirmation_btn_in_modal(browser_id, "Remove", tmp_memory)
     dismiss_notifies_if_present(driver)
 
 

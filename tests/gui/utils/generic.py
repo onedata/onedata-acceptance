@@ -15,7 +15,6 @@ from datetime import datetime
 from enum import Enum, StrEnum
 from functools import partial
 from itertools import islice
-from time import sleep
 from typing import Literal, Protocol, TypeVar, cast, overload
 
 from _pytest._py.path import LocalPath
@@ -24,7 +23,6 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
 )
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -44,7 +42,7 @@ from tests.gui.type_definitions import (
 )
 from tests.gui.utils import text as text_utils
 from tests.type_definitions import JsonValue
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import element_has_class, repeat_failed
 
 T = TypeVar("T")
 suppress = contextlib_suppress
@@ -425,25 +423,18 @@ def find_web_elem_with_text(
 
 
 def click_on_web_elem(
-    driver: WebDriver,
     web_elem: SeleniumWebElement,
     error_message: str | Callable[[], str],
 ) -> None:
-    disabled = "disabled" in web_elem.get_attribute("class")
-    # scroll to make the element visible
-    if not web_elem.is_displayed():
-        _ = web_elem.location_once_scrolled_into_view
-    if web_elem.is_enabled() and web_elem.is_displayed() and not disabled:
-        # Probably after striping disabled from web elem
-        # elem is not immediately clickable
-        sleep(0.25)
-        action = ActionChains(driver)
-        action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
-        action.perform()
-    else:
-        if callable(error_message):
-            error_message = error_message()
-        raise ElementNotInteractableException(error_message)
+    if (
+        not web_elem.is_enabled()
+        or not web_elem.is_displayed()
+        or element_has_class(web_elem, "disabled")
+    ):
+        message = error_message() if callable(error_message) else error_message
+        raise ElementNotInteractableException(message)
+
+    web_elem.click()
 
 
 def _scroll_to_css_selector(web_elem_root: WebElemRoot, css_selector: str) -> None:
