@@ -20,12 +20,15 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.edit_permissions import (
     MemberAclPermission,
 )
+from tests.gui.utils.generic import perform_action
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import SeleniumWebElement, repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _get_index(selenium: SeleniumDrivers, browser_id: str, num: str) -> int:
     n = NUMERALS[num]
     if n < 0:
@@ -371,7 +374,6 @@ def assert_acl_subject(
         r"(?P<num>.*) ACL record in permissions panel"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_btn_in_acl_record(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -379,12 +381,21 @@ def click_on_btn_in_acl_record(
     num: str,
 ) -> None:
     driver = selenium[browser_id]
+    edit_permissions = Modals(driver).details_modal.edit_permissions
     n = _get_index(selenium, browser_id, num)
-
     btn = btn.strip('"')
-    perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]
-    perm.menu_button()
-    Popups(driver).menu_in_edit_permissions.menu[btn.capitalize()]()
+
+    perm = perform_action(lambda: edit_permissions.acl.member_permission_list[n])
+    perform_action(perm.menu_button.click)
+
+    def get_menu_btn(driver: WebDriver) -> SeleniumWebElement:
+        return Popups(driver).menu_in_edit_permissions.menu[btn.capitalize()]
+
+    menu_option = wait_for_visible_element_using_getter(driver, get_menu_btn)
+    perform_action(
+        menu_option.click,
+        timeout=2 * WAIT_FRONTEND,
+    )
 
 
 @wt(

@@ -31,6 +31,7 @@ from tests.gui.type_definitions import (
     WebElementOrSelector,
     WebElemRoot,
 )
+from tests.gui.utils.core.exceptions import PageObjectNotFoundError
 from tests.utils.utils import element_has_class, repeat_failed
 
 
@@ -81,7 +82,7 @@ def is_element_visible_using_getter[VisibleElementT: VisibleElement](
     try:
         web_elem = web_elem_getter(driver)
         return web_elem if web_elem.is_displayed() else None
-    except (NoSuchElementException, StaleElementReferenceException):
+    except (NoSuchElementException, StaleElementReferenceException, PageObjectNotFoundError):
         return None
 
 

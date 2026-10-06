@@ -8,14 +8,11 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 from tests.utils.utils import element_has_class
 
 from .base import PageObject
+from .exceptions import PageObjectNotFoundError
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
-
-
-class PageObjectNotFoundError(RuntimeError):
-    """Raised when an item cannot be found in a page-object sequence."""
 
 
 class ButtonPageObject(PageObject):
