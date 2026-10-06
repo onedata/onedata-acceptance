@@ -10,7 +10,7 @@ Feature: Bagit uploader tests
             providers:
                 - oneprovider-1:
                     storage: s3
-                    size: 10000000
+                    size: 100000000000
             storage:
                 defaults:
                     provider: oneprovider-1
@@ -84,9 +84,9 @@ Feature: Bagit uploader tests
 
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 1
     And user of browser sees destination path, size and source URL information in audit log in "files-to-download" store details and they are as follow:
-      source URL: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
-      size: 5969
-      destination path: googlelogo_color_272x92dp.png
+      source URL: https://packages.onedata.org/icons/apache_pb.png
+      size: 8376
+      destination path: apache_pb.png
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
@@ -103,7 +103,7 @@ Feature: Bagit uploader tests
       - Star__-__v7__-__SegueA__-__2013_02_18.metadata.json
       - Star__-__v7__-__SegueA__-__2013_02_18.rfm
       - ark-file-meta.csv
-      - googlelogo_color_272x92dp.png
+      - apache_pb.png
 
     And user of browser closes "Store details" modal
 
@@ -126,7 +126,7 @@ Feature: Bagit uploader tests
       - Star__-__v7__-__SegueA__-__2013_02_18.metadata.json
       - Star__-__v7__-__SegueA__-__2013_02_18.rfm
       - ark-file-meta.csv
-      - googlelogo_color_272x92dp.png
+      - apache_pb.png
     And user of browser closes "Store details" modal
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-archive-destination" in 1st parallel box in "archive destination" lane
@@ -150,7 +150,7 @@ Feature: Bagit uploader tests
         - Star__-__v7__-__SegueA__-__2013_02_18.metadata.json
         - Star__-__v7__-__SegueA__-__2013_02_18.rfm
         - ark-file-meta.csv
-        - googlelogo_color_272x92dp.png
+        - apache_pb.png
       - valid.zip
 
     And user of browser sees that each file in "dir1" directory has following metadata:
@@ -159,16 +159,16 @@ Feature: Bagit uploader tests
       - checksum.md5.expected
       - checksum.md5.calculated
 
-    And user of browser sees inherited status tag for "googlelogo_color_272x92dp.png" in file browser
-    And user of browser clicks on inherited status tag for "googlelogo_color_272x92dp.png" in file browser
-    And user of browser sees Dataset status tag for "googlelogo_color_272x92dp.png" in file browser
+    And user of browser sees inherited status tag for "apache_pb.png" in file browser
+    And user of browser clicks on inherited status tag for "apache_pb.png" in file browser
+    And user of browser sees Dataset status tag for "apache_pb.png" in file browser
 
 
   Scenario Outline: User sees desirable xrootd file in file browser after execution of uploaded "bagit-uploader" with <xrootd_archive>
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload archive "automation/bagit_test_archives/<xrootd_archive>" to current dir
+    And user of browser uses upload button from file browser menu bar to upload archive <archive_path> to current dir
     And user of browser sees that item named <xrootd_archive> has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
@@ -201,7 +201,7 @@ Feature: Bagit uploader tests
 
     And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 1
     And user of browser sees that element in the content of the "uploaded-files" store details modal contains following file names:
-      - LHC10c_pp_ESD_120076.json
+      - <fetched_file>
     And user of browser closes "Store details" modal
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
@@ -213,7 +213,7 @@ Feature: Bagit uploader tests
 
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 1
     And user of browser sees that element in the content of the "files-to-download" store details modal contains following destination path:
-      - LHC10c_pp_ESD_120076.json
+      - <fetched_file>
     And user of browser closes "Store details" modal
 
     # Checking if Dataset in file browser has correct content
@@ -223,18 +223,18 @@ Feature: Bagit uploader tests
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees that the file structure in file browser is as follow:
         - data:
-          - LHC10c_pp_ESD_120076.json
+          - <fetched_file>
 
     And user of browser clicks and presses enter on item named "data" in file browser
-    And user of browser sees inherited status tag for "LHC10c_pp_ESD_120076.json" in file browser
-    And user of browser clicks on inherited status tag for "LHC10c_pp_ESD_120076.json" in file browser
-    And user of browser sees Dataset status tag for "LHC10c_pp_ESD_120076.json" in file browser
+    And user of browser sees inherited status tag for <fetched_file> in file browser
+    And user of browser clicks on inherited status tag for <fetched_file> in file browser
+    And user of browser sees Dataset status tag for <fetched_file> in file browser
 
 
     Examples:
-      | xrootd_archive                   |
-      | "valid_with_xrootd.zip"          |
-      | "bagit_archive_fetch_xrootd.zip" |
+      | archive_path                                                                                        | xrootd_archive                   | fetched_file                            |
+      | "automation/bagit_test_archives/valid_with_xrootd.zip"                                              | "valid_with_xrootd.zip"          | "LHC10c_pp_ESD_120076.json"             |
+      | "automation-examples/workflows/bagit-uploader/bagit_archive_fetch_xrootd.zip"                       | "bagit_archive_fetch_xrootd.zip" | "LHC10c_pp_ESD_120076.json"             |
 
 
   Scenario: User sees desirable exception in task audit log after executing BagIt Uploader with invalid archive - wrong_manifest_checksum.zip
@@ -270,19 +270,19 @@ Feature: Bagit uploader tests
         description: Lambda exception occurred during item processing.
 
 
-  Scenario: User sees desirable exception in task audit log after executing BagIt Uploader with invalid archive - wrong_fetch.zip
+  Scenario: User sees desirable exception in task audit log after BagIt Uploader fails to download unavailable_fetch_url.zip
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "automation/bagit_test_archives/wrong_fetch.zip" to current dir
-    And user of browser sees that item named "wrong_fetch.zip" has appeared in file browser
+    And user of browser uses upload button from file browser menu bar to upload file "automation/bagit_test_archives/unavailable_fetch_url.zip" to current dir
+    And user of browser sees that item named "unavailable_fetch_url.zip" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser executes 1st revision of "BagIt Uploader" workflow in "space1" space with the following initial values:
       destination-directory:
         - dir1
       input-bagit-archives:
-        - wrong_fetch.zip
+        - unavailable_fetch_url.zip
 
     Then user of browser sees "Failed" status in status bar in workflow visualizer
     And user of browser sees that status of "validate" lane in "BagIt Uploader" is "Finished"
@@ -296,7 +296,7 @@ Feature: Bagit uploader tests
       severity: Error
       content:
         details:
-          reason: $(contains ["HTTPSConnectionPool(host='www.heh.xd', port=443)", "Max retries exceeded with url", "Caused by NameResolutionError", "Failed to resolve 'www.heh.xd'", "[Errno -2] Name or service not known"])
+          reason: $(contains ["HTTP download failed", "404 Client Error", "packages.onedata.org"])
         description: Lambda exception occurred during item processing.
 
 
@@ -308,7 +308,7 @@ Feature: Bagit uploader tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload archive "automation/bagit_test_archives/bagit_archive_unpack.tar" to current dir
+    And user of browser uses upload button from file browser menu bar to upload archive "automation-examples/workflows/bagit-uploader/bagit_archive_unpack.tar" to current dir
     And user of browser sees that item named "bagit_archive_unpack.tar" has appeared in file browser
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
@@ -367,7 +367,53 @@ Feature: Bagit uploader tests
     And user of browser clicks on inherited status tag for "mid-covid6" in file browser
     And user of browser sees Dataset status tag for "mid-covid6" in file browser
 
-    # TODO: VFS-11705 implement test for following archives after workflow fix
-    # bagit_archive_5gbfile.zip
-    # bagit_archive_fetch.zip
-    # bagit_archive_unpack_and_fetch.zip
+
+  Scenario Outline: User sees successful execution of uploaded "BagIt Uploader" workflow with <input_archive>
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload archive <archive_path> to current dir
+    And user of browser sees that item named "<input_archive>" has appeared in file browser
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "BagIt Uploader" workflow
+    And user of browser chooses "<input_archive>" file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
+    And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
+    And user of browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser waits for all workflows to start
+    And user of browser waits extended time for all workflows to finish
+    And user of browser clicks on first executed workflow
+
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
+
+    And user of browser sees that audit log in task "bagit-uploader-unpack-data" in 1st parallel box in lane "unpack" contains following entry:
+      timestamp: today
+      source: user
+      severity: info
+      content:
+        status: Successfully unpacked <unpacked_files> files.
+        archive: "<input_archive>"
+    And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
+      timestamp: today
+      source: user
+      severity: info
+      content:
+        status: Found  <fetched_files> files to be downloaded.
+        archive: "<input_archive>"
+
+    And user of browser sees that number of elements in the content of the "files-to-download" store details modal is <fetched_files>
+    And user of browser closes "Store details" modal
+    And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is <uploaded_files>
+    And user of browser closes "Store details" modal
+
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees Dataset status tag for "dir1" in file browser
+
+    # TODO VFS-13914: uncomment and fix bagit_archive_3gb.zip test
+    Examples:
+      | archive_path                                                                                        | input_archive                      | unpacked_files | fetched_files | uploaded_files |
+      | "automation/bagit_test_archives/bagit_archive_fetch.zip"                                            | bagit_archive_fetch.zip            | 0              | 18            | 18             |
+      | "automation-examples/workflows/bagit-uploader/bagit_archive_unpack_and_fetch.zip"                   | bagit_archive_unpack_and_fetch.zip | 64             | 8             | 72             |
+#     | "automation-examples/workflows/bagit-uploader/bagit_archive_3gb.zip"                                | bagit_archive_3gb.zip              | 0              | 1             | 1              |
