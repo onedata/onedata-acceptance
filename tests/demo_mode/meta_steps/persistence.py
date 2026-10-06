@@ -24,14 +24,12 @@ from tests.demo_mode.utils.rest import OneproviderRestClient, OnezoneRestClient
 
 def start_persistent_environment(
     commands: DemoCommands,
-    request: pytest.FixtureRequest,
 ) -> DemoEnvironment:
     """Start both persistent commands before awaiting their services."""
-    onezone = start_persistent_onezone(commands, request)
+    onezone = start_persistent_onezone(commands)
     oneprovider = start_persistent_oneprovider(
         commands,
         onezone,
-        request,
     )
 
     await_onezone(commands, onezone)

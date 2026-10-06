@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from dataclasses import dataclass
 from pathlib import Path
 
+from tests.demo_mode.utils.command_context import current_command_context
 from tests.demo_mode.utils.commands.command import Command
 from tests.demo_mode.utils.commands.helpers import (
     CONTAINER_NAME_PLACEHOLDER,
@@ -30,17 +31,15 @@ class CommandTemplate:
     def bind(
         self,
         *,
-        release: str | None = None,
         container: str | None = None,
         cwd: Path = DEMO_MODE_ROOT,
     ) -> Command:
         """Load the command and substitute values required by its template."""
+        context = current_command_context()
         command = self.path.read_text(encoding="utf-8")
 
         if RELEASE_PLACEHOLDER in command:
-            if release is None:
-                raise ValueError(f"Command {self.relative_path!r} requires a release")
-            command = command.replace(RELEASE_PLACEHOLDER, release)
+            command = command.replace(RELEASE_PLACEHOLDER, context.release)
 
         if CONTAINER_NAME_PLACEHOLDER in command:
             if container is None:

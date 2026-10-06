@@ -4,8 +4,6 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import pytest
-
 from tests.demo_mode.constants import (
     FIRST_ONEPROVIDER_CONTAINER,
     SECOND_ONEPROVIDER_CONTAINER,
@@ -24,15 +22,13 @@ from tests.demo_mode.utils.commands import DemoCommands
 
 def start_foreground_environment(
     commands: DemoCommands,
-    request: pytest.FixtureRequest,
 ) -> DemoEnvironment:
     """Start and await a foreground Onezone and Oneprovider."""
-    onezone = run_foreground_onezone(commands, request)
+    onezone = run_foreground_onezone(commands)
     oneprovider = run_foreground_oneprovider(
         commands,
         FIRST_ONEPROVIDER_CONTAINER,
         onezone,
-        request,
     )
 
     await_onezone(commands, onezone)
@@ -45,21 +41,18 @@ def start_foreground_environment(
 
 def start_distributed_environment(
     commands: DemoCommands,
-    request: pytest.FixtureRequest,
 ) -> DemoEnvironment:
     """Start and await a foreground Onezone and two Oneproviders."""
-    onezone = run_foreground_onezone(commands, request)
+    onezone = run_foreground_onezone(commands)
     first_oneprovider = run_foreground_oneprovider(
         commands,
         FIRST_ONEPROVIDER_CONTAINER,
         onezone,
-        request,
     )
     second_oneprovider = run_foreground_oneprovider(
         commands,
         SECOND_ONEPROVIDER_CONTAINER,
         onezone,
-        request,
     )
 
     await_onezone(commands, onezone)

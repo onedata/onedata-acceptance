@@ -14,13 +14,10 @@ from tests.demo_mode.steps.python_access import (
 from tests.demo_mode.utils.commands import DemoCommands
 
 
-def test_python_access(
-    demo_commands: DemoCommands,
-    request: pytest.FixtureRequest,
-) -> None:
+def test_python_access(demo_commands: DemoCommands, request: pytest.FixtureRequest) -> None:
     expected_output = f"['{DEMO_SPACE_NAME}']\nTEST\n"
 
-    start_foreground_environment(demo_commands, request)
+    start_foreground_environment(demo_commands)
 
     command_output = run_python_access_example(demo_commands, request)
     assert command_output == expected_output, (

@@ -30,7 +30,7 @@ def test_distributed_environment(
     second_file_name = "second-provider-rest-test.txt"
     second_file_content = b"Data stored through the second Oneprovider\n"
 
-    environment = start_distributed_environment(demo_commands, request)
+    environment = start_distributed_environment(demo_commands)
     access_token = environment.oneproviders[0].demo_access_token(demo_commands)
     onezone = OnezoneRestClient(environment.onezone, access_token)
     first_provider = OneproviderRestClient(environment.oneproviders[0], access_token)

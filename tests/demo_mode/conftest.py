@@ -6,20 +6,22 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import warnings
 from collections.abc import Iterator
-from typing import cast
+from typing import Final, cast
 
 import pytest
 from _pytest.config.argparsing import Parser
 from urllib3.exceptions import InsecureRequestWarning
 
 from tests.demo_mode.constants import CONTAINER_NAMES
+from tests.demo_mode.utils.command_context import command_context
 from tests.demo_mode.utils.commands import DemoCommands
-from tests.demo_mode.utils.logging import command_logs_for_test
 from tests.demo_mode.utils.persistence import (
     prepare_demo_persistence,
     remove_demo_persistence,
 )
 from tests.utils.docker_utils import remove_containers
+
+PROCESS_EXIT_TIMEOUT: Final = 10.0
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -36,15 +38,8 @@ def release(request: pytest.FixtureRequest) -> str:
 
 
 @pytest.fixture
-def demo_commands(release: str) -> DemoCommands:
-    return DemoCommands(release)
-
-
-@pytest.fixture(autouse=True)
-def command_log_directory(request: pytest.FixtureRequest) -> Iterator[None]:
-    test_name = request.node.name.removeprefix("test_")
-    with command_logs_for_test(test_name):
-        yield
+def demo_commands() -> DemoCommands:
+    return DemoCommands()
 
 
 @pytest.fixture(autouse=True)
@@ -55,16 +50,6 @@ def suppress_unverified_https_warning() -> Iterator[None]:
         yield
 
 
-@pytest.fixture(autouse=True)
-def cleanup_demo_containers() -> Iterator[None]:
-    remove_containers(CONTAINER_NAMES)
-    print(flush=True)
-    try:
-        yield
-    finally:
-        remove_containers(CONTAINER_NAMES)
-
-
 @pytest.fixture
 def isolated_persistence_directories() -> Iterator[None]:
     """Own and clean the fixed host paths used by persistence commands."""
@@ -73,3 +58,20 @@ def isolated_persistence_directories() -> Iterator[None]:
         yield
     finally:
         remove_demo_persistence()
+
+
+@pytest.fixture(autouse=True)
+def demo_test_context(
+    request: pytest.FixtureRequest,
+    release: str,
+) -> Iterator[None]:
+    remove_containers(CONTAINER_NAMES)
+
+    with command_context(request.node.name, release) as context:
+        try:
+            yield
+        finally:
+            try:
+                remove_containers(CONTAINER_NAMES)
+            finally:
+                context.reap_processes(PROCESS_EXIT_TIMEOUT)

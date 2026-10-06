@@ -25,7 +25,7 @@ def test_persistency(
 ) -> None:
     test_file_content = b"Onedata demo-mode persistence REST test\n"
 
-    environment = start_persistent_environment(demo_commands, request)
+    environment = start_persistent_environment(demo_commands)
     assert_onezone_configuration(
         OnezoneRestClient(environment.onezone),
         release=release,
@@ -39,7 +39,7 @@ def test_persistency(
         request=request,
     )
     stop_persistent_environment(environment)
-    restarted_environment = start_persistent_environment(demo_commands, request)
+    restarted_environment = start_persistent_environment(demo_commands)
     assert_onezone_configuration(
         OnezoneRestClient(restarted_environment.onezone),
         release=release,

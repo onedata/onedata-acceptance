@@ -11,6 +11,8 @@ from contextlib import suppress
 from pathlib import Path
 from typing import Final, TextIO
 
+from tests.demo_mode.utils.command_context import current_command_context
+
 DEMO_MODE_ROOT: Final = Path(__file__).resolve().parents[2]
 COMMANDS_ROOT: Final = DEMO_MODE_ROOT / "commands"
 RELEASE_PLACEHOLDER: Final = "xRELEASExVERSIONx"
@@ -49,7 +51,7 @@ def _start_subprocess(
         stdout = log_file
         stderr = subprocess.STDOUT
 
-    return subprocess.Popen(
+    process = subprocess.Popen(
         command,
         cwd=cwd,
         stdout=stdout,
@@ -59,6 +61,9 @@ def _start_subprocess(
         start_new_session=True,
         text=True,
     )
+    current_command_context().register_process(process)
+
+    return process
 
 
 def _send_signal_to_process_group(

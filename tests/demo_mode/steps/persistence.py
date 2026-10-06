@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import subprocess
 
-import pytest
 from environment import docker
 
 from tests.demo_mode.constants import (
@@ -21,33 +20,27 @@ from tests.demo_mode.utils.logging import log_step
 @log_step("Starting persistent Onezone")
 def start_persistent_onezone(
     commands: DemoCommands,
-    request: pytest.FixtureRequest,
 ) -> Onezone:
     """Start Onezone using the unmodified persistence command."""
-    onezone = Onezone(
+    return Onezone(
         container=ONEZONE_CONTAINER,
         process=commands.persistent_onezone().start(),
     )
-    request.addfinalizer(onezone.stop_process)
-    return onezone
 
 
 @log_step("Starting persistent Oneprovider")
 def start_persistent_oneprovider(
     commands: DemoCommands,
     onezone: Onezone,
-    request: pytest.FixtureRequest,
 ) -> Oneprovider:
     """Start Oneprovider using the unmodified persistence command."""
     if onezone.process is None or onezone.process.poll() is not None:
         raise AssertionError("Onezone stopped before Oneprovider could be started")
 
-    oneprovider = Oneprovider(
+    return Oneprovider(
         container=FIRST_ONEPROVIDER_CONTAINER,
         process=commands.persistent_oneprovider().start(),
     )
-    request.addfinalizer(oneprovider.stop_process)
-    return oneprovider
 
 
 @log_step("Stopping persistent demo-mode environment")

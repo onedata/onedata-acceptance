@@ -6,8 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Final
 
-import pytest
-
 from tests.demo_mode.constants import ONEZONE_CONTAINER
 from tests.demo_mode.models import DemoService, Oneprovider, Onezone
 from tests.demo_mode.utils.commands import Command, DemoCommands
@@ -28,14 +26,11 @@ def _await_running_container(
 @log_step("Running Onezone in the foreground")
 def run_foreground_onezone(
     commands: DemoCommands,
-    request: pytest.FixtureRequest,
 ) -> Onezone:
-    onezone = Onezone(
+    return Onezone(
         container=ONEZONE_CONTAINER,
         process=commands.foreground_onezone().start(),
     )
-    request.addfinalizer(onezone.stop_process)
-    return onezone
 
 
 @log_step("Running Oneprovider in the foreground")
@@ -43,16 +38,13 @@ def run_foreground_oneprovider(
     commands: DemoCommands,
     container: str,
     onezone: Onezone,
-    request: pytest.FixtureRequest,
 ) -> Oneprovider:
     if onezone.process is None or onezone.process.poll() is not None:
         raise AssertionError("Onezone stopped before Oneprovider could be started")
-    oneprovider = Oneprovider(
+    return Oneprovider(
         container=container,
         process=commands.foreground_oneprovider(container).start(),
     )
-    request.addfinalizer(oneprovider.stop_process)
-    return oneprovider
 
 
 @log_step("Running Onezone in the background")

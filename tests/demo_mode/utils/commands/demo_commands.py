@@ -4,7 +4,6 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from dataclasses import dataclass
 from pathlib import Path
 from shlex import quote
 
@@ -25,29 +24,20 @@ _PYTHON_SETUP = CommandTemplate("python_access/setup_environment.sh")
 _PYTHON_ACCESS = CommandTemplate("python_access/check_python_access.py")
 
 
-@dataclass(frozen=True)
 class DemoCommands:
     """Catalog of all commands exercised by the demo-mode suite."""
 
-    release: str
-
     def foreground_onezone(self) -> Command:
-        return _FOREGROUND_ONEZONE.bind(release=self.release)
+        return _FOREGROUND_ONEZONE.bind()
 
     def foreground_oneprovider(self, container: str) -> Command:
-        return _FOREGROUND_ONEPROVIDER.bind(
-            release=self.release,
-            container=container,
-        )
+        return _FOREGROUND_ONEPROVIDER.bind(container=container)
 
     def background_onezone(self) -> Command:
-        return _BACKGROUND_ONEZONE.bind(release=self.release)
+        return _BACKGROUND_ONEZONE.bind()
 
     def background_oneprovider(self, container: str) -> Command:
-        return _BACKGROUND_ONEPROVIDER.bind(
-            release=self.release,
-            container=container,
-        )
+        return _BACKGROUND_ONEPROVIDER.bind(container=container)
 
     def await_onezone(self) -> Command:
         return _AWAIT_ONEZONE.bind()
@@ -56,16 +46,16 @@ class DemoCommands:
         return _AWAIT_ONEPROVIDER.bind(container=container)
 
     def persistent_onezone(self) -> Command:
-        return _PERSISTENT_ONEZONE.bind(release=self.release)
+        return _PERSISTENT_ONEZONE.bind()
 
     def persistent_oneprovider(self) -> Command:
-        return _PERSISTENT_ONEPROVIDER.bind(release=self.release)
+        return _PERSISTENT_ONEPROVIDER.bind()
 
     def access_token(self, container: str) -> Command:
         return _ACCESS_TOKEN.bind(container=container)
 
     def comprehensive_example(self) -> Command:
-        return _COMPREHENSIVE_EXAMPLE.bind(release=self.release)
+        return _COMPREHENSIVE_EXAMPLE.bind()
 
     def python_access(
         self,
