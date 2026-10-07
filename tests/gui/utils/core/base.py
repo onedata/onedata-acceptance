@@ -128,7 +128,7 @@ class PageObject(AbstractPageObject):
 
     def click(self) -> None:
         click_on_web_elem(
-            self._click_area,
+            lambda: self._click_area,
             lambda: f"cannot click on {self}",
         )
 
@@ -158,6 +158,6 @@ class ExpandableMixin:
 
     def _click_on_toggle(self) -> None:
         click_on_web_elem(
-            self._toggle,
+            lambda: self._toggle,
             lambda: f"cannot click on toggle for {self}",
         )

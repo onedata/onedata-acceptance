@@ -64,8 +64,10 @@ class BrowserRow(NamedElement):
         return getattr(self, f"{transform(name)}_tag").text
 
     def click_on_status_tag(self, name: str) -> None:
-        tag = getattr(self, f"{name.lower()}_tag")
-        click_on_web_elem(tag, f'cannot click on "{name}" in {self}')
+        click_on_web_elem(
+            lambda: getattr(self, f"{name.lower()}_tag"),
+            f'cannot click on "{name}" in {self}',
+        )
 
     def hover_to_btn_and_click(self, btn_name: str, driver: WebDriver) -> None:
         btn = getattr(self, btn_name)

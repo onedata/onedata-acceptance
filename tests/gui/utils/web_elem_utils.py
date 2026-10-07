@@ -163,17 +163,20 @@ def find_web_elem_with_text(
 
 
 @repeat_failed(
-    timeout=1,
+    timeout=WAIT_FRONTEND,
     interval=0.05,
     exceptions=(
         ElementNotInteractableException,
         ElementClickInterceptedException,
+        NoSuchElementException,
+        StaleElementReferenceException,
     ),
 )
 def click_on_web_elem(
-    web_elem: SeleniumWebElement,
+    web_elem_getter: Callable[[], SeleniumWebElement],
     error_message: str | Callable[[], str],
 ) -> None:
+    web_elem = web_elem_getter()
     if (
         not web_elem.is_enabled()
         or not web_elem.is_displayed()

@@ -299,16 +299,12 @@ def activate_input_box_in_modal(browser_id: str, in_type: str, tmp_memory: TmpMe
 @wt(parsers.parse("user of {browser_id} clicks on {option} button in active modal"))
 def click_on_button_in_active_modal(browser_id: str, tmp_memory: TmpMemory, option: str) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
-    if option == "copy":
-        button = modal.find_element(By.CSS_SELECTOR, "button.copy-btn")
-    else:
-        button = modal.find_element(By.CSS_SELECTOR, ".modal-footer button.btn-default")
 
-    @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
-    def click_on_btn(btn: SeleniumWebElement, error_message: str) -> None:
-        click_on_web_elem(btn, error_message)
+    def button_getter() -> SeleniumWebElement:
+        selector = "button.copy-btn" if option == "copy" else ".modal-footer button.btn-default"
+        return modal.find_element(By.CSS_SELECTOR, selector)
 
-    click_on_btn(button, f"{option} btn for displayed modal disabled")
+    click_on_web_elem(button_getter, f"{option} btn for displayed modal disabled")
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{text}" option in modal is not selected'))
