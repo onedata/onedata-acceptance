@@ -14,7 +14,6 @@ from tests.demo_mode.meta_steps.persistence import (
 from tests.demo_mode.meta_steps.rest import assert_onezone_configuration
 from tests.demo_mode.steps.persistence import stop_persistent_environment
 from tests.demo_mode.utils.commands import DemoCommands
-from tests.demo_mode.utils.rest import OnezoneRestClient
 
 
 @pytest.mark.usefixtures("isolated_persistence_directories")
@@ -27,7 +26,7 @@ def test_persistency(
 
     environment = start_persistent_environment(demo_commands)
     assert_onezone_configuration(
-        OnezoneRestClient(environment.onezone),
+        environment.onezone,
         release=release,
     )
 
@@ -41,7 +40,7 @@ def test_persistency(
     stop_persistent_environment(environment)
     restarted_environment = start_persistent_environment(demo_commands)
     assert_onezone_configuration(
-        OnezoneRestClient(restarted_environment.onezone),
+        restarted_environment.onezone,
         release=release,
     )
     assert_persistence_state(

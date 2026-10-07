@@ -9,11 +9,10 @@ import subprocess
 from environment import docker
 
 from tests.demo_mode.constants import (
-    FIRST_ONEPROVIDER_CONTAINER,
     ONEZONE_CONTAINER,
 )
-from tests.demo_mode.models import DemoEnvironment, Oneprovider, Onezone
-from tests.demo_mode.utils.commands import DemoCommands
+from tests.demo_mode.type_definitions import DemoEnvironment, Oneprovider, Onezone
+from tests.demo_mode.utils.commands import Command, DemoCommands
 from tests.demo_mode.utils.logging import log_step
 
 
@@ -31,6 +30,7 @@ def start_persistent_onezone(
 @log_step("Starting persistent Oneprovider")
 def start_persistent_oneprovider(
     commands: DemoCommands,
+    container: str,
     onezone: Onezone,
 ) -> Oneprovider:
     """Start Oneprovider using the unmodified persistence command."""
@@ -38,8 +38,8 @@ def start_persistent_oneprovider(
         raise AssertionError("Onezone stopped before Oneprovider could be started")
 
     return Oneprovider(
-        container=FIRST_ONEPROVIDER_CONTAINER,
-        process=commands.persistent_oneprovider().start(),
+        container=container,
+        process=commands.persistent_oneprovider(container).start(),
     )
 
 
@@ -60,7 +60,8 @@ def stop_persistent_environment(
         try:
             service.process.wait(timeout=timeout)
         except subprocess.TimeoutExpired as error:
-            service.stop_process()
+            if service.process is not None:
+                Command.stop_process(service.process, timeout)
             raise AssertionError(
                 f"The command running {service.container} did not exit after Docker stop"
             ) from error

@@ -48,8 +48,8 @@ class DemoCommands:
     def persistent_onezone(self) -> Command:
         return _PERSISTENT_ONEZONE.bind()
 
-    def persistent_oneprovider(self) -> Command:
-        return _PERSISTENT_ONEPROVIDER.bind()
+    def persistent_oneprovider(self, container: str) -> Command:
+        return _PERSISTENT_ONEPROVIDER.bind(container=container)
 
     def access_token(self, container: str) -> Command:
         return _ACCESS_TOKEN.bind(container=container)

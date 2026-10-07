@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from typing import cast
 
 from tests import OP_REST_PORT, PANEL_REST_PORT
-from tests.demo_mode.models import Oneprovider
 from tests.demo_mode.utils.rest.helpers import (
     SPACE_APPEARANCE_TIMEOUT,
     SPACE_SUPPORT_SIZE,
@@ -17,7 +16,6 @@ from tests.demo_mode.utils.rest.helpers import (
 )
 from tests.demo_mode.utils.rest.onezone_client import OnezoneRestClient
 from tests.type_definitions import JsonObject
-from tests.utils.docker_utils import docker_ip
 from tests.utils.rest_utils import (
     get_panel_rest_path,
     get_provider_rest_path,
@@ -33,16 +31,12 @@ from tests.utils.utils import repeat_failed
 class OneproviderRestClient:
     """REST and Onepanel operations directed at one demo Oneprovider."""
 
-    provider: Oneprovider
+    host: str
     access_token: str
-
-    @property
-    def container(self) -> str:
-        return self.provider.container
 
     def _list_onepanel_resource_ids(self, resource: str) -> list[str]:
         response = http_get(
-            ip=docker_ip(self.container),
+            ip=self.host,
             port=PANEL_REST_PORT,
             path=get_panel_rest_path("provider", resource),
             headers=_authorization_headers(self.access_token),
@@ -52,7 +46,7 @@ class OneproviderRestClient:
 
     def _list_accessible_spaces(self) -> list[JsonObject]:
         response = http_get(
-            ip=docker_ip(self.container),
+            ip=self.host,
             port=OP_REST_PORT,
             path=get_provider_rest_path("spaces"),
             headers=_authorization_headers(self.access_token),
@@ -66,7 +60,7 @@ class OneproviderRestClient:
         storage_id: str,
     ) -> None:
         http_post(
-            ip=docker_ip(self.container),
+            ip=self.host,
             port=PANEL_REST_PORT,
             path=get_panel_rest_path("provider", "spaces"),
             headers=_authorization_headers(self.access_token),
@@ -88,14 +82,12 @@ class OneproviderRestClient:
         accessible_space_ids = [
             cast(str, space["spaceId"]) for space in self._list_accessible_spaces()
         ]
-        assert space_id in accessible_space_ids, (
-            f"Space {space_id} has not appeared in {self.container}"
-        )
+        assert space_id in accessible_space_ids, f"Space {space_id} has not appeared at {self.host}"
         return space_id
 
     def configuration(self) -> JsonObject:
         response = http_get(
-            ip=docker_ip(self.container),
+            ip=self.host,
             port=OP_REST_PORT,
             path=get_provider_rest_path("configuration"),
         )
@@ -112,7 +104,7 @@ class OneproviderRestClient:
         ]
         assert len(matching_space_ids) == 1, (
             f"Expected exactly one accessible space named {name!r} through "
-            f"{self.container}, got {len(matching_space_ids)}"
+            f"{self.host}, got {len(matching_space_ids)}"
         )
         return matching_space_ids[0]
 
@@ -136,7 +128,7 @@ class OneproviderRestClient:
     def upload(self, *, space_id: str, file_name: str, content: bytes) -> None:
         file_path = get_provider_rest_path("data", space_id, "path", file_name)
         http_put(
-            ip=docker_ip(self.container),
+            ip=self.host,
             port=OP_REST_PORT,
             path=file_path,
             headers={
@@ -149,7 +141,7 @@ class OneproviderRestClient:
     def download(self, *, space_id: str, file_name: str) -> bytes:
         file_path = get_provider_rest_path("data", space_id, "path", file_name)
         return http_get(
-            ip=docker_ip(self.container),
+            ip=self.host,
             port=OP_REST_PORT,
             path=file_path,
             headers=_authorization_headers(self.access_token),
@@ -158,7 +150,7 @@ class OneproviderRestClient:
     def remove(self, *, space_id: str, file_name: str) -> None:
         file_path = get_provider_rest_path("data", space_id, "path", file_name)
         http_delete(
-            ip=docker_ip(self.container),
+            ip=self.host,
             port=OP_REST_PORT,
             path=file_path,
             headers=_authorization_headers(self.access_token),

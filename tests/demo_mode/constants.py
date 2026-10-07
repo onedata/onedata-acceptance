@@ -6,13 +6,18 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Final
 
+
+def oneprovider_container(number: int) -> str:
+    if number < 1:
+        raise ValueError("Oneprovider number must be positive")
+    return f"op_test{number}"
+
+
 ONEZONE_NAME: Final = "Demo Onezone"
 DEMO_SPACE_NAME: Final = "demo-space"
 ONEZONE_CONTAINER: Final = "oz_test"
-FIRST_ONEPROVIDER_CONTAINER: Final = "op_test1"
-SECOND_ONEPROVIDER_CONTAINER: Final = "op_test2"
 CONTAINER_NAMES: Final = (
-    FIRST_ONEPROVIDER_CONTAINER,
-    SECOND_ONEPROVIDER_CONTAINER,
+    oneprovider_container(1),
+    oneprovider_container(2),
     ONEZONE_CONTAINER,
 )

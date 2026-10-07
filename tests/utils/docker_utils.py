@@ -56,8 +56,18 @@ def run_cmd(
     )
 
 
-def docker_ip(container: object) -> str:
-    return docker.inspect(container)["NetworkSettings"]["IPAddress"]
+def container_ip(container: str) -> str:
+    inspection = docker.inspect(container)
+    networks = inspection["NetworkSettings"]["Networks"]
+
+    addresses = [network["IPAddress"] for network in networks.values() if network.get("IPAddress")]
+
+    if len(addresses) != 1:
+        raise AssertionError(
+            f"Expected {container!r} to have exactly one IP address, got {addresses!r}"
+        )
+
+    return addresses[0]
 
 
 def remove_containers(

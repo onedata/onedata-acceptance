@@ -9,13 +9,17 @@ from pathlib import Path
 from shutil import rmtree
 from typing import Final
 
-from tests.demo_mode.constants import CONTAINER_NAMES
+from tests.demo_mode.constants import CONTAINER_NAMES, oneprovider_container
 from tests.utils.docker_utils import remove_containers
 
 HOST_TMP_ENVIRONMENT_VARIABLE: Final = "DEMO_MODE_HOST_TMP"
-PERSISTENCE_DIRECTORY_NAMES: Final = ("oz-pers", "op-pers", "op-storage")
 OWNERSHIP_MARKER_NAME: Final = ".onedata-demo-mode-persistence-test-owned"
 OWNERSHIP_MARKER_CONTENT: Final = "onedata-demo-mode-persistence-test-v1\n"
+PERSISTENCE_DIRECTORY_NAMES: Final = (
+    "oz-pers",
+    f"{oneprovider_container(1)}-pers",
+    f"{oneprovider_container(1)}-storage",
+)
 
 
 def _host_tmp_path() -> Path:

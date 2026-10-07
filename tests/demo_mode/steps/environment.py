@@ -7,12 +7,22 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import Final
 
 from tests.demo_mode.constants import ONEZONE_CONTAINER
-from tests.demo_mode.models import DemoService, Oneprovider, Onezone
+from tests.demo_mode.type_definitions import DemoService, Oneprovider, Onezone
 from tests.demo_mode.utils.commands import Command, DemoCommands
 from tests.demo_mode.utils.logging import log_step
 from tests.utils.docker_utils import wait_for_running_container
 
 ENVIRONMENT_START_TIMEOUT: Final = 600.0
+
+
+def get_demo_access_token(
+    service: DemoService,
+    commands: DemoCommands,
+) -> str:
+    access_token = commands.access_token(service.container).run().strip()
+    if not access_token:
+        raise AssertionError("The access-token command returned an empty result")
+    return access_token
 
 
 def _await_running_container(
