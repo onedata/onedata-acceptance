@@ -13,6 +13,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
+from tests.gui.constants import WAIT_BACKEND
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -24,7 +25,6 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
-from tests.utils.entities_setup.spaces import WAIT_BACKEND
 from tests.utils.utils import element_has_class
 
 from .account_management import AccountManagementContentPage
