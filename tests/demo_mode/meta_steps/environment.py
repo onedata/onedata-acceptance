@@ -11,13 +11,35 @@ from tests.demo_mode.constants import (
 from tests.demo_mode.steps.environment import (
     await_oneprovider,
     await_onezone,
+    get_demo_access_token,
     run_background_oneprovider,
     run_background_onezone,
     run_foreground_oneprovider,
     run_foreground_onezone,
 )
+from tests.demo_mode.steps.rest import (
+    assert_oneprovider_configuration,
+    assert_onezone_configuration,
+)
 from tests.demo_mode.type_definitions import DemoEnvironment, Oneprovider, Onezone
 from tests.demo_mode.utils.commands import DemoCommands
+
+
+def assert_environment_configuration(
+    environment: DemoEnvironment,
+    commands: DemoCommands,
+    *,
+    release: str,
+) -> None:
+    """Assert the public configuration of every service in an environment."""
+    assert_onezone_configuration(environment.onezone, release=release)
+    for oneprovider in environment.oneproviders:
+        access_token = get_demo_access_token(oneprovider, commands)
+        assert_oneprovider_configuration(
+            oneprovider,
+            release=release,
+            access_token=access_token,
+        )
 
 
 def start_foreground_environment(

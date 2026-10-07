@@ -6,13 +6,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
+from tests.demo_mode.meta_steps.environment import assert_environment_configuration
 from tests.demo_mode.meta_steps.persistence import (
-    assert_persistence_state,
+    assert_persistent_state,
     save_persistent_state,
     start_persistent_environment,
+    stop_persistent_environment,
 )
-from tests.demo_mode.meta_steps.rest import assert_onezone_configuration
-from tests.demo_mode.steps.persistence import stop_persistent_environment
 from tests.demo_mode.utils.commands import DemoCommands
 
 
@@ -22,31 +22,26 @@ def test_persistency(
     demo_commands: DemoCommands,
     request: pytest.FixtureRequest,
 ) -> None:
-    test_file_content = b"Onedata demo-mode persistence REST test\n"
+    space_name = "demo-mode-persistence-space"
+    file_name = "persistence-rest-test.txt"
+    file_content = b"Onedata demo-mode persistence REST test\n"
 
     environment = start_persistent_environment(demo_commands)
-    assert_onezone_configuration(
-        environment.onezone,
-        release=release,
-    )
+    assert_environment_configuration(environment, demo_commands, release=release)
 
     persistence_state = save_persistent_state(
         environment,
         demo_commands,
-        release=release,
-        file_content=test_file_content,
+        space_name=space_name,
+        file_name=file_name,
+        file_content=file_content,
         request=request,
     )
     stop_persistent_environment(environment)
     restarted_environment = start_persistent_environment(demo_commands)
-    assert_onezone_configuration(
-        restarted_environment.onezone,
-        release=release,
-    )
-    assert_persistence_state(
+    assert_environment_configuration(restarted_environment, demo_commands, release=release)
+    assert_persistent_state(
         restarted_environment,
         demo_commands,
-        release=release,
-        file_content=test_file_content,
         state=persistence_state,
     )

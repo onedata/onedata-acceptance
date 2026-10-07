@@ -1,4 +1,4 @@
-"""Composite steps for the comprehensive demo-mode example."""
+"""Parsing helpers for the comprehensive demo-mode example."""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"

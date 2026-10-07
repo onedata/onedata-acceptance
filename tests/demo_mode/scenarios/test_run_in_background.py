@@ -6,13 +6,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.demo_mode.meta_steps.environment import start_background_environment
-from tests.demo_mode.meta_steps.rest import (
-    assert_onezone_configuration,
-    upload_and_verify_rest_file_content,
+from tests.demo_mode.meta_steps.environment import (
+    assert_environment_configuration,
+    start_background_environment,
 )
 from tests.demo_mode.steps.environment import get_demo_access_token
-from tests.demo_mode.steps.rest import get_rest_space_id
+from tests.demo_mode.steps.rest import assert_file_content, get_demo_space_id, upload_rest_file
 from tests.demo_mode.utils.commands import DemoCommands
 
 
@@ -21,21 +20,28 @@ def test_run_in_background(
     demo_commands: DemoCommands,
     request: pytest.FixtureRequest,
 ) -> None:
-    test_file_name = "background-rest-test.txt"
-    test_file_content = b"Onedata demo-mode background REST test\n"
+    file_name = "background-rest-test.txt"
+    file_content = b"Onedata demo-mode background REST test\n"
 
     environment = start_background_environment(demo_commands)
-    onezone = environment.onezone
-    provider = environment.oneproviders[0]
+    (provider,) = environment.oneproviders
     access_token = get_demo_access_token(provider, demo_commands)
-    assert_onezone_configuration(onezone, release=release)
+    assert_environment_configuration(environment, demo_commands, release=release)
 
-    space_id = get_rest_space_id(provider, access_token=access_token)
-    upload_and_verify_rest_file_content(
+    space_id = get_demo_space_id(provider, access_token=access_token)
+
+    upload_rest_file(
         provider,
         space_id=space_id,
-        file_name=test_file_name,
-        content=test_file_content,
+        file_name=file_name,
+        content=file_content,
         access_token=access_token,
         request=request,
+    )
+    assert_file_content(
+        provider,
+        space_id=space_id,
+        file_name=file_name,
+        expected_content=file_content,
+        access_token=access_token,
     )

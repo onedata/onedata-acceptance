@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 
 from tests.demo_mode.constants import oneprovider_container
-from tests.demo_mode.meta_steps.rest import get_oneprovider_id
 from tests.demo_mode.steps.environment import (
     await_oneprovider,
     await_onezone,
@@ -16,11 +15,13 @@ from tests.demo_mode.steps.environment import (
 from tests.demo_mode.steps.persistence import (
     start_persistent_oneprovider,
     start_persistent_onezone,
+    stop_persistent_service,
 )
 from tests.demo_mode.steps.rest import (
+    assert_file_content,
+    assert_space_support,
     create_space_for_provider,
-    download_rest_file,
-    get_supported_space_ids,
+    get_oneprovider_id,
     upload_rest_file,
 )
 from tests.demo_mode.type_definitions import DemoEnvironment, PersistentState
@@ -50,24 +51,23 @@ def save_persistent_state(
     environment: DemoEnvironment,
     commands: DemoCommands,
     *,
-    release: str,
+    space_name: str,
+    file_name: str,
     file_content: bytes,
     request: pytest.FixtureRequest,
 ) -> PersistentState:
     """Create and return state that must survive a demo-mode restart."""
-    file_name = "persistence-rest-test.txt"
     onezone = environment.onezone
-    provider = environment.oneproviders[0]
+    (provider,) = environment.oneproviders
     access_token = get_demo_access_token(provider, commands)
     provider_id = get_oneprovider_id(
         provider,
-        release=release,
         access_token=access_token,
     )
     space_id = create_space_for_provider(
         onezone,
         provider,
-        space_name="demo-mode-persistence-space",
+        space_name=space_name,
         access_token=access_token,
     )
     upload_rest_file(
@@ -83,43 +83,51 @@ def save_persistent_state(
         provider_id=provider_id,
         space_id=space_id,
         file_name=file_name,
+        file_content=file_content,
     )
 
 
-def assert_persistence_state(
+def assert_persistent_state(
     environment: DemoEnvironment,
     commands: DemoCommands,
     *,
-    release: str,
-    file_content: bytes,
     state: PersistentState,
 ) -> None:
     """Assert that demo credentials, configuration, and data survived restart."""
-    restarted_access_token = get_demo_access_token(environment.oneproviders[0], commands)
+    (provider,) = environment.oneproviders
+    restarted_access_token = get_demo_access_token(provider, commands)
     assert restarted_access_token == state.access_token, (
         "Demo access token changed after restart: "
         f"expected {state.access_token!r}, got {restarted_access_token!r}"
     )
 
-    provider = environment.oneproviders[0]
     restarted_provider_id = get_oneprovider_id(
         provider,
-        release=release,
         access_token=state.access_token,
     )
     assert restarted_provider_id == state.provider_id, (
         f"Expected provider ID {state.provider_id!r} after restart, got {restarted_provider_id!r}"
     )
-    assert state.space_id in get_supported_space_ids(
+    assert_space_support(
         provider,
+        space_id=state.space_id,
+        expected=True,
         access_token=state.access_token,
-    ), f"Space {state.space_id} is no longer supported by {provider.container} after restart"
-    downloaded_content = download_rest_file(
+    )
+    assert_file_content(
         provider,
         space_id=state.space_id,
         file_name=state.file_name,
+        expected_content=state.file_content,
         access_token=state.access_token,
     )
-    assert downloaded_content == file_content, (
-        f"{provider.container} returned {downloaded_content!r}, expected {file_content!r}"
-    )
+
+
+def stop_persistent_environment(
+    environment: DemoEnvironment,
+    timeout: float = 60,
+) -> None:
+    """Gracefully stop and reap a persistent demo-mode environment."""
+    services = (*environment.oneproviders, environment.onezone)
+    for service in services:
+        stop_persistent_service(service, timeout)

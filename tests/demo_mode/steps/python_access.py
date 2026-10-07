@@ -14,13 +14,14 @@ from tests.demo_mode.utils.python_access import (
 )
 
 
-@log_step("Running Python access example")
-def run_python_access_example(
+@log_step("Running Python access example and checking the output")
+def assert_python_access_example_output(
     commands: DemoCommands,
+    *,
+    expected_output: str,
     request: pytest.FixtureRequest,
     timeout: float = 600,
-) -> str:
-    """Prepare and run the Python access example in its generated venv."""
+) -> None:
     environment_root = prepare_python_access_directory(request)
     setup_log_path = environment_root / "setup.log"
     command = commands.python_access(
@@ -28,9 +29,12 @@ def run_python_access_example(
         setup_log_path=setup_log_path,
     )
     try:
-        return command.run(timeout=timeout)
+        actual_output = command.run(timeout=timeout)
     except AssertionError as error:
         setup_log = read_setup_log(setup_log_path)
         raise AssertionError(
             f"Python access example failed:\nsetup output:\n{setup_log}\n{error}"
         ) from error
+    assert actual_output == expected_output, (
+        f"Expected Python access output {expected_output!r}, got {actual_output!r}"
+    )

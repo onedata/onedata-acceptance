@@ -42,3 +42,4 @@ class PersistentState:
     provider_id: str
     space_id: str
     file_name: str
+    file_content: bytes

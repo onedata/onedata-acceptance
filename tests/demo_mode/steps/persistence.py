@@ -11,7 +11,7 @@ from environment import docker
 from tests.demo_mode.constants import (
     ONEZONE_CONTAINER,
 )
-from tests.demo_mode.type_definitions import DemoEnvironment, Oneprovider, Onezone
+from tests.demo_mode.type_definitions import DemoService, Oneprovider, Onezone
 from tests.demo_mode.utils.commands import Command, DemoCommands
 from tests.demo_mode.utils.logging import log_step
 
@@ -43,25 +43,19 @@ def start_persistent_oneprovider(
     )
 
 
-@log_step("Stopping persistent demo-mode environment")
-def stop_persistent_environment(
-    environment: DemoEnvironment,
-    timeout: float = 60,
-) -> None:
-    """Gracefully stop and reap a persistent demo-mode environment."""
-    services = (*environment.oneproviders, environment.onezone)
-    for service in services:
-        docker.stop(
-            service.container,
-            command_timeout=timeout,
-        )
-        if service.process is None:
-            raise AssertionError(f"Persistent service {service.container} has no launcher process")
-        try:
-            service.process.wait(timeout=timeout)
-        except subprocess.TimeoutExpired as error:
-            if service.process is not None:
-                Command.stop_process(service.process, timeout)
-            raise AssertionError(
-                f"The command running {service.container} did not exit after Docker stop"
-            ) from error
+@log_step("Stopping persistent demo-mode service")
+def stop_persistent_service(service: DemoService, timeout: float = 60) -> None:
+    docker.stop(
+        service.container,
+        command_timeout=timeout,
+    )
+    if service.process is None:
+        raise AssertionError(f"Persistent service {service.container} has no launcher process")
+    try:
+        service.process.wait(timeout=timeout)
+    except subprocess.TimeoutExpired as error:
+        Command.stop_process(service.process, timeout)
+        raise AssertionError(
+            f"The command running {service.container} "
+            "did not exit after Docker stop"
+        ) from error
