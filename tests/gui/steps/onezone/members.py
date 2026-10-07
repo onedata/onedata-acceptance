@@ -11,7 +11,7 @@ import time
 from typing import Any, Protocol, cast
 
 import yaml
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -738,7 +738,7 @@ def try_setting_privileges_in_members_subpage(
             config,
             True,
         )
-    except AssertionError:
+    except (TimeoutException, AssertionError):
         button = "Save"
         member_type_new = member_type + "s"
         privileges = yaml.load(config, yaml.Loader)
@@ -877,17 +877,24 @@ def assert_privileges_in_members_subpage(
     config: str,
     option: str | bool,
 ) -> None:
+    driver = selenium[browser_id]
     member_type = member_type + "s"
     privileges = yaml.load(config, yaml.Loader)
-    tree = get_privilege_tree(selenium, browser_id, where, member_type, member_name)
     is_direct_privileges = option != "effective "
+
     # wait for set privileges to be visible in gui
-    try:
-        tree.assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
-    except AssertionError:
-        time.sleep(2)
-        tree.assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
-    driver = selenium[browser_id]
+    def are_privileges_correct(_: WebDriver) -> bool:
+        try:
+            tree = get_privilege_tree(selenium, browser_id, where, member_type, member_name)
+            tree.assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
+            return True
+        except AssertionError:
+            return False
+
+    WebDriverWait(driver, timeout=WAIT_FRONTEND, poll_frequency=0.1).until(
+        are_privileges_correct, message="Privileges were not successfully set"
+    )
+
     page = find_members_page(driver, where)
     page.close_member(driver)
 

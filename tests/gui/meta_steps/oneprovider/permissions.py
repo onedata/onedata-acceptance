@@ -214,11 +214,7 @@ def _set_acl_privileges_for_selected(
 ) -> None:
     option = "Permissions"
     modal_name = "Details modal"
-    button = "Save"
-    close_button = "X"
-    panel = "Edit permissions"
     warning_modal = "warning"
-    proceed_button = "proceed"
     parsed_path = parse_seq(path) if path is not None else []
 
     if parsed_path and len(parsed_path) == 1:
@@ -230,13 +226,13 @@ def _set_acl_privileges_for_selected(
     assert_tab_in_modal(selenium, browser_id, option, modal_name)
 
     set_acl_entry_in_op_gui(selenium, browser_id, privileges, name)
-    click_panel_button(selenium, browser_id, button, panel)
+    click_panel_button(selenium, browser_id, "Save", "Edit permissions")
 
     modal = find_modal(selenium[browser_id], warning_modal, expected=False, timeout=WAIT_FRONTEND)
     if modal is not None:
-        click_modal_button(selenium, browser_id, proceed_button, warning_modal)
+        click_modal_button(selenium, browser_id, "proceed", warning_modal)
         wait_for_named_modal_to_disappear(selenium, browser_id, warning_modal)
-    click_modal_button(selenium, browser_id, close_button, modal_name)
+    click_modal_button(selenium, browser_id, "X", modal_name)
 
 
 @wt(

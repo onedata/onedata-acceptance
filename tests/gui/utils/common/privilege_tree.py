@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 from selenium.common.exceptions import (
+    ElementClickInterceptedException,
     ElementNotInteractableException,
     NoSuchElementException,
 )
@@ -28,10 +29,11 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.generic import perform_action
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.utils import repeat_failed
 
-PRIVILEGE_ROW_LOOKUP_ATTEMPTS = 10
+PRIVILEGE_ROW_LOOKUP_ATTEMPTS = 50
 
 
 class PrivilegeRow(PageObject):
@@ -75,23 +77,32 @@ class PrivilegeRow(PageObject):
         granted: PrivilegeGranted,
         with_scroll: bool = False,
     ) -> bool:
+        should_be_checked = bool(granted)
+
+        if self.toggle.is_checked() == should_be_checked:
+            return True
+
         if with_scroll:
-            if (self.toggle.is_checked() and not granted) or (
-                not self.toggle.is_checked() and granted
-            ):
-                driver.execute_script("document.querySelector('.col-content').scrollTo(0, 0)")
-                elem_id = self._checkbox.get_attribute("id")
-                try:
-                    driver.find_element(By.CSS_SELECTOR, "#" + elem_id).click()
-                except ElementNotInteractableException:
-                    self.toggle.click()
-        elif granted:
+            checkbox = driver.find_element(
+                By.ID,
+                self._checkbox.get_attribute("id"),
+            )
+            try:
+                checkbox.click()
+            except (ElementNotInteractableException, ElementClickInterceptedException):
+                if not self.toggle.web_elem.is_displayed():
+                    driver.execute_script("arguments[0].scrollIntoView();", self.toggle.web_elem)
+                    perform_action(
+                        self.toggle.click,
+                        timeout=WAIT_FRONTEND // 2,
+                    )
+
+        elif should_be_checked:
             self.activate()
         else:
             self.deactivate()
-        if granted:
-            return self.toggle.is_checked()
-        return self.toggle.is_unchecked()
+
+        return self.toggle.is_checked() == should_be_checked
 
 
 class PrivilegeGroup(PageObject):
@@ -104,6 +115,7 @@ class PrivilegeGroup(PageObject):
 
     sub_privileges = WebItemsSequence(".privilege-row", cls=PrivilegeRow)
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def expand(self, driver: WebDriver) -> None:
         if not self.is_expanded():
             expander_id = self._expander.get_attribute("id")
@@ -112,6 +124,8 @@ class PrivilegeGroup(PageObject):
                 driver.find_element(By.CSS_SELECTOR, f"#{expander_id}").click()
             except ElementNotInteractableException:
                 self.expander.click()
+
+        assert self.is_expanded(), f"Failed to expand {self}"
 
     def is_expanded(self) -> bool:
         return "oneicon-arrow-up" in self._expander.get_attribute("class")
@@ -338,7 +352,7 @@ class PrivilegeTree(PageObject):
                 privilege_row = self.privilege_groups[name]
             except PageObjectNotFoundError:
                 privilege_row_try += 1
-                time.sleep(1)
+                time.sleep(0.1)
 
         if privilege_row is None:
             raise TimeoutError(f"Privilege group '{name}' not found after retries")
@@ -348,7 +362,6 @@ class PrivilegeTree(PageObject):
         if granted == "Partially":
             sub_privileges = group["privilege subtypes"]
             privilege_row.expand(driver)
-            time.sleep(1)
             for sub_name, sub_granted in sub_privileges.items():
                 result = result and self.privileges[sub_name].set_privilege(
                     driver, sub_granted, with_scroll

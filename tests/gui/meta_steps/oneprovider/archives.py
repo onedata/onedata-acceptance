@@ -178,9 +178,6 @@ def _create_archive(
     option: str,
     follow_symbolic_links: bool = True,
 ) -> None:
-    option_in_data_row_menu = "Create archive"
-    button_name = "Create"
-    option_state = "disabled"
     try:
         _ = OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
     except NoSuchElementException:
@@ -203,7 +200,7 @@ def _create_archive(
         click_option_in_data_row_menu_in_browser(
             selenium,
             browser_id,
-            option_in_data_row_menu,
+            "Create archive",
             DATASET_BROWSER,
         )
         data = yaml.load(config, yaml.Loader)
@@ -213,32 +210,31 @@ def _create_archive(
         create_nested_archives = data.get("create nested archives", False)
         incremental = data.get("incremental", False)
         include_dip = data.get("include DIP", False)
+
         if follow_symbolic_links:
             follow_symbolic_links = data.get("follow symbolic links", True)
 
         if description:
             write_description_in_create_archive_modal(selenium, browser_id, description)
         if layout == "BagIt":
-            click_modal_button(selenium, browser_id, layout, option_in_data_row_menu)
+            click_modal_button(selenium, browser_id, layout, "Create archive")
         if create_nested_archives:
-            option = "create_nested_archives"
-            check_toggle_in_create_archive_modal(browser_id, selenium, option)
+            check_toggle_in_create_archive_modal(browser_id, selenium, "create_nested_archives")
         if incremental and incremental["enabled"]:
-            option = "incremental"
-            check_toggle_in_create_archive_modal(browser_id, selenium, option)
+            check_toggle_in_create_archive_modal(browser_id, selenium, "incremental")
         if include_dip:
-            option = "include_dip"
-            check_toggle_in_create_archive_modal(browser_id, selenium, option)
+            check_toggle_in_create_archive_modal(browser_id, selenium, "include_dip")
         if not follow_symbolic_links:
-            option = "follow_symbolic_links"
-            check_toggle_in_create_archive_modal(browser_id, selenium, option)
-        click_modal_button(selenium, browser_id, button_name, option_in_data_row_menu)
-        client = "web GUI"
+            check_toggle_in_create_archive_modal(browser_id, selenium, "follow_symbolic_links")
+        # breakpoint()
+        click_modal_button(selenium, browser_id, "Create", "Create archive")
+        # breakpoint()
+
         if description:
             copy_archive_id_to_tmp_memory(
                 selenium,
                 browser_id,
-                client,
+                "web GUI",
                 tmp_memory,
                 clipboard,
                 displays,
@@ -248,8 +244,8 @@ def _create_archive(
         assert_option_state_in_data_row_menu(
             selenium,
             browser_id,
-            option_in_data_row_menu,
-            option_state,
+            "Create archive",
+            "disabled",
             DATASET_BROWSER,
         )
 

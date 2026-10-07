@@ -28,7 +28,7 @@ from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import perform_action, transform
-from tests.gui.utils.web_elem_utils import click_on_web_elem
+from tests.gui.utils.web_elem_utils import click_on_web_elem, wait_for_visible_element_using_getter
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -464,10 +464,17 @@ def assert_there_is_no_button_in_panel(
 def click_modal_button(
     selenium: SeleniumDrivers, browser_id: str, button: str, modal_name: str
 ) -> None:
-    button = button.replace(".", "")
+    driver = selenium[browser_id]
+    button = transform(button.replace(".", ""))
     modal_attribute_name = resolve_modal_attribute_name(modal_name)
-    modal = perform_action(lambda: getattr(Modals(selenium[browser_id]), modal_attribute_name))
-    perform_action(getattr(modal, transform(button)).click)
+    modal = perform_action(lambda: getattr(Modals(driver), modal_attribute_name))
+
+    def button_getter(_: WebDriver) -> SeleniumWebElement:
+        return getattr(modal, button)
+
+    button_elem = wait_for_visible_element_using_getter(driver, button_getter)
+    button_elem.click()
+
     if modal_attribute_name == "create_group" and transform(button) == "create":
         is_notify_popup_visible_and_close_all_alert_popups(
             selenium,
