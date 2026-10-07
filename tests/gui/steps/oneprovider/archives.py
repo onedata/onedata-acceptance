@@ -15,8 +15,9 @@ from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.common.modals.archives_modals.create_archive import ToggleContainer
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.oneprovider.archive_browser import _ArchiveBrowser
 from tests.gui.utils.oneprovider.archive_browser.data_row import DataRow
 from tests.type_definitions import SeleniumDrivers
@@ -156,12 +157,22 @@ def from_ordinal_number_to_int(ordinal_number: str) -> int:
 
 
 @wt(parsers.parse('user of {browser_id} checks "{toggle_type}" toggle in modal "Create Archive"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def check_toggle_in_create_archive_modal(
     browser_id: str, selenium: SeleniumDrivers, toggle_type: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(Modals(driver).create_archive, transform(toggle_type)).check()
+
+    # breakpoint()
+    def toggle_getter() -> ToggleContainer:
+        return getattr(Modals(driver).create_archive, transform(toggle_type))
+
+    def assert_is_checked() -> None:
+        assert toggle_getter().is_checked()
+
+    perform_action(
+        lambda: driver.execute_script("arguments[0].scrollIntoView();", toggle_getter().web_elem)
+    )
+    perform_action(lambda: toggle_getter().check(), assertion=assert_is_checked)
 
 
 def compare_base_archive_name_with_archive_with_description(

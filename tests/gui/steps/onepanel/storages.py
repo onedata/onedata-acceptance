@@ -19,7 +19,7 @@ from tests.gui.meta_steps.rest.spaces import (
 )
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel, Popups
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.onepanel.storages import StorageContentPage, StorageRecord
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -309,7 +309,7 @@ def type_name_to_form_in_storages_page(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on {name} button in edit form "
+        'user of {browser_id} clicks on "{name}" button in edit form '
         'for "{storage}" storage in Onepanel'
     )
 )
@@ -318,11 +318,11 @@ def click_on_button_in_edit_form(
     selenium: SeleniumDrivers, browser_id: str, name: str, storage: str
 ) -> None:
     driver = selenium[browser_id]
-    button = name.lower() + "_button"
-    getattr(
-        Onepanel(driver).content.storages.storages[storage].edit_form.posix_editor,
-        button,
-    )()
+    button_name = f"{name.lower()}_button"
+    storages = Onepanel(driver).content.storages.storages
+    button = perform_action(lambda: getattr(storages[storage].edit_form.posix_editor, button_name))
+    driver.execute_script("arguments[0].scrollIntoView();", button.web_elem)
+    perform_action(button.click)
 
 
 @wt(

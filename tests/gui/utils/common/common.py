@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from functools import partial
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -91,7 +91,10 @@ class _Toggle(PageObject):
 
     def check(self) -> None:
         if not self.is_checked():
-            self.click()
+            try:
+                self.click()
+            except ElementClickInterceptedException:
+                assert self.is_checked(), "Toggle failed to check"
 
     def uncheck(self) -> None:
         if self.is_checked():
