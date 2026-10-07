@@ -8,20 +8,23 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, NamedButton, WebElement, WebItem
-from tests.utils.utils import element_has_class
+from tests.utils.utils import element_has_class, repeat_failed
 
 from ..modal import Modal
 
 
 class ToggleContainer(PageObject):
-    toggle_area = WebElement(".one-checkbox-base .one-way-toggle")
-    toggle_track = Toggle(".one-way-toggle-track")
+    toggle_area = WebElement(".one-checkbox-base.one-way-toggle")
+    toggle_track = Toggle(".one-way-toggle-control")
 
     def is_checked(self) -> bool:
-        return element_has_class(self.toggle_area.web_elem, "checked")
+        return element_has_class(self.toggle_area, "checked")
 
+    @repeat_failed(timeout=0.5)
     def check(self) -> None:
-        self.toggle_track.check()
+        if not self.is_checked():
+            self.toggle_track.web_elem.click()
+        assert self.is_checked(), "Toggle failed to check"
 
 
 class CreateArchive(Modal):
