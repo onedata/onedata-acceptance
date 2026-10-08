@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
+import re
 import signal
 import subprocess
 from contextlib import suppress
@@ -17,6 +18,8 @@ DEMO_MODE_ROOT: Final = Path(__file__).resolve().parents[2]
 COMMANDS_ROOT: Final = DEMO_MODE_ROOT / "commands"
 RELEASE_PLACEHOLDER: Final = "xRELEASExVERSIONx"
 CONTAINER_NAME_PLACEHOLDER: Final = "xCONTAINERxNAMEx"
+
+PLACEHOLDER_PATTERN: Final = re.compile(r"x[A-Z][A-Z0-9]*(?:x[A-Z][A-Z0-9]*)*x")
 
 
 def command_path(relative_path: str) -> Path:

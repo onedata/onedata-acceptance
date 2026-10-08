@@ -22,7 +22,6 @@ from tests.demo_mode.steps.rest import (
     assert_onezone_configuration,
 )
 from tests.demo_mode.type_definitions import DemoEnvironment, Oneprovider, Onezone
-from tests.demo_mode.utils.commands import DemoCommands
 
 
 def _validate_oneprovider_count(oneprovider_count: int) -> None:
@@ -34,7 +33,6 @@ def assert_environment_configuration(
     environment: DemoEnvironment,
     *,
     release: str,
-    access_token: str,
 ) -> None:
     """Assert the public configuration of every service in an environment."""
     assert_onezone_configuration(environment.onezone, release=release)
@@ -42,12 +40,10 @@ def assert_environment_configuration(
         assert_oneprovider_configuration(
             oneprovider,
             release=release,
-            access_token=access_token,
         )
 
 
 def start_foreground_environment(
-    commands: DemoCommands,
     *,
     oneprovider_count: int = 1,
 ) -> DemoEnvironment:
@@ -55,20 +51,19 @@ def start_foreground_environment(
 
     _validate_oneprovider_count(oneprovider_count)
 
-    onezone = run_foreground_onezone(commands)
+    onezone = run_foreground_onezone()
 
     oneproviders = tuple(
         run_foreground_oneprovider(
-            commands,
             oneprovider_container(number),
             onezone,
         )
         for number in range(1, oneprovider_count + 1)
     )
 
-    await_onezone(commands, onezone)
+    await_onezone(onezone)
     for oneprovider in oneproviders:
-        await_oneprovider(commands, oneprovider)
+        await_oneprovider(oneprovider)
 
     return DemoEnvironment(
         onezone=onezone,
@@ -76,26 +71,23 @@ def start_foreground_environment(
     )
 
 
-def start_background_environment(
-    commands: DemoCommands, *, oneprovider_count: int = 1
-) -> DemoEnvironment:
+def start_background_environment(*, oneprovider_count: int = 1) -> DemoEnvironment:
     """Start and await a detached Onezone and Oneprovider."""
 
     _validate_oneprovider_count(oneprovider_count)
 
-    onezone = run_background_onezone(commands)
+    onezone = run_background_onezone()
 
     oneproviders = tuple(
         run_background_oneprovider(
-            commands,
             oneprovider_container(number),
         )
         for number in range(1, oneprovider_count + 1)
     )
 
-    await_onezone(commands, onezone)
+    await_onezone(onezone)
     for oneprovider in oneproviders:
-        await_oneprovider(commands, oneprovider)
+        await_oneprovider(oneprovider)
 
     return DemoEnvironment(
         onezone=onezone,

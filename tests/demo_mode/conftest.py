@@ -18,7 +18,6 @@ from tests.demo_mode.constants import (
     PROCESS_EXIT_TIMEOUT,
 )
 from tests.demo_mode.utils.command_context import command_context
-from tests.demo_mode.utils.commands import DemoCommands
 from tests.demo_mode.utils.persistence import (
     prepare_demo_persistence,
     remove_demo_persistence,
@@ -37,11 +36,6 @@ def pytest_addoption(parser: Parser) -> None:
 @pytest.fixture
 def release(request: pytest.FixtureRequest) -> str:
     return cast(str, request.config.getoption("release"))
-
-
-@pytest.fixture
-def demo_commands() -> DemoCommands:
-    return DemoCommands()
 
 
 @pytest.fixture(autouse=True)

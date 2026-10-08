@@ -12,24 +12,25 @@ from tests.demo_mode.constants import (
     ONEZONE_CONTAINER,
 )
 from tests.demo_mode.type_definitions import DemoService, Oneprovider, Onezone
-from tests.demo_mode.utils.commands import Command, DemoCommands
+from tests.demo_mode.utils.commands import (
+    RUN_ONEPROVIDER_PERSISTENT,
+    RUN_ONEZONE_PERSISTENT,
+    Command,
+)
 from tests.demo_mode.utils.logging import log_step
 
 
 @log_step("Starting persistent Onezone")
-def start_persistent_onezone(
-    commands: DemoCommands,
-) -> Onezone:
+def start_persistent_onezone() -> Onezone:
     """Start Onezone using the unmodified persistence command."""
     return Onezone(
         container=ONEZONE_CONTAINER,
-        process=commands.persistent_onezone().start(),
+        process=RUN_ONEZONE_PERSISTENT.start(),
     )
 
 
 @log_step("Starting persistent Oneprovider")
 def start_persistent_oneprovider(
-    commands: DemoCommands,
     container: str,
     onezone: Onezone,
 ) -> Oneprovider:
@@ -39,7 +40,7 @@ def start_persistent_oneprovider(
 
     return Oneprovider(
         container=container,
-        process=commands.persistent_oneprovider(container).start(),
+        process=RUN_ONEPROVIDER_PERSISTENT.start(container),
     )
 
 

@@ -9,13 +9,13 @@ from pathlib import Path
 from tests.demo_mode.constants import DEMO_SPACE_NAME
 from tests.demo_mode.meta_steps.environment import start_foreground_environment
 from tests.demo_mode.steps.python_access import assert_python_access_example_output
-from tests.demo_mode.utils.commands import DemoCommands
 
 
-def test_python_access(demo_commands: DemoCommands, tmp_path: Path) -> None:
+def test_python_access(tmp_path: Path) -> None:
     expected_output = f"['{DEMO_SPACE_NAME}']\nTEST\n"
 
-    start_foreground_environment(demo_commands)
+    start_foreground_environment()
     assert_python_access_example_output(
-        demo_commands, expected_output=expected_output, environment_root=tmp_path
+        expected_output=expected_output,
+        environment_root=tmp_path,
     )

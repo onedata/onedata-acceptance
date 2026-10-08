@@ -32,14 +32,19 @@ class OneproviderRestClient:
     """REST and Onepanel operations directed at one demo Oneprovider."""
 
     host: str
-    access_token: str
+    access_token: str | None = None
+
+    def _authenticated_headers(self) -> dict[str, str]:
+        if self.access_token is None:
+            raise ValueError("This Oneprovider REST operation requires an access token")
+        return _authorization_headers(self.access_token)
 
     def _list_onepanel_resource_ids(self, resource: str) -> list[str]:
         response = http_get(
             ip=self.host,
             port=PANEL_REST_PORT,
             path=get_panel_rest_path("provider", resource),
-            headers=_authorization_headers(self.access_token),
+            headers=self._authenticated_headers(),
         )
         response_body = cast(JsonObject, response.json())
         return cast(list[str], response_body["ids"])
@@ -49,7 +54,7 @@ class OneproviderRestClient:
             ip=self.host,
             port=OP_REST_PORT,
             path=get_provider_rest_path("spaces"),
-            headers=_authorization_headers(self.access_token),
+            headers=self._authenticated_headers(),
         )
         return cast(list[JsonObject], response.json())
 
@@ -63,7 +68,7 @@ class OneproviderRestClient:
             ip=self.host,
             port=PANEL_REST_PORT,
             path=get_panel_rest_path("provider", "spaces"),
-            headers=_authorization_headers(self.access_token),
+            headers=self._authenticated_headers(),
             data=json.dumps(
                 {
                     "token": support_token,
@@ -132,7 +137,7 @@ class OneproviderRestClient:
             port=OP_REST_PORT,
             path=file_path,
             headers={
-                **_authorization_headers(self.access_token),
+                **self._authenticated_headers(),
                 "Content-Type": "application/octet-stream",
             },
             data=content,
@@ -144,7 +149,7 @@ class OneproviderRestClient:
             ip=self.host,
             port=OP_REST_PORT,
             path=file_path,
-            headers=_authorization_headers(self.access_token),
+            headers=self._authenticated_headers(),
         ).content
 
     def remove(self, *, space_id: str, file_name: str) -> None:
@@ -153,5 +158,5 @@ class OneproviderRestClient:
             ip=self.host,
             port=OP_REST_PORT,
             path=file_path,
-            headers=_authorization_headers(self.access_token),
+            headers=self._authenticated_headers(),
         )

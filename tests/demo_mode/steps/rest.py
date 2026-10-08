@@ -29,7 +29,7 @@ def onezone_rest_client(
 
 def oneprovider_rest_client(
     oneprovider: Oneprovider,
-    access_token: str,
+    access_token: str | None = None,
 ) -> OneproviderRestClient:
     return OneproviderRestClient(
         host=container_ip(oneprovider.container),
@@ -123,11 +123,9 @@ def assert_onezone_configuration(
 
 def get_oneprovider_id(
     provider: Oneprovider,
-    *,
-    access_token: str,
 ) -> str:
     """Return the validated ID exposed by a Oneprovider."""
-    configuration = oneprovider_rest_client(provider, access_token).configuration()
+    configuration = oneprovider_rest_client(provider).configuration()
     provider_id = configuration.get("providerId")
     assert isinstance(provider_id, str), (
         f"Expected {provider.container} to expose a string provider ID, got {provider_id!r}"
@@ -141,9 +139,8 @@ def assert_oneprovider_configuration(
     provider: Oneprovider,
     *,
     release: str,
-    access_token: str,
 ) -> None:
-    configuration = oneprovider_rest_client(provider, access_token).configuration()
+    configuration = oneprovider_rest_client(provider).configuration()
     assert configuration.get("version") == release, (
         f"Expected {provider.container} version {release!r}, got {configuration.get('version')!r}"
     )

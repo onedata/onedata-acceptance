@@ -12,26 +12,21 @@ from tests.demo_mode.meta_steps.environment import (
 from tests.demo_mode.steps.comprehensive_example import run_comprehensive_example
 from tests.demo_mode.steps.environment import get_demo_access_token
 from tests.demo_mode.steps.rest import assert_file_content
-from tests.demo_mode.utils.commands import DemoCommands
 from tests.demo_mode.utils.comprehensive_example import (
     get_comprehensive_example_file_name,
 )
 
 
-def test_comprehensive_example(
-    release: str,
-    demo_commands: DemoCommands,
-) -> None:
+def test_comprehensive_example(release: str) -> None:
     expected_file_content = b"hello world\\n"
-    command_output = run_comprehensive_example(demo_commands)
+    command_output = run_comprehensive_example()
     environment = guide_environment(oneprovider_count=1)
     (provider,) = environment.oneproviders
-    access_token = get_demo_access_token(provider, demo_commands)
     assert_environment_configuration(
         environment,
         release=release,
-        access_token=access_token,
     )
+    access_token = get_demo_access_token(provider)
     file_name = get_comprehensive_example_file_name(command_output)
     assert_file_content(
         provider,

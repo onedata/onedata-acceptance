@@ -25,21 +25,19 @@ from tests.demo_mode.steps.rest import (
     upload_rest_file,
 )
 from tests.demo_mode.type_definitions import DemoEnvironment, PersistentState
-from tests.demo_mode.utils.commands import DemoCommands
 
 
-def start_persistent_environment(commands: DemoCommands) -> DemoEnvironment:
+def start_persistent_environment() -> DemoEnvironment:
     """Start both persistent commands before awaiting their services."""
-    onezone = start_persistent_onezone(commands)
+    onezone = start_persistent_onezone()
 
     oneprovider = start_persistent_oneprovider(
-        commands,
         oneprovider_container(1),
         onezone,
     )
 
-    await_onezone(commands, onezone)
-    await_oneprovider(commands, oneprovider)
+    await_onezone(onezone)
+    await_oneprovider(oneprovider)
 
     return DemoEnvironment(
         onezone=onezone,
@@ -49,7 +47,6 @@ def start_persistent_environment(commands: DemoCommands) -> DemoEnvironment:
 
 def save_persistent_state(
     environment: DemoEnvironment,
-    commands: DemoCommands,
     *,
     space_name: str,
     file_name: str,
@@ -59,11 +56,8 @@ def save_persistent_state(
     """Create and return state that must survive a demo-mode restart."""
     onezone = environment.onezone
     (provider,) = environment.oneproviders
-    access_token = get_demo_access_token(provider, commands)
-    provider_id = get_oneprovider_id(
-        provider,
-        access_token=access_token,
-    )
+    access_token = get_demo_access_token(provider)
+    provider_id = get_oneprovider_id(provider)
     space_id = create_space_for_provider(
         onezone,
         provider,
@@ -89,22 +83,18 @@ def save_persistent_state(
 
 def assert_persistent_state(
     environment: DemoEnvironment,
-    commands: DemoCommands,
     *,
     state: PersistentState,
 ) -> None:
     """Assert that demo credentials, configuration, and data survived restart."""
     (provider,) = environment.oneproviders
-    restarted_access_token = get_demo_access_token(provider, commands)
+    restarted_access_token = get_demo_access_token(provider)
     assert restarted_access_token == state.access_token, (
         "Demo access token changed after restart: "
         f"expected {state.access_token!r}, got {restarted_access_token!r}"
     )
 
-    restarted_provider_id = get_oneprovider_id(
-        provider,
-        access_token=state.access_token,
-    )
+    restarted_provider_id = get_oneprovider_id(provider)
     assert restarted_provider_id == state.provider_id, (
         f"Expected provider ID {state.provider_id!r} after restart, got {restarted_provider_id!r}"
     )

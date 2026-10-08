@@ -20,29 +20,25 @@ from tests.demo_mode.steps.rest import (
     get_space_id,
     upload_rest_file,
 )
-from tests.demo_mode.utils.commands import DemoCommands
 
 
 def test_distributed_environment(
     release: str,
-    demo_commands: DemoCommands,
     request: pytest.FixtureRequest,
 ) -> None:
     local_content = b"Data stored through the local Oneprovider\n"
     shared_content = b"Data written through op_test1, read through op_test2\n"
 
     environment = start_foreground_environment(
-        demo_commands,
         oneprovider_count=2,
     )
     first, second = environment.oneproviders
 
-    access_token = get_demo_access_token(environment.onezone, demo_commands)
     assert_environment_configuration(
         environment,
         release=release,
-        access_token=access_token,
     )
+    access_token = get_demo_access_token(environment.onezone)
 
     for provider in environment.oneproviders:
         assert_space_support(
@@ -78,10 +74,7 @@ def test_distributed_environment(
             access_token=access_token,
         )
 
-    provider_ids = [
-        get_oneprovider_id(provider, access_token=access_token)
-        for provider in environment.oneproviders
-    ]
+    provider_ids = [get_oneprovider_id(provider) for provider in environment.oneproviders]
     assert len(set(provider_ids)) == len(provider_ids), provider_ids
 
     upload_rest_file(
