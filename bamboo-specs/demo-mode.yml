@@ -71,16 +71,16 @@ Comprehensive example:
   artifact-subscriptions: []
 
 _Autoformatter check:
-  key: BLFR
+  key: RUFF
   other: *common-opts
   tasks:
   - checkout: *checkout-default-repository
   - script: &run-check
       interpreter: SHELL
       scripts:
-      - make black-check
+      - make format-check
       working-dir: onedata-acceptance
-      description: Black formatting
+      description: Ruff formatting
   artifact-subscriptions: []
 
 _Static analysis:
