@@ -34,10 +34,12 @@ def _await_running_container(
 
 @log_step("Running Onezone in the foreground")
 def run_foreground_onezone() -> Onezone:
-    return Onezone(
+    onezone = Onezone(
         container=ONEZONE_CONTAINER,
         process=RUN_ONEZONE_FOREGROUND.start(),
     )
+    _await_running_container(onezone)
+    return onezone
 
 
 @log_step("Running Oneprovider in the foreground")
