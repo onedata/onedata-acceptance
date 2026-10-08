@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.demo_mode.constants import oneprovider_container
+from tests.demo_mode.constants import SHORT_COMMAND_TIMEOUT, oneprovider_container
 from tests.demo_mode.steps.environment import (
     await_oneprovider,
     await_onezone,
@@ -125,7 +125,7 @@ def assert_persistent_state(
 
 def stop_persistent_environment(
     environment: DemoEnvironment,
-    timeout: float = 60,
+    timeout: float = SHORT_COMMAND_TIMEOUT,
 ) -> None:
     """Gracefully stop and reap a persistent demo-mode environment."""
     services = (*environment.oneproviders, environment.onezone)

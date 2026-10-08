@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
+from tests.demo_mode.constants import EXAMPLE_TIMEOUT
 from tests.demo_mode.utils.commands import DemoCommands
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.python_access import (
@@ -20,7 +21,7 @@ def assert_python_access_example_output(
     *,
     expected_output: str,
     request: pytest.FixtureRequest,
-    timeout: float = 600,
+    timeout: float = EXAMPLE_TIMEOUT,
 ) -> None:
     environment_root = prepare_python_access_directory(request)
     setup_log_path = environment_root / "setup.log"

@@ -9,9 +9,9 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
+from tests.demo_mode.constants import PROCESS_EXIT_TIMEOUT, SHORT_COMMAND_TIMEOUT
 from tests.demo_mode.utils.commands.helpers import (
     DEMO_MODE_ROOT,
-    SHORT_COMMAND_TIMEOUT,
     _kill_process,
     _send_signal_to_process_group,
     _start_subprocess,
@@ -108,7 +108,7 @@ class Command:
         )
 
     @staticmethod
-    def stop_process(process: subprocess.Popen[str], timeout: float = 10) -> None:
+    def stop_process(process: subprocess.Popen[str], timeout: float = PROCESS_EXIT_TIMEOUT) -> None:
         """Stop and reap a process together with its child processes."""
         if process.poll() is not None:
             return

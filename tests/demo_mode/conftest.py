@@ -6,13 +6,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import warnings
 from collections.abc import Iterator
-from typing import Final, cast
+from typing import cast
 
 import pytest
 from _pytest.config.argparsing import Parser
 from urllib3.exceptions import InsecureRequestWarning
 
-from tests.demo_mode.constants import CONTAINER_NAMES
+from tests.demo_mode.constants import (
+    CONTAINER_NAMES,
+    CONTAINER_REMOVAL_TIMEOUT,
+    PROCESS_EXIT_TIMEOUT,
+)
 from tests.demo_mode.utils.command_context import command_context
 from tests.demo_mode.utils.commands import DemoCommands
 from tests.demo_mode.utils.persistence import (
@@ -20,8 +24,6 @@ from tests.demo_mode.utils.persistence import (
     remove_demo_persistence,
 )
 from tests.utils.docker_utils import remove_containers
-
-PROCESS_EXIT_TIMEOUT: Final = 10.0
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -65,13 +67,13 @@ def demo_test_context(
     request: pytest.FixtureRequest,
     release: str,
 ) -> Iterator[None]:
-    remove_containers(CONTAINER_NAMES)
+    remove_containers(CONTAINER_NAMES, timeout=CONTAINER_REMOVAL_TIMEOUT)
 
     with command_context(request.node.name, release) as context:
         try:
             yield
         finally:
             try:
-                remove_containers(CONTAINER_NAMES)
+                remove_containers(CONTAINER_NAMES, timeout=CONTAINER_REMOVAL_TIMEOUT)
             finally:
                 context.reap_processes(PROCESS_EXIT_TIMEOUT)

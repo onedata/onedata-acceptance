@@ -57,6 +57,7 @@ Comprehensive example:
       scripts:
       - |-
         docker rm -f "demo-mode-runner-${bamboo.buildResultKey}" 2>/dev/null || true
+        # keep in sync with tests/demo_mode/constants.py
         docker rm -f oz_test op_test1 op_test2 2>/dev/null || true
       description: Clean up demo mode containers
   requirements: &requirements

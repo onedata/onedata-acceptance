@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.demo_mode.constants import (
+    MAX_ONEPROVIDERS,
     ONEZONE_CONTAINER,
     oneprovider_container,
 )
@@ -23,6 +24,11 @@ from tests.demo_mode.steps.rest import (
 )
 from tests.demo_mode.type_definitions import DemoEnvironment, Oneprovider, Onezone
 from tests.demo_mode.utils.commands import DemoCommands
+
+
+def _validate_oneprovider_count(oneprovider_count: int) -> None:
+    if not 1 <= oneprovider_count <= MAX_ONEPROVIDERS:
+        raise ValueError(f"Oneprovider count must be between 1 and {MAX_ONEPROVIDERS}")
 
 
 def assert_environment_configuration(
@@ -48,6 +54,9 @@ def start_foreground_environment(
     oneprovider_count: int = 1,
 ) -> DemoEnvironment:
     """Start and await a foreground Onezone and Oneprovider."""
+
+    _validate_oneprovider_count(oneprovider_count)
+
     onezone = run_foreground_onezone(commands)
 
     oneproviders = tuple(
@@ -73,6 +82,9 @@ def start_background_environment(
     commands: DemoCommands, *, oneprovider_count: int = 1
 ) -> DemoEnvironment:
     """Start and await a detached Onezone and Oneprovider."""
+
+    _validate_oneprovider_count(oneprovider_count)
+
     onezone = run_background_onezone(commands)
 
     oneproviders = tuple(
@@ -98,6 +110,9 @@ def guide_environment(
     oneprovider_count: int = 1,
 ) -> DemoEnvironment:
     """Describe an environment started externally by a guide script."""
+
+    _validate_oneprovider_count(oneprovider_count)
+
     return DemoEnvironment(
         onezone=Onezone(container=ONEZONE_CONTAINER),
         oneproviders=tuple(

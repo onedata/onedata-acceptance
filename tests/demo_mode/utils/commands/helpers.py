@@ -17,7 +17,6 @@ DEMO_MODE_ROOT: Final = Path(__file__).resolve().parents[2]
 COMMANDS_ROOT: Final = DEMO_MODE_ROOT / "commands"
 RELEASE_PLACEHOLDER: Final = "xRELEASExVERSIONx"
 CONTAINER_NAME_PLACEHOLDER: Final = "xCONTAINERxNAMEx"
-SHORT_COMMAND_TIMEOUT: Final = 60.0
 
 
 def command_path(relative_path: str) -> Path:

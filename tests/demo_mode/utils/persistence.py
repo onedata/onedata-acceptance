@@ -9,17 +9,16 @@ from pathlib import Path
 from shutil import rmtree
 from typing import Final
 
-from tests.demo_mode.constants import CONTAINER_NAMES, oneprovider_container
+from tests.demo_mode.constants import (
+    CONTAINER_NAMES,
+    CONTAINER_REMOVAL_TIMEOUT,
+    PERSISTENCE_HOST_DIRS,
+)
 from tests.utils.docker_utils import remove_containers
 
 HOST_TMP_ENVIRONMENT_VARIABLE: Final = "DEMO_MODE_HOST_TMP"
 OWNERSHIP_MARKER_NAME: Final = ".onedata-demo-mode-persistence-test-owned"
 OWNERSHIP_MARKER_CONTENT: Final = "onedata-demo-mode-persistence-test-v1\n"
-PERSISTENCE_DIRECTORY_NAMES: Final = (
-    "oz-pers",
-    f"{oneprovider_container(1)}-pers",
-    f"{oneprovider_container(1)}-storage",
-)
 
 
 def _host_tmp_path() -> Path:
@@ -28,7 +27,7 @@ def _host_tmp_path() -> Path:
 
 def _persistence_paths() -> tuple[Path, ...]:
     host_tmp_path = _host_tmp_path()
-    return tuple(host_tmp_path / name for name in PERSISTENCE_DIRECTORY_NAMES)
+    return tuple(host_tmp_path / name for name in PERSISTENCE_HOST_DIRS)
 
 
 def _path_exists(path: Path) -> bool:
@@ -87,7 +86,7 @@ def _remove_persistence_paths_and_marker(
 
 def remove_demo_persistence() -> None:
     """Remove containers and all bind-mounted state owned by the persistence test."""
-    remove_containers(CONTAINER_NAMES)
+    remove_containers(CONTAINER_NAMES, timeout=CONTAINER_REMOVAL_TIMEOUT)
     existing_paths, marker, marker_exists = _assert_and_get_test_owns_existing_paths()
     _remove_persistence_paths_and_marker(existing_paths, marker, marker_exists)
 

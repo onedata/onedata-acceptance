@@ -44,7 +44,7 @@ def start_persistent_oneprovider(
 
 
 @log_step("Stopping persistent demo-mode service")
-def stop_persistent_service(service: DemoService, timeout: float = 60) -> None:
+def stop_persistent_service(service: DemoService, timeout: float) -> None:
     docker.stop(
         service.container,
         command_timeout=timeout,
@@ -56,6 +56,5 @@ def stop_persistent_service(service: DemoService, timeout: float = 60) -> None:
     except subprocess.TimeoutExpired as error:
         Command.stop_process(service.process, timeout)
         raise AssertionError(
-            f"The command running {service.container} "
-            "did not exit after Docker stop"
+            f"The command running {service.container} did not exit after Docker stop"
         ) from error

@@ -4,6 +4,7 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from tests.demo_mode.constants import DEMO_SPACE_ID
 from tests.demo_mode.meta_steps.environment import (
     assert_environment_configuration,
     guide_environment,
@@ -21,7 +22,6 @@ def test_comprehensive_example(
     release: str,
     demo_commands: DemoCommands,
 ) -> None:
-    demo_space_id = "cb274b2b8bb1750d9be37dd4a3eb7014chb175"
     expected_file_content = b"hello world\\n"
     command_output = run_comprehensive_example(demo_commands)
     environment = guide_environment(oneprovider_count=1)
@@ -31,7 +31,7 @@ def test_comprehensive_example(
     access_token = get_demo_access_token(provider, demo_commands)
     assert_file_content(
         provider,
-        space_id=demo_space_id,
+        space_id=DEMO_SPACE_ID,
         file_name=file_name,
         expected_content=expected_file_content,
         access_token=access_token,
