@@ -162,7 +162,6 @@ def check_toggle_in_create_archive_modal(
 ) -> None:
     driver = selenium[browser_id]
 
-    # breakpoint()
     def toggle_getter() -> ToggleContainer:
         return getattr(Modals(driver).create_archive, transform(toggle_type))
 

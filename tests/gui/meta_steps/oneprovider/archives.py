@@ -226,9 +226,7 @@ def _create_archive(
             check_toggle_in_create_archive_modal(browser_id, selenium, "include_dip")
         if not follow_symbolic_links:
             check_toggle_in_create_archive_modal(browser_id, selenium, "follow_symbolic_links")
-        # breakpoint()
         click_modal_button(selenium, browser_id, "Create", "Create archive")
-        # breakpoint()
 
         if description:
             copy_archive_id_to_tmp_memory(

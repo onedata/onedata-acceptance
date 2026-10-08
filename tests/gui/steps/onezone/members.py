@@ -19,7 +19,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
 from tests.gui.steps.common.common import get_onezone_subpage
-from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
+from tests.gui.steps.common.notifies import (
+    is_notify_popup_visible_and_close_all_alert_popups,
+)
 from tests.gui.steps.modals.modal import (
     assert_element_text,
     wt_wait_for_modal_to_appear,
@@ -739,7 +741,6 @@ def try_setting_privileges_in_members_subpage(
             True,
         )
     except (TimeoutException, AssertionError):
-        button = "Save"
         member_type_new = member_type + "s"
         privileges = yaml.load(config, yaml.Loader)
         tree = get_privilege_tree(
@@ -752,14 +753,14 @@ def try_setting_privileges_in_members_subpage(
         result = tree.set_privileges(selenium, browser_id, privileges, True)
         if option == "sets":
             click_button_on_element_header_in_members_and_wait(
-                selenium, browser_id, button, where, tree
+                selenium, browser_id, "Save", where, tree
             )
             is_notify_popup_visible_and_close_all_alert_popups(
                 selenium,
                 browser_id,
                 AlertPopup.PRIVILEGES_SAVED,
                 popup_expected=False,
-                timeout=WAIT_FRONTEND,
+                timeout=WAIT_FRONTEND // 2,
             )
 
         else:

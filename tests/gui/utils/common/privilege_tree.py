@@ -83,21 +83,38 @@ class PrivilegeRow(PageObject):
             return True
 
         if with_scroll:
-            checkbox = driver.find_element(
-                By.ID,
-                self._checkbox.get_attribute("id"),
-            )
-            try:
-                checkbox.click()
-            except (ElementNotInteractableException, ElementClickInterceptedException):
-                if not self.toggle.web_elem.is_displayed():
-                    driver.execute_script("arguments[0].scrollIntoView();", self.toggle.web_elem)
-                    perform_action(
-                        self.toggle.click,
-                        timeout=WAIT_FRONTEND // 2,
-                    )
 
-        elif should_be_checked:
+            def click_if_needed() -> None:
+                if self.toggle.is_checked() == should_be_checked:
+                    return
+
+                checkbox = self._checkbox
+                try:
+                    checkbox.click()
+                except (
+                    ElementNotInteractableException,
+                    ElementClickInterceptedException,
+                ):
+                    if self.toggle.is_checked() == should_be_checked:
+                        return
+                    driver.execute_script(
+                        "arguments[0].scrollIntoView({block: 'center'});",
+                        checkbox,
+                    )
+                    checkbox.click()
+
+            def assert_toggle_is_checked() -> None:
+                assert self.toggle.is_checked() == should_be_checked, (
+                    "Toggle has different state than expected"
+                )
+
+            try:
+                perform_action(click_if_needed, assertion=assert_toggle_is_checked)
+                return True
+            except AssertionError:
+                return False
+
+        if should_be_checked:
             self.activate()
         else:
             self.deactivate()
