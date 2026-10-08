@@ -349,11 +349,11 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
             echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
             one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
         description: Download artifacts
-    # - script: &run-selenium-tests
-    #     <<: *run-script-working-dir
-    #     scripts:
-    #       - make ENV_FILE=1oz_1op_openfaas SUITE=test_automation_examples_workflows_tests1 test_gui_pkg
-    #     description: Run Selenium tests
+    - script: &run-selenium-tests
+        <<: *run-script-working-dir
+        scripts:
+          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_basic test_gui_pkg
+        description: Run Selenium tests
   final-tasks:
     - test-parser:
         type: junit
