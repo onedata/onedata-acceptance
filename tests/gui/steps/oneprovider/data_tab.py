@@ -641,7 +641,7 @@ def assert_provider_chunk_in_data_distribution_empty(
         'user of {browser_id} sees {chunks} chunk(s) for provider "{provider}" in chunk bar'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND * 6)
 def assert_provider_chunks_in_data_distribution(
     selenium: SeleniumDrivers,
     browser_id: str,

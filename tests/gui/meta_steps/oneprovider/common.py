@@ -107,7 +107,7 @@ def replicate_files_to_providers(
 ) -> None:
     details_modal_str = "Details modal"
     for name in names:
-        click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
+        click_menu_for_elem_in_browser(selenium, browser_id, name, tmp_memory)
         click_option_in_data_row_menu_in_browser(selenium, browser_id, "Data distribution")
         assert_tab_in_modal(selenium, browser_id, "Distribution", details_modal_str)
 
@@ -134,7 +134,7 @@ def assert_eviction_done(
     details_modal = "Details modal"
     close_button = "X"
 
-    click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, details_modal)
     assert_see_history_btn_shown(selenium, browser_id)
@@ -155,7 +155,7 @@ def wt_assert_file_chunks(
     tab = "Distribution"
     close_button = "X"
     for file_name, file_desc in parsed_desc.items():
-        click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
+        click_menu_for_elem_in_browser(selenium, browser_id, file_name, tmp_memory)
         click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
         assert_tab_in_modal(selenium, browser_id, tab, details_modal)
         _assert_file_chunks(selenium, browser_id, hosts, file_desc)
@@ -212,7 +212,7 @@ def migrate_file_to_provider(
     details_modal = "Details modal"
     close_button = "X"
 
-    click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, details_modal)
     migrate_item(selenium, browser_id, source, target, hosts)
@@ -251,7 +251,7 @@ def open_modal_on_tab(
     else:
         option = tab
 
-    click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, filename, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, modal_name)
 

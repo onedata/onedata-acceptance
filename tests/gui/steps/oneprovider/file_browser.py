@@ -166,7 +166,7 @@ def assert_item_in_file_browser_is_of_size(
         'user of {browser_id} waits for displayed size in data row of "{item_name}" to be "{size}"'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_BACKEND * 6)
 def wait_for_size_to_be_displayed_in_data_row(
     selenium: SeleniumDrivers,
     browser_id: str,

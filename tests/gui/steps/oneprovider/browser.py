@@ -12,6 +12,7 @@ from datetime import datetime
 from typing import Protocol
 
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
@@ -615,20 +616,28 @@ def click_on_state_view_mode_tab(
     )
 )
 def wt_click_menu_for_elem_in_browser(
-    browser_id: str, item_name: str, tmp_memory: TmpMemory, which_browser: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+    which_browser: str,
 ) -> None:
-    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=which_browser)
+    click_menu_for_elem_in_browser(
+        selenium, browser_id, item_name, tmp_memory, which_browser=which_browser
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_for_elem_in_browser(
+    selenium: SeleniumDrivers,
     browser_id: str,
     item_name: str | int,
     tmp_memory: TmpMemory,
     which_browser: str = "file browser",
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser)]
-    browser.data[item_name].menu_button()
+    menu_button = browser.data[item_name].menu_button.web_elem
+    ActionChains(selenium[browser_id]).move_to_element(menu_button).click(menu_button).perform()
 
 
 @wt(

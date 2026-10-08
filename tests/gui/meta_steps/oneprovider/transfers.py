@@ -179,7 +179,7 @@ def open_transfer_page_by_clicking_on_link(
     selenium: SeleniumDrivers,
     link: str,
 ) -> None:
-    click_menu_for_elem_in_browser(browser_id, file, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, file, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, "Data distribution")
     click_link_in_data_distribution_panel(selenium, browser_id, link)
     wait_for_transfers_page_to_load(selenium, browser_id)
@@ -202,7 +202,7 @@ def evict_file(
     details_modal = "Details modal"
     close_button = "X"
 
-    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, details_modal)
     data_distribution_modal = Modals(driver).details_modal.data_distribution
