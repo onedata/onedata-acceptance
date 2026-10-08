@@ -22,7 +22,7 @@ from tests.gui.type_definitions import Clickable, TmpMemory, WhichBrowser
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.common.popups.configure_columns_menu import ColumnOption
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import sort_json_from_string, transform
+from tests.gui.utils.generic import perform_action, sort_json_from_string, transform
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
@@ -108,7 +108,7 @@ def click_and_press_enter_on_item_in_browser(
     # checking if file is located in file browser
     start = time.time()
     while item_name not in browser.data:
-        time.sleep(1)
+        time.sleep(0.5)
         if time.time() > start + WAIT_BACKEND:
             raise TimeoutError("waited too long")
 
@@ -214,7 +214,6 @@ def click_on_breadcrumbs_menu(
     breadcrumbs.menu_button()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def _get_items_list_from_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -297,7 +296,6 @@ def assert_items_presence_in_browser(
         assert item_name in data, f'not found "{item_name}" in browser'
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_only_expected_items_presence_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -305,13 +303,16 @@ def assert_only_expected_items_presence_in_browser(
     tmp_memory: TmpMemory,
     which_browser: str = "file browser",
 ) -> None:
-    data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
-
     expected_items = parse_seq(item_list) if isinstance(item_list, str) else item_list
-    assert len(expected_items) == len(data), (
-        f"there is different number of items in {which_browser}, "
-        f"actual items: {data}, expected items: {item_list}"
-    )
+
+    def check_until_numbers_of_items_are_equal() -> None:
+        data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
+        assert len(expected_items) == len(data), (
+            f"there is different number of items in {which_browser}, "
+            f"actual items: {data}, expected items: {item_list}"
+        )
+
+    perform_action(check_until_numbers_of_items_are_equal, timeout=WAIT_BACKEND)
 
     assert_items_presence_in_browser(
         selenium, browser_id, list(expected_items), tmp_memory, which_browser

@@ -26,7 +26,9 @@ from tests.gui.meta_steps.rest.storages import (
 )
 from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
-from tests.gui.steps.common.notifies import dismiss_notifies_if_present, is_notify_popup_visible_and_close_all_alert_popups
+from tests.gui.steps.common.notifies import (
+    is_notify_popup_visible_and_close_all_alert_popups,
+)
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     find_modal,
@@ -392,11 +394,13 @@ def _try_confirm_changes_in_modify_storage_modal(
     driver = selenium[browser_id]
     modal_name = "Modify Storage"
     # brief check if modal is already visible
-    if find_modal(driver, modal_name, expected=False, timeout=WAIT_FRONTEND//2):
+    if find_modal(driver, modal_name, expected=False, timeout=WAIT_FRONTEND // 2):
         with contextlib.suppress(NoSuchElementException):
             click_modal_button(selenium, browser_id, "Understand checkbox", modal_name)
             click_modal_button(selenium, browser_id, "Proceed", modal_name)
-            wait_for_named_modal_to_disappear(selenium, browser_id, modal_name, wait_time=WAIT_BACKEND * 5)
+            wait_for_named_modal_to_disappear(
+                selenium, browser_id, modal_name, wait_time=WAIT_BACKEND * 5
+            )
 
 
 def _register_revoke_space_supports_finalizer_if_storage_successfully_added(

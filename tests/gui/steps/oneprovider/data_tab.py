@@ -119,14 +119,15 @@ def click_button_from_file_browser_menu_bar(
 @wt(
     parsers.parse(
         "user of {browser_id} changes current working directory "
-        "to {path} using breadcrumbs in {which_browser}"
+        'to "{path}" using breadcrumbs in {which_browser:WhichBrowser}',
+        extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 def wt_change_cwd_using_breadcrumbs_in_data_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: str, path: str, which_browser: str
+    selenium: SeleniumDrivers, browser_id: str, path: str, which_browser: WhichBrowser
 ) -> None:
     change_cwd_using_breadcrumbs_in_data_tab_in_op(
-        selenium, browser_id, path, which_browser=which_browser
+        selenium, browser_id, path, which_browser=transform(which_browser.value)
     )
 
 
