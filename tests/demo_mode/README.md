@@ -1,144 +1,100 @@
 # Demo-mode acceptance tests
 
-This suite runs the commands published in the
-[demo-mode admin guide](https://onedata.org/docs/25/admin-guide/demo-mode/) and
-checks the resulting Onezone and Oneprovider services through their REST APIs.
+This suite guards the source [demo-mode admin guide](https://github.com/onedata/onedata-documentation/blob/develop/docs/admin-guide/demo-mode.md):
+it runs its Docker commands and verifies the resulting Onezone and Oneprovider
+services through their public interfaces.
 
-It covers foreground and detached startup, a two-provider environment,
-persistent state, Python access through `fs.onedatarestfs`, and the complete
-Docker/REST example.
+Unlike the other acceptance suites, demo mode uses neither one-env,
+`test_run.py`, nor pytest-bdd. `ENV_FILE`, `SUITE`, `KEYWORDS`, `OPTS`, and
+`--no-clean` do not apply; plain pytest starts a fresh environment per scenario.
 
-## Quick start
+> **Warning:** every scenario force-removes `oz_test`, `op_test1`, and
+> `op_test2`. Persistence also owns `/tmp/oz-pers`, `/tmp/op_test<N>-pers`, and
+> `/tmp/op_test<N>-storage`; without the suite's marker it refuses to remove
+> existing paths and fails instead.
 
-Docker must be available through `/var/run/docker.sock`, and the selected
-Onezone and Oneprovider images must be accessible locally or from their image
-registry.
+## Scenarios
 
-Run the complete suite from the repository root:
+| Scenario | Guide section | Command directories | Bamboo job |
+|---|---|---|---|
+| `test_run_in_foreground` | Running in the foreground; Acquiring an access token | `run_in_foreground/`, `access_token/` | Run in foreground |
+| `test_run_in_background` | Running in the background; Acquiring an access token | `run_in_background/`, `access_token/` | Run in background |
+| `test_distributed_environment` | Distributed environment | `run_in_foreground/`, `access_token/` | Distributed environment |
+| `test_comprehensive_example` | Comprehensive example | `comprehensive_example/`, `access_token/` | Comprehensive example |
+| `test_python_access` | Data access using Python | `run_in_foreground/`, `python_access/` | Python access |
+| `test_persistency` | Retaining persistence between restarts | `persistency/`, `access_token/` | disabled (`VFS-13556`) |
+
+## Running
+
+You need `/var/run/docker.sock`, the release's service images, initialized
+submodules (`make submodules`), and the acceptance-test image. Python access
+also needs PyPI while creating its virtual environment.
 
 ```bash
+# All scenarios
 make test_demo_mode RELEASE=25.1
+
+# One scenario (filename without .py)
+make test_demo_mode RELEASE=25.1 SCENARIO=test_distributed_environment
 ```
 
-Run one scenario by passing its filename without `.py`:
+| Make variable | Required | Meaning |
+|---|---|---|
+| `RELEASE` | yes | Onezone and Oneprovider image tag |
+| `SCENARIO` | no | one file from `scenarios/`, without `.py` |
+| `DOCKER_API_VERSION` | no | Docker API compatibility version, e.g. `1.41` |
+| `RUNNER_NAME` | no | explicit test-runner name, primarily for Bamboo cleanup |
 
-```bash
-make test_demo_mode RELEASE=25.1 SCENARIO=test_python_access
-```
-
-When running directly in a prepared Python environment:
+For IDE integration or debugging in a prepared local environment:
 
 ```bash
 python3 -m pytest --confcutdir=tests/demo_mode -rs -s -v \
     tests/demo_mode/scenarios --release=25.1
 ```
 
-## Adding or changing a scenario
+`--confcutdir` prevents loading repository-wide, one-env-based fixtures.
 
-1. Put the tutorial command in [commands](commands). Keep it usable as a
-   standalone example. Use `xRELEASExVERSIONx` and `xCONTAINERxNAMEx` where the
-   test must supply those values.
-2. Register its `CommandTemplate` in `utils/commands.py` and expose it through
-   `DemoCommands`. No other module should contain command paths or instantiate
-   templates.
-3. Add an operation to `steps` if the scenario needs a reusable external
-   action. A step may run a command, wait for a service, or perform a REST
-   request; a plain equality assertion is not a step.
-4. Compose operations in `meta_steps` when the sequence is reused, then keep
-   the scenario focused on the behavior being verified.
+## Diagnosing failures
 
-For example, command scripts are bound centrally and only the resulting
-`Command` is executable:
+JUnit output is written to `test-reports/results-demo-mode.xml`. Command logs
+are stored under `tests/demo_mode/logs/report.<timestamp>/` and published by
+Bamboo as the `command-logs` artifact:
 
-```python
-command = demo_commands.foreground_oneprovider(provider.container)
-process = command.start()
+```text
+report.<timestamp>/
+└── <scenario>/
+    ├── command-001-<name>.log
+    ├── command-002-<name>.log
+    └── setup.log                 # python_access only
 ```
 
-REST calls use clients that retain their service and access token:
+Each numbered log contains the rendered command and output. Command failures
+name the template; readiness failures point to `await-*` and launcher logs.
+Python failures preserve `setup.log`; REST failures appear in pytest and JUnit.
 
-```python
-provider = OneproviderRestClient(service, access_token)
-provider.upload(space_id=space_id, file_name=file_name, content=content)
-```
+## Changing guide commands
 
-Use keyword arguments for REST resource identifiers and payloads. This keeps
-upload, download, removal, and support operations consistent and readable.
+Files in `commands/` are tested guide fragments, not test helpers. Keep them in
+sync with the source guide. The intentional test-only adaptations are:
 
-## Code organization
+- `docker run -it` becomes `docker run -i`, because the runner has no TTY;
+- the Python REPL session becomes a script whose results are printed.
 
-- `commands/` contains the unmodified shell and Python examples under test.
-- `scenarios/` contains pytest scenarios and their high-level assertions.
-- `steps/` contains externally observable operations.
-- `meta_steps/` combines operations and performs behavior-level checks.
-- `utils/commands.py` owns command templates, binding, execution, and process
-  lifecycle.
-- `utils/rest.py` provides `OnezoneRestClient` and `OneproviderRestClient`.
-- `utils/` also contains logging and persistence-directory support.
+Keep `xRELEASExVERSIONx`; documentation replaces it during its build. Use
+`xCONTAINERxNAMEx` only where the guide permits selecting a container name. If
+the guide itself is wrong, fix it there and then copy the corrected command
+here rather than adding a test-only workaround.
 
-`CommandTemplate` only loads a script and binds its placeholders. It produces a
-`Command`, which is the sole execution interface for `run`, `start`, retry,
-logging, timeouts, and process termination. The `demo_commands` fixture supplies
-the release-bound `DemoCommands` catalog to scenarios.
+When adding a scenario:
 
-Started services are represented by `Onezone` and `Oneprovider`. Composite
-startup operations return a `DemoEnvironment`. A service process is `None` when
-the launch command exited after creating a detached container or an all-in-one
-example owns the lifecycle.
+1. Add or reuse a guide fragment under the matching `commands/` section.
+2. Register its path in `utils/commands/`; paths must not appear elsewhere.
+3. Put external operations in `steps/` and reusable guide-level procedures in
+   `meta_steps/`; steps must never import meta steps.
+4. Keep scenario data, ordering, and comparisons of already-fetched values in
+   `scenarios/`.
+5. Add a Bamboo job and keep its final container list synchronized with
+   `constants.py`.
 
-## Test conventions
-
-- A step performs an external action; it is not a wrapper around one `assert`.
-- A meta step combines operations or validates a complete behavior.
-- Steps never import meta steps.
-- Scenarios and steps do not instantiate `CommandTemplate` or contain command
-  paths.
-- REST code passes a client first and uses keyword-only operation arguments.
-- Foreground launcher processes are registered for cleanup immediately.
-- All providers are started before service readiness checks begin.
-
-The tutorial's `docker run -i` is intentional. Do not add `-t`: automated tests
-do not provide a terminal.
-
-## Debugging failures
-
-Each test receives a directory under
-`tests/demo_mode/logs/report.<timestamp>`. Every command invocation has a
-numbered log containing the rendered command and its output. Repeated readiness
-attempts receive separate files.
-
-JUnit results are written to `test-reports/results-demo-mode.xml`. Bamboo also
-publishes the command-log directory as the `command-logs` artifact.
-
-If Docker reports an API compatibility error, specify the newest API supported
-by the daemon:
-
-```bash
-make test_demo_mode RELEASE=25.1 DOCKER_API_VERSION=1.41
-```
-
-An interrupted local run can leave the fixed `oz_test`, `op_test1`, or
-`op_test2` container names occupied. Remove those test containers before
-retrying. The suite normally removes them before and after every scenario.
-
-The persistence scenario additionally uses `/tmp/oz-pers`, `/tmp/op-pers`, and
-`/tmp/op-storage`. It removes these paths only when their test ownership marker
-is valid.
-
-## Runner internals
-
-`make test_demo_mode` starts pytest in the acceptance-test image and mounts the
-host Docker socket. Service containers are therefore siblings of the test
-runner. The runner temporarily starts as root to gain socket access, then
-switches to the invoking UID and GID so reports and logs remain owned by the
-developer or Bamboo user.
-
-`RUNNER_NAME` is optional locally and lets Bamboo identify a runner left after
-cancellation:
-
-```bash
-make test_demo_mode RELEASE=25.1 RUNNER_NAME=my-demo-mode-runner
-```
-
-Unlike the GUI, mixed, and Oneclient suites, demo-mode tests do not use an
-`ENV_FILE` or `test_run.py`; every scenario starts its own services directly.
+Implementation mechanics belong in docstrings near `utils/test_runner.py`,
+`utils/command_context.py`, `utils/commands/`, and `steps/environment.py`.
