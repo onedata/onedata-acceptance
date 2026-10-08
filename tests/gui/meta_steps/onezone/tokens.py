@@ -601,7 +601,7 @@ def _set_tokens_caveats(
 
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, "expiration")
-        caveat.set_expiration_caveat(expiration_caveat, tmp_memory)
+        caveat.set_expiration_caveat(selenium[browser_id], expiration_caveat, tmp_memory)
     if region_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "region")
         caveat.set_region_caveats(selenium, browser_id, region_caveats)
