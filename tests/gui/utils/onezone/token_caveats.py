@@ -25,6 +25,7 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.generic import perform_action
 from tests.gui.utils.text import transform
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
@@ -349,7 +350,11 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
     ) -> None:
         get_caveat_field().click_new_item()
         driver = selenium[browser_id]
-        popup = Popups(driver).consumer_caveat_popup
+
+        popup = wait_for_visible_element_using_getter(
+            driver,
+            lambda current_driver: Popups(current_driver).consumer_caveat_popup,
+        )
 
         popup.expand_consumer_types()
         popup.select_consumer_type(consumer_type)
