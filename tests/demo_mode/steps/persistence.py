@@ -10,6 +10,7 @@ from environment import docker
 
 from tests.demo_mode.constants import (
     ONEZONE_CONTAINER,
+    SERVICE_READY_TIMEOUT,
 )
 from tests.demo_mode.type_definitions import DemoService, Oneprovider, Onezone
 from tests.demo_mode.utils.commands import (
@@ -18,15 +19,22 @@ from tests.demo_mode.utils.commands import (
     Command,
 )
 from tests.demo_mode.utils.logging import log_step
+from tests.utils.docker_utils import wait_for_running_container
 
 
 @log_step("Starting persistent Onezone")
 def start_persistent_onezone() -> Onezone:
     """Start Onezone using the unmodified persistence command."""
-    return Onezone(
+    onezone = Onezone(
         container=ONEZONE_CONTAINER,
         process=RUN_ONEZONE_PERSISTENT.start(),
     )
+    wait_for_running_container(
+        onezone.container,
+        onezone.process,
+        timeout=SERVICE_READY_TIMEOUT,
+    )
+    return onezone
 
 
 @log_step("Starting persistent Oneprovider")
