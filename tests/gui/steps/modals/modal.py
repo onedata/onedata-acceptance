@@ -132,6 +132,7 @@ def find_modal(
             "unlink",
             "download",
             "function pods activity",
+            "modify_storage",
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(By.CSS_SELECTOR, ".modal, .modal .modal-header h1")
