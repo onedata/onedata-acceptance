@@ -12,7 +12,6 @@ from tests.demo_mode.constants import (
 from tests.demo_mode.steps.environment import (
     await_oneprovider,
     await_onezone,
-    get_demo_access_token,
     run_background_oneprovider,
     run_background_onezone,
     run_foreground_oneprovider,
@@ -33,14 +32,13 @@ def _validate_oneprovider_count(oneprovider_count: int) -> None:
 
 def assert_environment_configuration(
     environment: DemoEnvironment,
-    commands: DemoCommands,
     *,
     release: str,
+    access_token: str,
 ) -> None:
     """Assert the public configuration of every service in an environment."""
     assert_onezone_configuration(environment.onezone, release=release)
     for oneprovider in environment.oneproviders:
-        access_token = get_demo_access_token(oneprovider, commands)
         assert_oneprovider_configuration(
             oneprovider,
             release=release,

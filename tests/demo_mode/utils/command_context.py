@@ -67,6 +67,10 @@ class CommandContext:
 
         self._processes.clear()
 
+    @property
+    def logs_directory(self) -> Path:
+        return self._logs_directory
+
 
 def current_command_context() -> CommandContext:
     """Return the active context or fail when called outside a demo test."""

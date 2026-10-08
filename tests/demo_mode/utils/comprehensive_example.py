@@ -4,6 +4,7 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import re
 from typing import Final
 
 MIN_FILENAME_MESSAGE_PARTS: Final = 3
@@ -27,7 +28,7 @@ def get_comprehensive_example_file_name(command_output: str) -> str:
     )
 
     file_name = message_parts[1]
-    assert file_name.endswith(".txt"), (
-        f"Expected comprehensive example to create a .txt file, got {file_name!r}"
+    assert re.fullmatch(r"test\d+\.txt", file_name), (
+        f"Expected comprehensive example to create test<N>.txt, got {file_name!r}"
     )
     return file_name

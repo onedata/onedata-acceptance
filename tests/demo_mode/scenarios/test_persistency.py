@@ -13,6 +13,7 @@ from tests.demo_mode.meta_steps.persistence import (
     start_persistent_environment,
     stop_persistent_environment,
 )
+from tests.demo_mode.steps.environment import get_demo_access_token
 from tests.demo_mode.utils.commands import DemoCommands
 
 
@@ -27,7 +28,13 @@ def test_persistency(
     file_content = b"Onedata demo-mode persistence REST test\n"
 
     environment = start_persistent_environment(demo_commands)
-    assert_environment_configuration(environment, demo_commands, release=release)
+    (provider,) = environment.oneproviders
+    access_token = get_demo_access_token(provider, demo_commands)
+    assert_environment_configuration(
+        environment,
+        release=release,
+        access_token=access_token,
+    )
 
     persistence_state = save_persistent_state(
         environment,
@@ -39,7 +46,13 @@ def test_persistency(
     )
     stop_persistent_environment(environment)
     restarted_environment = start_persistent_environment(demo_commands)
-    assert_environment_configuration(restarted_environment, demo_commands, release=release)
+    (restarted_provider,) = restarted_environment.oneproviders
+    restarted_access_token = get_demo_access_token(restarted_provider, demo_commands)
+    assert_environment_configuration(
+        restarted_environment,
+        release=release,
+        access_token=restarted_access_token,
+    )
     assert_persistent_state(
         restarted_environment,
         demo_commands,

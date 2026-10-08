@@ -25,10 +25,14 @@ def test_comprehensive_example(
     expected_file_content = b"hello world\\n"
     command_output = run_comprehensive_example(demo_commands)
     environment = guide_environment(oneprovider_count=1)
-    assert_environment_configuration(environment, demo_commands, release=release)
-    file_name = get_comprehensive_example_file_name(command_output)
     (provider,) = environment.oneproviders
     access_token = get_demo_access_token(provider, demo_commands)
+    assert_environment_configuration(
+        environment,
+        release=release,
+        access_token=access_token,
+    )
+    file_name = get_comprehensive_example_file_name(command_output)
     assert_file_content(
         provider,
         space_id=DEMO_SPACE_ID,

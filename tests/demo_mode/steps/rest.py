@@ -8,11 +8,13 @@ from functools import partial
 
 import pytest
 
-from tests.demo_mode.constants import DEMO_SPACE_NAME, ONEZONE_NAME
+from tests.demo_mode.constants import ONEZONE_NAME, SPACE_SYNC_TIMEOUT
 from tests.demo_mode.type_definitions import Oneprovider, Onezone
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.rest import OneproviderRestClient, OnezoneRestClient
 from tests.utils.docker_utils import container_ip
+from tests.utils.http_exceptions import HTTPBadRequest, HTTPNotFound
+from tests.utils.utils import repeat_failed
 
 
 def onezone_rest_client(
@@ -51,13 +53,14 @@ def create_space_for_provider(
 
 
 @log_step("Getting REST space ID")
-def get_demo_space_id(
+def get_space_id(
     provider: Oneprovider,
     *,
+    space_name: str,
     access_token: str,
 ) -> str:
     """Get the ID of the demo space accessible through a Oneprovider."""
-    return oneprovider_rest_client(provider, access_token).space_id(name=DEMO_SPACE_NAME)
+    return oneprovider_rest_client(provider, access_token).space_id(name=space_name)
 
 
 @log_step("Removing REST file")
@@ -146,8 +149,7 @@ def assert_oneprovider_configuration(
     )
 
 
-@log_step("Checking REST file content")
-def assert_file_content(
+def _assert_file_content(
     provider: Oneprovider,
     *,
     space_id: str,
@@ -165,6 +167,69 @@ def assert_file_content(
     assert downloaded_content == expected_content, (
         f"{provider.container} returned {downloaded_content!r}, expected {expected_content!r}"
     )
+
+
+def _is_missing_file_error(error: HTTPBadRequest) -> bool:
+    try:
+        response_body = error.response.json()
+    except ValueError:
+        return False
+
+    if not isinstance(response_body, dict):
+        return False
+    error_body = response_body.get("error")
+    if not isinstance(error_body, dict):
+        return False
+    details = error_body.get("details")
+    return isinstance(details, dict) and details.get("errno") == "enoent"
+
+
+@log_step("Checking REST file content")
+def assert_file_content(
+    provider: Oneprovider,
+    *,
+    space_id: str,
+    file_name: str,
+    expected_content: bytes,
+    access_token: str,
+) -> None:
+    _assert_file_content(
+        provider,
+        space_id=space_id,
+        file_name=file_name,
+        expected_content=expected_content,
+        access_token=access_token,
+    )
+
+
+@log_step("Awaiting REST file content")
+@repeat_failed(
+    timeout=SPACE_SYNC_TIMEOUT,
+    interval=1,
+    exceptions=(AssertionError, HTTPNotFound),
+)
+def await_file_content(
+    provider: Oneprovider,
+    *,
+    space_id: str,
+    file_name: str,
+    expected_content: bytes,
+    access_token: str,
+) -> None:
+    try:
+        _assert_file_content(
+            provider,
+            space_id=space_id,
+            file_name=file_name,
+            expected_content=expected_content,
+            access_token=access_token,
+        )
+    except HTTPBadRequest as error:
+        if not _is_missing_file_error(error):
+            raise
+        raise AssertionError(
+            f"{provider.container} does not expose {file_name!r} in space {space_id} yet"
+        ) from error
 
 
 @log_step("Checking Oneprovider space support")
