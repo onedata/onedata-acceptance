@@ -52,8 +52,9 @@ from tests.gui.steps.oneprovider.data_tab import (
     expand_size_statistics_for_providers,
     go_one_back_using_breadcrumbs_in_data_tab_in_op,
     has_downloaded_file_content,
+    start_uploading_file_to_cwd_in_file_browser,
     upload_file_to_cwd_in_file_browser,
-    upload_file_to_cwd_in_file_browser_no_waiting,
+    wait_for_file_upload_to_finish,
 )
 from tests.gui.steps.oneprovider.file_browser import (
     assert_item_in_file_browser_is_of_mdate,
@@ -83,6 +84,7 @@ from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import (
     ELEMENTS_SEQUENCE_PATTERN,
     parse_elements_sequence,
+    upload_workflow_path,
 )
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -97,6 +99,39 @@ def write_text_to_jump_input_and_wait_until_applied(
 ) -> None:
     write_to_jump_input(browser_id, tmp_memory, prefix)
     wait_until_prefix_written_to_jump_input(browser_id, tmp_memory, prefix)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} uses upload button from file browser "
+        'menu bar to upload {option} "automation/{inner_dir}/'
+        '{file_name}" to current dir'
+    )
+)
+def upload_automation_file_to_cwd_in_file_browser(
+    selenium: SeleniumDrivers, browser_id: str, file_name: str, inner_dir: str
+) -> None:
+    file_path = f"automation/{inner_dir}/{file_name}"
+    start_uploading_file_to_cwd_in_file_browser(selenium, browser_id, file_path)
+    wait_for_file_upload_to_finish(selenium, browser_id)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} uses upload button from file browser "
+        'menu bar to upload {option} "automation-examples/workflows/'
+        '{workflow_name}/{file_name}" to current dir'
+    )
+)
+def upload_automation_example_file_to_cwd_in_file_browser(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    workflow_name: str,
+    file_name: str,
+) -> None:
+    file_path = upload_workflow_path(f"{workflow_name}/{file_name}")
+    start_uploading_file_to_cwd_in_file_browser(selenium, browser_id, file_path)
+    wait_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -657,7 +692,7 @@ def upload_file_to_op_gui(
         upload_file_to_cwd_in_file_browser(selenium, browser_id, filename)
         assert_items_presence_in_browser(selenium, browser_id, [filename], tmp_memory)
     else:
-        upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id, filename)
+        start_uploading_file_to_cwd_in_file_browser(selenium, browser_id, filename)
         check_error_in_upload_presenter(selenium, browser_id)
 
 

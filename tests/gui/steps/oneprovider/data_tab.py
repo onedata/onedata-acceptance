@@ -412,29 +412,11 @@ def wait_extended_time_for_file_upload_to_finish(
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_file_to_cwd_in_file_browser_no_waiting(
+def start_uploading_file_to_cwd_in_file_browser(
     selenium: SeleniumDrivers, browser_id: str, file_name: str
 ) -> None:
     driver = selenium[browser_id]
     OPLoggedIn(driver).file_browser.upload_files(upload_file_path(file_name))
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) uses upload button from file "
-        r"browser menu bar to upload (?P<option>.*) "
-        r'"automation/(?P<inner_dir>.*)/'
-        r'(?P<file_name>.*)" to current dir'
-    )
-)
-@repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_automation_file_to_cwd_in_file_browser(
-    selenium: SeleniumDrivers, browser_id: str, file_name: str, inner_dir: str
-) -> None:
-    file_name = "automation/" + inner_dir + "/" + file_name.replace('"', "")
-    driver = selenium[browser_id]
-    OPLoggedIn(driver).file_browser.upload_files(upload_file_path(file_name))
-    wait_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -467,7 +449,7 @@ def upload_files_to_cwd_in_data_tab_no_waiting(
 def upload_file_to_cwd_in_file_browser(
     selenium: SeleniumDrivers, browser_id: str, file_name: str
 ) -> None:
-    upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id, file_name)
+    start_uploading_file_to_cwd_in_file_browser(selenium, browser_id, file_name)
     wait_for_file_upload_to_finish(selenium, browser_id)
 
 

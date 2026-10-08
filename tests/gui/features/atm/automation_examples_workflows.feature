@@ -10,7 +10,7 @@ Feature: Automation examples tests
             providers:
                 - oneprovider-1:
                     storage: s3
-                    size: 10000000
+                    size: 100000000000
             storage:
                 defaults:
                     provider: oneprovider-1
@@ -172,7 +172,7 @@ Feature: Automation examples tests
     And user of browser sees that the file structure in file browser is as follow:
         - dir1:
           - data:
-            - googlelogo_color_272x92dp.png
+            - apache_pb.png
           - file1
           - file2
           - file3
@@ -193,51 +193,9 @@ Feature: Automation examples tests
             status: Found  1 files to be downloaded.
             fetchFileName: fetch.txt
     And user of browser sees that content of "files-to-download" store is:
-      sourceUrl: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
+      sourceUrl: https://packages.onedata.org/icons/apache_pb.png
     And user of browser opens "sourceUrl" URL from "files-to-download" store in browser's location bar
-    And user of browser sees image named "googlelogo_color_272x92dp.png" in browser
-
-
-  Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using xrootd fetch file
-    When user of browser clicks on "Automation" in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
-
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/xrootd_fetch.txt" to current dir
-    And user of browser sees that item named "xrootd_fetch.txt" has appeared in file browser
-
-    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
-        fetch-files:
-          - xrootd_fetch.txt
-        destination:
-          - dir1
-
-    Then user of browser sees that status of "download-files" workflow is "Finished"
-    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
-        timestamp: today
-        source: user
-        severity: info
-        content:
-            status: Found  1 files to be downloaded.
-            fetchFileName: xrootd_fetch.txt
-
-    And user of browser opens file browser for "space1" space
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that the file structure in file browser is as follow:
-        - dir1:
-          - data:
-            - LHC10c_pp_ESD_120076.json
-          - file1
-          - file2
-          - file3
-          - file4
-          - file5
-        - dir2:
-          - file1
-        - xrootd_fetch.txt
+    And user of browser sees image named "apache_pb.png" in browser
 
 
   Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using fetch xrootd file
@@ -248,7 +206,7 @@ Feature: Automation examples tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/fetch_xrootd.txt" to current dir
+    And user of browser uses upload button from file browser menu bar to upload file "automation-examples/workflows/download-files/fetch_xrootd.txt" to current dir
     And user of browser sees that item named "fetch_xrootd.txt" has appeared in file browser
 
     And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
@@ -282,8 +240,53 @@ Feature: Automation examples tests
           - file1
         - fetch_xrootd.txt
 
-    # TODO: VFS-11705 implement test for following archives after workflow fix
-    # fetch_multiple_files.txt
+  Scenario: User sees desirable files after executing uploaded "download-files" workflow using "fetch_multiple_files" file
+    When user of browser clicks on "Automation" in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
+
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/fetch_multiple_files.txt" to current dir
+    And user of browser sees that item named "fetch_multiple_files.txt" has appeared in file browser
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "download-files" workflow
+    And user of browser chooses "fetch_multiple_files.txt" file as initial value of "fetch-files" store for workflow in "Select files" modal
+    And user of browser chooses "dir1" file as initial value of "destination" store for workflow in "Select files" modal
+    And user of browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser waits for all workflows to start
+    And user of browser waits extended time for all workflows to finish
+    And user of browser clicks on first executed workflow
+
+    Then user of browser sees that status of "download-files" workflow is "Finished"
+    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
+        timestamp: today
+        source: user
+        severity: info
+        content:
+            status: Found  17 files to be downloaded.
+            fetchFileName: fetch_multiple_files.txt
+
+    And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 17
+    And user of browser closes "Store details" modal
+
+    And user of browser opens file browser for "space1" space
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that the file structure in file browser is as follow:
+        - dir1:
+          - images: 1
+          - packages: 16
+          - file1
+          - file2
+          - file3
+          - file4
+          - file5
+        - dir2:
+          - file1
+        - fetch_multiple_files.txt
 
 
   Scenario: User sees exception after execution of uploaded "download-files" workflow finishes when using incorrect fetch file
@@ -338,7 +341,7 @@ Feature: Automation examples tests
             status: Found  1 files to be downloaded.
             fetchFileName: whitespaces_fetch.txt
     And user of browser sees that content of "files-to-download" store is:
-      sourceUrl: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
+      sourceUrl: https://packages.onedata.org/icons/apache_pb.png
 
 
   Scenario: User sees desirable "Active" workflow status before 10s pass in task auditlog after changing sleepDurationSec in echo lambda
@@ -366,9 +369,7 @@ Feature: Automation examples tests
     And user of browser clicks on "echo" on workflow executions list
     And user of browser is idle for 5 seconds
     And user of browser sees that status of "echo" workflow is "Active"
-    # Wait extra 3 seconds to make it more stable
-    And user of browser is idle for 8 seconds
-    And user of browser sees that status of "echo" workflow is "Finished"
+    And user of browser awaits for status of "echo" workflow to be "Finished"
 
 
   Scenario: User sees desirable exception in task auditlog after changing exceptionProbability in echo lambda

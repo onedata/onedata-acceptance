@@ -12,7 +12,7 @@ from collections.abc import Callable, Iterable, Iterator
 from contextlib import contextmanager
 from contextlib import suppress as contextlib_suppress
 from datetime import datetime
-from enum import Enum
+from enum import Enum, StrEnum
 from functools import partial
 from itertools import islice
 from time import sleep
@@ -44,6 +44,7 @@ from tests.gui.type_definitions import (
 )
 from tests.gui.utils import text as text_utils
 from tests.type_definitions import JsonValue
+from tests.utils.utils import repeat_failed
 
 T = TypeVar("T")
 suppress = contextlib_suppress
@@ -331,6 +332,22 @@ def wait_for_visible_element_using_getter[VisibleElementT: VisibleElement](
     )
 
 
+def perform_action[ActionResultT](
+    action: Callable[[], ActionResultT],
+    /,
+    assertion: Callable[[], None] | None = None,
+    timeout: float = WAIT_FRONTEND,
+) -> ActionResultT:
+    @repeat_failed(timeout=timeout)
+    def attempt() -> ActionResultT:
+        result = action()
+        if assertion is not None:
+            assertion()
+        return result
+
+    return attempt()
+
+
 def wait_for_element_to_disappear_using_getter[VisibleElementT: VisibleElement](
     driver: WebDriver,
     web_elem_getter: Callable[[WebDriver], VisibleElementT],
@@ -524,6 +541,15 @@ def sort_json_from_string(value: str) -> JsonValue:
 class OnedataService(Enum):
     WORKERS = "workers"
     ONES3 = "ones3"
+
+
+class OneS3ServiceState(StrEnum):
+    STOPPED = "stopped"
+    STARTING = "starting"
+    HEALTHY = "healthy"
+    UNHEALTHY = "unhealthy"
+    STOPPING = "stopping"
+    MISSING = "missing"
 
 
 class TransferState(Enum):

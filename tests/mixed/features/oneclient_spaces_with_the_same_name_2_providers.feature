@@ -77,9 +77,9 @@ Feature: Tests for oneclient interaction with spaces with the same name on 2 pro
         storage: posix
         size: 1000000
 
-    Then using oneclient1, user1 sees spaces "[helloworld, helloworld]" from "onezone" Onezone service, annotated with their ids in mount point
-    And using oneclient2, user1 sees spaces "[helloworld, helloworld]" from "onezone" Onezone service, annotated with their ids in mount point
-    And using oneclient3, user1 sees spaces "[helloworld, helloworld]" from "onezone" Onezone service, annotated with their ids in mount point
+    Then using oneclient1, user1 sees spaces ["helloworld", "helloworld"] from "onezone" Onezone service, annotated with their ids in mount point
+    And using oneclient2, user1 sees spaces ["helloworld", "helloworld"] from "onezone" Onezone service, annotated with their ids in mount point
+    And using oneclient3, user1 sees spaces ["helloworld", "helloworld"] from "onezone" Onezone service, annotated with their ids in mount point
 
     And using oneclient1, user1 creates file named "file1" in space with test alias "A" in oneprovider-1
     And using oneclient1, user1 writes "TEST AAA" to file named "file1" in space with test alias "A" in oneprovider-1
@@ -102,9 +102,9 @@ Feature: Tests for oneclient interaction with spaces with the same name on 2 pro
     And using oneclient2, user1 reads "TEST BBB" from file named "file1" in space with test alias "B" in oneprovider-1
     And using oneclient3, user1 reads "TEST BBB" from file named "file1" in space with test alias "B" in oneprovider-1
 
-    And using oneclient1, user1 sees spaces "[helloworld, helloworld2]" in mount point
-    And using oneclient2, user1 sees spaces "[helloworld, helloworld2]" in mount point
-    And using oneclient3, user1 sees spaces "[helloworld, helloworld2]" in mount point
+    And using oneclient1, user1 sees spaces ["helloworld", "helloworld2"] in mount point
+    And using oneclient2, user1 sees spaces ["helloworld", "helloworld2"] in mount point
+    And using oneclient3, user1 sees spaces ["helloworld", "helloworld2"] in mount point
 
 
   Scenario Outline: Using different oneclients user can see proper space contents after modifying contents by oneclients on different providers

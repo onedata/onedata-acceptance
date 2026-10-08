@@ -628,7 +628,13 @@ def _set_tokens_caveats(
         )
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "service")
-        caveat.set_service_caveats(selenium, browser_id, service_caveats)
+        driver = selenium[browser_id]
+        caveat.set_service_caveats(
+            selenium,
+            browser_id,
+            service_caveats,
+            lambda: OZLoggedIn(driver).tokens.create_token_page.service_caveat,
+        )
     if interface_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, "interface")
         caveat.set_interface_caveat(interface_caveat)

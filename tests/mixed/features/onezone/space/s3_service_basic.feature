@@ -32,7 +32,7 @@ Feature: Basic management of space using OneS3 and boto3
 
 
   Scenario: User can see correct spaces listed in OneS3 service, using list buckets function
-    Then using OneS3 and list buckets boto3 function, user user1 can see spaces "[space1, space2]"
+    Then using OneS3 and list buckets boto3 function, user user1 can see spaces ["space1", "space2"]
 
 
   Scenario: User can see presence of a space in OneS3 service, using head bucket function

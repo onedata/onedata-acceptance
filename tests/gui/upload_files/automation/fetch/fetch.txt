@@ -1,1 +1,1 @@
-https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png	5969	data/googlelogo_color_272x92dp.png
+https://packages.onedata.org/icons/apache_pb.png	8376	data/apache_pb.png
