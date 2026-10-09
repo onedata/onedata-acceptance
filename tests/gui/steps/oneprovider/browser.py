@@ -211,7 +211,8 @@ def click_on_breadcrumbs_menu(
 ) -> None:
     driver = selenium[browser_id]
     breadcrumbs = getattr(OPLoggedIn(driver), transform(which_browser)).breadcrumbs
-    breadcrumbs.menu_button()
+    menu_btn = breadcrumbs.menu_button.web_elem
+    ActionChains(driver).move_to_element(menu_btn).click(menu_btn).perform()
 
 
 def _get_items_list_from_browser(
