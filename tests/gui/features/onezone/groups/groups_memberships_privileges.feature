@@ -177,7 +177,6 @@ Feature: Basic management of groups privileges in Onezone GUI
     Then user of browser sees following privileges of "user1" user in group members subpage:
           User management:
             granted: False
-    And user of browser clicks "user1" user in "group1" group members users list
     And user of browser clicks "user2" user in "group1" group members users list
     And user of browser sees following privileges of "user2" user in group members subpage:
           User management:

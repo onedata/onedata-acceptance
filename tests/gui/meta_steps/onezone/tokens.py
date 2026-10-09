@@ -70,6 +70,7 @@ from tests.gui.steps.onezone.tokens import (
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.generic import perform_action
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -884,7 +885,7 @@ def remove_all_tokens(selenium: SeleniumDrivers, browser_id: str) -> None:
     modal = "Remove token"
 
     driver = selenium[browser_id]
-    tokens = get_onezone_subpage(driver, "tokens").sidebar.tokens
+    tokens = perform_action(lambda: get_onezone_subpage(driver, "tokens").sidebar.tokens)
     if len(tokens):
         tokens[0].click()
 

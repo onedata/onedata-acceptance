@@ -12,6 +12,7 @@ from itertools import zip_longest
 
 import requests
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
@@ -358,10 +359,18 @@ def click_on_button_on_providers_list(
 ) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    getattr(
+    button = transform(button)
+
+    button_elem = getattr(
         OZLoggedIn(driver).data.providers_page.providers_list[provider_name],
         transform(button),
-    )()
+    )
+    if button == "information_button":
+        ActionChains(driver).move_to_element(button_elem.web_elem).click(
+            button_elem.web_elem
+        ).perform()
+    else:
+        button_elem.click()
 
 
 def click_on_cease_support_in_menu_of_provider_on_providers_list(
