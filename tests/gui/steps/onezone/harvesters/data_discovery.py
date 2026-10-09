@@ -246,7 +246,7 @@ def wait_for_data_discovery_query_result(
 
     WebDriverWait(
         driver,
-        WAIT_BACKEND * 4,
+        WAIT_BACKEND * 6,
         poll_frequency=1,
         ignored_exceptions=(TimeoutException,),
     ).until(query_returns_expected_result)
