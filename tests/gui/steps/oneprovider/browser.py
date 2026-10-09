@@ -242,10 +242,25 @@ def _gather_data_from_browser(
     condition: Callable[[dict[str, BrowserRow]], bool],
 ) -> dict[str, BrowserRow]:
     data = {f.name: f for f in browser.data if f.name}
+    last_progress_at = time.monotonic()
+
     while condition(data):
-        browser.scroll_to_number_file(driver, len(data), browser)
+        # CSS ``nth-of-type`` indices start at 1. When rows are still loading,
+        # none of them may have a name yet, so using ``len(data)`` directly
+        # would keep trying to scroll to the invalid index 0.
+        browser.scroll_to_number_file(driver, max(len(data), 1), browser)
+        previous_items_count = len(data)
         partial_data = {f.name: f for f in browser.data if f.name}
         data.update(partial_data)
+
+        if len(data) > previous_items_count:
+            last_progress_at = time.monotonic()
+        elif time.monotonic() - last_progress_at >= WAIT_FRONTEND:
+            raise TimeoutError(
+                f"file browser rows did not finish loading; collected items: {set(data)}"
+            )
+        else:
+            time.sleep(0.1)
 
     return data
 
@@ -330,17 +345,22 @@ def check_if_item_is_dir_in_browser(
 ) -> bool:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
-    data = [f.name for f in browser.data if f.name]
+    data = {f.name: f for f in browser.data if f.name}
 
     while item_name not in data and len(data) != len(browser.data):
-        browser.scroll_to_number_file(driver, len(data), browser)
-        partial_data = [f.name for f in browser.data if f.name]
-        data.extend(partial_data)
+        data = _gather_data_from_browser(
+            driver,
+            browser,
+            lambda gathered_data: (
+                item_name not in gathered_data and len(gathered_data) != len(browser.data)
+            ),
+        )
 
     try:
         item = browser.data[item_name]
     except PageObjectNotFoundError:
-        browser.scroll_to_number_file(driver, data.index(item_name), browser)
+        # CSS ``nth-of-type`` uses one-based indices.
+        browser.scroll_to_number_file(driver, list(data).index(item_name) + 1, browser)
         item = browser.data[item_name]
 
     return not item.is_file()
