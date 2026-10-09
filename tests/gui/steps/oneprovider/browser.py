@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import re
 import time
-from collections.abc import Callable, Collection, Sequence
+from collections.abc import Collection, Sequence
 from datetime import datetime
 from typing import Protocol
 
@@ -16,15 +16,16 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import network_throttling_download
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.type_definitions import Clickable, TmpMemory, WhichBrowser
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.common.popups.configure_columns_menu import ColumnOption
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.enums import ListElement
 from tests.gui.utils.generic import perform_action, sort_json_from_string, transform
 from tests.gui.utils.oneprovider.browser import Browser
-from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
 from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import SeleniumDrivers
@@ -223,46 +224,15 @@ def _get_items_list_from_browser(
 ) -> Collection[str]:
 
     browser = tmp_memory[browser_id][transform(which_browser)]
-    data: Collection[str] = {f.name for f in browser.data if f.name}
-    driver = selenium[browser_id]
-    if len(data) != len(browser.data):
-
-        def condition(data_: dict[str, BrowserRow]) -> bool:
-            return len(data_) != len(browser.data)
-
-        data = _gather_data_from_browser(driver, browser, condition)
-        browser.scroll_to_number_file(driver, 2, browser)
-
-    return data
-
-
-def _gather_data_from_browser(
-    driver: WebDriver,
-    browser: Browser,
-    condition: Callable[[dict[str, BrowserRow]], bool],
-) -> dict[str, BrowserRow]:
-    data = {f.name: f for f in browser.data if f.name}
-    last_progress_at = time.monotonic()
-
-    while condition(data):
-        # CSS ``nth-of-type`` indices start at 1. When rows are still loading,
-        # none of them may have a name yet, so using ``len(data)`` directly
-        # would keep trying to scroll to the invalid index 0.
-        browser.scroll_to_number_file(driver, max(len(data), 1), browser)
-        previous_items_count = len(data)
-        partial_data = {f.name: f for f in browser.data if f.name}
-        data.update(partial_data)
-
-        if len(data) > previous_items_count:
-            last_progress_at = time.monotonic()
-        elif time.monotonic() - last_progress_at >= WAIT_FRONTEND:
-            raise TimeoutError(
-                f"file browser rows did not finish loading; collected items: {set(data)}"
-            )
-        else:
-            time.sleep(0.1)
-
-    return data
+    data = assert_n_items_in_items_list(
+        browser,
+        selenium,
+        browser_id,
+        None,
+        ListElement.FILES,
+        main_field="name",
+    )
+    return list(data)
 
 
 @wt(
@@ -320,22 +290,25 @@ def assert_only_expected_items_presence_in_browser(
     which_browser: str = "file browser",
 ) -> None:
     expected_items = parse_seq(item_list) if isinstance(item_list, str) else item_list
+    browser = tmp_memory[browser_id][transform(which_browser)]
 
-    def check_until_numbers_of_items_are_equal() -> None:
-        data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
-        assert len(expected_items) == len(data), (
-            f"there is different number of items in {which_browser}, "
-            f"actual items: {data}, expected items: {item_list}"
+    def check_until_numbers_of_items_are_equal() -> set[str]:
+        return assert_n_items_in_items_list(
+            browser,
+            selenium,
+            browser_id,
+            len(expected_items),
+            ListElement.FILES,
+            main_field="name",
         )
 
-    perform_action(check_until_numbers_of_items_are_equal, timeout=WAIT_BACKEND)
+    data = perform_action(check_until_numbers_of_items_are_equal, timeout=WAIT_BACKEND)
 
-    assert_items_presence_in_browser(
-        selenium, browser_id, list(expected_items), tmp_memory, which_browser
-    )
+    for item_name in list(expected_items):
+        assert item_name in data, f'not found "{item_name}" in browser'
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def check_if_item_is_dir_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -345,23 +318,21 @@ def check_if_item_is_dir_in_browser(
 ) -> bool:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
-    data = {f.name: f for f in browser.data if f.name}
+    browser.scroll_to_top()
+    data = assert_n_items_in_items_list(
+        browser, selenium, browser_id, None, ListElement.FILES, main_field="name"
+    )
+    assert item_name in data, "Item not is visible browser rows"
 
-    while item_name not in data and len(data) != len(browser.data):
-        data = _gather_data_from_browser(
-            driver,
-            browser,
-            lambda gathered_data: (
-                item_name not in gathered_data and len(gathered_data) != len(browser.data)
-            ),
-        )
-
-    try:
-        item = browser.data[item_name]
-    except PageObjectNotFoundError:
-        # CSS ``nth-of-type`` uses one-based indices.
-        browser.scroll_to_number_file(driver, list(data).index(item_name) + 1, browser)
-        item = browser.data[item_name]
+    browser.scroll_to_top()
+    stop_scrolling_flag = False
+    while not stop_scrolling_flag:
+        try:
+            item = browser.data[item_name]
+            stop_scrolling_flag = True
+        except PageObjectNotFoundError:
+            current_items = browser.get_visible_file_rows(browser.data, "name")
+            driver.execute_script("arguments[0].scrollIntoView();", current_items[-1].web_elem)
 
     return not item.is_file()
 

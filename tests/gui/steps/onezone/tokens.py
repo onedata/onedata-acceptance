@@ -127,7 +127,7 @@ def click_on_button_in_tokens_sidebar(
 def click_create_custom_token(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
 
-    def create_token():
+    def create_token() -> None:
         create_token = OZLoggedIn(driver).tokens.create_token_page.create_custom_token
         driver.execute_script("arguments[0].scrollIntoView();", create_token.web_elem)
         create_token.click()

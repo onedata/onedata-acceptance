@@ -65,18 +65,30 @@ def assert_n_items_in_items_list(
     page: ListPage | Browser,
     selenium: dict[str, WebDriver],
     browser_id: str,
-    number: int,
+    number: int | None,
     items_type: ListElement,
     main_field: ListItemMainField,
-) -> None:
+) -> set[str]:
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
 
+    if isinstance(page, Browser):
+        page.scroll_to_top()
+
+    def empty_browser_condition() -> bool:
+        return isinstance(page, Browser) and page.is_empty()
+
     WebDriverWait(driver, WAIT_FRONTEND).until(
-        lambda _: len(get_visible_items_list(page, items_type, main_field)) > 0,
+        lambda _: (
+            bool(get_visible_items_list(page, items_type, main_field)) or empty_browser_condition()
+        ),
         message=f"Waiting for initial {items_type.value} to appear failed",
     )
+
+    if empty_browser_condition():
+        assert number in (None, 0), f"There are 0 items, but should be: {number}"
+        return set()
 
     while not stop_scrolling_flag:
         new_items = get_visible_items_list(page, items_type, main_field)
@@ -86,10 +98,12 @@ def assert_n_items_in_items_list(
         seen_items.update(new_items_fields)
         driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
 
-    assert len(seen_items) == number, (
-        f"There are {len(seen_items)} items, but should be: {number}. All found"
-        f" items:\n {seen_items}"
-    )
+    if number is not None:
+        assert len(seen_items) == number, (
+            f"There are {len(seen_items)} items, but should be: {number}. All found"
+            f" items:\n {seen_items}"
+        )
+    return seen_items
 
 
 # there is a small chance that not all item will be loaded at time,
