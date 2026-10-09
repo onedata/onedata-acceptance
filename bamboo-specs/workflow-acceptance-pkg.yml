@@ -1,0 +1,36 @@
+version: 2
+plan:
+  project-key: AT
+  key: WP
+  name: workflow pkg
+stages:
+- Default Stage:
+    manual: false
+    final: false
+    jobs:
+    - Default Job
+Default Job:
+  key: JOB1
+  tasks:
+  - checkout:
+      force-clean-build: false
+      description: Checkout Default Repository
+  artifact-subscriptions: []
+repositories:
+- onedata-acceptance:
+    scope: global
+triggers:
+- bitbucket-server-trigger
+branches:
+  create: manually
+  delete: never
+  link-to-jira: true
+notifications: []
+labels: []
+dependencies:
+  require-all-stages-passing: false
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: system-default

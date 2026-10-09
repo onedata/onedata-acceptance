@@ -1,0 +1,18 @@
+version: 2
+plan:
+  key: AT-WS
+plan-permissions:
+- roles:
+  - logged-in
+  - anonymous
+  permissions:
+  - view
+- users:
+  - plgnikolow
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+  - view-configuration
