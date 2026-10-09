@@ -76,17 +76,26 @@ def assert_n_items_in_items_list(
     if isinstance(page, Browser):
         page.scroll_to_top()
 
-    def empty_browser_condition() -> bool:
-        return isinstance(page, Browser) and page.is_empty()
+    def browser_has_no_items() -> bool:
+        if not isinstance(page, Browser):
+            return False
+
+        if page.is_empty():
+            return True
+
+        try:
+            return bool(page.error_msg)
+        except NoSuchElementException:
+            return False
 
     WebDriverWait(driver, WAIT_FRONTEND).until(
         lambda _: (
-            bool(get_visible_items_list(page, items_type, main_field)) or empty_browser_condition()
+            bool(get_visible_items_list(page, items_type, main_field)) or browser_has_no_items()
         ),
         message=f"Waiting for initial {items_type.value} to appear failed",
     )
 
-    if empty_browser_condition():
+    if browser_has_no_items():
         assert number in (None, 0), f"There are 0 items, but should be: {number}"
         return set()
 
