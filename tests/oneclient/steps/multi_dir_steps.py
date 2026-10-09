@@ -270,11 +270,7 @@ def copy_dir(user: str, dir1: str, dir2: str, client_node: str, users: Users) ->
     client = users[user].clients[client_node]
     src_path = client.absolute_path(dir1)
     dest_path = client.absolute_path(dir2)
-
-    def condition() -> None:
-        client.cp(src_path, dest_path, recursive=True)
-
-    assert_(client.perform, condition)
+    client.cp(src_path, dest_path, recursive=True)
 
 
 @given(
