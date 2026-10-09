@@ -124,10 +124,15 @@ def click_on_button_in_tokens_sidebar(
         'user of {browser_id} clicks on "Create custom token" option in "Create new token" view'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_custom_token(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.create_token_page.create_custom_token()
+
+    def create_token():
+        create_token = OZLoggedIn(driver).tokens.create_token_page.create_custom_token
+        driver.execute_script("arguments[0].scrollIntoView();", create_token.web_elem)
+        create_token.click()
+
+    perform_action(create_token)
     wait_for_sliding_panel_to_stop_moving(
         driver, WAIT_FRONTEND, '[data-one-carousel-slide-id="form"]'
     )
