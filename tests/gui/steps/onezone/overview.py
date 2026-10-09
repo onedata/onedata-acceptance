@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import yaml
+from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
@@ -139,9 +140,15 @@ def click_link_in_space_marketplace_in_overview(
     browser_id: str, link: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
+    link = transform(link)
     marketplace_tile = OZLoggedIn(driver).data.overview_page.marketplace_tile
-    link_element = getattr(marketplace_tile, transform(link))
-    link_element.click()
+    link_element = getattr(marketplace_tile, link)
+    if link == "show":
+        ActionChains(driver).move_to_element(link_element.web_elem).click(
+            link_element.web_elem
+        ).perform()
+    else:
+        link_element.click()
 
 
 @wt(
