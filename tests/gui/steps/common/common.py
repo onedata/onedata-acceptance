@@ -14,6 +14,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
     TimeoutException,
 )
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -39,7 +40,7 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
 )
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.enums import ListElement
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.gui.utils.onezone.clusters_page import ClustersPage
@@ -340,7 +341,15 @@ def click_close_button_and_wait_to_disappear(
     web_elem_or_locator: WebElementOrCssLocator,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    try_click_without_throwing_error(lambda: get_close_button(driver).click())
+    def use_close_button() -> None:
+        button = get_close_button(driver)
+        if not isinstance(button, SeleniumWebElement):
+            button = get_close_button(driver).web_elem
+        ActionChains(driver).move_to_element(button).perform()
+        button.click()
+
+    perform_action(use_close_button)
+
     WebDriverWait(driver, WAIT_FRONTEND).until(
         invisibility_of_element(web_elem_or_locator),
         message="Popup or modal is still visible",
