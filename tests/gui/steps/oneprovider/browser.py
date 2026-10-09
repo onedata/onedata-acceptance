@@ -232,6 +232,9 @@ def _get_items_list_from_browser(
         ListElement.FILES,
         main_field="name",
     )
+    assert len(data) == len(browser.data), (
+        f"Collected {len(data)} of {len(browser.data)} browser items: {data}"
+    )
     return list(data)
 
 
