@@ -11,6 +11,7 @@ import time
 from selenium.common.exceptions import (
     ElementNotInteractableException,
 )
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
@@ -22,7 +23,7 @@ from tests.gui.steps.common.common import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow
 from tests.gui.utils.web_elem_utils import is_element_visible_using_getter
@@ -42,7 +43,10 @@ def _open_menu_for_token(driver: WebDriver, token_name: str) -> None:
 
 
 def click_option_for_token_row_menu(driver: WebDriver, option: str) -> None:
-    Popups(driver).menu_popup_with_text.menu[option.capitalize()]()
+    menu_item = perform_action(
+        lambda: Popups(driver).menu_popup_with_text.menu[option.capitalize()]
+    ).web_elem
+    ActionChains(driver).move_to_element(menu_item).click(menu_item).perform()
 
 
 def _click_on_btn_for_token(driver: WebDriver, token_name: str, btn: str) -> None:

@@ -880,10 +880,6 @@ def remove_token(selenium: SeleniumDrivers, browser_id: str, token_name: str) ->
 
 @wt(parsers.parse("user of {browser_id} removes all tokens"))
 def remove_all_tokens(selenium: SeleniumDrivers, browser_id: str) -> None:
-    btn = "remove"
-    button = "Remove"
-    modal = "Remove token"
-
     driver = selenium[browser_id]
     tokens = perform_action(lambda: get_onezone_subpage(driver, "tokens").sidebar.tokens)
     if len(tokens):
@@ -891,8 +887,8 @@ def remove_all_tokens(selenium: SeleniumDrivers, browser_id: str) -> None:
 
         for token in OZLoggedIn(driver).tokens.sidebar.tokens:
             token.menu_button.click()
-            click_option_for_token_row_menu(driver, btn)
-            click_modal_button(selenium, browser_id, button, modal)
+            click_option_for_token_row_menu(driver, "remove")
+            click_modal_button(selenium, browser_id, "Remove", "Remove token")
 
 
 @wt(
