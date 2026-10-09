@@ -11,6 +11,7 @@ from contextlib import suppress
 from typing import Any, Literal, overload
 
 from selenium.common.exceptions import (
+    NoSuchElementException,
     StaleElementReferenceException,
     TimeoutException,
 )
@@ -342,13 +343,16 @@ def click_close_button_and_wait_to_disappear(
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
     def use_close_button() -> None:
+        if invisibility_of_element(web_elem_or_locator)(driver):
+            return
         button = get_close_button(driver)
         if not isinstance(button, SeleniumWebElement):
             button = get_close_button(driver).web_elem
         ActionChains(driver).move_to_element(button).perform()
         button.click()
 
-    perform_action(use_close_button)
+    with suppress(StaleElementReferenceException, NoSuchElementException):
+        perform_action(use_close_button)
 
     WebDriverWait(driver, WAIT_FRONTEND).until(
         invisibility_of_element(web_elem_or_locator),
