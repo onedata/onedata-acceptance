@@ -74,52 +74,47 @@ class PrivilegeRow(PageObject):
     def set_privilege(
         self,
         driver: WebDriver,
-        granted: PrivilegeGranted,
-        with_scroll: bool = False,
+        granted: bool,
+        _: bool = False,
     ) -> bool:
-        should_be_checked = bool(granted)
+        should_be_checked = granted
 
-        if self.toggle.is_checked() == should_be_checked:
+        def condition() -> bool:
+            return (
+                not self.toggle.is_partial_checked()
+                and self.toggle.is_checked() == should_be_checked
+            )
+
+        if condition():
             return True
 
-        if with_scroll:
+        def click_if_needed() -> None:
+            if condition():
+                return
 
-            def click_if_needed() -> None:
-                if self.toggle.is_checked() == should_be_checked:
-                    return
-
-                checkbox = self._checkbox
-                try:
-                    checkbox.click()
-                except (
-                    ElementNotInteractableException,
-                    ElementClickInterceptedException,
-                ):
-                    if self.toggle.is_checked() == should_be_checked:
-                        return
-                    driver.execute_script(
-                        "arguments[0].scrollIntoView({block: 'center'});",
-                        checkbox,
-                    )
-                    checkbox.click()
-
-            def assert_toggle_is_checked() -> None:
-                assert self.toggle.is_checked() == should_be_checked, (
-                    "Toggle has different state than expected"
-                )
-
+            checkbox = self._checkbox
             try:
-                perform_action(click_if_needed, assertion=assert_toggle_is_checked)
-                return True
-            except AssertionError:
-                return False
+                checkbox.click()
+            except (
+                ElementNotInteractableException,
+                ElementClickInterceptedException,
+            ):
+                if condition():
+                    return
+                driver.execute_script(
+                    "arguments[0].scrollIntoView({block: 'center'});",
+                    checkbox,
+                )
+                checkbox.click()
 
-        if should_be_checked:
-            self.activate()
-        else:
-            self.deactivate()
+        def assert_toggle_is_checked() -> None:
+            assert condition(), "Toggle has different state than expected"
 
-        return self.toggle.is_checked() == should_be_checked
+        try:
+            perform_action(click_if_needed, assertion=assert_toggle_is_checked)
+            return True
+        except AssertionError:
+            return False
 
 
 class PrivilegeGroup(PageObject):
@@ -196,30 +191,47 @@ class PrivilegeGroup(PageObject):
     def set_privilege(
         self,
         driver: WebDriver,
-        granted: PrivilegeGranted,
-        with_scroll: bool = False,
+        granted: bool,
+        _: bool = False,
     ) -> bool:
-        count = 2 if self.toggle.is_partial_checked() and not granted else 1
-        if with_scroll:
-            if (
-                (self.toggle.is_checked() and not granted)
-                or (not self.toggle.is_checked() and granted)
-                or self.toggle.is_partial_checked()
+        should_be_checked = granted
+
+        def condition() -> bool:
+            return (
+                not self.toggle.is_partial_checked()
+                and self.toggle.is_checked() == should_be_checked
+            )
+
+        if condition():
+            return True
+
+        def click_if_needed() -> None:
+            if condition():
+                return
+
+            checkbox = self._checkbox
+            try:
+                checkbox.click()
+            except (
+                ElementNotInteractableException,
+                ElementClickInterceptedException,
             ):
-                driver.execute_script("document.querySelector('.col-content').scrollTo(0, 0)")
-                elem_id = self._checkbox.get_attribute("id")
-                for _ in range(count):
-                    try:
-                        driver.find_element(By.CSS_SELECTOR, "#" + elem_id).click()
-                    except ElementNotInteractableException:
-                        self.toggle.click()
-        elif granted:
-            self.activate()
-        else:
-            self.deactivate()
-        if granted:
-            return self.toggle.is_checked()
-        return self.toggle.is_unchecked()
+                if condition():
+                    return
+                driver.execute_script(
+                    "arguments[0].scrollIntoView({block: 'center'});",
+                    checkbox,
+                )
+                checkbox.click()
+
+        def assert_toggle_is_checked() -> None:
+            assert condition(), "Toggle has different state than expected"
+
+        try:
+            perform_action(click_if_needed, assertion=assert_toggle_is_checked)
+            return True
+        except AssertionError:
+            return False
 
 
 class PrivilegeTree(PageObject):

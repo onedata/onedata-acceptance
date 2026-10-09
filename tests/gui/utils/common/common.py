@@ -79,6 +79,7 @@ class _Toggle(PageObject):
 
     def is_checked(self) -> bool:
         web_elem = self.web_elem
+
         return element_has_class(web_elem, "checked") and not element_has_class(
             web_elem, "in-progress"
         )
