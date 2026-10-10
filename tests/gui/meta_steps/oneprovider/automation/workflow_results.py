@@ -8,8 +8,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from contextlib import suppress
 
 from _pytest._py.path import LocalPath
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -77,7 +79,9 @@ def open_modal_and_get_store_content(
     store_type: str,
     index: int = 0,
 ) -> str:
-    page.stores_list[store_name].click()
+    with suppress(ElementClickInterceptedException):
+        page.stores_list[store_name].click()
+
     modal = Modals(driver).store_details
     store_value = get_store_content(modal, store_type, index, clipboard, displays, browser_id)
     modal.close()
