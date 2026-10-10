@@ -22,6 +22,7 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
 )
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import GUI_LOGDIR
@@ -313,8 +314,10 @@ def compare_audit_log_to_store_log(
         tmp_memory,
         store_key,
     )
-    audit_log_btn = perform_action(lambda: get_visualizer_page_with_no_timeout(driver).audit_log)
-    audit_log_btn.click()
+    audit_log_btn = perform_action(
+        lambda: get_visualizer_page_with_no_timeout(driver).audit_log
+    ).web_elem
+    ActionChains(driver).move_to_element(audit_log_btn).click(audit_log_btn).perform()
     wait_for_visible_element_using_getter(driver, lambda _: Modals(driver).audit_log)
 
     click_modal_button(selenium, browser_id, "user_log", "audit_log")
