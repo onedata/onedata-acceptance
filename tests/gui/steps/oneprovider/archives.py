@@ -225,7 +225,7 @@ def assert_base_archive_description(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_archive_browser(browser_id: str, tmp_memory: TmpMemory, button: str) -> None:
     browser = tmp_memory[browser_id]["archive_browser"]
-    getattr(browser, transform(button))()
+    getattr(browser, transform(button)).click()
 
 
 @wt(
@@ -278,7 +278,7 @@ def click_menu_for_archive(
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser.value)]
     archive = get_archive_with_description(browser, description)
-    archive.menu_button()
+    archive.menu_button.click()
     if Popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
         raise AssertionError(f"Archive with description {description} did not open")
 
@@ -334,7 +334,7 @@ def go_back_to_dataset_page_from_archive_browser(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver).data.archive_header.back_to_dataset_page()
+    OZLoggedIn(driver).data.archive_header.back_to_dataset_page.click()
 
 
 def assert_not_archive_with_description(

@@ -466,7 +466,7 @@ def modify_data_type_in_store(
     if "data" in menu:
         # wait a moment for modal to open
         wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
-        Modals(driver).modify_store.data_type_remove()
+        Modals(driver).modify_store.data_type_remove.click()
 
     split_value = value.replace(")", "").split(" (")
     new_value = split_value[0] if "array" in value else value

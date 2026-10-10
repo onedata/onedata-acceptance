@@ -28,7 +28,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_group_button_in_panel(selenium: SeleniumDrivers, browser_id: str) -> None:
     groups_page = get_onezone_subpage(selenium[browser_id], "groups")
-    groups_page.create_group()
+    groups_page.create_group.click()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into group name text field'))
@@ -42,7 +42,7 @@ def input_name_into_input_box_on_main_groups_page(
 @wt(parsers.parse("user of {browser_id} clicks on confirmation button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_name_input_on_main_groups_page(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id]).groups.input_box.confirm()
+    OZLoggedIn(selenium[browser_id]).groups.input_box.confirm.click()
     is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
@@ -67,14 +67,14 @@ def click_on_option_in_group_menu_and_get_group(
     driver: WebDriver, group_name: str, option: str
 ) -> Group:
     group = get_group_by_name_from_main_page(driver, group_name)
-    group.menu()
+    group.menu.click()
     Popups(driver).menu_popup_with_text.menu[option]()
     return group
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_confirmation_button_to_rename_group(group: Group) -> None:
-    group.edit_box.confirm()
+    group.edit_box.confirm.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -122,7 +122,7 @@ def click_on_option_of_group_menu_on_left_sidebar_menu(
     driver.switch_to.default_content()
     page = OZLoggedIn(driver).groups
     page.groups_list[group_name].click()
-    getattr(page.groups_list[group_name], transform(option))()
+    getattr(page.groups_list[group_name], transform(option)).click()
 
 
 @wt(parsers.parse("user of {browser_id} sees that create group button is inactive"))
@@ -149,7 +149,7 @@ def open_group_subpage(
         group.click()
 
     if subpage != "main" and group.get_active_subpage() != subpage:
-        getattr(group, subpage)()
+        getattr(group, subpage).click()
 
 
 @wt(parsers.parse('user of {browser_id} see that page with text "{text}" appeared'))
@@ -272,7 +272,7 @@ def assert_list_of_children_contains_group(
 @wt(parsers.re(r"user of (?P<browser_id>.*) clicks show parent groups in hierarchy subpage"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_show_parent_groups_in_hierarchy_page(selenium: SeleniumDrivers, browser_id: str) -> None:
-    (OZLoggedIn(selenium[browser_id]).groups.main_page.hierarchy.show_parent_groups())
+    (OZLoggedIn(selenium[browser_id]).groups.main_page.hierarchy.show_parent_groups.click())
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" error on groups page'))

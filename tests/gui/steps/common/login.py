@@ -30,13 +30,13 @@ from tests.utils.utils import repeat_failed
 def _login_using_basic_auth(login_page: LoginPage, username: str, password: str) -> None:
     login_page.username = username
     login_page.password = password
-    login_page.sign_in()
+    login_page.sign_in.click()
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def _login_using_passphrase(login_page: LoginPage, password: str) -> None:
     login_page.passphrase = password
-    login_page.sign_in()
+    login_page.sign_in.click()
 
 
 @wt(
@@ -47,7 +47,7 @@ def _login_using_passphrase(login_page: LoginPage, password: str) -> None:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_sign_in_to_emergency_interface(selenium: SeleniumDrivers, browser_id: str) -> None:
-    LoginPage(selenium[browser_id]).sign_in_to_emergency_interface()
+    LoginPage(selenium[browser_id]).sign_in_to_emergency_interface.click()
 
 
 def _login_to_service(
@@ -139,7 +139,7 @@ def wt_enter_password_of_user(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def press_sign_in_btn_on_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
-    LoginPage(selenium[browser_id]).sign_in()
+    LoginPage(selenium[browser_id]).sign_in.click()
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) is logged in (?P<service>.*) service"))

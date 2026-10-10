@@ -111,7 +111,7 @@ def wt_click_on_support_space_btn_on_condition(selenium: SeleniumDrivers, browse
     with implicit_wait(driver, 1, SELENIUM_IMPLICIT_WAIT):
         spaces_page = Onepanel(driver).content.spaces
         if spaces_page.spaces.count() > 0:
-            spaces_page.support_space()
+            spaces_page.support_space.click()
 
 
 @wt(
@@ -143,7 +143,7 @@ def wt_select_mode_in_space_support_form(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_btn_in_space_support_form(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Onepanel(selenium[browser_id]).content.spaces.form.support_space()
+    Onepanel(selenium[browser_id]).content.spaces.form.support_space.click()
 
 
 @wt(
@@ -374,7 +374,7 @@ def wt_assert_proper_space_configuration_in_panel(
 
     driver = selenium[browser_id]
     space = Onepanel(driver).content.spaces.space
-    space.navigation.overview()
+    space.navigation.overview.click()
     displayed_conf = getattr(space.overview, sync_type.lower() + "_strategy")
 
     for attribute, val in yaml.load(conf, yaml.Loader).items():
@@ -441,9 +441,9 @@ def wt_clicks_on_btn_in_cease_support_modal(
 ) -> None:
     modal = Modals(selenium[browser_id]).cease_support_for_space
     if button == "Cease support":
-        modal.cease_support()
+        modal.cease_support.click()
     else:
-        modal.cancel()
+        modal.cancel.click()
 
 
 # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
@@ -455,10 +455,10 @@ def wt_clicks_on_btn_in_cease_support_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_space_instead_of_revoke(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
+    Modals(selenium[browser_id]).cease_support_for_space.space_delete_link.click()
     time.sleep(2)
-    Modals(selenium[browser_id]).remove_modal.understand_notice()
-    Modals(selenium[browser_id]).remove_modal.remove()
+    Modals(selenium[browser_id]).remove_modal.understand_notice.click()
+    Modals(selenium[browser_id]).remove_modal.remove.click()
 
 
 # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
@@ -478,13 +478,13 @@ def login_and_remove_space_instead_of_revoke(
 ) -> None:
     modal_name = "Cease oneprovider support for space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    Modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
+    Modals(selenium[browser_id]).cease_support_for_space.space_delete_link.click()
     time.sleep(3)
     login_using_basic_auth(selenium, [browser_id], [user], users, ["Onezone"])
     modal_name = "Remove space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    Modals(selenium[browser_id]).remove_modal.understand_notice()
-    Modals(selenium[browser_id]).remove_modal.remove()
+    Modals(selenium[browser_id]).remove_modal.understand_notice.click()
+    Modals(selenium[browser_id]).remove_modal.remove.click()
 
 
 @wt(
@@ -497,7 +497,7 @@ def login_and_remove_space_instead_of_revoke(
 def wt_clicks_on_understand_risk_in_cease_support_modal(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    (Modals(selenium[browser_id]).cease_support_for_space.understand_risk_checkbox())
+    (Modals(selenium[browser_id]).cease_support_for_space.understand_risk_checkbox.click())
 
 
 @wt(
@@ -509,7 +509,7 @@ def wt_clicks_on_understand_risk_in_cease_support_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_clicks_on_configure(selenium: SeleniumDrivers, browser_id: str) -> None:
-    (Onepanel(selenium[browser_id]).content.spaces.space.sync_chart.configure())
+    (Onepanel(selenium[browser_id]).content.spaces.space.sync_chart.configure.click())
 
 
 @wt(parsers.parse("user of {browser_id} clicks settings in Storage import in Spaces page"))
@@ -645,7 +645,7 @@ def click_option_on_dropdown_rule(
     for _ in range(20):
         time.sleep(0.2)
         if tab.selective_cleaning_form[rule].value_limit != option:
-            tab.selective_cleaning_form[rule].dropdown_button()
+            tab.selective_cleaning_form[rule].dropdown_button.click()
             tab.selective_cleaning_form[rule].dropdown[option].click()
         else:
             break
@@ -693,7 +693,7 @@ def click_accept_button_in_quota_editor_and_return_quota_editor_getter(
     def quota_editor_getter(driver: WebDriver) -> QuotaEditor:
         return getattr(Onepanel(driver).content.spaces.space.auto_cleaning, quota)
 
-    quota_editor_getter(driver).accept_button()
+    quota_editor_getter(driver).accept_button.click()
     return quota_editor_getter
 
 

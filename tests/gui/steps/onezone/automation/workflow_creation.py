@@ -46,7 +46,7 @@ def click_add_parameter_button_in_lambda_form(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
     form = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
-    getattr(form, transform(option)).add_button()
+    getattr(form, transform(option)).add_button.click()
 
 
 def enter_parameter_name_in_lambda_form(
@@ -177,7 +177,7 @@ def choose_option_in_dropdown_menu_in_task_page(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).automation.workflows_page.task_form
     if object_type == "result":
-        page.results[object_name + ":"].add_mapping()
+        page.results[object_name + ":"].add_mapping.click()
         page.results[object_name + ":"].target_store_dropdown[-1].click()
     elif object_type == "argument":
         page.arguments[object_name + ":"].value_builder_dropdown.click()

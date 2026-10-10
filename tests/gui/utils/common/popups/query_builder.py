@@ -45,7 +45,7 @@ class ExpressionBuilderPopup(PageObject):
     add_button = Button(".accept-condition")
 
     def expand_properties(self) -> None:
-        self.property_choice()
+        self.property_choice.click()
 
     def choose_property(self, property_name: str) -> None:
         self.expand_properties()
@@ -59,7 +59,7 @@ class ExpressionBuilderPopup(PageObject):
         return True
 
     def expand_comparators(self) -> None:
-        self.comparator_choice()
+        self.comparator_choice.click()
 
     def choose_comparator(self, comparator_name: str) -> None:
         self.expand_comparators()

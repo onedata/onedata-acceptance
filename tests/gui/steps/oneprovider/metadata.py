@@ -130,7 +130,7 @@ def click_on_del_metadata_record_button(
 ) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     entry = modal.xattrs.entries[attr_name]
-    entry.remove()
+    entry.remove.click()
 
 
 @wt(

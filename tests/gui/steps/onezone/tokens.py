@@ -116,7 +116,7 @@ def click_on_button_in_tokens_sidebar(
         raise TimeoutError(f"Did not manage to click {button} button")
     else:
         sidebar = tokens_page.sidebar
-        getattr(sidebar, transform(button))()
+        getattr(sidebar, transform(button)).click()
 
 
 @wt(
@@ -209,7 +209,7 @@ def choose_token_type_to_create(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_button_in_token_view(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.copy_token()
+    OZLoggedIn(driver).tokens.copy_token.click()
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{invite_type}" invite type'))
@@ -261,7 +261,7 @@ def assert_token_is_type(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_token_filter(selenium: SeleniumDrivers, browser_id: str, token_filter: str) -> None:
     filters = OZLoggedIn(selenium[browser_id]).tokens.sidebar.filter
-    getattr(filters, token_filter.lower())()
+    getattr(filters, token_filter.lower()).click()
 
 
 @wt(
@@ -325,7 +325,7 @@ def assert_token_is_marked(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_button_of_tokens_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.menu()
+    OZLoggedIn(driver).tokens.menu.click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option in tokens view menu'))
@@ -351,7 +351,7 @@ def switch_toggle_to_change_token(selenium: SeleniumDrivers, browser_id: str, ac
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_save_button_on_tokens_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.save_button()
+    OZLoggedIn(driver).tokens.save_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} appends "{text}" to name of token named "{token_name}'))
@@ -366,7 +366,7 @@ def append_token_name_in_sidebar(selenium: SeleniumDrivers, browser_id: str, tex
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_token_changes_in_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.sidebar.confirm()
+    OZLoggedIn(driver).tokens.sidebar.confirm.click()
 
 
 @wt(

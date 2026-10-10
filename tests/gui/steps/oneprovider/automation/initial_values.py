@@ -96,7 +96,7 @@ def select_groups_from_select_groups_modal(driver: WebDriver, group_list: str | 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_datasets_modal(driver: WebDriver) -> None:
     option = "Select datasets"
-    OPLoggedIn(driver).automation_page.input_link()
+    OPLoggedIn(driver).automation_page.input_link.click()
     time.sleep(1)
     Popups(driver).workflow_dataset_initial_value.menu[option].click()
     time.sleep(1)

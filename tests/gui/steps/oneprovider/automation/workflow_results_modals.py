@@ -21,6 +21,7 @@ from tests.gui.steps.common.common import (
     scroll_to_bottom_of_the_table,
 )
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.common.notifies import dismiss_notifies_if_present
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
     get_op_workflow_visualizer_page,
@@ -30,7 +31,9 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.workflows_modals.audit_log import AuditLog, LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.generic import perform_action
 from tests.gui.utils.oneprovider.automation import Task
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
@@ -160,7 +163,7 @@ def assert_number_of_proceeded_files(
 def click_on_task_audit_log(task: Task) -> None:
     if not check_if_task_is_opened(task):
         task.drag_handle.click()
-    task.audit_log()
+    task.audit_log.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -187,7 +190,7 @@ def get_modal_and_logs_for_task(
 
 
 def close_modal_and_task(modal: AuditLog, task: Task) -> None:
-    modal.x()
+    modal.x.click()
     task.drag_handle.click()
     # wait for task to close
     time.sleep(1)
@@ -203,21 +206,19 @@ def get_audit_log_json_and_write_to_file(
     path: str,
 ) -> None:
     log.click()
-    modal.copy_json()
+    modal.copy_json.click()
     audit_log = clipboard.paste(display=displays[browser_id])
     append_log_to_file(path, audit_log)
 
 
 @wt(parsers.parse('user of {browser_id} opens "{store_name}" store details modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def open_store_details_modal(
     selenium: SeleniumDrivers, browser_id: str, store_name: str
 ) -> StoreDetails:
     driver = selenium[browser_id]
     page = get_op_workflow_visualizer_page(driver)
     page.stores_list[store_name].click()
-    time.sleep(0.25)
-    return Modals(driver).store_details
+    return wait_for_visible_element_using_getter(driver, lambda _: Modals(driver).store_details)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -294,16 +295,20 @@ def get_store_content(
     clipboard: Clipboard,
     displays: dict[str, str],
     browser_id: str,
+    driver: WebDriver,
 ) -> str:
-    store_content_type = "store_content_" + store_type
-    store_content_list = getattr(modal, store_content_type)
-    try:
-        open_raw_view_for_elem(store_content_list, index, modal)
-    except TimeoutError:
-        # this closes the successful copy alert
-        modal.name_header.click()
-        open_raw_view_for_elem(store_content_list, index, modal)
-    modal.copy_button()
+    store_content_list = perform_action(lambda: getattr(modal, f"store_content_{store_type}"))
+
+    def action() -> None:
+        try:
+            open_raw_view_for_elem(store_content_list, index, modal)
+        except TimeoutError as e:
+            dismiss_notifies_if_present(driver)
+            modal.name_header.click()
+            raise e
+
+    perform_action(action, timeout=WAIT_BACKEND)
+    modal.copy_button.click()
     return clipboard.paste(display=displays[browser_id])
 
 
@@ -324,9 +329,9 @@ def open_url_from_store_content(
 
     modal = open_store_details_modal(selenium, browser_id, store_name)
     modal.store_content_list[0].click()
-    modal.copy_button()
+    modal.copy_button.click()
     items = json.loads(clipboard.paste(display=displays[browser_id]))
-    modal.close()
+    modal.close.click()
 
     url = items[option]
     driver = selenium[browser_id]

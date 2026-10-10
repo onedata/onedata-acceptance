@@ -254,7 +254,7 @@ def remove_all_xattrs_metadata(selenium: SeleniumDrivers, browser_id: str) -> No
     modal = Modals(selenium[browser_id]).details_modal.metadata
     if len(modal.xattrs.entries) > 0:
         while len(modal.xattrs.entries) > 0:
-            modal.xattrs.entries[0].remove()
+            modal.xattrs.entries[0].remove.click()
             time.sleep(0.5)
 
         click_panel_button(selenium, browser_id, button, panel)

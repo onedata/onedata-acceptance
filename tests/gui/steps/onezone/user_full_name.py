@@ -43,7 +43,7 @@ def type_text_into_user_full_name_edit_box_in_oz(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def activate_user_full_name_edit_box_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id]).profile.rename_full_name()
+    OZLoggedIn(selenium[browser_id]).profile.rename_full_name.click()
 
 
 @wt(

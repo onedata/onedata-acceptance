@@ -210,7 +210,7 @@ def change_parameter_type_in_lambda_form(
 
     # TODO VFS-12315 remove sleep in acc tests
     time.sleep(1)
-    object_bracket.remove_element()
+    object_bracket.remove_element.click()
     object_bracket.type_dropdown.click()
 
     Popups(driver).power_select.choose_item(new_type)
@@ -258,18 +258,18 @@ def modify_parameter_in_lambda_form(
     ordinal = ordinal if ordinal else "1st"
     bracket_name = "bracket_" + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
-    object_bracket.settings()
+    object_bracket.settings.click()
     setts = object_bracket.parameter_settings
     for item in data:
         [(arg, val)] = item.items()
         if arg == "File type":
-            setts.file_type()
+            setts.file_type.click()
             Popups(driver).power_select.choose_item(val)
         if arg == "Carried file attributes":
             # remove default file attributes
             for attribute in setts.attributes:
-                attribute.x()
-            setts.carried_file_attrs()
+                attribute.x.click()
+            setts.carried_file_attrs.click()
             for el in val:
                 try:
                     Popups(driver).options_selector.choose_option(transform(el))

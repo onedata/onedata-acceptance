@@ -79,7 +79,7 @@ def click_on_dir_in_abs_path(selenium: SeleniumDrivers, browser_id: str, path: s
 @wt(parsers.parse("user of {browser_id} clicks on copy icon on shares view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_icon_on_shares_view(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OPLoggedIn(selenium[browser_id]).shares_page.copy_icon()
+    OPLoggedIn(selenium[browser_id]).shares_page.copy_icon.click()
 
 
 @wt(parsers.parse("user of {browser_id} copies URL"))
@@ -218,7 +218,7 @@ def change_cwd_using_breadcrumbs(selenium: SeleniumDrivers, browser_id: str, pat
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_cwd_to_home_using_breadcrumbs(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OPLoggedIn(selenium[browser_id]).shares_page.breadcrumbs.space_root()
+    OPLoggedIn(selenium[browser_id]).shares_page.breadcrumbs.space_root.click()
 
 
 @wt(parsers.parse("user of {browser_id} sees that share's URL is the same as URL from clipboard"))
@@ -238,13 +238,13 @@ def check_urls_are_equal(
 @wt(parsers.parse("user of {browser_id} copies share REST endpoint on shares view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_share_link(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OPLoggedIn(selenium[browser_id]).shares_page.copy_icon()
+    OPLoggedIn(selenium[browser_id]).shares_page.copy_icon.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks share link type selector on shares view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_share_link_type_selector(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OPLoggedIn(selenium[browser_id]).shares_page.link_type_selector()
+    OPLoggedIn(selenium[browser_id]).shares_page.link_type_selector.click()
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{url_type}" share link type on shares view'))
@@ -257,13 +257,13 @@ def choose_share_link_type(selenium: SeleniumDrivers, browser_id: str, url_type:
 @wt(parsers.parse("user of {browser_id} opens description tab on share view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_description_tab(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OPLoggedIn(selenium[browser_id]).shares_page.description_tab()
+    OPLoggedIn(selenium[browser_id]).shares_page.description_tab.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on add description button on share description tab"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_description_button(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OPLoggedIn(selenium[browser_id]).shares_page.create_description()
+    OPLoggedIn(selenium[browser_id]).shares_page.create_description.click()
 
 
 @wt(
@@ -277,7 +277,7 @@ def append_description(selenium: SeleniumDrivers, browser_id: str, description: 
 
     # check if editor is in preview or edit mode
     if OPLoggedIn(driver).shares_page.editor_mode == "Edit Markdown":
-        OPLoggedIn(driver).shares_page.switch_editor_markdown()
+        OPLoggedIn(driver).shares_page.switch_editor_markdown.click()
     OPLoggedIn(driver).shares_page.description_input += description
 
 
@@ -285,7 +285,7 @@ def append_description(selenium: SeleniumDrivers, browser_id: str, description: 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def save_description_changes(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OPLoggedIn(driver).shares_page.save_description()
+    OPLoggedIn(driver).shares_page.save_description.click()
 
 
 @wt(parsers.parse("user of {browser_id} can see there are {number} shares in shares view"))

@@ -114,7 +114,7 @@ def enable_import_in_add_storage_form(selenium: SeleniumDrivers, browser_id: str
 def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    Onepanel(selenium[browser_id]).content.storages.form.add()
+    Onepanel(selenium[browser_id]).content.storages.form.add.click()
 
 
 @wt(
@@ -198,7 +198,7 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(
 def click_modify_storage_in_onepanel(selenium: SeleniumDrivers, browser_id: str, name: str) -> None:
     driver = selenium[browser_id]
     Onepanel(driver).content.storages.storages[name].click()
-    Onepanel(driver).content.storages.storages[name].modify()
+    Onepanel(driver).content.storages.storages[name].modify.click()
 
 
 @wt(
@@ -340,7 +340,7 @@ def copy_storage_id_to_clipboard(
     selenium: SeleniumDrivers, browser_id: str, storage_name: str
 ) -> None:
     driver = selenium[browser_id]
-    Onepanel(driver).content.storages.storages[storage_name].copy_id_button()
+    Onepanel(driver).content.storages.storages[storage_name].copy_id_button.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

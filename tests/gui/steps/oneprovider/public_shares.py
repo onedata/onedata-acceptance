@@ -138,7 +138,7 @@ def assert_message_no_file_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_public_share_link_type_selector(selenium: SeleniumDrivers, browser_id: str) -> None:
-    public_share(selenium[browser_id]).link_type_selector()
+    public_share(selenium[browser_id]).link_type_selector.click()
 
 
 @wt(
@@ -152,13 +152,13 @@ def choose_public_share_link_type(
 ) -> None:
     driver = selenium[browser_id]
     type_popup = public_share(driver).url_type_popup
-    getattr(type_popup, transform(url_type))()
+    getattr(type_popup, transform(url_type)).click()
 
 
 @wt(parsers.parse("user of {browser_id} copies share REST endpoint on share's public interface"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_public_share_link(selenium: SeleniumDrivers, browser_id: str) -> None:
-    public_share(selenium[browser_id]).copy_icon()
+    public_share(selenium[browser_id]).copy_icon.click()
 
 
 @wt(
@@ -172,7 +172,7 @@ def open_tab_in_public_share(selenium: SeleniumDrivers, browser_id: str, tab: st
     tab = transform(tab) + "_tab"
     driver = selenium[browser_id]
     _change_iframe_for_public_share_page(selenium, browser_id)
-    getattr(public_share(driver), tab)()
+    getattr(public_share(driver), tab).click()
 
 
 @wt(
@@ -207,9 +207,9 @@ def click_button_in_share(
 ) -> None:
     driver = selenium[browser_id]
     if option == "public":
-        getattr(public_share(driver), transform(button))()
+        getattr(public_share(driver), transform(button)).click()
     else:
-        getattr(private_share(driver), transform(button))()
+        getattr(private_share(driver), transform(button)).click()
 
 
 def check_item_presence_in_dublin_core_metadata(
@@ -244,7 +244,7 @@ def assert_data_in_dublin_core_metadata(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_link_in_shares_interface(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
-    public_share(driver).copy_link()
+    public_share(driver).copy_link.click()
 
 
 @wt(

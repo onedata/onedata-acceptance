@@ -139,14 +139,14 @@ class CreateNewTokenPage(PageObject):
 
     def expand_caveats(self) -> None:
         if "show" in self.show_inactive_caveats.web_elem.text.lower():
-            self.show_inactive_caveats()
+            self.show_inactive_caveats.click()
 
     def caveats_expanded(self) -> bool:
         return "hide" in self.show_inactive_caveats.web_elem.text.lower()
 
     def hide_caveats(self) -> None:
         if "hide" in self.show_inactive_caveats.web_elem.text.lower():
-            self.show_inactive_caveats()
+            self.show_inactive_caveats.click()
 
     def scroll_to_bottom(self) -> None:
         self.driver.execute_script(
