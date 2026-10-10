@@ -10,7 +10,7 @@ import time
 from contextlib import suppress
 from datetime import datetime
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait
@@ -272,7 +272,9 @@ def compare_array_in_store_details_modal(modal: StoreDetails, item_list: str) ->
 def open_raw_view_for_elem(
     store_content_list: PageObjectsSequence, index: int, modal: StoreDetails
 ) -> None:
-    store_content_list[index].click()
+    with suppress(ElementClickInterceptedException):
+        store_content_list[index].click()
+
     with suppress(NoSuchElementException):
         if modal.raw_view:
             return
