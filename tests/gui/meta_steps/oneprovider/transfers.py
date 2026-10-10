@@ -42,12 +42,9 @@ from tests.gui.steps.oneprovider.transfers import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    TransferState,
-    parse_elements_sequence,
-)
+from tests.gui.utils.enums import TransferState
 from tests.gui.utils.oneprovider.transfers import TransferItemType
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -182,7 +179,7 @@ def open_transfer_page_by_clicking_on_link(
     selenium: SeleniumDrivers,
     link: str,
 ) -> None:
-    click_menu_for_elem_in_browser(browser_id, file, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, file, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, "Data distribution")
     click_link_in_data_distribution_panel(selenium, browser_id, link)
     wait_for_transfers_page_to_load(selenium, browser_id)
@@ -205,7 +202,7 @@ def evict_file(
     details_modal = "Details modal"
     close_button = "X"
 
-    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, details_modal)
     data_distribution_modal = Modals(driver).details_modal.data_distribution

@@ -23,12 +23,8 @@ from tests.gui.type_definitions import (
     WhichBrowser,
 )
 from tests.gui.utils import Popups
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    sort_json_from_string,
-    transform,
-)
+from tests.gui.utils.generic import sort_json_from_string, transform
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 

@@ -11,6 +11,7 @@ import time
 from selenium.common.exceptions import (
     ElementNotInteractableException,
 )
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
@@ -22,12 +23,10 @@ from tests.gui.steps.common.common import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
-from tests.gui.utils.generic import (
-    is_element_visible_using_getter,
-    transform,
-)
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow
+from tests.gui.utils.web_elem_utils import is_element_visible_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -44,7 +43,10 @@ def _open_menu_for_token(driver: WebDriver, token_name: str) -> None:
 
 
 def click_option_for_token_row_menu(driver: WebDriver, option: str) -> None:
-    Popups(driver).menu_popup_with_text.menu[option.capitalize()]()
+    menu_item = perform_action(
+        lambda: Popups(driver).menu_popup_with_text.menu[option.capitalize()]
+    ).web_elem
+    ActionChains(driver).move_to_element(menu_item).click(menu_item).perform()
 
 
 def _click_on_btn_for_token(driver: WebDriver, token_name: str, btn: str) -> None:
@@ -122,10 +124,15 @@ def click_on_button_in_tokens_sidebar(
         'user of {browser_id} clicks on "Create custom token" option in "Create new token" view'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_custom_token(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.create_token_page.create_custom_token()
+
+    def create_token() -> None:
+        create_token = OZLoggedIn(driver).tokens.create_token_page.create_custom_token
+        driver.execute_script("arguments[0].scrollIntoView();", create_token.web_elem)
+        create_token.click()
+
+    perform_action(create_token)
     wait_for_sliding_panel_to_stop_moving(
         driver, WAIT_FRONTEND, '[data-one-carousel-slide-id="form"]'
     )

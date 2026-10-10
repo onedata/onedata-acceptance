@@ -17,9 +17,9 @@ from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import (
+from tests.gui.utils.enums import HostPattern
+from tests.gui.utils.text import (
     ELEMENTS_SEQUENCE_PATTERN,
-    HostPattern,
     parse_elements_sequence,
     parse_seq,
     parse_url,

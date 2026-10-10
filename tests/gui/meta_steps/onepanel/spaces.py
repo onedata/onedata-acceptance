@@ -69,11 +69,11 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.gui.utils.generic import (
+from tests.gui.utils.onepanel.spaces import StartScanState
+from tests.gui.utils.web_elem_utils import (
     wait_for_element_to_disappear_using_getter,
     wait_for_visible_element_using_getter,
 )
-from tests.gui.utils.onepanel.spaces import StartScanState
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User, Users

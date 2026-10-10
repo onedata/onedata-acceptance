@@ -17,9 +17,10 @@ from tests.gui.constants import (
 from tests.gui.meta_steps.rest.spaces import (
     revoke_space_supports_for_storage_using_rest,
 )
+from tests.gui.steps.common.notifies import dismiss_notifies_if_present
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel, Popups
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.onepanel.storages import StorageContentPage, StorageRecord
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
@@ -248,7 +249,11 @@ def delete_additional_param_in_posix_storage_edit_page(
 def save_changes_in_posix_storage_edit_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     storage = Onepanel(driver).content.storages.storages["posix"]
-    storage.edit_form.posix_editor.save_button.click()
+    save_btn = storage.edit_form.posix_editor.save_button
+    if not save_btn.is_displayed():
+        driver.execute_script("arguments[0].scrollIntoView();", save_btn.web_elem)
+    save_btn.click()
+    dismiss_notifies_if_present(driver)
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{name}" has disappeared from the storages list'))
@@ -309,7 +314,7 @@ def type_name_to_form_in_storages_page(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on {name} button in edit form "
+        'user of {browser_id} clicks on "{name}" button in edit form '
         'for "{storage}" storage in Onepanel'
     )
 )
@@ -318,11 +323,11 @@ def click_on_button_in_edit_form(
     selenium: SeleniumDrivers, browser_id: str, name: str, storage: str
 ) -> None:
     driver = selenium[browser_id]
-    button = name.lower() + "_button"
-    getattr(
-        Onepanel(driver).content.storages.storages[storage].edit_form.posix_editor,
-        button,
-    )()
+    button_name = f"{name.lower()}_button"
+    storages = Onepanel(driver).content.storages.storages
+    button = perform_action(lambda: getattr(storages[storage].edit_form.posix_editor, button_name))
+    driver.execute_script("arguments[0].scrollIntoView();", button.web_elem)
+    perform_action(button.click)
 
 
 @wt(

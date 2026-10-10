@@ -25,6 +25,7 @@ from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     click_modal_button,
     click_panel_button,
+    find_modal,
 )
 from tests.gui.steps.oneprovider.browser import assert_status_tag_for_file_in_browser
 from tests.gui.steps.oneprovider.metadata import (
@@ -133,9 +134,7 @@ def set_metadata_in_op_gui(
 ) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
-    button = "Save"
     close_button = "X"
-    text = "Updating metadata failed"
     status_type = "metadata"
 
     open_modal_for_file_browser_item(
@@ -154,14 +153,17 @@ def set_metadata_in_op_gui(
     else:
         click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, option)
         type_text_to_metadata_textarea(selenium, browser_id, val, tab_name)
-    click_panel_button(selenium, browser_id, button, option)
+    click_panel_button(selenium, browser_id, "Save", option)
 
     if res == "fails":
-        assert_error_modal_with_text_appeared(selenium, browser_id, text)
+        assert_error_modal_with_text_appeared(selenium, browser_id, "Updating metadata failed")
+        click_modal_button(selenium, browser_id, "close", "Error")
     else:
         assert_status_tag_for_file_in_browser(browser_id, status_type, path, tmp_memory)
 
     click_modal_button(selenium, browser_id, close_button, modal_name)
+    if res == "fails":
+        find_modal(selenium[browser_id], "There are unsaved changes", expected=True)
 
 
 def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: str) -> None:

@@ -81,11 +81,8 @@ from tests.gui.type_definitions import (
 from tests.gui.type_definitions import DataDirectoryContent as DirectoryContent
 from tests.gui.utils import Modals
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    upload_workflow_path,
-)
+from tests.gui.utils.generic import upload_workflow_path
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
@@ -164,7 +161,7 @@ def _click_menu_for_elem_somewhere_in_file_browser(
         go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path)
         browser = tmp_memory[browser_id]["file_browser"]
         browser.click_on_background()
-        click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
+        click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory)
     except (
         KeyError,
         PageObjectNotFoundError,
@@ -175,7 +172,7 @@ def _click_menu_for_elem_somewhere_in_file_browser(
         # TODO VFS-12315 remove sleep in acc tests
         time.sleep(0.5)
         go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path)
-        click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
+        click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory)
 
 
 @wt(
@@ -845,7 +842,7 @@ def check_file_owner(
     option = "Information"
     modal_name = "File details"
 
-    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     check_file_owner_in_file_details_modal(selenium, browser_id, owner)
@@ -1213,7 +1210,7 @@ def get_file_id_from_details_modal(
         file_name = file_name.rsplit("/", maxsplit=1)[-1]
 
     modal_name = "Directory details" if "dir" in file_name else "File details"
-    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_menu)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     click_modal_button(selenium, browser_id, "file_id", modal_name)
@@ -1256,7 +1253,7 @@ def delete_first_n_files(
     if num_files_to_delete > 1:
         choose_option_from_selection_menu(browser_id, selenium, option_to_select, tmp_memory)
     else:
-        click_menu_for_elem_in_browser(browser_id, 0, tmp_memory)
+        click_menu_for_elem_in_browser(selenium, browser_id, 0, tmp_memory)
         click_option_in_data_row_menu_in_browser(selenium, browser_id, option_to_select)
     click_modal_button(selenium, browser_id, modal_option, modal)
 

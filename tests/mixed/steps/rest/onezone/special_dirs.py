@@ -12,7 +12,7 @@ import pytest
 
 from oneprovider_client.rest import ApiException
 from tests.gui.utils import CDMIClient as cdmi
-from tests.gui.utils.generic import SpecialDir
+from tests.gui.utils.enums import SpecialDir
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.oneprovider.data import (
     create_empty_file_in_dir_rest,

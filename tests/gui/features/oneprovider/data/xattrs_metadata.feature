@@ -51,6 +51,7 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser types "attr" to key input box of new metadata xattr entry
     And user of browser types "val" to value input box of attribute "attr" metadata xattr entry
     And user of browser clicks on "Save" button in metadata panel
+    And user of browser clicks on "X" button in modal "<modal>"
     Then user of browser sees metadata status tag for "<item>" in file browser
 
     And user of browser opens "Metadata" tab in "<modal>" modal via clicking on metadata status tag for "<item>"

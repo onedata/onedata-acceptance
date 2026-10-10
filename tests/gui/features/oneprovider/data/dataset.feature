@@ -162,6 +162,8 @@ Feature: Basic datasets operations
 
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser changes current working directory to "space1" using breadcrumbs in dataset browser
+    
     Then user of browser sees that the item structure in dataset browser is as follow:
           - dir3:
               - dir5

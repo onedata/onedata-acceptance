@@ -21,11 +21,8 @@ from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.qos import
     QoSValueOption,
 )
 from tests.gui.utils.core import scroll_to_css_selector_bottom
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import wt
 from tests.utils.user_utils import Users

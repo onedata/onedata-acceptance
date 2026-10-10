@@ -15,7 +15,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
-from tests.gui.utils.generic import click_on_web_elem, transform
+from tests.gui.utils.generic import transform
+from tests.gui.utils.web_elem_utils import click_on_web_elem
 from tests.utils.utils import element_has_class
 
 
@@ -63,8 +64,10 @@ class BrowserRow(NamedElement):
         return getattr(self, f"{transform(name)}_tag").text
 
     def click_on_status_tag(self, name: str) -> None:
-        tag = getattr(self, f"{name.lower()}_tag")
-        click_on_web_elem(self.driver, tag, f'cannot click on "{name}" in {self}')
+        click_on_web_elem(
+            lambda: getattr(self, f"{name.lower()}_tag"),
+            f'cannot click on "{name}" in {self}',
+        )
 
     def hover_to_btn_and_click(self, btn_name: str, driver: WebDriver) -> None:
         btn = getattr(self, btn_name)

@@ -15,7 +15,9 @@ import yaml
 from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
+    TimeoutException,
 )
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import PANEL_REST_PORT
 from tests.gui.constants import WAIT_BACKEND
@@ -26,7 +28,9 @@ from tests.gui.meta_steps.rest.storages import (
 )
 from tests.gui.steps.common.common import wait_for_error_modal_to_appear
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
-from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
+from tests.gui.steps.common.notifies import (
+    is_notify_popup_visible_and_close_all_alert_popups,
+)
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     wait_for_named_modal_to_disappear,
@@ -58,8 +62,12 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.rest.storages import storage_data_from_config
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Onepanel
+from tests.gui.utils.common.modals import Modals
+from tests.gui.utils.common.modals.storage_modals.modify_storage import ModifyStorage
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.onepanel.storages import StorageContentPage
+from tests.gui.utils.text import transform
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_post
@@ -388,16 +396,30 @@ def wt_delete_all_additional_params_in_storage_page(
 def _try_confirm_changes_in_modify_storage_modal(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    button = "Proceed"
-    checkbox = "Understand checkbox"
-    modal = "Modify Storage"
-    # if modal will not appear
+    modal_name = "Modify Storage"
+    driver = selenium[browser_id]
+
+    def modal_getter(current_driver: WebDriver) -> ModifyStorage:
+        return Modals(current_driver).modify_storage
+
     try:
-        click_modal_button(selenium, browser_id, checkbox, modal)
-        click_modal_button(selenium, browser_id, button, modal)
-        wait_for_named_modal_to_disappear(selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5)
-    except NoSuchElementException:
-        pass
+        modal = wait_for_visible_element_using_getter(driver, modal_getter)
+    except TimeoutException:
+        return
+
+    with contextlib.suppress(NoSuchElementException):
+        if transform(modal.label) != "modify_storage_backend":
+            return
+
+        modal.understand_checkbox.click()
+        modal.proceed.click()
+
+        wait_for_named_modal_to_disappear(
+            selenium,
+            browser_id,
+            modal_name,
+            wait_time=WAIT_BACKEND * 5,
+        )
 
 
 def _register_revoke_space_supports_finalizer_if_storage_successfully_added(

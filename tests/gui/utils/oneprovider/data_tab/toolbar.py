@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, WebElement
-from tests.gui.utils.generic import rm_css_cls
+from tests.gui.utils.web_elem_utils import rm_css_cls
 
 
 class DataTopToolBar(PageObject):

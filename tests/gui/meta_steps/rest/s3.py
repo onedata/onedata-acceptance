@@ -16,7 +16,7 @@ from tests.gui.steps.rest.s3 import (
     assert_bucket_exists,
     create_bucket,
 )
-from tests.gui.utils.generic import OnedataService, OneS3ServiceState
+from tests.gui.utils.enums import OnedataService, OneS3ServiceState
 from tests.type_definitions import HostDescription, Hosts
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPNotFound

@@ -28,7 +28,7 @@ from tests.gui.meta_steps.onezone.groups import (
     see_groups_using_op_gui,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.mixed.steps.rest.onezone.group_management import (
     add_subgroups_using_rest,
     assert_subgroups_using_rest,

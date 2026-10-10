@@ -24,7 +24,7 @@ from tests.gui.utils.core.web_objects import (
     PageObjectNotFoundError,
     PageObjectsSequence,
 )
-from tests.gui.utils.generic import TransferState
+from tests.gui.utils.enums import TransferState
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 
 TRANSFER_STATUS_LIST = [

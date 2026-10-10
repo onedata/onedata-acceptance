@@ -8,7 +8,9 @@ from collections.abc import Callable, Iterable
 from datetime import datetime, timedelta
 from typing import Protocol, TypedDict
 
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.common.common import Toggle
@@ -23,6 +25,7 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.generic import perform_action
 from tests.gui.utils.text import transform
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
@@ -112,6 +115,11 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
     path_entries = WebItemsSequence(".pathEntry-collapse", cls=PathEntry)
     object_id_entries = WebItemsSequence(".objectIdEntry-field", cls=ObjectIdEntry)
 
+    _time_input_element = WebElement(".form-control.date-time-picker")
+
+    def click_time_input(self) -> None:
+        self._time_input_element.click()
+
     @repeat_failed(timeout=1)
     def activate(self) -> None:
         self.toggle.check()
@@ -184,6 +192,7 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
     # expiration caveat
     def set_expiration_caveat(
         self,
+        driver: WebDriver,
         expire_caveat: ExpirationCaveat,
         tmp_memory: TmpMemory,
     ) -> None:
@@ -192,6 +201,16 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         _time = self.get_time_after_delta(min_delta)
         self.time_input = _time
         tmp_memory["expire_time"] = _time
+
+        def ensure_datetime_picker_is_not_displayed() -> None:
+            datetime_picker = driver.find_elements(By.CSS_SELECTOR, ".xdsoft_datetimepicker")[0]
+
+            if datetime_picker.is_displayed():
+                self.click_time_input()
+
+            assert not datetime_picker.is_displayed(), "datetime picker is still displayed"
+
+        perform_action(ensure_datetime_picker_is_not_displayed)
 
     def get_time_after_delta(self, delta: int) -> str:
         now = datetime.now()
@@ -219,9 +238,9 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
         browser_id: str,
         region: str,
     ) -> None:
-        perform_action(self.new_item.click)
+        self.new_item.click()
         driver = selenium[browser_id]
-        perform_action(Popups(driver).selector_popup.selectors[region].click)
+        Popups(driver).selector_popup.selectors[region].click()
 
     # country caveat
     def set_country_caveats(
@@ -331,7 +350,11 @@ class CaveatField(PageObject):  # noqa: PLR0904 - page object exposes caveat ope
     ) -> None:
         get_caveat_field().click_new_item()
         driver = selenium[browser_id]
-        popup = Popups(driver).consumer_caveat_popup
+
+        popup = wait_for_visible_element_using_getter(
+            driver,
+            lambda current_driver: Popups(current_driver).consumer_caveat_popup,
+        )
 
         popup.expand_consumer_types()
         popup.select_consumer_type(consumer_type)

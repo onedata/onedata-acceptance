@@ -48,6 +48,7 @@ Feature: Basic operations on public shares in file browser
   Scenario: User sees public URLs of share are equal
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser copies share URL of "share_dir1" share of "dir1"
+    And user of space_owner_browser clicks on "X" button in modal "Directory details"
     And user of space_owner_browser opens "share_dir1" single share view of "dir1" using "Shared" tag
     Then user of space_owner_browser sees that share's URL is the same as URL from clipboard
 

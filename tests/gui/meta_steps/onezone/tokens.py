@@ -70,6 +70,7 @@ from tests.gui.steps.onezone.tokens import (
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn
 from tests.gui.utils.common.popups.generic import AlertPopup
+from tests.gui.utils.generic import perform_action
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
@@ -601,7 +602,7 @@ def _set_tokens_caveats(
 
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, "expiration")
-        caveat.set_expiration_caveat(expiration_caveat, tmp_memory)
+        caveat.set_expiration_caveat(selenium[browser_id], expiration_caveat, tmp_memory)
     if region_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "region")
         caveat.set_region_caveats(selenium, browser_id, region_caveats)
@@ -879,19 +880,15 @@ def remove_token(selenium: SeleniumDrivers, browser_id: str, token_name: str) ->
 
 @wt(parsers.parse("user of {browser_id} removes all tokens"))
 def remove_all_tokens(selenium: SeleniumDrivers, browser_id: str) -> None:
-    btn = "remove"
-    button = "Remove"
-    modal = "Remove token"
-
     driver = selenium[browser_id]
-    tokens = get_onezone_subpage(driver, "tokens").sidebar.tokens
+    tokens = perform_action(lambda: get_onezone_subpage(driver, "tokens").sidebar.tokens)
     if len(tokens):
         tokens[0].click()
 
         for token in OZLoggedIn(driver).tokens.sidebar.tokens:
             token.menu_button.click()
-            click_option_for_token_row_menu(driver, btn)
-            click_modal_button(selenium, browser_id, button, modal)
+            click_option_for_token_row_menu(driver, "remove")
+            click_modal_button(selenium, browser_id, "Remove", "Remove token")
 
 
 @wt(

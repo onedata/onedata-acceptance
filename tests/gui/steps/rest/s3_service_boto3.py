@@ -17,7 +17,7 @@ from plumbum import LocalPath
 
 from tests import ONES3_PORT
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
 from tests.type_definitions import Hosts, Tokens
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

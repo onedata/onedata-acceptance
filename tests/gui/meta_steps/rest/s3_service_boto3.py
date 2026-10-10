@@ -17,7 +17,7 @@ from tests.gui.steps.rest.s3_service_boto3 import (
     read_file_content_from_bucket,
 )
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.text import parse_elements_sequence
 from tests.type_definitions import Hosts, Tokens
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

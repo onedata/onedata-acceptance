@@ -9,9 +9,9 @@ from collections.abc import Iterable
 from typing import ClassVar
 
 from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.type_definitions import ListItemMainField, PageName
 from tests.gui.utils.core.base import NamedElement, PageObject, PageObjectMeta
 from tests.gui.utils.core.web_elements import Label, NamedButton
-from tests.gui.utils.generic import ListItemMainField, PageName
 from tests.utils.utils import repeat_failed
 
 

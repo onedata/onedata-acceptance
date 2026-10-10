@@ -27,7 +27,8 @@ from tests.gui.utils.common.modals.files_modals.details_modal import NavigationT
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import click_on_web_elem, transform
+from tests.gui.utils.generic import perform_action, transform
+from tests.gui.utils.web_elem_utils import click_on_web_elem, wait_for_visible_element_using_getter
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -90,11 +91,21 @@ def assert_non_empty_token_in_add_storage_modal(browser_id: str, tmp_memory: Tmp
     tmp_memory[browser_id]["token"] = token
 
 
-def _find_modal(driver: WebDriver, modal_name: str) -> SeleniumWebElement:
+def find_modal(
+    driver: WebDriver, modal_name: str, expected: bool = True, timeout: float = WAIT_BACKEND
+) -> SeleniumWebElement | None:
 
     # TODO: VFS-13648 Refactor find modal function
 
     def _find() -> SeleniumWebElement:
+        if modal_name == "warning":
+            for modal in reversed(driver.find_elements(By.CSS_SELECTOR, ".question-modal")):
+                if modal.is_displayed():
+                    return modal
+            if expected:
+                raise NoSuchElementException(f"modal {modal_name} not found")
+            return None
+
         elements_list = [
             "group",
             "token",
@@ -121,6 +132,7 @@ def _find_modal(driver: WebDriver, modal_name: str) -> SeleniumWebElement:
             "unlink",
             "download",
             "function pods activity",
+            "modify_storage",
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(By.CSS_SELECTOR, ".modal, .modal .modal-header h1")
@@ -132,24 +144,34 @@ def _find_modal(driver: WebDriver, modal_name: str) -> SeleniumWebElement:
         for name, modal in zip(modals[1::2], modals[::2], strict=True):
             if name.text.lower() == modal_name.lower():
                 return modal
-        raise NoSuchElementException(f"modal {modal_name} not found")
+        if expected:
+            raise NoSuchElementException(f"modal {modal_name} not found")
+        return None
 
     modal_name = modal_name.lower()
-    return WebDriverWait(driver, WAIT_BACKEND).until(
-        lambda _: _find(),
-        message=f"waiting for {modal_name:s} modal to appear",
-    )
+    try:
+        return WebDriverWait(driver, timeout, ignored_exceptions=[ValueError]).until(
+            lambda _: _find(),
+            message=f"waiting for {modal_name:s} modal to appear",
+        )
+    except TimeoutException as e:
+        if not expected:
+            return None
+        raise e
 
 
 def get_modal[T: Modal](driver: WebDriver, modal_name: str, modal_type: type[T]) -> T:
-    modal_web_elem = _find_modal(driver, modal_name)
+    modal_web_elem = find_modal(driver, modal_name)
     return modal_type(driver, modal_web_elem)
 
 
-def _wait_for_modal_to_appear(
-    driver: WebDriver, browser_id: str, modal_name: str, tmp_memory: TmpMemory
+def wait_for_modal_to_appear(
+    driver: WebDriver,
+    browser_id: str,
+    modal_name: str,
+    tmp_memory: TmpMemory,
 ) -> None:
-    modal = _find_modal(driver, modal_name)
+    modal = find_modal(driver, modal_name)
     tmp_memory[browser_id]["window"]["modal"] = modal
 
 
@@ -164,7 +186,7 @@ def assert_modal_does_not_appear(
 ) -> None:
     driver = selenium[browser_id]
     try:
-        _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+        wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
         raise AssertionError(f"Modal {modal_name} has appeared")
     except TimeoutException:
         pass
@@ -181,7 +203,7 @@ def wt_wait_for_modal_to_appear(
     selenium: SeleniumDrivers, browser_id: str, modal_name: str, tmp_memory: TmpMemory
 ) -> None:
     driver = selenium[browser_id]
-    _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+    wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
 
 
 @given(parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared'))
@@ -189,7 +211,7 @@ def g_wait_for_modal_to_appear(
     selenium: SeleniumDrivers, browser_id: str, modal_name: str, tmp_memory: TmpMemory
 ) -> None:
     driver = selenium[browser_id]
-    _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+    wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
 
 
 def _wait_for_modal_to_disappear(driver: WebDriver, browser_id: str, tmp_memory: TmpMemory) -> None:
@@ -242,50 +264,6 @@ def g_wait_for_modal_to_disappear(
     _wait_for_modal_to_disappear(driver, browser_id, tmp_memory)
 
 
-def _click_on_confirmation_btn_in_modal(
-    driver: WebDriver, browser_id: str, button_name: str, tmp_memory: TmpMemory
-) -> None:
-    @repeat_failed(attempts=WAIT_BACKEND, timeout=True)
-    def click_on_btn(d: WebDriver, elem: SeleniumWebElement, msg: str) -> None:
-        click_on_web_elem(d, elem, msg)
-
-    button_name = button_name.lower()
-    modal = tmp_memory[browser_id]["window"]["modal"]
-    buttons = modal.find_elements(By.CSS_SELECTOR, "button")
-    error_message = f"clicking on {button_name} in displayed modal disabled"
-    for btn in buttons:
-        if btn.text.lower() == button_name:
-            click_on_btn(driver, btn, error_message)
-            break
-    else:
-        raise AssertionError(f"no button named {button_name} found")
-
-
-@wt(
-    parsers.re(
-        r'user of (?P<browser_id>\w+) clicks "(?P<button_name>.*)" '
-        r"(confirmation )?button in displayed modal"
-    )
-)
-def wt_click_on_confirmation_btn_in_modal(
-    selenium: SeleniumDrivers, browser_id: str, button_name: str, tmp_memory: TmpMemory
-) -> None:
-    driver = selenium[browser_id]
-    _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory)
-
-
-@given(
-    parsers.parse(
-        'user of {browser_id} clicked "{button_name}" confirmation button in displayed modal'
-    )
-)
-def g_click_on_confirmation_btn_in_modal(
-    selenium: SeleniumDrivers, browser_id: str, button_name: str, tmp_memory: TmpMemory
-) -> None:
-    driver = selenium[browser_id]
-    _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory)
-
-
 @wt(parsers.parse("user of {browser_id} sees that message displayed in modal matches: {regexp}"))
 def is_modal_msg_matching(browser_id: str, regexp: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
@@ -320,21 +298,14 @@ def activate_input_box_in_modal(browser_id: str, in_type: str, tmp_memory: TmpMe
 
 
 @wt(parsers.parse("user of {browser_id} clicks on {option} button in active modal"))
-def click_on_button_in_active_modal(
-    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory, option: str
-) -> None:
-    driver = selenium[browser_id]
+def click_on_button_in_active_modal(browser_id: str, tmp_memory: TmpMemory, option: str) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
-    if option == "copy":
-        button = modal.find_element(By.CSS_SELECTOR, "button.copy-btn")
-    else:
-        button = modal.find_element(By.CSS_SELECTOR, ".modal-footer button.btn-default")
 
-    @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
-    def click_on_btn(d: WebDriver, btn: SeleniumWebElement, error_message: str) -> None:
-        click_on_web_elem(d, btn, error_message)
+    def button_getter() -> SeleniumWebElement:
+        selector = "button.copy-btn" if option == "copy" else ".modal-footer button.btn-default"
+        return modal.find_element(By.CSS_SELECTOR, selector)
 
-    click_on_btn(driver, button, f"{option} btn for displayed modal disabled")
+    click_on_web_elem(button_getter, f"{option} btn for displayed modal disabled")
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{text}" option in modal is not selected'))
@@ -487,14 +458,20 @@ def assert_there_is_no_button_in_panel(
         r'button in modal "(?P<modal_name>.*?)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(
     selenium: SeleniumDrivers, browser_id: str, button: str, modal_name: str
 ) -> None:
+    driver = selenium[browser_id]
+    button = transform(button.replace(".", ""))
     modal_attribute_name = resolve_modal_attribute_name(modal_name)
-    modal = getattr(Modals(selenium[browser_id]), modal_attribute_name)
-    button = button.replace(".", "")
-    getattr(modal, transform(button)).click()
+    modal = perform_action(lambda: getattr(Modals(driver), modal_attribute_name))
+
+    def button_getter(_: WebDriver) -> SeleniumWebElement:
+        return getattr(modal, button)
+
+    button_elem = wait_for_visible_element_using_getter(driver, button_getter)
+    button_elem.click()
+
     if modal_attribute_name == "create_group" and transform(button) == "create":
         is_notify_popup_visible_and_close_all_alert_popups(
             selenium,

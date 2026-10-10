@@ -9,7 +9,6 @@ from collections import defaultdict
 from collections.abc import Callable, MutableMapping
 from typing import (
     Literal,
-    Optional,
     ParamSpec,
     Protocol,
     TypedDict,
@@ -19,9 +18,8 @@ from typing import (
 from _pytest.fixtures import FixtureRequest
 from selenium.webdriver.remote.webdriver import WebDriver
 
-type JsonValue = Optional[
-    str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
-]
+type JsonValue = None | str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
+
 type JsonObject = dict[str, JsonValue]
 
 

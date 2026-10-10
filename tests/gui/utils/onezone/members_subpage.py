@@ -46,6 +46,13 @@ class MembersItemHeader(PageObject):
     save_button = NamedButton(".save-btn", text="Save")
     discard_button = NamedButton(".discard-btn", text="Discard changes")
 
+    def click(self) -> None:
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center', inline: 'nearest'});",
+            self.web_elem,
+        )
+        super().click()
+
     @repeat_failed(timeout=WAIT_FRONTEND)
     def click_menu(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.user).perform()

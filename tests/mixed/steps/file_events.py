@@ -16,7 +16,7 @@ import yaml
 from tests import OP_REST_PORT
 from tests.gui.sse_fixtures import MonitorEntry
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.text import parse_elements_sequence
 from tests.mixed.type_definitions import (
     EventResult,
     ExpectedAttrs,

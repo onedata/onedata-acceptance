@@ -15,13 +15,10 @@ from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_al
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    ListElement,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.enums import ListElement
+from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

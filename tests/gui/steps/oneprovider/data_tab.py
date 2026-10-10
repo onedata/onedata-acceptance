@@ -30,14 +30,9 @@ from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in
 from tests.gui.type_definitions import TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    parse_seq,
-    transform,
-    upload_file_path,
-)
+from tests.gui.utils.generic import transform, upload_file_path
 from tests.gui.utils.oneprovider.breadcrumbs import _Breadcrumbs
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
@@ -124,14 +119,15 @@ def click_button_from_file_browser_menu_bar(
 @wt(
     parsers.parse(
         "user of {browser_id} changes current working directory "
-        "to {path} using breadcrumbs in {which_browser}"
+        'to "{path}" using breadcrumbs in {which_browser:WhichBrowser}',
+        extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 def wt_change_cwd_using_breadcrumbs_in_data_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: str, path: str, which_browser: str
+    selenium: SeleniumDrivers, browser_id: str, path: str, which_browser: WhichBrowser
 ) -> None:
     change_cwd_using_breadcrumbs_in_data_tab_in_op(
-        selenium, browser_id, path, which_browser=which_browser
+        selenium, browser_id, path, which_browser=transform(which_browser.value)
     )
 
 
@@ -646,7 +642,7 @@ def assert_provider_chunk_in_data_distribution_empty(
         'user of {browser_id} sees {chunks} chunk(s) for provider "{provider}" in chunk bar'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND * 6)
 def assert_provider_chunks_in_data_distribution(
     selenium: SeleniumDrivers,
     browser_id: str,

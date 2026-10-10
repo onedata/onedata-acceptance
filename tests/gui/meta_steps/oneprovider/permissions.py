@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.common.exceptions import ElementNotInteractableException
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
     assert_browser_in_tab_in_op,
@@ -18,10 +19,11 @@ from tests.gui.steps.modals.details_modal import (
 )
 from tests.gui.steps.modals.modal import (
     assert_there_is_no_button_in_panel,
-    check_warning_modal,
     click_modal_button,
     click_panel_button,
     close_first_modal_if_present,
+    find_modal,
+    wait_for_named_modal_to_disappear,
 )
 from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
 from tests.gui.steps.oneprovider.data_tab import (
@@ -53,11 +55,7 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    parse_seq,
-)
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import Users
@@ -216,11 +214,7 @@ def _set_acl_privileges_for_selected(
 ) -> None:
     option = "Permissions"
     modal_name = "Details modal"
-    button = "Save"
-    close_button = "X"
-    panel = "Edit permissions"
     warning_modal = "warning"
-    proceed_button = "proceed"
     parsed_path = parse_seq(path) if path is not None else []
 
     if parsed_path and len(parsed_path) == 1:
@@ -232,10 +226,13 @@ def _set_acl_privileges_for_selected(
     assert_tab_in_modal(selenium, browser_id, option, modal_name)
 
     set_acl_entry_in_op_gui(selenium, browser_id, privileges, name)
-    click_panel_button(selenium, browser_id, button, panel)
-    if check_warning_modal(selenium, browser_id):
-        click_modal_button(selenium, browser_id, proceed_button, warning_modal)
-    click_modal_button(selenium, browser_id, close_button, modal_name)
+    click_panel_button(selenium, browser_id, "Save", "Edit permissions")
+
+    modal = find_modal(selenium[browser_id], warning_modal, expected=False, timeout=WAIT_FRONTEND)
+    if modal is not None:
+        click_modal_button(selenium, browser_id, "proceed", warning_modal)
+        wait_for_named_modal_to_disappear(selenium, browser_id, warning_modal)
+    click_modal_button(selenium, browser_id, "X", modal_name)
 
 
 @wt(

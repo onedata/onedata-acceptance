@@ -145,10 +145,17 @@ def confirm_lambda_creation_or_edition(
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
 
-    if option == "task":
-        page.workflows_page.task_form.create_button.click()
-    else:
-        page.lambdas_page.form.create_button.click()
+    create_button = (
+        page.workflows_page.task_form.create_button
+        if option == "task"
+        else page.lambdas_page.form.create_button
+    )
+
+    if not create_button.web_elem.is_displayed():
+        selenium[browser_id].execute_script(
+            "arguments[0].scrollIntoView();", create_button.web_elem
+        )
+    create_button.click()
 
 
 @wt(
