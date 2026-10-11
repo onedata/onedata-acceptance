@@ -29,15 +29,20 @@ class ParameterSetting(PageObject):
 
 
 class LambdaParameter(PageObject):
-    add_button = Button(".add-field-button")
+    add_button = Button(".add-field-button", scroll=False)
     name = WebItem(".entryName-field .text-like-field", cls=InputBox)
-    type_dropdown = WebElement(".entryDataSpec-field .ember-power-select-trigger")
-    remove_element = Button(".remove-trigger")
-    settings = Button(".oneicon-settings")
+    type_dropdown = WebElement(".entryDataSpec-field .ember-power-select-trigger", scroll=False)
+    remove_element = Button(".remove-trigger", scroll=False)
+    settings = Button(".oneicon-settings", scroll=False)
     parameter_settings = WebItem(".dataTypeEditor-children", cls=ParameterSetting)
+    data_type_header = WebElement(".data-type-header", scroll=False)
+
+    def get_chosen_type(self) -> str:
+        return self.data_type_header.text
 
 
 class LambdaParameters(PageObject):
+    label = WebElement(":scope > label.control-label")
     add_button = Button(".add-field-button")
     bracket_1st = WebItem(".collection-item:nth-child(1)", cls=LambdaParameter)
     bracket_2nd = WebItem(".collection-item:nth-child(2)", cls=LambdaParameter)

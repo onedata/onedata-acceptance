@@ -10,7 +10,7 @@ import contextlib
 import json
 import os
 import time
-from typing import cast
+from typing import Literal, cast
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -18,7 +18,10 @@ from selenium.common.exceptions import (
     ElementNotInteractableException,
     NoSuchElementException,
 )
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import (
     assert_lambda_exists,
@@ -44,7 +47,9 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import transform, upload_lambda_path
+from tests.gui.utils.generic import perform_action, transform, upload_lambda_path
+from tests.gui.utils.onezone.lambdas_subpage import LambdaAddForm, LambdaParameter
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import JsonObject, SeleniumDrivers
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
@@ -179,43 +184,63 @@ def create_lambda_using_gui(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) changes (?P<ordinal>|1st |2nd |3rd "
-        r"|4th )(?P<option>argument|result|configuration parameters) "
+        r"user of (?P<browser_id>.*) changes (?P<ordinal>|1st|2nd|3rd"
+        r"|4th) (?P<option>argument|result|configuration parameters) "
         r'named "(?P<name>.*)" to be "(?P<param_type>.*)" type'
     )
 )
 def change_parameter_type_in_lambda_form(
     selenium: SeleniumDrivers,
     browser_id: str,
-    option: str,
+    option: Literal["argument", "result", "configuration parameters"],
     param_type: str,
     ordinal: str,
 ) -> None:
     driver = selenium[browser_id]
     param_type = param_type.lower()
-    page = OZLoggedIn(driver).automation.lambdas_page.form
-    subpage = getattr(page, transform(option))
-
+    form: LambdaAddForm = OZLoggedIn(driver).automation.lambdas_page.form
+    bracket_name = f"bracket_{ordinal}"
     ordinal = ordinal if ordinal else "1st"
-    bracket_name = "bracket_" + ordinal.strip()
-    object_bracket = getattr(subpage, bracket_name)
+
+    def get_object_bracket() -> LambdaParameter:
+        bracket = getattr(getattr(form, transform(option)), bracket_name)
+        driver.execute_script("arguments[0].scrollIntoView();", bracket.web_elem)
+        return bracket
+
+    object_bracket = get_object_bracket()
     css_selector = "#" + object_bracket.name.web_elem.get_attribute("id")
-
     try_to_close_workflow_creation_popup(driver)
-
     scroll_to_css_selector(driver, css_selector)
 
-    split_type = param_type.replace(")", "").split(" (")
-    new_type = split_type[0] if "array" in param_type else param_type
+    is_array = "array" in param_type
+    if is_array:
+        # param type is like: 'Array (Number)'
+        split_type = param_type.replace(")", "").split(" (")
+        new_type = "array"
+    else:
+        new_type = param_type
 
-    # TODO VFS-12315 remove sleep in acc tests
-    time.sleep(1)
-    object_bracket.remove_element.click()
-    object_bracket.type_dropdown.click()
+    def choose_value_from_dropdown() -> None:
+        with contextlib.suppress(NoSuchElementException):
+            remove_element_btn = get_object_bracket().remove_element.web_elem
+            ActionChains(driver).move_to_element(remove_element_btn).click(
+                remove_element_btn
+            ).perform()
 
-    Popups(driver).power_select.choose_item(new_type)
+        dropdown_trigger: SeleniumWebElement = wait_for_visible_element_using_getter(
+            driver, lambda _: get_object_bracket().type_dropdown, timeout=WAIT_FRONTEND // 4
+        )
 
-    if "array" in param_type:
+        dropdown_trigger.click()
+        Popups(driver).power_select.choose_item(new_type)
+        chosen_type = get_object_bracket().get_chosen_type()
+        assert transform(chosen_type) == new_type, (
+            f"Chosen type is {chosen_type} instead of expected {new_type}"
+        )
+
+    perform_action(choose_value_from_dropdown, timeout=WAIT_FRONTEND * 2)
+
+    if is_array:
         object_bracket.type_dropdown.click()
         Popups(driver).power_select.choose_item(split_type[1])
 
