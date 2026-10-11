@@ -35,10 +35,17 @@ class LambdaParameter(PageObject):
     remove_element = Button(".remove-trigger", scroll=False)
     settings = Button(".oneicon-settings", scroll=False)
     parameter_settings = WebItem(".dataTypeEditor-children", cls=ParameterSetting)
-    data_type_header = WebElement(".data-type-header", scroll=False)
+    default_data_type = WebElement(".default-data-type-editor .data-type-header", scroll=False)
+    outer_data_type = WebElement(
+        ".data-type-editor > .data-type-header:not(.data-type-editor-default .data-type-header)",
+        scroll=False,
+    )
 
-    def get_chosen_type(self) -> str:
-        return self.data_type_header.text
+    def get_default_type(self) -> str:
+        return self.default_data_type.text
+
+    def get_outer_type(self) -> str:
+        return self.outer_data_type.text
 
 
 class LambdaParameters(PageObject):

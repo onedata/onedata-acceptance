@@ -218,19 +218,22 @@ def change_parameter_type_in_lambda_form(
         new_type = param_type
 
     def choose_value_from_dropdown() -> None:
-        with contextlib.suppress(NoSuchElementException):
+        with contextlib.suppress(NoSuchElementException, PageObjectNotFoundError):
             remove_element_btn = get_object_bracket().remove_element.web_elem
             ActionChains(driver).move_to_element(remove_element_btn).click(
                 remove_element_btn
             ).perform()
 
-        dropdown_trigger: SeleniumWebElement = wait_for_visible_element_using_getter(
-            driver, lambda _: get_object_bracket().type_dropdown, timeout=WAIT_FRONTEND // 4
-        )
+            dropdown_trigger: SeleniumWebElement = wait_for_visible_element_using_getter(
+                driver, lambda _: get_object_bracket().type_dropdown, timeout=WAIT_FRONTEND // 4
+            )
+            dropdown_trigger.click()
+            Popups(driver).power_select.choose_item(new_type)
 
-        dropdown_trigger.click()
-        Popups(driver).power_select.choose_item(new_type)
-        chosen_type = get_object_bracket().get_chosen_type()
+        object_bracket = get_object_bracket()
+        chosen_type = (
+            object_bracket.get_outer_type() if is_array else object_bracket.get_default_type()
+        )
         assert transform(chosen_type) == new_type, (
             f"Chosen type is {chosen_type} instead of expected {new_type}"
         )
@@ -240,11 +243,29 @@ def change_parameter_type_in_lambda_form(
     if is_array:
 
         def choose_nested_value_in_dropdown() -> None:
-            # TODO add checking if dropdown is expanded and corect value was chosen
-            get_object_bracket().type_dropdown.click()
-            Popups(driver).power_select.choose_item(split_type[1])
+            with contextlib.suppress(NoSuchElementException, PageObjectNotFoundError):
+                get_object_bracket().type_dropdown.click()
+                Popups(driver).power_select.choose_item(split_type[1])
+
+            object_bracket = get_object_bracket()
+            _assert_object_bracket_chosen_values(object_bracket, split_type)
 
         perform_action(choose_nested_value_in_dropdown)
+
+
+def _assert_object_bracket_chosen_values(
+    object_bracket: LambdaParameter, expected_params: list[str]
+) -> None:
+    chosen_outer_type = object_bracket.get_outer_type()
+    chosen_default_type = object_bracket.get_default_type()
+    expected_outer_type, expected_default_type = expected_params
+
+    assert transform(expected_outer_type) == transform(chosen_outer_type), (
+        f"Chosen outer type is {chosen_outer_type} instead of expected {expected_outer_type}"
+    )
+    assert transform(expected_default_type) == transform(chosen_default_type), (
+        f"Chosen default type is {chosen_default_type} instead of expected {expected_default_type}"
+    )
 
 
 @wt(
