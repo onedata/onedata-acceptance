@@ -53,23 +53,6 @@ def get_space_names_from_sidebar(selenium: SeleniumDrivers, browser_id: str) -> 
     return [elem.name for elem in OZLoggedIn(selenium[browser_id]).data.spaces_headers_list]
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
-    # select data in main menu if not selected
-    get_onezone_subpage(driver, "data")
-    click_on_space_in_menu_list(driver, name)
-
-
-def click_on_space_in_menu_list(driver: WebDriver, name: str, force: bool = True) -> DataPage:
-    # function assumes data page is active
-    page = OZLoggedIn(driver).data
-    if force:
-        page.spaces_headers_list[name].web_elem.click()
-    elif not page.spaces_list[name].is_active():
-        page.spaces_headers_list[name].click()
-    return page
-
-
 def _parse_tabs_list(tabs: str) -> list[str]:
     if tabs == "all":
         return [tabs]
@@ -260,13 +243,38 @@ def _click_on_option_in_the_sidebar(
     return get_onezone_subpage(driver, page_name)
 
 
+def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
+    # select data in main menu if not selected
+    get_onezone_subpage(driver, "data")
+    _click_on_space_in_menu_list(driver, name)
+
+
+def _click_on_space_in_menu_list(driver: WebDriver, name: str, force: bool = True) -> DataPage:
+    # function assumes data page is active
+    page = OZLoggedIn(driver).data
+    if force:
+        page.spaces_headers_list[name].web_elem.click()
+    elif not page.spaces_list[name].is_active():
+        page.spaces_headers_list[name].click()
+    return page
+
+
+def _get_list_element_on_subpage_in_oz_page(
+    driver: WebDriver, page_name: str, option: ListElement, elem_name: str
+) -> Any:
+    page_name = cast(PageName, page_name)
+    page = get_onezone_subpage(driver, page_name)
+    elements_list = getattr(page, f"{option.value}_list")
+    return elements_list[elem_name]
+
+
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*?) clicks "(?P<name>.*?)" '
         r"on the (?P<option>spaces|groups|harvesters) list in the sidebar"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_element_on_lists_on_left_sidebar_menu(
     selenium: SeleniumDrivers, browser_id: str, option: str, name: str
 ) -> None:
@@ -276,23 +284,15 @@ def click_element_on_lists_on_left_sidebar_menu(
     if page_name == "spaces":
         try:
             _choose_space_from_menu_list(driver, name)
-            click_on_space_in_menu_list(driver, name)
+            _click_on_space_in_menu_list(driver, name)
         except ElementClickInterceptedException:
             pass
     else:
         if option == "automation":
             option += "s"
-        get_list_element_on_subpage_in_oz_page(driver, page_name, ListElement(option), name).click()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def get_list_element_on_subpage_in_oz_page(
-    driver: WebDriver, page_name: str, option: ListElement, elem_name: str
-) -> Any:
-    page_name = cast(PageName, page_name)
-    page = get_onezone_subpage(driver, page_name)
-    elements_list = getattr(page, f"{option.value}_list")
-    return elements_list[elem_name]
+        _get_list_element_on_subpage_in_oz_page(
+            driver, page_name, ListElement(option), name
+        ).click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button in space "{space_name}" menu'))
@@ -460,7 +460,7 @@ def _click_on_option_of_space_on_left_sidebar_menu(
     submenu_option = transform(option).replace(",", "")
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    page = click_on_space_in_menu_list(driver, space_name, force=force)
+    page = _click_on_space_in_menu_list(driver, space_name, force=force)
     getattr(page.spaces_list[space_name], submenu_option).click()
 
 

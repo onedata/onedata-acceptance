@@ -408,7 +408,10 @@ def click_button_in_workflow(selenium: SeleniumDrivers, browser_id: str) -> None
     button.click()
 
     def button_disabled_condition() -> bool:
-        return button.web_elem.get_attribute("disabled") and not element_has_class(button.web_elem, "clickable")
+        return button.web_elem.get_attribute("disabled") and not element_has_class(
+            button.web_elem, "clickable"
+        )
+
     assert button_disabled_condition(), "Changes were not saved successfully"
 
 

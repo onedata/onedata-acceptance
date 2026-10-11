@@ -11,7 +11,9 @@ from contextlib import suppress
 from datetime import datetime
 
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -269,12 +271,18 @@ def compare_array_in_store_details_modal(modal: StoreDetails, item_list: str) ->
         )
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def open_raw_view_for_elem(
-    store_content_list: PageObjectsSequence, index: int, modal: StoreDetails
+    store_content_list: PageObjectsSequence, index: int, modal: StoreDetails, driver: WebDriver
 ) -> None:
     with suppress(ElementClickInterceptedException):
-        store_content_list[index].click()
+
+        def get_store_content_web_elem() -> SeleniumWebElement:
+            store_content = store_content_list[index].web_elem
+            driver.execute_script("arguments[0].scrollIntoView();", store_content)
+            return store_content
+
+        store_content = perform_action(get_store_content_web_elem, timeout=WAIT_FRONTEND // 4)
+        ActionChains(driver).move_to_element(store_content).click(store_content).perform()
 
     with suppress(NoSuchElementException):
         if modal.raw_view:
@@ -284,7 +292,9 @@ def open_raw_view_for_elem(
         if modal.single_file_container.name:
             return
 
-    raise TimeoutError(f"Did not manage to open raw view for {index} element in store content list")
+    raise NoSuchElementException(
+        f"Did not manage to open raw view for {index} element in store content list"
+    )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -301,9 +311,9 @@ def get_store_content(
 
     def action() -> None:
         try:
-            open_raw_view_for_elem(store_content_list, index, modal)
-        except TimeoutError as e:
-            dismiss_notifies_if_present(driver)
+            open_raw_view_for_elem(store_content_list, index, modal, driver)
+        except NoSuchElementException as e:
+            dismiss_notifies_if_present(driver, timeout=WAIT_FRONTEND // 4)
             modal.name_header.click()
             raise e
 
