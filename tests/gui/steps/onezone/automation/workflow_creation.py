@@ -28,7 +28,7 @@ from tests.gui.utils.onezone.lambdas_subpage import LambdaParameter
 from tests.gui.utils.onezone.workflows_subpage import JSONWorkflowsPanel
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import element_has_class, repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -404,7 +404,12 @@ def insert_text_in_textfield_of_workflow(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_workflow(selenium: SeleniumDrivers, browser_id: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
-    page.workflows_page.workflow_save_button.click()
+    button = page.workflows_page.workflow_save_button
+    button.click()
+
+    def button_disabled_condition() -> bool:
+        return button.web_elem.get_attribute("disabled") and not element_has_class(button.web_elem, "clickable")
+    assert button_disabled_condition(), "Changes were not saved successfully"
 
 
 @wt(
