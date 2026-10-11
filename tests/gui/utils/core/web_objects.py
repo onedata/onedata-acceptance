@@ -22,9 +22,6 @@ class ButtonPageObject(PageObject):
     def __str__(self) -> str:
         return f"{self.object_name} btn in {self.parent}"
 
-    def __call__(self) -> None:
-        self.click()
-
     def is_active(self) -> bool:
         return element_has_class(self.web_elem, "active")
 

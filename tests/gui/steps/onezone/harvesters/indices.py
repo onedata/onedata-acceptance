@@ -61,7 +61,7 @@ def type_index_name_to_input_field_in_indices_page(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_button_in_indices_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).discovery.indices_page.create_button()
+    OZLoggedIn(driver).discovery.indices_page.create_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{index_name}" has appeared on the indices list'))
@@ -154,10 +154,10 @@ def change_indices_on_gui_plugin_tab(
 ) -> None:
     driver = selenium[browser_id]
     gui_plugin_tab = OZLoggedIn(driver).discovery.configuration_page.gui_plugin_tab
-    gui_plugin_tab.indices_edit()
-    gui_plugin_tab.choose_indices_expand()
+    gui_plugin_tab.indices_edit.click()
+    gui_plugin_tab.choose_indices_expand.click()
     Popups(driver).power_select.choose_item(index_name)
-    gui_plugin_tab.indices_save()
+    gui_plugin_tab.indices_save.click()
 
 
 @wt(

@@ -28,7 +28,7 @@ from tests.gui.utils.onezone.lambdas_subpage import LambdaParameter
 from tests.gui.utils.onezone.workflows_subpage import JSONWorkflowsPanel
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import element_has_class, repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -46,7 +46,7 @@ def click_add_parameter_button_in_lambda_form(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
     form = OZLoggedIn(selenium[browser_id]).automation.lambdas_page.form
-    getattr(form, transform(option)).add_button()
+    getattr(form, transform(option)).add_button.click()
 
 
 def enter_parameter_name_in_lambda_form(
@@ -177,7 +177,7 @@ def choose_option_in_dropdown_menu_in_task_page(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).automation.workflows_page.task_form
     if object_type == "result":
-        page.results[object_name + ":"].add_mapping()
+        page.results[object_name + ":"].add_mapping.click()
         page.results[object_name + ":"].target_store_dropdown[-1].click()
     elif object_type == "argument":
         page.arguments[object_name + ":"].value_builder_dropdown.click()
@@ -404,7 +404,15 @@ def insert_text_in_textfield_of_workflow(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_workflow(selenium: SeleniumDrivers, browser_id: str) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
-    page.workflows_page.workflow_save_button.click()
+    button = page.workflows_page.workflow_save_button
+    button.click()
+
+    def button_disabled_condition() -> bool:
+        return button.web_elem.get_attribute("disabled") and not element_has_class(
+            button.web_elem, "clickable"
+        )
+
+    assert button_disabled_condition(), "Changes were not saved successfully"
 
 
 @wt(

@@ -44,7 +44,7 @@ def open_provider_popover_on_world_map(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_visit_provider(driver: WebDriver) -> None:
-    Popups(driver).provider_map_popover.visit_provider()
+    Popups(driver).provider_map_popover.visit_provider.click()
 
 
 @wt(
@@ -85,7 +85,7 @@ def assert_popup_for_provider_has_appeared_on_map(
     try:
         expected_provider_name = Popups(driver).provider_map_popover.provider_name
     except NoSuchElementException:
-        Popups(driver).provider_details.values[0].copy_to_clipboard()
+        Popups(driver).provider_details.values[0].copy_to_clipboard.click()
         expected_provider_name = clipboard.paste(display=displays[browser_id])
     provider_name = hosts[provider]["name"]
     assert provider_name == expected_provider_name, error_message.format(
@@ -376,7 +376,7 @@ def click_on_button_on_providers_list(
 def click_on_cease_support_in_menu_of_provider_on_providers_list(
     driver: WebDriver,
 ) -> None:
-    Popups(driver).menu_popup_with_text.cease_support_from_providers_list_menu()
+    Popups(driver).menu_popup_with_text.cease_support_from_providers_list_menu.click()
 
 
 @wt(

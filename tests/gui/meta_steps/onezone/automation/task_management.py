@@ -183,7 +183,7 @@ def remove_task_from_lane(selenium: SeleniumDrivers, browser_id: str, lane: str,
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).automation
     lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane_obj.parallel_box.task_list[task].menu_button()
+    lane_obj.parallel_box.task_list[task].menu_button.click()
     Popups(driver).menu_popup_with_label.menu[option]()
     click_modal_button(selenium, browser_id, option, modal)
 
@@ -226,7 +226,7 @@ def _open_task_form(
     driver = selenium[browser_id]
     page = get_onezone_subpage(driver, "automation")
     lane_obj = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
-    lane_obj.parallel_box.task_list[task].menu_button()
+    lane_obj.parallel_box.task_list[task].menu_button.click()
     Popups(driver).menu_popup_with_label.menu["Modify"]()
     # wait for task form to open
     time.sleep(1)
@@ -257,7 +257,7 @@ def _modify_task_result_mappings(
         except PageObjectNotFoundError:
             result = page.workflows_page.task_form.results[result_name + ":"]
         if option == "adding":
-            result.add_mapping()
+            result.add_mapping.click()
         element = result.target_store_dropdown[-1]
         driver.execute_script("arguments[0].scrollIntoView();", element)
         result.target_store_dropdown[-1].click()

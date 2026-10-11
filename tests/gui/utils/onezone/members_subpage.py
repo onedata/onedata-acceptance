@@ -111,7 +111,7 @@ class MembershipRelation(PageObject):
 
     def click_relation_menu_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.line).perform()
-        self.relation_menu_button()
+        self.relation_menu_button.click()
 
 
 class MembershipRow(PageObject):

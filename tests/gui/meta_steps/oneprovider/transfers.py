@@ -206,7 +206,7 @@ def evict_file(
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, details_modal)
     data_distribution_modal = Modals(driver).details_modal.data_distribution
-    data_distribution_modal.providers[provider_name].menu_button()
+    data_distribution_modal.providers[provider_name].menu_button.click()
     Popups(driver).data_distribution_popup.menu[menu_option]()
     click_modal_button(selenium, browser_id, close_button, details_modal)
 

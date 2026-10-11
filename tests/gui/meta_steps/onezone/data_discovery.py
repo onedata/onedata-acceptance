@@ -162,7 +162,7 @@ def see_files_with_order(selenium: SeleniumDrivers, browser_id: str, config: str
 @wt(parsers.parse('user of {browser_id} clicks on "Go to source file..." for "{filename}"'))
 def go_to_source_of_file(selenium: SeleniumDrivers, browser_id: str, filename: str) -> None:
     data_dict = _unpack_files_data(selenium, browser_id)
-    data_dict[filename].source_button()
+    data_dict[filename].source_button.click()
 
 
 @wt(parsers.parse("user of {browser_id} sees {number} files on data discovery page"))
@@ -200,7 +200,7 @@ def _select_filter_property(page: DataDiscovery, item: JsonValue) -> None:
     if not isinstance(item, dict) or set(item) != {"__onedata"}:
         raise ValueError(f"Do not support {item}")
 
-    page.filter_properties_tree.tree_nodes["__onedata"].expander()
+    page.filter_properties_tree.tree_nodes["__onedata"].expander.click()
     attributes = cast(list[JsonValue], item["__onedata"])
     for attribute in attributes:
         _select_onedata_attribute(page, attribute)
@@ -218,7 +218,7 @@ def _select_onedata_attribute(page: DataDiscovery, attribute: JsonValue) -> None
         raise ValueError(f"Do not support {attribute}")
 
     xattrs_node = nodes["xattrs"]
-    xattrs_node.expander()
+    xattrs_node.expander.click()
     property_names = cast(list[str], attribute["xattrs"])
     for property_name in property_names:
         xattrs_node.xattrs_tree_nodes[property_name].checkbox.click()

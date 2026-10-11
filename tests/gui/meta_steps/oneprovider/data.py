@@ -426,7 +426,7 @@ def check_metadata_for_file_in_directory(
                 f"{expected} metadata key is not in metadata for {item.name} in {directory}"
             )
             assert expected in entries, error_message2
-        modal.x()
+        modal.x.click()
 
 
 def go_to_and_assert_browser(

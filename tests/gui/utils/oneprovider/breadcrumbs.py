@@ -33,7 +33,7 @@ class _Breadcrumbs(PageObject):
 
     def chdir(self, path: str, archive: bool = False) -> None:
         if not path or path == "/":
-            self.space_root()
+            self.space_root.click()
         else:
             path_parts = path.split("/")
             breadcrumbs = self._breadcrumbs

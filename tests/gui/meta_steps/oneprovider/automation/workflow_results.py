@@ -83,9 +83,10 @@ def open_modal_and_get_store_content(
         page.stores_list[store_name].click()
 
     modal = Modals(driver).store_details
-    store_value = get_store_content(modal, store_type, index, clipboard, displays, browser_id)
-    modal.close()
-
+    store_value = get_store_content(
+        modal, store_type, index, clipboard, displays, browser_id, driver
+    )
+    modal.close.click()
     return store_value
 
 

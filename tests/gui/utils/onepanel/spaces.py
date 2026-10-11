@@ -266,11 +266,11 @@ class AutoCleaning(PageObject):
 
     def click_rename_soft_quota_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self._soft_quota).perform()
-        self.soft_quota.edit_button()
+        self.soft_quota.edit_button.click()
 
     def click_rename_hard_quota_button(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self._hard_quota).perform()
-        self.hard_quota.edit_button()
+        self.hard_quota.edit_button.click()
 
 
 class NavigationHeader(PageObject):

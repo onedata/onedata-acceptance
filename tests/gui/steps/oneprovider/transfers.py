@@ -171,16 +171,16 @@ def cancel_or_rerun_transfer(
     transfers = get_transfers(selenium[browser_id])
     if state == "waiting":
         try:
-            getattr(transfers, state)[0].menu_button()
+            getattr(transfers, state)[0].menu_button.click()
         except (
             ElementNotInteractableException,
             NoSuchElementException,
             PageObjectNotFoundError,
         ):
             ongoing_transfer: TransferRecordActive = transfers.ongoing[0]
-            ongoing_transfer.menu_button()
+            ongoing_transfer.menu_button.click()
     else:
-        getattr(transfers, transform(state))[0].menu_button()
+        getattr(transfers, transform(state))[0].menu_button.click()
 
     option = "Cancel transfer" if option == "cancels" else "Rerun transfer"
     click_option_in_popup_labeled_menu(selenium, browser_id, option)
@@ -264,14 +264,14 @@ def migrate_item(
     target_name = hosts[target]["name"]
 
     data_distribution_modal = Modals(driver).details_modal.data_distribution
-    data_distribution_modal.providers[source_name].menu_button()
+    data_distribution_modal.providers[source_name].menu_button.click()
     Popups(driver).data_distribution_popup.menu[menu_option]()
 
     if not check_provider_in_migrate_dropdown(driver, target_name):
         _expand_dropdown_in_migrate_record(driver)
         Popups(driver).migrate_dropdown.providers_list[target_name].click()
 
-    data_distribution_modal.migrate.migrate_button()
+    data_distribution_modal.migrate.migrate_button.click()
 
 
 @wt(
@@ -285,7 +285,7 @@ def replicate_item(selenium: SeleniumDrivers, browser_id: str, provider: str, ho
     menu_option = "Replicate here"
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button()
+    Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button.click()
     Popups(driver).data_distribution_popup.menu[menu_option]()
 
 
@@ -318,7 +318,7 @@ def click_menu_button_in_data_distribution_panel(
 ) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button()
+    Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button.click()
 
 
 @wt(
@@ -376,7 +376,7 @@ def assert_option_in_provider_popup_menu(
 ) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button()
+    Modals(driver).details_modal.data_distribution.providers[provider_name].menu_button.click()
 
     menu = Popups(driver).menu_popup_with_text.menu
     assert option not in menu, f"{option} should not be in selection menu"

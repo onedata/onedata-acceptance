@@ -423,8 +423,8 @@ def click_generate_token_in_subgroups_list(
 ) -> None:
     page = get_onezone_subpage(selenium[browser_id], "groups")
     page.groups_list[group].click()
-    page.groups_list[group].members()
-    getattr(page.main_page.members, member).generate_token()
+    page.groups_list[group].members.click()
+    getattr(page.main_page.members, member).generate_token.click()
 
 
 @wt(
@@ -445,7 +445,7 @@ def click_on_option_in_members_list_menu(
 ) -> None:
     driver = selenium[browser_id]
     page = find_members_page(driver, where)
-    getattr(page, member).header.menu_button()
+    getattr(page, member).header.menu_button.click()
     Popups(driver).menu_popup_with_text.menu[button]()
 
 
@@ -476,7 +476,7 @@ def assert_generated_token_is_present(selenium: SeleniumDrivers, browser_id: str
 @wt(parsers.re(r"user of (?P<browser_id>.*) copies invitation token from modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token_from_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Modals(selenium[browser_id]).invite_using_token.copy()
+    Modals(selenium[browser_id]).invite_using_token.copy.click()
 
 
 @wt(
@@ -495,7 +495,7 @@ def assert_element_is_groups_child(
 ) -> None:
     page = get_onezone_subpage(selenium[browser_id], "groups")
     page.groups_list[parent].click()
-    page.groups_list[parent].members()
+    page.groups_list[parent].members.click()
 
     try:
         page.members_page.groups.items[child]
@@ -568,7 +568,7 @@ def check_user_in_space_members_list(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data
     page.spaces_headers_list[space_name].click()
-    page.spaces_list[space_name].members()
+    page.spaces_list[space_name].members.click()
     try:
         page.members_page.users.items[username]
     except (PageObjectNotFoundError, NoSuchElementException):
@@ -679,14 +679,14 @@ def copy_invitation_token(
     page = get_onezone_subpage(driver, "groups")
     page.groups_list[group].click()
 
-    getattr(page.main_page.members, who + "s").header.menu_button()
+    getattr(page.main_page.members, who + "s").header.menu_button.click()
     button = f"Invite {who} using token"
 
     Popups(driver).menu_popup_with_text.menu[button].click()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, button, tmp_memory)
-    Modals(selenium[browser_id]).invite_using_token.copy()
-    Modals(selenium[browser_id]).invite_using_token.close()
+    Modals(selenium[browser_id]).invite_using_token.copy.click()
+    Modals(selenium[browser_id]).invite_using_token.close.click()
 
 
 @wt(
@@ -706,7 +706,7 @@ def get_invitation_token(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).groups
     page.groups_list[group].click()
-    page.main_page.menu_button()
+    page.main_page.menu_button.click()
     Popups(driver).menu_popup_with_text.menu["Invite " + who]()
     token = page.members_page.token.token
     tmp_memory[browser_id]["token"] = token

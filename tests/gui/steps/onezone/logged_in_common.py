@@ -80,7 +80,7 @@ def click_on_btn_in_oz_panel(
     driver = selenium[browser_id]
     panel = getattr(OZLoggedIn(driver), oz_panel)
     action = getattr(panel, btn.lower().replace(" ", "_"))
-    action()
+    action.click()
 
 
 @wt(

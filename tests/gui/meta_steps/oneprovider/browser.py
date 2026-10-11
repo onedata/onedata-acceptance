@@ -240,7 +240,7 @@ def create_json_column_in_columns_menu(
         new_json_col.column_label.clear()
         new_json_col.column_label.send_keys(label_name)
 
-    new_json_col.create()
+    new_json_col.create.click()
 
     # hide columns menu popup
     click_configure_columns_button(browser)

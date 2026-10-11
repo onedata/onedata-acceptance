@@ -129,20 +129,20 @@ def wt_click_on_sidebar_item(
 @wt(parsers.parse("user of {browser_id} clicks info button on warning bar in Onepanel page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_info_button_on_warning_bar(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OnePage(selenium[browser_id]).warning_bar.info()
+    OnePage(selenium[browser_id]).warning_bar.info.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks open in onezone in modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_open_in_onezone_in_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     modal = Modals(selenium[browser_id])
-    modal.emergency_interface.open_in_onezone()
+    modal.emergency_interface.open_in_onezone.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks open in onezone in Onepanel login page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_open_in_onezone(selenium: SeleniumDrivers, browser_id: str) -> None:
-    LoginPage(selenium[browser_id]).open_in_onezone()
+    LoginPage(selenium[browser_id]).open_in_onezone.click()
 
 
 @wt(
@@ -381,7 +381,7 @@ def assert_value_in_info_tile_in_overview_onepanel_view(
         if _property.name != property_name:
             continue
         if _property.value == "":
-            _property.copy()
+            _property.copy.click()
             value = clipboard.paste(display=displays[browser_id])
         else:
             value = _property.value

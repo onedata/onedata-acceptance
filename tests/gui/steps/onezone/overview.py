@@ -25,7 +25,7 @@ def type_space_name_on_rename_space_input_on_overview_page(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).data.overview_page.info_tile.rename()
+    OZLoggedIn(driver).data.overview_page.info_tile.rename.click()
     OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.value = space_name
 
 
@@ -35,14 +35,14 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.confirm()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.confirm.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on cancel button on overview page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_cancel_rename_button_on_overview_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.cancel()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.cancel.click()
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) confirms rename the space using (?P<option>.*)"))

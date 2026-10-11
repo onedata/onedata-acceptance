@@ -95,7 +95,7 @@ def set_space_data_in_configuration_tab(
     page.click()
     page.value = data_name
     if with_save:
-        page.confirm()
+        page.confirm.click()
 
 
 @wt(

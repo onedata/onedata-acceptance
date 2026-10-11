@@ -57,7 +57,7 @@ def assert_public_toggle_on_harvester_config_page(
 @wt(parsers.parse("user of {browser_id} clicks on copy icon of public harvester URL"))
 def copy_public_harvester_url(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).discovery.configuration_page.general_tab.copy_public_url()
+    OZLoggedIn(driver).discovery.configuration_page.general_tab.copy_public_url.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on {tab_name} tab on harvester configuration page"))
@@ -66,7 +66,7 @@ def click_on_tab_of_harvester_config_page(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).discovery.configuration_page
-    getattr(page, transform(tab_name) + "_button")()
+    getattr(page, transform(tab_name) + "_button").click()
 
 
 @wt(
@@ -96,7 +96,7 @@ def click_button_in_tab_of_harvester_config_page(
 ) -> None:
     driver = selenium[browser_id]
     page = getattr(OZLoggedIn(driver).discovery.configuration_page, transform(tab_name))
-    getattr(page, transform(button) + "_button")()
+    getattr(page, transform(button) + "_button").click()
 
 
 @wt(parsers.parse("user of {browser_id} waits until plugin upload finish"))

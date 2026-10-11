@@ -72,7 +72,7 @@ def wt_type_text_to_in_box_in_chpasswd_form(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_confirm_btn_in_chpasswd_form(selenium: SeleniumDrivers, browser_id: str) -> None:
     form = OnePage(selenium[browser_id]).content.account_management.chpasswd_form
-    form.confirm_password_change()
+    form.confirm_password_change.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on {btn} button in account management page"))

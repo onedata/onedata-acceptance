@@ -149,7 +149,7 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(
     breadcrumbs = _get_breadcrumbs(browser_id, selenium, which_browser)
     path = transform(path)
     if path == "space_root":
-        breadcrumbs.space_root()
+        breadcrumbs.space_root.click()
     else:
         breadcrumbs.chdir(path, archive)
 
@@ -706,7 +706,7 @@ def choose_option_from_selection_menu(
 ) -> None:
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]["file_browser"]
-    file_browser.selection_menu_button()
+    file_browser.selection_menu_button.click()
     Popups(driver).menu_popup_with_label.menu[option].click()
 
 
@@ -726,7 +726,7 @@ def choose_option_for_file_from_selection_menu(
 ) -> None:
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]["file_browser"]
-    file_browser.data[file_name].menu_button()
+    file_browser.data[file_name].menu_button.click()
     menu = Popups(driver).menu_popup
     menu.choose_option(option)
 
@@ -758,7 +758,7 @@ def click_choose_other_oneprovider_on_file_browser(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver).data.choose_other_provider()
+    OZLoggedIn(driver).data.choose_other_provider.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -922,7 +922,7 @@ def check_data_distribution_size_for_provider(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_size_statistics_for_providers(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    Modals(driver).details_modal.size_statistics.expand_stats_button()
+    Modals(driver).details_modal.size_statistics.expand_stats_button.click()
 
 
 @wt(

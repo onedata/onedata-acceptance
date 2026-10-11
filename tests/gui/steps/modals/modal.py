@@ -73,14 +73,14 @@ def wait_for_add_storage_modal_to_appear(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def cp_token_from_add_storage_modal(browser_id: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
-    modal.copy()
+    modal.copy.click()
 
 
 @wt(parsers.parse('user of {browser_id} generate another token in "Add storage" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def gen_another_token_in_add_storage_modal(browser_id: str, tmp_memory: TmpMemory) -> None:
     modal = tmp_memory[browser_id]["window"]["modal"]
-    modal.generate_token()
+    modal.generate_token.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees non-empty token in "Add storage" modal'))
@@ -398,7 +398,7 @@ def click_panel_button(
     selenium: SeleniumDrivers, browser_id: str, button: str, panel_name: str
 ) -> None:
     tab = getattr(Modals(selenium[browser_id]).details_modal, transform(panel_name))
-    getattr(tab, transform(button))()
+    getattr(tab, transform(button)).click()
 
 
 @wt(
@@ -673,12 +673,12 @@ def get_error_modal_text(selenium: SeleniumDrivers, browser_id: str) -> str:
 def close_modal(selenium: SeleniumDrivers, browser_id: str, modal: str) -> None:
     modal = resolve_modal_attribute_name(modal)
     try:
-        getattr(Modals(selenium[browser_id]), modal).close()
+        getattr(Modals(selenium[browser_id]), modal).close.click()
     except AttributeError:
         try:
-            getattr(Modals(selenium[browser_id]), modal).cancel()
+            getattr(Modals(selenium[browser_id]), modal).cancel.click()
         except AttributeError:
-            getattr(Modals(selenium[browser_id]), modal).x()
+            getattr(Modals(selenium[browser_id]), modal).x.click()
     except NoSuchElementException:
         return
 
@@ -697,7 +697,7 @@ def close_first_modal_if_present(driver: WebDriver) -> None:
 @wt(parsers.parse("user of {browser_id} clicks copy command icon in REST API modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_icon_in_rest_api_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Modals(selenium[browser_id]).rest_api_modal.copy_command_button()
+    Modals(selenium[browser_id]).rest_api_modal.copy_command_button.click()
 
 
 @wt(
@@ -780,4 +780,4 @@ def check_checkbox_in_advertise_space_modal(selenium: SeleniumDrivers, browser_i
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_warning(selenium: SeleniumDrivers, browser_id: str, button: str) -> None:
     driver = selenium[browser_id]
-    getattr(Modals(driver).warning_info, transform(button))()
+    getattr(Modals(driver).warning_info, transform(button)).click()
