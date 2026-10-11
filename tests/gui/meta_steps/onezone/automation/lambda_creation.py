@@ -45,7 +45,6 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
 from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.generic import perform_action, transform, upload_lambda_path
 from tests.gui.utils.onezone.lambdas_subpage import LambdaAddForm, LambdaParameter
@@ -203,14 +202,12 @@ def change_parameter_type_in_lambda_form(
     ordinal = ordinal if ordinal else "1st"
 
     def get_object_bracket() -> LambdaParameter:
-        bracket = getattr(getattr(form, transform(option)), bracket_name)
+        bracket = perform_action(lambda: getattr(getattr(form, transform(option)), bracket_name))
         driver.execute_script("arguments[0].scrollIntoView();", bracket.web_elem)
         return bracket
 
-    object_bracket = get_object_bracket()
-    css_selector = "#" + object_bracket.name.web_elem.get_attribute("id")
+    get_object_bracket()
     try_to_close_workflow_creation_popup(driver)
-    scroll_to_css_selector(driver, css_selector)
 
     is_array = "array" in param_type
     if is_array:
@@ -241,8 +238,13 @@ def change_parameter_type_in_lambda_form(
     perform_action(choose_value_from_dropdown, timeout=WAIT_FRONTEND * 2)
 
     if is_array:
-        object_bracket.type_dropdown.click()
-        Popups(driver).power_select.choose_item(split_type[1])
+
+        def choose_nested_value_in_dropdown() -> None:
+            # TODO add checking if dropdown is expanded and corect value was chosen
+            get_object_bracket().type_dropdown.click()
+            Popups(driver).power_select.choose_item(split_type[1])
+
+        perform_action(choose_nested_value_in_dropdown)
 
 
 @wt(
