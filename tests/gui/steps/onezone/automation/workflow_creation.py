@@ -5,9 +5,11 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import time
 
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -436,15 +438,16 @@ def click_button_in_workflow_details_and_see_error_modal(
     )
 )
 def click_save_button_for_workflow_edition(selenium: SeleniumDrivers, browser_id: str) -> None:
-    page = perform_action(lambda: OZLoggedIn(selenium[browser_id]).automation)
+    driver = selenium[browser_id]
+    page = perform_action(lambda: OZLoggedIn(driver).automation)
 
     def get_save_button() -> SeleniumWebElement:
         return page.workflows_page.workflow_edition_save.web_elem
 
-    button_web_elem = perform_action(get_save_button)
-    button_web_elem.click()
-
     def button_disabled_condition() -> None:
+        button_web_elem = get_save_button()
+        with contextlib.suppress(WebDriverException):
+            ActionChains(driver).move_to_element(button_web_elem).click(button_web_elem).perform()
         message = "Changes were not saved successfully"
         assert button_web_elem.get_attribute("disabled"), message
         assert not element_has_class(button_web_elem, "clickable"), message
