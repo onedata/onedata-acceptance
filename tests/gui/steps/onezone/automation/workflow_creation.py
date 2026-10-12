@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_FRONTEND
@@ -318,7 +319,8 @@ def add_task_to_empty_parallel_box(
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane_name]
-    lane.empty_parallel_box.add_task_button.click()
+    btn = lane.empty_parallel_box.add_task_button.web_elem
+    ActionChains(selenium[browser_id]).move_to_element(btn).click(btn).perform()
 
 
 @wt(
