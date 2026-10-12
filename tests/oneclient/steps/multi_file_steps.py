@@ -218,10 +218,7 @@ def ls_present_spaces(user: str, spaces: list[str], client_node: str, users: Use
 
     def condition() -> None:
         listed_spaces = client.ls(path)
-        for space in spaces:
-            assert space in listed_spaces, (
-                f"Space {space} not in listed spaces, listed spaces: {listed_spaces}"
-            )
+        assert set(listed_spaces) == set(spaces), f"Expected spaces {spaces}, got {listed_spaces}"
 
     assert_(client.perform, condition)
 
