@@ -131,10 +131,10 @@ test_upgrade_src:
 ##
 
 build_swaggers:
-	cd onezone_swagger && make python-client && cd generated/python && mv onezone_client ${MIXED_TESTS_ROOT}
-	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ${MIXED_TESTS_ROOT}
-	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ${MIXED_TESTS_ROOT}
-	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ${MIXED_TESTS_ROOT}
+	cd submodules/onezone_swagger && make python-client && cd generated/python && mv onezone_client ${MIXED_TESTS_ROOT}
+	cd submodules/onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ${MIXED_TESTS_ROOT}
+	cd submodules/oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ${MIXED_TESTS_ROOT}
+	cd submodules/cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ${MIXED_TESTS_ROOT}
 
 ##
 ## Clean
@@ -143,17 +143,17 @@ build_swaggers:
 clean: clean_swaggers
 
 clean_swaggers:
-	cd onezone_swagger && make clean
-	cd onepanel_swagger && make clean
-	cd oneprovider_swagger && make clean
-	cd cdmi_swagger && make clean
+	cd submodules/onezone_swagger && make clean
+	cd submodules/onepanel_swagger && make clean
+	cd submodules/oneprovider_swagger && make clean
+	cd submodules/cdmi_swagger && make clean
 	rm -rf ${MIXED_TESTS_ROOT}/onezone_client
 	rm -rf ${MIXED_TESTS_ROOT}/onepanel_client
 	rm -rf ${MIXED_TESTS_ROOT}/oneprovider_client
 	rm -rf ${MIXED_TESTS_ROOT}/cdmi_client
 
 codetag-tracker:
-	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
+	./submodules/bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
 
 
 ##

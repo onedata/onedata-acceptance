@@ -23,7 +23,10 @@ from subprocess import call, check_output
 import tempfile
 import xml.etree.ElementTree as ElementTree
 
+# isort: off
+from tests import ONE_ENV_DIR
 from bamboos.docker.environment import docker
+# isort: on
 
 TEST_RUNNER_CONTAINER_NAME: Final[str] = "test-runner"
 
@@ -135,7 +138,7 @@ def clean_env(
         rm=True,
         interactive=True,
         name="onenv-clean",
-        workdir=os.path.join(script_dir, "one-env"),
+        workdir=ONE_ENV_DIR,
         reflect=reflect,
         network="host",
         image=image,
@@ -326,7 +329,7 @@ def main() -> None:
         pull=not args.no_pull,
     )
 
-    call(["./onenv", "init"], cwd="one-env")
+    call(["./onenv", "init"], cwd=ONE_ENV_DIR)
 
     if args.local:
         cmd = [

@@ -17,7 +17,7 @@ from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests import gui
+from tests import AUTOMATION_EXAMPLES_DIR, gui
 from tests.gui.constants import WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.utils import text as text_utils
 from tests.type_definitions import JsonValue
@@ -43,52 +43,20 @@ def upload_workflow_path(workflow_name: str | None = None) -> str:
     """Resolve an absolute path for workflow file with name workflow_name
     stored in automation-examples submodule
     """
+    workflow_dir = os.path.join(AUTOMATION_EXAMPLES_DIR, "workflows")
     if workflow_name:
-        return os.path.abspath(
-            os.path.join(
-                os.path.dirname(gui.__file__),
-                "..",
-                "..",
-                "automation-examples",
-                "workflows",
-                workflow_name,
-            )
-        )
-    return os.path.abspath(
-        os.path.join(
-            os.path.dirname(gui.__file__),
-            "..",
-            "..",
-            "automation-examples",
-            "workflows",
-        )
-    )
+        return os.path.join(workflow_dir, workflow_name)
+    return workflow_dir
 
 
 def upload_lambda_path(lambda_name: str | None) -> str:
     """Resolve an absolute path for lambda dump file with name lambda_name
     stored in automation-examples submodule
     """
+    lambda_dir = os.path.join(AUTOMATION_EXAMPLES_DIR, "lambdas")
     if lambda_name:
-        return os.path.abspath(
-            os.path.join(
-                os.path.dirname(gui.__file__),
-                "..",
-                "..",
-                "automation-examples",
-                "lambdas",
-                lambda_name,
-            )
-        )
-    return os.path.abspath(
-        os.path.join(
-            os.path.dirname(gui.__file__),
-            "..",
-            "..",
-            "automation-examples",
-            "lambdas",
-        )
-    )
+        return os.path.join(lambda_dir, lambda_name)
+    return lambda_dir
 
 
 def strip_path(path_string: str, separator: str = "/") -> str:

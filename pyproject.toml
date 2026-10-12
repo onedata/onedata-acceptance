@@ -201,7 +201,6 @@ module = [
 ignore_missing_imports = true
 disable_error_code = ["import-untyped"]
 
-# TODO: VFS-13661 move all submodules into one place
 # Ignore generated / external REST clients reported by mypy logs.
 [[tool.mypy.overrides]]
 module = [

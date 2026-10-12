@@ -326,12 +326,12 @@ authorization: &acceptance-oneclient-tests-job
           - |-
             #!/bin/bash
             ARTIFACT="surefire_${bamboo_shortJobName// /_}.tar.gz"
-            echo ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+            echo ./submodules/bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
                 --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
                 --artifact-name ${ARTIFACT}
             let c=3
             while : ; do
-                ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                ./submodules/bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
                     --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
                     --artifact-name ${ARTIFACT}
                 tar zxf ${ARTIFACT}
@@ -357,8 +357,8 @@ authorization: &acceptance-oneclient-tests-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-            one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            echo submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
         description: Download artifacts
     - script: &run-acceptance-tests
         <<: *run-script-working-dir
@@ -378,10 +378,10 @@ authorization: &acceptance-oneclient-tests-job
             #!/bin/bash
             ARTIFACT=surefire_${bamboo_shortJobName// /_}.tar.gz
             tar czf ${ARTIFACT} test-reports/results*.xml
-            echo ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+            echo ./submodules/bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
                 --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
                 --artifact-name ${ARTIFACT}
-            ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+            ./submodules/bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
                 --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
                 --artifact-name ${ARTIFACT}
         description: Pack and push surefire artifact
@@ -390,7 +390,7 @@ authorization: &acceptance-oneclient-tests-job
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
-            cp onedata-acceptance/one-env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
+            cp onedata-acceptance/submodules/one-env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
             mv onedata-acceptance/tests/oneclient/logs/*/*/images.yaml onedata-acceptance/tests/oneclient/logs
             tar czf test_logs.tar.gz onedata-acceptance/tests/oneclient/logs
         description: Pack logs
