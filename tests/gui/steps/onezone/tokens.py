@@ -6,10 +6,12 @@ __author__ = "Bartosz Walkowicz, Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
 
 from selenium.common.exceptions import (
     ElementNotInteractableException,
+    NoSuchElementException,
 )
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -23,6 +25,7 @@ from tests.gui.steps.common.common import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
+from tests.gui.utils.core.exceptions import PageObjectNotFoundError
 from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow
@@ -33,9 +36,15 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_token_by_name(driver: WebDriver, token_name: str) -> TokenRow:
+def get_token_by_name(driver: WebDriver, token_name: str, under_rename: bool = False) -> TokenRow:
     tokens_page = get_onezone_subpage(driver, "tokens")
-    return tokens_page.sidebar.tokens[token_name]
+    if not under_rename:
+        return tokens_page.sidebar.tokens[token_name]
+    for token in tokens_page.sidebar.tokens:
+        with contextlib.suppress(NoSuchElementException):
+            if token.rename_input == token_name:
+                return token
+    raise PageObjectNotFoundError(f"Token with name {token_name} not found")
 
 
 def _open_menu_for_token(driver: WebDriver, token_name: str) -> None:
@@ -362,11 +371,23 @@ def append_token_name_in_sidebar(selenium: SeleniumDrivers, browser_id: str, tex
     OZLoggedIn(driver).tokens.sidebar.name_input = input_box + text
 
 
-@wt(parsers.parse("user of {browser_id} confirms changes in token named {token_name}"))
+@wt(
+    parsers.parse(
+        'user of {browser_id} confirms changes in token named "{token_name}" for rename to "{new_token_name}"'
+    )
+)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_token_changes_in_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
+def confirm_token_changes_in_sidebar(
+    selenium: SeleniumDrivers, browser_id: str, new_token_name: str
+) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.sidebar.confirm.click()
+    button_web_elem = OZLoggedIn(driver).tokens.sidebar.confirm.web_elem
+    menu_web_elem = get_token_by_name(
+        driver, new_token_name, under_rename=True
+    ).menu_button.web_elem
+
+    ActionChains(driver).move_to_element(menu_web_elem).perform()
+    ActionChains(driver).move_to_element(button_web_elem).click(button_web_elem).perform()
 
 
 @wt(
