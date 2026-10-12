@@ -6,6 +6,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import errno
 from typing import cast
 
 import pytest
@@ -156,6 +157,13 @@ def _assert_ex_error_message_oc(error_message: str) -> None:
     assert EX_ERR_MSG_OC in error_message, f"Unexpected error occurred:\n {error_message}"
 
 
+def _assert_user_root_operation_error(error: OSError, expected_errno: int, operation: str) -> None:
+    assert error.errno == expected_errno, (
+        f"Unexpected error while {operation} the Oneclient mount root: "
+        f"expected errno {expected_errno}, got {error.errno}: {error}"
+    )
+
+
 @wt(
     parsers.parse(
         "using {client}, {user} fails to remove the {name:SpecialDir} in {host}",
@@ -214,15 +222,25 @@ def try_to_remove_special_dir_by_id(
     )
 )
 def try_to_remove_user_root_dir_by_path(client: str, users: Users, user: str) -> None:
-    if "oneclient" in client.lower():
-        try:
-            oneclient_host = change_client_name_to_hostname(client.lower())
-            try_to_delete_root_dir(user, oneclient_host, users)
-            raise AssertionError("Space root dir was deleted!")
-        except OSError as e:
-            _assert_ex_error_message_oc(str(e))
-    else:
+    if "oneclient" not in client.lower():
         raise NoSuchClientException(f"unknown client {client}")
+
+    oneclient_host = change_client_name_to_hostname(client.lower())
+    oneclient = users[user].clients[oneclient_host]
+    spaces_before = sorted(oneclient.list_spaces())
+
+    with pytest.raises(OSError) as exc_info:  # noqa: PT011 - errno checked below
+        try_to_delete_root_dir(user, oneclient_host, users)
+
+    _assert_user_root_operation_error(
+        exc_info.value,
+        errno.EBUSY,
+        "removing",
+    )
+
+    assert sorted(oneclient.list_spaces()) == spaces_before, (
+        "Oneclient mount root contents changed after failed removal"
+    )
 
 
 @wt(
@@ -284,15 +302,25 @@ def try_to_move_special_dir_by_id(
     )
 )
 def try_to_move_user_root_dir_by_path(client: str, user: str, users: Users) -> None:
-    if "oneclient" in client.lower():
-        try:
-            oneclient_host = change_client_name_to_hostname(client.lower())
-            try_to_move_root_dir(user, oneclient_host, users, "new_name")
-            raise AssertionError("moved user root dir, but moving should have failed")
-        except OSError as e:
-            _assert_ex_error_message_oc(str(e))
-    else:
+    if "oneclient" not in client.lower():
         raise NoSuchClientException(f"unknown client {client}")
+
+    oneclient_host = change_client_name_to_hostname(client.lower())
+    oneclient = users[user].clients[oneclient_host]
+    spaces_before = sorted(oneclient.list_spaces())
+
+    with pytest.raises(OSError) as exc_info:  # noqa: PT011 - errno checked below
+        try_to_move_root_dir(user, oneclient_host, users, "new_name")
+
+    _assert_user_root_operation_error(
+        exc_info.value,
+        errno.EBUSY,
+        "moving",
+    )
+
+    assert sorted(oneclient.list_spaces()) == spaces_before, (
+        "Oneclient mount root contents changed after failed move"
+    )
 
 
 @wt(
@@ -358,13 +386,25 @@ def try_to_create_file_in_special_dir_by_id(
 def try_to_create_file_in_user_root_dir_by_path(
     client: str, users: Users, user: str, file_name: str
 ) -> None:
-    if "oneclient" in client.lower():
-        try:
-            oneclient_host = change_client_name_to_hostname(client.lower())
-            try_to_create_file_in_root_dir(user, oneclient_host, users, file_name)
-            raise AssertionError("file created in user root dir, but creation should have failed")
-        except OSError as e:
-            _assert_ex_error_message_oc(str(e))
+    if "oneclient" not in client.lower():
+        raise NoSuchClientException(f"unknown client {client}")
+
+    oneclient_host = change_client_name_to_hostname(client.lower())
+    oneclient = users[user].clients[oneclient_host]
+    spaces_before = sorted(oneclient.list_spaces())
+
+    with pytest.raises(OSError) as exc_info:  # noqa: PT011 - errno checked below
+        try_to_create_file_in_root_dir(user, oneclient_host, users, file_name)
+
+    _assert_user_root_operation_error(
+        exc_info.value,
+        errno.EACCES,
+        "creating a file in",
+    )
+
+    assert sorted(oneclient.list_spaces()) == spaces_before, (
+        "Oneclient mount root contents changed after failed file creation"
+    )
 
 
 @wt(

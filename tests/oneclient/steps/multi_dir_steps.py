@@ -182,28 +182,28 @@ def delete_non_empty(user: str, dirs: str, client_node: str, users: Users) -> No
 
 def try_to_delete_root_dir(user: str, client_node: str, users: Users) -> None:
     client = users[user].clients[client_node]
-    client.rm(client.get_mount_path(), recursive=True)
+    # Keep this to one syscall; rmtree would descend into the mounted spaces.
+    client.rmdir(client.get_mount_path())
 
 
 def try_to_move_root_dir(user: str, client_node: str, users: Users, dst: str) -> None:
     client = users[user].clients[client_node]
-    client.mv(client.get_mount_path(), os.path.join(ONECLIENT_MOUNT_DIR, dst))
+    # shutil.move falls back to copying after the expected rename failure.
+    client.osrename(client.get_mount_path(), os.path.join(ONECLIENT_MOUNT_DIR, dst))
 
 
 def move_dir_by_id(user: str, client_node: str, users: Users, file_id: str, dst: str) -> None:
     client = users[user].clients[client_node]
-    client.mv(
+    # Rename inside the mount so EXDEV cannot mask the Oneclient response.
+    client.osrename(
         f"{client.get_mount_path()}/.__onedata__file_id__{file_id}",
-        os.path.join(ONECLIENT_MOUNT_DIR, dst),
+        os.path.join(client.get_mount_path(), dst),
     )
 
 
 def delete_dir_by_id(user: str, client_node: str, users: Users, file_id: str) -> None:
     client = users[user].clients[client_node]
-    client.rm(
-        f"{client.get_mount_path()}/.__onedata__file_id__{file_id}",
-        recursive=True,
-    )
+    client.rmdir(f"{client.get_mount_path()}/.__onedata__file_id__{file_id}")
 
 
 @when(
