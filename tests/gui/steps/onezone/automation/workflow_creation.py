@@ -22,6 +22,7 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import (
     ensure_revision_is_visible,
 )
+from tests.gui.steps.onezone.spaces import assert_error_popup_has_appeared
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
@@ -400,7 +401,9 @@ def insert_text_in_textfield_of_workflow(
         'user of {browser_id} confirms edition of selected workflow details using "Save" button'
     )
 )
-def click_button_in_workflow(selenium: SeleniumDrivers, browser_id: str) -> None:
+def click_save_button_in_workflow_details(
+    selenium: SeleniumDrivers, browser_id: str, expect_disappearance: bool = True
+) -> None:
     page = perform_action(lambda: OZLoggedIn(selenium[browser_id]).automation)
 
     def get_save_button() -> SeleniumWebElement:
@@ -408,7 +411,23 @@ def click_button_in_workflow(selenium: SeleniumDrivers, browser_id: str) -> None
 
     button = perform_action(get_save_button)
     button.click()
-    wait_for_element_to_disappear_using_getter(selenium[browser_id], lambda _: get_save_button())
+
+    if expect_disappearance:
+        wait_for_element_to_disappear_using_getter(
+            selenium[browser_id], lambda _: get_save_button()
+        )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} confirms edition of selected workflow details using "Save" button and sees error modal'
+    )
+)
+def click_button_in_workflow_details_and_see_error_modal(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    click_save_button_in_workflow_details(selenium, browser_id, expect_disappearance=False)
+    assert_error_popup_has_appeared(selenium, browser_id)
 
 
 @wt(

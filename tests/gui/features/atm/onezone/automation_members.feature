@@ -333,8 +333,7 @@ Feature: Management of inventories members
     And user of browser1 opens inventory "inventory1" workflows subpage
     And user of browser1 clicks on "Change details" button in workflow "echo" menu in workflows subpage
     And user of browser1 writes "Workflow Renamed" in name textfield of selected workflow
-    And user of browser1 confirms edition of selected workflow details using "Save" button
-    And user of browser1 sees that error popup has appeared
+    And user of browser1 confirms edition of selected workflow details using "Save" button and sees error modal
     And user of browser1 clicks on "Close" button in modal "Error"
 
     # Space-owner-user changes privileges for group2
