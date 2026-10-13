@@ -195,6 +195,7 @@ def remove_space_with_alias_in_oz(
         user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
         space_api = SpaceApi(user_client)
         space_api.remove_space(space_aliases[alias]["sid"])
+        space_aliases.pop(alias)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -224,6 +225,7 @@ def rename_space_with_alias_in_oz(
         space = user_api.get_user_space(space_aliases[alias]["sid"])
         space.name = new_space_name
         space_api.modify_space(space.space_id, space)
+        space_aliases[alias]["name"] = new_space_name
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 

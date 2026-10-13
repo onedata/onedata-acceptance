@@ -92,10 +92,7 @@ def create_base(
         else:
             raise AssertionError
 
-        try:
-            assert_generic(client.perform, should_fail, condition)
-        except AssertionError as e:
-            print(e)
+        assert_generic(client.perform, should_fail, condition)
 
 
 def create_hardlink(
