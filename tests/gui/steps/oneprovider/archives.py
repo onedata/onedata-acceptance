@@ -6,10 +6,11 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import re
 import time
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
@@ -277,8 +278,9 @@ def click_menu_for_archive(
     which_browser: WhichBrowser = WhichBrowser.ARCHIVE_BROWSER,
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser.value)]
-    archive = get_archive_with_description(browser, description)
-    archive.menu_button.click()
+    with contextlib.suppress(PageObjectNotFoundError, ElementClickInterceptedException):
+        archive = get_archive_with_description(browser, description)
+        archive.menu_button.click()
     if Popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
         raise AssertionError(f"Archive with description {description} did not open")
 

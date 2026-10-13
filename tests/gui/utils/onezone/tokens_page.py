@@ -30,6 +30,7 @@ class TokenRow(PageObject):
     id = name = Label(".item-name")
     menu_button = Button(".token-menu-trigger")
     icon = WebElement(".one-icon")
+    rename_input = Input(".name-editor .form-control")
 
     def is_type_of(self, exp_type: str) -> bool:
         return exp_type in self.icon.get_attribute("class")

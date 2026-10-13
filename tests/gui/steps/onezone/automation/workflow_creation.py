@@ -5,10 +5,14 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import json
 import time
 
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import (
@@ -20,12 +24,14 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import (
     ensure_revision_is_visible,
 )
+from tests.gui.steps.onezone.spaces import assert_error_popup_has_appeared
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.onezone.lambdas_subpage import LambdaParameter
 from tests.gui.utils.onezone.workflows_subpage import JSONWorkflowsPanel
+from tests.gui.utils.web_elem_utils import wait_for_element_to_disappear_using_getter
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import element_has_class, repeat_failed
@@ -318,7 +324,8 @@ def add_task_to_empty_parallel_box(
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).automation
     lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane_name]
-    lane.empty_parallel_box.add_task_button.click()
+    btn = lane.empty_parallel_box.add_task_button.web_elem
+    ActionChains(selenium[browser_id]).move_to_element(btn).click(btn).perform()
 
 
 @wt(
@@ -396,23 +403,56 @@ def insert_text_in_textfield_of_workflow(
         'user of {browser_id} confirms edition of selected workflow details using "Save" button'
     )
 )
+def click_save_button_in_workflow_details(
+    selenium: SeleniumDrivers, browser_id: str, expect_disappearance: bool = True
+) -> None:
+    page = perform_action(lambda: OZLoggedIn(selenium[browser_id]).automation)
+
+    def get_save_button() -> SeleniumWebElement:
+        return page.workflows_page.workflow_change_details_save.web_elem
+
+    button = perform_action(get_save_button)
+    button.click()
+
+    if expect_disappearance:
+        wait_for_element_to_disappear_using_getter(
+            selenium[browser_id], lambda _: get_save_button()
+        )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} confirms edition of selected workflow details using "Save" button and sees error modal'
+    )
+)
+def click_button_in_workflow_details_and_see_error_modal(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    click_save_button_in_workflow_details(selenium, browser_id, expect_disappearance=False)
+    assert_error_popup_has_appeared(selenium, browser_id)
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} saves workflow edition by clicking "Save" button from menu bar'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_workflow(selenium: SeleniumDrivers, browser_id: str) -> None:
-    page = OZLoggedIn(selenium[browser_id]).automation
-    button = page.workflows_page.workflow_save_button
-    button.click()
+def click_save_button_for_workflow_edition(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    page = perform_action(lambda: OZLoggedIn(driver).automation)
 
-    def button_disabled_condition() -> bool:
-        return button.web_elem.get_attribute("disabled") and not element_has_class(
-            button.web_elem, "clickable"
-        )
+    def get_save_button() -> SeleniumWebElement:
+        return page.workflows_page.workflow_edition_save.web_elem
 
-    assert button_disabled_condition(), "Changes were not saved successfully"
+    def button_disabled_condition() -> None:
+        button_web_elem = get_save_button()
+        with contextlib.suppress(WebDriverException):
+            ActionChains(driver).move_to_element(button_web_elem).click(button_web_elem).perform()
+        message = "Changes were not saved successfully"
+        assert button_web_elem.get_attribute("disabled"), message
+        assert not element_has_class(button_web_elem, "clickable"), message
+
+    perform_action(button_disabled_condition)
 
 
 @wt(
