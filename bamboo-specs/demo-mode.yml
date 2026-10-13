@@ -1,6 +1,6 @@
 version: 2
 plan:
-  project-key: ODSRV
+  project-key: AT
   key: DMA
   name: demo mode acceptance
 variables:

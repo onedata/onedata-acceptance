@@ -1,6 +1,6 @@
 version: 2
 plan:
-  key: ODSRV-DMA
+  key: AT-DMA
 plan-permissions:
 - users:
   - plgnikolow
