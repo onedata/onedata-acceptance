@@ -78,7 +78,7 @@ class SpaceAlias(TypedDict):
     sid: str
 
 
-type SpaceAliases = MutableMapping[str, SpaceAlias]
+type SpaceAliases = dict[str, SpaceAlias]
 
 
 class UserMemory(TypedDict):

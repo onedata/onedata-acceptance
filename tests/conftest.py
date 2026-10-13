@@ -30,6 +30,7 @@ from selenium.webdriver.support.events import EventFiringWebDriver
 from urllib3.exceptions import MaxRetryError
 
 from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
+from tests.mixed.type_definitions import SpaceAliases
 from tests.type_definitions import (
     EnvDesc,
     FactoryCallable,
@@ -382,7 +383,7 @@ def spaces() -> dict[str, str]:
 
 
 @pytest.fixture
-def space_aliases() -> dict[str, dict[str, str]]:
+def space_aliases() -> SpaceAliases:
     return {}
 
 
