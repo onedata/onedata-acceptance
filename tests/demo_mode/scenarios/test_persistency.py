@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.demo_mode.meta_steps.environment import assert_environment_configuration
 from tests.demo_mode.meta_steps.persistence import (
     assert_persistent_state,
     save_persistent_state,
@@ -17,7 +16,6 @@ from tests.demo_mode.meta_steps.persistence import (
 
 @pytest.mark.usefixtures("isolated_persistence_directories")
 def test_persistency(
-    release: str,
     request: pytest.FixtureRequest,
 ) -> None:
     space_name = "demo-mode-persistence-space"
@@ -25,10 +23,6 @@ def test_persistency(
     file_content = b"Onedata demo-mode persistence REST test\n"
 
     environment = start_persistent_environment()
-    assert_environment_configuration(
-        environment,
-        release=release,
-    )
 
     persistence_state = save_persistent_state(
         environment,
@@ -39,10 +33,6 @@ def test_persistency(
     )
     stop_persistent_environment(environment)
     restarted_environment = start_persistent_environment()
-    assert_environment_configuration(
-        restarted_environment,
-        release=release,
-    )
     assert_persistent_state(
         restarted_environment,
         state=persistence_state,

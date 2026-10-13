@@ -35,7 +35,6 @@ SHORT_COMMAND_TIMEOUT: Final = 60
 CONTAINER_REMOVAL_TIMEOUT: Final = 60
 PROCESS_EXIT_TIMEOUT: Final = 10
 
-ONEZONE_NAME: Final = "Demo Onezone"
 DEMO_SPACE_NAME: Final = "demo-space"
 ONEZONE_CONTAINER: Final = "oz_test"
 CONTAINER_NAMES: Final = (

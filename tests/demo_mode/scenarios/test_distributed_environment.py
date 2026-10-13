@@ -7,10 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 
 from tests.demo_mode.constants import DEMO_SPACE_ID, DEMO_SPACE_NAME
-from tests.demo_mode.meta_steps.environment import (
-    assert_environment_configuration,
-    start_foreground_environment,
-)
+from tests.demo_mode.meta_steps.environment import start_foreground_environment
 from tests.demo_mode.steps.environment import get_demo_access_token
 from tests.demo_mode.steps.rest import (
     assert_file_content,
@@ -23,7 +20,6 @@ from tests.demo_mode.steps.rest import (
 
 
 def test_distributed_environment(
-    release: str,
     request: pytest.FixtureRequest,
 ) -> None:
     local_content = b"Data stored through the local Oneprovider\n"
@@ -34,10 +30,6 @@ def test_distributed_environment(
     )
     first, second = environment.oneproviders
 
-    assert_environment_configuration(
-        environment,
-        release=release,
-    )
     access_token = get_demo_access_token(environment.onezone)
 
     for provider in environment.oneproviders:

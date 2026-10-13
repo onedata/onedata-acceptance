@@ -9,6 +9,14 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
+class DemoImages:
+    """Docker images selected for a demo-mode test session."""
+
+    onezone: str
+    oneprovider: str
+
+
+@dataclass(frozen=True)
 class DemoService:
     """A demo-mode service, its Docker container, and optional launcher process."""
 

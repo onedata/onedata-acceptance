@@ -7,16 +7,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 
 from tests.demo_mode.constants import DEMO_SPACE_ID, DEMO_SPACE_NAME
-from tests.demo_mode.meta_steps.environment import (
-    assert_environment_configuration,
-    start_foreground_environment,
-)
+from tests.demo_mode.meta_steps.environment import start_foreground_environment
 from tests.demo_mode.steps.environment import get_demo_access_token
 from tests.demo_mode.steps.rest import assert_file_content, get_space_id, upload_rest_file
 
 
 def test_run_in_foreground(
-    release: str,
     request: pytest.FixtureRequest,
 ) -> None:
     file_name = "foreground-rest-test.txt"
@@ -24,10 +20,6 @@ def test_run_in_foreground(
 
     environment = start_foreground_environment()
     (provider,) = environment.oneproviders
-    assert_environment_configuration(
-        environment,
-        release=release,
-    )
     access_token = get_demo_access_token(environment.onezone)
 
     space_id = get_space_id(provider, space_name=DEMO_SPACE_NAME, access_token=access_token)

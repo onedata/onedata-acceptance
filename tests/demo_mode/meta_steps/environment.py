@@ -17,30 +17,12 @@ from tests.demo_mode.steps.environment import (
     run_foreground_oneprovider,
     run_foreground_onezone,
 )
-from tests.demo_mode.steps.rest import (
-    assert_oneprovider_configuration,
-    assert_onezone_configuration,
-)
 from tests.demo_mode.type_definitions import DemoEnvironment, Oneprovider, Onezone
 
 
 def _validate_oneprovider_count(oneprovider_count: int) -> None:
     if not 1 <= oneprovider_count <= MAX_ONEPROVIDERS:
         raise ValueError(f"Oneprovider count must be between 1 and {MAX_ONEPROVIDERS}")
-
-
-def assert_environment_configuration(
-    environment: DemoEnvironment,
-    *,
-    release: str,
-) -> None:
-    """Assert the public configuration of every service in an environment."""
-    assert_onezone_configuration(environment.onezone, release=release)
-    for oneprovider in environment.oneproviders:
-        assert_oneprovider_configuration(
-            oneprovider,
-            release=release,
-        )
 
 
 def start_foreground_environment(

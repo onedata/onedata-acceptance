@@ -129,6 +129,7 @@ test_upgrade_src:
 DEMO_MODE_SCENARIOS_ROOT := tests/demo_mode/scenarios
 DEMO_MODE_TEST_REPORTS_DIR := $(CURDIR)/test-reports
 DEMO_MODE_LOGS_DIR := $(CURDIR)/tests/demo_mode/logs
+DEMO_MODE_DOCKER_CONFIG_DIR := $(if $(DOCKER_CONFIG),$(DOCKER_CONFIG),$(HOME)/.docker)
 ifdef SCENARIO
 DEMO_MODE_TEST_PATH := ${DEMO_MODE_SCENARIOS_ROOT}/${SCENARIO}.py
 else
@@ -140,9 +141,14 @@ endif
 ifdef DOCKER_API_VERSION
 DEMO_MODE_DOCKER_API_VERSION_OPTION := -e DOCKER_API_VERSION="${DOCKER_API_VERSION}"
 endif
+ifdef ONEZONE_IMAGE
+DEMO_MODE_ONEZONE_IMAGE_OPTION := --onezone-image="${ONEZONE_IMAGE}"
+endif
+ifdef ONEPROVIDER_IMAGE
+DEMO_MODE_ONEPROVIDER_IMAGE_OPTION := --oneprovider-image="${ONEPROVIDER_IMAGE}"
+endif
 
 test_demo_mode:
-	@test -n "${RELEASE}" || (echo "RELEASE is required, for example: make test_demo_mode RELEASE=25.1"; exit 2)
 	@test -z "${SCENARIO}" || test -f "${DEMO_MODE_TEST_PATH}" || (echo "Unknown demo-mode scenario: ${SCENARIO}"; exit 2)
 	@mkdir -p "${DEMO_MODE_TEST_REPORTS_DIR}" "${DEMO_MODE_LOGS_DIR}"
 	@rm -f "${DEMO_MODE_TEST_REPORTS_DIR}/results-demo-mode.xml"
@@ -151,9 +157,12 @@ test_demo_mode:
 	 -e DEMO_MODE_HOST_TMP=/demo-mode-host-tmp \
 	 -e DEMO_MODE_HOST_UID="$$(id -u)" \
 	 -e DEMO_MODE_HOST_GID="$$(id -g)" \
+	 -e DOCKER_CONFIG=/demo-mode-docker-config \
+	 -e bamboo_planRepository_branchName \
 	 -v $(CURDIR):$(CURDIR):ro \
 	 -v ${DEMO_MODE_TEST_REPORTS_DIR}:${DEMO_MODE_TEST_REPORTS_DIR} \
 	 -v ${DEMO_MODE_LOGS_DIR}:${DEMO_MODE_LOGS_DIR} \
+	 -v ${DEMO_MODE_DOCKER_CONFIG_DIR}:/demo-mode-docker-config:ro \
 	 -v /tmp:/demo-mode-host-tmp \
 	 -v /var/run/docker.sock:/var/run/docker.sock \
 	 -w $(CURDIR) ${ACCEPTANCE_TEST_IMAGE} \
@@ -161,7 +170,7 @@ test_demo_mode:
 	 --color=yes -p no:cacheprovider -rs -s -v \
 	 --confcutdir=tests/demo_mode \
 	 --junitxml=${DEMO_MODE_TEST_REPORTS_DIR}/results-demo-mode.xml \
-	 ${DEMO_MODE_TEST_PATH} --release="${RELEASE}"
+	 ${DEMO_MODE_TEST_PATH} ${DEMO_MODE_ONEZONE_IMAGE_OPTION} ${DEMO_MODE_ONEPROVIDER_IMAGE_OPTION}
 
 
 ##

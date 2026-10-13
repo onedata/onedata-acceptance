@@ -1,9 +1,9 @@
-docker run --rm -i --detach --name oz_test onedata/onezone:xRELEASExVERSIONx demo
+docker run --rm -i --detach --name oz_test xONEZONExIMAGEx demo
 OZ_NAME=oz_test;\
 until OZ_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $OZ_NAME 2>/dev/null) && [ -n "$OZ_IP" ]; do\
 	echo -en "Awaiting the ${OZ_NAME} container...\r"; sleep 1;\
 done; echo; \
-docker run --rm -i --detach --name op_test1 onedata/oneprovider:xRELEASExVERSIONx demo $OZ_IP
+docker run --rm -i --detach --name op_test1 xONEPROVIDERxIMAGEx demo $OZ_IP
 OP_NAME=op_test1;\
 until OP_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $OP_NAME 2>/dev/null) && [ -n "$OP_IP" ]; do\
 	echo -en "Awaiting the ${OP_NAME} container...\r"; sleep 1;\

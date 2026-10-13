@@ -16,7 +16,8 @@ from tests.demo_mode.utils.command_context import current_command_context
 
 DEMO_MODE_ROOT: Final = Path(__file__).resolve().parents[2]
 COMMANDS_ROOT: Final = DEMO_MODE_ROOT / "commands"
-RELEASE_PLACEHOLDER: Final = "xRELEASExVERSIONx"
+ONEZONE_IMAGE_PLACEHOLDER: Final = "xONEZONExIMAGEx"
+ONEPROVIDER_IMAGE_PLACEHOLDER: Final = "xONEPROVIDERxIMAGEx"
 CONTAINER_NAME_PLACEHOLDER: Final = "xCONTAINERxNAMEx"
 
 PLACEHOLDER_PATTERN: Final = re.compile(r"x[A-Z][A-Z0-9]*(?:x[A-Z][A-Z0-9]*)*x")

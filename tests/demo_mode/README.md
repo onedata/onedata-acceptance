@@ -26,22 +26,32 @@ Unlike the other acceptance suites, demo mode uses neither one-env,
 
 ## Running
 
-You need `/var/run/docker.sock`, the release's service images, initialized
-submodules (`make submodules`), and the acceptance-test image. Python access
-also needs PyPI while creating its virtual environment.
+You need `/var/run/docker.sock`, Docker credentials with access to the service
+image registry, initialized submodules (`make submodules`), and the
+acceptance-test image. The runner mounts the Docker configuration from
+`DOCKER_CONFIG`, or from `~/.docker` when `DOCKER_CONFIG` is unset. By default,
+Onezone and Oneprovider images are resolved from `branchConfig.yaml` and pulled
+once per test session. Python access also needs PyPI while creating its virtual
+environment.
 
 ```bash
 # All scenarios
-make test_demo_mode RELEASE=25.1
+make test_demo_mode
 
 # One scenario (filename without .py)
-make test_demo_mode RELEASE=25.1 SCENARIO=test_distributed_environment
+make test_demo_mode SCENARIO=test_distributed_environment
+
+# Explicit images instead of branchConfig.yaml
+make test_demo_mode \
+    ONEZONE_IMAGE=onedata/onezone:25.1 \
+    ONEPROVIDER_IMAGE=onedata/oneprovider:25.1
 ```
 
 | Make variable | Required | Meaning |
 |---|---|---|
-| `RELEASE` | yes | Onezone and Oneprovider image tag |
 | `SCENARIO` | no | one file from `scenarios/`, without `.py` |
+| `ONEZONE_IMAGE` | no | complete Onezone image reference overriding `branchConfig.yaml` |
+| `ONEPROVIDER_IMAGE` | no | complete Oneprovider image reference overriding `branchConfig.yaml` |
 | `DOCKER_API_VERSION` | no | Docker API compatibility version, e.g. `1.41` |
 | `RUNNER_NAME` | no | explicit test-runner name, primarily for Bamboo cleanup |
 
@@ -49,7 +59,9 @@ For IDE integration or debugging in a prepared local environment:
 
 ```bash
 python3 -m pytest --confcutdir=tests/demo_mode -rs -s -v \
-    tests/demo_mode/scenarios --release=25.1
+    tests/demo_mode/scenarios \
+    --onezone-image=onedata/onezone:25.1 \
+    --oneprovider-image=onedata/oneprovider:25.1
 ```
 
 `--confcutdir` prevents loading repository-wide, one-env-based fixtures.
@@ -78,11 +90,12 @@ Files in `commands/` are tested guide fragments, not test helpers. Keep them in
 sync with the source guide. The intentional test-only adaptations are:
 
 - `docker run -it` becomes `docker run -i`, because the runner has no TTY;
+- complete image names become `xONEZONExIMAGEx` and
+  `xONEPROVIDERxIMAGEx`, which the tests resolve from `branchConfig.yaml`;
 - the Python REPL session becomes a script whose results are printed.
 
-Keep `xRELEASExVERSIONx`; documentation replaces it during its build. Use
-`xCONTAINERxNAMEx` only where the guide permits selecting a container name. If
-the guide itself is wrong, fix it there and then copy the corrected command
+Use `xCONTAINERxNAMEx` only where the guide permits selecting a container name.
+If the guide itself is wrong, fix it there and then copy the corrected command
 here rather than adding a test-only workaround.
 
 When adding a scenario:

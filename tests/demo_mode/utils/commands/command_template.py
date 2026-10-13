@@ -4,6 +4,7 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import shlex
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -14,15 +15,16 @@ from tests.demo_mode.utils.commands.command import Command
 from tests.demo_mode.utils.commands.helpers import (
     CONTAINER_NAME_PLACEHOLDER,
     DEMO_MODE_ROOT,
+    ONEPROVIDER_IMAGE_PLACEHOLDER,
+    ONEZONE_IMAGE_PLACEHOLDER,
     PLACEHOLDER_PATTERN,
-    RELEASE_PLACEHOLDER,
     command_path,
 )
 
 
 @dataclass(frozen=True)
 class CommandTemplate:
-    """A command script whose release and container placeholders are rendered."""
+    """A command script whose image and container placeholders are rendered."""
 
     relative_path: str
 
@@ -44,7 +46,14 @@ class CommandTemplate:
         if not requires_container and container is not None:
             raise ValueError(f"Command {self.relative_path!r} does not accept a container name")
 
-        command = command.replace(RELEASE_PLACEHOLDER, context.release)
+        command = command.replace(
+            ONEZONE_IMAGE_PLACEHOLDER,
+            shlex.quote(context.images.onezone),
+        )
+        command = command.replace(
+            ONEPROVIDER_IMAGE_PLACEHOLDER,
+            shlex.quote(context.images.oneprovider),
+        )
 
         if container is not None:
             command = command.replace(CONTAINER_NAME_PLACEHOLDER, container)

@@ -17,6 +17,7 @@ from itertools import count
 from pathlib import Path
 from typing import Final
 
+from tests.demo_mode.type_definitions import DemoImages
 from tests.utils.path_utils import make_logdir
 
 COMMAND_LOGS_ROOT: Final = Path(__file__).resolve().parents[1] / "logs"
@@ -33,7 +34,7 @@ def _safe_log_name(name: str) -> str:
 class CommandContext:
     """State and resources owned by a single demo-mode test."""
 
-    release: str
+    images: DemoImages
     _logs_directory: Path
     _log_counter: Iterator[int] = field(default_factory=lambda: count(1))
     _processes: list[subprocess.Popen[str]] = field(default_factory=list)
@@ -86,12 +87,12 @@ def current_command_context() -> CommandContext:
 @contextmanager
 def command_context(
     test_name: str,
-    release: str,
+    images: DemoImages,
 ) -> Generator[CommandContext, None, None]:
     """Create and activate a command context for one demo-mode test."""
     logs_directory = COMMAND_LOGS_DIRECTORY / _safe_log_name(test_name.removeprefix("test_"))
     logs_directory.mkdir()
-    context = CommandContext(release, logs_directory)
+    context = CommandContext(images, logs_directory)
     token = _current_command_context.set(context)
     try:
         yield context

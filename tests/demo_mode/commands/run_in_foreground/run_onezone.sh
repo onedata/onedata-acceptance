@@ -1,1 +1,1 @@
-docker run --rm -i --name oz_test onedata/onezone:xRELEASExVERSIONx demo
+docker run --rm -i --name oz_test xONEZONExIMAGEx demo

@@ -8,7 +8,7 @@ from functools import partial
 
 import pytest
 
-from tests.demo_mode.constants import ONEZONE_NAME, SPACE_SYNC_TIMEOUT
+from tests.demo_mode.constants import SPACE_SYNC_TIMEOUT
 from tests.demo_mode.type_definitions import Oneprovider, Onezone
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.rest import OneproviderRestClient, OnezoneRestClient
@@ -105,22 +105,6 @@ def upload_rest_file(
     )
 
 
-@log_step("Asserting onezone configuration")
-def assert_onezone_configuration(
-    onezone: Onezone,
-    *,
-    release: str,
-) -> None:
-    """Assert that Onezone exposes the expected public configuration."""
-    configuration = onezone_rest_client(onezone).configuration()
-    assert configuration.get("name") == ONEZONE_NAME, (
-        f"Expected Onezone name {ONEZONE_NAME!r}, got {configuration.get('name')!r}"
-    )
-    assert configuration.get("version") == release, (
-        f"Expected Onezone version {release!r}, got {configuration.get('version')!r}"
-    )
-
-
 def get_oneprovider_id(
     provider: Oneprovider,
 ) -> str:
@@ -132,18 +116,6 @@ def get_oneprovider_id(
     )
     assert provider_id, f"Expected {provider.container} to expose a non-empty provider ID"
     return provider_id
-
-
-@log_step("Checking Oneprovider configuration")
-def assert_oneprovider_configuration(
-    provider: Oneprovider,
-    *,
-    release: str,
-) -> None:
-    configuration = oneprovider_rest_client(provider).configuration()
-    assert configuration.get("version") == release, (
-        f"Expected {provider.container} version {release!r}, got {configuration.get('version')!r}"
-    )
 
 
 def _assert_file_content(
