@@ -89,6 +89,8 @@ class Task(NamedElement):
             self.web_elem.find_element(
                 By.CSS_SELECTOR, ".view-task-time-series-action-trigger"
             ).click()
+        else:
+            raise ValueError(f"Unsupported task option: {option!r}")
 
 
 class ParallelBox(NamedElement):

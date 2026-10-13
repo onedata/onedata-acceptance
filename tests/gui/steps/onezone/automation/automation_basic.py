@@ -23,8 +23,6 @@ from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.popups.generic import CreatedItemAlertPopup
 from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
     transform,
     upload_file_path,
     upload_lambda_path,
@@ -32,6 +30,7 @@ from tests.gui.utils.generic import (
 )
 from tests.gui.utils.onezone.lambdas_subpage import Lambda
 from tests.gui.utils.onezone.workflows_subpage import Workflow, WorkflowVisualiser
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -44,7 +43,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_automation_button_in_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id]).automation.create_automation()
+    OZLoggedIn(selenium[browser_id]).automation.create_automation.click()
 
 
 def get_oz_workflow_visualizer(driver: WebDriver) -> WorkflowVisualiser:
@@ -63,7 +62,7 @@ def input_name_into_input_box_on_main_automation_page(
 @wt(parsers.parse("user of {browser_id} clicks on confirmation button on automation page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_name_input_on_main_automation_page(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id]).automation.input_box.confirm()
+    OZLoggedIn(selenium[browser_id]).automation.input_box.confirm.click()
     is_notify_popup_visible_and_close_all_alert_popups(
         selenium,
         browser_id,
@@ -87,7 +86,7 @@ def click_option_in_inventory_menu(
     driver = selenium[browser_id]
     page = get_onezone_subpage(driver, "automation")
     page.automations_list[inventory].click()
-    page.automations_list[inventory].menu()
+    page.automations_list[inventory].menu.click()
     Popups(driver).menu_popup_with_text.menu[option]()
 
 
@@ -103,7 +102,7 @@ def input_new_inventory_name_into_rename_inventory_input_box(
 @wt(parsers.re(r"user of (?P<browser_id>.*) confirms inventory rename with confirmation button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id]).automation.automations_list[0].edit_box.confirm()
+    OZLoggedIn(selenium[browser_id]).automation.automations_list[0].edit_box.confirm.click()
 
 
 @wt(
@@ -150,7 +149,7 @@ def go_to_inventory_subpage(
         tmp_memory[browser_id]["oz_page"] = page
     page.automations_list[inventory].click()
     if subpage != "main":
-        getattr(page.automations_list[inventory], subpage)()
+        getattr(page.automations_list[inventory], subpage).click()
 
 
 @wt(
@@ -440,7 +439,7 @@ def click_on_option_of_inventory_on_left_sidebar_menu(
 
 def try_to_close_workflow_creation_popup(driver: WebDriver) -> None:
     with suppress(WebDriverException):
-        Popups(driver).workflow_creation_alert.close()
+        Popups(driver).workflow_creation_alert.close.click()
 
 
 @wt(parsers.parse("user of {browser_id} sees that workflow editor appeared"))

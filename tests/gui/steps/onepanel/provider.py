@@ -125,7 +125,7 @@ def click_discard_button_on_modal_in_provider_panel(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    Onepanel(driver).discard_button()
+    Onepanel(driver).discard_button.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on Discard button in the configure web cert modal"))
@@ -137,7 +137,7 @@ def wt_click_on_discard_btn_in_domain_change_modal(
         modal = Modals(selenium[browser_id]).configure_web_cert
     except NoSuchElementException:
         return
-    modal.discard()
+    modal.discard.click()
 
 
 @wt(parsers.parse("user of {browser_id} activates Request a subdomain toggle"))

@@ -49,6 +49,10 @@ from tests.utils.utils import repeat_failed
 # this step is created to avoid using repeat_failed in metasteps
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_op_workflow_visualizer_page(driver: WebDriver) -> WorkflowVisualiser:
+    return get_visualizer_page_with_no_timeout(driver)
+
+
+def get_visualizer_page_with_no_timeout(driver: WebDriver) -> WorkflowVisualiser:
     return OPLoggedIn(driver).automation_page.workflow_visualiser
 
 
@@ -290,7 +294,7 @@ def expand_first_executed_workflow_record(selenium: SeleniumDrivers, browser_id:
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_workflow_menu(selenium: SeleniumDrivers, browser_id: str, workflow: str) -> None:
     page = switch_to_automation_page(selenium, browser_id)
-    page.workflow_executions_list[workflow].menu_button()
+    page.workflow_executions_list[workflow].menu_button.click()
 
 
 @wt(
@@ -350,7 +354,7 @@ def click_option_for_lane(
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
-    lane.latest_run_menu()
+    lane.latest_run_menu.click()
     click_option_in_popup_labeled_menu(selenium, browser_id, option)
 
 
@@ -363,7 +367,7 @@ def click_option_for_lane(
 def click_button_on_status_bar(selenium: SeleniumDrivers, browser_id: str, button: str) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     time.sleep(1)
-    getattr(page.workflow_visualiser, transform(button))()
+    getattr(page.workflow_visualiser, transform(button)).click()
 
 
 @wt(
@@ -390,7 +394,7 @@ def select_logging_level_in_automation_subpage(
     browser_id: str, selenium: SeleniumDrivers, level: str
 ) -> None:
     driver = selenium[browser_id]
-    OPLoggedIn(driver).automation_page.logging_level()
+    OPLoggedIn(driver).automation_page.logging_level.click()
     options = Popups(driver).logging_level
     options.choose_item(level)
 
@@ -402,7 +406,7 @@ def click_on_elem_in_store_details_modal(modal: StoreDetails, name: str, option:
     elif option == "dataset":
         modal.store_content_list[name].dataset_name.click()
     else:
-        modal.single_file_container.clickable_name()
+        modal.single_file_container.clickable_name.click()
 
     # wait a moment to open a tab
     time.sleep(1)

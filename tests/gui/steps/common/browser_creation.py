@@ -24,11 +24,8 @@ from tests.gui.constants import (
     SELENIUM_IMPLICIT_WAIT,
 )
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    redirect_display,
-)
+from tests.gui.utils.generic import redirect_display
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import JsonObject, SeleniumDrivers, WebDriverFactory
 from tests.utils.bdd_utils import given, parsers
 

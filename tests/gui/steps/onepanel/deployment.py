@@ -25,12 +25,9 @@ from tests.gui.steps.common.common import (
 )
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    is_element_visible_on_page,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.web_elem_utils import is_element_visible_on_page
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
@@ -58,10 +55,10 @@ def g_create_admin_in_panels(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_create_admin_in_panel(selenium: SeleniumDrivers, browser_id: str, passphrase: str) -> None:
     init_page = Onepanel(selenium[browser_id]).init_page
-    init_page.create_new_cluster()
+    init_page.create_new_cluster.click()
     init_page.passphrase = passphrase
     init_page.confirm_passphrase = passphrase
-    init_page.submit_button()
+    init_page.submit_button.click()
 
 
 @wt(
@@ -304,7 +301,7 @@ def wt_await_finish_of_cluster_deployment(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_perform_check_in_dns_setup_step(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Onepanel(selenium[browser_id]).content.deployment.setup_dns.perform_check()
+    Onepanel(selenium[browser_id]).content.deployment.setup_dns.perform_check.click()
 
 
 @wt(
@@ -315,7 +312,7 @@ def wt_click_perform_check_in_dns_setup_step(selenium: SeleniumDrivers, browser_
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_proceed_in_dns_setup_step(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Onepanel(selenium[browser_id]).content.deployment.setup_dns.proceed()
+    Onepanel(selenium[browser_id]).content.deployment.setup_dns.proceed.click()
 
 
 @wt(
@@ -328,7 +325,7 @@ def wt_click_proceed_in_dns_setup_step(selenium: SeleniumDrivers, browser_id: st
 def wt_click_yes_in_warning_modal_in_dns_setup_step(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
-    Modals(selenium[browser_id]).dns_configuration_warning.yes()
+    Modals(selenium[browser_id]).dns_configuration_warning.yes.click()
 
 
 @wt(
@@ -492,7 +489,7 @@ def wt_type_text_to_in_box_in_deployment_step5(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_add_btn_in_storage_add_form(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Onepanel(selenium[browser_id]).content.deployment.step5.form.add()
+    Onepanel(selenium[browser_id]).content.deployment.step5.form.add.click()
 
 
 @wt(
@@ -547,7 +544,7 @@ def wt_type_registration_token_in_step2(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_proceed_button_in_step2(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Onepanel(selenium[browser_id]).content.deployment.step2.proceed()
+    Onepanel(selenium[browser_id]).content.deployment.step2.proceed.click()
 
 
 @wt(
@@ -559,7 +556,7 @@ def wt_click_proceed_button_in_step2(selenium: SeleniumDrivers, browser_id: str)
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_go_to_emergency_onepanel_interface(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Onepanel(selenium[browser_id]).content.deployment.laststep.link()
+    Onepanel(selenium[browser_id]).content.deployment.laststep.link.click()
 
 
 @wt(parsers.parse('provider "{provider}" with onezone domain host entry is added to /etc/hosts'))

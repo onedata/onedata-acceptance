@@ -104,7 +104,7 @@ def create_dataset(
             item_browser,
         )
 
-    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_data_row_menu)
     click_modal_button(selenium, browser_id, "Establish dataset", option_in_data_row_menu)
     flags = [item.replace("_protection", "") for item in get_flags(option)]
@@ -130,7 +130,7 @@ def fail_to_create_dataset_in_op_gui(
         option_in_space,
         tmp_memory,
     )
-    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_data_row_menu)
     fail_to_click_button_in_modal(browser_id, create_button, option_in_data_row_menu, selenium)
 
@@ -190,7 +190,9 @@ def remove_dataset_in_op_gui(
         tmp_memory,
         item_browser=item_browser,
     )
-    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=item_browser)
+    click_menu_for_elem_in_browser(
+        selenium, browser_id, item_name, tmp_memory, which_browser=item_browser
+    )
     click_option_in_data_row_menu_in_browser(
         selenium,
         browser_id,
@@ -249,7 +251,7 @@ def check_effective_protection_flags_for_file_in_op_gui(
     )
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory, item_name)
     item_name = item_name.rsplit("/", maxsplit=1)[-1]
-    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_data_row_menu)
     flags = [item.replace("_protection", "") for item in get_flags(option)]
     for flag in flags:
@@ -298,7 +300,9 @@ def set_protection_flags_for_dataset_in_op_gui(
     )
     item_name = item_name.rsplit("/", maxsplit=1)[-1]
 
-    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=item_browser)
+    click_menu_for_elem_in_browser(
+        selenium, browser_id, item_name, tmp_memory, which_browser=item_browser
+    )
     click_option_in_data_row_menu_in_browser(
         selenium,
         browser_id,
@@ -332,7 +336,9 @@ def detach_dataset_in_op_gui(
         tmp_memory,
         item_browser=item_browser,
     )
-    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=item_browser)
+    click_menu_for_elem_in_browser(
+        selenium, browser_id, item_name, tmp_memory, which_browser=item_browser
+    )
     click_option_in_data_row_menu_in_browser(
         selenium,
         browser_id,
@@ -402,7 +408,9 @@ def reattach_dataset_in_op_gui(
         tmp_memory,
         item_browser=item_browser,
     )
-    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser=item_browser)
+    click_menu_for_elem_in_browser(
+        selenium, browser_id, item_name, tmp_memory, which_browser=item_browser
+    )
     click_option_in_data_row_menu_in_browser(
         selenium,
         browser_id,

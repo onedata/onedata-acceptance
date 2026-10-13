@@ -30,14 +30,9 @@ from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in
 from tests.gui.type_definitions import TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    parse_seq,
-    transform,
-    upload_file_path,
-)
+from tests.gui.utils.generic import transform, upload_file_path
 from tests.gui.utils.oneprovider.breadcrumbs import _Breadcrumbs
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
@@ -124,14 +119,15 @@ def click_button_from_file_browser_menu_bar(
 @wt(
     parsers.parse(
         "user of {browser_id} changes current working directory "
-        "to {path} using breadcrumbs in {which_browser}"
+        'to "{path}" using breadcrumbs in {which_browser:WhichBrowser}',
+        extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 def wt_change_cwd_using_breadcrumbs_in_data_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: str, path: str, which_browser: str
+    selenium: SeleniumDrivers, browser_id: str, path: str, which_browser: WhichBrowser
 ) -> None:
     change_cwd_using_breadcrumbs_in_data_tab_in_op(
-        selenium, browser_id, path, which_browser=which_browser
+        selenium, browser_id, path, which_browser=transform(which_browser.value)
     )
 
 
@@ -153,7 +149,7 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(
     breadcrumbs = _get_breadcrumbs(browser_id, selenium, which_browser)
     path = transform(path)
     if path == "space_root":
-        breadcrumbs.space_root()
+        breadcrumbs.space_root.click()
     else:
         breadcrumbs.chdir(path, archive)
 
@@ -646,7 +642,7 @@ def assert_provider_chunk_in_data_distribution_empty(
         'user of {browser_id} sees {chunks} chunk(s) for provider "{provider}" in chunk bar'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND * 6)
 def assert_provider_chunks_in_data_distribution(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -710,7 +706,7 @@ def choose_option_from_selection_menu(
 ) -> None:
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]["file_browser"]
-    file_browser.selection_menu_button()
+    file_browser.selection_menu_button.click()
     Popups(driver).menu_popup_with_label.menu[option].click()
 
 
@@ -730,7 +726,7 @@ def choose_option_for_file_from_selection_menu(
 ) -> None:
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]["file_browser"]
-    file_browser.data[file_name].menu_button()
+    file_browser.data[file_name].menu_button.click()
     menu = Popups(driver).menu_popup
     menu.choose_option(option)
 
@@ -762,7 +758,7 @@ def click_choose_other_oneprovider_on_file_browser(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver).data.choose_other_provider()
+    OZLoggedIn(driver).data.choose_other_provider.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -926,7 +922,7 @@ def check_data_distribution_size_for_provider(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_size_statistics_for_providers(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    Modals(driver).details_modal.size_statistics.expand_stats_button()
+    Modals(driver).details_modal.size_statistics.expand_stats_button.click()
 
 
 @wt(

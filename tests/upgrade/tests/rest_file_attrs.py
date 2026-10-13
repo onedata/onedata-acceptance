@@ -9,7 +9,7 @@ import os
 from functools import partial
 from typing import TypedDict
 
-from tests.gui.utils.generic import FileAttr
+from tests.gui.utils.enums import FileAttr
 from tests.type_definitions import JsonObject
 from tests.upgrade.utils.rest_utils import (
     get_directory_size_statistics,

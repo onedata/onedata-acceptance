@@ -14,8 +14,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneprovider.automation import InitialValueStore
+from tests.gui.utils.text import parse_seq
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -96,7 +96,7 @@ def select_groups_from_select_groups_modal(driver: WebDriver, group_list: str | 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_datasets_modal(driver: WebDriver) -> None:
     option = "Select datasets"
-    OPLoggedIn(driver).automation_page.input_link()
+    OPLoggedIn(driver).automation_page.input_link.click()
     time.sleep(1)
     Popups(driver).workflow_dataset_initial_value.menu[option].click()
     time.sleep(1)

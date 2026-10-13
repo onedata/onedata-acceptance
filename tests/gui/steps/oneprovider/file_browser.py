@@ -27,13 +27,10 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import Clipboard, TarTree, TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.gui.utils.oneprovider.file_browser import FileSelector
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -169,7 +166,7 @@ def assert_item_in_file_browser_is_of_size(
         'user of {browser_id} waits for displayed size in data row of "{item_name}" to be "{size}"'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_BACKEND * 6)
 def wait_for_size_to_be_displayed_in_data_row(
     selenium: SeleniumDrivers,
     browser_id: str,

@@ -10,7 +10,7 @@ from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.steps.common.notifies import dismiss_notifies_if_present
 from tests.gui.steps.modals.modal import (
     assert_element_text_in_modal,
-    wt_click_on_confirmation_btn_in_modal,
+    click_modal_button,
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.onezone.groups import open_group_subpage
@@ -31,13 +31,8 @@ from tests.gui.steps.onezone.members import (
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    MembersParentType,
-    MemberType,
-    parse_elements_sequence,
-)
+from tests.gui.type_definitions import MembersParentType, MemberType, TmpMemory
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -79,7 +74,7 @@ def remove_member_from_parent(
     modal_name = modal_name_prefix + parent_label
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Remove", tmp_memory)
+    click_modal_button(selenium, browser_id, "Remove", "Remove modal")
     dismiss_notifies_if_present(driver)
 
 

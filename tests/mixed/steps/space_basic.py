@@ -29,7 +29,7 @@ from tests.gui.meta_steps.onezone.spaces import (
     rename_spaces_in_oz_using_gui,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.onezone.members import (
     add_users_to_space_in_oz_using_rest,

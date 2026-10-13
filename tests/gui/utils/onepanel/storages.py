@@ -72,8 +72,8 @@ class StorageAddForm(PageObject):
 
 class POSIXEditorKeyValue(PageObject):
     key = WebItem(".text-left", cls=InputBox)
-    key_name = id = Label(".show-edit-icon .one-label")
-    val = WebItem(".form-control-column", cls=InputBox)
+    key_name = id = Label(".show-edit-icon .one-label", scroll=False)
+    val = WebItem(".form-control-column", cls=InputBox, scroll=False)
     delete = Button(".remove-param")
 
 

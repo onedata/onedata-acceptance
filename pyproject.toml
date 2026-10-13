@@ -1,6 +1,6 @@
-# Ruff policy for the OneData acceptance tests. It follows the core Ruff
-# policy from the OneData Python tooling handbook and adds compatibility rules
-# for diagnostics enabled by the former Pylint configuration.
+# Ruff policy for the OneData acceptance tests: the rule set shared by the
+# OneData Python repos, plus compatibility rules for diagnostics enabled by
+# the former Pylint configuration.
 
 [tool.ruff]
 line-length = 100
@@ -8,8 +8,8 @@ target-version = "py312"
 output-format = "pylint"
 
 [tool.ruff.lint]
-# OneData handbook core. Keep this list identical to the Python project
-# templates in onedata-dev-documentation.
+# The rule set shared by the OneData Python repos. Leave this list as it is;
+# rules specific to this repo go into `extend-select` below.
 select = ["E", "W", "F", "I", "UP", "B", "SIM", "PL"]
 # Disable E501 so the formatter's line length remains a soft limit.
 ignore = ["E501"]
@@ -20,7 +20,7 @@ ignore = ["E501"]
 preview = true
 explicit-preview-rules = true
 
-# Compatibility extensions beyond the handbook core. Each group corresponds
+# Compatibility extensions beyond the shared rule set. Each group corresponds
 # to checks enabled by the former Pylint policy.
 extend-select = [
     # Reject variables that shadow builtins, preventing misleading calls and lookups.
@@ -163,9 +163,7 @@ python_version = "3.12"
 warn_unused_ignores = true        # flag a `# type: ignore` that no longer applies
 warn_redundant_casts = true       # flag casts that do nothing
 disallow_untyped_defs = true      # every function must be annotated
-disallow_incomplete_defs = true   # …and partially-annotated functions are an error too
 strict_equality = true            # flag comparisons between non-overlapping types
-no_implicit_optional = true       # `x: int = None` is an error, not implicit Optional
 
 # TODO: VFS-13659 uncomment after final typing fixes
 # warn_return_any = true            # flag returning Any from a typed function

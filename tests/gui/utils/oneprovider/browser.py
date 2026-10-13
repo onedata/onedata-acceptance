@@ -17,6 +17,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.type_definitions import ListItemMainField
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -25,7 +26,6 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
-from tests.gui.utils.generic import ListItemMainField
 from tests.utils.utils import repeat_failed
 
 from ..core import scroll_to_css_selector

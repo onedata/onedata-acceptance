@@ -91,7 +91,7 @@ def click_button_in_description_form(
     browser_id: str, selenium: SeleniumDrivers, button: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(private_share(driver).description_form, transform(button))()
+    getattr(private_share(driver).description_form, transform(button)).click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that link on share\'s private interface is "{link}"'))

@@ -75,7 +75,7 @@ Feature: Storage management using onepanel
     And user of <browser> is idle for 5 seconds
     And user of <browser> clicks on "Modify" button for "new_storage1" storage record in Storages page in Onepanel
     And user of <browser> types "/volumes/posix2" to Mount point field in POSIX edit form for "new_storage1" storage in Onepanel
-    And user of <browser> clicks on Save button in edit form for "new_storage1" storage in Onepanel
+    And user of <browser> clicks on "Save" button in edit form for "new_storage1" storage in Onepanel
     And user of <browser> confirms committed changes in modal "Modify Storage"
     And user of <browser> is idle for 5 seconds
     And user of <browser> expands "new_storage1" record on storages list in storages page in Onepanel
@@ -150,7 +150,7 @@ Feature: Storage management using onepanel
 
     And user of browser_unified clicks on "Modify" button for "new_storage1" storage record in Storages page in Onepanel
     And user of browser_unified types "/volumes/posix/renamed_dir05" to Mount point field in POSIX edit form for "new_storage1" storage in Onepanel
-    And user of browser_unified clicks on Save button in edit form for "new_storage1" storage in Onepanel
+    And user of browser_unified clicks on "Save" button in edit form for "new_storage1" storage in Onepanel
     And user of browser_unified confirms committed changes in modal "Modify Storage"
 
     And user of browser_unified opens file browser for "space1" space

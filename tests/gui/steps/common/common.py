@@ -11,9 +11,11 @@ from contextlib import suppress
 from typing import Any, Literal, overload
 
 from selenium.common.exceptions import (
+    NoSuchElementException,
     StaleElementReferenceException,
     TimeoutException,
 )
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
@@ -23,6 +25,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import (
     Clickable,
+    ListItemMainField,
+    PageName,
     VisibilityCondition,
     WebElementOrCssLocator,
     WebElementOrSelector,
@@ -36,14 +40,8 @@ from tests.gui.utils.common.modals.archives_modals.archive_recall_information im
     ArchiveRecallInformation,
 )
 from tests.gui.utils.core.base import NamedElement
-from tests.gui.utils.generic import (
-    ListElement,
-    ListItemMainField,
-    PageName,
-    get_visibility_condition,
-    get_web_elem_or_locator,
-    transform,
-)
+from tests.gui.utils.enums import ListElement
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.automation_page import AutomationPage
 from tests.gui.utils.onezone.clusters_page import ClustersPage
@@ -58,6 +56,7 @@ from tests.gui.utils.onezone.groups.groups_page import GroupsPage
 from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.gui.utils.onezone.shares_page import SharesPage
 from tests.gui.utils.onezone.tokens_page import TokensPage
+from tests.gui.utils.web_elem_utils import get_visibility_condition, get_web_elem_or_locator
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -66,18 +65,39 @@ def assert_n_items_in_items_list(
     page: ListPage | Browser,
     selenium: dict[str, WebDriver],
     browser_id: str,
-    number: int,
+    number: int | None,
     items_type: ListElement,
     main_field: ListItemMainField,
-) -> None:
+) -> set[str]:
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
 
+    if isinstance(page, Browser):
+        page.scroll_to_top()
+
+    def browser_has_no_items() -> bool:
+        if not isinstance(page, Browser):
+            return False
+
+        if page.is_empty():
+            return True
+
+        try:
+            return bool(page.error_msg)
+        except NoSuchElementException:
+            return False
+
     WebDriverWait(driver, WAIT_FRONTEND).until(
-        lambda _: len(get_visible_items_list(page, items_type, main_field)) > 0,
+        lambda _: (
+            bool(get_visible_items_list(page, items_type, main_field)) or browser_has_no_items()
+        ),
         message=f"Waiting for initial {items_type.value} to appear failed",
     )
+
+    if browser_has_no_items():
+        assert number in (None, 0), f"There are 0 items, but should be: {number}"
+        return set()
 
     while not stop_scrolling_flag:
         new_items = get_visible_items_list(page, items_type, main_field)
@@ -87,10 +107,12 @@ def assert_n_items_in_items_list(
         seen_items.update(new_items_fields)
         driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
 
-    assert len(seen_items) == number, (
-        f"There are {len(seen_items)} items, but should be: {number}. All found"
-        f" items:\n {seen_items}"
-    )
+    if number is not None:
+        assert len(seen_items) == number, (
+            f"There are {len(seen_items)} items, but should be: {number}. All found"
+            f" items:\n {seen_items}"
+        )
+    return seen_items
 
 
 # there is a small chance that not all item will be loaded at time,
@@ -343,7 +365,18 @@ def click_close_button_and_wait_to_disappear(
     web_elem_or_locator: WebElementOrCssLocator,
     get_close_button: Callable[[WebDriver], Clickable],
 ) -> bool:
-    try_click_without_throwing_error(lambda: get_close_button(driver).click())
+    def use_close_button() -> None:
+        if invisibility_of_element(web_elem_or_locator)(driver):
+            return
+        button = get_close_button(driver)
+        if not isinstance(button, SeleniumWebElement):
+            button = get_close_button(driver).web_elem
+        ActionChains(driver).move_to_element(button).perform()
+        button.click()
+
+    with suppress(StaleElementReferenceException, NoSuchElementException):
+        perform_action(use_close_button)
+
     WebDriverWait(driver, WAIT_FRONTEND).until(
         invisibility_of_element(web_elem_or_locator),
         message="Popup or modal is still visible",

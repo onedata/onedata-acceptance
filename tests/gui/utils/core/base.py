@@ -7,7 +7,7 @@ from abc import ABC, ABCMeta, abstractmethod
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.utils.generic import click_on_web_elem
+from tests.gui.utils.web_elem_utils import click_on_web_elem
 from tests.utils.utils import element_has_class
 
 __author__ = "Bartosz Walkowicz"
@@ -128,8 +128,7 @@ class PageObject(AbstractPageObject):
 
     def click(self) -> None:
         click_on_web_elem(
-            self.driver,
-            self._click_area,
+            lambda: self._click_area,
             lambda: f"cannot click on {self}",
         )
 
@@ -159,7 +158,6 @@ class ExpandableMixin:
 
     def _click_on_toggle(self) -> None:
         click_on_web_elem(
-            self.driver,
-            self._toggle,
+            lambda: self._toggle,
             lambda: f"cannot click on toggle for {self}",
         )

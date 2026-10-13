@@ -6,17 +6,19 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import re
 import time
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.common.modals.archives_modals.create_archive import ToggleContainer
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.oneprovider.archive_browser import _ArchiveBrowser
 from tests.gui.utils.oneprovider.archive_browser.data_row import DataRow
 from tests.type_definitions import SeleniumDrivers
@@ -156,12 +158,21 @@ def from_ordinal_number_to_int(ordinal_number: str) -> int:
 
 
 @wt(parsers.parse('user of {browser_id} checks "{toggle_type}" toggle in modal "Create Archive"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def check_toggle_in_create_archive_modal(
     browser_id: str, selenium: SeleniumDrivers, toggle_type: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(Modals(driver).create_archive, transform(toggle_type)).check()
+
+    def toggle_getter() -> ToggleContainer:
+        return getattr(Modals(driver).create_archive, transform(toggle_type))
+
+    def assert_is_checked() -> None:
+        assert toggle_getter().is_checked()
+
+    perform_action(
+        lambda: driver.execute_script("arguments[0].scrollIntoView();", toggle_getter().web_elem)
+    )
+    perform_action(lambda: toggle_getter().check(), assertion=assert_is_checked)
 
 
 def compare_base_archive_name_with_archive_with_description(
@@ -215,7 +226,7 @@ def assert_base_archive_description(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_archive_browser(browser_id: str, tmp_memory: TmpMemory, button: str) -> None:
     browser = tmp_memory[browser_id]["archive_browser"]
-    getattr(browser, transform(button))()
+    getattr(browser, transform(button)).click()
 
 
 @wt(
@@ -267,8 +278,9 @@ def click_menu_for_archive(
     which_browser: WhichBrowser = WhichBrowser.ARCHIVE_BROWSER,
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser.value)]
-    archive = get_archive_with_description(browser, description)
-    archive.menu_button()
+    with contextlib.suppress(PageObjectNotFoundError, ElementClickInterceptedException):
+        archive = get_archive_with_description(browser, description)
+        archive.menu_button.click()
     if Popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
         raise AssertionError(f"Archive with description {description} did not open")
 
@@ -324,7 +336,7 @@ def go_back_to_dataset_page_from_archive_browser(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver).data.archive_header.back_to_dataset_page()
+    OZLoggedIn(driver).data.archive_header.back_to_dataset_page.click()
 
 
 def assert_not_archive_with_description(

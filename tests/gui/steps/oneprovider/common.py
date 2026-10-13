@@ -22,11 +22,7 @@ from tests.gui.constants import (
 )
 from tests.gui.type_definitions import FilePath, TmpMemory
 from tests.gui.utils import OPLoggedIn
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    parse_url,
-)
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_url
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

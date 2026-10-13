@@ -26,7 +26,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_marketplace_subpage(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).data.space_marketplace_page.advertise_space_button()
+    OZLoggedIn(driver).data.space_marketplace_page.advertise_space_button.click()
 
 
 @wt(

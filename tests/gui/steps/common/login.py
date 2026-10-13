@@ -17,12 +17,9 @@ from tests.gui.steps.common.url import (
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.utils import LoginPage, OnePage
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-    wait_for_visible_element_using_getter,
-)
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -33,13 +30,13 @@ from tests.utils.utils import repeat_failed
 def _login_using_basic_auth(login_page: LoginPage, username: str, password: str) -> None:
     login_page.username = username
     login_page.password = password
-    login_page.sign_in()
+    login_page.sign_in.click()
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def _login_using_passphrase(login_page: LoginPage, password: str) -> None:
     login_page.passphrase = password
-    login_page.sign_in()
+    login_page.sign_in.click()
 
 
 @wt(
@@ -50,7 +47,7 @@ def _login_using_passphrase(login_page: LoginPage, password: str) -> None:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_sign_in_to_emergency_interface(selenium: SeleniumDrivers, browser_id: str) -> None:
-    LoginPage(selenium[browser_id]).sign_in_to_emergency_interface()
+    LoginPage(selenium[browser_id]).sign_in_to_emergency_interface.click()
 
 
 def _login_to_service(
@@ -142,7 +139,7 @@ def wt_enter_password_of_user(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def press_sign_in_btn_on_login_page(selenium: SeleniumDrivers, browser_id: str) -> None:
-    LoginPage(selenium[browser_id]).sign_in()
+    LoginPage(selenium[browser_id]).sign_in.click()
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) is logged in (?P<service>.*) service"))

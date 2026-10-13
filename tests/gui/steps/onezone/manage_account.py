@@ -61,7 +61,7 @@ def click_emergency_panel_logout(selenium: SeleniumDrivers, browser_id: str) -> 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def start_username_change(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id]).profile.rename_username()
+    OZLoggedIn(selenium[browser_id]).profile.rename_username.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -76,7 +76,7 @@ def confirm_username_change(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_edit_password_form(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id]).profile.rename_password()
+    OZLoggedIn(selenium[browser_id]).profile.rename_password.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -168,6 +168,6 @@ def wt_assert_user_alias_in_sidebar(
         name = OZLoggedIn(driver).profile_username
         assert name == username, error_message.format(username, name)
     except AssertionError:
-        OZLoggedIn(driver).profile.profile()
+        OZLoggedIn(driver).profile.profile.click()
         name = OZLoggedIn(driver).profile_username
         assert name == username, error_message.format(username, name)

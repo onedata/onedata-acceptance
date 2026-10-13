@@ -72,11 +72,8 @@ from tests.gui.utils.common.xml_addons import (
     replace_xml_editor_data,
     resolve_xml_tag_for_et_search,
 )
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
@@ -95,7 +92,7 @@ def create_share(
     modal_name = "Share / Publish directory"
     button = "Create"
 
-    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
+    click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, share_name, modal_name)

@@ -15,7 +15,7 @@ from tests.gui.meta_steps.oneprovider.data import (
     create_symlinks_of_file_with_path,
 )
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.oneprovider.data import (
     _lookup_file_id,

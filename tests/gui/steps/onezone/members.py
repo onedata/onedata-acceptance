@@ -11,7 +11,7 @@ import time
 from typing import Any, Protocol, cast
 
 import yaml
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -19,7 +19,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
 from tests.gui.steps.common.common import get_onezone_subpage
-from tests.gui.steps.common.notifies import is_notify_popup_visible_and_close_all_alert_popups
+from tests.gui.steps.common.notifies import (
+    is_notify_popup_visible_and_close_all_alert_popups,
+)
 from tests.gui.steps.modals.modal import (
     assert_element_text,
     wt_wait_for_modal_to_appear,
@@ -37,7 +39,15 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.type_definitions import (
+    MENU_ELEM_TO_TAB_NAME,
+    PARENT_LIST_NAMES,
+    MembersParentType,
+    MemberType,
+    PageName,
+    SidebarMemberParent,
+    TmpMemory,
+)
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
@@ -45,19 +55,10 @@ from tests.gui.utils.core.web_objects import (
     PageObjectNotFoundError,
     PageObjectsSequence,
 )
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    MENU_ELEM_TO_TAB_NAME,
-    PARENT_LIST_NAMES,
-    MembersParentType,
-    MemberType,
-    PageName,
-    SidebarMemberParent,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import element_has_class, repeat_failed
@@ -422,8 +423,8 @@ def click_generate_token_in_subgroups_list(
 ) -> None:
     page = get_onezone_subpage(selenium[browser_id], "groups")
     page.groups_list[group].click()
-    page.groups_list[group].members()
-    getattr(page.main_page.members, member).generate_token()
+    page.groups_list[group].members.click()
+    getattr(page.main_page.members, member).generate_token.click()
 
 
 @wt(
@@ -444,7 +445,7 @@ def click_on_option_in_members_list_menu(
 ) -> None:
     driver = selenium[browser_id]
     page = find_members_page(driver, where)
-    getattr(page, member).header.menu_button()
+    getattr(page, member).header.menu_button.click()
     Popups(driver).menu_popup_with_text.menu[button]()
 
 
@@ -475,7 +476,7 @@ def assert_generated_token_is_present(selenium: SeleniumDrivers, browser_id: str
 @wt(parsers.re(r"user of (?P<browser_id>.*) copies invitation token from modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token_from_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
-    Modals(selenium[browser_id]).invite_using_token.copy()
+    Modals(selenium[browser_id]).invite_using_token.copy.click()
 
 
 @wt(
@@ -494,7 +495,7 @@ def assert_element_is_groups_child(
 ) -> None:
     page = get_onezone_subpage(selenium[browser_id], "groups")
     page.groups_list[parent].click()
-    page.groups_list[parent].members()
+    page.groups_list[parent].members.click()
 
     try:
         page.members_page.groups.items[child]
@@ -567,7 +568,7 @@ def check_user_in_space_members_list(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data
     page.spaces_headers_list[space_name].click()
-    page.spaces_list[space_name].members()
+    page.spaces_list[space_name].members.click()
     try:
         page.members_page.users.items[username]
     except (PageObjectNotFoundError, NoSuchElementException):
@@ -678,14 +679,14 @@ def copy_invitation_token(
     page = get_onezone_subpage(driver, "groups")
     page.groups_list[group].click()
 
-    getattr(page.main_page.members, who + "s").header.menu_button()
+    getattr(page.main_page.members, who + "s").header.menu_button.click()
     button = f"Invite {who} using token"
 
     Popups(driver).menu_popup_with_text.menu[button].click()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, button, tmp_memory)
-    Modals(selenium[browser_id]).invite_using_token.copy()
-    Modals(selenium[browser_id]).invite_using_token.close()
+    Modals(selenium[browser_id]).invite_using_token.copy.click()
+    Modals(selenium[browser_id]).invite_using_token.close.click()
 
 
 @wt(
@@ -705,7 +706,7 @@ def get_invitation_token(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).groups
     page.groups_list[group].click()
-    page.main_page.menu_button()
+    page.main_page.menu_button.click()
     Popups(driver).menu_popup_with_text.menu["Invite " + who]()
     token = page.members_page.token.token
     tmp_memory[browser_id]["token"] = token
@@ -739,8 +740,7 @@ def try_setting_privileges_in_members_subpage(
             config,
             True,
         )
-    except AssertionError:
-        button = "Save"
+    except (TimeoutException, AssertionError):
         member_type_new = member_type + "s"
         privileges = yaml.load(config, yaml.Loader)
         tree = get_privilege_tree(
@@ -753,14 +753,14 @@ def try_setting_privileges_in_members_subpage(
         result = tree.set_privileges(selenium, browser_id, privileges, True)
         if option == "sets":
             click_button_on_element_header_in_members_and_wait(
-                selenium, browser_id, button, where, tree
+                selenium, browser_id, "Save", where, tree
             )
             is_notify_popup_visible_and_close_all_alert_popups(
                 selenium,
                 browser_id,
                 AlertPopup.PRIVILEGES_SAVED,
                 popup_expected=False,
-                timeout=WAIT_FRONTEND,
+                timeout=WAIT_FRONTEND // 2,
             )
 
         else:
@@ -878,17 +878,24 @@ def assert_privileges_in_members_subpage(
     config: str,
     option: str | bool,
 ) -> None:
+    driver = selenium[browser_id]
     member_type = member_type + "s"
     privileges = yaml.load(config, yaml.Loader)
-    tree = get_privilege_tree(selenium, browser_id, where, member_type, member_name)
     is_direct_privileges = option != "effective "
+
     # wait for set privileges to be visible in gui
-    try:
-        tree.assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
-    except AssertionError:
-        time.sleep(2)
-        tree.assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
-    driver = selenium[browser_id]
+    def are_privileges_correct(_: WebDriver) -> bool:
+        try:
+            tree = get_privilege_tree(selenium, browser_id, where, member_type, member_name)
+            tree.assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
+            return True
+        except AssertionError:
+            return False
+
+    WebDriverWait(driver, timeout=WAIT_FRONTEND, poll_frequency=0.1).until(
+        are_privileges_correct, message="Privileges were not successfully set"
+    )
+
     page = find_members_page(driver, where)
     page.close_member(driver)
 
