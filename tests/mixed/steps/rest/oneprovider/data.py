@@ -16,21 +16,21 @@ import yaml
 from cdmi_client import ContainerApi, DataObjectApi
 from cdmi_client.rest import ApiException as CdmiException
 from oneprovider_client import (
+    ApiClient,
     BasicFileOperationsApi,
     FilePathResolutionApi,
     ShareApi,
     SpaceApi,
 )
+from oneprovider_client.models.inline_response2015 import InlineResponse2015
+from oneprovider_client.models.share import Share
+from oneprovider_client.models.space import Space
 from oneprovider_client.rest import ApiException as OPException
 from tests import OP_REST_PORT
 from tests.gui.constants import NUMERALS
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.text import parse_elements_sequence
-from tests.mixed.oneprovider_client import ApiClient
-from tests.mixed.oneprovider_client.models.inline_response2015 import InlineResponse2015
-from tests.mixed.oneprovider_client.models.share import Share
-from tests.mixed.oneprovider_client.models.space import Space
 from tests.mixed.steps.rest.oneprovider.basic import (
     HostsConfig,
     see_item_is_dir_op_rest,

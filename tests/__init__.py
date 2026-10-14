@@ -19,6 +19,7 @@ BAMBOOS_DIR = os.path.join(SUBMODULES_DIR, "bamboos")
 ONE_ENV_DIR = os.path.join(SUBMODULES_DIR, "one-env")
 AUTOMATION_EXAMPLES_DIR = os.path.join(SUBMODULES_DIR, "automation-examples")
 DOCKER_DIR = os.path.join(BAMBOOS_DIR, "docker")
+GENERATED_CLIENTS_DIR = os.path.join(PROJECT_DIR, "generated")
 TEST_DIR = os.path.join(PROJECT_DIR, "tests")
 UTILS_DIR = os.path.join(TEST_DIR, "utils")
 
@@ -70,7 +71,7 @@ DEFAULT_HEADERS = {"content-type": "application/json"}
 MEGABYTE = 1024 * 1024
 
 # Append useful modules to the path
-sys.path = [PROJECT_DIR, SUBMODULES_DIR, DOCKER_DIR] + sys.path
+sys.path = [PROJECT_DIR, SUBMODULES_DIR, DOCKER_DIR, GENERATED_CLIENTS_DIR] + sys.path
 
 # Oneclient mountpath prefix
 ONECLIENT_MOUNTPATH_PREFIX = "/mnt/oneclient"

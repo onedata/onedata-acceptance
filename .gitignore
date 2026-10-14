@@ -44,3 +44,4 @@ warnings.log
 
 # Emacs
 *~
+generated/*
