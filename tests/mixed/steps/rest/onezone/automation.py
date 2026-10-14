@@ -13,14 +13,12 @@ from typing import Protocol, TypedDict, cast
 
 import yaml
 
+from oneprovider_client.api.workflow_execution_api import WorkflowExecutionApi
 from oneprovider_client.rest import ApiException
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import upload_file_path, upload_workflow_path
-from tests.mixed.oneprovider_client.api.workflow_execution_api import (
-    WorkflowExecutionApi,
-)
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id, upload_file_rest
 from tests.mixed.type_definitions import IdMap, MutableIdMap
 from tests.mixed.utils.common import login_to_provider

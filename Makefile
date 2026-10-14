@@ -75,7 +75,8 @@ RERUNS                      ?= 1
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
 FILE_MODE                   ?= regular
-MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
+TESTS_ROOT := $(shell pwd)
+GENERATED_CLIENTS_ROOT := ${TESTS_ROOT}/generated
 
 ifdef bamboo_GUI_PKG_VERIFICATION
     GUI_PKG_VERIFICATION = --gui-pkg-verification
@@ -88,6 +89,7 @@ endif
 .PHONY: test_performance test_performance_pkg test_performance_src
 .PHONY: test_upgrade_pkg test_upgrade_src
 .PHONY: format format-check static-analysis type-check
+.PHONY: submodules
 
 test_gui:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
@@ -98,7 +100,7 @@ test_gui_src: SOURCES = --sources
 test_gui_src: test_gui
 
 test_mixed:
-	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	PYTHONPATH=${GENERATED_CLIENTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	 -k=${KEYWORDS} --count ${COUNT} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
 
 test_mixed_pkg: test_mixed
@@ -131,10 +133,11 @@ test_upgrade_src:
 ##
 
 build_swaggers:
-	cd onezone_swagger && make python-client && cd generated/python && mv onezone_client ${MIXED_TESTS_ROOT}
-	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ${MIXED_TESTS_ROOT}
-	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ${MIXED_TESTS_ROOT}
-	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ${MIXED_TESTS_ROOT}
+	mkdir -p ${GENERATED_CLIENTS_ROOT}
+	cd submodules/onezone_swagger && make python-client && cd generated/python && mv onezone_client ${GENERATED_CLIENTS_ROOT}
+	cd submodules/onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ${GENERATED_CLIENTS_ROOT}
+	cd submodules/oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ${GENERATED_CLIENTS_ROOT}
+	cd submodules/cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ${GENERATED_CLIENTS_ROOT}
 
 ##
 ## Clean
@@ -143,17 +146,17 @@ build_swaggers:
 clean: clean_swaggers
 
 clean_swaggers:
-	cd onezone_swagger && make clean
-	cd onepanel_swagger && make clean
-	cd oneprovider_swagger && make clean
-	cd cdmi_swagger && make clean
-	rm -rf ${MIXED_TESTS_ROOT}/onezone_client
-	rm -rf ${MIXED_TESTS_ROOT}/onepanel_client
-	rm -rf ${MIXED_TESTS_ROOT}/oneprovider_client
-	rm -rf ${MIXED_TESTS_ROOT}/cdmi_client
+	cd submodules/onezone_swagger && make clean
+	cd submodules/onepanel_swagger && make clean
+	cd submodules/oneprovider_swagger && make clean
+	cd submodules/cdmi_swagger && make clean
+	rm -rf ${GENERATED_CLIENTS_ROOT}/onezone_client
+	rm -rf ${GENERATED_CLIENTS_ROOT}/onepanel_client
+	rm -rf ${GENERATED_CLIENTS_ROOT}/oneprovider_client
+	rm -rf ${GENERATED_CLIENTS_ROOT}/cdmi_client
 
 codetag-tracker:
-	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
+	./submodules/bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
 
 
 ##

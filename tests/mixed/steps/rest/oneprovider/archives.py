@@ -11,14 +11,12 @@ from typing import NotRequired, Protocol, TypedDict, cast
 
 import yaml
 
+from oneprovider_client.api.archive_api import ArchiveApi
+from oneprovider_client.api.basic_file_operations_api import BasicFileOperationsApi
+from oneprovider_client.api.dataset_api import DatasetApi
 from oneprovider_client.rest import ApiException as OPException
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
-from tests.mixed.oneprovider_client.api.archive_api import ArchiveApi
-from tests.mixed.oneprovider_client.api.basic_file_operations_api import (
-    BasicFileOperationsApi,
-)
-from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.steps.rest.oneprovider.datasets import get_dataset_id
 from tests.mixed.type_definitions import (

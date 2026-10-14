@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 __author__ = "Jakub Kudzia, Michal Cwiertnia, Michal Stanisz"
 __copyright__ = "Copyright (C) 2016-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -20,7 +22,7 @@ import yaml
 from requests.exceptions import ConnectTimeout
 
 from bamboos.docker.images_branch_config import resolve_image
-from tests import OZ_REST_PORT, PANEL_REST_PORT
+from tests import ONE_ENV_DIR, OZ_REST_PORT, PANEL_REST_PORT
 from tests.type_definitions import Hosts, JsonObject
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.luma_utils import (
@@ -121,7 +123,7 @@ def start_environment(
     while not started and attempts < START_ENV_MAX_RETRIES:
         try:
             maybe_setup_helm()
-            run_onenv_command("init", cwd=None, onenv_path="one-env/onenv")
+            run_onenv_command("init", cwd=None, onenv_path=os.path.join(ONE_ENV_DIR, "onenv"))
             run_onenv_command("up", up_args)
             run_onenv_command("wait", wait_args)
             dep_status = get_deployment_status()

@@ -10,8 +10,8 @@ from typing import cast
 
 import yaml
 
+from onezone_client import SpaceApi
 from onezone_client.rest import ApiException
-from tests.mixed.onezone_client import SpaceApi
 from tests.mixed.steps.rest.onezone.common import get_group
 from tests.mixed.type_definitions import (
     IdMap,

@@ -1,27 +1,27 @@
 [submodule "onepanel_swagger"]
-	path = onepanel_swagger
+	path = submodules/onepanel_swagger
 	url = ../onepanel-swagger.git
 	branch = develop
 [submodule "onezone_swagger"]
-	path = onezone_swagger
+	path = submodules/onezone_swagger
 	url = ../onezone-swagger.git
 	branch = develop
 [submodule "oneprovider_swagger"]
-	path = oneprovider_swagger
+	path = submodules/oneprovider_swagger
 	url = ../oneprovider-swagger.git
 	branch = develop
 [submodule "cdmi_swagger"]
-    path = cdmi_swagger
+    path = submodules/cdmi_swagger
     url = ../cdmi-swagger.git
     branch = develop
 [submodule "bamboos"]
-	path = bamboos
+	path = submodules/bamboos
 	url = ../bamboos.git
 	branch = develop
 [submodule "one-env"]
-	path = one-env
+	path = submodules/one-env
 	url = ../one-env.git
     branch = develop
 [submodule "automation-examples"]
-	path = automation-examples
+	path = submodules/automation-examples
 	url = ../automation-examples.git

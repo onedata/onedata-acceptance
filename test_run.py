@@ -9,21 +9,25 @@ Run the script with -h flag to learn about script's running options.
 
 from __future__ import annotations
 
-import re
-import os
-import sys
-import glob
-import platform
 import argparse
+import glob
+import os
+import platform
+import re
 import shutil
-import textwrap
-from typing import Final
-import yaml
-from subprocess import call, check_output
+import sys
 import tempfile
+import textwrap
 import xml.etree.ElementTree as ElementTree
+from subprocess import call, check_output
+from typing import Final
 
+import yaml
+
+# isort: off
+from tests import ONE_ENV_DIR
 from bamboos.docker.environment import docker
+# isort: on
 
 TEST_RUNNER_CONTAINER_NAME: Final[str] = "test-runner"
 
@@ -46,9 +50,7 @@ def get_images_option(
     images_cfg: list[str] = []
     add_image_to_images_cfg(oz_image, "onezone", "--oz-image", images_cfg, pull)
     add_image_to_images_cfg(op_image, "oneprovider", "--op-image", images_cfg, pull)
-    add_image_to_images_cfg(
-        rest_cli_image, "rest-cli", "--rest-cli-image", images_cfg, pull
-    )
+    add_image_to_images_cfg(rest_cli_image, "rest-cli", "--rest-cli-image", images_cfg, pull)
 
     if test_type in ["oneclient", "mixed", "performance"]:
         add_image_to_images_cfg(oc_image, "oneclient", "--oc-image", images_cfg, pull)
@@ -56,9 +58,7 @@ def get_images_option(
         env_file_path = f"tests/gui/environments/{env_file_name}.yaml"
         with open(env_file_path, "r") as f:
             if yaml.load(f, yaml.Loader).get("openfaas", False):
-                add_image_to_images_cfg(
-                    oc_image, "oneclient", "--oc-image", images_cfg, pull
-                )
+                add_image_to_images_cfg(oc_image, "oneclient", "--oc-image", images_cfg, pull)
                 add_image_to_images_cfg(
                     openfaas_pod_status_monitor_image,
                     "openfaas-pod-status-monitor",
@@ -108,9 +108,7 @@ def env_errors_exists(testsuite: ElementTree.Element | None) -> bool:
     for testcase in testcases:
         skipped = testcase.find("skipped")
         if skipped is not None:
-            if re.match(
-                ".*environment error.*", skipped.attrib["message"].lower(), re.I
-            ):
+            if re.match(".*environment error.*", skipped.attrib["message"].lower(), re.I):
                 return True
     return False
 
@@ -135,7 +133,7 @@ def clean_env(
         rm=True,
         interactive=True,
         name="onenv-clean",
-        workdir=os.path.join(script_dir, "one-env"),
+        workdir=ONE_ENV_DIR,
         reflect=reflect,
         network="host",
         image=image,
@@ -143,9 +141,7 @@ def clean_env(
         command=["./onenv", "clean", "-a", "-v"],
     )
 
-    container = docker.ps(
-        all=True, quiet=True, filters=[("name", TEST_RUNNER_CONTAINER_NAME)]
-    )
+    container = docker.ps(all=True, quiet=True, filters=[("name", TEST_RUNNER_CONTAINER_NAME)])
     if container:
         docker.remove(container, force=True)
 
@@ -293,9 +289,7 @@ def main() -> None:
         dest="local_charts_path",
     )
 
-    parser.add_argument(
-        "--timeout", action="store", help="Onenv wait timeout", dest="timeout"
-    )
+    parser.add_argument("--timeout", action="store", help="Onenv wait timeout", dest="timeout")
 
     parser.add_argument(
         "--no-pull",
@@ -309,9 +303,7 @@ def main() -> None:
     )
 
     [args, pass_args] = parser.parse_known_args()
-    script_dir = os.path.abspath(
-        os.path.join("..", os.path.dirname(os.path.abspath(__file__)))
-    )
+    script_dir = os.path.abspath(os.path.join("..", os.path.dirname(os.path.abspath(__file__))))
     tmp_user_config_dir: str | None = None
 
     images_opt = get_images_option(
@@ -326,7 +318,7 @@ def main() -> None:
         pull=not args.no_pull,
     )
 
-    call(["./onenv", "init"], cwd="one-env")
+    call(["./onenv", "init"], cwd=ONE_ENV_DIR)
 
     if args.local:
         cmd = [
@@ -348,9 +340,7 @@ def main() -> None:
 
     else:
         local_charts_path = (
-            [f"--local-charts-path={args.local_charts_path}"]
-            if args.local_charts_path
-            else []
+            [f"--local-charts-path={args.local_charts_path}"] if args.local_charts_path else []
         )
         no_clean = ["--no-clean"] if not args.clean else []
         env_file = [f"--env-file={args.env_file}"] if args.env_file else []
@@ -466,9 +456,7 @@ SERVICE_TO_IMAGE: dict[str, str] = {
     "oneclient": "docker.onedata.org/oneclient-dev",
     "rest-cli": "docker.onedata.org/rest-cli",
     "openfaas-pod-status-monitor": "docker.onedata.org/openfaas-pod-status-monitor",
-    "openfaas-lambda-result-streamer": (
-        "docker.onedata.org/openfaas-lambda-result-streamer"
-    ),
+    "openfaas-lambda-result-streamer": ("docker.onedata.org/openfaas-lambda-result-streamer"),
 }
 
 

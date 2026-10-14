@@ -4,7 +4,11 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 
+from selenium.common.exceptions import ElementNotInteractableException
+
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, NamedButton, WebElement, WebItem
@@ -20,11 +24,18 @@ class ToggleContainer(PageObject):
     def is_checked(self) -> bool:
         return element_has_class(self.toggle_area, "checked")
 
-    @repeat_failed(timeout=0.5)
     def check(self) -> None:
-        if not self.is_checked():
-            self.toggle_track.web_elem.click()
-        assert self.is_checked(), "Toggle failed to check"
+        self.change_toggle_state(expected=True)
+
+    def uncheck(self) -> None:
+        self.change_toggle_state(expected=False)
+
+    @repeat_failed(timeout=WAIT_FRONTEND // 4)
+    def change_toggle_state(self, expected: bool) -> None:
+        if self.is_checked() != expected:
+            with contextlib.suppress(ElementNotInteractableException):
+                self.toggle_track.web_elem.click()
+            assert self.is_checked(), "Toggle failed to change state"
 
 
 class CreateArchive(Modal):
