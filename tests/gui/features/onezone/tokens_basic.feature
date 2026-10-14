@@ -50,7 +50,7 @@ Feature: Management of tokens basic features in Onezone GUI
     And user of browser creates 1 <token type> token
     And user of browser clicks on rename button for token named "<token name>" on tokens list
     And user of browser appends "-renamed" to name of token named "<token name>"
-    And user of browser confirms changes in token named "<token name>"
+    And user of browser confirms changes in token named "<token name>" for rename to "<token name>-renamed"
     And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
     Then user of browser sees that there is token named "<token name renamed>" on tokens list
 

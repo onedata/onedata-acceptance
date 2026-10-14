@@ -137,19 +137,13 @@ class WorkflowsPage(ListPage):
         ".atm-workflow-schemas-list .atm-workflow-schemas-list-entry",
         cls=Workflow,
     )
-
     navigation_tab = WebItemsSequence(".nav-tabs li", cls=NavigationTab)
-
     workflow_visualiser = WebItem(".workflow-visualiser", cls=WorkflowVisualiser)
-
     revision_details = WebItem(".revision-details-form", cls=RevisionDetails)
-
     workflow_creator = WebItem(
         ".content-atm-inventories-workflows-creator-view", cls=WorkflowCreator
     )
-
     task_form = WebItem(".task-form-container", cls=TaskAddForm)
-
     workflow_name_input = WebItem(".name-field .text-like-field", cls=EditBox)
-
-    workflow_save_button = Button(".btn-save")
+    workflow_change_details_save = Button(".atm-workflow-schema-details-form .btn-save")
+    workflow_edition_save = Button(".with-back .btn-save")
