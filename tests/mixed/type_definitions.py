@@ -76,6 +76,7 @@ type LumaMappings = dict[str, dict[str, StorageMappings]]
 class SpaceAlias(TypedDict):
     name: str
     sid: str
+    removed: NotRequired[bool]
 
 
 type SpaceAliases = dict[str, SpaceAlias]
