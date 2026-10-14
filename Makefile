@@ -88,6 +88,7 @@ endif
 .PHONY: test_performance test_performance_pkg test_performance_src
 .PHONY: test_upgrade_pkg test_upgrade_src
 .PHONY: format format-check static-analysis type-check
+.PHONY: submodules
 
 test_gui:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
