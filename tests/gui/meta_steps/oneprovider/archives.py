@@ -130,42 +130,6 @@ def create_archive(
     )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} {option} to create archive for item "
-        '"{item_name}" in "{space_name}" with following '
-        "configuration and follow symbolic links set as"
-        " {follow_symbolic_links}:\n{config}"
-    )
-)
-def create_archive_with_follow_symbolic_link(
-    browser_id: str,
-    selenium: SeleniumDrivers,
-    config: str,
-    item_name: str,
-    space_name: str,
-    tmp_memory: TmpMemory,
-    clipboard: Clipboard,
-    displays: dict[str, str],
-    option: str,
-    follow_symbolic_links: str,
-) -> None:
-    should_follow_symbolic_links = follow_symbolic_links == "true"
-
-    _create_archive(
-        browser_id,
-        selenium,
-        config,
-        item_name,
-        space_name,
-        tmp_memory,
-        clipboard,
-        displays,
-        option,
-        should_follow_symbolic_links,
-    )
-
-
 def _create_archive(
     browser_id: str,
     selenium: SeleniumDrivers,
@@ -176,7 +140,6 @@ def _create_archive(
     clipboard: Clipboard,
     displays: dict[str, str],
     option: str,
-    follow_symbolic_links: bool = True,
 ) -> None:
     try:
         _ = OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
@@ -211,22 +174,25 @@ def _create_archive(
         incremental = data.get("incremental", False)
         include_dip = data.get("include DIP", False)
 
-        if follow_symbolic_links:
-            follow_symbolic_links = data.get("follow symbolic links", True)
+        follow_symbolic_links = data.get("follow symbolic links", True)
 
         if description:
             write_description_in_create_archive_modal(selenium, browser_id, description)
         if layout == "BagIt":
-            click_modal_button(selenium, browser_id, layout, "Create archive")
+            click_modal_button(selenium, browser_id, "BagIt", modal_name="Create archive")
         if create_nested_archives:
-            check_toggle_in_create_archive_modal(browser_id, selenium, "create_nested_archives")
+            check_toggle_in_create_archive_modal(
+                browser_id, selenium, toggle_type="create_nested_archives"
+            )
         if incremental and incremental["enabled"]:
-            check_toggle_in_create_archive_modal(browser_id, selenium, "incremental")
+            check_toggle_in_create_archive_modal(browser_id, selenium, toggle_type="incremental")
         if include_dip:
-            check_toggle_in_create_archive_modal(browser_id, selenium, "include_dip")
+            check_toggle_in_create_archive_modal(browser_id, selenium, toggle_type="include_dip")
         if not follow_symbolic_links:
-            check_toggle_in_create_archive_modal(browser_id, selenium, "follow_symbolic_links")
-        click_modal_button(selenium, browser_id, "Create", "Create archive")
+            check_toggle_in_create_archive_modal(
+                browser_id, selenium, toggle_type="follow_symbolic_links"
+            )
+        click_modal_button(selenium, browser_id, "Create", modal_name="Create archive")
 
         if description:
             copy_archive_id_to_tmp_memory(
