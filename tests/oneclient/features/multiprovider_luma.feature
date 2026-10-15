@@ -4,7 +4,7 @@ Feature: LUMA acceptance tests using multiple providers
     Given oneclients [client11, client12, client21, client22]
       mounted on client_hosts [oneclient-1, oneclient-1, oneclient-2, oneclient-2] respectively,
       using [token, token, token, token] by [rob, marie, rob, marie]
-    When rob creates directories [krk-pl-par-c/dir1] on client21
+    When rob succeeds to create directories [krk-pl-par-c/dir1] on client21
     And rob creates regular files [krk-pl-par-c/dir1/file1] on client21
     And rob sees [file1] in krk-pl-par-c/dir1 on client21
     And rob changes krk-pl-par-c/dir1 mode to 755 on client21
@@ -52,7 +52,7 @@ Feature: LUMA acceptance tests using multiple providers
     Given oneclients [client11, client21]
       mounted on client_hosts [oneclient-1, oneclient-2] respectively,
       using [token, token] by [rob, rob]
-    When rob creates directories [krk-plirw-par-c/Landsat-2] on client21
+    When rob succeeds to create directories [krk-plirw-par-c/Landsat-2] on client21
     And rob creates regular files [krk-plirw-par-c/Landsat-2/file1] on client21
     # wait to ensure synchronization between providers
     And rob is idle for 10 seconds

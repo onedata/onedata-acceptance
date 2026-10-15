@@ -41,7 +41,7 @@ Feature: Regular_file_CRUD
 
 
   Scenario: Write to regular file and assert size after listing
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     And user1 creates regular files [space1/dir1/file1]
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/file1
     Then user1 sees file1 in space1/dir1
@@ -66,7 +66,7 @@ Feature: Regular_file_CRUD
 
     
   Scenario: Move regular file and read
-    When user1 creates directory and parents [space1/dir1/dir2, space1/dir3]
+    When user1 creates directory and parents [space1/dir1/dir2, space1/dir3] on client1
     And user1 creates regular files [space1/dir1/dir2/file1]
     And user1 sees [file1] in space1/dir1/dir2
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1
@@ -81,7 +81,7 @@ Feature: Regular_file_CRUD
 
     
   Scenario: Move big regular file and check MD5
-    When user1 creates directory and parents [space1/dir1/dir2, space1/dir3]
+    When user1 creates directory and parents [space1/dir1/dir2, space1/dir3] on client1
     And user1 creates regular files [space1/dir1/dir2/file1]
     And user1 sees [file1] in space1/dir1/dir2
     And user1 writes 32 MB of random characters to space1/dir1/dir2/file1 and saves MD5
@@ -94,7 +94,7 @@ Feature: Regular_file_CRUD
 
     
   Scenario: Copy regular file and read
-    When user1 creates directory and parents [space1/dir1/dir2, space1/dir3]
+    When user1 creates directory and parents [space1/dir1/dir2, space1/dir3] on client1
     And user1 creates regular files [space1/dir1/dir2/file1]
     And user1 sees [file1] in space1/dir1/dir2
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1
@@ -111,7 +111,7 @@ Feature: Regular_file_CRUD
 
     
   Scenario: Copy big regular file and check MD5
-    When user1 creates directory and parents [space1/dir1/dir2, space1/dir3]
+    When user1 creates directory and parents [space1/dir1/dir2, space1/dir3] on client1
     And user1 creates regular files [space1/dir1/dir2/file1]
     And user1 sees [file1] in space1/dir1/dir2
     And user1 writes 32 MB of random characters to space1/dir1/dir2/file1 and saves MD5
@@ -123,7 +123,7 @@ Feature: Regular_file_CRUD
 
     
   Scenario: Delete file copied right after read
-    When user1 creates directory and parents [space1/dir1/dir2]
+    When user1 creates directory and parents [space1/dir1/dir2] on client1
     And user1 creates regular files [space1/dir1/dir2/file1]
     And user1 sees [file1] in space1/dir1/dir2
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1
@@ -133,7 +133,7 @@ Feature: Regular_file_CRUD
 
     
   Scenario: Restart provider with active oneclient connection
-    When user1 creates directory and parents [space1/dir1/dir2]
+    When user1 creates directory and parents [space1/dir1/dir2] on client1
     And user1 creates regular files [space1/dir1/dir2/file1]
     And user1 sees [file1] in space1/dir1/dir2
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1
@@ -142,7 +142,7 @@ Feature: Regular_file_CRUD
 
 
   Scenario: Restart provider network for short time with active oneclient connection
-    When user1 creates directory and parents [space1/dir1/dir2]
+    When user1 creates directory and parents [space1/dir1/dir2] on client1
     And user1 creates regular files [space1/dir1/dir2/file1]
     And user1 sees [file1] in space1/dir1/dir2
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1
@@ -151,7 +151,7 @@ Feature: Regular_file_CRUD
 
 
   Scenario: Restart provider network for long time with active oneclient connection
-    When user1 creates directory and parents [space1/dir1/dir2]
+    When user1 creates directory and parents [space1/dir1/dir2] on client1
     And user1 creates regular files [space1/dir1/dir2/file1]
     And user1 sees [file1] in space1/dir1/dir2
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1

@@ -7,8 +7,7 @@ Feature: Multi_directory_CRUD
 
     
   Scenario: Create directory
-    When user1 creates directories [space1/dir1, space1/dir2, space1/dir3]
-      on client11
+    When user1 succeeds to create directories [space1/dir1, space1/dir2, space1/dir3] on client11
     Then user1 can stat [dir1, dir2, dir3] in space1 on client11
     And user2 can stat [dir1, dir2, dir3] in space1 on client21
     Then user1 sees [dir1, dir2, dir3] in space1 on client11
@@ -16,12 +15,12 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Clean everything after creating directory and hidden directory
-    When user1 creates directories [space1/dir1, space1/dir2, space1/dir3] on client11
+    When user1 succeeds to create directories [space1/dir1, space1/dir2, space1/dir3] on client11
     And user1 can stat [dir1, dir2, dir3] in space1 on client11
     And user2 can stat [dir1, dir2, dir3] in space1 on client21
     And user1 sees [dir1, dir2, dir3] in space1 on client11
     And user2 sees [dir1, dir2, dir3] in space1 on client21
-    And user2 creates directories [space1/.dir4] on client21
+    And user2 succeeds to create directories [space1/.dir4] on client21
     # waiting for synchronization and not listing directory is intentional
     # we want to purge spaces without listing or stating hidden directory
     And user1 is idle for 10 seconds
@@ -66,7 +65,7 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Rename own directory
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 renames space1/dir1 to space1/dir2 on client11
     Then user1 can stat [dir2] in space1 on client11
     And user2 can stat [dir2] in space1 on client21
@@ -79,7 +78,7 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Delete someone's empty directory
-    When user2 creates directories [space1/dir1] on client21
+    When user2 succeeds to create directories [space1/dir1] on client21
     And user1 sees [dir1] in space1 on client11
     And user1 deletes directories (rmdir) [space1/dir1] on client11
     And user1 doesn't see [dir1] in space1 on client11
@@ -100,7 +99,7 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Delete own empty directory
-    When user2 creates directories [space1/dir1] on client21
+    When user2 succeeds to create directories [space1/dir1] on client21
     And user1 sees [dir1] in space1 on client11
     And user2 deletes directories (rmdir) [space1/dir1] on client21
     Then user1 can't stat [dir1] in space1 on client11
@@ -115,16 +114,16 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Fail to create file in directory without write permission
-    When user2 creates directories [space1/dir1] on client21
+    When user2 succeeds to create directories [space1/dir1] on client21
     And user2 changes space1/dir1 mode to 755 on client21
     And mode of user1's space1/dir1 is 755 on client11
     And user1 fails to create directories [space1/dir1/dir2] on client11
 
 
   Scenario: Delete directory right after deleting its subdirectory by other client
-    When user2 creates directories [space1/dir1] on client21
+    When user2 succeeds to create directories [space1/dir1] on client21
     And user1 sees [dir1] in space1 on client11
-    And user1 creates directories [space1/dir1/dir2] on client11
+    And user1 succeeds to create directories [space1/dir1/dir2] on client11
     Then user2 sees [dir2] in space1/dir1 on client21
     Then user1 deletes directories (rm -rf) [space1/dir1/dir2] on client11
     Then user1 can't stat [dir2] in space1/dir1 on client11
@@ -134,9 +133,9 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Create file in directory with write permission
-    When user2 creates directories [space1/dir1] on client21
+    When user2 succeeds to create directories [space1/dir1] on client21
     And user1 sees [dir1] in space1 on client11
-    And user1 creates directories [space1/dir1/dir2] on client11
+    And user1 succeeds to create directories [space1/dir1/dir2] on client11
     Then user2 can stat [dir2] in space1/dir1 on client21
     And user1 can stat [dir2] in space1/dir1 on client11
     Then user2 sees [dir2] in space1/dir1 on client21
@@ -175,11 +174,11 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Recreate directory deleted by other user
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user2 sees [dir1] in space1 on client21
     And user1 deletes directories (rmdir) [space1/dir1] on client11
     And user2 doesn't see [dir1] in space1 on client21
-    And user2 creates directories [space1/dir1] on client21
+    And user2 succeeds to create directories [space1/dir1] on client21
     Then user2 can stat [dir1] in space1 on client21
     And user1 can stat [dir1] in space1 on client11
     Then user2 sees [dir1] in space1 on client21
@@ -187,8 +186,7 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Create child directories
-    When user1 creates directory and parents [space1/dir1/child1, space1/dir1/child2, space1/dir1/child3]
-      on client11
+    When user1 creates directory and parents [space1/dir1/child1, space1/dir1/child2, space1/dir1/child3] on client11
     Then user1 can stat [child1, child2, child3] in space1/dir1 on client11
     And user2 can stat [child1, child2, child3] in space1/dir1 on client21
     Then user1 sees [child1, child2, child3] in space1/dir1 on client11
@@ -196,8 +194,7 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Create child directories 2
-    When user2 creates directory and parents [space1/dir1/dir2/dir3/child1, space1/dir1/dir2/child1, space1/dir1/child1]
-      on client21
+    When user2 creates directory and parents [space1/dir1/dir2/dir3/child1, space1/dir1/dir2/child1, space1/dir1/child1] on client21
     Then user1 can stat [dir2, child1] in space1/dir1 on client11
     And user2 can stat [dir2, child1] in space1/dir1 on client21
     And user1 can stat [dir3, child1] in space1/dir1/dir2 on client11
@@ -213,7 +210,7 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Fail to create a duplicate directory
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user2 sees [dir1] in space1 on client21
     And user2 fails to create directories [space1/dir1] on client21
 
@@ -234,7 +231,7 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Fail to delete non-empty directory using rmdir
-    When user2 creates directories [space1/dir1, space1/dir1/child1] on client21
+    When user2 succeeds to create directories [space1/dir1, space1/dir1/child1] on client21
     And user1 sees [dir1] in space1 on client11
     And user2 sees [dir1] in space1 on client21
     And user1 sees [child1] in space1/dir1 on client11
@@ -252,8 +249,7 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Delete non-empty directory
-    When user1 creates directory and parents [space1/dir1/child1, space1/dir1/child2, space1/dir2/dir3/child1]
-      on client11
+    When user1 creates directory and parents [space1/dir1/child1, space1/dir1/child2, space1/dir2/dir3/child1] on client11
     And user1 sees [dir1, dir2] in space1 on client11
     And user2 sees [dir1, dir2] in space1 on client21
     And user1 sees [child1, child2] in space1/dir1 on client11
@@ -317,7 +313,7 @@ Feature: Multi_directory_CRUD
 
 
   Scenario: Fail to move directory to itself
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 sees [dir1] in space1 on client11
     And user2 sees [dir1] in space1 on client21
     And user1 fails to move space1/dir1 to space1/dir1 using shell command on client11

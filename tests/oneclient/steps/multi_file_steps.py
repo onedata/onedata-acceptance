@@ -20,7 +20,7 @@ from collections.abc import Callable, Mapping
 import jsondiff
 import pytest
 
-from tests.oneclient.steps.multi_dir_steps import create
+from tests.oneclient.steps.multi_dir_steps import try_to_create_directory
 from tests.type_definitions import Hosts
 from tests.utils.acceptance_utils import compare, list_parser, make_arg_list, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
@@ -122,7 +122,8 @@ def create_target_file(
     dir_name: str,
 ) -> str:
     space = file_name.split("/", maxsplit=1)[0]
-    create(user, f"[{space}/{dir_name}]", client_node, users, exists_ok=True)
+    directory_path = f"[{space}/{dir_name}]"
+    try_to_create_directory(user, client_node, directory_path, users, exist_ok=True)
     file_name_hash = "".join(
         random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
     )

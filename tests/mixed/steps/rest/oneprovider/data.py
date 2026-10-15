@@ -8,7 +8,7 @@ from collections.abc import Iterable, Mapping
 from datetime import datetime
 from functools import partial
 from http import HTTPStatus
-from typing import cast
+from typing import Literal, cast
 
 import pytest
 import yaml
@@ -126,7 +126,12 @@ def assert_num_of_files_in_path_in_op_rest(
 
 
 def create_dir_in_op_rest(
-    user: str, users: Users, host: str, hosts: Hosts, path: str, result: str
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    path: str,
+    result: Literal["succeeds", "fails"],
 ) -> None:
     client = login_to_cdmi(user, users, hosts[host]["hostname"])
 
@@ -279,9 +284,9 @@ def create_item_in_op_rest(
     request: pytest.FixtureRequest,
 ) -> None:
     if name.startswith("dir"):
-        create_dir_in_op_rest(user, users, host, hosts, f"{cwd}/{name}", "")
+        create_dir_in_op_rest(user, users, host, hosts, f"{cwd}/{name}", "succeeds")
     else:
-        create_file_in_op_rest(user, users, host, hosts, f"{cwd}/{name}", "")
+        create_file_in_op_rest(user, users, host, hosts, f"{cwd}/{name}", "succeeds")
     if not content:
         return
     cwd += "/" + name

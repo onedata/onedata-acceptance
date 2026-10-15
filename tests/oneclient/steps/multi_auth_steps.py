@@ -12,7 +12,7 @@ from tests.type_definitions import EnvDesc, Hosts
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, then
 from tests.utils.user_utils import Users
-from tests.utils.utils import assert_
+from tests.utils.utils import repeat_failed
 
 
 @given(
@@ -28,7 +28,7 @@ from tests.utils.utils import assert_
         "user_names": parse_elements_sequence,
     },
 )
-def multi_mount(
+def mount_multiple_clients(
     user_names: list[str],
     client_ids: list[str],
     client_hosts: list[str],
@@ -56,24 +56,29 @@ def multi_mount(
         )
 
 
-@then(parsers.re(r"(?P<spaces>.*) are mounted for (?P<user_name>\w+) on (?P<client_nodes>.*)"))
-def check_spaces(spaces: str, user_name: str, client_nodes: str, users: Users) -> None:
-    expected_spaces = list_parser(spaces)
-    client_node_names = list_parser(client_nodes)
+def assert_spaces_found_in_client(
+    user: str, client_node: str, expected_spaces: list[str], users: Users
+) -> None:
+    client = users[user].clients[client_node]
 
-    for client_node in client_node_names:
-        user = users[user_name]
-        client = user.clients[client_node]
+    @repeat_failed(timeout=client.timeout, interval=1)
+    def assert_action() -> None:
         spaces_in_client = client.list_spaces()
+        for space in expected_spaces:
+            assert space in spaces_in_client, (
+                f"Space {expected_spaces} not found in spaces list"
+                f" {spaces_in_client} on client {client_node}"
+            )
 
-        def condition(
-            spaces_to_check: list[str] = spaces_in_client,
-            checked_client_node: str = client_node,
-        ) -> None:
-            for space in expected_spaces:
-                assert space in spaces_to_check, (
-                    f"Space {expected_spaces} not found in spaces list"
-                    f" {spaces_to_check} on client {checked_client_node}"
-                )
+    assert_action()
 
-        assert_(client.perform, condition)
+
+@then(
+    parsers.parse("{spaces} are mounted for {user_name} on {client_nodes}"),
+    converters={"spaces": list_parser, "client_nodes": list_parser},
+)
+def assert_spaces_found_for_each_client(
+    spaces: list[str], user_name: str, client_nodes: list[str], users: Users
+) -> None:
+    for client_node in client_nodes:
+        assert_spaces_found_in_client(user_name, client_node, spaces, users)
