@@ -147,8 +147,8 @@ _Type_check:
   - script:
       interpreter: SHELL
       scripts:
-      - submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata-acceptance
+      - ./onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} ../../branchConfig.yaml
+      working-dir: onedata-acceptance/submodules/one-env
       description: Download artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE

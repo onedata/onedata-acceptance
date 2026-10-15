@@ -346,8 +346,9 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-            submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            echo ./onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} ../../branchConfig.yaml
+            ./onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} ../../branchConfig.yaml
+        working-dir: onedata-acceptance/submodules/one-env
         description: Download artifacts
     - script: &run-selenium-tests
         <<: *run-script-working-dir
@@ -379,7 +380,7 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/gui/logs
-            cp onedata-acceptance/sources_info.yaml onedata-acceptance/tests/gui/logs
+            cp onedata-acceptance/submodules/one-env/sources_info.yaml onedata-acceptance/tests/gui/logs
             mv onedata-acceptance/tests/gui/logs/report.* onedata-acceptance/tests/gui/logs/gui_report
             mv onedata-acceptance/tests/gui/logs/gui_report/images.yaml onedata-acceptance/tests/gui/logs
         description: Pack logs

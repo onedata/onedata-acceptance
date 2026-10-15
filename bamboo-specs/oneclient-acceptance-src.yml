@@ -357,8 +357,9 @@ authorization: &acceptance-oneclient-tests-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-            submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            echo ./onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} ../../branchConfig.yaml
+            ./onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} ../../branchConfig.yaml
+        working-dir: onedata-acceptance/submodules/one-env
         description: Download artifacts
     - script: &run-acceptance-tests
         <<: *run-script-working-dir
