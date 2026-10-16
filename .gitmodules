@@ -15,11 +15,11 @@
     url = ../cdmi-swagger.git
     branch = develop
 [submodule "bamboos"]
-	path = submodules/bamboos
+	path = bamboos
 	url = ../bamboos.git
 	branch = develop
 [submodule "one-env"]
-	path = submodules/one-env
+	path = one-env
 	url = ../one-env.git
     branch = develop
 [submodule "automation-examples"]
