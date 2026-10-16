@@ -93,7 +93,7 @@ document: [one-env guide](https://git.onedata.org/projects/VFS/repos/onedev/brow
 
 To start Onedata deployment, navigate to the `one-env` directory in 
 [one-env](https://git.onedata.org/projects/VFS/repos/one-env/browse) repository
-or to [one-env](submodules/one-env) submodule in the onedata-acceptance repository and run:
+or to [one-env](one-env) submodule in the onedata-acceptance repository and run:
 
  ```
 ./onenv up -f test_env_config.yaml 

@@ -315,12 +315,12 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
           - |-
             #!/bin/bash
             ARTIFACT="surefire_${bamboo_shortJobName// /_}.tar.gz"
-            echo ./submodules/bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+            echo ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
                 --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
                 --artifact-name ${ARTIFACT}
             let c=3
             while : ; do
-                ./submodules/bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
                     --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
                     --artifact-name ${ARTIFACT}
                 tar zxf ${ARTIFACT}
@@ -346,8 +346,8 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
-            submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+            echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+            one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
         description: Download artifacts
     - script: &run-selenium-tests
         <<: *run-script-working-dir
@@ -367,10 +367,10 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
             #!/bin/bash
             ARTIFACT=surefire_${bamboo_shortJobName// /_}.tar.gz
             tar czf ${ARTIFACT} test-reports/results*.xml
-            echo ./submodules/bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+            echo ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
                 --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
                 --artifact-name ${ARTIFACT}
-            ./submodules/bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+            ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
                 --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
                 --artifact-name ${ARTIFACT}
         description: Pack and push surefire artifact
@@ -379,7 +379,7 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/gui/logs
-            cp onedata-acceptance/submodules/one-env/sources_info.yaml onedata-acceptance/tests/gui/logs
+            cp onedata-acceptance/sources_info.yaml onedata-acceptance/tests/gui/logs
             mv onedata-acceptance/tests/gui/logs/report.* onedata-acceptance/tests/gui/logs/gui_report
             mv onedata-acceptance/tests/gui/logs/gui_report/images.yaml onedata-acceptance/tests/gui/logs
         description: Pack logs
