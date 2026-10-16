@@ -166,8 +166,8 @@ _Type_check:
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - |-
-        cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
-        cp onedata-acceptance/sources_info.yaml onedata-acceptance/tests/oneclient/logs
+        cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/upgrade/logs
+        cp onedata-acceptance/sources_info.yaml onedata-acceptance/tests/upgrade/logs
         mv onedata-acceptance/tests/upgrade/logs/*/*/images.yaml onedata-acceptance/tests/upgrade/logs
         tar czf test_logs.tar.gz onedata-acceptance/tests/upgrade/logs
       description: Pack logs
