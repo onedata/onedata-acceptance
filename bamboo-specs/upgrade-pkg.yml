@@ -147,7 +147,7 @@ _Type_check:
   - script:
       interpreter: SHELL
       scripts:
-      - submodules/one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+      - one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
       working-dir: onedata-acceptance
       description: Download artifacts
   - script:
@@ -167,7 +167,7 @@ _Type_check:
       scripts:
       - |-
         cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
-        cp onedata-acceptance/submodules/one-env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
+        cp onedata-acceptance/sources_info.yaml onedata-acceptance/tests/oneclient/logs
         mv onedata-acceptance/tests/upgrade/logs/*/*/images.yaml onedata-acceptance/tests/upgrade/logs
         tar czf test_logs.tar.gz onedata-acceptance/tests/upgrade/logs
       description: Pack logs
