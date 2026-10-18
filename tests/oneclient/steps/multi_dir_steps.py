@@ -19,7 +19,7 @@ from tests.utils.bdd_utils import given, parsers, when, wt
 from tests.utils.client_utils import Client
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.user_utils import Users
-from tests.utils.utils import assert_generic, repeat_failed
+from tests.utils.utils import assert_with_expected_fail, repeat_failed
 
 
 def try_to_create_directory(
@@ -34,15 +34,16 @@ def try_to_create_directory(
     client = users[user].clients[client_node]
     absolute_path = client.absolute_path(dir_name)
 
-    @repeat_failed(timeout=client.timeout, interval=1)
-    def assert_action() -> None:
-        try:
-            client.mkdir(absolute_path, recursive=recursive, exist_ok=exist_ok)
-        except OSError as e:
-            if not should_fail:
-                raise AssertionError("Failed to create directory") from e
+    def condition() -> None:
+        client.mkdir(absolute_path, recursive=recursive, exist_ok=exist_ok)
 
-    assert_action()
+    assert_with_expected_fail(
+        condition,
+        timeout=client.timeout,
+        should_fail=should_fail,
+        message="Directory creation succeeded, expected it to fail",
+        exceptions=OSError if should_fail else Exception,
+    )
 
 
 @wt(
@@ -253,19 +254,23 @@ def list_dirs_base(
 ) -> list[str]:
     client = users[user].clients[client_node]
     path = client.absolute_path(directory)
-    path_content = []
+    path_content: list[str] = []
 
-    def condition() -> bool:
+    def condition() -> None:
         try:
             content = client.ls(path=path)
-            path_content.extend(content)
         except OSError as ex:
             if ex.errno == errno.EPERM:
-                return bool(should_fail)
-            raise ex
-        return not bool(should_fail)
+                raise PermissionError(ex.errno, ex.strerror, ex.filename) from ex
+            raise
+        path_content[:] = content
 
-    assert_generic(client.perform, should_fail, condition)
+    assert_with_expected_fail(
+        condition,
+        client.timeout,
+        should_fail=should_fail,
+        exceptions=PermissionError if should_fail else Exception,
+    )
     return path_content
 
 
