@@ -19,6 +19,7 @@ from decorator import decorator
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL
+from tests.type_definitions import IgnoredExceptions
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -82,7 +83,7 @@ def repeat_failed(
     attempts: int = 10,
     timeout: float | None = None,
     interval: float = 0.1,
-    exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
+    exceptions: IgnoredExceptions = (Exception,),
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """Returns wrapper on function, which keeps calling it until timeout or
     for attempts times in case of failure (exception).
@@ -122,7 +123,7 @@ def perform_action_with_timeout[ActionResultT](
     action: Callable[[], ActionResultT],
     /,
     timeout: float,
-    ignored_exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
+    ignored_exceptions: IgnoredExceptions = (Exception,),
     interval: float = 0.1,
 ) -> ActionResultT:
     @repeat_failed(timeout=timeout, exceptions=ignored_exceptions, interval=interval)

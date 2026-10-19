@@ -88,3 +88,5 @@ class EnvDesc(TypedDict, total=False):
     scenario: str
     patch: str
     entities_config: str
+
+type IgnoredExceptions = type[BaseException] | tuple[type[BaseException], ...]

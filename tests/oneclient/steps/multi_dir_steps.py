@@ -12,6 +12,7 @@ import subprocess as sp
 import time
 from typing import Literal
 
+from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
 from tests.type_definitions import Hosts
 from tests.utils import ONECLIENT_MOUNT_DIR
 from tests.utils.acceptance_utils import list_parser
@@ -19,7 +20,7 @@ from tests.utils.bdd_utils import given, parsers, when, wt
 from tests.utils.client_utils import Client
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.user_utils import Users
-from tests.utils.utils import assert_with_expected_fail, repeat_failed
+from tests.utils.utils import assert_with_expected_fail, perform_action_with_timeout
 
 
 def try_to_create_directory(
@@ -89,7 +90,6 @@ def try_to_remove_directory(
     client = user.clients[client_node]
     absolute_path = client.absolute_path(dir_name)
 
-    @repeat_failed(timeout=client.timeout, interval=1)
     def assert_action() -> None:
         try:
             client.rmdir(absolute_path)
@@ -97,7 +97,7 @@ def try_to_remove_directory(
             if not should_fail:
                 raise AssertionError("Failed to create base directory") from e
 
-    assert_action()
+    perform_action_with_timeout(assert_action, client.timeout, interval=INTERVAL)
 
 
 def delete_empty_base(
@@ -175,11 +175,10 @@ def force_remove_directory(user_name: str, client_node: str, dir_path: str, user
     client = user.clients[client_node]
     absolute_path = client.absolute_path(dir_path)
 
-    @repeat_failed(timeout=client.timeout, interval=1)
     def assert_action() -> None:
         client.rm(absolute_path, recursive=True, force=True)
 
-    assert_action()
+    perform_action_with_timeout(assert_action, client.timeout, interval=INTERVAL)
 
 
 @wt(
@@ -225,11 +224,10 @@ def remove_directory(user_name: str, client_node: str, dir_path: str, users: Use
     client = user.clients[client_node]
     absolute_path = client.absolute_path(dir_path)
 
-    @repeat_failed(timeout=client.timeout, interval=1)
     def assert_action() -> None:
         client.rmdir(absolute_path, recursive=True)
 
-    assert_action()
+    perform_action_with_timeout(assert_action, client.timeout, interval=INTERVAL)
 
 
 @when(
@@ -295,11 +293,10 @@ def copy_dir(user: str, dir1: str, dir2: str, client_node: str, users: Users) ->
     src_path = client.absolute_path(dir1)
     dest_path = client.absolute_path(dir2)
 
-    @repeat_failed(timeout=client.timeout, interval=1)
     def assert_action() -> None:
         client.cp(src_path, dest_path, recursive=True)
 
-    assert_action()
+    perform_action_with_timeout(assert_action, client.timeout, interval=INTERVAL)
 
 
 @given(
