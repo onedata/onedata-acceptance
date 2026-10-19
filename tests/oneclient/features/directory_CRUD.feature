@@ -116,10 +116,18 @@ Feature: Directory_CRUD
     And user1 sees [dir2] in space1/dir1
     And user1 sees [dir3] in space1/dir1/dir2
     And user1 sees [dir5] in space1/dir4
+
+    And user1 doesn't see [dir4] in space1/dir1/dir2/dir3
+    And user1 can't stat [dir4] in space1/dir1/dir2/dir3
+
     And user1 copies directory space1/dir4 to space1/dir1/dir2/dir3 on client1
+
     Then user1 can stat [dir5] in space1/dir4
+    And user1 sees [dir5] in space1/dir4
+
+    And user1 sees [dir4] in space1/dir1/dir2/dir3
+
     And user1 can stat [dir5] in space1/dir1/dir2/dir3/dir4
-    Then user1 sees [dir5] in space1/dir4
     And user1 sees [dir5] in space1/dir1/dir2/dir3/dir4
 
 

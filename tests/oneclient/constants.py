@@ -2,4 +2,4 @@
 
 from typing import Final
 
-ONECLIENT_REPEATS_INTERVAL: Final[float] = 0.5
+ONECLIENT_REPEATS_INTERVAL: Final[float] = 1.0
