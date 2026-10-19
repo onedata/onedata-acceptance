@@ -19,6 +19,7 @@ from tests.gui.meta_steps.onezone.space_marketplace import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.common.browser_creation import *
+from tests.gui.steps.common.common import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.login import *

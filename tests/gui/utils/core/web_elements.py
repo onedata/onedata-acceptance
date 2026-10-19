@@ -159,12 +159,12 @@ class AceEditor(WebElement):
         driver = instance.web_elem.parent
         selector = self.css_selector + " .ace_text-input"
         script = (
-            f"var textarea = document.querySelector('{selector}');"
-            f"textarea.value = '{val}';"
+            "var textarea = document.querySelector(arguments[0]);"
+            "textarea.value = arguments[1];"
             "textarea.dispatchEvent(new Event('input', { bubbles: true}));"
             "return textarea.value"
         )
-        inserted_val = driver.execute_script(script)
+        inserted_val = driver.execute_script(script, selector, val)
         msg = f"Inserted val is {inserted_val} instead of {val}"
         assert val == inserted_val, msg
 

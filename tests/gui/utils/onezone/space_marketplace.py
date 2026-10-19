@@ -9,8 +9,10 @@ from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     NamedButton,
+    WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.onezone.generic_page import ListPage
 from tests.gui.utils.onezone.space_configuration_subpage import SpaceTag
 
 
@@ -19,7 +21,7 @@ class SpaceSupportItem(PageObject):
 
 
 class MarketplaceSpace(PageObject):
-    space_name = id = Label(".space-name .item-name")
+    name = id = Label(".space-name .item-name")
     tags_list = WebItemsSequence(".tags-input .tag-item", cls=SpaceTag)
     access_info = Label(".access-info-head-container")
 
@@ -34,9 +36,10 @@ class MarketplaceSpace(PageObject):
 
     show_description_button = Button(".expand-btn")
     description = Label(".marketplace-space-description")
+    description_element = WebElement(".marketplace-space-description")
 
 
-class SpaceMarketplacePage(PageObject):
+class SpaceMarketplacePage(ListPage):
     advertise_space_button = NamedButton(".one-button", text="Advertise your space")
     spaces_marketplace_list = WebItemsSequence(
         ".spaces-marketplace-list .spaces-marketplace-item",

@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from datetime import date
 
+from selenium.webdriver.common.by import By
+
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
@@ -41,7 +43,6 @@ def assert_marketplace_icon_in_space_sidebar(
 ) -> None:
     driver = selenium[browser_id]
     error_message = f"Space: {space_name} does not have marketplace indicator visible"
-
     assert OZLoggedIn(driver).data.spaces_list[space_name].advertised_icon, error_message
 
 
@@ -69,7 +70,6 @@ def assert_element_in_space_marketplace(
     element_type: str,
     element_data: str,
 ) -> None:
-
     space = get_space_from_marketplace_list(selenium, browser_id, space_name)
     element = getattr(space, transform(element_type))
     name_of_element = element_type.capitalize()
@@ -103,3 +103,31 @@ def assert_elements_list_in_space_marketplace(
             " list in advertised "
             f"space: {space_name}"
         )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees "{space_name}" advertised space description '
+        'with "{expected_header}" header and "{expected_paragraph}" paragraph'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_advertised_space_description(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    expected_header: str,
+    expected_paragraph: str,
+) -> None:
+    space = get_space_from_marketplace_list(selenium, browser_id, space_name)
+    description = space.description_element
+    header = description.find_element(By.CSS_SELECTOR, "h1")
+    paragraph = description.find_element(By.CSS_SELECTOR, "p")
+    assert header.is_displayed(), "Header is not displayed"
+    assert header.text == expected_header, (
+        f"Header should be '{expected_header}', but is '{header.text}'"
+    )
+    assert paragraph.is_displayed(), "Paragraph is not displayed"
+    assert paragraph.text == expected_paragraph, (
+        f"Paragraph should be '{expected_paragraph}', but is '{paragraph.text}'"
+    )

@@ -17,9 +17,11 @@ Feature: Basic management of Space Marketplace
 
 
   Scenario: User sees own space in the Marketplace after configuring it
-    When user of browser clicks "Overview" of "space1" space in the sidebar
-    And user of browser sees that the space is not advertised in the Marketplace tile in space overview subpage
-    And user of browser clicks "Configure advertisement" link in the Marketplace tile in space overview subpage
+    When user of browser clicks on "Data" in the main menu
+    And user of browser clicks on "Marketplace" button in spaces sidebar
+    And user of browser clicks on "Advertise your space" button in Space Marketplace subpage
+    And user of browser chooses "space1" in spaces dropdown menu in modal "Advertise space"
+    And user of browser clicks on "Configure..." button in modal "Advertise space"
     And user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
     And user of browser sets space configuration as follows:
         space name: "space1"
@@ -30,7 +32,7 @@ Feature: Basic management of Space Marketplace
             - big-data
           domains:
             - science
-        description: "Example of a space advertised in a Marketplace"
+        description: "# Example space\nExample of a space advertised in a Marketplace"
 
     And user of browser checks "Advertise in Marketplace" toggle on space configuration page
     And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
@@ -42,6 +44,7 @@ Feature: Basic management of Space Marketplace
     And user of browser clicks "Overview" of "space1" space in the sidebar
     Then user of browser sees that the space is advertised in the Marketplace tile in space overview subpage
     And user of browser clicks "Show" link in the Marketplace tile in space overview subpage
+    Then user of browser can see there are 1 spaces marketplace on the spaces marketplace list in the sidebar
     And user of browser sees advertised space on Space Marketplace subpage with following parameters:
         space name: "space1"
         tags:
@@ -52,7 +55,7 @@ Feature: Basic management of Space Marketplace
         creation time: current
         providers:
           - dev-oneprovider-krakow
-        description: "Example of a space advertised in a Marketplace"
+    And user of browser sees "space1" advertised space description with "Example space" header and "Example of a space advertised in a Marketplace" paragraph
 
 
   Scenario: User is asked about unsaved changes in space configuration subpage and can save them

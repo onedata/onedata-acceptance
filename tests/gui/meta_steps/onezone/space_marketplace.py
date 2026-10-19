@@ -82,7 +82,7 @@ def _configure_space_manually(
 
     space_name = data[space_name_option]
     organization_name = data[organization_name_option]
-    tags = data.get("tags", False)
+    tags = data.get("tags", None)
     description = data["description"]
 
     set_space_data_in_configuration_tab(
@@ -174,7 +174,11 @@ def _assert_space_in_marketplace_with_config(
     creation_time = data[creation_time_option]
     tags = data.get("tags", False)
     providers = data.get("providers", False)
-    description = data[description_option]
+    description = data.get(description_option, None)
+
+    assert_element_in_space_marketplace(
+        selenium, browser_id, space_name, "access_info", "Membership granted"
+    )
 
     assert_element_in_space_marketplace(
         selenium,
@@ -200,10 +204,11 @@ def _assert_space_in_marketplace_with_config(
             selenium, browser_id, space_name, "provider", providers
         )
 
-    assert_element_in_space_marketplace(
-        selenium,
-        browser_id,
-        space_name,
-        description_option,
-        description,
-    )
+    if description:
+        assert_element_in_space_marketplace(
+            selenium,
+            browser_id,
+            space_name,
+            description_option,
+            description,
+        )
