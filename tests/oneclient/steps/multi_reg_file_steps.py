@@ -5,9 +5,14 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
 from tests.utils.bdd_utils import parsers, then, when, wt
 from tests.utils.user_utils import Users
-from tests.utils.utils import assert_, assert_expected_failure, assert_generic
+from tests.utils.utils import (
+    assert_expected_failure,
+    assert_with_expected_fail,
+    perform_action_with_timeout,
+)
 
 from . import multi_file_steps
 
@@ -27,7 +32,7 @@ def write_text_base(
     def condition() -> None:
         client.write(str(text), file_path)
 
-    assert_generic(client.perform, should_fail, condition, timeout=0)
+    assert_with_expected_fail(condition, should_fail=should_fail, timeout=0)
 
 
 @wt(
@@ -54,7 +59,7 @@ def write_opened(user: str, text: str, file: str, client_node: str, users: Users
     def condition() -> None:
         client.write_to_opened_file(file_path, text)
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @when(
@@ -76,7 +81,7 @@ def write_at_offset(
         f.write(data.encode("utf-8"))
         f.close()
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(
@@ -104,7 +109,7 @@ def count_md5(
         context["md5"] = client.md5sum(file_path)
         assert context["md5"] is not None
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(
@@ -132,7 +137,7 @@ def write_rand_text(
         )
         count_md5(user_name, file, client_node, users, context)
 
-    assert_(client.perform, condition, timeout=0)
+    perform_action_with_timeout(condition, timeout=0)
     users[user_name].mark_last_operation_succeeded()
 
 
@@ -153,7 +158,7 @@ def read_text(user: str, text: str, file: str, client_node: str, users: Users) -
             f"Read {_read_text!r} instead of expected {text} on {client_node}"
         )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(
@@ -171,7 +176,7 @@ def read_opened(user: str, text: str, file: str, client_node: str, users: Users)
         _read_text = client.read_from_opened_file(client.absolute_path(file))
         assert _read_text == text, f"Read {_read_text} instead of expected {text} on {client_node}"
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(parsers.re(r'(?P<user>\w+) reads "" from file (?P<file>.*) on (?P<client_node>.*)'))
@@ -188,7 +193,7 @@ def cannot_read(user: str, file: str, client_node: str, users: Users) -> None:
     def condition() -> None:
         assert_expected_failure(client.read, file_path)
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @when(parsers.re(r'(?P<user>\w+) appends "(?P<text>.*)" to (?P<file>.*) on (?P<client_node>.*)'))
@@ -200,7 +205,7 @@ def append(user: str, text: str, file: str, client_node: str, users: Users) -> N
     def condition() -> None:
         client.write(str(text), file_path, mode="a")
 
-    assert_(client.perform, condition, timeout=0)
+    perform_action_with_timeout(condition, timeout=0)
 
 
 @when(
@@ -218,7 +223,7 @@ def replace(user: str, text1: str, text2: str, file: str, client_node: str, user
         ret = client.replace_pattern(file_path, text1, text2)
         assert ret == 0
 
-    assert_(client.perform, condition, timeout=0)
+    perform_action_with_timeout(condition, timeout=0)
 
 
 @when(
@@ -236,7 +241,7 @@ def copy_reg_file(user: str, file: str, path: str, client_node: str, users: User
     def condition() -> None:
         client.cp(src_path, dest_path)
 
-    assert_(client.perform, condition, timeout=0)
+    perform_action_with_timeout(condition, timeout=0)
 
 
 @wt(parsers.re(r"(?P<user>\w+) checks MD5 of (?P<file>.*) on (?P<client_node>.*)"))
@@ -250,7 +255,7 @@ def check_md5(
         md5 = client.md5sum(client.absolute_path(file))
         assert md5 == context["md5"], f"Wrong MD5 of file {file}"
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 def do_truncate_base(
@@ -268,7 +273,7 @@ def do_truncate_base(
     def condition() -> None:
         client.truncate(file_path, int(new_size))
 
-    assert_generic(client.perform, should_fail, condition, timeout=0)
+    assert_with_expected_fail(condition, should_fail=should_fail, timeout=0)
 
 
 @wt(
@@ -301,7 +306,7 @@ def execute_script_base(
     def condition() -> None:
         client.execute(script_path)
 
-    assert_generic(client.perform, should_fail, condition, timeout=0)
+    assert_with_expected_fail(condition, should_fail=should_fail, timeout=0)
 
 
 @wt(parsers.re(r"(?P<user>\w+) executes (?P<script>.*) on (?P<client_node>.*)"))
@@ -357,4 +362,4 @@ def set_file_position(user: str, file: str, offset: str, client_node: str, users
     def condition() -> None:
         client.seek(file_path, int(offset))
 
-    assert_(client.perform, condition, timeout=0)
+    perform_action_with_timeout(condition, timeout=0)

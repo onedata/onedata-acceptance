@@ -5,17 +5,17 @@ Feature: Directory_stat
 
     
   Scenario: Check file type
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     Then file type of user1's space1/dir1 is directory
 
 
   Scenario: Check default access permissions
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     Then mode of user1's space1/dir1 is 775
 
 
   Scenario: Change access permissions
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     And user1 changes space1/dir1 mode to 211
     Then mode of user1's space1/dir1 is 211
     And user1 changes space1/dir1 mode to 755
@@ -23,15 +23,15 @@ Feature: Directory_stat
 
 
   Scenario: Timestamps at creation
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     Then modification time of user1's space1/dir1 is equal to access time
     And status-change time of user1's space1/dir1 is equal to access time
 
 
   Scenario: Update timestamps
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     And user1 is idle for 2 seconds
-    And user1 creates directories [space1/dir1/dir2]
+    And user1 succeeds to create directories [space1/dir1/dir2] on client1
     And user1 updates [space1/dir1] timestamps
     # aim of above step is to call touch on space1/dir1
     # after creation of subdir access time and
@@ -41,9 +41,9 @@ Feature: Directory_stat
 
 
   Scenario: Access time
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     And user1 is idle for 2 seconds
-    And user1 creates directories [space1/dir1/dir2]
+    And user1 succeeds to create directories [space1/dir1/dir2] on client1
     # two steps above ensure that access time is older than
     # modification time or status-change time and
     # will be modified on next access
@@ -55,16 +55,16 @@ Feature: Directory_stat
 
 
   Scenario: Modification time
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     And user1 is idle for 2 seconds
     # call sleep, to be sure that time of above and below operations is different
-    And user1 creates directories [space1/dir1/dir2]
+    And user1 succeeds to create directories [space1/dir1/dir2] on client1
     Then modification time of user1's space1/dir1 is greater than access time
     And modification time of user1's space1/dir1 is equal to status-change time
 
 
   Scenario: Status-change time when renaming
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     And user1 is idle for 2 seconds
     # call sleep, to be sure that time of above and below operations is different
     And user1 renames space1/dir1 to space1/dir2
@@ -73,7 +73,7 @@ Feature: Directory_stat
 
 
   Scenario: Status-change time when changing mode
-    When user1 creates directories [space1/dir1]
+    When user1 succeeds to create directories [space1/dir1] on client1
     And user1 is idle for 2 seconds
     # call sleep, to be sure that time of above and below operations is different
     And user1 changes space1/dir1 mode to 711

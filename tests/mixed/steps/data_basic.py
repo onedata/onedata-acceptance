@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import re
 from collections.abc import Mapping
-from typing import cast
+from typing import Literal, cast
 
 import pytest
 from _pytest._py.path import LocalPath
@@ -278,7 +278,7 @@ def create_file_in_op_with_tokens(
 
 @wt(
     parsers.re(
-        r"using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create "
+        r"using (?P<client>.*), (?P<user>\w+) (?P<result>succeeds|fails) to create "
         r'directory named "/(?P<abs_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'
     )
 )
@@ -292,7 +292,7 @@ def create_dir_in_op(
     tmp_memory: TmpMemory,
     host: str,
     selenium: SeleniumDrivers,
-    result: str,
+    result: Literal["succeeds", "fails"],
 ) -> None:
     cwd = "space root"
     full_path = f"{space}/{abs_path}"

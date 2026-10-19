@@ -10,7 +10,7 @@ import json
 import os
 from collections.abc import Iterable, Mapping
 from functools import partial
-from typing import cast
+from typing import Literal, cast
 
 import pytest
 import yaml
@@ -93,12 +93,10 @@ def mount_new_oneclient_result(
 
 
 def create_dir_in_op_oneclient(
-    user: str, full_path: str, users: Users, result: str, host: str
+    user: str, full_path: str, users: Users, result: Literal["fails", "succeeds"], host: str
 ) -> None:
-    if result == "fails":
-        multi_dir_steps.fail_to_create(user, full_path, host, users)
-    else:
-        multi_dir_steps.create(user, full_path, host, users)
+    should_fail = result == "fails"
+    multi_dir_steps.try_to_create_directory(user, host, full_path, users, should_fail=should_fail)
 
 
 def create_file_in_op_oneclient(
@@ -202,7 +200,7 @@ def create_item_in_op_oneclient(
     request: pytest.FixtureRequest,
 ) -> None:
     if name.startswith("dir"):
-        multi_dir_steps.create(user, f"{cwd}/{name}", host, users)
+        multi_dir_steps.try_to_create_directory(user, host, f"{cwd}/{name}", users)
     else:
         multi_file_steps.create_reg_file(user, f"{cwd}/{name}", host, users, request)
     if not content:

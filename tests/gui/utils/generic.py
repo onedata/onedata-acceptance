@@ -21,7 +21,7 @@ from tests import AUTOMATION_EXAMPLES_DIR, gui
 from tests.gui.constants import WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.utils import text as text_utils
 from tests.type_definitions import JsonValue
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import perform_action_with_timeout
 
 T = TypeVar("T")
 suppress = contextlib_suppress
@@ -87,17 +87,12 @@ def iter_ahead[T](iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
 def perform_action[ActionResultT](
     action: Callable[[], ActionResultT],
     /,
-    assertion: Callable[[], None] | None = None,
     timeout: float = WAIT_FRONTEND,
 ) -> ActionResultT:
-    @repeat_failed(timeout=timeout)
-    def attempt() -> ActionResultT:
-        result = action()
-        if assertion is not None:
-            assertion()
-        return result
-
-    return attempt()
+    return perform_action_with_timeout(
+        action,
+        timeout=timeout,
+    )
 
 
 def wait_for_file_to_download(
