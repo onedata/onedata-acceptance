@@ -90,14 +90,15 @@ def try_to_remove_directory(
     client = user.clients[client_node]
     absolute_path = client.absolute_path(dir_name)
 
-    def assert_action() -> None:
-        try:
-            client.rmdir(absolute_path)
-        except OSError as e:
-            if not should_fail:
-                raise AssertionError("Failed to create base directory") from e
+    def condition() -> None:
+        client.rmdir(absolute_path)
 
-    perform_action_with_timeout(assert_action, client.timeout, interval=INTERVAL)
+    assert_with_expected_fail(
+        condition,
+        client.timeout,
+        should_fail=should_fail,
+        message=f"Operation of removing directory: {dir_name} expected to fail, but did not",
+    )
 
 
 def delete_empty_base(

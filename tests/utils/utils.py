@@ -47,7 +47,7 @@ def assert_with_expected_fail(
     should_fail: bool = False,
     interval: float = ONECLIENT_REPEATS_INTERVAL,
     message: str = GENERIC_MESSAGE,
-    exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
+    exceptions: IgnoredExceptions = (Exception,),
 ) -> None:
     try:
         perform_action_with_timeout(
