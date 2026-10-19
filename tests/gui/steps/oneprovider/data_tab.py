@@ -1025,7 +1025,7 @@ def check_content_for_provider(
         .content
     )
     assert provider_content == content, (
-        f"Provider {provider} content is {provider_content} instead of {content}!"
+        f"Provider {provider} content is '{provider_content}' instead of '{content}'"
     )
 
 
