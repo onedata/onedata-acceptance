@@ -141,7 +141,7 @@ def purge_all_spaces(client: Client) -> None:
             space_purged = False
             while retries > 0 and not space_purged:
                 try:
-                    print(f"Cleaning space {space_path} (retries left {retries})")
+                    print(f"\nCleaning space {space_path} (retries left {retries})")
                     client.rm(path=space_path, recursive=True)
                     space_purged = True
                 except FileNotFoundError:
