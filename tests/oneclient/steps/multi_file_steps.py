@@ -239,7 +239,8 @@ def ls_empty(directory: str, user: str, client_node: str, users: Users) -> None:
     dir_path = client.absolute_path(directory)
 
     def condition() -> None:
-        assert len(client.ls(dir_path)) == 0
+        files = len(client.ls(dir_path))
+        assert files == 0, f"Directory is not empty - it has {files} files instead"
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -468,7 +469,10 @@ def check_size(user: str, file: str, size: str | int, client_node: str, users: U
 
     def condition() -> None:
         stat_result = client.stat(file_path)
-        assert stat_result.st_size == expected_size
+        size = stat_result.st_size
+        assert size == expected_size, (
+            f"Size of {file_path} should be {expected_size} B, but is {size} B"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -496,7 +500,10 @@ def check_type_impl(
 
     def condition() -> None:
         stat_result = client.stat(file_path) if follow_symlinks else client.lstat(file_path)
-        assert getattr(stat_lib, stat_method)(stat_result.st_mode)
+        assert getattr(stat_lib, stat_method)(stat_result.st_mode), (
+            f"Expected {file_path} on {client_node} to be {file_type}, "
+            f"but stat returned mode {stat_result.st_mode:#o}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -548,8 +555,14 @@ def shell_check_type(
         follow_links = "-L " if mode == "symlink" else ""
         cmd = f"stat --format=%F {follow_links}{file_path}"
         stat_file_type = client.run_cmd(cmd, output=True)
-        assert isinstance(stat_file_type, str)
-        assert stat_file_type.strip() == file_type
+        assert isinstance(stat_file_type, str), (
+            f"Expected stat output for {file_path} on {client_node} to be a string, "
+            f"but got {stat_file_type!r}"
+        )
+        assert stat_file_type.strip() == file_type, (
+            f"Expected file type of {file_path} on {client_node} to be {file_type!r}, "
+            f"but got {stat_file_type.strip()!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -564,7 +577,10 @@ def check_mode(user: str, file: str, mode: str, client_node: str, users: Users) 
 
     def condition() -> None:
         stat_result = client.stat(file_path)
-        assert stat_lib.S_IMODE(stat_result.st_mode) == expected_mode
+        assert stat_lib.S_IMODE(stat_result.st_mode) == expected_mode, (
+            f"Expected permissions of {file_path} on {client_node} to be {expected_mode:#o}, "
+            f"but got {stat_lib.S_IMODE(stat_result.st_mode):#o}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -672,7 +688,11 @@ def check_files_time(
         t1 = getattr(stat_result, attr1)
         stat_result2 = client.stat(file2_path)
         t2 = getattr(stat_result2, attr2)
-        assert compare(t1, t2, comparator)
+        assert compare(t1, t2, comparator), (
+            f"Time comparison failed on {client_node}: "
+            f"{time1} of {file_path} ({t1}) should be {comparator} "
+            f"{time2} of {file2_path} ({t2})"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -708,7 +728,11 @@ def cmp_time_to_previous(
         stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr)
         t2 = getattr(recorded_stats, attr)
-        assert compare(t1, t2, comparator)
+        assert compare(t1, t2, comparator), (
+            f"Time comparison failed on {client_node}: "
+            f"{time1} of {file_path} ({t1}) should be {comparator} "
+            f"recorded {time1} of {file2} ({t2})"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -816,7 +840,10 @@ def check_xattr_exists(user: str, file: str, name: str, client_node: str, users:
 
     def condition() -> None:
         xattrs = client.listxattr(file_path)
-        assert name in xattrs
+        assert name in xattrs, (
+            f"Expected extended attribute {name!r} on {file_path} on {client_node}, "
+            f"but found {xattrs!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -836,7 +863,10 @@ def check_xattr_doesnt_exist(
 
     def condition() -> None:
         xattrs = client.listxattr(file_path)
-        assert name not in xattrs
+        assert name not in xattrs, (
+            f"Expected extended attribute {name!r} to be absent from {file_path} "
+            f"on {client_node}, but found it in {xattrs!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -858,7 +888,10 @@ def check_string_xattr(
     def condition() -> None:
         xattr_value: bytes = client.getxattr(file_path, name)
         value_utf = value.encode("utf-8") if isinstance(value, str) else value
-        assert xattr_value == value_utf
+        assert xattr_value == value_utf, (
+            f"Expected extended attribute {name!r} of {file_path} on {client_node} "
+            f"to be {value_utf!r}, but got {xattr_value!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -879,7 +912,10 @@ def check_numeric_xattr(
 
     def condition() -> None:
         xattr_value = client.getxattr(file_path, name)
-        assert float(xattr_value) == float(value)
+        assert float(xattr_value) == float(value), (
+            f"Expected extended attribute {name!r} of {file_path} on {client_node} "
+            f"to have numeric value {value!r}, but got {xattr_value!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -900,7 +936,10 @@ def check_json_xattr(
 
     def condition() -> None:
         xattr_value = client.getxattr(file_path, name)
-        assert jsondiff.diff(json.loads(xattr_value), json.loads(value)) == {}
+        assert jsondiff.diff(json.loads(xattr_value), json.loads(value)) == {}, (
+            f"Expected extended attribute {name!r} of {file_path} on {client_node} "
+            f"to have JSON value {value!r}, but got {xattr_value!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
