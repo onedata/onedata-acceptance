@@ -25,14 +25,19 @@ Feature: Multi_directory_CRUD
     # we want to purge spaces without listing or stating hidden directory
     And user1 is idle for 10 seconds
     And user1 purges all spaces on client11
-    Then user1 can't stat [dir1, dir2, dir3] in space1 on client11
-    And user2 can't stat [dir1, dir2, dir3] in space1 on client21
-    And user1 doesn't see [dir1, dir2, dir3] in space1 on client11
+
+    # NOTE: changing order of 2 same steps only for different clients below fixes this test, but shouldn't
+    Then user2 can't stat [dir1, dir2, dir3] in space1 on client21
+    And user1 can't stat [dir1, dir2, dir3] in space1 on client11
+
     And user2 doesn't see [dir1, dir2, dir3] in space1 on client21
-    And user1 can't stat [.dir4] in space1 on client11
+    And user1 doesn't see [dir1, dir2, dir3] in space1 on client11
+
     And user2 can't stat [.dir4] in space1 on client21
-    And user1 doesn't see [.dir4] in space1 on client11
+    And user1 can't stat [.dir4] in space1 on client11
+
     And user2 doesn't see [.dir4] in space1 on client21
+    And user1 doesn't see [.dir4] in space1 on client11
 
 
   Scenario: Fail to rename someone's directory without write permission on parent

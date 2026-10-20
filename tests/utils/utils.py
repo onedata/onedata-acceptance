@@ -146,6 +146,7 @@ def perform_action_with_timeout[ActionResultT](
         **repeat_args,
     )
     def attempt() -> ActionResultT:
+        print("Wywoluje")
         return action()
 
     return attempt()
