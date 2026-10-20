@@ -107,7 +107,9 @@ def count_md5(
 
     def condition() -> None:
         context["md5"] = client.md5sum(file_path)
-        assert context["md5"] is not None
+        assert context["md5"] is not None, (
+            f"Expected an MD5 checksum for {file_path} on {client_node}, but got None"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -221,7 +223,10 @@ def replace(user: str, text1: str, text2: str, file: str, client_node: str, user
 
     def condition() -> None:
         ret = client.replace_pattern(file_path, text1, text2)
-        assert ret == 0
+        assert ret == 0, (
+            f"Replacing {text1!r} with {text2!r} in {file_path} on {client_node} "
+            f"failed with exit code {ret}"
+        )
 
     perform_action_with_timeout(condition, timeout=0)
 

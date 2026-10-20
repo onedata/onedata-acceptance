@@ -60,7 +60,7 @@ class ShutilProxy(Protocol):
         ignore_errors: bool = ...,
         onerror: Callable[..., object] | None = ...,
     ) -> None: ...
-    def copytree(self, src: str, dest: str) -> str: ...
+    def copytree(self, src: str, dest: str, *, dirs_exist_ok: bool = ...) -> str: ...
     def copy(self, src: str, dest: str) -> str: ...
 
 
@@ -300,11 +300,8 @@ class Client:  # noqa: PLR0904 - façade intentionally exposes client operations
     def cp(self, src: str, dest: str, recursive: bool = False) -> None:
         if recursive:
             if self.rpyc_connection.modules.os.path.isdir(dest):
-                # shutil.copytree fails if dest is an existing directory
                 dest = os.path.join(dest, os.path.basename(os.path.normpath(src)))
-                self.rpyc_connection.modules.shutil.copytree(src, dest)
-            else:
-                self.rpyc_connection.modules.shutil.copytree(src, dest)
+            self.rpyc_connection.modules.shutil.copytree(src, dest, dirs_exist_ok=True)
         else:
             self.rpyc_connection.modules.shutil.copy(src, dest)
 

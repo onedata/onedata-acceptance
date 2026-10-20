@@ -109,8 +109,8 @@ Feature: Multi_directory_CRUD
 
   Scenario: Fail to list directory without read permission
     When user2 creates directory and parents [space1/dir1/dir2] on client21
-    And user2 changes space1/dir1/dir2 mode to 735 on client21
-    And user1 can't list space1/dir1/dir2 on client11
+    And user2 changes space1/dir1/dir2 mode to 735 on client21 and user1 sees that file can't be listed on client11
+    # And user1 can't list space1/dir1/dir2 on client11
 
 
   Scenario: Fail to create file in directory without write permission
