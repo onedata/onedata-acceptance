@@ -9,7 +9,7 @@ from typing import Literal
 import yaml
 
 from tests.oneclient.conftest import Users
-from tests.oneclient.steps.multi_file_steps import stat_absent, stat_present
+from tests.oneclient.steps.multi_file_steps import ls_absent, ls_present, stat_absent, stat_present
 from tests.utils.bdd_utils import parsers, wt
 
 type NodeState = Literal["present", "absent"]
@@ -46,8 +46,8 @@ def _validate_tree_config(config: object, path: str = "config") -> TreeConfig:
 
 @wt(
     parsers.re(
-        r'(?P<user>\w+) sees on "(?P<client_node>[^"]+)", that file tree rooted at path '
-        r"(?P<root_path>[^\r\n]+) contains following nodes:\n(?P<config>[\s\S]*)"
+        r'(?P<user>\w+) sees on "(?P<client_node>[^"]+)", that file tree rooted at'
+        r' "(?P<root_path>[^\r\n]+)" contains following nodes:\n(?P<config>[\s\S]*)'
     ),
     converters={"config": parse_tree_config},
 )
@@ -63,10 +63,10 @@ def assert_file_tree_nodes(
         for name, children in nodes.items():
             # current node is a file that is expected to be present or absent
             if children == "present":
-                stat_present(user, parent_path, name, client_node, users)
+                ls_present(user, name, parent_path, client_node, users)
                 continue
             if children == "absent":
-                stat_absent(user, parent_path, name, client_node, users)
+                ls_absent(user, name, parent_path, client_node, users)
                 continue
 
             # current node is a not an empty directory, otherwise we skip
@@ -81,3 +81,27 @@ def assert_file_tree_nodes(
         parent_path=root_path,
         nodes=config,
     )
+
+
+@wt(
+    parsers.re(
+        r"(?P<user>\w+) (?P<visibility>can|can't) see and "
+        r"(?P<stat>can|can't) stat (?P<files>.*) in (?P<path>.*) on "
+        r'"(?P<client_node>[^"]+)"'
+    )
+)
+def assert_expected_result_for_visibility_and_stat(
+    user: str,
+    files: str,
+    path: str,
+    users: Users,
+    visibility: str,
+    stat: str,
+    client_node: str,
+) -> None:
+    visible, can_stat = visibility == "can", stat == "can"
+    ls_function = ls_present if visible else ls_absent
+    stat_function = stat_present if can_stat else stat_absent
+
+    stat_function(user, path, files, client_node, users)
+    ls_function(user, files, path, client_node, users)
