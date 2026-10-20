@@ -24,7 +24,7 @@ import pytest
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
 from tests.oneclient.steps.multi_dir_steps import try_to_create_directory
 from tests.type_definitions import Hosts
-from tests.utils.acceptance_utils import compare, list_parser, make_arg_list, time_attr
+from tests.utils.acceptance_utils import compare, list_parser, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
 from tests.utils.client_utils import Client
 from tests.utils.onenv_utils import cmd_exec
@@ -41,20 +41,19 @@ SYMLINKS_DIR = ".symlinks"
 
 def create_base(
     user: str,
-    files: str,
+    files: list[str],
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
     should_fail: bool = False,
 ) -> None:
-    file_names = list_parser(files)
     user_ = users[user]
     client = user_.clients[client_node]
     mode = request.config.getoption("file_mode")
 
     assert mode in ["hardlink", "symlink", "regular"], f"Unexpected file mode: {mode}"
 
-    for file_name in file_names:
+    for file_name in files:
         path = client.absolute_path(file_name)
         condition: Callable[[], None]
 
@@ -124,7 +123,7 @@ def create_target_file(
     dir_name: str,
 ) -> str:
     space = file_name.split("/", maxsplit=1)[0]
-    directory_path = f"[{space}/{dir_name}]"
+    directory_path = os.path.join(space, dir_name)
     try_to_create_directory(user, client_node, directory_path, users, exist_ok=True)
     file_name_hash = "".join(
         random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
@@ -133,10 +132,13 @@ def create_target_file(
     return client.absolute_path(target_file_path)
 
 
-@wt(parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*) on (?P<client_node>.*)"))
+@wt(
+    parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*) on (?P<client_node>.*)"),
+    converters={"files": list_parser},
+)
 def create_reg_file(
     user: str,
-    files: str,
+    files: list[str],
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
@@ -148,11 +150,12 @@ def create_reg_file(
     parsers.re(
         r"(?P<user>\w+) fails to create regular files (?P<files>.*) "
         r"on (?P<client_node>.*)"
-    )
+    ),
+    converters={"files": list_parser},
 )
 def create_reg_file_fail(
     user: str,
-    files: str,
+    files: list[str],
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
@@ -177,7 +180,7 @@ def create_many(
 ) -> None:
     for i in range(int(lower), int(upper)):
         new_file = os.path.join(parent_dir, str(i))
-        create_reg_file(user, make_arg_list(new_file), client_node, users, request)
+        create_reg_file(user, [new_file], client_node, users, request)
 
 
 @wt(

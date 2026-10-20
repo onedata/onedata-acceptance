@@ -9,14 +9,20 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
+from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, then, when, wt
 from tests.utils.user_utils import Users
 
 from . import multi_file_steps
 
 
-@wt(parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*)"))
-def create_reg_file(user: str, files: str, users: Users, request: pytest.FixtureRequest) -> None:
+@wt(
+    parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*)"),
+    converters={"files": list_parser},
+)
+def create_reg_file(
+    user: str, files: list[str], users: Users, request: pytest.FixtureRequest
+) -> None:
     multi_file_steps.create_reg_file(user, files, "client1", users, request)
 
 

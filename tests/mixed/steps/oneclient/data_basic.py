@@ -108,9 +108,9 @@ def create_file_in_op_oneclient(
     request: pytest.FixtureRequest,
 ) -> None:
     if result == "fails":
-        multi_file_steps.create_reg_file_fail(user, path, host, users, request)
+        multi_file_steps.create_reg_file_fail(user, [path], host, users, request)
     else:
-        multi_file_steps.create_reg_file(user, path, host, users, request)
+        multi_file_steps.create_reg_file(user, [path], host, users, request)
 
 
 def create_file_in_op_oneclient_with_tokens(
@@ -202,7 +202,7 @@ def create_item_in_op_oneclient(
     if name.startswith("dir"):
         multi_dir_steps.try_to_create_directory(user, host, f"{cwd}/{name}", users)
     else:
-        multi_file_steps.create_reg_file(user, f"{cwd}/{name}", host, users, request)
+        multi_file_steps.create_reg_file(user, [f"{cwd}/{name}"], host, users, request)
     if not content:
         return
     cwd += "/" + name
