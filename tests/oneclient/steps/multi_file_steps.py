@@ -631,7 +631,7 @@ def change_mode_and_assert_file_cant_be_listed(
 ) -> None:
     change_mode_base(user_name1, file, mode, client_node1, users)
     # Check mode can be executed on another client because it only needs search permission on the parent dir
-    # TODO: this line shouldn't fix this test but currently does
+    # NOTE: this line shouldn't fix this test but currently does
     # check_mode(user_name2, file, mode, client_node2, users)
     cannot_list_dir(user_name2, file, client_node2, users)
 
