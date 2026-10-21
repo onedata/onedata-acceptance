@@ -121,7 +121,7 @@ def write_audit_logs_for_task_to_file(
 
 
 def get_audit_logs_from_every_task_in_workflow(
-    lanes: PageObjectsSequence,
+    lanes: PageObjectsSequence[WorkflowLane],
     driver: WebDriver,
     clipboard: Clipboard,
     path: str,
@@ -130,7 +130,6 @@ def get_audit_logs_from_every_task_in_workflow(
     exp_status: str,
 ) -> None:
     for lane in lanes:
-        lane = cast(WorkflowLane, lane)
         for parallel_box in lane.parallel_boxes:
             for task in parallel_box.task_list:
                 write_audit_logs_for_task_to_file(
@@ -210,7 +209,7 @@ def assert_audit_log_in_store(
         f"There is no file id information in audit log in {store_name} store details"
     )
 
-    tmp_memory[f"{store_name}_store_log"] = store_details
+    tmp_memory[f"{store_name}_store_log"] = dict(store_details)
 
 
 @wt(
@@ -251,17 +250,15 @@ def assert_content_in_audit_log_in_store(
     )
 
     actual_expected = {
-        "sourceUrl": "source URL",
-        "size": "size",
-        "destinationPath": "destination path",
+        "sourceUrl": (store_details["sourceUrl"], "source URL"),
+        "size": (store_details["size"], "size"),
+        "destinationPath": (
+            store_details["destinationPath"].split("/")[-1],
+            "destination path",
+        ),
     }
 
-    for actual, expected in actual_expected.items():
-        actual_elem = (
-            cast(str, store_details[actual]).split("/")[-1]
-            if actual == "destinationPath"
-            else store_details[actual]
-        )
+    for actual, (actual_elem, expected) in actual_expected.items():
         expected_elem = expected_data[expected]
         error_message2 = (
             f"Actual {actual} {actual_elem} is not the same as expected {expected_elem}"
@@ -765,22 +762,25 @@ def compare_to_expected_if_element_exist_for_store(
     clipboard: Clipboard,
     displays: dict[str, str],
 ) -> None:
-    if elem:
-        if option == "fileId":
-            file_info = cast(str, elem).split(" ")[1].replace(")", "").split("/")
-            elem = get_file_id_from_details_modal(
-                selenium,
-                browser_id,
-                file_info[0],
-                tmp_memory,
-                file_info[1],
-                clipboard,
-                displays,
-            )
+    if not elem:
+        return
 
-        assert elem == items[option], (
-            f"{option}: {items[option]} in store {store_name} does not match expected {elem}"
+    if option == "fileId":
+        assert isinstance(elem, str), f"Expected fileId to be a string, got {type(elem).__name__}"
+        file_info = elem.split(" ")[1].replace(")", "").split("/")
+        elem = get_file_id_from_details_modal(
+            selenium,
+            browser_id,
+            file_info[0],
+            tmp_memory,
+            file_info[1],
+            clipboard,
+            displays,
         )
+
+    assert elem == items[option], (
+        f"{option}: {items[option]} in store {store_name} does not match expected {elem}"
+    )
 
 
 @wt(parsers.parse('user of {browser_id} sees that content of "{store_name}" store is:\n{config}'))

@@ -11,7 +11,6 @@ import re
 import subprocess as sp
 from collections import defaultdict
 from collections.abc import Generator
-from typing import cast
 
 import pytest
 from _pytest._py.path import LocalPath
@@ -158,7 +157,7 @@ def tmp_memory() -> TmpMemory:
     Because of use of multiple browsers, the correct format would be:
      {'browser1': {...}, 'browser2': {...}, ...}
     """
-    return cast(TmpMemory, defaultdict(dict))
+    return defaultdict(dict)
 
 
 @pytest.fixture
