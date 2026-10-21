@@ -162,7 +162,7 @@ class UpgradeTestsController:
         client = self.users[username].mount_client(
             client_host_alias,
             client_instance,
-            cast(Mapping[str, Mapping[str, str]], self.hosts),
+            self.hosts,
             self.env["env_desc"],
             opts=[],
         )
