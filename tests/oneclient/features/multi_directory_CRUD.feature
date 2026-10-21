@@ -201,12 +201,7 @@ Feature: Multi_directory_CRUD
 
   Scenario: Delete empty directory and parents
     When user1 creates directory and parents [space1/dir1/dir2/dir3] on client11
-    And user1 sees on "client11", that file tree rooted at "space1" contains following nodes:
-        dir1:
-          dir2:
-            dir3: present
-
-    And user2 sees on "client21", that file tree rooted at "space1" contains following nodes:
+    And [user1, user2] see on [client11, client21], that file tree rooted at "space1" contains following nodes:
         dir1:
           dir2:
             dir3: present
@@ -239,15 +234,7 @@ Feature: Multi_directory_CRUD
   Scenario: Delete non-empty directory
     When user1 creates directory and parents [space1/dir1/child1, space1/dir1/child2, space1/dir2/dir3/child1] on client11
 
-    And user1 sees on "client11", that file tree rooted at "space1" contains following nodes:
-        dir1:
-          child1: present
-          child2: present
-        dir2:
-          dir3:
-            child1: present
-
-    And user2 sees on "client21", that file tree rooted at "space1" contains following nodes:
+    And [user1, user2] sees on [client11, client21], that file tree rooted at "space1" contains following nodes:
         dir1:
           child1: present
           child2: present
@@ -264,14 +251,7 @@ Feature: Multi_directory_CRUD
   Scenario: Move directory
     When user1 creates directory and parents [space1/dir1/dir2/dir3, space1/dir4/dir5] on client11
     
-    And user1 sees on "client11", that file tree rooted at "space1" contains following nodes:
-        dir1:
-          dir2:
-            dir3: present
-        dir4:
-          dir5: present
-
-    And user2 sees on "client21", that file tree rooted at "space1" contains following nodes:
+    And [user1, user2] sees on [client11, client21], that file tree rooted at "space1" contains following nodes:
         dir1:
           dir2:
             dir3: present
@@ -292,14 +272,8 @@ Feature: Multi_directory_CRUD
 
   Scenario: Copy directory
     When user1 creates directory and parents [space1/dir1/dir2/dir3, space1/dir4/dir5] on client11
-    And user1 sees on "client11", that file tree rooted at "space1" contains following nodes:
-        dir1:
-          dir2:
-            dir3: present
-        dir4:
-          dir5: present
 
-    And user2 sees on "client21", that file tree rooted at "space1" contains following nodes:
+    And [user1, user2] see on [client11, client21], that file tree rooted at "space1" contains following nodes:
         dir1:
           dir2:
             dir3: present
@@ -333,12 +307,7 @@ Feature: Multi_directory_CRUD
   Scenario: Fail to move directory to its subtree
     When user1 creates directory and parents [space1/dir1/dir2/dir3] on client11
 
-    And user1 sees on "client11", that file tree rooted at "space1" contains following nodes:
-        dir1:
-          dir2:
-            dir3: present
-
-    And user2 sees on "client21", that file tree rooted at "space1" contains following nodes:
+    And [user1, user2] see on [client11, client21], that file tree rooted at "space1" contains following nodes:
         dir1:
           dir2:
             dir3: present
