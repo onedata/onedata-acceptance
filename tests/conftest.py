@@ -434,16 +434,16 @@ def rm_users(request: pytest.FixtureRequest) -> bool:
 @pytest.fixture
 def selenium(request: pytest.FixtureRequest) -> SeleniumFixtureState:
     """Returns a WebDriver instance based on options and capabilities"""
-    return {"request": request}
+    return SeleniumFixtureState(request)
 
 
 @pytest.fixture(scope="session")
 def session_capabilities(
     request: pytest.FixtureRequest,
-    variables: dict[str, object],
+    variables: JsonObject,
 ) -> JsonObject:
     """Returns combined capabilities from pytest-variables and command line"""
-    capabilities = cast(JsonObject, variables.get("capabilities", {}))
+    capabilities = variables.get("capabilities", {})
     for capability in request.config.getoption("capabilities"):
         capabilities[capability[0]] = capability[1]
     return capabilities
@@ -538,7 +538,7 @@ def factory(
     if "get_instance" in dir(fun):
         raise AttributeError(f'object {fun.__name__} already has "get_instance" attribute')
     fun.get_instance = fun
-    return cast(FactoryCallable[FactoryParams, FactoryResult], fun)
+    return fun
 
 
 # ============================================================================
@@ -602,12 +602,11 @@ def pytest_runtest_makereport(
     call: pytest.CallInfo[None],
 ) -> Generator[None, HookOutcome, None]:
     outcome = yield
-    report = cast(TestReport, outcome.get_result())
+    report = outcome.get_result()
     if call.when != "call":
         return
     request = cast(pytest.FixtureRequest, item.funcargs["request"])
     drivers = cast(SeleniumFixtureState, request.getfixturevalue("selenium")).copy()
-    drivers.pop("request", None)
 
     summary: list[str] = []
     extras: list[object] = []
@@ -926,8 +925,8 @@ def _get_repeat_progress(request: pytest.FixtureRequest) -> tuple[int, int]:
     if repeat_count <= 1:
         return 0, 1
 
-    repeat_number = request.getfixturevalue("__pytest_repeat_step_number")
-    return cast(int, repeat_number), repeat_count
+    repeat_number = int(request.getfixturevalue("__pytest_repeat_step_number"))
+    return repeat_number, repeat_count
 
 
 @pytest.fixture
@@ -1034,9 +1033,8 @@ def xfail_by_env(request: pytest.FixtureRequest, env_description_file: str) -> N
 
 
 def select_browser(selenium: SeleniumFixtureState, browser_id: str) -> WebDriver:
-    browser = cast(WebDriver, selenium[browser_id])
-    request = cast(pytest.FixtureRequest, selenium["request"])
-    request.node._driver = browser
+    browser = selenium[browser_id]
+    selenium.request.node._driver = browser
     return browser
 
 

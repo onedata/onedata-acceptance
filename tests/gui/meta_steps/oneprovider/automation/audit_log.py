@@ -73,7 +73,6 @@ from tests.gui.type_definitions import (
     WhichBrowser,
 )
 from tests.gui.utils import Modals
-from tests.gui.utils.common.modals.workflows_modals.audit_log import LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import perform_action
@@ -111,7 +110,6 @@ def write_audit_logs_for_task_to_file(
     if task.status == exp_status:
         modal, logs = get_modal_and_logs_for_task(path, task, driver)
         for log in logs:
-            log = cast(LogsEntry, log)
             if log.severity != "Info":
                 get_audit_log_json_and_write_to_file(
                     log, modal, clipboard, displays, browser_id, path

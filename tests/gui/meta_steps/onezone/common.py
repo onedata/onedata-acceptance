@@ -52,7 +52,7 @@ from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.onezone.members_subpage import MembershipRow
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
-from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
+from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers, SeleniumFixtureState
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
 
@@ -71,7 +71,7 @@ from tests.utils.user_utils import Users
 )
 def login_using_gui(
     host_list: list[str],
-    selenium: SeleniumDrivers,
+    selenium: SeleniumFixtureState,
     driver: WebDriver,
     tmpdir: LocalPath,
     tmp_memory: TmpMemory,
@@ -97,7 +97,7 @@ def login_using_gui(
         capabilities,
     )
     g_open_onedata_service_page(selenium, user_list, host_list, hosts)
-    browsers_to_users = selenium["request"].getfixturevalue("browsers_to_users")
+    browsers_to_users = selenium.request.getfixturevalue("browsers_to_users")
 
     for browser, user in zip(browser_id_list, user_list, strict=False):
         browsers_to_users[browser] = user
