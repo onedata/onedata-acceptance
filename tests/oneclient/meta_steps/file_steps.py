@@ -8,6 +8,7 @@ from typing import Literal
 
 import yaml
 
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.oneclient.conftest import Users
 from tests.oneclient.steps.multi_file_steps import ls_absent, ls_present, stat_absent, stat_present
 from tests.utils.bdd_utils import parsers, wt
@@ -46,49 +47,59 @@ def _validate_tree_config(config: object, path: str = "config") -> TreeConfig:
 
 @wt(
     parsers.re(
-        r'(?P<user>\w+) sees on "(?P<client_node>[^"]+)", that file tree rooted at'
+        rf"(?P<user_names>{ELEMENTS_SEQUENCE_PATTERN}) sees? on "
+        rf"(?P<client_nodes>{ELEMENTS_SEQUENCE_PATTERN}), that file tree rooted at"
         r' "(?P<root_path>[^\r\n]+)" contains following nodes:\n(?P<config>[\s\S]*)'
     ),
-    converters={"config": parse_tree_config},
+    converters={
+        "config": parse_tree_config,
+        "user_names": parse_elements_sequence,
+        "client_nodes": parse_elements_sequence,
+    },
 )
 def assert_file_tree_nodes(
-    user: str,
+    user_names: list[str],
     config: TreeConfig,
-    client_node: str,
+    client_nodes: list[str],
     root_path: str,
     users: Users,
 ) -> None:
     # parent_path needs to be changed into pathlib in the future
-    def assert_tree_node(parent_path: str, nodes: TreeConfig) -> None:
+    def assert_tree_node(
+        user_name: str, client_node: str, parent_path: str, nodes: TreeConfig
+    ) -> None:
         for name, children in nodes.items():
             # current node is a file that is expected to be present or absent
             if children == "present":
-                ls_present(user, name, parent_path, client_node, users)
+                ls_present(user_name, name, parent_path, client_node, users)
                 continue
             if children == "absent":
-                ls_absent(user, name, parent_path, client_node, users)
+                ls_absent(user_name, name, parent_path, client_node, users)
                 continue
 
             # current node is a not an empty directory, otherwise we skip
             if children is not None:
                 new_parent_path = f"{parent_path}/{name}"
-                assert_tree_node(new_parent_path, children)
+                assert_tree_node(user_name, client_node, new_parent_path, children)
 
     # parent path parameter is usually initially a space_name,
     # nodes parameter is initially whole yaml config,
     # that will be narrowed down to yaml subnodes during recursive calls
-    assert_tree_node(
-        parent_path=root_path,
-        nodes=config,
-    )
+    for user_name, client_node in zip(user_names, client_nodes, strict=True):
+        assert_tree_node(
+            user_name=user_name,
+            client_node=client_node,
+            parent_path=root_path,
+            nodes=config,
+        )
 
 
 @wt(
     parsers.re(
         r"(?P<user>\w+) (?P<visibility>can|can't) see and "
-        r"(?P<stat>can|can't) stat (?P<files>.*) in (?P<path>.*) on "
-        r'"(?P<client_node>[^"]+)"'
-    )
+        rf"(?P<stat>can|can't) stat (?P<files>{ELEMENTS_SEQUENCE_PATTERN})"
+        r' in (?P<path>.*) on "(?P<client_node>[^"]+)"'
+    ),
 )
 def assert_expected_result_for_visibility_and_stat(
     user: str,

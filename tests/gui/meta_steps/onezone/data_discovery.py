@@ -217,10 +217,14 @@ def _select_onedata_attribute(page: DataDiscovery, attribute: JsonValue) -> None
     if not isinstance(attribute, dict) or set(attribute) != {"xattrs"}:
         raise ValueError(f"Do not support {attribute}")
 
+    xattrs = attribute["xattrs"]
+    if not isinstance(xattrs, list) or not all(isinstance(name, str) for name in xattrs):
+        raise ValueError(f"Unsupported attribute: {attribute}")
+
     xattrs_node = nodes["xattrs"]
     xattrs_node.expander.click()
-    property_names = cast(list[str], attribute["xattrs"])
-    for property_name in property_names:
+
+    for property_name in xattrs:
         xattrs_node.xattrs_tree_nodes[property_name].checkbox.click()
 
 
