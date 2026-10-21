@@ -312,7 +312,7 @@ Create file: &acceptance-mixed-tests-in-chrome-job
   artifacts:
     - name: report
       location: onedata-acceptance/tests/mixed/logs/
-      pattern: "**/*.*"
+      pattern: "**/*"
       shared: false
       required: false
   requirements:
