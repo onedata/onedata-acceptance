@@ -89,29 +89,25 @@ class PrivilegeRow(PageObject):
             return True
 
         def click_if_needed() -> None:
-            if condition():
-                return
+            if not condition():
+                checkbox = self._checkbox
+                try:
+                    checkbox.click()
+                except (
+                    ElementNotInteractableException,
+                    ElementClickInterceptedException,
+                ):
+                    if not condition():
+                        driver.execute_script(
+                            "arguments[0].scrollIntoView({block: 'center'});",
+                            checkbox,
+                        )
+                        checkbox.click()
 
-            checkbox = self._checkbox
-            try:
-                checkbox.click()
-            except (
-                ElementNotInteractableException,
-                ElementClickInterceptedException,
-            ):
-                if condition():
-                    return
-                driver.execute_script(
-                    "arguments[0].scrollIntoView({block: 'center'});",
-                    checkbox,
-                )
-                checkbox.click()
-
-        def assert_toggle_is_checked() -> None:
             assert condition(), "Toggle has different state than expected"
 
         try:
-            perform_action(click_if_needed, assertion=assert_toggle_is_checked)
+            perform_action(click_if_needed)
             return True
         except AssertionError:
             return False
@@ -206,29 +202,25 @@ class PrivilegeGroup(PageObject):
             return True
 
         def click_if_needed() -> None:
-            if condition():
-                return
+            if not condition():
+                checkbox = self._checkbox
+                try:
+                    checkbox.click()
+                except (
+                    ElementNotInteractableException,
+                    ElementClickInterceptedException,
+                ):
+                    if not condition():
+                        driver.execute_script(
+                            "arguments[0].scrollIntoView({block: 'center'});",
+                            checkbox,
+                        )
+                        checkbox.click()
 
-            checkbox = self._checkbox
-            try:
-                checkbox.click()
-            except (
-                ElementNotInteractableException,
-                ElementClickInterceptedException,
-            ):
-                if condition():
-                    return
-                driver.execute_script(
-                    "arguments[0].scrollIntoView({block: 'center'});",
-                    checkbox,
-                )
-                checkbox.click()
-
-        def assert_toggle_is_checked() -> None:
             assert condition(), "Toggle has different state than expected"
 
         try:
-            perform_action(click_if_needed, assertion=assert_toggle_is_checked)
+            perform_action(click_if_needed)
             return True
         except AssertionError:
             return False

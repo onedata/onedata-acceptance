@@ -66,10 +66,10 @@ Feature: Basic files tab operations on external symlinks in file browser
     And user of browser succeeds to rename "dir3" to "symlink_dir3" in "spacec1"
     And user of browser changes current working directory to space root using breadcrumbs
 
-    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration and follow symbolic links set as <follow_sym_links>:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
-        follow symbolic links: True
+        follow symbolic links: <follow_sym_links>
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
 
@@ -80,8 +80,8 @@ Feature: Basic files tab operations on external symlinks in file browser
 
     Examples:
       | follow_sym_links  |
-      | True              |
-      | False             |
+      | true              |
+      | false             |
 
 
   Scenario: User downloads file from space using external symlink modal for symlink pointing outside archive created without "Follow symbolic links"

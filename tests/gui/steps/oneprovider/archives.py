@@ -166,13 +166,11 @@ def check_toggle_in_create_archive_modal(
     def toggle_getter() -> ToggleContainer:
         return getattr(Modals(driver).create_archive, transform(toggle_type))
 
-    def assert_is_checked() -> None:
-        assert toggle_getter().is_checked()
+    toggle = perform_action(toggle_getter)
+    previous_state: bool = toggle.is_checked()
+    driver.execute_script("arguments[0].scrollIntoView();", toggle.web_elem)
 
-    perform_action(
-        lambda: driver.execute_script("arguments[0].scrollIntoView();", toggle_getter().web_elem)
-    )
-    perform_action(lambda: toggle_getter().check(), assertion=assert_is_checked)
+    toggle.change_toggle_state(expected=not previous_state)
 
 
 def compare_base_archive_name_with_archive_with_description(

@@ -12,14 +12,22 @@ import traceback
 from collections.abc import Callable, Sequence
 from time import sleep, time
 from types import ModuleType
-from typing import ParamSpec, TypeVar, cast
+from typing import Final, ParamSpec, TypedDict, TypeVar, cast
 
 import pytest
 from decorator import decorator
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
+from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL
+from tests.type_definitions import IgnoredExceptions
+
 P = ParamSpec("P")
 T = TypeVar("T")
+
+
+class RepeatArgs(TypedDict, total=False):
+    timeout: float | None
+    attempts: int
 
 
 def check_call_with_logging(cmd: str | Sequence[str]) -> None:
@@ -35,26 +43,33 @@ def log_exception() -> None:
     logging.error(extracted_stack)
 
 
-def assert_generic(
-    expression: Callable[..., object],
-    should_fail: bool,
-    *args: object,
-    **kwargs: object,
+GENERIC_MESSAGE: Final[str] = "Operation succeeded, expected it to fail"
+
+
+def assert_with_expected_fail(
+    condition: Callable[[], object],
+    timeout: float | None = None,
+    should_fail: bool = False,
+    interval: float = ONECLIENT_REPEATS_INTERVAL,
+    attempts: int | None = None,
+    message: str = GENERIC_MESSAGE,
+    exceptions: IgnoredExceptions = (Exception,),
 ) -> None:
+    try:
+        perform_action_with_timeout(
+            condition,
+            timeout=timeout,
+            interval=interval,
+            attempts=attempts,
+            ignored_exceptions=exceptions,
+        )
+    except exceptions:
+        if should_fail:
+            return
+        raise
+
     if should_fail:
-        assert_false(expression, *args, **kwargs)
-    else:
-        assert_(expression, *args, **kwargs)
-
-
-def assert_(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
-    assert_result = expression(*args, **kwargs)
-    assert assert_result
-
-
-def assert_false(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
-    assert_result = expression(*args, **kwargs)
-    assert not assert_result
+        raise AssertionError(message)
 
 
 def get_fun_name(fun: str) -> str | None:
@@ -75,7 +90,7 @@ def repeat_failed(
     attempts: int = 10,
     timeout: float | None = None,
     interval: float = 0.1,
-    exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
+    exceptions: IgnoredExceptions = (Exception,),
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """Returns wrapper on function, which keeps calling it until timeout or
     for attempts times in case of failure (exception).
@@ -95,7 +110,7 @@ def repeat_failed(
     @decorator
     def wrapper(fun: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
         now = time()
-        limit, i = (now + timeout, now) if timeout else (attempts, 0)
+        limit, i = (now + timeout, now) if timeout is not None else (attempts, 0)
 
         while i < limit:
             try:
@@ -109,6 +124,31 @@ def repeat_failed(
         return fun(*args, **kwargs)
 
     return cast(Callable[[Callable[P, T]], Callable[P, T]], wrapper)
+
+
+def perform_action_with_timeout[ActionResultT](
+    action: Callable[[], ActionResultT],
+    /,
+    timeout: float | None = None,
+    ignored_exceptions: IgnoredExceptions = (Exception,),
+    interval: float = 0.1,
+    attempts: int | None = None,
+) -> ActionResultT:
+
+    assert timeout is not None or attempts is not None, "Either timeout or attempts must be given"
+
+    # An explicit attempt count takes precedence over the timeout.
+    repeat_args: RepeatArgs = {"timeout": timeout} if attempts is None else {"attempts": attempts}
+
+    @repeat_failed(
+        exceptions=ignored_exceptions,
+        interval=interval,
+        **repeat_args,
+    )
+    def attempt() -> ActionResultT:
+        return action()
+
+    return attempt()
 
 
 def get_copyright(mod: ModuleType) -> str:

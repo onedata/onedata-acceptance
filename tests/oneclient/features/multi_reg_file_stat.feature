@@ -55,7 +55,7 @@ Feature: Multi_regular_file_stat
 
 
   Scenario: Fail to truncate regular file without write permission
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 sees [file1] in space1/dir1 on client11
     And user2 sees [file1] in space1/dir1 on client21
@@ -73,7 +73,7 @@ Feature: Multi_regular_file_stat
 
 
   Scenario: Fail to update timestamps (touch) without write permission
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 sees [file1] in space1/dir1 on client11
     And user2 sees [file1] in space1/dir1 on client21
@@ -83,7 +83,7 @@ Feature: Multi_regular_file_stat
 
 
   Scenario: Update timestamps (touch) with write permission
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 sees [file1] in space1/dir1 on client11
     And user2 sees [file1] in space1/dir1 on client21

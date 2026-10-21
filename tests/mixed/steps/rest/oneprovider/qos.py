@@ -4,7 +4,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.mixed.oneprovider_client import QoSApi
+from oneprovider_client import QoSApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_provider

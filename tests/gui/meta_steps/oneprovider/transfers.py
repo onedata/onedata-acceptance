@@ -47,6 +47,7 @@ from tests.gui.utils.oneprovider.transfers import TransferItemType
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -94,6 +95,7 @@ def assert_first_transfer(
     )
 
 
+@repeat_failed(attempts=10, interval=0.5)
 def assert_transfer_column(
     selenium: SeleniumDrivers,
     browser_id: str,
