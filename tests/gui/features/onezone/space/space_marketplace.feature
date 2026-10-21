@@ -58,6 +58,36 @@ Feature: Basic management of Space Marketplace
     And user of browser sees "space1" advertised space description with "Example space" header and "Example of a space advertised in a Marketplace" paragraph
 
 
+  Scenario: User does not see owned space in the Marketplace after he withdraws it
+    Given using REST, user space-owner-user configures "space1" space in "onezone" Onezone service as follows:
+        organizationName: "onedata"
+        description: "Example of a space advertised in a Marketplace"
+        advertisedInMarketplace: true
+        marketplaceContactEmail: "example@gmail.com"
+
+    When user of browser clicks on "Data" in the main menu
+    And user of browser clicks on "Marketplace" button in spaces sidebar
+    Then user of browser sees advertised space on Space Marketplace subpage with following parameters:
+        space name: "space1"
+        organization name: "onedata"
+        creation time: current
+        providers:
+          - dev-oneprovider-krakow
+        description: "Example of a space advertised in a Marketplace"
+    And user of browser sees "Visit space" link for "space1" space in Space Marketplace subpage
+    And user of browser sees "Configure" link for "space1" space in Space Marketplace subpage
+
+    When user of browser clicks "Configure" link for "space1" space in Space Marketplace subpage
+    Then user of browser sees that opened space name is "space1"
+    And user of browser sees "space configuration" label of current page
+    And user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
+    When user of browser unchecks "Advertise in Marketplace" toggle on space configuration page
+    And user of browser clicks on "Proceed" button in modal "Warning"
+    Then user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
+    When user of browser clicks on "Marketplace" button in spaces sidebar
+    Then user of browser does not see "space1" space in Space Marketplace subpage
+
+
   Scenario: User is asked about unsaved changes in space configuration subpage and can save them
     When user of browser clicks "Configuration" of "space1" space in the sidebar
     And user of browser provides space configuration without saving as follows:

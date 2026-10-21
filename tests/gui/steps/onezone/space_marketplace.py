@@ -1,9 +1,7 @@
-"""This module contains gherkin steps to run acceptance tests featuring
-Space Marketplace management in onezone web GUI.
-"""
+"""This module contains steps for Space Marketplace management in Onezone web GUI."""
 
-__author__ = "Rafał Widziszewski"
-__copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
+__author__ = "Mateusz Zajac"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from datetime import date
@@ -52,6 +50,22 @@ def get_space_from_marketplace_list(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.space_marketplace_page
     return page.spaces_marketplace_list[space_name]
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} does not see "{space_name}" space in Space Marketplace subpage'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_space_not_in_marketplace_list(
+    selenium: SeleniumDrivers, browser_id: str, space_name: str
+) -> None:
+    driver = selenium[browser_id]
+    page = OZLoggedIn(driver).data.space_marketplace_page
+    assert space_name not in page.spaces_marketplace_list, (
+        f'Space "{space_name}" unexpectedly found in Space Marketplace'
+    )
 
 
 def get_today_date() -> str:
@@ -131,3 +145,42 @@ def assert_advertised_space_description(
     assert paragraph.text == expected_paragraph, (
         f"Paragraph should be '{expected_paragraph}', but is '{paragraph.text}'"
     )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees "{link_name}" link for "{space_name}" '
+        "space in Space Marketplace subpage"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_marketplace_space_link_visible(
+    browser_id: str,
+    link_name: str,
+    space_name: str,
+    selenium: SeleniumDrivers,
+) -> None:
+    space = get_space_from_marketplace_list(selenium, browser_id, space_name)
+    link_attribute = {"Visit space": "visit_space", "Configure": "configure_space"}[link_name]
+    link = getattr(space, link_attribute)
+    assert link.is_displayed(), (
+        f'"{link_name}" link is not displayed for "{space_name}" in Space Marketplace'
+    )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks "{link_name}" link for "{space_name}" '
+        "space in Space Marketplace subpage"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_marketplace_space_link(
+    browser_id: str,
+    link_name: str,
+    space_name: str,
+    selenium: SeleniumDrivers,
+) -> None:
+    space = get_space_from_marketplace_list(selenium, browser_id, space_name)
+    link_attribute = {"Visit space": "visit_space", "Configure": "configure_space"}[link_name]
+    getattr(space, link_attribute).click()

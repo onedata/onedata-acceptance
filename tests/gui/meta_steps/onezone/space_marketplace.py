@@ -9,17 +9,44 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import yaml
 
-from tests.gui.steps.onezone.marketplace import (
-    assert_element_in_space_marketplace,
-    assert_elements_list_in_space_marketplace,
-)
 from tests.gui.steps.onezone.space_configuration import (
     add_tags_in_space_configuration_tab,
     set_description_of_a_space,
     set_space_data_in_configuration_tab,
 )
-from tests.type_definitions import SeleniumDrivers
-from tests.utils.bdd_utils import parsers, wt
+from tests.gui.steps.onezone.space_marketplace import (
+    assert_element_in_space_marketplace,
+    assert_elements_list_in_space_marketplace,
+)
+from tests.gui.steps.rest.spaces import modify_space_using_rest
+from tests.type_definitions import Hosts, SeleniumDrivers
+from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.user_utils import Users
+
+
+@given(
+    parsers.parse(
+        'using REST, user {user} configures "{space_name}" space in "{zone_host}" '
+        "Onezone service as follows:\n{config}"
+    )
+)
+def configure_space_using_rest(
+    user: str,
+    space_name: str,
+    zone_host: str,
+    config: str,
+    hosts: Hosts,
+    users: Users,
+    spaces: dict[str, str],
+) -> None:
+    space_data = yaml.load(config, yaml.Loader)
+    modify_space_using_rest(
+        hosts[zone_host]["hostname"],
+        users[user].username,
+        users[user].password,
+        spaces[space_name],
+        space_data,
+    )
 
 
 @wt(parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}"))

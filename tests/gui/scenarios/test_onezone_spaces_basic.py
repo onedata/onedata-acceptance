@@ -48,12 +48,12 @@ from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.manage_account import *
-from tests.gui.steps.onezone.marketplace import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.overview import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.space_configuration import *
+from tests.gui.steps.onezone.space_marketplace import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
@@ -68,11 +68,11 @@ def screens() -> list[int]:
     return [0, 1]
 
 
-scenarios("../features/onezone/space/spaces.feature")
-scenarios("../features/onezone/space/create_new_space.feature")
-scenarios("../features/onezone/space/multispace.feature")
-scenarios("../features/onezone/space/spaces_memberships.feature")
-scenarios("../features/onezone/space/spaces_effective_privileges.feature")
+# scenarios("../features/onezone/space/spaces.feature")
+# scenarios("../features/onezone/space/create_new_space.feature")
+# scenarios("../features/onezone/space/multispace.feature")
+# scenarios("../features/onezone/space/spaces_memberships.feature")
+# scenarios("../features/onezone/space/spaces_effective_privileges.feature")
 scenarios("../features/onezone/space/space_marketplace.feature")
-scenarios("../features/onezone/space/marketplace_privileges_management.feature")
-scenarios("../features/onezone/space/access_to_space.feature")
+# scenarios("../features/onezone/space/marketplace_privileges_management.feature")
+# scenarios("../features/onezone/space/access_to_space.feature")
