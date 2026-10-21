@@ -4,7 +4,6 @@ using web GUI
 
 from collections.abc import Callable
 from itertools import zip_longest
-from typing import cast
 
 from _pytest._py.path import LocalPath
 from selenium.webdriver.common.by import By
@@ -263,13 +262,12 @@ def wt_visit_file_browser(
 
 def search_for_members(
     driver: WebDriver,
-    records: PageObjectsSequence,
+    records: PageObjectsSequence[MembershipRow],
     member_name: str,
     parent_name: str,
     fun: Callable[[MembershipRow, int], bool],
 ) -> bool:
     for record in records:
-        record = cast(MembershipRow, record)
         record_id = record.clickable_name.get_attribute("id")
         scroll_to_css_selector(driver, f"#{record_id}")
         elements = driver.find_elements(

@@ -13,7 +13,7 @@ import time
 from ast import literal_eval
 from collections.abc import Mapping
 from datetime import date
-from typing import TypedDict, cast
+from typing import Literal, TypedDict, cast
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -91,6 +91,23 @@ class AuditLogDebugContent(TypedDict):
 class AuditLogDebugEntry(TypedDict):
     content: AuditLogDebugContent
     severity: str
+
+
+class TaskAuditLogEntry(TypedDict):
+    content: AuditLogContent
+    severity: str
+    source: str
+    timestamp: float
+
+
+class ExpectedTaskAuditLogEntry(TypedDict, total=False):
+    content: AuditLogContent
+    severity: str
+    source: str
+    timestamp: str
+
+
+type TaskAuditLogLabel = Literal["source", "severity", "timestamp"]
 
 
 def write_audit_logs_for_task_to_file(
@@ -620,14 +637,12 @@ def check_visual_in_store_details_modal(
         )
         assert modal.raw_view == serialized_items, error_message
     else:
-        parsed_items = cast(
-            list[AuditLogValue] | AuditLogContent,
-            (
-                literal_eval(serialized_items)
-                if variable_type != "files"
-                else parse_seq(serialized_items)
-            ),
-        )
+        parsed_items: list[str] | AuditLogContent
+        if variable_type != "files":
+            parsed_items = literal_eval(serialized_items)
+        else:
+            parse_seq(serialized_items)
+
         for elem in modal.store_content_list:
             if variable_type == "ranges":
                 expected = {
@@ -836,22 +851,50 @@ def assert_content_of_store(
 
 
 def compare_to_expected_if_elem_exist_audit_log(
-    data: Mapping[str, AuditLogValue],
-    label: str,
-    actual_items: Mapping[str, AuditLogValue],
+    data: ExpectedTaskAuditLogEntry,
+    label: TaskAuditLogLabel,
+    actual_items: TaskAuditLogEntry,
     task_name: str,
 ) -> None:
-    expected = data.get(label, False)
+    comparable_expected: AuditLogValue | date
+    comparable_actual: AuditLogValue | date
+
+    if label == "timestamp":
+        expected_timestamp = data.get("timestamp")
+
+        if expected_timestamp is None:
+            return
+        if expected_timestamp != "today":
+            raise ValueError(f"Unsupported expected timestamp: {expected_timestamp!r}")
+
+        comparable_expected = date.today()
+        comparable_actual = date.fromtimestamp(actual_items["timestamp"] / 1000)
+    elif label == "severity":
+        comparable_expected = data.get("severity", "").lower()
+        if not comparable_expected:
+            return
+        comparable_actual = actual_items["severity"]
+    else:
+        comparable_expected = data.get("source")
+        if not comparable_expected:
+            return
+        comparable_actual = actual_items["source"]
+
+    assert_elements_of_task_audit_log_are_the_same(
+        comparable_expected, comparable_actual, label, task_name
+    )
+
+
+def compare_content_element_if_expected(
+    expected_content: Mapping[str, AuditLogValue],
+    label: str,
+    actual_content: Mapping[str, AuditLogValue],
+    task_name: str,
+) -> None:
+    expected = expected_content.get(label)
     if expected:
-        comparable_expected: AuditLogValue | date = expected
-        comparable_actual: AuditLogValue | date = actual_items[label]
-        if label == "timestamp":
-            comparable_expected = date.today()
-            comparable_actual = date.fromtimestamp(cast(float, actual_items["timestamp"]) / 1000)
-        elif label == "severity":
-            comparable_expected = cast(str, expected).lower()
         assert_elements_of_task_audit_log_are_the_same(
-            comparable_expected, comparable_actual, label, task_name
+            expected, actual_content[label], label, task_name
         )
 
 
@@ -924,7 +967,7 @@ def compare_content_of_task_audit_log(
     item = cast(AuditLogContent, details.get("item", {})) if details else {}
 
     for label in expected_identical:
-        compare_to_expected_if_elem_exist_audit_log(content, label, actual_content, task_name)
+        compare_content_element_if_expected(content, label, actual_content, task_name)
     if reason:
         compare_content_reason_of_task_audit_log(
             reason,
@@ -1100,14 +1143,18 @@ def assert_content_of_task_audit_log(
     displays: dict[str, str],
     tmp_memory: TmpMemory,
 ) -> None:
-    expected_identical = ["source", "severity", "timestamp"]
+    expected_identical: tuple[TaskAuditLogLabel, ...] = (
+        "source",
+        "severity",
+        "timestamp",
+    )
     click = "click"
     link = "Audit log"
     driver = selenium[browser_id]
-    data = yaml.load(config, yaml.Loader)
-    content = data.get("content", False)
-    severity = data.get("severity", False)
-    source = data.get("source", False)
+    data: ExpectedTaskAuditLogEntry = yaml.load(config, yaml.Loader)
+    content = data.get("content")
+    severity = data.get("severity", "")
+    source = data.get("source", "")
     close = "closes"
     # wait a second for workflow to open
     time.sleep(1)
@@ -1118,7 +1165,7 @@ def assert_content_of_task_audit_log(
     modal = Modals(driver).audit_log
     click_on_log_in_workflow_audit_log(driver, severity, source)
     modal.copy_json.click()
-    actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
+    actual_items: TaskAuditLogEntry = json.loads(clipboard.paste(display=displays[browser_id]))
 
     for label in expected_identical:
         compare_to_expected_if_elem_exist_audit_log(data, label, actual_items, task_name)
