@@ -156,7 +156,7 @@ clean_swaggers:
 	rm -rf ${GENERATED_CLIENTS_ROOT}/cdmi_client
 
 codetag-tracker:
-	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
+	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-dirs=generated --excluded-files=.pylintrc
 
 
 ##
@@ -176,7 +176,7 @@ endef
 ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/constants.py tests/gui/__init__.py tests/__init__.py \
  tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
  tests/performance/__init__.py tests/performance/type_definitions.py tests/performance/test_*.py \
- tests/oneclient/steps tests/oneclient/__init__.py tests/utils tests/upgrade
+ tests/oneclient/steps tests/oneclient/meta_steps tests/oneclient/__init__.py tests/utils tests/upgrade
 ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py \
  tests/oneclient/conftest.py tests/performance/conftest.py
 ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios

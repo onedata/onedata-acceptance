@@ -14,7 +14,7 @@ from typing import cast
 import rpyc
 
 from tests import HTTP_PORT, OZ_REST_PORT
-from tests.type_definitions import EnvDesc
+from tests.type_definitions import EnvDesc, Hosts
 from tests.utils import ONECLIENT_LOGS_DIR, ONECLIENT_MOUNT_DIR, RPYC_LOGS_DIR
 from tests.utils.client_utils import Client, RpycConnectionLike, get_client_conf
 from tests.utils.docker_utils import run_cmd as docker_run_cmd
@@ -83,7 +83,7 @@ class User:
         self,
         client_host_alias: str,
         client_id: str,
-        hosts: Mapping[str, Mapping[str, str]],
+        hosts: Hosts,
         env_desc: EnvDesc,
         token: str = CORRECT_TOKEN,
         opts: list[str] | None = None,

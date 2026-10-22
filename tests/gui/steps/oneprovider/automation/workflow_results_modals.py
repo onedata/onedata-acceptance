@@ -181,7 +181,7 @@ def click_on_log_in_workflow_audit_log(driver: WebDriver, severity: str, source:
 
 def get_modal_and_logs_for_task(
     path: str, task: Task, driver: WebDriver
-) -> tuple[AuditLog, PageObjectsSequence]:
+) -> tuple[AuditLog, PageObjectsSequence[LogsEntry]]:
     append_log_to_file(path, task.name)
     click_on_task_audit_log(task)
     # wait a moment for audit log modal to appear

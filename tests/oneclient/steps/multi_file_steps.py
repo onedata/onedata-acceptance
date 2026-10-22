@@ -22,9 +22,9 @@ import jsondiff
 import pytest
 
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
-from tests.oneclient.steps.multi_dir_steps import try_to_create_directory
+from tests.oneclient.steps.multi_dir_steps import cannot_list_dir, try_to_create_directory
 from tests.type_definitions import Hosts
-from tests.utils.acceptance_utils import compare, list_parser, make_arg_list, time_attr
+from tests.utils.acceptance_utils import compare, list_parser, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
 from tests.utils.client_utils import Client
 from tests.utils.onenv_utils import cmd_exec
@@ -41,20 +41,19 @@ SYMLINKS_DIR = ".symlinks"
 
 def create_base(
     user: str,
-    files: str,
+    files: list[str],
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
     should_fail: bool = False,
 ) -> None:
-    file_names = list_parser(files)
     user_ = users[user]
     client = user_.clients[client_node]
     mode = request.config.getoption("file_mode")
 
     assert mode in ["hardlink", "symlink", "regular"], f"Unexpected file mode: {mode}"
 
-    for file_name in file_names:
+    for file_name in files:
         path = client.absolute_path(file_name)
         condition: Callable[[], None]
 
@@ -124,7 +123,7 @@ def create_target_file(
     dir_name: str,
 ) -> str:
     space = file_name.split("/", maxsplit=1)[0]
-    directory_path = f"[{space}/{dir_name}]"
+    directory_path = os.path.join(space, dir_name)
     try_to_create_directory(user, client_node, directory_path, users, exist_ok=True)
     file_name_hash = "".join(
         random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
@@ -133,10 +132,13 @@ def create_target_file(
     return client.absolute_path(target_file_path)
 
 
-@wt(parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*) on (?P<client_node>.*)"))
+@wt(
+    parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*) on (?P<client_node>.*)"),
+    converters={"files": list_parser},
+)
 def create_reg_file(
     user: str,
-    files: str,
+    files: list[str],
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
@@ -148,11 +150,12 @@ def create_reg_file(
     parsers.re(
         r"(?P<user>\w+) fails to create regular files (?P<files>.*) "
         r"on (?P<client_node>.*)"
-    )
+    ),
+    converters={"files": list_parser},
 )
 def create_reg_file_fail(
     user: str,
-    files: str,
+    files: list[str],
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
@@ -177,7 +180,7 @@ def create_many(
 ) -> None:
     for i in range(int(lower), int(upper)):
         new_file = os.path.join(parent_dir, str(i))
-        create_reg_file(user, make_arg_list(new_file), client_node, users, request)
+        create_reg_file(user, [new_file], client_node, users, request)
 
 
 @wt(
@@ -236,7 +239,8 @@ def ls_empty(directory: str, user: str, client_node: str, users: Users) -> None:
     dir_path = client.absolute_path(directory)
 
     def condition() -> None:
-        assert len(client.ls(dir_path)) == 0
+        files = len(client.ls(dir_path))
+        assert files == 0, f"Directory is not empty - it has {files} files instead"
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -465,7 +469,10 @@ def check_size(user: str, file: str, size: str | int, client_node: str, users: U
 
     def condition() -> None:
         stat_result = client.stat(file_path)
-        assert stat_result.st_size == expected_size
+        size = stat_result.st_size
+        assert size == expected_size, (
+            f"Size of {file_path} should be {expected_size} B, but is {size} B"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -493,7 +500,10 @@ def check_type_impl(
 
     def condition() -> None:
         stat_result = client.stat(file_path) if follow_symlinks else client.lstat(file_path)
-        assert getattr(stat_lib, stat_method)(stat_result.st_mode)
+        assert getattr(stat_lib, stat_method)(stat_result.st_mode), (
+            f"Expected {file_path} on {client_node} to be {file_type}, "
+            f"but stat returned mode {stat_result.st_mode:#o}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -545,8 +555,14 @@ def shell_check_type(
         follow_links = "-L " if mode == "symlink" else ""
         cmd = f"stat --format=%F {follow_links}{file_path}"
         stat_file_type = client.run_cmd(cmd, output=True)
-        assert isinstance(stat_file_type, str)
-        assert stat_file_type.strip() == file_type
+        assert isinstance(stat_file_type, str), (
+            f"Expected stat output for {file_path} on {client_node} to be a string, "
+            f"but got {stat_file_type!r}"
+        )
+        assert stat_file_type.strip() == file_type, (
+            f"Expected file type of {file_path} on {client_node} to be {file_type!r}, "
+            f"but got {stat_file_type.strip()!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -561,7 +577,10 @@ def check_mode(user: str, file: str, mode: str, client_node: str, users: Users) 
 
     def condition() -> None:
         stat_result = client.stat(file_path)
-        assert stat_lib.S_IMODE(stat_result.st_mode) == expected_mode
+        assert stat_lib.S_IMODE(stat_result.st_mode) == expected_mode, (
+            f"Expected permissions of {file_path} on {client_node} to be {expected_mode:#o}, "
+            f"but got {stat_lib.S_IMODE(stat_result.st_mode):#o}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -593,6 +612,28 @@ def change_mode_base(
 )
 def change_mode(user: str, file: str, mode: str, client_node: str, users: Users) -> None:
     change_mode_base(user, file, mode, client_node, users)
+
+
+@wt(
+    parsers.re(
+        r"(?P<user_name1>\w+) changes (?P<file>.*) mode to (?P<mode>.*)"
+        r"on (?P<client_node1>.*) and (?P<user_name2>\w+) sees that file can't be listed on (?P<client_node2>.*)"
+    )
+)
+def change_mode_and_assert_file_cant_be_listed(
+    user_name1: str,
+    file: str,
+    mode: str,
+    client_node1: str,
+    user_name2: str,
+    client_node2: str,
+    users: Users,
+) -> None:
+    change_mode_base(user_name1, file, mode, client_node1, users)
+    # Check mode can be executed on another client because it only needs search permission on the parent dir
+    # TODO: VFS-13861 this line shouldn't fix this test but currently does
+    check_mode(user_name2, file, mode, client_node2, users)
+    cannot_list_dir(user_name2, file, client_node2, users)
 
 
 @wt(
@@ -669,7 +710,11 @@ def check_files_time(
         t1 = getattr(stat_result, attr1)
         stat_result2 = client.stat(file2_path)
         t2 = getattr(stat_result2, attr2)
-        assert compare(t1, t2, comparator)
+        assert compare(t1, t2, comparator), (
+            f"Time comparison failed on {client_node}: "
+            f"{time1} of {file_path} ({t1}) should be {comparator} "
+            f"{time2} of {file2_path} ({t2})"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -705,7 +750,11 @@ def cmp_time_to_previous(
         stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr)
         t2 = getattr(recorded_stats, attr)
-        assert compare(t1, t2, comparator)
+        assert compare(t1, t2, comparator), (
+            f"Time comparison failed on {client_node}: "
+            f"{time1} of {file_path} ({t1}) should be {comparator} "
+            f"recorded {time1} of {file2} ({t2})"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -813,7 +862,10 @@ def check_xattr_exists(user: str, file: str, name: str, client_node: str, users:
 
     def condition() -> None:
         xattrs = client.listxattr(file_path)
-        assert name in xattrs
+        assert name in xattrs, (
+            f"Expected extended attribute {name!r} on {file_path} on {client_node}, "
+            f"but found {xattrs!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -833,7 +885,10 @@ def check_xattr_doesnt_exist(
 
     def condition() -> None:
         xattrs = client.listxattr(file_path)
-        assert name not in xattrs
+        assert name not in xattrs, (
+            f"Expected extended attribute {name!r} to be absent from {file_path} "
+            f"on {client_node}, but found it in {xattrs!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -855,7 +910,10 @@ def check_string_xattr(
     def condition() -> None:
         xattr_value: bytes = client.getxattr(file_path, name)
         value_utf = value.encode("utf-8") if isinstance(value, str) else value
-        assert xattr_value == value_utf
+        assert xattr_value == value_utf, (
+            f"Expected extended attribute {name!r} of {file_path} on {client_node} "
+            f"to be {value_utf!r}, but got {xattr_value!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -876,7 +934,10 @@ def check_numeric_xattr(
 
     def condition() -> None:
         xattr_value = client.getxattr(file_path, name)
-        assert float(xattr_value) == float(value)
+        assert float(xattr_value) == float(value), (
+            f"Expected extended attribute {name!r} of {file_path} on {client_node} "
+            f"to have numeric value {value!r}, but got {xattr_value!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -897,7 +958,10 @@ def check_json_xattr(
 
     def condition() -> None:
         xattr_value = client.getxattr(file_path, name)
-        assert jsondiff.diff(json.loads(xattr_value), json.loads(value)) == {}
+        assert jsondiff.diff(json.loads(xattr_value), json.loads(value)) == {}, (
+            f"Expected extended attribute {name!r} of {file_path} on {client_node} "
+            f"to have JSON value {value!r}, but got {xattr_value!r}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 

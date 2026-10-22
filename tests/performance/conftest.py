@@ -8,8 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import inspect
 import os
-from collections.abc import Generator, Mapping
-from typing import cast
+from collections.abc import Generator
 
 import pytest
 import yaml
@@ -94,7 +93,7 @@ def mount_performance_client(
     client = users[username].mount_client(
         client_host,
         client_id,
-        cast(Mapping[str, Mapping[str, str]], hosts),
+        hosts,
         env_desc,
         CORRECT_TOKEN,
     )

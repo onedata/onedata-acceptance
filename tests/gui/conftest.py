@@ -11,12 +11,10 @@ import re
 import subprocess as sp
 from collections import defaultdict
 from collections.abc import Generator
-from typing import cast
 
 import pytest
 from _pytest._py.path import LocalPath
 from _pytest.config.argparsing import Parser
-from _pytest.reports import TestReport
 from pytest_bdd.parser import Feature, Scenario, Step
 from selenium import webdriver
 
@@ -66,7 +64,7 @@ def pytest_addoption(parser: Parser) -> None:
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item: pytest.Item) -> Generator[None, HookOutcome, None]:
     outcome = yield
-    rep = cast(TestReport, outcome.get_result())
+    rep = outcome.get_result()
     setattr(item, rep.when + "_xvfb_recorder", rep)
 
 
@@ -159,7 +157,7 @@ def tmp_memory() -> TmpMemory:
     Because of use of multiple browsers, the correct format would be:
      {'browser1': {...}, 'browser2': {...}, ...}
     """
-    return cast(TmpMemory, defaultdict(dict))
+    return defaultdict(dict)
 
 
 @pytest.fixture
