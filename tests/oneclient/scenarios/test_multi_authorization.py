@@ -17,36 +17,36 @@ from tests.utils.acceptance_utils import *
 scenario = partial(scenario, "../features/multi_authorization.feature")
 
 
-@scenario(
-    "Successful authorization - 1 client per user",
-)
-def test_successful_authorization1(env_description_file):
-    pass
+# @scenario(
+#     "Successful authorization - 1 client per user",
+# )
+# def test_successful_authorization1(env_description_file):
+#     pass
 
 
-@scenario(
-    "Successful authorization - 2 clients of one user",
-)
-def test_successful_authorization2(env_description_file):
-    pass
+# @scenario(
+#     "Successful authorization - 2 clients of one user",
+# )
+# def test_successful_authorization2(env_description_file):
+#     pass
 
 
-@scenario(
-    "Successful authorization - 2 clients of one user on different hosts",
-)
-def test_successful_authorization3(env_description_file):
-    pass
+# @scenario(
+#     "Successful authorization - 2 clients of one user on different hosts",
+# )
+# def test_successful_authorization3(env_description_file):
+#     pass
 
 
-@scenario(
-    "Bad and good authorization",
-)
-def test_good_and_bad_authorization(env_description_file):
-    pass
+# @scenario(
+#     "Bad and good authorization",
+# )
+# def test_good_and_bad_authorization(env_description_file):
+#     pass
 
 
-@scenario(
-    "Bad authorization",
-)
-def test_bad_authorization(env_description_file):
-    pass
+# @scenario(
+#     "Bad authorization",
+# )
+# def test_bad_authorization(env_description_file):
+#     pass

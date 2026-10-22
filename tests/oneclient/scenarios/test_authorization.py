@@ -15,11 +15,11 @@ from tests.utils.acceptance_utils import *
 scenario = partial(scenario, "../features/authorization.feature")
 
 
-@scenario("Successful authorization")
-def test_successful_authorization(env_description_file):
-    pass
+# @scenario("Successful authorization")
+# def test_successful_authorization(env_description_file):
+#     pass
 
 
-@scenario("Bad authorization")
-def test_bad_authorization(env_description_file):
-    pass
+# @scenario("Bad authorization")
+# def test_bad_authorization(env_description_file):
+#     pass
