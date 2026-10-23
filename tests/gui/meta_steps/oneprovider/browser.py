@@ -280,9 +280,12 @@ def open_metadata_tab_using_tag(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) scrolls (?P<direction>up|down) "(?P<num>.*)" screens from the (top|bottom)'
-        r" in (?P<which_browser>file browser|"
-        r'archive browser|dataset browser) table and sees the same files with "(?P<trials>.*)" trials for each different screen size'
+        r"^user of (?P<browser_id>.+?) scrolls "
+        r'(?P<direction>up|down) "(?P<num>\d+)" screens from the '
+        r"(?:top|bottom) in "
+        r"(?P<which_browser>(?:file|archive|dataset) browser) table "
+        r'and sees the same files with "(?P<trials>\d+)" trials '
+        r"for each different screen size$"
     ),
     converters={"which_browser": WhichBrowser},
 )
@@ -317,5 +320,5 @@ def scroll_few_screens_in_browser(
             unique_file_name_lists.add(tuple(current_file_names))
 
         assert len(unique_file_name_lists) == 1, (
-            f"Unique seen file names lists:\n{unique_file_name_lists}"
+            f"Unique seen file names lists for screen size ({size.width}, {size.height}):\n{unique_file_name_lists}"
         )
