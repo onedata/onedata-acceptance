@@ -5,6 +5,10 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import time
+from typing import Literal
+
+from tests.gui.constants import RESPONSIVE_LAYOUT_DELAY, ScreenSize
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.browser import click_configure_columns_button
@@ -12,9 +16,10 @@ from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.type_definitions import TmpMemory
+from tests.gui.type_definitions import TmpMemory, WhichBrowser
 from tests.gui.utils import Popups
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
+from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -24,12 +29,13 @@ from tests.utils.bdd_utils import parsers, wt
         r"user of (?P<browser_id>.*) creates new xattr column with "
         r'"(?P<key_name>.*)" key in (?P<which_browser>file browser|'
         r"archive browser|dataset browser) table"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
     key_name: str,
 ) -> None:
@@ -44,12 +50,13 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
         r' "(?P<key_name>.*)" key and "(?P<label_name>.*)" column label'
         r" in (?P<which_browser>file browser|archive browser|"
         r"dataset browser) table"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
     selenium: SeleniumDrivers,
     browser_id: str,
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
     key_name: str,
     label_name: str,
@@ -68,14 +75,14 @@ def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
 def create_xattr_columns_in_columns_menu_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
     name: str,
     with_label: bool = False,
     label_name: str | None = None,
 ) -> None:
     driver = selenium[browser_id]
-    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
 
     click_configure_columns_button(browser)
     wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
@@ -103,12 +110,13 @@ def create_xattr_columns_in_columns_menu_in_browser(
         r' document" mode and "(?P<label_name>.*)" custom label'
         r" in (?P<which_browser>file browser|archive browser|"
         r"dataset browser) table"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def wt_create_json_column_for_whole_document_with_label(
     selenium: SeleniumDrivers,
     browser_id: str,
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
     label_name: str,
 ) -> None:
@@ -128,12 +136,13 @@ def wt_create_json_column_for_whole_document_with_label(
         r'user of (?P<browser_id>.*) creates new json column with "Whole'
         r' document" mode in (?P<which_browser>file browser|'
         r"archive browser|dataset browser) table"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def wt_create_json_column_for_whole_document(
     selenium: SeleniumDrivers,
     browser_id: str,
-    which_browser: str,
+    which_browser: WhichBrowser,
     tmp_memory: TmpMemory,
 ) -> None:
     create_json_column_in_columns_menu(
@@ -154,13 +163,14 @@ def wt_create_json_column_for_whole_document(
         r"(?P<input_type>key|query) and with"
         r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def wt_create_json_column_for_query_or_key_with_label(
     selenium: SeleniumDrivers,
     browser_id: str,
     tmp_memory: TmpMemory,
-    which_browser: str,
+    which_browser: WhichBrowser,
     label_name: str,
     mode: str,
     option: str,
@@ -183,13 +193,14 @@ def wt_create_json_column_for_query_or_key_with_label(
         r' for "(?P<option>.*)" (?P<input_type>key|query) '
         r"in (?P<which_browser>file"
         r" browser|archive browser|dataset browser) table"
-    )
+    ),
+    converters={"which_browser": WhichBrowser},
 )
 def wt_create_json_column_for_query_or_key(
     selenium: SeleniumDrivers,
     browser_id: str,
     tmp_memory: TmpMemory,
-    which_browser: str,
+    which_browser: WhichBrowser,
     mode: str,
     option: str,
 ) -> None:
@@ -208,13 +219,13 @@ def create_json_column_in_columns_menu(
     selenium: SeleniumDrivers,
     browser_id: str,
     tmp_memory: TmpMemory,
-    which_browser: str,
+    which_browser: WhichBrowser,
     label_name: str | None,
     mode: str,
     option: str | None,
 ) -> None:
     driver = selenium[browser_id]
-    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
 
     click_configure_columns_button(browser)
     wait_for_item_to_appear(Popups(selenium[browser_id]).configure_columns_menu.web_elem)
@@ -267,3 +278,58 @@ def open_metadata_tab_using_tag(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
     assert_tab_in_modal(selenium, browser_id, tab_name, modal_name)
+
+
+@wt(
+    parsers.re(
+        r"^user of (?P<browser_id>.+?) scrolls "
+        r'(?P<direction>up|down) "(?P<num>\d+)" screens from the '
+        r"(?:top|bottom) in "
+        r"(?P<which_browser>(?:file|archive|dataset) browser) table "
+        r'and sees the same files with "(?P<trials>\d+)" trials '
+        r"for each different screen size$"
+    ),
+    converters={"which_browser": WhichBrowser},
+)
+def scroll_few_screens_in_browser(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    which_browser: WhichBrowser,
+    num: int,
+    direction: Literal["up", "down"],
+    tmp_memory: TmpMemory,
+    trials: int,
+) -> None:
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
+
+    def wait_until_files_list_not_stale() -> list[BrowserRow]:
+        files = browser.files_list
+        _ = files[0].name
+        return files
+
+    for screen_size in ScreenSize:
+        size = screen_size.value
+        driver.set_window_size(size.width, size.height)
+        time.sleep(RESPONSIVE_LAYOUT_DELAY)
+
+        unique_file_name_lists: set[tuple[str, ...]] = set()
+
+        for _ in range(trials):
+            if direction == "up":
+                browser.scroll_to_bottom()
+            else:
+                browser.scroll_to_top()
+            perform_action(wait_until_files_list_not_stale)
+
+            browser.scroll_few_screens(direction, num)
+
+            files = perform_action(wait_until_files_list_not_stale)
+            current_file_names = browser.get_field_value_from_visible_rows(elements_list=files)
+
+            unique_file_name_lists.add(tuple(current_file_names))
+
+        assert len(unique_file_name_lists) == 1, (
+            f"Unique seen file names lists for screen size ({size.width}, {size.height}):\n"
+            + "\n".join(map(str, unique_file_name_lists))
+        )
