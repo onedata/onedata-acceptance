@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Literal
 
+from tests.gui.constants import ScreenSize
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.browser import click_configure_columns_button
@@ -16,7 +17,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.type_definitions import TmpMemory, WhichBrowser
 from tests.gui.utils import Popups
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -279,19 +280,42 @@ def open_metadata_tab_using_tag(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) scrolls (?P<direction>up|down) "(?P<num>.*)" screens'
+        r'user of (?P<browser_id>.*) scrolls (?P<direction>up|down) "(?P<num>.*)" screens from the (top|bottom)'
         r" in (?P<which_browser>file browser|"
-        r"archive browser|dataset browser) table"
+        r'archive browser|dataset browser) table and sees the same files with "(?P<trials>.*)" trials for each different screen size'
     ),
     converters={"which_browser": WhichBrowser},
 )
 def scroll_few_screens_in_browser(
+    selenium: SeleniumDrivers,
     browser_id: str,
     which_browser: WhichBrowser,
     num: int,
     direction: Literal["up", "down"],
     tmp_memory: TmpMemory,
+    trials: int,
 ) -> None:
-
+    driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser.value)]
-    browser.scroll_few_screens(direction, num)
+
+    for screen_size in ScreenSize:
+        size = screen_size.value
+        driver.set_window_size(size.width, size.height)
+        unique_file_name_lists: set[tuple[str, ...]] = set()
+
+        for _ in range(trials):
+            if direction == "up":
+                browser.scroll_to_bottom()
+            else:
+                browser.scroll_to_top()
+
+            browser.scroll_few_screens(direction, num)
+
+            files = perform_action(lambda: browser.files_list)
+            current_file_names = browser.get_field_value_from_visible_rows(elements_list=files)
+
+            unique_file_name_lists.add(tuple(current_file_names))
+
+        assert len(unique_file_name_lists) == 1, (
+            f"Unique seen file names lists:\n{unique_file_name_lists}"
+        )

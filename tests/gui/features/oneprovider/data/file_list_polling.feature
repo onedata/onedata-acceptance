@@ -49,3 +49,9 @@ Feature: File list polling
     And user of browser2 succeeds to rename "test1.txt" to "new_file1.txt" in "space1"
     And user of browser1 is idle for 10 seconds
     Then user of browser1 sees that item named "new_file1.txt" is currently visible in file browser
+
+
+  Scenario: User sees renamed file in another window after waiting a while without using refresh
+    When user of browser2 opens file browser for "space1" space
+    And user of browser2 uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir and waits extended time for upload to finish
+    Then user of browser2 scrolls down "5" screens from the top in file browser table and sees the same files with "10" trials for each different screen size
