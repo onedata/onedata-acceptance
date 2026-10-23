@@ -303,6 +303,11 @@ def scroll_few_screens_in_browser(
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser.value)]
 
+    def wait_until_files_list_not_stale() -> list[BrowserRow]:
+        files = browser.files_list
+        _ = files[0].name
+        return files
+
     for screen_size in ScreenSize:
         size = screen_size.value
         driver.set_window_size(size.width, size.height)
@@ -315,12 +320,9 @@ def scroll_few_screens_in_browser(
                 browser.scroll_to_bottom()
             else:
                 browser.scroll_to_top()
+            perform_action(wait_until_files_list_not_stale)
 
             browser.scroll_few_screens(direction, num)
-
-            def wait_until_files_list_not_stale() -> list[BrowserRow]:
-                _ = browser.files_list[0].name
-                return browser.files_list
 
             files = perform_action(wait_until_files_list_not_stale)
             current_file_names = browser.get_field_value_from_visible_rows(elements_list=files)
