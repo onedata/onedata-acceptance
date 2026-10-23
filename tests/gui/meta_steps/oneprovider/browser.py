@@ -5,9 +5,10 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import time
 from typing import Literal
 
-from tests.gui.constants import ScreenSize
+from tests.gui.constants import RESPONSIVE_LAYOUT_DELAY, ScreenSize
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.browser import click_configure_columns_button
@@ -304,6 +305,8 @@ def scroll_few_screens_in_browser(
     for screen_size in ScreenSize:
         size = screen_size.value
         driver.set_window_size(size.width, size.height)
+        time.sleep(RESPONSIVE_LAYOUT_DELAY)
+
         unique_file_name_lists: set[tuple[str, ...]] = set()
 
         for _ in range(trials):
