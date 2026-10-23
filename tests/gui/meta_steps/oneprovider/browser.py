@@ -19,6 +19,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.type_definitions import TmpMemory, WhichBrowser
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import perform_action, transform
+from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
@@ -317,11 +318,16 @@ def scroll_few_screens_in_browser(
 
             browser.scroll_few_screens(direction, num)
 
-            files = perform_action(lambda: browser.files_list)
+            def wait_until_files_list_not_stale() -> list[BrowserRow]:
+                _ = browser.files_list[0].name
+                return browser.files_list
+
+            files = perform_action(wait_until_files_list_not_stale)
             current_file_names = browser.get_field_value_from_visible_rows(elements_list=files)
 
             unique_file_name_lists.add(tuple(current_file_names))
 
         assert len(unique_file_name_lists) == 1, (
-            f"Unique seen file names lists for screen size ({size.width}, {size.height}):\n{unique_file_name_lists}"
+            f"Unique seen file names lists for screen size ({size.width}, {size.height}):\n"
+            + "\n".join(map(str, unique_file_name_lists))
         )
