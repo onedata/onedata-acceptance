@@ -234,7 +234,7 @@ def try_to_remove_user_root_dir_by_path(client: str, users: Users, user: str) ->
 
     _assert_user_root_operation_error(
         exc_info.value,
-        errno.EBUSY,
+        errno.ENOTSUP,
         "removing",
     )
 
@@ -314,7 +314,7 @@ def try_to_move_user_root_dir_by_path(client: str, user: str, users: Users) -> N
 
     _assert_user_root_operation_error(
         exc_info.value,
-        errno.EBUSY,
+        errno.ENOTSUP,
         "moving",
     )
 
@@ -398,7 +398,7 @@ def try_to_create_file_in_user_root_dir_by_path(
 
     _assert_user_root_operation_error(
         exc_info.value,
-        errno.EACCES,
+        errno.ENOTSUP,
         "creating a file in",
     )
 
