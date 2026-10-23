@@ -5,12 +5,11 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
-from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
 from tests.type_definitions import EnvDesc, Hosts
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, then
 from tests.utils.user_utils import Users
-from tests.utils.utils import perform_action_with_timeout
+from tests.utils.utils import assert_
 
 
 @given(
@@ -67,9 +66,7 @@ def assert_spaces_found_in_client(
                 f" {spaces_in_client} on client {client_node}"
             )
 
-    perform_action_with_timeout(
-        assert_action, client.timeout, ignored_exceptions=(AssertionError,), interval=INTERVAL
-    )
+    assert_(client.perform, assert_action)
 
 
 @then(
