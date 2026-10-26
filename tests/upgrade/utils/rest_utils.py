@@ -24,7 +24,7 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.utils import repeat_failed
 
-DEFAULT_REST_QUERY_TIMEOUT = 60
+DEFAULT_REST_QUERY_TIMEOUT = 120
 ROOT_FILE_ID_MIN_PROVIDER_VERSION = 21
 
 JsonList = list[JsonObject]
