@@ -283,11 +283,11 @@ def open_metadata_tab_using_tag(
 @wt(
     parsers.re(
         r"^user of (?P<browser_id>.+?) scrolls "
-        r'(?P<direction>up|down) "(?P<num>\d+)" screens from the '
-        r"(?:top|bottom) in "
-        r"(?P<which_browser>(?:file|archive|dataset) browser) table "
-        r'and sees the same files with "(?P<trials>\d+)" trials '
-        r"for each different screen size$"
+        r"(?P<direction>up|down) (?P<num>\d+) screens from the "
+        r"(?:top|bottom) of "
+        r'(?P<which_browser>(?:file|archive|dataset) browser) in "(?P<path>.+?)" '
+        r"and always sees the same files after (?P<trials>\d+) trials "
+        r"for each screen size$"
     ),
     converters={"which_browser": WhichBrowser},
 )
@@ -296,6 +296,7 @@ def scroll_few_screens_in_browser(
     browser_id: str,
     which_browser: WhichBrowser,
     num: int,
+    path: str,
     direction: Literal["up", "down"],
     tmp_memory: TmpMemory,
     trials: int,
@@ -317,15 +318,14 @@ def scroll_few_screens_in_browser(
 
         for _ in range(trials):
             if direction == "up":
-                browser.scroll_to_bottom()
+                browser.scroll_to_bottom(expected_last_file=tmp_memory["expected_last_files"][path])
             else:
                 browser.scroll_to_top()
             perform_action(wait_until_files_list_not_stale)
 
             browser.scroll_few_screens(direction, num)
 
-            files = perform_action(wait_until_files_list_not_stale)
-            current_file_names = browser.get_field_value_from_visible_rows(elements_list=files)
+            current_file_names = browser.get_field_value_from_visible_rows()
 
             unique_file_name_lists.add(tuple(current_file_names))
 

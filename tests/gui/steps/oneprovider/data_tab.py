@@ -424,14 +424,23 @@ def start_uploading_file_to_cwd_in_file_browser(
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab_no_waiting(
-    selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    directory_path: str,
+    tmpdir: LocalPath,
+    tmp_memory: TmpMemory,
 ) -> None:
     driver = selenium[browser_id]
     directory = tmpdir.join(browser_id, *directory_path.split("/"))
     if directory.isdir():
-        OPLoggedIn(driver).file_browser.upload_files(
-            "\n".join(str(item) for item in directory.listdir() if item.isfile())
-        )
+        files = [item for item in directory.listdir() if item.isfile()]
+        file_browser = OPLoggedIn(driver).file_browser
+        remote_path = file_browser.breadcrumbs.pwd()
+        file_browser.upload_files("\n".join(str(item) for item in files))
+        if files:
+            tmp_memory["expected_last_files"][remote_path] = max(
+                (item.basename for item in files), key=str.casefold
+            )
     else:
         raise FileNotFoundError(f"directory {directory} does not exist")
 
@@ -457,9 +466,15 @@ def upload_file_to_cwd_in_file_browser(
     )
 )
 def upload_files_to_cwd_in_data_tab_extended_wait(
-    selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    directory_path: str,
+    tmpdir: LocalPath,
+    tmp_memory: TmpMemory,
 ) -> None:
-    upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, directory_path, tmpdir)
+    upload_files_to_cwd_in_data_tab_no_waiting(
+        selenium, browser_id, directory_path, tmpdir, tmp_memory
+    )
     wait_extended_time_for_file_upload_to_finish(selenium, browser_id)
 
 
@@ -489,9 +504,15 @@ def upload_files_to_cwd_in_data_tab(
     )
 )
 def upload_directory_files_to_cwd_in_data_tab(
-    selenium: SeleniumDrivers, browser_id: str, directory_path: str, tmpdir: LocalPath
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    directory_path: str,
+    tmpdir: LocalPath,
+    tmp_memory: TmpMemory,
 ) -> None:
-    upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, directory_path, tmpdir)
+    upload_files_to_cwd_in_data_tab_no_waiting(
+        selenium, browser_id, directory_path, tmpdir, tmp_memory
+    )
     wait_for_file_upload_to_finish(selenium, browser_id)
 
 

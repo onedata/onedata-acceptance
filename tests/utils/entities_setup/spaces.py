@@ -18,6 +18,7 @@ import yaml
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.rest.spaces import delete_space_if_present_using_rest
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.text import parse_elements_sequence
 from tests.type_definitions import HostDescription, JsonObject, JsonValue
 from tests.utils.bdd_utils import given, parsers, wt
@@ -840,11 +841,17 @@ def create_files_names_alphabetically(
     user: str,
     provider: str,
     hosts: Hosts,
+    tmp_memory: TmpMemory,
 ) -> None:
+    last_expected_file: str | None = None
     for i in range(int(number)):
         num = str(i + 1).rjust(3, "0")
-        file_path = f"{path}/file_{num}"
+        last_expected_file = f"file_{num}"
+        file_path = f"{path}/{last_expected_file}"
         create_empty_file(file_path, users, user, provider, hosts)
+
+    if last_expected_file is not None:
+        tmp_memory["expected_last_files"][path] = last_expected_file
 
 
 @given(
@@ -862,9 +869,12 @@ def create_files_names_alphabetically_with_dir_list(
     provider: str,
     users: Users,
     hosts: Hosts,
+    tmp_memory: TmpMemory,
 ) -> None:
     for dir_path in dir_list:
-        create_files_names_alphabetically(number, dir_path, users, user, provider, hosts)
+        create_files_names_alphabetically(
+            number, dir_path, users, user, provider, hosts, tmp_memory
+        )
 
 
 def _get_users_space_id_list(
