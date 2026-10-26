@@ -140,8 +140,13 @@ def purge_all_spaces(client: Client) -> None:
                         # retry in case events between providers haven't synchronized yet
                         retries = retries - 1
                         time.sleep(retry_delay)
-                    elif e.errno in (errno.EPERM, errno.EACCES, errno.EIO):
-                        # ignore permission errors during cleaning
+                    elif e.errno in (
+                        errno.EPERM,
+                        errno.EACCES,
+                        errno.EIO,
+                        errno.ENOTSUP,
+                    ):
+                        # ignore errors caused by removing the virtual space root
                         space_purged = True
                     else:
                         print(f"Unexpected error '{e.errno}' when cleaning space: {space_path}")
