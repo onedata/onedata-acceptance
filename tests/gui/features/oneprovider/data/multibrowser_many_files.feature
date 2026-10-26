@@ -1,4 +1,4 @@
-Feature: Jump to file using jump input in two file browsers
+Feature: Navigating large file lists with jump input and repeated scrolling
 
 
   Background:
