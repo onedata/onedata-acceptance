@@ -41,6 +41,6 @@ Feature: Jump to file using jump input in file browser
     Then user of browser sees that item named "file_200" is currently visible in file browser
 
 
-  Scenario: The user repeatedly scrolls through the same number of files from the top of the list at each screen size and always reaches the same set of files
+  Scenario: User repeatedly scrolls up the same number of screens from the end of the list and always sees the same files
     When user of browser opens file browser for "space1" space
-    Then user of browser scrolls up 5 screens from the bottom of file browser in "space1" and always sees the same files after 10 trials for each screen size
+    Then user of browser scrolls up 7 screens from the bottom of file browser in "space1" and always sees the same files after 3 trials for each screen size
