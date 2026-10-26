@@ -22,7 +22,10 @@ import jsondiff
 import pytest
 
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
-from tests.oneclient.steps.multi_dir_steps import cannot_list_dir, try_to_create_directory
+from tests.oneclient.steps.multi_dir_steps import (
+    cannot_list_dir_due_to_permission_error,
+    try_to_create_directory,
+)
 from tests.type_definitions import Hosts
 from tests.utils.acceptance_utils import compare, list_parser, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
@@ -616,10 +619,11 @@ def change_mode(user: str, file: str, mode: str, client_node: str, users: Users)
 @wt(
     parsers.re(
         r"(?P<user_name1>\w+) changes (?P<file>.*) mode to (?P<mode>.*)"
-        r"on (?P<client_node1>.*) and (?P<user_name2>\w+) sees that file can't be listed on (?P<client_node2>.*)"
+        r"on (?P<client_node1>.*) and (?P<user_name2>\w+) sees that directory can't be listed on "
+        r"(?P<client_node2>.*) due to permission error"
     )
 )
-def change_mode_and_assert_file_cant_be_listed(
+def change_mode_and_assert_dir_cant_be_listed_due_to_permission_error(
     user_name1: str,
     file: str,
     mode: str,
@@ -632,7 +636,7 @@ def change_mode_and_assert_file_cant_be_listed(
     # Check mode can be executed on another client because it only needs search permission on the parent dir
     # NOTE: this line shouldn't fix this test but currently does
     # check_mode(user_name2, file, mode, client_node2, users)
-    cannot_list_dir(user_name2, file, client_node2, users)
+    cannot_list_dir_due_to_permission_error(user_name2, file, client_node2, users)
 
 
 @wt(

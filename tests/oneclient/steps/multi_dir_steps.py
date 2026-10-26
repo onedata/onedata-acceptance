@@ -249,7 +249,7 @@ def list_dirs_base(
     directory: str,
     client_node: str,
     users: Users,
-    should_fail: bool = False,
+    expected_error: type[OSError] | None = None,
 ) -> list[str]:
     client = users[user].clients[client_node]
     path = client.absolute_path(directory)
@@ -259,16 +259,24 @@ def list_dirs_base(
         try:
             content = client.ls(path=path)
         except OSError as ex:
-            if ex.errno == errno.EPERM:
+            if ex.errno in (errno.EPERM, errno.EACCES):
                 raise PermissionError(ex.errno, ex.strerror, ex.filename) from ex
+            if ex.errno == errno.ENOENT:
+                raise FileNotFoundError(ex.errno, ex.strerror, ex.filename) from ex
             raise
         path_content[:] = content
 
+    failure_message = (
+        f"Directory {directory!r} was accessible, expected {expected_error.__name__}"
+        if expected_error is not None
+        else ""
+    )
     assert_with_expected_fail(
         condition,
         client.timeout,
-        should_fail=should_fail,
-        exceptions=PermissionError if should_fail else Exception,
+        should_fail=expected_error is not None,
+        message=failure_message,
+        exceptions=expected_error or Exception,
     )
     return path_content
 
@@ -278,9 +286,28 @@ def list_dir(user: str, directory: str, client_node: str, users: Users) -> None:
     list_dirs_base(user, directory, client_node, users)
 
 
-@wt(parsers.re(r"(?P<user>\w+) can't list (?P<directory>.*) on (?P<client_node>.*)"))
-def cannot_list_dir(user: str, directory: str, client_node: str, users: Users) -> None:
-    list_dirs_base(user, directory, client_node, users, should_fail=True)
+@wt(
+    parsers.re(
+        r"(?P<user>\w+) can't list (?P<directory>.*) on (?P<client_node>.*) "
+        r"due to permission error"
+    )
+)
+def cannot_list_dir_due_to_permission_error(
+    user: str, directory: str, client_node: str, users: Users
+) -> None:
+    list_dirs_base(user, directory, client_node, users, expected_error=PermissionError)
+
+
+@wt(
+    parsers.re(
+        r"(?P<user>\w+) can't list (?P<directory>.*) on (?P<client_node>.*) "
+        r"due to file not found error"
+    )
+)
+def cannot_list_dir_due_to_file_not_found_error(
+    user: str, directory: str, client_node: str, users: Users
+) -> None:
+    list_dirs_base(user, directory, client_node, users, expected_error=FileNotFoundError)
 
 
 @when(
