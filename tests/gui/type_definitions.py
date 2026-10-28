@@ -51,6 +51,16 @@ type TreeConfig = list[str | dict[str, "TreeConfig | str | int"]]
 type AuditLogValue = str | int | float | bool | list["AuditLogValue"] | dict[str, "AuditLogValue"]
 type AuditLogContent = dict[str, AuditLogValue]
 
+
+class StoreDetails(TypedDict, total=False):
+    algorithm: str | None
+    checksum: str | None
+    fileId: str | None
+    destinationPath: str | None
+    sourceUrl: str | None
+    size: int | None
+
+
 type PrivilegeGranted = Literal[True, False, "Partially"]
 PrivilegeGroupConfig = TypedDict(
     "PrivilegeGroupConfig",

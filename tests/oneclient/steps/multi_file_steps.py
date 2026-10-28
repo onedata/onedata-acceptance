@@ -634,8 +634,8 @@ def change_mode_and_assert_dir_cant_be_listed_due_to_permission_error(
 ) -> None:
     change_mode_base(user_name1, file, mode, client_node1, users)
     # Check mode can be executed on another client because it only needs search permission on the parent dir
-    # NOTE: this line shouldn't fix this test but currently does
-    # check_mode(user_name2, file, mode, client_node2, users)
+    # TODO: VFS-13861 this line shouldn't fix this test but currently does
+    check_mode(user_name2, file, mode, client_node2, users)
     cannot_list_dir_due_to_permission_error(user_name2, file, client_node2, users)
 
 

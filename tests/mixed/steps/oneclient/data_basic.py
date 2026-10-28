@@ -51,7 +51,7 @@ def mount_new_oneclient_with_token(
     users[user].mount_client(
         "oneclient-1",
         "client1",
-        cast(Mapping[str, Mapping[str, str]], hosts),
+        hosts,
         env_desc,
         token,
     )
@@ -70,7 +70,7 @@ def mount_new_oneclient_with_token_fail(
         users[user].mount_client(
             "oneclient-1",
             "client1",
-            cast(Mapping[str, Mapping[str, str]], hosts),
+            hosts,
             env_desc,
             token,
         )

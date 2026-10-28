@@ -156,7 +156,7 @@ clean_swaggers:
 	rm -rf ${GENERATED_CLIENTS_ROOT}/cdmi_client
 
 codetag-tracker:
-	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
+	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-dirs=generated --excluded-files=.pylintrc
 
 
 ##

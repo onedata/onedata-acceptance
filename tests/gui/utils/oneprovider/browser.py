@@ -9,9 +9,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import contextlib
 from abc import ABC
 from collections.abc import Iterable
-from typing import ClassVar
+from typing import ClassVar, Literal
 
-from selenium.common.exceptions import JavascriptException, NoSuchElementException
+from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -26,6 +26,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.web_elem_utils import is_element_visible_using_getter
 from tests.utils.utils import repeat_failed
 
 from ..core import scroll_to_css_selector
@@ -112,6 +113,13 @@ class Browser(ABC, PageObject):
             "arguments[0].scrollTo(arguments[1]);", self.web_elem, self._bottom
         )
 
+    def scroll_few_screens(self, direction: Literal["up", "down"], num: int) -> None:
+        key = Keys.PAGE_UP if direction == "up" else Keys.PAGE_DOWN
+        self.click_on_background()
+
+        for _ in range(num):
+            (ActionChains(self.driver).key_down(key).key_up(key).perform())
+
     def scroll_to_number_file(self, driver: WebDriver, number: int, browser: "Browser") -> None:
         selector = browser.get_css_selector() + " " + f".data-row:nth-of-type({number})"
         scroll_to_css_selector(driver, selector)
@@ -130,13 +138,9 @@ class Browser(ABC, PageObject):
         ActionChains(driver).move_to_element(element).perform()
 
     def is_empty(self) -> bool:
-        try:
-            _ = self._empty_dir_icon
-        except NoSuchElementException:
-            return False
-        return True
+        return (
+            is_element_visible_using_getter(self.driver, lambda _: self._empty_dir_icon) is not None
+        )
 
     def get_css_selector(self) -> str:
-        css_selector = self.web_elem.get_attribute("class")
-        css_selector = css_selector.replace(" ", ".")
-        return "." + css_selector
+        return "." + self.web_elem.get_attribute("class").replace(" ", ".")

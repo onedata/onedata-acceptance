@@ -4,9 +4,6 @@ __author__ = "Jakub Kudzia, Piotr Ociepka"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Mapping
-from typing import cast
-
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
 from tests.type_definitions import EnvDesc, Hosts
@@ -51,7 +48,7 @@ def mount_multiple_clients(
         user.mount_client(
             client_host,
             client_id,
-            cast(Mapping[str, Mapping[str, str]], hosts),
+            hosts,
             env_desc,
             token,
         )

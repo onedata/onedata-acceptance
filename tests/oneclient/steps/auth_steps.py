@@ -5,9 +5,6 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from collections.abc import Mapping
-from typing import cast
-
 from tests.oneclient.steps.multi_auth_steps import assert_spaces_found_for_each_client
 from tests.type_definitions import EnvDesc, Hosts
 from tests.utils.acceptance_utils import list_parser
@@ -20,7 +17,7 @@ def default_mount(user: str, token: str, hosts: Hosts, users: Users, env_desc: E
     users[user].mount_client(
         "oneclient-1",
         "client1",
-        cast(Mapping[str, Mapping[str, str]], hosts),
+        hosts,
         env_desc,
         token,
     )
