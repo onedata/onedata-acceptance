@@ -1,4 +1,4 @@
-Feature: Navigating large file lists with jump input and repeated scrolling
+Feature: Navigating large file lists with a single browser
 
 
   Background:
@@ -19,28 +19,31 @@ Feature: Navigating large file lists with jump input and repeated scrolling
 
 
   Scenario: User successfully jumps to a previously non-visible file after writing its name prefix to jump input
-    When user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
+    When user of browser opens file browser for "space1" space
     And user of browser writes "file_1" to jump input in file browser and expects "file_100" to be highlighted
     Then user of browser sees that item named "file_100" is currently visible in file browser
 
 
   Scenario: User jumps to beginning of file list after writing "aaa" to jump input
-    When user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser scrolls to the bottom of file browser
+    When user of browser opens file browser for "space1" space
+    And user of browser scrolls to the bottom of file browser with "file_200" as the expected last file
     And user of browser sees that item named "file_200" is currently visible in file browser
     And user of browser writes "aaa" to jump input in file browser and expects "file_001" to be highlighted
     Then user of browser sees that item named "file_001" is currently visible in file browser
 
 
   Scenario: User jumps to the end of the list after writing "zzz" to jump input
-    When user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
+    When user of browser opens file browser for "space1" space
     And user of browser writes "zzz" to jump input in file browser and expects "file_200" to be highlighted
     Then user of browser sees that item named "file_200" is currently visible in file browser
 
 
   Scenario: User repeatedly scrolls up the same number of screens from the end of the list and always sees the same files
     When user of browser opens file browser for "space1" space
-    Then user of browser scrolls up 7 screens from the bottom of file browser in "space1" and always sees the same files after 3 trials for each screen size
+    And user of browser scrolls to the bottom of file browser with "file_200" as the expected last file
+    And user of browser scrolls up 7 screens in file browser
+    And user of browser remembers visible files list in file browser
+
+    Then user of browser scrolls to the bottom of file browser with "file_200" as the expected last file
+    And user of browser scrolls up 7 screens in file browser
+    And user of browser sees that visible files list is the same as remembered in file browser

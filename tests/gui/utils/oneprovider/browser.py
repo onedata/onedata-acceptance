@@ -110,17 +110,22 @@ class Browser(ABC, PageObject):
                 "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
             )
 
-    def scroll_to_bottom(self, expected_last_file: str) -> None:
-        scroll_condition = True
-        while scroll_condition:
-            bottom = self._bottom
-            self.driver.execute_script("arguments[0].scrollIntoView();", bottom)
-            scroll_condition = perform_action(
-                lambda: self.files_list[-1].name != expected_last_file
+    def scroll_to_last_file_on_files_list(self, expected_last_file: str) -> None:
+        def scroll_and_check_last_file() -> None:
+            self.scroll_to_bottom()
+            actual_last_file = self.files_list[-1].name
+            assert actual_last_file == expected_last_file, (
+                f'Expected last file "{expected_last_file}", '
+                f'but currently reached "{actual_last_file}"'
             )
+
+        perform_action(scroll_and_check_last_file, timeout=WAIT_FRONTEND)
 
         # scroll 1 more time to ensure that we are actually at the bottom of page
         self.scroll_few_screens(direction="down", num=1)
+
+    def scroll_to_bottom(self) -> None:
+        self.driver.execute_script("arguments[0].scrollIntoView();", self._bottom)
 
     def scroll_few_screens(self, direction: Literal["up", "down"], num: int) -> None:
         key = Keys.PAGE_UP if direction == "up" else Keys.PAGE_DOWN

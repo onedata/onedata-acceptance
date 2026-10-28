@@ -1,4 +1,4 @@
-Feature: Navigating large file lists with jump input and repeated scrolling
+Feature: Navigating large file lists with multiple browsers
 
 
   Background:
@@ -29,7 +29,7 @@ Feature: Navigating large file lists with jump input and repeated scrolling
     And user of browser2 clicks "Files" of "space1" space in the sidebar
     And user of browser2 sees file browser in files tab in Oneprovider page
     And user of browser2 uses upload button from file browser menu bar to upload local file "file_0011.txt" to remote current dir
-    And user of browser1 scrolls to the bottom of file browser
+    And user of browser1 scrolls to the bottom of file browser with "file_200" as the expected last file
     And user of browser1 clicks "Refresh" button from file browser menu bar
     Then user of browser1 writes "file_0011" to jump input in file browser and expects "file_0011.txt" to be highlighted
     And user of browser1 sees that item named "file_0011.txt" is currently visible in file browser

@@ -282,12 +282,66 @@ def open_metadata_tab_using_tag(
 
 @wt(
     parsers.re(
-        r"^user of (?P<browser_id>.+?) scrolls "
+        r"user of (?P<browser_id>.+?) scrolls (?P<direction>up|down) (?P<num>\d+)"
+        r" screens in (?P<which_browser>(?:file|archive|dataset) browser)"
+    ),
+    converters={"which_browser": WhichBrowser},
+)
+def scroll_few_screens_in_file_browser(
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    num: int,
+    direction: Literal["up", "down"],
+    which_browser: WhichBrowser,
+) -> None:
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
+    browser.scroll_few_screens(direction, num)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.+?) remembers visible files list"
+        r" in (?P<which_browser>(?:file|archive|dataset) browser)"
+    ),
+    converters={"which_browser": WhichBrowser},
+)
+def remember_visible_files_list(
+    browser_id: str, tmp_memory: TmpMemory, which_browser: WhichBrowser
+) -> None:
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
+    visible_file_names: list[str] = browser.get_field_value_from_visible_rows()
+    tmp_memory[browser_id]["visible_files"] = visible_file_names
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.+?) sees that visible files list is the same as remembered"
+        r" in (?P<which_browser>(?:file|archive|dataset) browser)"
+    ),
+    converters={"which_browser": WhichBrowser},
+)
+def assert_currently_visible_files_list_matches_remembered_list(
+    browser_id: str, tmp_memory: TmpMemory, which_browser: WhichBrowser
+) -> None:
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
+    visible_file_names: list[str] = browser.get_field_value_from_visible_rows()
+    remembered_file_names = tmp_memory[browser_id]["visible_files"]
+    assert visible_file_names == remembered_file_names, (
+        "Current list differs from remembered\n"
+        f"Current: {visible_file_names}\n"
+        f"Remembered: {remembered_file_names}"
+    )
+
+
+@wt(
+    parsers.re(
+        r"^for each supported screen size, user of (?P<browser_id>.+?) performs "
+        r"(?P<trials>\d+) trials of scrolling "
         r"(?P<direction>up|down) (?P<num>\d+) screens from the "
-        r"(?:top|bottom) of "
-        r'(?P<which_browser>(?:file|archive|dataset) browser) in "(?P<path>.+?)" '
-        r"and always sees the same files after (?P<trials>\d+) trials "
-        r"for each screen size$"
+        r"(?P<starting_edge>top|bottom) of "
+        r'(?P<which_browser>(?:file|archive|dataset) browser) \(with "'
+        r'(?P<expected_last_file>.+?)" as the expected last file\) '
+        r"and sees the same files in every trial$"
     ),
     converters={"which_browser": WhichBrowser},
 )
@@ -296,8 +350,9 @@ def scroll_few_screens_in_browser(
     browser_id: str,
     which_browser: WhichBrowser,
     num: int,
-    path: str,
+    expected_last_file: str,
     direction: Literal["up", "down"],
+    starting_edge: Literal["top", "bottom"],
     tmp_memory: TmpMemory,
     trials: int,
 ) -> None:
@@ -317,8 +372,8 @@ def scroll_few_screens_in_browser(
         unique_file_name_lists: set[tuple[str, ...]] = set()
 
         for _ in range(trials):
-            if direction == "up":
-                browser.scroll_to_bottom(expected_last_file=tmp_memory["expected_last_files"][path])
+            if starting_edge == "bottom":
+                browser.scroll_to_last_file_on_files_list(expected_last_file=expected_last_file)
             else:
                 browser.scroll_to_top()
             perform_action(wait_until_files_list_not_stale)
