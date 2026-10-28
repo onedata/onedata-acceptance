@@ -10,6 +10,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
+from tests.gui.utils.text import parse_elements_sequence
+from tests.gui.utils.web_elem_utils import replace_ace_editor_data
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -120,7 +122,7 @@ def set_description_of_a_space(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.configuration_page
     page.editor_description_mode.click()
-    page.description_text_area = description
+    replace_ace_editor_data(driver, description)
     if with_save:
         page.save_button.click()
         page.preview_description_mode.click()
@@ -146,6 +148,28 @@ def add_tags_in_space_configuration_tab(
 
     if with_save:
         page.space_tags_editor.save_button.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees tags "{expected_tags:ElementsSequence}" '
+        "in space configuration subpage",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_tags_in_space_configuration_tab(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    expected_tags: list[str],
+) -> None:
+    driver = selenium[browser_id]
+    tags_editor = OZLoggedIn(driver).data.configuration_page.space_tags_editor
+    actual_tags = [tag.name for tag in tags_editor.tags]
+
+    assert set(actual_tags) == set(expected_tags), (
+        f"Expected space tags {expected_tags}, but found {actual_tags}"
+    )
 
 
 @wt(parsers.parse('user of {browser_id} sees "{label_info}" header label in configuration space'))

@@ -3,6 +3,7 @@ Feature: Basic management of Space Marketplace
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - space-owner-user
+            - marketplace-user
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: space-owner-user
@@ -34,6 +35,8 @@ Feature: Basic management of Space Marketplace
             - science
         description: "# Example space\nExample of a space advertised in a Marketplace"
 
+    # TODO: VFS-13985 Either uncomment it or add a new meta step to check if space configuration is correct before advertising
+    # And user of browser sees tags "[archival, big-data, science]" in space configuration subpage
     And user of browser checks "Advertise in Marketplace" toggle on space configuration page
     And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
     And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
@@ -45,8 +48,8 @@ Feature: Basic management of Space Marketplace
     Then user of browser sees that the space is advertised in the Marketplace tile in space overview subpage
     And user of browser clicks "Show" link in the Marketplace tile in space overview subpage
     Then user of browser can see there are 1 spaces marketplace on the spaces marketplace list in the sidebar
-    And user of browser sees advertised space on Space Marketplace subpage with following parameters:
-        space name: "space1"
+    And user of browser sees "space1" space in Space Marketplace subpage with following details:
+        access state: membership granted
         tags:
           - archival
           - big-data
@@ -67,8 +70,8 @@ Feature: Basic management of Space Marketplace
 
     When user of browser clicks on "Data" in the main menu
     And user of browser clicks on "Marketplace" button in spaces sidebar
-    Then user of browser sees advertised space on Space Marketplace subpage with following parameters:
-        space name: "space1"
+    Then user of browser sees "space1" space in Space Marketplace subpage with following details:
+        access state: membership granted
         organization name: "onedata"
         creation time: current
         providers:
@@ -86,6 +89,38 @@ Feature: Basic management of Space Marketplace
     Then user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
     When user of browser clicks on "Marketplace" button in spaces sidebar
     Then user of browser does not see "space1" space in Space Marketplace subpage
+
+
+  Scenario: Users see live changes to an advertised space in the Marketplace
+    Given using REST, user space-owner-user configures "space1" space in "onezone" Onezone service as follows:
+        organizationName: "Onedata"
+        description: "Original marketplace description"
+        advertisedInMarketplace: true
+        marketplaceContactEmail: "example@gmail.com"
+    And opened [space_owner_browser, marketplace_browser] with [space-owner-user, marketplace-user] signed in to [Onezone, Onezone] service
+
+    When user of space_owner_browser clicks on "Data" in the main menu
+    And user of space_owner_browser clicks "Configuration" of "space1" space in the sidebar
+    And user of marketplace_browser clicks on "Data" in the main menu
+    And user of marketplace_browser clicks on "Marketplace" button in spaces sidebar
+    Then user of marketplace_browser sees "space1" space with a "Request access" button in Space Marketplace subpage
+
+    When user of space_owner_browser sets space configuration as follows:
+        space name: "space1-updated"
+        organization name: "Onedata Research"
+        tags:
+          general:
+            - archival
+            - big-data
+        description: "Updated marketplace description"
+
+    Then user of marketplace_browser sees "space1-updated" space in Space Marketplace subpage with following details:
+        access state: request access
+        tags:
+          - archival
+          - big-data
+        organization name: "Onedata Research"
+        description: "Updated marketplace description"
 
 
   Scenario: User is asked about unsaved changes in space configuration subpage and can save them

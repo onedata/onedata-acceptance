@@ -15,8 +15,10 @@ from tests.gui.steps.onezone.space_configuration import (
     set_space_data_in_configuration_tab,
 )
 from tests.gui.steps.onezone.space_marketplace import (
+    assert_creation_time_in_space_marketplace,
     assert_element_in_space_marketplace,
     assert_elements_list_in_space_marketplace,
+    assert_space_with_request_access_in_marketplace_subpage,
 )
 from tests.gui.steps.rest.spaces import modify_space_using_rest
 from tests.type_definitions import Hosts, SeleniumDrivers
@@ -129,7 +131,6 @@ def _configure_space_manually(
     set_description_of_a_space(selenium, browser_id, description, with_save=with_save)
 
     if tags:
-        # KeyError when call tags[general_option] if not exists
         if general_option in tags:
             add_tags_in_space_configuration_tab(
                 selenium,
@@ -150,27 +151,30 @@ def _configure_space_manually(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees advertised space on Space Marketplace "
-        "subpage with following parameters:\n{config}"
+        'user of {browser_id} sees "{space_name}" space in Space Marketplace '
+        "subpage with following details:\n{config}"
     )
 )
-def assert_space_in_marketplace_with_config(
-    browser_id: str, selenium: SeleniumDrivers, config: str
+def assert_space_details_in_marketplace(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    config: str,
 ) -> None:
-    """Assert space advertised in marketplace according to given config.
+    """Assert selected details of a space advertised in the marketplace.
 
     Config format given in yaml is as follows:
-    space name: space_name
+    access state: "membership granted" or "request access"  ---> optional
     tags:                               ---> optional
       - tag
-    organization name: organization_name
-    creation time: date                (DD-Mon-YYYY)
-    providers:
+    organization name: organization_name                       ---> optional
+    creation time: date (DD-Mon-YYYY) or "current"             ---> optional
+    providers:                                                  ---> optional
       - provider_name
-    description: description
+    description: description                                    ---> optional
 
     Example configuration:
-    space name: "space1"
+    access state: membership granted
     tags:
       - archival
       - big-data
@@ -182,60 +186,50 @@ def assert_space_in_marketplace_with_config(
     description: "Example of a space advertised in a Marketplace"
 
     """
-
-    _assert_space_in_marketplace_with_config(browser_id, config, selenium)
-
-
-def _assert_space_in_marketplace_with_config(
-    browser_id: str, config: str, selenium: SeleniumDrivers
-) -> None:
     data = yaml.load(config, yaml.Loader)
 
-    space_name_option = "space name"
-    organization_name_option = "organization name"
-    creation_time_option = "creation time"
-    description_option = "description"
-
-    space_name = data[space_name_option]
-    organization_name = data[organization_name_option]
-    creation_time = data[creation_time_option]
-    tags = data.get("tags", False)
-    providers = data.get("providers", False)
-    description = data.get(description_option, None)
-
-    assert_element_in_space_marketplace(
-        selenium, browser_id, space_name, "access_info", "Membership granted"
-    )
-
-    assert_element_in_space_marketplace(
-        selenium,
-        browser_id,
-        space_name,
-        organization_name_option,
-        organization_name,
-    )
-
-    if tags:
-        assert_elements_list_in_space_marketplace(selenium, browser_id, space_name, "tag", tags)
-
-    assert_element_in_space_marketplace(
-        selenium,
-        browser_id,
-        space_name,
-        creation_time_option,
-        creation_time,
-    )
-
-    if providers:
-        assert_elements_list_in_space_marketplace(
-            selenium, browser_id, space_name, "provider", providers
-        )
-
-    if description:
+    access_state = data.get("access state")
+    if access_state == "membership granted":
         assert_element_in_space_marketplace(
             selenium,
             browser_id,
             space_name,
-            description_option,
-            description,
+            "access_info",
+            "Membership granted",
         )
+    elif access_state == "request access":
+        assert_space_with_request_access_in_marketplace_subpage(
+            selenium,
+            browser_id,
+            space_name,
+        )
+    elif access_state is not None:
+        raise ValueError(f"Unsupported marketplace access state: {access_state}")
+
+    for option in ("organization name", "description"):
+        if option in data:
+            assert_element_in_space_marketplace(
+                selenium,
+                browser_id,
+                space_name,
+                option,
+                data[option],
+            )
+
+    if "creation time" in data:
+        assert_creation_time_in_space_marketplace(
+            selenium,
+            browser_id,
+            space_name,
+            data["creation time"],
+        )
+
+    for option, element_type in (("tags", "tag"), ("providers", "provider")):
+        if option in data:
+            assert_elements_list_in_space_marketplace(
+                selenium,
+                browser_id,
+                space_name,
+                element_type,
+                data[option],
+            )

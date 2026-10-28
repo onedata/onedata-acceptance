@@ -18,15 +18,33 @@ from tests.utils.utils import repeat_failed
 
 
 @wt(
-    parsers.re(
-        r'user of (?P<browser_id>.*) clicks on "Advertise your space" '
-        r"button in Space Marketplace subpage"
+    parsers.parse(
+        'user of {browser_id} clicks on "Advertise your space" button in Space Marketplace subpage'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_marketplace_subpage(selenium: SeleniumDrivers, browser_id: str) -> None:
+def click_advertise_space_button_in_marketplace_subpage(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver).data.space_marketplace_page.advertise_space_button.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees "{space_name}" space with a "Request access" '
+        "button in Space Marketplace subpage"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_space_with_request_access_in_marketplace_subpage(
+    selenium: SeleniumDrivers, browser_id: str, space_name: str
+) -> None:
+    driver = selenium[browser_id]
+    space = OZLoggedIn(driver).data.space_marketplace_page.spaces_marketplace_list[space_name]
+    assert space.request_access.is_displayed(), (
+        f"'Request access' button is not displayed for {space_name}"
+    )
 
 
 @wt(
@@ -76,6 +94,24 @@ def get_today_date() -> str:
     return day + " " + month + " " + year
 
 
+def assert_creation_time_in_space_marketplace(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    space_name: str,
+    expected_creation_time: str,
+) -> None:
+    if expected_creation_time == "current":
+        expected_creation_time = get_today_date()
+
+    assert_element_in_space_marketplace(
+        selenium,
+        browser_id,
+        space_name,
+        "creation time",
+        expected_creation_time,
+    )
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_in_space_marketplace(
     selenium: SeleniumDrivers,
@@ -91,11 +127,7 @@ def assert_element_in_space_marketplace(
         f"{name_of_element}: {element} displayed in advertised space:"
         f" {space_name}, does not match expected: {element_data}"
     )
-
-    if element_type == "creation time" and element_data == "current":
-        element_data = get_today_date()
-
-    assert element_data in element, error_message
+    assert element_data == element, error_message
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

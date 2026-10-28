@@ -99,16 +99,6 @@ def get_xml_editor_data(driver: WebDriver) -> str:
     )
 
 
-def replace_xml_editor_data(driver: WebDriver, new_data: str) -> None:
-    driver.execute_script(
-        """
-        var editor = ace.edit(document.querySelector('.ace_editor'));
-        editor.setValue(arguments[0], -1);
-        """,
-        new_data,
-    )
-
-
 def check_ace_editor_appeared(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     try:

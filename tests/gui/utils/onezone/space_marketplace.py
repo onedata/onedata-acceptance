@@ -33,6 +33,7 @@ class MarketplaceSpace(PageObject):
 
     visit_space = Button(".visit-space-link")
     configure_space = Button(".configure-space-link")
+    request_access = Button(".access-info-col .btn")
 
     show_description_button = Button(".expand-btn")
     description = Label(".marketplace-space-description")
