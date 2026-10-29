@@ -29,11 +29,17 @@ def assert_advertise_in_marketplace_toggle(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.configuration_page
+    toggle = page.advertise_toggle
+    toggle_classes = toggle.web_elem.get_attribute("class")
 
     if "not" in checked:
-        assert page.advertise_toggle.is_unchecked(), "Space is advertised in marketplace"
+        assert toggle.is_unchecked(), (
+            f'Space is advertised in marketplace; advertise toggle classes: "{toggle_classes}"'
+        )
     else:
-        assert page.advertise_toggle.is_checked(), "Space is not advertised in marketplace"
+        assert toggle.is_checked(), (
+            f'Space is not advertised in marketplace; advertise toggle classes: "{toggle_classes}"'
+        )
 
 
 @wt(
@@ -132,19 +138,18 @@ def set_description_of_a_space(
 def add_tags_in_space_configuration_tab(
     selenium: SeleniumDrivers,
     browser_id: str,
-    tag_type: str,
-    tags: list[str],
+    tags_to_add: dict[str, list[str]],
     with_save: bool = True,
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.configuration_page
     page.space_tags_editor.click()
     page.space_tags_editor.add_tag.click()
-    getattr(Popups(driver).spaces_tags, tag_type).click()
-
-    for tag in tags:
-        Popups(driver).spaces_tags.search_bar = tag
-        Popups(driver).spaces_tags.tags_list[tag].click()
+    for tag_type, tags in tags_to_add.items():
+        getattr(Popups(driver).spaces_tags, tag_type).click()
+        for tag in tags:
+            Popups(driver).spaces_tags.search_bar = tag
+            Popups(driver).spaces_tags.tags_list[tag].click()
 
     if with_save:
         page.space_tags_editor.save_button.click()

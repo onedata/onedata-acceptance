@@ -106,8 +106,6 @@ def _configure_space_manually(
 
     space_name_option = "space name"
     organization_name_option = "organization name"
-    general_option = "general"
-    domains_option = "domains"
 
     space_name = data[space_name_option]
     organization_name = data[organization_name_option]
@@ -128,25 +126,11 @@ def _configure_space_manually(
         organization_name,
         with_save=with_save,
     )
-    set_description_of_a_space(selenium, browser_id, description, with_save=with_save)
 
     if tags:
-        if general_option in tags:
-            add_tags_in_space_configuration_tab(
-                selenium,
-                browser_id,
-                general_option,
-                tags[general_option],
-                with_save=with_save,
-            )
-        if domains_option in tags:
-            add_tags_in_space_configuration_tab(
-                selenium,
-                browser_id,
-                domains_option,
-                tags[domains_option],
-                with_save=with_save,
-            )
+        add_tags_in_space_configuration_tab(selenium, browser_id, tags, with_save=with_save)
+
+    set_description_of_a_space(selenium, browser_id, description, with_save=with_save)
 
 
 @wt(
