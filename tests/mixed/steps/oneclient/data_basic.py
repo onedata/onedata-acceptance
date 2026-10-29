@@ -148,7 +148,9 @@ def see_items_in_op_oneclient(
         if last_elem_in_path.startswith("dir"):
             full_path = f"{space}/{item}"
             if result == "fails":
-                multi_dir_steps.cannot_list_dir(user, full_path, host, users)
+                multi_dir_steps.cannot_list_dir_due_to_file_not_found_error(
+                    user, full_path, host, users
+                )
             else:
                 multi_dir_steps.list_dir(user, full_path, host, users)
         elif result == "fails":
