@@ -26,6 +26,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.gui.utils.generic import perform_action
 from tests.gui.utils.web_elem_utils import is_element_visible_using_getter
 from tests.utils.utils import repeat_failed
 
@@ -79,13 +80,14 @@ class Browser(ABC, PageObject):
     ) -> list[BrowserRow]:
         return [row for row in elements_list if getattr(row, main_field)]
 
-    @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_field_value_from_visible_rows(
-        elements_list: Iterable[BrowserRow],
+        self,
+        elements_list: Iterable[BrowserRow] | None = None,
         main_field: ListItemMainField = "name",
     ) -> list[str]:
-        return [getattr(row, main_field) for row in elements_list if getattr(row, main_field)]
+        rows = self.files_list if elements_list is None else elements_list
+        return [value for row in rows if (value := getattr(row, main_field))]
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS
 
@@ -108,15 +110,26 @@ class Browser(ABC, PageObject):
                 "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
             )
 
+    def scroll_to_last_file_on_files_list(self, expected_last_file: str) -> None:
+        def scroll_and_check_last_file() -> None:
+            self.scroll_to_bottom()
+            actual_last_file = self.files_list[-1].name
+            assert actual_last_file == expected_last_file, (
+                f'Expected last file "{expected_last_file}", '
+                f'but currently reached "{actual_last_file}"'
+            )
+
+        perform_action(scroll_and_check_last_file, timeout=WAIT_FRONTEND)
+
+        # scroll 1 more time to ensure that we are actually at the bottom of page
+        self.scroll_few_screens(direction="down", num=1)
+
     def scroll_to_bottom(self) -> None:
-        self.driver.execute_script(
-            "arguments[0].scrollTo(arguments[1]);", self.web_elem, self._bottom
-        )
+        self.driver.execute_script("arguments[0].scrollIntoView();", self._bottom)
 
     def scroll_few_screens(self, direction: Literal["up", "down"], num: int) -> None:
         key = Keys.PAGE_UP if direction == "up" else Keys.PAGE_DOWN
         self.click_on_background()
-
         for _ in range(num):
             (ActionChains(self.driver).key_down(key).key_up(key).perform())
 
