@@ -49,3 +49,4 @@ Feature: File list polling
     And user of browser2 succeeds to rename "test1.txt" to "new_file1.txt" in "space1"
     And user of browser1 is idle for 10 seconds
     Then user of browser1 sees that item named "new_file1.txt" is currently visible in file browser
+

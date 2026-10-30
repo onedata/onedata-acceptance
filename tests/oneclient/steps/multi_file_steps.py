@@ -22,7 +22,7 @@ import jsondiff
 import pytest
 
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
-from tests.oneclient.steps.multi_dir_steps import cannot_list_dir, try_to_create_directory
+from tests.oneclient.steps.multi_dir_steps import try_to_create_directory
 from tests.type_definitions import Hosts
 from tests.utils.acceptance_utils import compare, list_parser, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
@@ -224,10 +224,9 @@ def ls_present_spaces(user: str, spaces: list[str], client_node: str, users: Use
 
     def condition() -> None:
         listed_spaces = client.ls(path)
-        for space in spaces:
-            assert space in listed_spaces, (
-                f"Space {space} not in listed spaces, listed spaces: {listed_spaces}"
-            )
+        assert sorted(listed_spaces) == sorted(spaces), (
+            f"Expected spaces {spaces}, got {listed_spaces}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 

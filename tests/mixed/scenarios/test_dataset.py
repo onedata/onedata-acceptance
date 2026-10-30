@@ -43,6 +43,7 @@ from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.dataset import *
+from tests.mixed.steps.onepanel_basic import *
 from tests.mixed.steps.qos import *
 from tests.mixed.steps.rest.oneprovider.data import *
 from tests.mixed.steps.tokens_basic import *

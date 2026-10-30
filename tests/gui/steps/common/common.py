@@ -73,30 +73,9 @@ def assert_n_items_in_items_list(
     seen_items = set()
     stop_scrolling_flag = False
 
-    if isinstance(page, Browser):
-        page.scroll_to_top()
-
-    def browser_has_no_items() -> bool:
-        if not isinstance(page, Browser):
-            return False
-
-        if page.is_empty():
-            return True
-
-        try:
-            return bool(page.error_msg)
-        except NoSuchElementException:
-            return False
-
-    WebDriverWait(driver, WAIT_FRONTEND).until(
-        lambda _: (
-            bool(get_visible_items_list(page, items_type, main_field)) or browser_has_no_items()
-        ),
-        message=f"Waiting for initial {items_type.value} to appear failed",
-    )
-
-    if browser_has_no_items():
-        assert number in (None, 0), f"There are 0 items, but should be: {number}"
+    if not wait_for_initial_items_and_validate_empty_state(
+        page, driver, number, items_type, main_field
+    ):
         return set()
 
     while not stop_scrolling_flag:
@@ -113,6 +92,47 @@ def assert_n_items_in_items_list(
             f" items:\n {seen_items}"
         )
     return seen_items
+
+
+def wait_for_initial_items_and_validate_empty_state(
+    page: ListPage | Browser,
+    driver: WebDriver,
+    number: int | None,
+    items_type: ListElement,
+    main_field: ListItemMainField,
+) -> bool:
+    if isinstance(page, Browser):
+        page.scroll_to_top()
+
+    def browser_has_no_items() -> bool:
+        if not isinstance(page, Browser):
+            return False
+
+        if page.is_empty():
+            return True
+
+        try:
+            return bool(page.error_msg)
+        except NoSuchElementException:
+            return False
+
+    try:
+        WebDriverWait(driver, WAIT_FRONTEND).until(
+            lambda _: (
+                bool(get_visible_items_list(page, items_type, main_field)) or browser_has_no_items()
+            ),
+            message=f"Waiting for initial {items_type.value} to appear failed",
+        )
+    except TimeoutException as e:
+        if number == 0:
+            return False
+        raise e
+
+    if browser_has_no_items():
+        assert number in (None, 0), f"There are 0 items, but should be: {number}"
+        return False
+
+    return True
 
 
 # there is a small chance that not all item will be loaded at time,
