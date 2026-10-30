@@ -166,25 +166,3 @@ def get_suite_description(mod: ModuleType) -> str | None:
 
 def element_has_class(element: SeleniumWebElement, class_name: str) -> bool:
     return class_name in (element.get_attribute("class") or "").split()
-
-
-def assert_generic(
-    expression: Callable[..., object],
-    should_fail: bool,
-    *args: object,
-    **kwargs: object,
-) -> None:
-    if should_fail:
-        assert_false(expression, *args, **kwargs)
-    else:
-        assert_(expression, *args, **kwargs)
-
-
-def assert_(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
-    assert_result = expression(*args, **kwargs)
-    assert assert_result
-
-
-def assert_false(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
-    assert_result = expression(*args, **kwargs)
-    assert not assert_result
