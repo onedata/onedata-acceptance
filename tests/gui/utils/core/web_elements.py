@@ -10,6 +10,7 @@ from typing import Any
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.text import transform
 from tests.gui.utils.web_elem_utils import find_web_elem, find_web_elem_with_text
@@ -138,7 +139,9 @@ class Input(WebElement):
 
     def __set__(self, instance: Any, val: Any) -> None:
         input_box = super().__get__(instance, type(instance))
-        input_box.clear()
+        # input_box.clear() doesn't work if you want to input an empty string
+        input_box.send_keys(Keys.CONTROL, "a")
+        input_box.send_keys(Keys.BACKSPACE)
         if val != "":
             input_box.send_keys(val)
             assert input_box.get_attribute("value") == val, (

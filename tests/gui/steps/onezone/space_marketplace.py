@@ -8,13 +8,122 @@ from datetime import date
 
 from selenium.webdriver.common.by import By
 
-from tests.gui.constants import WAIT_FRONTEND
-from tests.gui.utils import OZLoggedIn
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import assert_n_items_in_items_list
+from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.enums import ListElement
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.space_marketplace import MarketplaceSpace
+from tests.gui.utils.text import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_into_marketplace_search_input(
+    selenium: SeleniumDrivers, browser_id: str, value: str
+) -> None:
+    page = OZLoggedIn(selenium[browser_id]).data.space_marketplace_page
+    page.filter_header.search_input = value
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_marketplace_refresh_button_is_enabled(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    page = OZLoggedIn(selenium[browser_id]).data.space_marketplace_page
+    assert page.refresh_button.is_enabled(), "Marketplace refresh button should be enabled"
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def scroll_to_top_of_marketplace_spaces_list(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    page = OZLoggedIn(driver).data.space_marketplace_page
+    driver.execute_script("arguments[0].scrollIntoView();", page.filter_header.web_elem)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees {number:d} Marketplace spaces and all their names "
+        'contain "{subtext}"'
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_marketplace_space_count_and_names_contain(
+    selenium: SeleniumDrivers, browser_id: str, number: int, subtext: str
+) -> None:
+    scroll_to_top_of_marketplace_spaces_list(selenium, browser_id)
+    page = OZLoggedIn(selenium[browser_id]).data.space_marketplace_page
+    space_names = assert_n_items_in_items_list(
+        page,
+        selenium,
+        browser_id,
+        number=number,
+        items_type=ListElement.SPACES_MARKETPLACE,
+        main_field="name",
+    )
+    non_matching_names = sorted(name for name in space_names if subtext not in name)
+    assert not non_matching_names, (
+        f'Marketplace space names not containing "{subtext}": {non_matching_names}'
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees only Marketplace spaces named {space_names:ElementsSequence}",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_only_named_marketplace_spaces_are_displayed(
+    selenium: SeleniumDrivers, browser_id: str, space_names: list[str]
+) -> None:
+    scroll_to_top_of_marketplace_spaces_list(selenium, browser_id)
+    page = OZLoggedIn(selenium[browser_id]).data.space_marketplace_page
+    actual_space_names = assert_n_items_in_items_list(
+        page,
+        selenium,
+        browser_id,
+        number=len(space_names),
+        items_type=ListElement.SPACES_MARKETPLACE,
+        main_field="name",
+    )
+    expected_space_names = set(space_names)
+    assert actual_space_names == expected_space_names, (
+        "Unexpected Marketplace spaces displayed. "
+        f"Missing: {sorted(expected_space_names - actual_space_names)}; "
+        f"unexpected: {sorted(actual_space_names - expected_space_names)}"
+    )
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def clear_marketplace_tags_filter(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    filter_header = OZLoggedIn(driver).data.space_marketplace_page.filter_header
+    if filter_header.tags_input.tags:
+        filter_header.tags_input.clear.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_marketplace_tags_selector_trigger(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    filter_header = OZLoggedIn(driver).data.space_marketplace_page.filter_header
+    filter_header.tags_input.add_tag.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_marketplace_tag_category(
+    selenium: SeleniumDrivers, browser_id: str, tag_type: str
+) -> None:
+    getattr(Popups(selenium[browser_id]).spaces_tags, tag_type).click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_marketplace_tag(selenium: SeleniumDrivers, browser_id: str, tag: str) -> None:
+    tags_popup = Popups(selenium[browser_id]).spaces_tags
+    tags_popup.search_bar = tag
+    tags_popup.tags_list[tag].click()
 
 
 @wt(

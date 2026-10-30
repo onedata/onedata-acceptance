@@ -122,7 +122,6 @@ Feature: Basic management of Space Marketplace
         organization name: "Onedata Research"
         description: "Updated marketplace description"
 
-
   Scenario: User is asked about unsaved changes in space configuration subpage and can save them
     When user of browser clicks "Configuration" of "space1" space in the sidebar
     And user of browser provides space configuration without saving as follows:
@@ -143,3 +142,57 @@ Feature: Basic management of Space Marketplace
         tags:
           - dynamic
         description: "Example of a space advertised in a Marketplace"
+
+
+  Scenario: User sees spaces in Marketplace that conform to filtering options
+    Given using REST, space-owner-user creates and advertises 50 spaces with "Hello" prefix in "onezone" Onezone service as follows:
+        organizationName: "Onedata"
+        description: "Lorem ipsum"
+        marketplaceContactEmail: "space-owner@example.com"
+    And using REST, space-owner-user creates and advertises 50 spaces with "World" prefix in "onezone" Onezone service as follows:
+        organizationName: "Onedata"
+        description: "Lorem ipsum"
+        marketplaceContactEmail: "space-owner@example.com"
+    And using REST, user space-owner-user configures "World00" space in "onezone" Onezone service as follows:
+        description: "Test"
+        tags:
+          - archival
+          - demo
+    And using REST, user space-owner-user configures "World01" space in "onezone" Onezone service as follows:
+        organizationName: "AGH"
+    And using REST, user space-owner-user configures "World02" space in "onezone" Onezone service as follows:
+        organizationName: "UJ"
+    And using REST, user space-owner-user configures "Hello01" space in "onezone" Onezone service as follows:
+        tags:
+          - archival
+    And using REST, user space-owner-user configures "Hello02" space in "onezone" Onezone service as follows:
+        tags:
+          - demo
+    And opened [space_owner_browser, marketplace_browser] with [space-owner-user, marketplace-user] signed in to [Onezone, Onezone] service
+
+    When user of marketplace_browser clicks on "Data" in the main menu
+    And user of marketplace_browser clicks on "Marketplace" button in spaces sidebar
+
+    And user of marketplace_browser sets Marketplace filters as follows:
+        search: "1"
+    Then user of marketplace_browser sees 28 Marketplace spaces and all their names contain "1"
+
+    And user of marketplace_browser sets Marketplace filters as follows:
+        search: "AGH"
+    Then user of marketplace_browser sees only Marketplace spaces named ["World01"]
+
+    And user of marketplace_browser sets Marketplace filters as follows:
+        search: "Test"
+    Then user of marketplace_browser sees only Marketplace spaces named ["World00"]
+
+    And user of marketplace_browser sets Marketplace filters as follows:
+        search: ""
+        tags:
+          general:
+            - archival
+            - demo
+    Then user of marketplace_browser sees only Marketplace spaces named ["Hello01", "Hello02", "World00"]
+
+    And user of marketplace_browser sets Marketplace filters as follows:
+        search: "01"
+    Then user of marketplace_browser sees only Marketplace spaces named ["Hello01"]

@@ -18,10 +18,16 @@ from tests.gui.steps.onezone.space_marketplace import (
     assert_creation_time_in_space_marketplace,
     assert_element_in_space_marketplace,
     assert_elements_list_in_space_marketplace,
+    assert_marketplace_refresh_button_is_enabled,
     assert_space_with_request_access_in_marketplace_subpage,
+    clear_marketplace_tags_filter,
+    click_marketplace_tags_selector_trigger,
+    select_marketplace_tag,
+    select_marketplace_tag_category,
+    write_into_marketplace_search_input,
 )
 from tests.gui.steps.rest.spaces import modify_space_using_rest
-from tests.type_definitions import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, JsonValue, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
 
@@ -49,6 +55,41 @@ def configure_space_using_rest(
         spaces[space_name],
         space_data,
     )
+
+
+def update_marketplace_tags_filter(selenium: SeleniumDrivers, browser_id: str, config: str) -> None:
+    tags_to_add: dict[str, list[str]] = yaml.load(config, yaml.Loader)
+
+    clear_marketplace_tags_filter(selenium, browser_id)
+    click_marketplace_tags_selector_trigger(selenium, browser_id)
+    for tag_type, tags in tags_to_add.items():
+        select_marketplace_tag_category(selenium, browser_id, tag_type)
+        for tag in tags:
+            select_marketplace_tag(selenium, browser_id, tag)
+    click_marketplace_tags_selector_trigger(selenium, browser_id)
+
+
+@wt(parsers.parse("user of {browser_id} sets Marketplace filters as follows:\n{config}"))
+def set_marketplace_filters(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
+    """Set any combination of the Marketplace search and tags filters.
+
+    Example configuration:
+        search: "example"              ---> optional
+        tags:                           ---> optional
+          general:
+            - archival
+            - demo
+    """
+    data: dict[str, JsonValue] = yaml.load(config, yaml.Loader)
+
+    if "search" in data:
+        search_input: str = data["search"]
+        write_into_marketplace_search_input(selenium, browser_id, search_input)
+
+    if "tags" in data:
+        update_marketplace_tags_filter(selenium, browser_id, yaml.dump(data["tags"]))
+
+    assert_marketplace_refresh_button_is_enabled(selenium, browser_id)
 
 
 @wt(parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}"))
