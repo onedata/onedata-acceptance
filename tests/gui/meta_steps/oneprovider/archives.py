@@ -34,6 +34,8 @@ from tests.gui.steps.oneprovider.archives import (
     click_and_press_enter_on_archive,
     click_menu_for_archive,
     get_archive_with_description,
+    wait_for_archive_state,
+    wait_for_expected_state,
     write_description_in_create_archive_modal,
     write_in_confirmation_input,
 )
@@ -54,6 +56,7 @@ from tests.gui.steps.oneprovider.browser import (
 )
 from tests.gui.steps.oneprovider.data_tab import (
     assert_browser_in_tab_in_op,
+    check_browser_to_load,
     check_content_for_provider,
     check_size_statistic_in_dir_details,
     check_size_stats_for_provider,
@@ -166,33 +169,23 @@ def _create_archive(
             "Create archive",
             DATASET_BROWSER,
         )
-        data = yaml.load(config, yaml.Loader)
+        description = _configure_create_archive_modal(selenium, browser_id, config)
 
-        description = data.get("description", False)
-        layout = data["layout"]
-        create_nested_archives = data.get("create nested archives", False)
-        incremental = data.get("incremental", False)
-        include_dip = data.get("include DIP", False)
-
-        follow_symbolic_links = data.get("follow symbolic links", True)
-
-        if description:
-            write_description_in_create_archive_modal(selenium, browser_id, description)
-        if layout == "BagIt":
-            click_modal_button(selenium, browser_id, "BagIt", modal_name="Create archive")
-        if create_nested_archives:
-            check_toggle_in_create_archive_modal(
-                browser_id, selenium, toggle_type="create_nested_archives"
-            )
-        if incremental and incremental["enabled"]:
-            check_toggle_in_create_archive_modal(browser_id, selenium, toggle_type="incremental")
-        if include_dip:
-            check_toggle_in_create_archive_modal(browser_id, selenium, toggle_type="include_dip")
-        if not follow_symbolic_links:
-            check_toggle_in_create_archive_modal(
-                browser_id, selenium, toggle_type="follow_symbolic_links"
-            )
         click_modal_button(selenium, browser_id, "Create", modal_name="Create archive")
+        check_browser_to_load(
+            selenium,
+            browser_id,
+            tmp_memory,
+            browser=WhichBrowser.ARCHIVE_BROWSER,
+        )
+
+        if option == "succeeds":
+            wait_for_expected_state(selenium, browser_id, "Preserved", description, tmp_memory)
+        else:
+            excluded_archive_states = ["Pending", "Building", "Verifying"]
+            wait_for_archive_state(
+                selenium, browser_id, description, tmp_memory, None, excluded_archive_states
+            )
 
         if description:
             copy_archive_id_to_tmp_memory(
@@ -212,6 +205,36 @@ def _create_archive(
             "disabled",
             DATASET_BROWSER,
         )
+
+
+def _configure_create_archive_modal(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    config: str,
+) -> str:
+    data = yaml.load(config, yaml.Loader)
+    description = data.get("description", "")
+
+    if description:
+        write_description_in_create_archive_modal(selenium, browser_id, description)
+    if data["layout"] == "BagIt":
+        click_modal_button(selenium, browser_id, "BagIt", modal_name="Create archive")
+    if data.get("create nested archives", False):
+        check_toggle_in_create_archive_modal(
+            browser_id, selenium, toggle_type="create_nested_archives"
+        )
+
+    incremental = data.get("incremental", False)
+    if incremental and incremental["enabled"]:
+        check_toggle_in_create_archive_modal(browser_id, selenium, toggle_type="incremental")
+    if data.get("include DIP", False):
+        check_toggle_in_create_archive_modal(browser_id, selenium, toggle_type="include_dip")
+    if not data.get("follow symbolic links", True):
+        check_toggle_in_create_archive_modal(
+            browser_id, selenium, toggle_type="follow_symbolic_links"
+        )
+
+    return description
 
 
 def copy_archive_id_to_tmp_memory(
