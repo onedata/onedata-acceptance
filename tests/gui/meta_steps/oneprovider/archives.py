@@ -217,6 +217,9 @@ def _configure_create_archive_modal(
 
     if description:
         write_description_in_create_archive_modal(selenium, browser_id, description)
+    else:
+        description = "No description"
+
     if data["layout"] == "BagIt":
         click_modal_button(selenium, browser_id, "BagIt", modal_name="Create archive")
     if data.get("create nested archives", False):

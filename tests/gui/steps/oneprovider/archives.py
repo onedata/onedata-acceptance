@@ -396,9 +396,7 @@ def wait_for_archive_state(
         else f"leave the excluded states {excluded_states}"
     )
     WebDriverWait(
-        driver,
-        timeout=300,
-        poll_frequency=0.5,
+        driver, timeout=300, poll_frequency=0.5, ignored_exceptions=[PageObjectNotFoundError]
     ).until(
         state_condition,
         message=(f'Archive with description "{description}" did not {expected_state_description}'),
