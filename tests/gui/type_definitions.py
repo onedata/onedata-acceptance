@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections import defaultdict, namedtuple
 from collections.abc import Callable
-from enum import Enum
+from enum import StrEnum
 from os import PathLike
 from typing import Any, Literal, Protocol, TypedDict
 
@@ -23,7 +23,7 @@ class Clickable(Protocol):
     def click(self) -> None: ...
 
 
-class WhichBrowser(Enum):
+class WhichBrowser(StrEnum):
     ARCHIVE_BROWSER = "archive browser"
     ARCHIVE_FILE_BROWSER = "archive file browser"
     DATASET_BROWSER = "dataset browser"
