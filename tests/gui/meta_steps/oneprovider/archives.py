@@ -34,8 +34,8 @@ from tests.gui.steps.oneprovider.archives import (
     click_and_press_enter_on_archive,
     click_menu_for_archive,
     get_archive_with_description,
-    wait_for_archive_state,
-    wait_for_expected_state,
+    wait_for_archive_to_enter_or_exit_states,
+    wait_for_expected_archive_state,
     write_description_in_create_archive_modal,
     write_in_confirmation_input,
 )
@@ -180,11 +180,18 @@ def _create_archive(
         )
 
         if option == "succeeds":
-            wait_for_expected_state(selenium, browser_id, "Preserved", description, tmp_memory)
+            wait_for_expected_archive_state(
+                selenium, browser_id, "Preserved", description, tmp_memory
+            )
         else:
             excluded_archive_states = ["Pending", "Building", "Verifying"]
-            wait_for_archive_state(
-                selenium, browser_id, description, tmp_memory, None, excluded_archive_states
+            wait_for_archive_to_enter_or_exit_states(
+                selenium,
+                browser_id,
+                description,
+                tmp_memory,
+                expected_states=None,
+                excluded_states=excluded_archive_states,
             )
 
         if description:

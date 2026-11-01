@@ -364,7 +364,7 @@ def assert_page_with_error_appeared(
     assert browser.message == text, f'page with text "{text}" not  found'
 
 
-def wait_for_archive_state(
+def wait_for_archive_to_enter_or_exit_states(
     selenium: SeleniumDrivers,
     browser_id: str,
     description: str,
@@ -411,14 +411,16 @@ def wait_for_archive_state(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_expected_state(
+def wait_for_expected_archive_state(
     selenium: SeleniumDrivers,
     browser_id: str,
     state: str,
     description: str,
     tmp_memory: TmpMemory,
 ) -> None:
-    wait_for_archive_state(selenium, browser_id, description, tmp_memory, [state], None)
+    wait_for_archive_to_enter_or_exit_states(
+        selenium, browser_id, description, tmp_memory, [state], None
+    )
 
 
 @wt(parsers.parse("user of {browser_id} sees archive ID in Archive details modal"))
