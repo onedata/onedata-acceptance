@@ -252,6 +252,7 @@ def copy_archive_id_to_tmp_memory(
     if client.lower() == "web gui":
         option_in_menu = "Copy archive ID"
         assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, ARCHIVE_BROWSER)
+        waits_for_preserved_state(browser_id, "Preserved", description, tmp_memory)
         click_menu_for_archive(browser_id, tmp_memory, description, selenium)
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER

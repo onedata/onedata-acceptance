@@ -22,7 +22,7 @@ import jsondiff
 import pytest
 
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
-from tests.oneclient.steps.multi_dir_steps import cannot_list_dir, try_to_create_directory
+from tests.oneclient.steps.multi_dir_steps import try_to_create_directory
 from tests.type_definitions import Hosts
 from tests.utils.acceptance_utils import compare, list_parser, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
@@ -224,10 +224,9 @@ def ls_present_spaces(user: str, spaces: list[str], client_node: str, users: Use
 
     def condition() -> None:
         listed_spaces = client.ls(path)
-        for space in spaces:
-            assert space in listed_spaces, (
-                f"Space {space} not in listed spaces, listed spaces: {listed_spaces}"
-            )
+        assert sorted(listed_spaces) == sorted(spaces), (
+            f"Expected spaces {spaces}, got {listed_spaces}"
+        )
 
     perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
@@ -612,28 +611,6 @@ def change_mode_base(
 )
 def change_mode(user: str, file: str, mode: str, client_node: str, users: Users) -> None:
     change_mode_base(user, file, mode, client_node, users)
-
-
-@wt(
-    parsers.re(
-        r"(?P<user_name1>\w+) changes (?P<file>.*) mode to (?P<mode>.*)"
-        r"on (?P<client_node1>.*) and (?P<user_name2>\w+) sees that file can't be listed on (?P<client_node2>.*)"
-    )
-)
-def change_mode_and_assert_file_cant_be_listed(
-    user_name1: str,
-    file: str,
-    mode: str,
-    client_node1: str,
-    user_name2: str,
-    client_node2: str,
-    users: Users,
-) -> None:
-    change_mode_base(user_name1, file, mode, client_node1, users)
-    # Check mode can be executed on another client because it only needs search permission on the parent dir
-    # TODO: VFS-13861 this line shouldn't fix this test but currently does
-    check_mode(user_name2, file, mode, client_node2, users)
-    cannot_list_dir(user_name2, file, client_node2, users)
 
 
 @wt(

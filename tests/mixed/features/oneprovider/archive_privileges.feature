@@ -42,6 +42,7 @@ Feature: Archives privileges mixed tests
     And if <client_inviting> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client_checking>, user2 successfully joins space space1 with received token
+    And using REST, user2 waits for space "space1" support in oneprovider-1
     Then using <client_checking>, user2 sees archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
 
   Examples:
@@ -65,6 +66,7 @@ Feature: Archives privileges mixed tests
     And if <client_inviting> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client_creating>, user2 successfully joins space space1 with received token
+    And using REST, user2 waits for space "space1" support in oneprovider-1
     Then using <client_creating>, user2 fails to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
@@ -93,6 +95,7 @@ Feature: Archives privileges mixed tests
     And if <client_inviting> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client_creating>, user2 successfully joins space space1 with received token
+    And using REST, user2 waits for space "space1" support in oneprovider-1
     Then using <client_creating>, user2 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
@@ -124,6 +127,7 @@ Feature: Archives privileges mixed tests
     And if <client_inviting> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client_removing>, user2 successfully joins space space1 with received token
+    And using REST, user2 waits for space "space1" support in oneprovider-1
     Then using <client_removing>, user2 fails to remove archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
     And using <client_inviting>, user1 sees archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
 
@@ -153,6 +157,7 @@ Feature: Archives privileges mixed tests
     And if <client_inviting> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client_removing>, user2 successfully joins space space1 with received token
+    And using REST, user2 waits for space "space1" support in oneprovider-1
     Then using <client_removing>, user2 succeeds to remove archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
     And using <client_inviting>, user1 does not see archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
 
