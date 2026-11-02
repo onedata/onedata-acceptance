@@ -47,118 +47,118 @@ stages:
         - _Autoformatter check
         - _Static analysis
         - _Type_check
-        # - authorization
-        # - directory CRUD
-        # - directory CRUD hardlinks
-        # - directory CRUD symlinks
-        # - directory stat
-        # - directory stat hardlinks
-        # - directory stat symlinks
-        # - luma provider
-        # - luma proxy
-        # - multiclient authorization
+        - authorization
+        - directory CRUD
+        - directory CRUD hardlinks
+        - directory CRUD symlinks
+        - directory stat
+        - directory stat hardlinks
+        - directory stat symlinks
+        - luma provider
+        - luma proxy
+        - multiclient authorization
         - multiprovider directory CRUD directio
         - multiprovider directory CRUD directio hardlinks
         - multiprovider directory CRUD directio symlinks
         - multiprovider directory CRUD proxyio
         - multiprovider directory CRUD proxyio hardlinks
         - multiprovider directory CRUD proxyio symlinks
-        # - multiprovider directory stat directio
-        # - multiprovider directory stat directio hardlinks
-        # - multiprovider directory stat directio symlinks
-        # - multiprovider directory stat proxyio
-        # - multiprovider directory stat proxyio hardlinks
-        # - multiprovider directory stat proxyio symlinks
+        - multiprovider directory stat directio
+        - multiprovider directory stat directio hardlinks
+        - multiprovider directory stat directio symlinks
+        - multiprovider directory stat proxyio
+        - multiprovider directory stat proxyio hardlinks
+        - multiprovider directory stat proxyio symlinks
         - multiprovider proxy directory CRUD proxyio
         - multiprovider proxy directory CRUD proxyio hardlinks
         - multiprovider proxy directory CRUD proxyio symlinks
-        # - multiprovider proxy directory stat proxyio
-        # - multiprovider proxy directory stat proxyio hardlinks
-        # - multiprovider proxy directory stat proxyio symlinks
-        # - multiprovider proxy regular file CRUD proxyio
-        # - multiprovider proxy regular file CRUD proxyio hardlinks
-        # - multiprovider proxy regular file CRUD proxyio symlinks
-        # - multiprovider proxy regular file stat proxyio
-        # - multiprovider proxy regular file stat proxyio hardlinks
-        # - multiprovider proxy regular file stat proxyio symlinks
+        - multiprovider proxy directory stat proxyio
+        - multiprovider proxy directory stat proxyio hardlinks
+        - multiprovider proxy directory stat proxyio symlinks
+        - multiprovider proxy regular file CRUD proxyio
+        - multiprovider proxy regular file CRUD proxyio hardlinks
+        - multiprovider proxy regular file CRUD proxyio symlinks
+        - multiprovider proxy regular file stat proxyio
+        - multiprovider proxy regular file stat proxyio hardlinks
+        - multiprovider proxy regular file stat proxyio symlinks
         - multiprovider proxy s3 directory CRUD proxyio
         - multiprovider proxy s3 directory CRUD proxyio hardlinks
         - multiprovider proxy s3 directory CRUD proxyio symlinks
-        # - multiprovider proxy s3 directory stat proxyio
-        # - multiprovider proxy s3 directory stat proxyio hardlinks
-        # - multiprovider proxy s3 directory stat proxyio symlinks
-        # - multiprovider proxy s3 regular file CRUD proxyio
-        # - multiprovider proxy s3 regular file CRUD proxyio hardlinks
-        # - multiprovider proxy s3 regular file CRUD proxyio symlinks
-        # - multiprovider proxy s3 regular file stat proxyio
-        # - multiprovider proxy s3 regular file stat proxyio hardlinks
-        # - multiprovider proxy s3 regular file stat proxyio symlinks
-        # - multiprovider regular file CRUD directio
-        # - multiprovider regular file CRUD directio hardlinks
-        # - multiprovider regular file CRUD directio symlinks
-        # - multiprovider regular file CRUD proxyio
-        # - multiprovider regular file CRUD proxyio hardlinks
-        # - multiprovider regular file CRUD proxyio symlinks
-        # - multiprovider regular file stat directio
-        # - multiprovider regular file stat directio hardlinks
-        # - multiprovider regular file stat directio symlinks
-        # - multiprovider regular file stat proxyio
-        # - multiprovider regular file stat proxyio hardlinks
-        # - multiprovider regular file stat proxyio symlinks
-        # - multiprovider replication directio
-        # - multiprovider replication directio hardlinks
-        # - multiprovider replication directio symlinks
-        # - multiprovider replication proxyio
-        # - multiprovider replication proxyio hardlinks
-        # - multiprovider replication proxyio symlinks
+        - multiprovider proxy s3 directory stat proxyio
+        - multiprovider proxy s3 directory stat proxyio hardlinks
+        - multiprovider proxy s3 directory stat proxyio symlinks
+        - multiprovider proxy s3 regular file CRUD proxyio
+        - multiprovider proxy s3 regular file CRUD proxyio hardlinks
+        - multiprovider proxy s3 regular file CRUD proxyio symlinks
+        - multiprovider proxy s3 regular file stat proxyio
+        - multiprovider proxy s3 regular file stat proxyio hardlinks
+        - multiprovider proxy s3 regular file stat proxyio symlinks
+        - multiprovider regular file CRUD directio
+        - multiprovider regular file CRUD directio hardlinks
+        - multiprovider regular file CRUD directio symlinks
+        - multiprovider regular file CRUD proxyio
+        - multiprovider regular file CRUD proxyio hardlinks
+        - multiprovider regular file CRUD proxyio symlinks
+        - multiprovider regular file stat directio
+        - multiprovider regular file stat directio hardlinks
+        - multiprovider regular file stat directio symlinks
+        - multiprovider regular file stat proxyio
+        - multiprovider regular file stat proxyio hardlinks
+        - multiprovider regular file stat proxyio symlinks
+        - multiprovider replication directio
+        - multiprovider replication directio hardlinks
+        - multiprovider replication directio symlinks
+        - multiprovider replication proxyio
+        - multiprovider replication proxyio hardlinks
+        - multiprovider replication proxyio symlinks
         - multiprovider s3 directory CRUD proxyio
         - multiprovider s3 directory CRUD proxyio hardlinks
         - multiprovider s3 directory CRUD proxyio symlinks
-        # - multiprovider s3 directory stat proxyio
-        # - multiprovider s3 directory stat proxyio hardlinks
-        # - multiprovider s3 directory stat proxyio symlinks
-        # - multiprovider s3 regular file CRUD proxyio
-        # - multiprovider s3 regular file CRUD proxyio hardlinks
-        # - multiprovider s3 regular file CRUD proxyio symlinks
-        # - multiprovider s3 regular file stat proxyio
-        # - multiprovider s3 regular file stat proxyio hardlinks
-        # - multiprovider s3 regular file stat proxyio symlinks
-        # - regular file CRUD directio
-        # - regular file CRUD directio hardlinks
-        # - regular file CRUD directio symlinks
-        # - regular file CRUD proxyio
-        # - regular file CRUD proxyio hardlinks
-        # - regular file CRUD proxyio symlinks
-        # - regular file stat directio
-        # - regular file stat directio hardlinks
-        # - regular file stat directio symlinks
-        # - regular file stat proxyio
-        # - regular file stat proxyio hardlinks
-        # - regular file stat proxyio symlinks
+        - multiprovider s3 directory stat proxyio
+        - multiprovider s3 directory stat proxyio hardlinks
+        - multiprovider s3 directory stat proxyio symlinks
+        - multiprovider s3 regular file CRUD proxyio
+        - multiprovider s3 regular file CRUD proxyio hardlinks
+        - multiprovider s3 regular file CRUD proxyio symlinks
+        - multiprovider s3 regular file stat proxyio
+        - multiprovider s3 regular file stat proxyio hardlinks
+        - multiprovider s3 regular file stat proxyio symlinks
+        - regular file CRUD directio
+        - regular file CRUD directio hardlinks
+        - regular file CRUD directio symlinks
+        - regular file CRUD proxyio
+        - regular file CRUD proxyio hardlinks
+        - regular file CRUD proxyio symlinks
+        - regular file stat directio
+        - regular file stat directio hardlinks
+        - regular file stat directio symlinks
+        - regular file stat proxyio
+        - regular file stat proxyio hardlinks
+        - regular file stat proxyio symlinks
         - singleprovider directory CRUD multiclient directio
         - singleprovider directory CRUD multiclient directio hardlinks
         - singleprovider directory CRUD multiclient directio symlinks
-        # - singleprovider directory stat multiclient directio
-        # - singleprovider directory stat multiclient directio hardlinks
-        # - singleprovider directory stat multiclient directio symlinks
-        # - singleprovider extended attributes
-        # - singleprovider extended attributes hardlinks
-        # - singleprovider extended attributes symlinks
-        # - singleprovider regular file CRUD multiclient directio
-        # - singleprovider regular file CRUD multiclient directio hardlinks
-        # - singleprovider regular file CRUD multiclient directio symlinks
-        # - singleprovider regular file CRUD multiclient proxyio
-        # - singleprovider regular file CRUD multiclient proxyio hardlinks
-        # - singleprovider regular file CRUD multiclient proxyio symlinks
-        # - singleprovider regular file stat multiclient directio
-        # - singleprovider regular file stat multiclient directio hardlinks
-        # - singleprovider regular file stat multiclient directio symlinks
-        # - singleprovider regular file stat multiclient proxyio
-        # - singleprovider regular file stat multiclient proxyio hardlinks
-        # - singleprovider regular file stat multiclient proxyio symlinks
-        # - singleprovider storage modification singleclient directio
-        # - singleprovider storage modification singleclient directio hardlinks
-        # - singleprovider storage modification singleclient directio symlinks
+        - singleprovider directory stat multiclient directio
+        - singleprovider directory stat multiclient directio hardlinks
+        - singleprovider directory stat multiclient directio symlinks
+        - singleprovider extended attributes
+        - singleprovider extended attributes hardlinks
+        - singleprovider extended attributes symlinks
+        - singleprovider regular file CRUD multiclient directio
+        - singleprovider regular file CRUD multiclient directio hardlinks
+        - singleprovider regular file CRUD multiclient directio symlinks
+        - singleprovider regular file CRUD multiclient proxyio
+        - singleprovider regular file CRUD multiclient proxyio hardlinks
+        - singleprovider regular file CRUD multiclient proxyio symlinks
+        - singleprovider regular file stat multiclient directio
+        - singleprovider regular file stat multiclient directio hardlinks
+        - singleprovider regular file stat multiclient directio symlinks
+        - singleprovider regular file stat multiclient proxyio
+        - singleprovider regular file stat multiclient proxyio hardlinks
+        - singleprovider regular file stat multiclient proxyio symlinks
+        - singleprovider storage modification singleclient directio
+        - singleprovider storage modification singleclient directio hardlinks
+        - singleprovider storage modification singleclient directio symlinks
   - Qnthack - rerun:
       manual: false
       final: true
@@ -293,269 +293,8 @@ _Type_check:
           - make type-check
         description: Type checker
 
-# authorization: &acceptance-oneclient-tests-job
-#   key: AUT
-#   other:
-#     clean-working-dir: true
-#   tasks:
-#     - script: &clear-env
-#         <<: *run-script
-#         scripts:
-#           - curl ${bamboo.OnedataFinalTasksURL} | bash -
-#         description: Clear env
-#     - script: &restart-minikube
-#         <<: *run-script
-#         scripts:
-#           - sudo ${HOME}/restart_minikube.sh
-#         description: Restart minikube
-#     - checkout: *checkout-default-repository
-#     - script: &init-submodules
-#         <<: *run-script-working-dir
-#         scripts:
-#           - |-
-#             git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-#             git remote -v
-#             make submodules
-#         description: Init submodules
-#         conditions:
-#           - variable:
-#               matches:
-#                 bamboo.buildNumber: '[2-9]|.{2,}'
-#     - script: &quarantine-hack-pull-surefire
-#         <<: *run-script-working-dir
-#         scripts:
-#           - |-
-#             #!/bin/bash
-#             ARTIFACT="surefire_${bamboo_shortJobName// /_}.tar.gz"
-#             echo ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
-#                 --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
-#                 --artifact-name ${ARTIFACT}
-#             let c=3
-#             while : ; do
-#                 ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
-#                     --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
-#                     --artifact-name ${ARTIFACT}
-#                 tar zxf ${ARTIFACT}
-#                 if [ -f test-reports/results*.xml ]; then
-#                     break
-#                 else
-#                     let c=$c-1
-#                     if [[ $c < 0 ]]; then
-#                         echo "Giving up... The surefire file 'results.xml' could not be pulled. Does it exist in the develop?" >&2
-#                         break
-#                     fi
-#                     echo "The surefire file 'results.xml' could not be pulled, retrying in 30 seconds..." >&2
-#                     sleep 30
-#                 fi
-#             done
-#             touch test-reports/results*.xml
-#         description: Pull surefire artifact and unpack it
-#         conditions:
-#           - variable:
-#               matches:
-#                 bamboo.buildNumber: '2|3'
-#     - script: &download-artifacts
-#         <<: *run-script-working-dir
-#         scripts:
-#           - |-
-#             echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
-#             one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
-#         description: Download artifacts
-#     - script: &run-acceptance-tests
-#         <<: *run-script-working-dir
-#         scripts:
-#           - make test_oneclient_pkg SUITE=test_authorization  ENV_FILE=singleclient_authorization
-#         description: Run acceptance oneclient tests
-#   final-tasks:
-#     - test-parser:
-#         type: junit
-#         ignore-time: "false"
-#         test-results: onedata-acceptance/test-reports/results*.xml
-#         description: Parse test results
-#     - script:
-#         <<: *run-script-working-dir
-#         scripts:
-#           - |-
-#             #!/bin/bash
-#             ARTIFACT=surefire_${bamboo_shortJobName// /_}.tar.gz
-#             tar czf ${ARTIFACT} test-reports/results*.xml
-#             echo ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
-#                 --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
-#                 --artifact-name ${ARTIFACT}
-#             ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
-#                 --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
-#                 --artifact-name ${ARTIFACT}
-#         description: Pack and push surefire artifact
-#     - script:
-#         <<: *run-script
-#         scripts:
-#           - |-
-#             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
-#             cp onedata-acceptance/sources_info.yaml onedata-acceptance/tests/oneclient/logs
-#             mv onedata-acceptance/tests/oneclient/logs/*/*/images.yaml onedata-acceptance/tests/oneclient/logs
-#             tar czf test_logs.tar.gz onedata-acceptance/tests/oneclient/logs
-#         description: Pack logs
-#     - script:
-#         <<: *run-script-working-dir
-#         scripts:
-#           - curl ${bamboo.OnedataFinalTasksURL} | bash -
-#         description: Clear env and working dir
-#     - script:
-#         scripts:
-#           - |-
-#             echo "No real testing done on build 2 - only unpacking of surefire artifact (see above logs). The job is forced to fail."
-#             false
-#         conditions:
-#           - variable:
-#               matches:
-#                 bamboo.buildNumber: '2'
-#         description: Qnthack - always fail on build 2
-#   artifacts:
-#     - name: test_logs.tar.gz
-#       pattern: test_logs.tar.gz
-#       shared: false
-#       required: false
-#   requirements:
-#     - minikube
-#   artifact-subscriptions: []
-
-# directory CRUD:
-#   <<: *acceptance-oneclient-tests-job
-#   key: DC
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
-
-# directory CRUD hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: DCH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=hardlink
-
-# directory CRUD symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: DCS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=symlink
-
-# directory stat:
-#   <<: *acceptance-oneclient-tests-job
-#   key: DS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
-
-# directory stat hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: DSH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=hardlink
-
-# directory stat symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: DSS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=symlink
-
-# luma provider:
-#   <<: *acceptance-oneclient-tests-job
-#   key: LP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage test_oneclient_pkg
-
-# luma proxy:
-#   <<: *acceptance-oneclient-tests-job
-#   key: LPR
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage test_oneclient_pkg
-
-# multiclient authorization:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MA
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization test_oneclient_pkg
-
-multiprovider directory CRUD directio: &acceptance-oneclient-tests-job
-  key: MDCD
+authorization: &acceptance-oneclient-tests-job
+  key: AUT
   other:
     clean-working-dir: true
   tasks:
@@ -625,7 +364,7 @@ multiprovider directory CRUD directio: &acceptance-oneclient-tests-job
     - script: &run-acceptance-tests
         <<: *run-script-working-dir
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg
+          - make test_oneclient_pkg SUITE=test_authorization  ENV_FILE=singleclient_authorization
         description: Run acceptance oneclient tests
   final-tasks:
     - test-parser:
@@ -679,6 +418,156 @@ multiprovider directory CRUD directio: &acceptance-oneclient-tests-job
   requirements:
     - minikube
   artifact-subscriptions: []
+
+directory CRUD:
+  <<: *acceptance-oneclient-tests-job
+  key: DC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
+
+directory CRUD hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: DCH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=hardlink
+
+directory CRUD symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: DCS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=symlink
+
+directory stat:
+  <<: *acceptance-oneclient-tests-job
+  key: DS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
+
+directory stat hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: DSH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=hardlink
+
+directory stat symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: DSS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=symlink
+
+luma provider:
+  <<: *acceptance-oneclient-tests-job
+  key: LP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage test_oneclient_pkg
+
+luma proxy:
+  <<: *acceptance-oneclient-tests-job
+  key: LPR
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage test_oneclient_pkg
+
+multiclient authorization:
+  <<: *acceptance-oneclient-tests-job
+  key: MA
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization test_oneclient_pkg
+
+multiprovider directory CRUD directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MDCD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg
 
 multiprovider directory CRUD directio hardlinks:
   <<: *acceptance-oneclient-tests-job
@@ -755,95 +644,95 @@ multiprovider directory CRUD proxyio symlinks:
         scripts:
           - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider directory stat directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MDSD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio test_oneclient_pkg
+multiprovider directory stat directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MDSD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio test_oneclient_pkg
 
-# multiprovider directory stat directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MDSDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=hardlink
+multiprovider directory stat directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MDSDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider directory stat directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MDSDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=symlink
+multiprovider directory stat directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MDSDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider directory stat proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MDSP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider test_oneclient_pkg
+multiprovider directory stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MDSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider test_oneclient_pkg
 
-# multiprovider directory stat proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MDSPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider test_oneclient_pkg FILE_MODE=hardlink
+multiprovider directory stat proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MDSPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider directory stat proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MDSPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider test_oneclient_pkg FILE_MODE=symlink
+multiprovider directory stat proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MDSPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider test_oneclient_pkg FILE_MODE=symlink
 
 multiprovider proxy directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -890,140 +779,140 @@ multiprovider proxy directory CRUD proxyio symlinks:
         scripts:
           - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider proxy directory stat proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPDSP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg
+multiprovider proxy directory stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPDSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg
 
-# multiprovider proxy directory stat proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPDSPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=hardlink
+multiprovider proxy directory stat proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPDSPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider proxy directory stat proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPDSPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=symlink
+multiprovider proxy directory stat proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPDSPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider proxy regular file CRUD proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPRFCP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy test_oneclient_pkg
+multiprovider proxy regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPRFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy test_oneclient_pkg
 
-# multiprovider proxy regular file CRUD proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPRFCPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=hardlink
+multiprovider proxy regular file CRUD proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPRFCPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider proxy regular file CRUD proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPRFCPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=symlink
+multiprovider proxy regular file CRUD proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPRFCPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider proxy regular file stat proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPRFSP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg
+multiprovider proxy regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPRFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg
 
-# multiprovider proxy regular file stat proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPRFSPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=hardlink
+multiprovider proxy regular file stat proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPRFSPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider proxy regular file stat proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPRFSPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=symlink
+multiprovider proxy regular file stat proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPRFSPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg FILE_MODE=symlink
 
 multiprovider proxy s3 directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -1070,410 +959,410 @@ multiprovider proxy s3 directory CRUD proxyio symlinks:
         scripts:
           - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider proxy s3 directory stat proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPSDSP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg
+multiprovider proxy s3 directory stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSDSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg
 
-# multiprovider proxy s3 directory stat proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPSDSPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=hardlink
+multiprovider proxy s3 directory stat proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSDSPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider proxy s3 directory stat proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPSDSPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=symlink
+multiprovider proxy s3 directory stat proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSDSPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider proxy s3 regular file CRUD proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPSRFCP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg
+multiprovider proxy s3 regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSRFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg
 
-# multiprovider proxy s3 regular file CRUD proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPSRFCPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=hardlink
+multiprovider proxy s3 regular file CRUD proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSRFCPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider proxy s3 regular file CRUD proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPSRFCPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=symlink
+multiprovider proxy s3 regular file CRUD proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSRFCPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider proxy s3 regular file stat proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPSRFSP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg
+multiprovider proxy s3 regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSRFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg
 
-# multiprovider proxy s3 regular file stat proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPSRFSPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=hardlink
+multiprovider proxy s3 regular file stat proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSRFSPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider proxy s3 regular file stat proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MPSRFSPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=symlink
+multiprovider proxy s3 regular file stat proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSRFSPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider regular file CRUD directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFCD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg
+multiprovider regular file CRUD directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFCD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg
 
-# multiprovider regular file CRUD directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFCDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=hardlink
+multiprovider regular file CRUD directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFCDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider regular file CRUD directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFCDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=symlink
+multiprovider regular file CRUD directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFCDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider regular file CRUD proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFCP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio test_oneclient_pkg
+multiprovider regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio test_oneclient_pkg
 
-# multiprovider regular file CRUD proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFCPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=hardlink
+multiprovider regular file CRUD proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFCPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider regular file CRUD proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFCPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=symlink
+multiprovider regular file CRUD proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFCPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider regular file stat directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFSD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio test_oneclient_pkg
+multiprovider regular file stat directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFSD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio test_oneclient_pkg
 
-# multiprovider regular file stat directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFSDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=hardlink
+multiprovider regular file stat directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFSDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider regular file stat directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFSDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=symlink
+multiprovider regular file stat directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFSDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider regular file stat proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFSP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio test_oneclient_pkg
+multiprovider regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio test_oneclient_pkg
 
-# multiprovider regular file stat proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFSPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=hardlink
+multiprovider regular file stat proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFSPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider regular file stat proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRFSPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=symlink
+multiprovider regular file stat proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFSPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider replication directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env test_oneclient_pkg
+multiprovider replication directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env test_oneclient_pkg
 
-# multiprovider replication directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env test_oneclient_pkg FILE_MODE=hardlink
+multiprovider replication directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider replication directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env test_oneclient_pkg FILE_MODE=symlink
+multiprovider replication directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider replication proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio test_oneclient_pkg
+multiprovider replication proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio test_oneclient_pkg
 
-# multiprovider replication proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=hardlink
+multiprovider replication proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider replication proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MRPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=symlink
+multiprovider replication proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MRPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio test_oneclient_pkg FILE_MODE=symlink
 
 multiprovider s3 directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -1520,320 +1409,320 @@ multiprovider s3 directory CRUD proxyio symlinks:
         scripts:
           - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider s3 directory stat proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MSDSP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg
+multiprovider s3 directory stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MSDSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg
 
-# multiprovider s3 directory stat proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MSDSPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=hardlink
+multiprovider s3 directory stat proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MSDSPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider s3 directory stat proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MSDSPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=symlink
+multiprovider s3 directory stat proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MSDSPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider s3 regular file CRUD proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MSRFCP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg
+multiprovider s3 regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MSRFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg
 
-# multiprovider s3 regular file CRUD proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MSRFCPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=hardlink
+multiprovider s3 regular file CRUD proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MSRFCPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider s3 regular file CRUD proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MSRFCPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=symlink
+multiprovider s3 regular file CRUD proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MSRFCPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=symlink
 
-# multiprovider s3 regular file stat proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MSRFSP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg
+multiprovider s3 regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MSRFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg
 
-# multiprovider s3 regular file stat proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MSRFSPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=hardlink
+multiprovider s3 regular file stat proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MSRFSPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=hardlink
 
-# multiprovider s3 regular file stat proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: MSRFSPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=symlink
+multiprovider s3 regular file stat proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: MSRFSPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg FILE_MODE=symlink
 
-# regular file CRUD directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFCD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
+regular file CRUD directio:
+  <<: *acceptance-oneclient-tests-job
+  key: RFCD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
 
-# regular file CRUD directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFCDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=hardlink
+regular file CRUD directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: RFCDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=hardlink
 
-# regular file CRUD directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFCDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=symlink
+regular file CRUD directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: RFCDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=symlink
 
-# regular file CRUD proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFCP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
+regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: RFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
 
-# regular file CRUD proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFCPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
+regular file CRUD proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: RFCPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
 
-# regular file CRUD proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFCPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=symlink
+regular file CRUD proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: RFCPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=symlink
 
-# regular file stat directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFSD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
+regular file stat directio:
+  <<: *acceptance-oneclient-tests-job
+  key: RFSD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
 
-# regular file stat directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFSDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=hardlink
+regular file stat directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: RFSDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=hardlink
 
-# regular file stat directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFSDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=symlink
+regular file stat directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: RFSDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg FILE_MODE=symlink
 
-# regular file stat proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFSP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
+regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: RFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
 
-# regular file stat proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFSPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
+regular file stat proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: RFSPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
 
-# regular file stat proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: RFSPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=symlink
+regular file stat proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: RFSPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=symlink
 
 singleprovider directory CRUD multiclient directio:
   <<: *acceptance-oneclient-tests-job
@@ -1880,335 +1769,335 @@ singleprovider directory CRUD multiclient directio symlinks:
         scripts:
           - make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=symlink
 
-# singleprovider directory stat multiclient directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SDSMD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
+singleprovider directory stat multiclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SDSMD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
 
-# singleprovider directory stat multiclient directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SDSMDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=hardlink
+singleprovider directory stat multiclient directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SDSMDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=hardlink
 
-# singleprovider directory stat multiclient directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SDSMDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=symlink
+singleprovider directory stat multiclient directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SDSMDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=symlink
 
-# singleprovider extended attributes:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SEA
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
+singleprovider extended attributes:
+  <<: *acceptance-oneclient-tests-job
+  key: SEA
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
 
-# singleprovider extended attributes hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SEAH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
+singleprovider extended attributes hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SEAH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
 
-# singleprovider extended attributes symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SEAS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=symlink
+singleprovider extended attributes symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SEAS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg FILE_MODE=symlink
 
-# singleprovider regular file CRUD multiclient directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFCMD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
+singleprovider regular file CRUD multiclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFCMD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
 
-# singleprovider regular file CRUD multiclient directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFCMDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=hardlink
+singleprovider regular file CRUD multiclient directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFCMDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=hardlink
 
-# singleprovider regular file CRUD multiclient directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFCMDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=symlink
+singleprovider regular file CRUD multiclient directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFCMDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=symlink
 
-# singleprovider regular file CRUD multiclient proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFCMP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg
+singleprovider regular file CRUD multiclient proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFCMP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg
 
-# singleprovider regular file CRUD multiclient proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFCMPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
+singleprovider regular file CRUD multiclient proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFCMPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
 
-# singleprovider regular file CRUD multiclient proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFCMPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg FILE_MODE=symlink
+singleprovider regular file CRUD multiclient proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFCMPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg FILE_MODE=symlink
 
-# singleprovider regular file stat multiclient directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFSMD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
+singleprovider regular file stat multiclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFSMD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
 
-# singleprovider regular file stat multiclient directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFSMDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=hardlink
+singleprovider regular file stat multiclient directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFSMDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=hardlink
 
-# singleprovider regular file stat multiclient directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFSMDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=symlink
+singleprovider regular file stat multiclient directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFSMDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg FILE_MODE=symlink
 
-# singleprovider regular file stat multiclient proxyio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFSMP
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg
+singleprovider regular file stat multiclient proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFSMP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg
 
-# singleprovider regular file stat multiclient proxyio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFSMPH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
+singleprovider regular file stat multiclient proxyio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFSMPH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg FILE_MODE=hardlink
 
-# singleprovider regular file stat multiclient proxyio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SRFSMPS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg FILE_MODE=symlink
+singleprovider regular file stat multiclient proxyio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFSMPS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg FILE_MODE=symlink
 
-# singleprovider storage modification singleclient directio:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SPSMSD
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script: &build-swaggers
-#         <<: *run-script-working-dir
-#         scripts:
-#           - make build_swaggers
-#         description: Build swaggers
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_pkg
+singleprovider storage modification singleclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SPSMSD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: &build-swaggers
+        <<: *run-script-working-dir
+        scripts:
+          - make build_swaggers
+        description: Build swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_pkg
 
-# singleprovider storage modification singleclient directio hardlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SPSMSDH
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script: &build-swaggers
-#         <<: *run-script-working-dir
-#         scripts:
-#           - make build_swaggers
-#         description: Build swaggers
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_pkg FILE_MODE=hardlink
+singleprovider storage modification singleclient directio hardlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SPSMSDH
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: &build-swaggers
+        <<: *run-script-working-dir
+        scripts:
+          - make build_swaggers
+        description: Build swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_pkg FILE_MODE=hardlink
 
-# singleprovider storage modification singleclient directio symlinks:
-#   <<: *acceptance-oneclient-tests-job
-#   key: SPSMSDS
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script: &build-swaggers
-#         <<: *run-script-working-dir
-#         scripts:
-#           - make build_swaggers
-#         description: Build swaggers
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_pkg FILE_MODE=symlink
+singleprovider storage modification singleclient directio symlinks:
+  <<: *acceptance-oneclient-tests-job
+  key: SPSMSDS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: &build-swaggers
+        <<: *run-script-working-dir
+        scripts:
+          - make build_swaggers
+        description: Build swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_pkg FILE_MODE=symlink
 
 
 Qnthack - rerun:
