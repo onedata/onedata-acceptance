@@ -16,7 +16,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import ListItemMainField
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -119,7 +119,7 @@ class Browser(ABC, PageObject):
                 f'but currently reached "{actual_last_file}"'
             )
 
-        perform_action(scroll_and_check_last_file, timeout=WAIT_FRONTEND)
+        perform_action(scroll_and_check_last_file, timeout=WAIT_BACKEND)
 
         # scroll 1 more time to ensure that we are actually at the bottom of page
         self.scroll_few_screens(direction="down", num=1)
