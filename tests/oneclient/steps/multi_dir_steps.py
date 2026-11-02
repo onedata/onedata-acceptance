@@ -45,7 +45,7 @@ def try_to_create_directory(
         timeout=client.timeout,
         should_fail=should_fail,
         message="Directory creation succeeded, expected it to fail",
-        exceptions=OSError if should_fail else Exception,
+        expected_failure_exception=OSError,
     )
 
 
@@ -97,9 +97,11 @@ def try_to_remove_directory(
 
     assert_with_expected_fail(
         condition,
-        client.timeout,
+        timeout=client.timeout,
         should_fail=should_fail,
         message=f"Operation of removing directory: {dir_name} expected to fail, but did not",
+        retryable_exceptions=OSError,
+        expected_failure_exception=OSError,
     )
 
 
@@ -278,12 +280,24 @@ def list_dirs_base(
         if expected_error is not None
         else ""
     )
+
+    retryable_exceptions = (
+        tuple(
+            exception
+            for exception in (PermissionError, FileNotFoundError)
+            if exception is not expected_error
+        )
+        if expected_error is not None
+        else (OSError,)
+    )
+
     assert_with_expected_fail(
         condition,
-        client.timeout,
+        timeout=client.timeout,
         should_fail=expected_error is not None,
         message=failure_message,
-        exceptions=expected_error or Exception,
+        retryable_exceptions=retryable_exceptions,
+        expected_failure_exception=expected_error,
     )
     return path_content
 
