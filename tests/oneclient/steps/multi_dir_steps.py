@@ -8,8 +8,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import errno
 import os.path
+import stat as stat_lib
 import subprocess as sp
 import time
+from contextlib import suppress
 from typing import Literal
 
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
@@ -43,7 +45,7 @@ def try_to_create_directory(
         timeout=client.timeout,
         should_fail=should_fail,
         message="Directory creation succeeded, expected it to fail",
-        exceptions=OSError if should_fail else Exception,
+        expected_failure_exception=OSError,
     )
 
 
@@ -95,9 +97,11 @@ def try_to_remove_directory(
 
     assert_with_expected_fail(
         condition,
-        client.timeout,
+        timeout=client.timeout,
         should_fail=should_fail,
         message=f"Operation of removing directory: {dir_name} expected to fail, but did not",
+        retryable_exceptions=OSError,
+        expected_failure_exception=OSError,
     )
 
 
@@ -130,39 +134,44 @@ def fail_to_delete_empty(user: str, dirs: str, client_node: str, users: Users) -
     delete_empty_base(user, dirs, client_node, users, should_fail=True)
 
 
+def clear_directory(client: Client, path: str) -> None:
+    mode = client.lstat(path).st_mode
+
+    if stat_lib.S_ISLNK(mode):
+        raise ValueError(f"Refusing to clear a symlink: {path}")
+
+    if not stat_lib.S_ISDIR(mode):
+        raise NotADirectoryError(path)
+
+    for name in client.ls(path):
+        child = os.path.join(path, name)
+        child_mode = client.lstat(child).st_mode
+        client.rm(
+            path=child,
+            recursive=stat_lib.S_ISDIR(child_mode),
+        )
+
+
 def purge_all_spaces(client: Client) -> None:
-    try:
+    spaces = client.list_spaces()
+
+    for space in spaces:
+        space_path = client.absolute_path(space)
+        retries = 10
         retry_delay = 5
-
-        spaces = client.list_spaces()
-
-        for space in spaces:
-            space_path = client.absolute_path(space)
-            retries = 10
-            space_purged = False
-            while retries > 0 and not space_purged:
-                try:
-                    print(f"\nCleaning space {space_path} (retries left {retries})")
-                    client.rm(path=space_path, recursive=True)
-                    space_purged = True
-                except FileNotFoundError:
-                    space_purged = True
-                except OSError as e:
-                    if e.errno in (errno.ENOTEMPTY, errno.EAGAIN) and (retries > 0):
-                        # retry in case events between providers haven't synchronized yet
-                        retries = retries - 1
-                        time.sleep(retry_delay)
-                    elif e.errno in (errno.EPERM, errno.EACCES, errno.EIO):
-                        # ignore permission errors during cleaning
-                        space_purged = True
-                    else:
-                        print(f"Unexpected error '{e.errno}' when cleaning space: {space_path}")
-                        raise e
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        print(f"Error during cleaning up spaces: {e}")
-        raise e
+        for i in range(retries):
+            print(f"\nCleaning space {space_path} (retries left {retries - (i + 1)})")
+            try:
+                with suppress(FileNotFoundError):
+                    clear_directory(client, space_path)
+                break
+            except OSError as e:
+                if e.errno in (errno.ENOTEMPTY, errno.EAGAIN):
+                    # retry in case events between providers haven't synchronized yet
+                    time.sleep(retry_delay)
+            except Exception as e:
+                # raise for every other exception
+                raise RuntimeError("Error during cleaning up spaces") from e
 
 
 @wt(parsers.re(r"(?P<user>\w+) purges all spaces on (?P<client_node>.*)"))
@@ -271,12 +280,24 @@ def list_dirs_base(
         if expected_error is not None
         else ""
     )
+
+    retryable_exceptions = (
+        tuple(
+            exception
+            for exception in (PermissionError, FileNotFoundError)
+            if exception is not expected_error
+        )
+        if expected_error is not None
+        else (OSError,)
+    )
+
     assert_with_expected_fail(
         condition,
-        client.timeout,
+        timeout=client.timeout,
         should_fail=expected_error is not None,
         message=failure_message,
-        exceptions=expected_error or Exception,
+        retryable_exceptions=retryable_exceptions,
+        expected_failure_exception=expected_error,
     )
     return path_content
 

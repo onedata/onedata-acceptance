@@ -26,9 +26,8 @@ Feature: Multi_directory_CRUD
     And user1 purges all spaces on client11
 
     # TODO: VFS-13861 Changing order of 2 same steps only for different clients below changes result of this test, but shouldn't
-    Then user1 doesn't see [dir1, dir2, dir3] in space1 on client11
-    And user2 can't see and can't stat [dir1, dir2, dir3] in space1 on "client21"
-    And user1 can't stat [dir1, dir2, dir3] in space1 on client11
+    Then user2 can't see and can't stat [dir1, dir2, dir3] in space1 on "client21"
+    And user1 can't see and can't stat [dir1, dir2, dir3] in space1 on "client11"
 
     And user2 can't see and can't stat [.dir4] in space1 on "client21"
     And user1 can't see and can't stat [.dir4] in space1 on "client11"

@@ -22,7 +22,9 @@ import jsondiff
 import pytest
 
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
-from tests.oneclient.steps.multi_dir_steps import try_to_create_directory
+from tests.oneclient.steps.multi_dir_steps import (
+    try_to_create_directory,
+)
 from tests.type_definitions import Hosts
 from tests.utils.acceptance_utils import compare, list_parser, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
@@ -93,9 +95,11 @@ def create_base(
 
         assert_with_expected_fail(
             condition,
-            client.timeout,
+            timeout=client.timeout,
             should_fail=should_fail,
             message=f"Operation of creating files: {files} expected to fail, but did not",
+            retryable_exceptions=OSError,
+            expected_failure_exception=OSError if should_fail else None,
         )
 
 
@@ -290,10 +294,11 @@ def mv_base(
 
     assert_with_expected_fail(
         condition,
-        0 if should_fail else client.timeout,
+        timeout=0 if should_fail else client.timeout,
         should_fail=should_fail,
         message=f"Moving {file1} to {file2} succeeded, expected it to fail",
-        exceptions=OSError if should_fail else Exception,
+        retryable_exceptions=() if should_fail else OSError,
+        expected_failure_exception=OSError if should_fail else None,
     )
 
 
@@ -325,10 +330,11 @@ def rename_base(
 
     assert_with_expected_fail(
         condition,
-        0 if should_fail else client.timeout,
+        timeout=0 if should_fail else client.timeout,
         should_fail=should_fail,
         message=f"Renaming {file1} to {file2} succeeded, expected it to fail",
-        exceptions=OSError if should_fail else Exception,
+        retryable_exceptions=() if should_fail else OSError,
+        expected_failure_exception=OSError if should_fail else None,
     )
 
 
@@ -400,17 +406,16 @@ def shell_move_base(
     dest = client.absolute_path(file2)
     cmd = f"mv {src} {dest}"
 
-    def condition() -> None:
-        ret = client.run_cmd(cmd, error=True)
-        if ret != 0:
-            raise OSError(f"Command ended with exit code {ret}")
+    def condition() -> bool:
+        return client.run_cmd(cmd, error=True) == 0
 
     assert_with_expected_fail(
         condition,
-        0 if should_fail else client.timeout,
+        timeout=0 if should_fail else client.timeout,
         should_fail=should_fail,
         message=f"Moving {src} to {dest} with mv succeeded, expected it to fail",
-        exceptions=OSError if should_fail else Exception,
+        retryable_exceptions=() if should_fail else OSError,
+        expected_failure_exception=OSError if should_fail else None,
     )
 
 
@@ -437,10 +442,7 @@ def delete_file_base(
             client.rm(path_to_delete)
 
         assert_with_expected_fail(
-            condition,
-            timeout=client.timeout,
-            should_fail=should_fail,
-            exceptions=OSError if should_fail else Exception,
+            condition, timeout=client.timeout, should_fail=should_fail, retryable_exceptions=OSError
         )
 
 
@@ -600,7 +602,13 @@ def change_mode_base(
     def condition() -> None:
         client.chmod(parsed_mode, file_path)
 
-    assert_with_expected_fail(condition, client.timeout, should_fail=should_fail)
+    assert_with_expected_fail(
+        condition,
+        timeout=client.timeout,
+        should_fail=should_fail,
+        retryable_exceptions=OSError,
+        expected_failure_exception=OSError,
+    )
 
 
 @wt(
@@ -753,7 +761,7 @@ def touch_file_base(
             condition,
             timeout=client.timeout,
             should_fail=should_fail,
-            exceptions=OSError if should_fail else Exception,
+            retryable_exceptions=OSError,
         )
 
 
