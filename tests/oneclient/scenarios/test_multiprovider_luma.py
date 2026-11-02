@@ -13,4 +13,4 @@ from tests.oneclient.steps.multi_file_steps import *
 from tests.oneclient.steps.multi_reg_file_steps import *
 from tests.utils.acceptance_utils import *
 
-# scenarios("../features/multiprovider_luma.feature")
+scenarios("../features/multiprovider_luma.feature")

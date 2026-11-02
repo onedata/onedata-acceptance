@@ -17,21 +17,21 @@ from tests.oneclient.steps.reg_file_steps import *
 scenario = partial(scenario, "../features/luma_provider.feature")
 
 
-# @scenario("Operations on POSIX storage")
-# def test_posix_storage_operations(env_description_file):
-#     pass
+@scenario("Operations on POSIX storage")
+def test_posix_storage_operations(env_description_file):
+    pass
 
 
-# @scenario("Operations on CEPH storage")
-# def test_ceph_storage_operations(env_description_file):
-#     pass
+@scenario("Operations on CEPH storage")
+def test_ceph_storage_operations(env_description_file):
+    pass
 
 
-# @scenario("Operations on Amazon S3 storage")
-# def test_s3_storage_operations(env_description_file):
-#     pass
+@scenario("Operations on Amazon S3 storage")
+def test_s3_storage_operations(env_description_file):
+    pass
 
 
-# @scenario("Operations on Openstack Swift storage")
-# def test_swift_storage_operations(env_description_file):
-#     pass
+@scenario("Operations on Openstack Swift storage")
+def test_swift_storage_operations(env_description_file):
+    pass

@@ -19,21 +19,21 @@ from tests.utils.acceptance_utils import *
 scenario = partial(scenario, "../features/extended_attributes.feature")
 
 
-# @scenario("Check extended attribute exists")
-# def test_extended_attribute_exists(env_description_file):
-#     pass
+@scenario("Check extended attribute exists")
+def test_extended_attribute_exists(env_description_file):
+    pass
 
 
-# @scenario("Check string extended attribute has correct value")
-# def test_string_extended_attribute_has_value(env_description_file):
-#     pass
+@scenario("Check string extended attribute has correct value")
+def test_string_extended_attribute_has_value(env_description_file):
+    pass
 
 
-# @scenario("Check JSON extended attribute has correct value")
-# def test_json_extended_attribute_has_value(env_description_file):
-#     pass
+@scenario("Check JSON extended attribute has correct value")
+def test_json_extended_attribute_has_value(env_description_file):
+    pass
 
 
-# @scenario("Check numeric extended attribute has correct value")
-# def test_numeric_extended_attribute_has_value(env_description_file):
-#     pass
+@scenario("Check numeric extended attribute has correct value")
+def test_numeric_extended_attribute_has_value(env_description_file):
+    pass

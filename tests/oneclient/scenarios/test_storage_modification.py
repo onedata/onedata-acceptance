@@ -21,16 +21,16 @@ from tests.utils.acceptance_utils import *
 scenario = partial(scenario, "../features/storage_modification.feature")
 
 
-# @scenario("Change Ceph parameters with active oneclient connection")
-# def test_ceph_storage_parameter_change(env_description_file):
-#     pass
+@scenario("Change Ceph parameters with active oneclient connection")
+def test_ceph_storage_parameter_change(env_description_file):
+    pass
 
 
-# @scenario("Change S3 parameters with active oneclient connection")
-# def test_s3_storage_parameter_change(env_description_file):
-#     pass
+@scenario("Change S3 parameters with active oneclient connection")
+def test_s3_storage_parameter_change(env_description_file):
+    pass
 
 
-# @scenario("Change POSIX parameters with active oneclient connection")
-# def test_posix_storage_parameter_change(env_description_file):
-#     pass
+@scenario("Change POSIX parameters with active oneclient connection")
+def test_posix_storage_parameter_change(env_description_file):
+    pass
