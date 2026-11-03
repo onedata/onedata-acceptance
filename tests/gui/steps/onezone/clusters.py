@@ -37,7 +37,7 @@ def click_button_in_cluster_page(selenium: SeleniumDrivers, browser_id: str, but
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_registration_cluster_token(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).clusters.token_page.copy()
+    OZLoggedIn(driver).clusters.token_page.copy.click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Onedatify documentation" link in clusters page'))
@@ -116,7 +116,7 @@ def click_button_in_gui_settings_page(
     selenium: SeleniumDrivers, browser_id: str, button: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver).clusters.gui_settings_page, transform(button))()
+    getattr(OZLoggedIn(driver).clusters.gui_settings_page, transform(button)).click()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" in the "{box}" in GUI settings page'))
@@ -143,7 +143,7 @@ def remove_notification_in_gui_settings_page(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_the_understand_notice(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).clusters.deregistration_checkbox()
+    OZLoggedIn(driver).clusters.deregistration_checkbox.click()
 
 
 @wt(
@@ -176,7 +176,7 @@ def click_cluster_menu_button(
     selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
 ) -> None:
     provider_record = _get_cluster_record(selenium, browser_id, provider, hosts)
-    provider_record.menu_button()
+    provider_record.menu_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees only one "{provider}" record in clusters menu'))
@@ -287,7 +287,7 @@ def click_on_link_in_cookies_popup(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_cookies_popup(selenium: SeleniumDrivers, browser_id: str, button: str) -> None:
     driver = selenium[browser_id]
-    getattr(Popups(driver).cookies, transform(button))()
+    getattr(Popups(driver).cookies, transform(button)).click()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" on {kind_of_agreement} page'))
@@ -317,9 +317,9 @@ def click_button_on_agreement_page(
 ) -> None:
     driver = selenium[browser_id]
     if kind_of_agreement == "privacy policy":
-        getattr(PrivacyPolicy(driver), transform(button))()
+        getattr(PrivacyPolicy(driver), transform(button)).click()
     else:
-        getattr(TermsOfUse(driver), transform(button))()
+        getattr(TermsOfUse(driver), transform(button)).click()
 
 
 @wt(parsers.parse('user of {browser_id} goes to "{kind_of_agreement}" page'))

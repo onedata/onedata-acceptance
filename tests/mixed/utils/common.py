@@ -12,6 +12,14 @@ from typing import Any, Protocol
 import yaml
 from _pytest._py.path import LocalPath
 
+from cdmi_client import ApiClient as ApiClient_CDMI
+from cdmi_client.configuration import Configuration as Conf_CDMI
+from onepanel_client import ApiClient as ApiClient_panel
+from onepanel_client.configuration import Configuration as Conf_panel
+from oneprovider_client import ApiClient as ApiClient_provider
+from oneprovider_client.configuration import Configuration as Conf_provider
+from onezone_client import ApiClient as ApiClient_OZ
+from onezone_client.configuration import Configuration as Conf_OZ
 from tests import (
     CDMI_REST_PATH_PREFIX,
     OZ_REST_PATH_PREFIX,
@@ -21,20 +29,13 @@ from tests import (
     PROVIDER_REST_PATH_PREFIX,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.mixed.cdmi_client import ApiClient as ApiClient_CDMI
-from tests.mixed.cdmi_client.configuration import Configuration as Conf_CDMI
-from tests.mixed.onepanel_client import ApiClient as ApiClient_panel
-from tests.mixed.onepanel_client.configuration import Configuration as Conf_panel
-from tests.mixed.oneprovider_client import ApiClient as ApiClient_provider
-from tests.mixed.oneprovider_client.configuration import Configuration as Conf_provider
-from tests.mixed.onezone_client import ApiClient as ApiClient_OZ
-from tests.mixed.onezone_client.configuration import Configuration as Conf_OZ
 from tests.mixed.type_definitions import Resolver
 from tests.mixed.utils.privileges import (
     space_manager_privileges,
     space_member_privileges,
     space_owner_privileges,
 )
+from tests.type_definitions import SeleniumFixtureState
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -208,7 +209,7 @@ def execute_copied_curl_command_with_env_vars(
     displays: dict[str, str],
     clipboard: Clipboard,
     tmp_memory: TmpMemory,
-    selenium: Mapping[str, FixtureRequestLike],
+    selenium: SeleniumFixtureState,
     config: str,
 ) -> None:
     """
@@ -218,7 +219,7 @@ def execute_copied_curl_command_with_env_vars(
     """
     loaded_config = yaml.load(config, yaml.Loader)
     resolved_config = {
-        k: try_to_resolve_items(v, selenium["request"]) for k, v in loaded_config.items()
+        k: try_to_resolve_items(v, selenium.request) for k, v in loaded_config.items()
     }
     execute_copied_curl_command(browser_id, displays, clipboard, tmp_memory, config=resolved_config)
 

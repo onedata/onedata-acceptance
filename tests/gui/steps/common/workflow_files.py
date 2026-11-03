@@ -8,9 +8,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 
+from tests import AUTOMATION_EXAMPLES_DIR
 from tests.utils.bdd_utils import parsers, wt
 
-WORKFLOW_DIR = "automation-examples/workflows"
+WORKFLOW_DIR = os.path.join(AUTOMATION_EXAMPLES_DIR, "workflows")
 TESTS_DIR = "tests/gui/features"
 WORKFLOWS_NAMES: list[str] = []
 

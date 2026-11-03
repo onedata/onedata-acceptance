@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections import defaultdict, namedtuple
 from collections.abc import Callable
-from enum import Enum
+from enum import StrEnum
 from os import PathLike
 from typing import Any, Literal, Protocol, TypedDict
 
@@ -23,7 +23,7 @@ class Clickable(Protocol):
     def click(self) -> None: ...
 
 
-class WhichBrowser(Enum):
+class WhichBrowser(StrEnum):
     ARCHIVE_BROWSER = "archive browser"
     ARCHIVE_FILE_BROWSER = "archive file browser"
     DATASET_BROWSER = "dataset browser"
@@ -51,6 +51,16 @@ type TreeConfig = list[str | dict[str, "TreeConfig | str | int"]]
 type AuditLogValue = str | int | float | bool | list["AuditLogValue"] | dict[str, "AuditLogValue"]
 type AuditLogContent = dict[str, AuditLogValue]
 
+
+class StoreDetails(TypedDict, total=False):
+    algorithm: str | None
+    checksum: str | None
+    fileId: str | None
+    destinationPath: str | None
+    sourceUrl: str | None
+    size: int | None
+
+
 type PrivilegeGranted = Literal[True, False, "Partially"]
 PrivilegeGroupConfig = TypedDict(
     "PrivilegeGroupConfig",
@@ -60,6 +70,53 @@ PrivilegeGroupConfig = TypedDict(
     },
 )
 type PrivilegesConfig = dict[str, PrivilegeGroupConfig]
+
+ListItemMainField = Literal["name", "description"]
+type PageName = Literal[
+    "data",
+    "shares",
+    "providers",
+    "groups",
+    "tokens",
+    "discovery",
+    "automation",
+    "clusters",
+    "cluster",
+]
+type MembersParentType = Literal[
+    "space",
+    "harvester",
+    "automation",
+    "inventory",
+    "cluster",
+    "group",
+]
+type SidebarMemberParent = Literal[
+    "space",
+    "group",
+    "harvester",
+    "automation",
+    "inventory",
+]
+type MemberType = Literal["group", "user"]
+
+
+MENU_ELEM_TO_TAB_NAME: dict[MembersParentType, PageName] = {
+    "space": "data",
+    "harvester": "discovery",
+    "automation": "automation",
+    "inventory": "automation",
+    "cluster": "clusters",
+    "group": "groups",
+}
+
+PARENT_LIST_NAMES: dict[SidebarMemberParent, str] = {
+    "space": "spaces_list",
+    "group": "groups_list",
+    "harvester": "harvesters_list",
+    "automation": "automations_list",
+    "inventory": "automations_list",
+}
 
 
 Clipboard = namedtuple("Clipboard", ["copy", "paste"])

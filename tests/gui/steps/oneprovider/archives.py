@@ -6,17 +6,20 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import re
-import time
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.type_definitions import TmpMemory, WhichBrowser
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.common.modals.archives_modals.create_archive import ToggleContainer
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.oneprovider.archive_browser import _ArchiveBrowser
 from tests.gui.utils.oneprovider.archive_browser.data_row import DataRow
 from tests.type_definitions import SeleniumDrivers
@@ -156,12 +159,19 @@ def from_ordinal_number_to_int(ordinal_number: str) -> int:
 
 
 @wt(parsers.parse('user of {browser_id} checks "{toggle_type}" toggle in modal "Create Archive"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def check_toggle_in_create_archive_modal(
     browser_id: str, selenium: SeleniumDrivers, toggle_type: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(Modals(driver).create_archive, transform(toggle_type)).check()
+
+    def toggle_getter() -> ToggleContainer:
+        return getattr(Modals(driver).create_archive, transform(toggle_type))
+
+    toggle = perform_action(toggle_getter)
+    previous_state: bool = toggle.is_checked()
+    driver.execute_script("arguments[0].scrollIntoView();", toggle.web_elem)
+
+    toggle.change_toggle_state(expected=not previous_state)
 
 
 def compare_base_archive_name_with_archive_with_description(
@@ -215,7 +225,7 @@ def assert_base_archive_description(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_archive_browser(browser_id: str, tmp_memory: TmpMemory, button: str) -> None:
     browser = tmp_memory[browser_id]["archive_browser"]
-    getattr(browser, transform(button))()
+    getattr(browser, transform(button)).click()
 
 
 @wt(
@@ -267,8 +277,9 @@ def click_menu_for_archive(
     which_browser: WhichBrowser = WhichBrowser.ARCHIVE_BROWSER,
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser.value)]
-    archive = get_archive_with_description(browser, description)
-    archive.menu_button()
+    with contextlib.suppress(PageObjectNotFoundError, ElementClickInterceptedException):
+        archive = get_archive_with_description(browser, description)
+        archive.menu_button.click()
     if Popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
         raise AssertionError(f"Archive with description {description} did not open")
 
@@ -324,7 +335,7 @@ def go_back_to_dataset_page_from_archive_browser(
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver).data.archive_header.back_to_dataset_page()
+    OZLoggedIn(driver).data.archive_header.back_to_dataset_page.click()
 
 
 def assert_not_archive_with_description(
@@ -353,26 +364,63 @@ def assert_page_with_error_appeared(
     assert browser.message == text, f'page with text "{text}" not  found'
 
 
+def wait_for_archive_to_enter_or_exit_states(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    description: str,
+    tmp_memory: TmpMemory,
+    expected_states: list[str] | None,
+    excluded_states: list[str] | None,
+) -> None:
+    if expected_states is None and excluded_states is None:
+        raise AssertionError("Either expected or excluded statuses list must be given")
+
+    browser = tmp_memory[browser_id]["archive_browser"]
+    driver = selenium[browser_id]
+
+    def state_condition(_: WebDriver) -> bool:
+        archive = perform_action(
+            lambda: get_archive_with_description(browser, description),
+            timeout=WAIT_FRONTEND // 4,
+        )
+        archive_state = archive.state.state_type
+        if expected_states:
+            return archive_state in expected_states
+        if excluded_states:
+            return archive_state not in excluded_states
+        return False
+
+    expected_state_description = (
+        f"reach one of the expected states {expected_states}"
+        if expected_states
+        else f"leave the excluded states {excluded_states}"
+    )
+    WebDriverWait(
+        driver, timeout=300, poll_frequency=0.5, ignored_exceptions=[PageObjectNotFoundError]
+    ).until(
+        state_condition,
+        message=(f'Archive with description "{description}" did not {expected_state_description}'),
+    )
+
+
 @wt(
-    parsers.parse(
-        'user of {browser_id} waits for "{status}" state for archive'
-        ' with description "{description}" in archive browser'
+    parsers.re(
+        r'user of (?P<browser_id>.*?) waits for "(?P<state>.*?)" state'
+        r" for archive with description "
+        r'"(?P<description>.*?)" in archive browser'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def waits_for_preserved_state(
-    browser_id: str, status: str, description: str, tmp_memory: TmpMemory
+def wait_for_expected_archive_state(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    state: str,
+    description: str,
+    tmp_memory: TmpMemory,
 ) -> None:
-    browser = tmp_memory[browser_id]["archive_browser"]
-    archive = get_archive_with_description(browser, description)
-    for _ in range(150):
-        if archive.state.state_type == status:
-            break
-        time.sleep(2)
-    else:
-        raise TimeoutError(
-            f'failed to see "{status}" state for archive with description "{description}"'
-        )
+    wait_for_archive_to_enter_or_exit_states(
+        selenium, browser_id, description, tmp_memory, [state], None
+    )
 
 
 @wt(parsers.parse("user of {browser_id} sees archive ID in Archive details modal"))

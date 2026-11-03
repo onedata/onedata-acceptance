@@ -8,8 +8,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from contextlib import suppress
+from typing import TypeGuard
 
 from _pytest._py.path import LocalPath
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -33,15 +36,31 @@ from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, StoreDetails, TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     MetadataTab,
 )
-from tests.gui.utils.generic import parse_elements_sequence, wait_for_file_to_download
+from tests.gui.utils.generic import wait_for_file_to_download
 from tests.gui.utils.oneprovider.automation import WorkflowVisualiser
+from tests.gui.utils.text import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
+
+
+def _is_store_details(value: object) -> TypeGuard[StoreDetails]:
+    if not isinstance(value, dict):
+        return False
+
+    string_fields = ("algorithm", "checksum", "fileId", "destinationPath", "sourceUrl")
+    if any(
+        field in value and value[field] is not None and not isinstance(value[field], str)
+        for field in string_fields
+    ):
+        return False
+
+    size = value.get("size")
+    return size is None or isinstance(size, int) and not isinstance(size, bool)
 
 
 def get_store_details_json(
@@ -51,9 +70,9 @@ def get_store_details_json(
     displays: dict[str, str],
     store_name: str,
     store_type: str,
-) -> dict[str, object]:
+) -> StoreDetails:
     page = get_op_workflow_visualizer_page(driver)
-    return json.loads(
+    store_details: object = json.loads(
         open_modal_and_get_store_content(
             browser_id,
             driver,
@@ -64,6 +83,9 @@ def get_store_details_json(
             store_type,
         )
     )
+    if not _is_store_details(store_details):
+        raise TypeError("Store details JSON has an unexpected structure")
+    return store_details
 
 
 def open_modal_and_get_store_content(
@@ -76,11 +98,14 @@ def open_modal_and_get_store_content(
     store_type: str,
     index: int = 0,
 ) -> str:
-    page.stores_list[store_name].click()
-    modal = Modals(driver).store_details
-    store_value = get_store_content(modal, store_type, index, clipboard, displays, browser_id)
-    modal.close()
+    with suppress(ElementClickInterceptedException):
+        page.stores_list[store_name].click()
 
+    modal = Modals(driver).store_details
+    store_value = get_store_content(
+        modal, store_type, index, clipboard, displays, browser_id, driver
+    )
+    modal.close.click()
     return store_value
 
 

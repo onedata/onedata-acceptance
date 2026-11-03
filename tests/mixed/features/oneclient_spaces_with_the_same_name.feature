@@ -41,8 +41,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
 
     # this step removes one of the spaces with that name
     And using REST, user1 removes space named "helloworld" in "onezone" Onezone service
-    # Due to VFS-10923, space id is still visible
-    And using oneclient1, user1 sees spaces ["helloworld"] from "onezone" Onezone service, annotated with their ids in mount point
+    And using oneclient1, user1 sees spaces ["helloworld"] in mount point
 
 
   Scenario: Using oneclient user can see 2 spaces with the same name annotated with their ids in mount point, then after renaming one space user can see them without id
@@ -164,8 +163,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
 
     And using oneclient1, user1 sees spaces ["space_helloworld", "space_helloworld"] from "onezone" Onezone service, annotated with their ids in mount point, waiting up to 60s
     And using REST, user1 leaves space named "space_helloworld" in "onezone" Onezone service
-    # Due to VFS-10923, space id is still visible
-    And using oneclient1, user1 sees spaces ["space_helloworld"] from "onezone" Onezone service, annotated with their ids in mount point, waiting up to 60s
+    And using oneclient1, user1 sees spaces ["space_helloworld"] in mount point, waiting up to 60s
 
 
   Scenario: Using oneclient user can see 2 spaces with the same name annotated with their ids in mount point, then after removing one space (when provider is offline) can see the other without id
@@ -188,8 +186,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
     # this step removes one of the spaces with that name
     And using REST, user1 removes space named "helloworld" in "onezone" Onezone service
     And user1 starts network on oneprovider oneprovider-krakow
-    # Due to VFS-10923, space id is still visible
-    And using oneclient1, user1 sees spaces ["helloworld"] from "onezone" Onezone service, annotated with their ids in mount point, waiting up to 60s
+    And using oneclient1, user1 sees spaces ["helloworld"] in mount point, waiting up to 60s
 
 
   Scenario: Using oneclient user can see 2 spaces with the same name annotated with their ids in mount point, then after renaming one space (when provider is offline) can see them without id

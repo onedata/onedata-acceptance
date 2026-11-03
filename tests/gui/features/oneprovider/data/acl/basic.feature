@@ -131,6 +131,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser adds ACE with "attributes:read attributes" privilege set for group group1
     And user of browser adds ACE with [deletion:delete, acl:read acl] privileges set for user space-owner-user
     And user of browser clicks on "Save" button in edit permissions panel
+    And user of browser clicks on "Proceed" button in modal "Warning"
 
     # Check ACL records
     And user of browser selects "ACL" permission type in edit permissions panel
@@ -165,6 +166,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     Then user of browser sees that first ACL record in edit permissions panel is set for user space-owner-user
     And user of browser sees that second ACL record in edit permissions panel is set for group group1
     And user of browser clicks on "Save" button in edit permissions panel
+    And user of browser clicks on "Proceed" button in modal "Warning"
 
     # check order after close and open modal again
     And user of browser selects "ACL" permission type in edit permissions panel

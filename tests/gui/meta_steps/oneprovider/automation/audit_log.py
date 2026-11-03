@@ -13,7 +13,7 @@ import time
 from ast import literal_eval
 from collections.abc import Mapping
 from datetime import date
-from typing import TypedDict, cast
+from typing import Literal, TypedDict, cast
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -22,6 +22,7 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
 )
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import GUI_LOGDIR
@@ -39,6 +40,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_on_link_in_task_box,
     click_on_task_in_lane,
     get_op_workflow_visualizer_page,
+    get_visualizer_page_with_no_timeout,
     switch_to_automation_page,
 )
 from tests.gui.steps.oneprovider.automation.automation_statuses import (
@@ -71,15 +73,12 @@ from tests.gui.type_definitions import (
     WhichBrowser,
 )
 from tests.gui.utils import Modals
-from tests.gui.utils.common.modals.workflows_modals.audit_log import LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core.web_objects import PageObjectsSequence
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    parse_seq,
-)
+from tests.gui.utils.generic import perform_action
 from tests.gui.utils.oneprovider.automation import Task, WorkflowLane
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence, parse_seq
+from tests.gui.utils.web_elem_utils import wait_for_visible_element_using_getter
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
@@ -92,6 +91,23 @@ class AuditLogDebugContent(TypedDict):
 class AuditLogDebugEntry(TypedDict):
     content: AuditLogDebugContent
     severity: str
+
+
+class TaskAuditLogEntry(TypedDict):
+    content: AuditLogContent
+    severity: str
+    source: str
+    timestamp: float
+
+
+class ExpectedTaskAuditLogEntry(TypedDict, total=False):
+    content: AuditLogContent
+    severity: str
+    source: str
+    timestamp: str
+
+
+type TaskAuditLogLabel = Literal["source", "severity", "timestamp"]
 
 
 def write_audit_logs_for_task_to_file(
@@ -111,19 +127,18 @@ def write_audit_logs_for_task_to_file(
     if task.status == exp_status:
         modal, logs = get_modal_and_logs_for_task(path, task, driver)
         for log in logs:
-            log = cast(LogsEntry, log)
             if log.severity != "Info":
                 get_audit_log_json_and_write_to_file(
                     log, modal, clipboard, displays, browser_id, path
                 )
-                modal.close_details()
+                modal.close_details.click()
                 append_log_to_file(path, "\n")
 
         close_modal_and_task(modal, task)
 
 
 def get_audit_logs_from_every_task_in_workflow(
-    lanes: PageObjectsSequence,
+    lanes: PageObjectsSequence[WorkflowLane],
     driver: WebDriver,
     clipboard: Clipboard,
     path: str,
@@ -132,7 +147,6 @@ def get_audit_logs_from_every_task_in_workflow(
     exp_status: str,
 ) -> None:
     for lane in lanes:
-        lane = cast(WorkflowLane, lane)
         for parallel_box in lane.parallel_boxes:
             for task in parallel_box.task_list:
                 write_audit_logs_for_task_to_file(
@@ -212,7 +226,7 @@ def assert_audit_log_in_store(
         f"There is no file id information in audit log in {store_name} store details"
     )
 
-    tmp_memory[f"{store_name}_store_log"] = store_details
+    tmp_memory[f"{store_name}_store_log"] = dict(store_details)
 
 
 @wt(
@@ -253,17 +267,15 @@ def assert_content_in_audit_log_in_store(
     )
 
     actual_expected = {
-        "sourceUrl": "source URL",
-        "size": "size",
-        "destinationPath": "destination path",
+        "sourceUrl": (store_details["sourceUrl"], "source URL"),
+        "size": (store_details["size"], "size"),
+        "destinationPath": (
+            store_details["destinationPath"].split("/")[-1],
+            "destination path",
+        ),
     }
 
-    for actual, expected in actual_expected.items():
-        actual_elem = (
-            cast(str, store_details[actual]).split("/")[-1]
-            if actual == "destinationPath"
-            else store_details[actual]
-        )
+    for actual, (actual_elem, expected) in actual_expected.items():
         expected_elem = expected_data[expected]
         error_message2 = (
             f"Actual {actual} {actual_elem} is not the same as expected {expected_elem}"
@@ -303,6 +315,7 @@ def compare_audit_log_to_store_log(
     selenium: SeleniumDrivers,
     tmp_memory: TmpMemory,
 ) -> None:
+    driver = selenium[browser_id]
     store_key = f"{store_name}_store_log"
     store_audit_log = get_store_audit_log(
         browser_id,
@@ -313,6 +326,11 @@ def compare_audit_log_to_store_log(
         tmp_memory,
         store_key,
     )
+    audit_log_btn = perform_action(
+        lambda: get_visualizer_page_with_no_timeout(driver).audit_log
+    ).web_elem
+    ActionChains(driver).move_to_element(audit_log_btn).click(audit_log_btn).perform()
+    wait_for_visible_element_using_getter(driver, lambda _: Modals(driver).audit_log)
 
     click_modal_button(selenium, browser_id, "user_log", "audit_log")
     click_modal_button(selenium, browser_id, "copy_json", "audit_log")
@@ -392,7 +410,7 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
 ) -> None:
     elem_type = "workflow"
     page = switch_to_automation_page(selenium, browser_id)
-    page.workflow_visualiser.audit_log()
+    page.workflow_visualiser.audit_log.click()
     driver = selenium[browser_id]
 
     compare_audit_log_to_store_log(
@@ -405,7 +423,7 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
         selenium,
         tmp_memory,
     )
-    Modals(driver).audit_log.x()
+    Modals(driver).audit_log.x.click()
 
 
 @wt(
@@ -540,9 +558,9 @@ def assert_each_element_contains_some_information(
     element_count = len(modal.store_content_object)
     for i in range(element_count):
         store_content = json.loads(
-            get_store_content(modal, store_type, i, clipboard, displays, browser_id)
+            get_store_content(modal, store_type, i, clipboard, displays, browser_id, driver)
         )
-        modal.close_details()
+        modal.close_details.click()
         file_path = (
             store_content
             if option == "file names"
@@ -583,9 +601,9 @@ def assert_each_element_checksum_content_in_store(
     element_count = len(modal.store_content_object)
     for i in range(element_count):
         store_content = json.loads(
-            get_store_content(modal, store_type, i, clipboard, displays, browser_id)
+            get_store_content(modal, store_type, i, clipboard, displays, browser_id, driver)
         )
-        modal.close_details()
+        modal.close_details.click()
         expected_sha256 = expected_data["checksums"]["sha256"]["status"]
         actual_sha256 = store_content["checksums"]["sha256"]["status"]
         error_message = (
@@ -619,14 +637,12 @@ def check_visual_in_store_details_modal(
         )
         assert modal.raw_view == serialized_items, error_message
     else:
-        parsed_items = cast(
-            list[AuditLogValue] | AuditLogContent,
-            (
-                literal_eval(serialized_items)
-                if variable_type != "files"
-                else parse_seq(serialized_items)
-            ),
-        )
+        parsed_items: list[str] | AuditLogContent
+        if variable_type != "files":
+            parsed_items = literal_eval(serialized_items)
+        else:
+            parse_seq(serialized_items)
+
         for elem in modal.store_content_list:
             if variable_type == "ranges":
                 expected = {
@@ -695,7 +711,7 @@ def assert_datasets_in_store_details(
 ) -> None:
     modal = open_store_details_modal(selenium, browser_id, store_name)
     compare_datasets_in_store_details_modal(item_list, modal, store_name)
-    modal.close()
+    modal.close.click()
 
 
 @wt(
@@ -711,7 +727,7 @@ def assert_file_in_store_details(
 
     error_message = f"{file} is not in Store details modal for {store_name} store"
     assert file == actual_file, error_message
-    modal.close()
+    modal.close.click()
 
 
 @wt(
@@ -761,22 +777,25 @@ def compare_to_expected_if_element_exist_for_store(
     clipboard: Clipboard,
     displays: dict[str, str],
 ) -> None:
-    if elem:
-        if option == "fileId":
-            file_info = cast(str, elem).split(" ")[1].replace(")", "").split("/")
-            elem = get_file_id_from_details_modal(
-                selenium,
-                browser_id,
-                file_info[0],
-                tmp_memory,
-                file_info[1],
-                clipboard,
-                displays,
-            )
+    if not elem:
+        return
 
-        assert elem == items[option], (
-            f"{option}: {items[option]} in store {store_name} does not match expected {elem}"
+    if option == "fileId":
+        assert isinstance(elem, str), f"Expected fileId to be a string, got {type(elem).__name__}"
+        file_info = elem.split(" ")[1].replace(")", "").split("/")
+        elem = get_file_id_from_details_modal(
+            selenium,
+            browser_id,
+            file_info[0],
+            tmp_memory,
+            file_info[1],
+            clipboard,
+            displays,
         )
+
+    assert elem == items[option], (
+        f"{option}: {items[option]} in store {store_name} does not match expected {elem}"
+    )
 
 
 @wt(parsers.parse('user of {browser_id} sees that content of "{store_name}" store is:\n{config}'))
@@ -803,13 +822,13 @@ def assert_content_of_store(
     modal = open_store_details_modal(selenium, browser_id, store_name)
 
     if len(modal.store_content_list) == 0:
-        modal.copy_button()
+        modal.copy_button.click()
         item = json.loads(clipboard.paste(display=displays[browser_id]))
         error_message = "expected value: {} differs from actual one: {}"
         assert data[0] == item, error_message.format(data[0], item)
     else:
         modal.store_content_list[0].click()
-        modal.copy_button()
+        modal.copy_button.click()
         items = json.loads(clipboard.paste(display=displays[browser_id]))
 
         for option in options_to_check:
@@ -828,26 +847,54 @@ def assert_content_of_store(
     with contextlib.suppress(
         StaleElementReferenceException, NoSuchElementException, ElementNotInteractableException
     ):
-        modal.close()
+        modal.close.click()
 
 
 def compare_to_expected_if_elem_exist_audit_log(
-    data: Mapping[str, AuditLogValue],
-    label: str,
-    actual_items: Mapping[str, AuditLogValue],
+    data: ExpectedTaskAuditLogEntry,
+    label: TaskAuditLogLabel,
+    actual_items: TaskAuditLogEntry,
     task_name: str,
 ) -> None:
-    expected = data.get(label, False)
+    comparable_expected: AuditLogValue | date
+    comparable_actual: AuditLogValue | date
+
+    if label == "timestamp":
+        expected_timestamp = data.get("timestamp")
+
+        if expected_timestamp is None:
+            return
+        if expected_timestamp != "today":
+            raise ValueError(f"Unsupported expected timestamp: {expected_timestamp!r}")
+
+        comparable_expected = date.today()
+        comparable_actual = date.fromtimestamp(actual_items["timestamp"] / 1000)
+    elif label == "severity":
+        comparable_expected = data.get("severity", "").lower()
+        if not comparable_expected:
+            return
+        comparable_actual = actual_items["severity"]
+    else:
+        comparable_expected = data.get("source")
+        if not comparable_expected:
+            return
+        comparable_actual = actual_items["source"]
+
+    assert_elements_of_task_audit_log_are_the_same(
+        comparable_expected, comparable_actual, label, task_name
+    )
+
+
+def compare_content_element_if_expected(
+    expected_content: Mapping[str, AuditLogValue],
+    label: str,
+    actual_content: Mapping[str, AuditLogValue],
+    task_name: str,
+) -> None:
+    expected = expected_content.get(label)
     if expected:
-        comparable_expected: AuditLogValue | date = expected
-        comparable_actual: AuditLogValue | date = actual_items[label]
-        if label == "timestamp":
-            comparable_expected = date.today()
-            comparable_actual = date.fromtimestamp(cast(float, actual_items["timestamp"]) / 1000)
-        elif label == "severity":
-            comparable_expected = cast(str, expected).lower()
         assert_elements_of_task_audit_log_are_the_same(
-            comparable_expected, comparable_actual, label, task_name
+            expected, actual_content[label], label, task_name
         )
 
 
@@ -920,7 +967,7 @@ def compare_content_of_task_audit_log(
     item = cast(AuditLogContent, details.get("item", {})) if details else {}
 
     for label in expected_identical:
-        compare_to_expected_if_elem_exist_audit_log(content, label, actual_content, task_name)
+        compare_content_element_if_expected(content, label, actual_content, task_name)
     if reason:
         compare_content_reason_of_task_audit_log(
             reason,
@@ -982,7 +1029,7 @@ def assert_content_of_user_task_audit_log(
         )
     except NoSuchElementException:
         pass
-    modal.x()
+    modal.x.click()
     click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, close)
 
 
@@ -1055,7 +1102,7 @@ def assert_element_content_in_task_audit_log(
     time.sleep(1)
     modal = Modals(driver).audit_log
     modal.user_log.click()
-    modal.copy_json()
+    modal.copy_json.click()
     actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
     actual_data = actual_items["content"][element]
     # this is done because of very specific problem with passing (data/)
@@ -1074,7 +1121,7 @@ def assert_element_content_in_task_audit_log(
             f'as expected:\n "{expected_data}"'
         )
         assert actual_data == expected_data, error_message
-    modal.x()
+    modal.x.click()
     click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, close)
 
 
@@ -1096,14 +1143,18 @@ def assert_content_of_task_audit_log(
     displays: dict[str, str],
     tmp_memory: TmpMemory,
 ) -> None:
-    expected_identical = ["source", "severity", "timestamp"]
+    expected_identical: tuple[TaskAuditLogLabel, ...] = (
+        "source",
+        "severity",
+        "timestamp",
+    )
     click = "click"
     link = "Audit log"
     driver = selenium[browser_id]
-    data = yaml.load(config, yaml.Loader)
-    content = data.get("content", False)
-    severity = data.get("severity", False)
-    source = data.get("source", False)
+    data: ExpectedTaskAuditLogEntry = yaml.load(config, yaml.Loader)
+    content = data.get("content")
+    severity = data.get("severity", "")
+    source = data.get("source", "")
     close = "closes"
     # wait a second for workflow to open
     time.sleep(1)
@@ -1113,8 +1164,8 @@ def assert_content_of_task_audit_log(
     time.sleep(1)
     modal = Modals(driver).audit_log
     click_on_log_in_workflow_audit_log(driver, severity, source)
-    modal.copy_json()
-    actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
+    modal.copy_json.click()
+    actual_items: TaskAuditLogEntry = json.loads(clipboard.paste(display=displays[browser_id]))
 
     for label in expected_identical:
         compare_to_expected_if_elem_exist_audit_log(data, label, actual_items, task_name)
@@ -1132,7 +1183,7 @@ def assert_content_of_task_audit_log(
         )
 
     try:
-        modal.x()
+        modal.x.click()
         click_on_task_in_lane(
             selenium,
             browser_id,
@@ -1177,7 +1228,7 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
                 file_log = data[i]
                 idx = log_entries - i - 1
                 modal.logs_entry[idx].click()
-                modal.copy_json()
+                modal.copy_json.click()
                 visible_log = json.loads(clipboard.paste(display=displays[browser_id]))
                 # remove 'source' from dict
                 visible_log.pop("source")
@@ -1223,7 +1274,7 @@ def _assert_workflow_audit_log_contains_entries(
             continue
         error_message = f"there is no entry {expected_entry} in workflow audit log"
         raise AssertionError(error_message)
-    modal.x()
+    modal.x.click()
 
 
 def assert_expected_in_entries(expected_entry: str, entries: list[AuditLogDebugEntry]) -> bool:
@@ -1296,7 +1347,7 @@ def _get_workflow_audit_log(
     # wait for modal to appear
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modal = Modals(driver).audit_log
-    modal.download_as_json()
+    modal.download_as_json.click()
     wait_for_file_with_unknown_name_to_download(n_files_before_download, path)
     file_name = os.listdir(path)[-1]
     return tmpdir.join(browser_id, "download", file_name)

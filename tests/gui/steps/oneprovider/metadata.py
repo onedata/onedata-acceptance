@@ -15,7 +15,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
     XattrMetadataEntry,
 )
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.text import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -130,7 +130,7 @@ def click_on_del_metadata_record_button(
 ) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     entry = modal.xattrs.entries[attr_name]
-    entry.remove()
+    entry.remove.click()
 
 
 @wt(

@@ -6,11 +6,14 @@ __author__ = "Bartosz Walkowicz, Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import contextlib
 import time
 
 from selenium.common.exceptions import (
     ElementNotInteractableException,
+    NoSuchElementException,
 )
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
@@ -22,21 +25,26 @@ from tests.gui.steps.common.common import (
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
-from tests.gui.utils.generic import (
-    is_element_visible_using_getter,
-    transform,
-)
+from tests.gui.utils.core.exceptions import PageObjectNotFoundError
+from tests.gui.utils.generic import perform_action, transform
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow
+from tests.gui.utils.web_elem_utils import is_element_visible_using_getter
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_token_by_name(driver: WebDriver, token_name: str) -> TokenRow:
+def get_token_by_name(driver: WebDriver, token_name: str, under_rename: bool = False) -> TokenRow:
     tokens_page = get_onezone_subpage(driver, "tokens")
-    return tokens_page.sidebar.tokens[token_name]
+    if not under_rename:
+        return tokens_page.sidebar.tokens[token_name]
+    for token in tokens_page.sidebar.tokens:
+        with contextlib.suppress(NoSuchElementException):
+            if token.rename_input == token_name:
+                return token
+    raise PageObjectNotFoundError(f"Token with name {token_name} not found")
 
 
 def _open_menu_for_token(driver: WebDriver, token_name: str) -> None:
@@ -44,7 +52,10 @@ def _open_menu_for_token(driver: WebDriver, token_name: str) -> None:
 
 
 def click_option_for_token_row_menu(driver: WebDriver, option: str) -> None:
-    Popups(driver).menu_popup_with_text.menu[option.capitalize()]()
+    menu_item = perform_action(
+        lambda: Popups(driver).menu_popup_with_text.menu[option.capitalize()]
+    ).web_elem
+    ActionChains(driver).move_to_element(menu_item).click(menu_item).perform()
 
 
 def _click_on_btn_for_token(driver: WebDriver, token_name: str, btn: str) -> None:
@@ -114,7 +125,7 @@ def click_on_button_in_tokens_sidebar(
         raise TimeoutError(f"Did not manage to click {button} button")
     else:
         sidebar = tokens_page.sidebar
-        getattr(sidebar, transform(button))()
+        getattr(sidebar, transform(button)).click()
 
 
 @wt(
@@ -122,10 +133,15 @@ def click_on_button_in_tokens_sidebar(
         'user of {browser_id} clicks on "Create custom token" option in "Create new token" view'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_custom_token(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.create_token_page.create_custom_token()
+
+    def create_token() -> None:
+        create_token = OZLoggedIn(driver).tokens.create_token_page.create_custom_token
+        driver.execute_script("arguments[0].scrollIntoView();", create_token.web_elem)
+        create_token.click()
+
+    perform_action(create_token)
     wait_for_sliding_panel_to_stop_moving(
         driver, WAIT_FRONTEND, '[data-one-carousel-slide-id="form"]'
     )
@@ -202,7 +218,7 @@ def choose_token_type_to_create(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_button_in_token_view(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.copy_token()
+    OZLoggedIn(driver).tokens.copy_token.click()
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{invite_type}" invite type'))
@@ -254,7 +270,7 @@ def assert_token_is_type(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_token_filter(selenium: SeleniumDrivers, browser_id: str, token_filter: str) -> None:
     filters = OZLoggedIn(selenium[browser_id]).tokens.sidebar.filter
-    getattr(filters, token_filter.lower())()
+    getattr(filters, token_filter.lower()).click()
 
 
 @wt(
@@ -318,7 +334,7 @@ def assert_token_is_marked(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_button_of_tokens_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.menu()
+    OZLoggedIn(driver).tokens.menu.click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option in tokens view menu'))
@@ -344,7 +360,7 @@ def switch_toggle_to_change_token(selenium: SeleniumDrivers, browser_id: str, ac
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_save_button_on_tokens_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.save_button()
+    OZLoggedIn(driver).tokens.save_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} appends "{text}" to name of token named "{token_name}'))
@@ -355,11 +371,23 @@ def append_token_name_in_sidebar(selenium: SeleniumDrivers, browser_id: str, tex
     OZLoggedIn(driver).tokens.sidebar.name_input = input_box + text
 
 
-@wt(parsers.parse("user of {browser_id} confirms changes in token named {token_name}"))
+@wt(
+    parsers.parse(
+        'user of {browser_id} confirms changes in token named "{token_name}" for rename to "{new_token_name}"'
+    )
+)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_token_changes_in_sidebar(selenium: SeleniumDrivers, browser_id: str) -> None:
+def confirm_token_changes_in_sidebar(
+    selenium: SeleniumDrivers, browser_id: str, new_token_name: str
+) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).tokens.sidebar.confirm()
+    button_web_elem = OZLoggedIn(driver).tokens.sidebar.confirm.web_elem
+    menu_web_elem = get_token_by_name(
+        driver, new_token_name, under_rename=True
+    ).menu_button.web_elem
+
+    ActionChains(driver).move_to_element(menu_web_elem).perform()
+    ActionChains(driver).move_to_element(button_web_elem).click(button_web_elem).perform()
 
 
 @wt(

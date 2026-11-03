@@ -15,7 +15,8 @@ from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import Popups
-from tests.gui.utils.generic import parse_elements_sequence, transform
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import parse_elements_sequence
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -87,7 +88,7 @@ def assert_data_discovery_page_ecrin(selenium: SeleniumDrivers, browser_id: str)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def start_query_block(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    DataDiscovery(driver).query_builder.root_block()
+    DataDiscovery(driver).query_builder.root_block.click()
 
 
 @wt(
@@ -193,7 +194,7 @@ def choose_value_in_query_builder(selenium: SeleniumDrivers, browser_id: str, va
 def click_add_button_in_query_builder(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
-    query_builder_popup.add_button()
+    query_builder_popup.add_button.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks {operator} operator in query builder popup"))
@@ -203,7 +204,7 @@ def click_operator_in_query_builder(
 ) -> None:
     driver = selenium[browser_id]
     query_builder = Popups(driver).get_query_builder_not_hidden_popup()
-    getattr(query_builder, f"{operator.lower()}_operator")()
+    getattr(query_builder, f"{operator.lower()}_operator").click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{button_name}" button on Data discovery page'))
@@ -219,7 +220,7 @@ def _click_button_on_data_disc_page(
 ) -> None:
     driver = selenium[browser_id]
     page = DataDiscovery(driver)
-    getattr(page, f"{transform(button_name)}_button")()
+    getattr(page, f"{transform(button_name)}_button").click()
 
 
 def wait_for_data_discovery_query_result(
@@ -245,7 +246,7 @@ def wait_for_data_discovery_query_result(
 
     WebDriverWait(
         driver,
-        WAIT_BACKEND * 4,
+        WAIT_BACKEND * 6,
         poll_frequency=1,
         ignored_exceptions=(TimeoutException,),
     ).until(query_returns_expected_result)
@@ -261,7 +262,7 @@ def assert_page_size(selenium: SeleniumDrivers, browser_id: str, number: str) ->
 @wt(parsers.parse("user of {browser_id} opens next page of data discovery page"))
 def open_next_data_disc_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    DataDiscovery(driver).next_page()
+    DataDiscovery(driver).next_page.click()
 
 
 @wt(
@@ -273,5 +274,5 @@ def choose_sorting_parameter_or_order(
     selenium: SeleniumDrivers, browser_id: str, parameter: str, item: str
 ) -> None:
     driver = selenium[browser_id]
-    getattr(DataDiscovery(driver), f"sorting_{item}_selector")()
+    getattr(DataDiscovery(driver), f"sorting_{item}_selector").click()
     DataDiscovery(driver).choose_item(parameter)

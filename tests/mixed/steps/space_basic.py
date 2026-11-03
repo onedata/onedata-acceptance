@@ -6,6 +6,7 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections import Counter
 from collections.abc import Mapping
 from typing import cast
 
@@ -29,7 +30,7 @@ from tests.gui.meta_steps.onezone.spaces import (
     rename_spaces_in_oz_using_gui,
 )
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.generic import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.onezone.members import (
     add_users_to_space_in_oz_using_rest,
@@ -692,11 +693,23 @@ def assert_spaces_with_ids_in_mount_point(
         user_api = UserApi(user_client)
         user_spaces = user_api.list_user_spaces().spaces
 
-        space_names_with_ids = []
+        matching_spaces = []
         for sid in user_spaces:
             space = user_api.get_user_space(sid)
             if space.name in expected_spaces:
-                space_names_with_ids.append(f"{space.name}@{space.space_id}")
+                matching_spaces.append(space)
+
+        expected_name_counts = Counter(expected_spaces)
+        actual_name_counts = Counter(space.name for space in matching_spaces)
+        assert actual_name_counts == expected_name_counts, (
+            f"Expected spaces {expected_spaces}, got "
+            f"{[space.name for space in matching_spaces]} from Onezone"
+        )
+
+        space_names_with_ids = [
+            f"{space.name}@{space.space_id}" if actual_name_counts[space.name] > 1 else space.name
+            for space in matching_spaces
+        ]
 
         ls_present_spaces(user, space_names_with_ids, oneclient_host, users)
     else:

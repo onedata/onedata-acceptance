@@ -122,12 +122,12 @@ def is_notify_popup_visible_and_close_all_alert_popups(
 
 def dismiss_notifies_if_present(
     driver: WebDriver,
-    timeout: float = WAIT_FRONTEND,
+    timeout: float = WAIT_FRONTEND // 2,
 ) -> None:
     seen_popups: set[CapturedPopup] = set()
 
     try:
-        WebDriverWait(driver, timeout, poll_frequency=0.1).until(
+        WebDriverWait(driver, timeout, poll_frequency=0.05).until(
             partial(capture_visible_popups, seen_popups=seen_popups)
         )
     except TimeoutException:

@@ -31,7 +31,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Fail to rename regular file without write permission on parent
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 changes space1/dir1 mode to 755 on client11
     And mode of user2's space1/dir1 is 755 on client21
@@ -43,7 +43,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Rename regular file with write permission on parent
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 sees [file1] in space1/dir1 on client11
     And user2 sees [file1] in space1/dir1 on client21
@@ -83,7 +83,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Fail to delete regular file by other user without write permission on parent
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 sees [file1] in space1/dir1 on client11
     And user2 sees [file1] in space1/dir1 on client21
@@ -129,7 +129,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Fail to read regular file without read permission
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user2 sees [file1] in space1/dir1 on client21
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/file1 on client11
@@ -142,7 +142,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Write to regular file with write permission
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 changes space1/dir1/file1 mode to 660 on client11
     And mode of user2's space1/dir1/file1 is 660 on client21
@@ -154,7 +154,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Fail to write to regular file without write permission
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 changes space1/dir1/file1 mode to 600 on client11
     Then mode of user2's space1/dir1/file1 is 600 on client21
@@ -164,7 +164,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Execute file with execute permission
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/script.sh] on client11
     And user1 changes space1/dir1/script.sh mode to 654 on client11
     And mode of user2's space1/dir1/script.sh is 654 on client21
@@ -174,7 +174,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Fail to execute file without execute permission
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/script.sh] on client11
     And user2 sees [script.sh] in space1/dir1 on client21
     And user1 writes "#!/usr/bin/env bash\n\necho TEST" to space1/dir1/script.sh on client11
@@ -261,7 +261,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Delete file opened by other user for reading
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 sees [file1] in space1/dir1 on client11
     And user2 sees [file1] in space1/dir1 on client21
@@ -280,7 +280,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Delete file opened by other user for reading and writing
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 sees [file1] in space1/dir1 on client11
     And user2 sees [file1] in space1/dir1 on client21
@@ -296,7 +296,7 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Fail to delete file without permission, file is opened by other user
-    When user1 creates directories [space1/dir1] on client11
+    When user1 succeeds to create directories [space1/dir1] on client11
     And user1 creates regular files [space1/dir1/file1] on client11
     And user1 sees [file1] in space1/dir1 on client11
     And user2 sees [dir1] in space1 on client21

@@ -14,12 +14,12 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.generic import rm_css_cls
 from tests.gui.utils.onezone.common import EditBox, InputBox
 from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.gui.utils.onezone.lambdas_subpage import LambdasPage
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.gui.utils.onezone.workflows_subpage import WorkflowsPage
+from tests.gui.utils.web_elem_utils import rm_css_cls
 
 
 class Inventory(NamedElement):

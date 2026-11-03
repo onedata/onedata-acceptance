@@ -10,14 +10,14 @@ import json
 import os
 from collections.abc import Iterable, Mapping
 from functools import partial
-from typing import cast
+from typing import Literal, cast
 
 import pytest
 import yaml
 
 from tests.gui.constants import NUMERALS, WAIT_BACKEND
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import parse_elements_sequence
+from tests.gui.utils.text import parse_elements_sequence
 from tests.mixed.utils.data import (
     Content,
     ContentItem,
@@ -51,7 +51,7 @@ def mount_new_oneclient_with_token(
     users[user].mount_client(
         "oneclient-1",
         "client1",
-        cast(Mapping[str, Mapping[str, str]], hosts),
+        hosts,
         env_desc,
         token,
     )
@@ -70,7 +70,7 @@ def mount_new_oneclient_with_token_fail(
         users[user].mount_client(
             "oneclient-1",
             "client1",
-            cast(Mapping[str, Mapping[str, str]], hosts),
+            hosts,
             env_desc,
             token,
         )
@@ -93,12 +93,10 @@ def mount_new_oneclient_result(
 
 
 def create_dir_in_op_oneclient(
-    user: str, full_path: str, users: Users, result: str, host: str
+    user: str, full_path: str, users: Users, result: Literal["fails", "succeeds"], host: str
 ) -> None:
-    if result == "fails":
-        multi_dir_steps.fail_to_create(user, full_path, host, users)
-    else:
-        multi_dir_steps.create(user, full_path, host, users)
+    should_fail = result == "fails"
+    multi_dir_steps.try_to_create_directory(user, host, full_path, users, should_fail=should_fail)
 
 
 def create_file_in_op_oneclient(
@@ -110,9 +108,9 @@ def create_file_in_op_oneclient(
     request: pytest.FixtureRequest,
 ) -> None:
     if result == "fails":
-        multi_file_steps.create_reg_file_fail(user, path, host, users, request)
+        multi_file_steps.create_reg_file_fail(user, [path], host, users, request)
     else:
-        multi_file_steps.create_reg_file(user, path, host, users, request)
+        multi_file_steps.create_reg_file(user, [path], host, users, request)
 
 
 def create_file_in_op_oneclient_with_tokens(
@@ -150,7 +148,9 @@ def see_items_in_op_oneclient(
         if last_elem_in_path.startswith("dir"):
             full_path = f"{space}/{item}"
             if result == "fails":
-                multi_dir_steps.cannot_list_dir(user, full_path, host, users)
+                multi_dir_steps.cannot_list_dir_due_to_file_not_found_error(
+                    user, full_path, host, users
+                )
             else:
                 multi_dir_steps.list_dir(user, full_path, host, users)
         elif result == "fails":
@@ -202,9 +202,9 @@ def create_item_in_op_oneclient(
     request: pytest.FixtureRequest,
 ) -> None:
     if name.startswith("dir"):
-        multi_dir_steps.create(user, f"{cwd}/{name}", host, users)
+        multi_dir_steps.try_to_create_directory(user, host, f"{cwd}/{name}", users)
     else:
-        multi_file_steps.create_reg_file(user, f"{cwd}/{name}", host, users, request)
+        multi_file_steps.create_reg_file(user, [f"{cwd}/{name}"], host, users, request)
     if not content:
         return
     cwd += "/" + name

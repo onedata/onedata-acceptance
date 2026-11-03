@@ -21,11 +21,8 @@ from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.qos import
     QoSValueOption,
 )
 from tests.gui.utils.core import scroll_to_css_selector_bottom
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import wt
 from tests.utils.user_utils import Users
@@ -292,7 +289,7 @@ def assert_no_expression_in_qualities_of_service_modal(
 @wt(parsers.parse('user of {browser_id} clicks "enter as text" label in QoS panel'))
 def click_enter_as_text_link(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    Modals(driver).details_modal.qos.enter_as_text()
+    Modals(driver).details_modal.qos.enter_as_text.click()
 
 
 @wt(
@@ -302,7 +299,7 @@ def click_enter_as_text_link(selenium: SeleniumDrivers, browser_id: str) -> None
 )
 def confirm_entering_text(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    Modals(driver).details_modal.qos.confirm_text()
+    Modals(driver).details_modal.qos.confirm_text.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on add query block icon in QoS panel"))
@@ -396,7 +393,7 @@ def assert_list_of_storages_in_add_cond_popup(
 def click_add_in_add_cond_popup(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     popup = Popups(driver).get_query_builder_not_hidden_popup()
-    popup.add_button()
+    popup.add_button.click()
 
 
 @wt(

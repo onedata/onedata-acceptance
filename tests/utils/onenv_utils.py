@@ -16,6 +16,8 @@ import urllib3
 import yaml
 from kubernetes import client, config
 
+from tests import ONE_ENV_DIR
+
 type Command = list[str]
 type CommandResult = str | int
 type YamlValue = str | int | float | bool | list["YamlValue"] | dict[str, "YamlValue"] | None
@@ -33,7 +35,7 @@ def run_onenv_command(
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: Literal[True] = True,
-    cwd: str | None = "one-env",
+    cwd: str | None = ONE_ENV_DIR,
     onenv_path: str = "./onenv",
 ) -> str: ...
 
@@ -45,7 +47,7 @@ def run_onenv_command(
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: Literal[False] = False,
-    cwd: str | None = "one-env",
+    cwd: str | None = ONE_ENV_DIR,
     onenv_path: str = "./onenv",
 ) -> int: ...
 
@@ -57,7 +59,7 @@ def run_onenv_command(
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: bool = True,
-    cwd: str | None = "one-env",
+    cwd: str | None = ONE_ENV_DIR,
     onenv_path: str = "./onenv",
 ) -> CommandResult: ...
 
@@ -68,7 +70,7 @@ def run_onenv_command(
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: bool = True,
-    cwd: str | None = "one-env",
+    cwd: str | None = ONE_ENV_DIR,
     onenv_path: str = "./onenv",
 ) -> CommandResult:
     cmd = ["sudo", onenv_path, command] if sudo else [onenv_path, command]

@@ -12,6 +12,7 @@ from itertools import zip_longest
 
 import requests
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import OP_REST_PORT
@@ -19,11 +20,8 @@ from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import get_onezone_subpage
 from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-    transform,
-)
+from tests.gui.utils.generic import transform
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.onenv_utils import run_onenv_command
@@ -46,7 +44,7 @@ def open_provider_popover_on_world_map(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_visit_provider(driver: WebDriver) -> None:
-    Popups(driver).provider_map_popover.visit_provider()
+    Popups(driver).provider_map_popover.visit_provider.click()
 
 
 @wt(
@@ -87,7 +85,7 @@ def assert_popup_for_provider_has_appeared_on_map(
     try:
         expected_provider_name = Popups(driver).provider_map_popover.provider_name
     except NoSuchElementException:
-        Popups(driver).provider_details.values[0].copy_to_clipboard()
+        Popups(driver).provider_details.values[0].copy_to_clipboard.click()
         expected_provider_name = clipboard.paste(display=displays[browser_id])
     provider_name = hosts[provider]["name"]
     assert provider_name == expected_provider_name, error_message.format(
@@ -361,16 +359,24 @@ def click_on_button_on_providers_list(
 ) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    getattr(
+    button = transform(button)
+
+    button_elem = getattr(
         OZLoggedIn(driver).data.providers_page.providers_list[provider_name],
         transform(button),
-    )()
+    )
+    if button == "information_button":
+        ActionChains(driver).move_to_element(button_elem.web_elem).click(
+            button_elem.web_elem
+        ).perform()
+    else:
+        button_elem.click()
 
 
 def click_on_cease_support_in_menu_of_provider_on_providers_list(
     driver: WebDriver,
 ) -> None:
-    Popups(driver).menu_popup_with_text.cease_support_from_providers_list_menu()
+    Popups(driver).menu_popup_with_text.cease_support_from_providers_list_menu.click()
 
 
 @wt(

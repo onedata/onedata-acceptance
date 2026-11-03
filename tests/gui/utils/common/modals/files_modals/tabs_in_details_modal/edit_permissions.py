@@ -75,6 +75,7 @@ class AclPermissionGroup(PageObject):
 
 class MemberAclPermission(PageObject):
     name = id = Label(".subject-name")
+    content = WebElement(".one-collapsible-list-item-content", scroll=False)
     menu_button = Button(".btn-menu-toggle")
     menu = WebItem(
         ".webui-popover-content .one-webui-popover.one-collapsible-toolbar-popover",

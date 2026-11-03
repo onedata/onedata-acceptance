@@ -11,7 +11,8 @@ from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.enums import ListElement
+from tests.gui.utils.generic import transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -31,7 +32,7 @@ def click_button_on_discovery_on_left_sidebar_menu(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_button_in_discovery_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).discovery.create_button()
+    OZLoggedIn(driver).discovery.create_button.click()
 
 
 @wt(
@@ -80,7 +81,7 @@ def click_on_option_in_harvester_menu(
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).discovery
     page.harvesters_list[name].click()
-    page.harvesters_list[name].menu_button()
+    page.harvesters_list[name].menu_button.click()
     page.menu[option]()
 
 
@@ -98,7 +99,7 @@ def type_text_to_rename_input_field_in_discovery_page(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_harvester_rename_using_button(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).discovery.rename_button()
+    OZLoggedIn(driver).discovery.rename_button.click()
 
 
 @wt(
@@ -123,7 +124,7 @@ def click_option_in_discovery_page_menu(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).discovery
-    page.menu_button()
+    page.menu_button.click()
     page.menu[button_name].click()
 
 

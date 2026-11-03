@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import yaml
+from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
@@ -24,7 +25,7 @@ def type_space_name_on_rename_space_input_on_overview_page(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).data.overview_page.info_tile.rename()
+    OZLoggedIn(driver).data.overview_page.info_tile.rename.click()
     OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.value = space_name
 
 
@@ -34,14 +35,14 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.confirm()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.confirm.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on cancel button on overview page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_cancel_rename_button_on_overview_page(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.cancel()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.cancel.click()
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*) confirms rename the space using (?P<option>.*)"))
@@ -139,9 +140,15 @@ def click_link_in_space_marketplace_in_overview(
     browser_id: str, link: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
+    link = transform(link)
     marketplace_tile = OZLoggedIn(driver).data.overview_page.marketplace_tile
-    link_element = getattr(marketplace_tile, transform(link))
-    link_element.click()
+    link_element = getattr(marketplace_tile, link)
+    if link == "show":
+        ActionChains(driver).move_to_element(link_element.web_elem).click(
+            link_element.web_elem
+        ).perform()
+    else:
+        link_element.click()
 
 
 @wt(

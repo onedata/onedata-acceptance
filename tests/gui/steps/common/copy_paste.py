@@ -8,10 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.type_definitions import Clipboard, TmpMemory
-from tests.gui.utils.generic import (
-    ELEMENTS_SEQUENCE_PATTERN,
-    parse_elements_sequence,
-)
+from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
 from tests.utils.bdd_utils import parsers, wt
 
 

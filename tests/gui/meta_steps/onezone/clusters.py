@@ -46,10 +46,9 @@ from tests.gui.steps.onezone.members import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.rest.provider import GuiMessageType, modify_gui_setting_message
-from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, MembersParentType, MemberType, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.generic import MembersParentType, MemberType
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import User

@@ -107,7 +107,7 @@ or to [one-env](one-env) submodule in the onedata-acceptance repository and run:
 
 Example of a 2 provider deployment with specified onezone and oneprovider images:
 ```bash
-./onenv up -f -pi docker.onedata.org/oneprovider-dev:develop -zi docker.onedata.org/onezone-dev:develop ../tests/gui/environments/1oz_2op_deployed.yaml
+./onenv up -f -pi docker.onedata.org/oneprovider-dev:develop -zi docker.onedata.org/onezone-dev:develop ../../tests/gui/environments/1oz_2op_deployed.yaml
 ```
 
 

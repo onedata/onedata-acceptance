@@ -16,21 +16,24 @@ import string
 import subprocess as sp
 import time
 from collections.abc import Callable, Mapping
+from functools import partial
 
 import jsondiff
 import pytest
 
-from tests.oneclient.steps.multi_dir_steps import create
+from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
+from tests.oneclient.steps.multi_dir_steps import (
+    try_to_create_directory,
+)
 from tests.type_definitions import Hosts
-from tests.utils.acceptance_utils import compare, list_parser, make_arg_list, time_attr
+from tests.utils.acceptance_utils import compare, list_parser, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
 from tests.utils.client_utils import Client
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.user_utils import Users
 from tests.utils.utils import (
-    assert_,
-    assert_expected_failure,
-    assert_generic,
+    assert_with_expected_fail,
+    perform_action_with_timeout,
     repeat_failed,
 )
 
@@ -40,62 +43,64 @@ SYMLINKS_DIR = ".symlinks"
 
 def create_base(
     user: str,
-    files: str,
+    files: list[str],
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
     should_fail: bool = False,
 ) -> None:
-    file_names = list_parser(files)
     user_ = users[user]
     client = user_.clients[client_node]
     mode = request.config.getoption("file_mode")
 
-    for file_name in file_names:
-        # path for original file in hardlink/symlink mode
-        # space_name/(.hardlinks or .symlinks)/(random string)
+    assert mode in ["hardlink", "symlink", "regular"], f"Unexpected file mode: {mode}"
 
+    for file_name in files:
         path = client.absolute_path(file_name)
         condition: Callable[[], None]
-        if mode == "regular":
 
-            def create_regular_file(file_path_to_create: str = path) -> None:
+        if mode in ["hardlink", "symlink"]:
+            # path for original file in hardlink/symlink mode: space_name/(.hardlinks or .symlinks)/(random string)
+            target_dir = HARDLINKS_DIR if mode == "hardlink" else SYMLINKS_DIR
+
+            create_function: Callable[[str, str], None] = (
+                client.create_hardlink if mode == "hardlink" else client.create_symlink
+            )
+
+            target_file_path = create_target_file(
+                user, client, client_node, users, file_name, target_dir
+            )
+
+            def create_link(
+                link_target_path: str,
+                link_path: str,
+                create_link_function: Callable[[str, str], None],
+            ) -> None:
+                client.create_file(link_target_path)
+                create_link_function(link_target_path, link_path)
+
+            condition = partial(
+                create_link,
+                link_target_path=target_file_path,
+                link_path=path,
+                create_link_function=create_function,
+            )
+
+        else:
+
+            def create_regular_file(file_path_to_create: str) -> None:
                 client.create_file(file_path_to_create)
 
-            condition = create_regular_file
-        elif mode == "hardlink":
-            target_file_path = create_target_file(
-                user, client, client_node, users, file_name, HARDLINKS_DIR
-            )
+            condition = partial(create_regular_file, file_path_to_create=path)
 
-            def create_hardlink_files(
-                link_target_path: str = target_file_path,
-                hardlink_path: str = path,
-            ) -> None:
-                client.create_file(link_target_path)
-                client.create_hardlink(link_target_path, hardlink_path)
-
-            condition = create_hardlink_files
-        elif mode == "symlink":
-            target_file_path = create_target_file(
-                user, client, client_node, users, file_name, SYMLINKS_DIR
-            )
-
-            def create_symlink_files(
-                link_target_path: str = target_file_path,
-                symlink_path: str = path,
-            ) -> None:
-                client.create_file(link_target_path)
-                client.create_symlink(link_target_path, symlink_path)
-
-            condition = create_symlink_files
-        else:
-            raise AssertionError
-
-        try:
-            assert_generic(client.perform, should_fail, condition)
-        except AssertionError as e:
-            print(e)
+        assert_with_expected_fail(
+            condition,
+            timeout=client.timeout,
+            should_fail=should_fail,
+            message=f"Operation of creating files: {files} expected to fail, but did not",
+            retryable_exceptions=OSError,
+            expected_failure_exception=OSError if should_fail else None,
+        )
 
 
 def create_hardlink(
@@ -122,7 +127,8 @@ def create_target_file(
     dir_name: str,
 ) -> str:
     space = file_name.split("/", maxsplit=1)[0]
-    create(user, f"[{space}/{dir_name}]", client_node, users, exists_ok=True)
+    directory_path = os.path.join(space, dir_name)
+    try_to_create_directory(user, client_node, directory_path, users, exist_ok=True)
     file_name_hash = "".join(
         random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
     )
@@ -130,10 +136,13 @@ def create_target_file(
     return client.absolute_path(target_file_path)
 
 
-@wt(parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*) on (?P<client_node>.*)"))
+@wt(
+    parsers.re(r"(?P<user>\w+) creates regular files (?P<files>.*) on (?P<client_node>.*)"),
+    converters={"files": list_parser},
+)
 def create_reg_file(
     user: str,
-    files: str,
+    files: list[str],
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
@@ -145,11 +154,12 @@ def create_reg_file(
     parsers.re(
         r"(?P<user>\w+) fails to create regular files (?P<files>.*) "
         r"on (?P<client_node>.*)"
-    )
+    ),
+    converters={"files": list_parser},
 )
 def create_reg_file_fail(
     user: str,
-    files: str,
+    files: list[str],
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
@@ -174,7 +184,7 @@ def create_many(
 ) -> None:
     for i in range(int(lower), int(upper)):
         new_file = os.path.join(parent_dir, str(i))
-        create_reg_file(user, make_arg_list(new_file), client_node, users, request)
+        create_reg_file(user, [new_file], client_node, users, request)
 
 
 @wt(
@@ -190,10 +200,10 @@ def stat_present(user: str, path: str, files: str, client_node: str, users: User
     file_names = list_parser(files)
 
     def condition() -> None:
-        for f in file_names:
-            client.stat(os.path.join(path, f))
+        for file_name in file_names:
+            client.stat(os.path.join(path, file_name))
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(parsers.re(r"(?P<user>\w+) sees (?P<files>.*) in (?P<path>.*) on (?P<client_node>.*)"))
@@ -208,7 +218,7 @@ def ls_present(user: str, files: str, path: str, client_node: str, users: Users)
         for file in file_names:
             assert file in listed_files, f"File {file} not in listed files"
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 def ls_present_spaces(user: str, spaces: list[str], client_node: str, users: Users) -> None:
@@ -218,12 +228,11 @@ def ls_present_spaces(user: str, spaces: list[str], client_node: str, users: Use
 
     def condition() -> None:
         listed_spaces = client.ls(path)
-        for space in spaces:
-            assert space in listed_spaces, (
-                f"Space {space} not in listed spaces, listed spaces: {listed_spaces}"
-            )
+        assert sorted(listed_spaces) == sorted(spaces), (
+            f"Expected spaces {spaces}, got {listed_spaces}"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(parsers.re(r"(?P<directory>.*) is empty for (?P<user>\w+) on (?P<client_node>.*)"))
@@ -233,9 +242,10 @@ def ls_empty(directory: str, user: str, client_node: str, users: Users) -> None:
     dir_path = client.absolute_path(directory)
 
     def condition() -> None:
-        assert len(client.ls(dir_path)) == 0
+        files = len(client.ls(dir_path))
+        assert files == 0, f"Directory is not empty - it has {files} files instead"
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(
@@ -263,7 +273,7 @@ def ls_children(
         for i in range(lower_int, upper_int):
             assert str(i) in listed_files, f"File {i} not in listed files"
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 def mv_base(
@@ -282,10 +292,14 @@ def mv_base(
     def condition() -> None:
         client.mv(src, dest)
 
-    if should_fail:
-        assert_expected_failure(condition)
-    else:
-        assert_(client.perform, condition)
+    assert_with_expected_fail(
+        condition,
+        timeout=0 if should_fail else client.timeout,
+        should_fail=should_fail,
+        message=f"Moving {file1} to {file2} succeeded, expected it to fail",
+        retryable_exceptions=() if should_fail else OSError,
+        expected_failure_exception=OSError if should_fail else None,
+    )
 
 
 @wt(
@@ -314,10 +328,14 @@ def rename_base(
     def condition() -> None:
         client.osrename(src, dest)
 
-    if should_fail:
-        assert_expected_failure(condition)
-    else:
-        assert_(client.perform, condition)
+    assert_with_expected_fail(
+        condition,
+        timeout=0 if should_fail else client.timeout,
+        should_fail=should_fail,
+        message=f"Renaming {file1} to {file2} succeeded, expected it to fail",
+        retryable_exceptions=() if should_fail else OSError,
+        expected_failure_exception=OSError if should_fail else None,
+    )
 
 
 @wt(
@@ -350,7 +368,7 @@ def stat_absent(user: str, path: str, files: str, client_node: str, users: Users
             else:
                 raise AssertionError(f"Failed: There is item {f}")
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(
@@ -371,7 +389,7 @@ def ls_absent(user: str, files: str, path: str, client_node: str, users: Users) 
         for file in file_names:
             assert file not in listed_files, f"File {file} is in files list"
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 def shell_move_base(
@@ -388,15 +406,17 @@ def shell_move_base(
     dest = client.absolute_path(file2)
     cmd = f"mv {src} {dest}"
 
-    def condition() -> None:
-        ret = client.run_cmd(cmd, error=True)
-        if ret != 0:
-            raise OSError(f"Command ended with exit code {ret}")
+    def condition() -> bool:
+        return client.run_cmd(cmd, error=True) == 0
 
-    if should_fail:
-        assert_expected_failure(condition)
-    else:
-        assert_(client.perform, condition)
+    assert_with_expected_fail(
+        condition,
+        timeout=0 if should_fail else client.timeout,
+        should_fail=should_fail,
+        message=f"Moving {src} to {dest} with mv succeeded, expected it to fail",
+        retryable_exceptions=() if should_fail else OSError,
+        expected_failure_exception=OSError if should_fail else None,
+    )
 
 
 @wt(
@@ -421,10 +441,9 @@ def delete_file_base(
         def condition(path_to_delete: str = path) -> None:
             client.rm(path_to_delete)
 
-        if should_fail:
-            assert_expected_failure(condition)
-        else:
-            assert_(client.perform, condition)
+        assert_with_expected_fail(
+            condition, timeout=client.timeout, should_fail=should_fail, retryable_exceptions=OSError
+        )
 
 
 @wt(parsers.re(r"(?P<user>\w+) deletes files (?P<files>.*) on (?P<client_node>.*)"))
@@ -451,9 +470,12 @@ def check_size(user: str, file: str, size: str | int, client_node: str, users: U
 
     def condition() -> None:
         stat_result = client.stat(file_path)
-        assert stat_result.st_size == expected_size
+        size = stat_result.st_size
+        assert size == expected_size, (
+            f"Size of {file_path} should be {expected_size} B, but is {size} B"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 def check_type_impl(
@@ -479,9 +501,12 @@ def check_type_impl(
 
     def condition() -> None:
         stat_result = client.stat(file_path) if follow_symlinks else client.lstat(file_path)
-        assert getattr(stat_lib, stat_method)(stat_result.st_mode)
+        assert getattr(stat_lib, stat_method)(stat_result.st_mode), (
+            f"Expected {file_path} on {client_node} to be {file_type}, "
+            f"but stat returned mode {stat_result.st_mode:#o}"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @then(
@@ -531,10 +556,16 @@ def shell_check_type(
         follow_links = "-L " if mode == "symlink" else ""
         cmd = f"stat --format=%F {follow_links}{file_path}"
         stat_file_type = client.run_cmd(cmd, output=True)
-        assert isinstance(stat_file_type, str)
-        assert stat_file_type.strip() == file_type
+        assert isinstance(stat_file_type, str), (
+            f"Expected stat output for {file_path} on {client_node} to be a string, "
+            f"but got {stat_file_type!r}"
+        )
+        assert stat_file_type.strip() == file_type, (
+            f"Expected file type of {file_path} on {client_node} to be {file_type!r}, "
+            f"but got {stat_file_type.strip()!r}"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(parsers.re(r"mode of (?P<user>\w+)'s (?P<file>.*) is (?P<mode>.*) on (?P<client_node>.*)"))
@@ -547,9 +578,12 @@ def check_mode(user: str, file: str, mode: str, client_node: str, users: Users) 
 
     def condition() -> None:
         stat_result = client.stat(file_path)
-        assert stat_lib.S_IMODE(stat_result.st_mode) == expected_mode
+        assert stat_lib.S_IMODE(stat_result.st_mode) == expected_mode, (
+            f"Expected permissions of {file_path} on {client_node} to be {expected_mode:#o}, "
+            f"but got {stat_lib.S_IMODE(stat_result.st_mode):#o}"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 def change_mode_base(
@@ -568,7 +602,13 @@ def change_mode_base(
     def condition() -> None:
         client.chmod(parsed_mode, file_path)
 
-    assert_generic(client.perform, should_fail, condition)
+    assert_with_expected_fail(
+        condition,
+        timeout=client.timeout,
+        should_fail=should_fail,
+        retryable_exceptions=OSError,
+        expected_failure_exception=OSError,
+    )
 
 
 @wt(
@@ -630,7 +670,7 @@ def check_time(
 
         assert compare(t1, t2, comparator), err_msg
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 def check_files_time(
@@ -655,9 +695,13 @@ def check_files_time(
         t1 = getattr(stat_result, attr1)
         stat_result2 = client.stat(file2_path)
         t2 = getattr(stat_result2, attr2)
-        assert compare(t1, t2, comparator)
+        assert compare(t1, t2, comparator), (
+            f"Time comparison failed on {client_node}: "
+            f"{time1} of {file_path} ({t1}) should be {comparator} "
+            f"{time2} of {file2_path} ({t2})"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @then(
@@ -691,9 +735,13 @@ def cmp_time_to_previous(
         stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr)
         t2 = getattr(recorded_stats, attr)
-        assert compare(t1, t2, comparator)
+        assert compare(t1, t2, comparator), (
+            f"Time comparison failed on {client_node}: "
+            f"{time1} of {file_path} ({t1}) should be {comparator} "
+            f"recorded {time1} of {file2} ({t2})"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 def touch_file_base(
@@ -706,14 +754,15 @@ def touch_file_base(
     for file in file_names:
         file_path = client.absolute_path(file)
 
-        def condition(path_to_touch: str = file_path) -> bool:
-            try:
-                client.touch(path_to_touch)
-            except OSError:
-                return bool(should_fail)
-            return not bool(should_fail)
+        def condition(path_to_touch: str = file_path) -> None:
+            client.touch(path_to_touch)
 
-        assert_(client.perform, condition)
+        assert_with_expected_fail(
+            condition,
+            timeout=client.timeout,
+            should_fail=should_fail,
+            retryable_exceptions=OSError,
+        )
 
 
 @when(parsers.re(r"(?P<user>\w+) updates (?P<files>.*) timestamps on (?P<client_node>.*)"))
@@ -748,7 +797,7 @@ def set_xattr(user: str, file: str, name: str, value: str, client_node: str, use
 
         client.setxattr(file_path, name, value_bytes)
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(
@@ -765,7 +814,7 @@ def remove_all_xattr(user: str, file: str, client_node: str, users: Users) -> No
     def condition() -> None:
         client.clear_xattr(file_path)
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(
@@ -782,7 +831,7 @@ def remove_xattr(user: str, file: str, name: str, client_node: str, users: Users
     def condition() -> None:
         client.removexattr(file_path, name)
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @then(
@@ -798,9 +847,12 @@ def check_xattr_exists(user: str, file: str, name: str, client_node: str, users:
 
     def condition() -> None:
         xattrs = client.listxattr(file_path)
-        assert name in xattrs
+        assert name in xattrs, (
+            f"Expected extended attribute {name!r} on {file_path} on {client_node}, "
+            f"but found {xattrs!r}"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @then(
@@ -818,9 +870,12 @@ def check_xattr_doesnt_exist(
 
     def condition() -> None:
         xattrs = client.listxattr(file_path)
-        assert name not in xattrs
+        assert name not in xattrs, (
+            f"Expected extended attribute {name!r} to be absent from {file_path} "
+            f"on {client_node}, but found it in {xattrs!r}"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @then(
@@ -840,9 +895,12 @@ def check_string_xattr(
     def condition() -> None:
         xattr_value: bytes = client.getxattr(file_path, name)
         value_utf = value.encode("utf-8") if isinstance(value, str) else value
-        assert xattr_value == value_utf
+        assert xattr_value == value_utf, (
+            f"Expected extended attribute {name!r} of {file_path} on {client_node} "
+            f"to be {value_utf!r}, but got {xattr_value!r}"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @then(
@@ -861,9 +919,12 @@ def check_numeric_xattr(
 
     def condition() -> None:
         xattr_value = client.getxattr(file_path, name)
-        assert float(xattr_value) == float(value)
+        assert float(xattr_value) == float(value), (
+            f"Expected extended attribute {name!r} of {file_path} on {client_node} "
+            f"to have numeric value {value!r}, but got {xattr_value!r}"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @then(
@@ -882,9 +943,12 @@ def check_json_xattr(
 
     def condition() -> None:
         xattr_value = client.getxattr(file_path, name)
-        assert jsondiff.diff(json.loads(xattr_value), json.loads(value)) == {}
+        assert jsondiff.diff(json.loads(xattr_value), json.loads(value)) == {}, (
+            f"Expected extended attribute {name!r} of {file_path} on {client_node} "
+            f"to have JSON value {value!r}, but got {xattr_value!r}"
+        )
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(parsers.re(r"(?P<user>\w+) records (?P<files>.*) stats on (?P<client_node>.*)"))
@@ -936,7 +1000,7 @@ def assert_file_ownership(
             assert stat_result.st_uid != expected_uid, wrong_uid_msg
             assert stat_result.st_gid != expected_gid, wrong_gid_msg
 
-    assert_(client.perform, condition)
+    perform_action_with_timeout(condition, timeout=client.timeout, interval=INTERVAL)
 
 
 @wt(

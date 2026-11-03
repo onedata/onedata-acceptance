@@ -10,8 +10,8 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
+from tests.gui.type_definitions import PageName
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
-from tests.gui.utils.generic import PageName
 from tests.gui.utils.onezone.generic_page import GenericPage, SidebarPanelPage
 from tests.utils.entities_setup.spaces import WAIT_FRONTEND
 from tests.utils.utils import element_has_class, repeat_failed

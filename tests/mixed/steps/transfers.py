@@ -27,7 +27,7 @@ from tests.gui.meta_steps.oneprovider.transfers import (
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
 from tests.gui.steps.oneprovider.data_tab import upload_files_to_cwd_in_data_tab
 from tests.gui.type_definitions import TmpMemory
-from tests.gui.utils.generic import TransferState
+from tests.gui.utils.enums import TransferState
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,
     assert_recent_transfer_finished_rest,

@@ -54,6 +54,7 @@ Feature: Management of invite tokens in Onezone GUI, with admin user
 
     And user of browser2 sees that "space1" has appeared on the spaces list of "harvester2" harvester
     Then user of browser2 opens token consume view for "harvester3" harvester, pastes token, fails to proceed and sees error modal
+    And user of browser2 clicks on "Close" button in modal "Error"
     And user of browser2 removes all tokens
 
 
