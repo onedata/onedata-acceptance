@@ -69,11 +69,11 @@ def screens() -> list[int]:
     return [0, 1]
 
 
-# scenarios("../features/onezone/space/spaces.feature")
-# scenarios("../features/onezone/space/create_new_space.feature")
-# scenarios("../features/onezone/space/multispace.feature")
-# scenarios("../features/onezone/space/spaces_memberships.feature")
-# scenarios("../features/onezone/space/spaces_effective_privileges.feature")
+scenarios("../features/onezone/space/spaces.feature")
+scenarios("../features/onezone/space/create_new_space.feature")
+scenarios("../features/onezone/space/multispace.feature")
+scenarios("../features/onezone/space/spaces_memberships.feature")
+scenarios("../features/onezone/space/spaces_effective_privileges.feature")
 scenarios("../features/onezone/space/space_marketplace.feature")
-# scenarios("../features/onezone/space/marketplace_privileges_management.feature")
-# scenarios("../features/onezone/space/access_to_space.feature")
+scenarios("../features/onezone/space/marketplace_privileges_management.feature")
+scenarios("../features/onezone/space/access_to_space.feature")
