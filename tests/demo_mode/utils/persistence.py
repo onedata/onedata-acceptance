@@ -49,6 +49,7 @@ def prepare_demo_persistence() -> None:
 
 
 def _host_tmp_path() -> Path:
+    """Return the host temporary directory mounted into the test runner."""
     return Path(os.environ.get(HOST_TMP_ENVIRONMENT_VARIABLE, "/tmp"))
 
 
@@ -70,10 +71,6 @@ def _is_valid_ownership_marker(marker: Path) -> bool:
     )
 
 
-def _get_unowned_paths(existing_paths: list[Path]) -> list[Path]:
-    return [path for path in existing_paths if not path.is_dir() or path.is_symlink()]
-
-
 def _assert_and_get_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:
     marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
     marker_exists = _path_exists(marker)
@@ -89,11 +86,13 @@ def _assert_and_get_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:
             f"{formatted_paths}"
         )
 
-    unowned_paths = _get_unowned_paths(existing_paths)
-    if unowned_paths:
-        formatted_paths = ", ".join(str(path) for path in unowned_paths)
+    non_directory_paths = [
+        path for path in existing_paths if not path.is_dir() or path.is_symlink()
+    ]
+    if non_directory_paths:
+        formatted_paths = ", ".join(str(path) for path in non_directory_paths)
         raise AssertionError(
-            "Refusing to remove demo-mode persistence paths not owned by the test: "
+            "Refusing to remove demo-mode persistence paths that are not actual directories: "
             f"{formatted_paths}"
         )
 
