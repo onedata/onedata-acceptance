@@ -55,6 +55,11 @@ Comprehensive example:
   key: CEX
   other: *common-opts
   tasks:
+  - script: &clear-env
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
   - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: &run-demo-mode-test
@@ -70,13 +75,10 @@ Comprehensive example:
       test-results: onedata-acceptance/test-reports/results*.xml
       description: Parse test results
   - script:
-      interpreter: SHELL
+      interpreter: BINSH_OR_CMDEXE
       scripts:
-      - |-
-        docker rm -f "demo-mode-runner-${bamboo.buildResultKey}" 2>/dev/null || true
-        # keep in sync with tests/demo_mode/constants.py
-        docker rm -f oz_test op_test1 op_test2 2>/dev/null || true
-      description: Clean up demo mode containers
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
   requirements: &requirements
   - minikube
   artifacts: &command-log-artifacts
@@ -128,6 +130,7 @@ Distributed environment:
   key: DISTENV
   other: *common-opts
   tasks:
+  - script: *clear-env
   - checkout: *checkout-default-repository
   - script: *init-submodules
   - script:
@@ -144,6 +147,7 @@ Distributed environment:
 #   key: PERSIST
 #   other: *common-opts
 #   tasks:
+#   - script: *clear-env
 #   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script:
@@ -159,6 +163,7 @@ Python access:
   key: PYACCESS
   other: *common-opts
   tasks:
+  - script: *clear-env
   - checkout: *checkout-default-repository
   - script: *init-submodules
   - script:
@@ -174,6 +179,7 @@ Run in background:
   key: BACKGROUND
   other: *common-opts
   tasks:
+  - script: *clear-env
   - checkout: *checkout-default-repository
   - script: *init-submodules
   - script:
@@ -189,6 +195,7 @@ Run in foreground:
   key: FOREGROUND
   other: *common-opts
   tasks:
+  - script: *clear-env
   - checkout: *checkout-default-repository
   - script: *init-submodules
   - script:
@@ -218,7 +225,7 @@ dependencies:
   block-strategy: none
   plans: []
 other:
-  concurrent-build-plugin: system-default
+  concurrent-build-plugin: "3"
   all-other-apps:
     custom:
       com.atlassian.bamboo.plugin.hungbuildkiller:
