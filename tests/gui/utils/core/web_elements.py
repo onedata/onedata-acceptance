@@ -139,14 +139,24 @@ class Input(WebElement):
 
     def __set__(self, instance: Any, val: Any) -> None:
         input_box = super().__get__(instance, type(instance))
-        # input_box.clear() doesn't work if you want to input an empty string
-        input_box.send_keys(Keys.CONTROL, "a")
-        input_box.send_keys(Keys.BACKSPACE)
+        current_value = input_box.get_attribute("value")
+
+        if current_value == val:
+            return
+
+        if current_value != "":
+            if val == "":
+                input_box.send_keys(Keys.CONTROL, "a")
+                input_box.send_keys(Keys.BACKSPACE)
+            else:
+                input_box.clear()
+
         if val != "":
             input_box.send_keys(val)
-            assert input_box.get_attribute("value") == val, (
-                f'entering "{val}" to {self.descriptor_name} in {instance} failed'
-            )
+
+        assert input_box.get_attribute("value") == val, (
+            f'entering "{val}" to {self.descriptor_name} in {instance} failed'
+        )
 
 
 class AceEditor(WebElement):
