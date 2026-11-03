@@ -5,6 +5,8 @@ plan-permissions:
 - users:
   - plgnikolow
   - rosezajac
+  groups:
+  - plggveildev
   permissions:
   - view
   - edit
