@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from typing import cast
 
 from tests import OZ_REST_PORT
-from tests.demo_mode.utils.rest.helpers import _authorization_headers
 from tests.type_definitions import JsonObject
 from tests.utils.rest_utils import get_zone_rest_path, http_get, http_post
 
@@ -20,11 +19,6 @@ class OnezoneRestClient:
 
     host: str
     access_token: str | None = None
-
-    def _authenticated_headers(self) -> dict[str, str]:
-        if self.access_token is None:
-            raise ValueError("This Onezone REST operation requires an access token")
-        return _authorization_headers(self.access_token)
 
     def configuration(self) -> JsonObject:
         response = http_get(
@@ -56,3 +50,8 @@ class OnezoneRestClient:
         )
         response_body = cast(JsonObject, response.json())
         return cast(str, response_body["token"])
+
+    def _authenticated_headers(self) -> dict[str, str]:
+        if self.access_token is None:
+            raise ValueError("This Onezone REST operation requires an access token")
+        return {"X-Auth-Token": self.access_token}

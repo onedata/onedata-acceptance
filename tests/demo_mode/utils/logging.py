@@ -17,14 +17,6 @@ Step = Callable[P, R]
 StepDecorator = Callable[[Step[P, R]], Step[P, R]]
 
 
-def _log_step_start(description: str) -> None:
-    print(f"\n[demo-mode] START: {description}", flush=True)
-
-
-def _log_step_done(description: str) -> None:
-    print(f"[demo-mode] DONE: {description}", flush=True)
-
-
 def log_running_command(command: str) -> None:
     print(f"[demo-mode] RUNNING COMMAND:\n{command}", flush=True)
 
@@ -55,3 +47,11 @@ def log_step(description: str) -> StepDecorator:
         return wrapper
 
     return decorator
+
+
+def _log_step_start(description: str) -> None:
+    print(f"\n[demo-mode] START: {description}", flush=True)
+
+
+def _log_step_done(description: str) -> None:
+    print(f"[demo-mode] DONE: {description}", flush=True)

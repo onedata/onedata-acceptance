@@ -25,11 +25,6 @@ COMMAND_LOGS_DIRECTORY: Final = Path(make_logdir(str(COMMAND_LOGS_ROOT), "report
 _current_command_context: ContextVar["CommandContext"] = ContextVar("current_command_context")
 
 
-def _safe_log_name(name: str) -> str:
-    file_name = Path(name).name
-    return re.sub(r"[^A-Za-z0-9_.-]+", "-", file_name).strip("-.") or "unknown"
-
-
 @dataclass
 class CommandContext:
     """State and resources owned by a single demo-mode test."""
@@ -98,3 +93,8 @@ def command_context(
         yield context
     finally:
         _current_command_context.reset(token)
+
+
+def _safe_log_name(name: str) -> str:
+    file_name = Path(name).name
+    return re.sub(r"[^A-Za-z0-9_.-]+", "-", file_name).strip("-.") or "unknown"

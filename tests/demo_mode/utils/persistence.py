@@ -21,6 +21,28 @@ OWNERSHIP_MARKER_NAME: Final = ".onedata-demo-mode-persistence-test-owned"
 OWNERSHIP_MARKER_CONTENT: Final = "onedata-demo-mode-persistence-test-v1\n"
 
 
+def remove_demo_persistence() -> None:
+    """Remove containers and all bind-mounted state owned by the persistence test."""
+    remove_containers(CONTAINER_NAMES, timeout=CONTAINER_REMOVAL_TIMEOUT)
+    existing_paths, marker, marker_exists = _assert_and_get_test_owns_existing_paths()
+    _remove_persistence_paths_and_marker(existing_paths, marker, marker_exists)
+
+    remaining_paths = [path for path in _persistence_paths() if _path_exists(path)]
+    if _path_exists(marker):
+        remaining_paths.append(marker)
+    assert not remaining_paths, (
+        "Demo-mode persistence paths remain after cleanup: "
+        f"{', '.join(str(path) for path in remaining_paths)}"
+    )
+
+
+def prepare_demo_persistence() -> None:
+    """Reserve the clean fixed host paths used by persistence commands."""
+    remove_demo_persistence()
+    marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
+    marker.write_text(OWNERSHIP_MARKER_CONTENT, encoding="utf-8")
+
+
 def _host_tmp_path() -> Path:
     return Path(os.environ.get(HOST_TMP_ENVIRONMENT_VARIABLE, "/tmp"))
 
@@ -82,25 +104,3 @@ def _remove_persistence_paths_and_marker(
         rmtree(path)
     if marker_exists:
         marker.unlink()
-
-
-def remove_demo_persistence() -> None:
-    """Remove containers and all bind-mounted state owned by the persistence test."""
-    remove_containers(CONTAINER_NAMES, timeout=CONTAINER_REMOVAL_TIMEOUT)
-    existing_paths, marker, marker_exists = _assert_and_get_test_owns_existing_paths()
-    _remove_persistence_paths_and_marker(existing_paths, marker, marker_exists)
-
-    remaining_paths = [path for path in _persistence_paths() if _path_exists(path)]
-    if _path_exists(marker):
-        remaining_paths.append(marker)
-    assert not remaining_paths, (
-        "Demo-mode persistence paths remain after cleanup: "
-        f"{', '.join(str(path) for path in remaining_paths)}"
-    )
-
-
-def prepare_demo_persistence() -> None:
-    """Reserve the clean fixed host paths used by persistence commands."""
-    remove_demo_persistence()
-    marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
-    marker.write_text(OWNERSHIP_MARKER_CONTENT, encoding="utf-8")

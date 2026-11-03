@@ -4,30 +4,19 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import os
 import signal
 import subprocess
+from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TextIO
 
 from tests.demo_mode.constants import PROCESS_EXIT_TIMEOUT, SHORT_COMMAND_TIMEOUT
-from tests.demo_mode.utils.commands.helpers import (
-    DEMO_MODE_ROOT,
-    _kill_process,
-    _send_signal_to_process_group,
-    _start_subprocess,
-)
+from tests.demo_mode.utils.command_context import current_command_context
+from tests.demo_mode.utils.commands.helpers import DEMO_MODE_ROOT
 from tests.demo_mode.utils.logging import log_running_command, open_command_log
 from tests.utils.time_utils import deadline_after, remaining_time, sleep_before_retry
-
-
-class _CommandTimeout(Exception):
-    """Captured output and exit status of a command killed after a timeout."""
-
-    def __init__(self, returncode: int, stdout: str, stderr: str) -> None:
-        self.returncode = returncode
-        self.stdout = stdout
-        self.stderr = stderr
 
 
 @dataclass(frozen=True)
@@ -48,44 +37,6 @@ class Command:
                 log_file,
                 capture_output=False,
             )
-
-    def _run_once(
-        self,
-        timeout: float,
-        log_file: TextIO,
-    ) -> subprocess.CompletedProcess[str]:
-        """Run one attempt using the supplied shared command log."""
-        process = _start_subprocess(
-            self.text,
-            self.cwd,
-            log_file,
-            capture_output=True,
-        )
-        try:
-            stdout, stderr = process.communicate(timeout=timeout)
-        except subprocess.TimeoutExpired as error:
-            stdout, stderr = _kill_process(process)
-            log_file.write(stdout)
-            log_file.write(stderr)
-            log_file.flush()
-            assert process.returncode is not None
-            raise _CommandTimeout(
-                process.returncode,
-                stdout,
-                stderr,
-            ) from error
-
-        log_file.write(stdout)
-        log_file.write(stderr)
-        log_file.flush()
-
-        assert process.returncode is not None
-        return subprocess.CompletedProcess(
-            process.args,
-            process.returncode,
-            stdout,
-            stderr,
-        )
 
     def run(self, *, timeout: float = SHORT_COMMAND_TIMEOUT) -> str:
         """Run once and return stdout, failing with captured output."""
@@ -167,3 +118,96 @@ class Command:
         except subprocess.TimeoutExpired:
             _send_signal_to_process_group(process, signal.SIGKILL)
             process.wait()
+
+    def _run_once(
+        self,
+        timeout: float,
+        log_file: TextIO,
+    ) -> subprocess.CompletedProcess[str]:
+        """Run one attempt using the supplied shared command log."""
+        process = _start_subprocess(
+            self.text,
+            self.cwd,
+            log_file,
+            capture_output=True,
+        )
+        try:
+            stdout, stderr = process.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired as error:
+            stdout, stderr = _kill_process(process)
+            log_file.write(stdout)
+            log_file.write(stderr)
+            log_file.flush()
+            assert process.returncode is not None
+            raise _CommandTimeout(
+                process.returncode,
+                stdout,
+                stderr,
+            ) from error
+
+        log_file.write(stdout)
+        log_file.write(stderr)
+        log_file.flush()
+
+        assert process.returncode is not None
+        return subprocess.CompletedProcess(
+            process.args,
+            process.returncode,
+            stdout,
+            stderr,
+        )
+
+
+class _CommandTimeout(Exception):
+    """Captured output and exit status of a command killed after a timeout."""
+
+    def __init__(self, returncode: int, stdout: str, stderr: str) -> None:
+        self.returncode = returncode
+        self.stdout = stdout
+        self.stderr = stderr
+
+
+def _start_subprocess(
+    command: str,
+    cwd: Path,
+    log_file: TextIO,
+    *,
+    capture_output: bool,
+) -> subprocess.Popen[str]:
+    stdout: int | TextIO
+    stderr: int | TextIO
+
+    if capture_output:
+        stdout = subprocess.PIPE
+        stderr = subprocess.PIPE
+    else:
+        stdout = log_file
+        stderr = subprocess.STDOUT
+
+    process = subprocess.Popen(
+        command,
+        cwd=cwd,
+        stdout=stdout,
+        stderr=stderr,
+        executable="/bin/bash",
+        shell=True,
+        start_new_session=True,
+        text=True,
+    )
+    current_command_context().register_process(process)
+
+    return process
+
+
+def _send_signal_to_process_group(
+    process: subprocess.Popen[str],
+    signal_number: signal.Signals,
+) -> None:
+    with suppress(ProcessLookupError):
+        os.killpg(process.pid, signal_number)
+
+
+def _kill_process(process: subprocess.Popen[str]) -> tuple[str, str]:
+    _send_signal_to_process_group(process, signal.SIGKILL)
+    stdout, stderr = process.communicate()
+    return stdout or "", stderr or ""

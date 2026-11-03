@@ -12,7 +12,6 @@ from tests import OP_REST_PORT, PANEL_REST_PORT
 from tests.demo_mode.utils.rest.helpers import (
     SPACE_APPEARANCE_TIMEOUT,
     SPACE_SUPPORT_SIZE,
-    _authorization_headers,
 )
 from tests.demo_mode.utils.rest.onezone_client import OnezoneRestClient
 from tests.type_definitions import JsonObject
@@ -33,62 +32,6 @@ class OneproviderRestClient:
 
     host: str
     access_token: str | None = None
-
-    def _authenticated_headers(self) -> dict[str, str]:
-        if self.access_token is None:
-            raise ValueError("This Oneprovider REST operation requires an access token")
-        return _authorization_headers(self.access_token)
-
-    def _list_onepanel_resource_ids(self, resource: str) -> list[str]:
-        response = http_get(
-            ip=self.host,
-            port=PANEL_REST_PORT,
-            path=get_panel_rest_path("provider", resource),
-            headers=self._authenticated_headers(),
-        )
-        response_body = cast(JsonObject, response.json())
-        return cast(list[str], response_body["ids"])
-
-    def _list_accessible_spaces(self) -> list[JsonObject]:
-        response = http_get(
-            ip=self.host,
-            port=OP_REST_PORT,
-            path=get_provider_rest_path("spaces"),
-            headers=self._authenticated_headers(),
-        )
-        return cast(list[JsonObject], response.json())
-
-    def _submit_space_support(
-        self,
-        *,
-        support_token: str,
-        storage_id: str,
-    ) -> None:
-        http_post(
-            ip=self.host,
-            port=PANEL_REST_PORT,
-            path=get_panel_rest_path("provider", "spaces"),
-            headers=self._authenticated_headers(),
-            data=json.dumps(
-                {
-                    "token": support_token,
-                    "size": SPACE_SUPPORT_SIZE,
-                    "storageId": storage_id,
-                }
-            ),
-        )
-
-    @repeat_failed(
-        timeout=SPACE_APPEARANCE_TIMEOUT,
-        interval=1,
-        exceptions=AssertionError,
-    )
-    def _wait_for_accessible_space(self, space_id: str) -> str:
-        accessible_space_ids = [
-            cast(str, space["spaceId"]) for space in self._list_accessible_spaces()
-        ]
-        assert space_id in accessible_space_ids, f"Space {space_id} has not appeared at {self.host}"
-        return space_id
 
     def configuration(self) -> JsonObject:
         response = http_get(
@@ -160,3 +103,59 @@ class OneproviderRestClient:
             path=file_path,
             headers=self._authenticated_headers(),
         )
+
+    def _authenticated_headers(self) -> dict[str, str]:
+        if self.access_token is None:
+            raise ValueError("This Oneprovider REST operation requires an access token")
+        return {"X-Auth-Token": self.access_token}
+
+    def _list_onepanel_resource_ids(self, resource: str) -> list[str]:
+        response = http_get(
+            ip=self.host,
+            port=PANEL_REST_PORT,
+            path=get_panel_rest_path("provider", resource),
+            headers=self._authenticated_headers(),
+        )
+        response_body = cast(JsonObject, response.json())
+        return cast(list[str], response_body["ids"])
+
+    def _list_accessible_spaces(self) -> list[JsonObject]:
+        response = http_get(
+            ip=self.host,
+            port=OP_REST_PORT,
+            path=get_provider_rest_path("spaces"),
+            headers=self._authenticated_headers(),
+        )
+        return cast(list[JsonObject], response.json())
+
+    def _submit_space_support(
+        self,
+        *,
+        support_token: str,
+        storage_id: str,
+    ) -> None:
+        http_post(
+            ip=self.host,
+            port=PANEL_REST_PORT,
+            path=get_panel_rest_path("provider", "spaces"),
+            headers=self._authenticated_headers(),
+            data=json.dumps(
+                {
+                    "token": support_token,
+                    "size": SPACE_SUPPORT_SIZE,
+                    "storageId": storage_id,
+                }
+            ),
+        )
+
+    @repeat_failed(
+        timeout=SPACE_APPEARANCE_TIMEOUT,
+        interval=1,
+        exceptions=AssertionError,
+    )
+    def _wait_for_accessible_space(self, space_id: str) -> str:
+        accessible_space_ids = [
+            cast(str, space["spaceId"]) for space in self._list_accessible_spaces()
+        ]
+        assert space_id in accessible_space_ids, f"Space {space_id} has not appeared at {self.host}"
+        return space_id

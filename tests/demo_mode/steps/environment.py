@@ -26,12 +26,6 @@ def get_demo_access_token(service: DemoService) -> str:
     return access_token
 
 
-def _await_running_container(
-    service: DemoService,
-) -> None:
-    wait_for_running_container(service.container, service.process, timeout=SERVICE_READY_TIMEOUT)
-
-
 @log_step("Running Onezone in the foreground")
 def run_foreground_onezone() -> Onezone:
     onezone = Onezone(
@@ -86,3 +80,9 @@ def await_oneprovider(
         oneprovider.container,
         timeout=SERVICE_READY_TIMEOUT,
     )
+
+
+def _await_running_container(
+    service: DemoService,
+) -> None:
+    wait_for_running_container(service.container, service.process, timeout=SERVICE_READY_TIMEOUT)

@@ -20,11 +20,6 @@ from tests.demo_mode.steps.environment import (
 from tests.demo_mode.type_definitions import DemoEnvironment, Oneprovider, Onezone
 
 
-def _validate_oneprovider_count(oneprovider_count: int) -> None:
-    if not 1 <= oneprovider_count <= MAX_ONEPROVIDERS:
-        raise ValueError(f"Oneprovider count must be between 1 and {MAX_ONEPROVIDERS}")
-
-
 def start_foreground_environment(
     *,
     oneprovider_count: int = 1,
@@ -92,3 +87,8 @@ def guide_environment(
             for number in range(1, oneprovider_count + 1)
         ),
     )
+
+
+def _validate_oneprovider_count(oneprovider_count: int) -> None:
+    if not 1 <= oneprovider_count <= MAX_ONEPROVIDERS:
+        raise ValueError(f"Oneprovider count must be between 1 and {MAX_ONEPROVIDERS}")

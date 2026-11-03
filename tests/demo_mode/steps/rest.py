@@ -17,26 +17,6 @@ from tests.utils.http_exceptions import HTTPBadRequest, HTTPNotFound
 from tests.utils.utils import repeat_failed
 
 
-def onezone_rest_client(
-    onezone: Onezone,
-    access_token: str | None = None,
-) -> OnezoneRestClient:
-    return OnezoneRestClient(
-        host=container_ip(onezone.container),
-        access_token=access_token,
-    )
-
-
-def oneprovider_rest_client(
-    oneprovider: Oneprovider,
-    access_token: str | None = None,
-) -> OneproviderRestClient:
-    return OneproviderRestClient(
-        host=container_ip(oneprovider.container),
-        access_token=access_token,
-    )
-
-
 @log_step("Creating provider space")
 def create_space_for_provider(
     onezone: Onezone,
@@ -46,8 +26,8 @@ def create_space_for_provider(
     access_token: str,
 ) -> str:
     """Create a space supported by the selected Oneprovider."""
-    return oneprovider_rest_client(provider, access_token).create_and_support_space(
-        onezone_rest_client(onezone, access_token),
+    return _oneprovider_rest_client(provider, access_token).create_and_support_space(
+        _onezone_rest_client(onezone, access_token),
         name=space_name,
     )
 
@@ -60,7 +40,7 @@ def get_space_id(
     access_token: str,
 ) -> str:
     """Get the ID of the demo space accessible through a Oneprovider."""
-    return oneprovider_rest_client(provider, access_token).space_id(name=space_name)
+    return _oneprovider_rest_client(provider, access_token).space_id(name=space_name)
 
 
 @log_step("Removing REST file")
@@ -72,7 +52,7 @@ def remove_rest_file(
     access_token: str,
 ) -> None:
     """Remove a file through the selected Oneprovider."""
-    oneprovider_rest_client(provider, access_token).remove(
+    _oneprovider_rest_client(provider, access_token).remove(
         space_id=space_id,
         file_name=file_name,
     )
@@ -89,7 +69,7 @@ def upload_rest_file(
     request: pytest.FixtureRequest,
 ) -> None:
     """Upload a REST file and schedule its removal after the test."""
-    oneprovider_rest_client(provider, access_token).upload(
+    _oneprovider_rest_client(provider, access_token).upload(
         space_id=space_id,
         file_name=file_name,
         content=content,
@@ -109,48 +89,13 @@ def get_oneprovider_id(
     provider: Oneprovider,
 ) -> str:
     """Return the validated ID exposed by a Oneprovider."""
-    configuration = oneprovider_rest_client(provider).configuration()
+    configuration = _oneprovider_rest_client(provider).configuration()
     provider_id = configuration.get("providerId")
     assert isinstance(provider_id, str), (
         f"Expected {provider.container} to expose a string provider ID, got {provider_id!r}"
     )
     assert provider_id, f"Expected {provider.container} to expose a non-empty provider ID"
     return provider_id
-
-
-def _assert_file_content(
-    provider: Oneprovider,
-    *,
-    space_id: str,
-    file_name: str,
-    expected_content: bytes,
-    access_token: str,
-) -> None:
-    downloaded_content = oneprovider_rest_client(
-        provider,
-        access_token,
-    ).download(
-        space_id=space_id,
-        file_name=file_name,
-    )
-    assert downloaded_content == expected_content, (
-        f"{provider.container} returned {downloaded_content!r}, expected {expected_content!r}"
-    )
-
-
-def _is_missing_file_error(error: HTTPBadRequest) -> bool:
-    try:
-        response_body = error.response.json()
-    except ValueError:
-        return False
-
-    if not isinstance(response_body, dict):
-        return False
-    error_body = response_body.get("error")
-    if not isinstance(error_body, dict):
-        return False
-    details = error_body.get("details")
-    return isinstance(details, dict) and details.get("errno") == "enoent"
 
 
 @log_step("Checking REST file content")
@@ -209,7 +154,7 @@ def assert_space_support(
     expected: bool,
     access_token: str,
 ) -> None:
-    supported_space_ids = oneprovider_rest_client(
+    supported_space_ids = _oneprovider_rest_client(
         provider,
         access_token,
     ).supported_space_ids()
@@ -219,3 +164,58 @@ def assert_space_support(
         f"Expected space {space_id} to "
         f"{'be' if expected else 'not be'} supported by {provider.container}"
     )
+
+
+def _onezone_rest_client(
+    onezone: Onezone,
+    access_token: str | None = None,
+) -> OnezoneRestClient:
+    return OnezoneRestClient(
+        host=container_ip(onezone.container),
+        access_token=access_token,
+    )
+
+
+def _oneprovider_rest_client(
+    oneprovider: Oneprovider,
+    access_token: str | None = None,
+) -> OneproviderRestClient:
+    return OneproviderRestClient(
+        host=container_ip(oneprovider.container),
+        access_token=access_token,
+    )
+
+
+def _assert_file_content(
+    provider: Oneprovider,
+    *,
+    space_id: str,
+    file_name: str,
+    expected_content: bytes,
+    access_token: str,
+) -> None:
+    downloaded_content = _oneprovider_rest_client(
+        provider,
+        access_token,
+    ).download(
+        space_id=space_id,
+        file_name=file_name,
+    )
+    assert downloaded_content == expected_content, (
+        f"{provider.container} returned {downloaded_content!r}, expected {expected_content!r}"
+    )
+
+
+def _is_missing_file_error(error: HTTPBadRequest) -> bool:
+    try:
+        response_body = error.response.json()
+    except ValueError:
+        return False
+
+    if not isinstance(response_body, dict):
+        return False
+    error_body = response_body.get("error")
+    if not isinstance(error_body, dict):
+        return False
+    details = error_body.get("details")
+    return isinstance(details, dict) and details.get("errno") == "enoent"

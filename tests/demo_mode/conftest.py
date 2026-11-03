@@ -38,13 +38,6 @@ def pytest_addoption(parser: Parser) -> None:
     )
 
 
-def _select_image(override: object, service: str) -> str:
-    image = override or resolve_image(service)
-    if not isinstance(image, str) or not image:
-        raise RuntimeError(f"No Docker image configured for {service}")
-    return image
-
-
 @pytest.fixture(scope="session")
 def demo_images(request: pytest.FixtureRequest) -> DemoImages:
     """Resolve and pull the service images once for the whole test session."""
@@ -99,3 +92,10 @@ def demo_test_context(
                 remove_containers(CONTAINER_NAMES, timeout=CONTAINER_REMOVAL_TIMEOUT)
             finally:
                 context.reap_processes(PROCESS_EXIT_TIMEOUT)
+
+
+def _select_image(override: object, service: str) -> str:
+    image = override or resolve_image(service)
+    if not isinstance(image, str) or not image:
+        raise RuntimeError(f"No Docker image configured for {service}")
+    return image
