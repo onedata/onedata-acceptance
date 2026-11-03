@@ -15,7 +15,7 @@ from tests.demo_mode.steps.rest import (
     await_file_content,
     get_oneprovider_id,
     get_space_id,
-    upload_rest_file,
+    upload_file,
 )
 
 
@@ -36,7 +36,6 @@ def test_distributed_environment(
         assert_space_support(
             provider,
             space_id=DEMO_SPACE_ID,
-            expected=True,
             access_token=access_token,
         )
 
@@ -50,7 +49,7 @@ def test_distributed_environment(
         )
 
         file_name = f"{provider.container}-local.txt"
-        upload_rest_file(
+        upload_file(
             provider,
             space_id=DEMO_SPACE_ID,
             file_name=file_name,
@@ -69,7 +68,7 @@ def test_distributed_environment(
     provider_ids = [get_oneprovider_id(provider) for provider in environment.oneproviders]
     assert len(set(provider_ids)) == len(provider_ids), provider_ids
 
-    upload_rest_file(
+    upload_file(
         first,
         space_id=DEMO_SPACE_ID,
         file_name="shared.txt",

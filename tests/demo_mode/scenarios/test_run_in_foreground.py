@@ -9,7 +9,7 @@ import pytest
 from tests.demo_mode.constants import DEMO_SPACE_ID, DEMO_SPACE_NAME
 from tests.demo_mode.meta_steps.environment import start_foreground_environment
 from tests.demo_mode.steps.environment import get_demo_access_token
-from tests.demo_mode.steps.rest import assert_file_content, get_space_id, upload_rest_file
+from tests.demo_mode.steps.rest import assert_file_content, get_space_id, upload_file
 
 
 def test_run_in_foreground(
@@ -25,7 +25,7 @@ def test_run_in_foreground(
     space_id = get_space_id(provider, space_name=DEMO_SPACE_NAME, access_token=access_token)
     assert space_id == DEMO_SPACE_ID, f"Demo space id should be {DEMO_SPACE_ID}, but is {space_id}"
 
-    upload_rest_file(
+    upload_file(
         provider,
         space_id=space_id,
         file_name=file_name,

@@ -22,7 +22,7 @@ from tests.demo_mode.steps.rest import (
     assert_space_support,
     create_space_for_provider,
     get_oneprovider_id,
-    upload_rest_file,
+    upload_file,
 )
 from tests.demo_mode.type_definitions import DemoEnvironment, PersistentState
 
@@ -64,7 +64,7 @@ def save_persistent_state(
         space_name=space_name,
         access_token=access_token,
     )
-    upload_rest_file(
+    upload_file(
         provider,
         space_id=space_id,
         file_name=file_name,
@@ -101,7 +101,6 @@ def assert_persistent_state(
     assert_space_support(
         provider,
         space_id=state.space_id,
-        expected=True,
         access_token=state.access_token,
     )
     assert_file_content(

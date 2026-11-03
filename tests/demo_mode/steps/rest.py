@@ -8,10 +8,14 @@ from functools import partial
 
 import pytest
 
-from tests.demo_mode.constants import SPACE_SYNC_TIMEOUT
+from tests.demo_mode.constants import SPACE_APPEARANCE_TIMEOUT, SPACE_SYNC_TIMEOUT
 from tests.demo_mode.type_definitions import Oneprovider, Onezone
 from tests.demo_mode.utils.logging import log_step
-from tests.demo_mode.utils.rest import OneproviderRestClient, OnezoneRestClient
+from tests.demo_mode.utils.rest import (
+    OneproviderRestClient,
+    OnezoneRestClient,
+    get_oneprovider_configuration,
+)
 from tests.utils.docker_utils import container_ip
 from tests.utils.http_exceptions import HTTPBadRequest, HTTPNotFound
 from tests.utils.utils import repeat_failed
@@ -26,10 +30,20 @@ def create_space_for_provider(
     access_token: str,
 ) -> str:
     """Create a space supported by the selected Oneprovider."""
-    return _oneprovider_rest_client(provider, access_token).create_and_support_space(
-        _onezone_rest_client(onezone, access_token),
-        name=space_name,
+    onezone_client = _onezone_rest_client(onezone, access_token)
+    provider_client = _oneprovider_rest_client(provider, access_token)
+
+    space_id = onezone_client.create_space(name=space_name)
+    support_token = onezone_client.create_space_support_token(space_id=space_id)
+    storage_ids = provider_client.storage_ids()
+    if not storage_ids:
+        raise AssertionError("Demo Oneprovider has no storage available")
+    provider_client.support_space(
+        support_token=support_token,
+        storage_id=storage_ids[0],
     )
+    _await_accessible_space(provider_client, space_id)
+    return space_id
 
 
 @log_step("Getting REST space ID")
@@ -43,8 +57,8 @@ def get_space_id(
     return _oneprovider_rest_client(provider, access_token).space_id(name=space_name)
 
 
-@log_step("Removing REST file")
-def remove_rest_file(
+@log_step("Removing file")
+def remove_file(
     provider: Oneprovider,
     *,
     space_id: str,
@@ -58,8 +72,8 @@ def remove_rest_file(
     )
 
 
-@log_step("Uploading REST file")
-def upload_rest_file(
+@log_step("Uploading file")
+def upload_file(
     provider: Oneprovider,
     *,
     space_id: str,
@@ -76,7 +90,7 @@ def upload_rest_file(
     )
     request.addfinalizer(
         partial(
-            remove_rest_file,
+            remove_file,
             provider,
             space_id=space_id,
             file_name=file_name,
@@ -89,7 +103,7 @@ def get_oneprovider_id(
     provider: Oneprovider,
 ) -> str:
     """Return the validated ID exposed by a Oneprovider."""
-    configuration = _oneprovider_rest_client(provider).configuration()
+    configuration = get_oneprovider_configuration(container_ip(provider.container))
     provider_id = configuration.get("providerId")
     assert isinstance(provider_id, str), (
         f"Expected {provider.container} to expose a string provider ID, got {provider_id!r}"
@@ -120,7 +134,7 @@ def assert_file_content(
 @repeat_failed(
     timeout=SPACE_SYNC_TIMEOUT,
     interval=1,
-    exceptions=(AssertionError, HTTPNotFound),
+    exceptions=(AssertionError, HTTPBadRequest, HTTPNotFound),
 )
 def await_file_content(
     provider: Oneprovider,
@@ -130,20 +144,13 @@ def await_file_content(
     expected_content: bytes,
     access_token: str,
 ) -> None:
-    try:
-        _assert_file_content(
-            provider,
-            space_id=space_id,
-            file_name=file_name,
-            expected_content=expected_content,
-            access_token=access_token,
-        )
-    except HTTPBadRequest as error:
-        if not _is_missing_file_error(error):
-            raise
-        raise AssertionError(
-            f"{provider.container} does not expose {file_name!r} in space {space_id} yet"
-        ) from error
+    _assert_file_content(
+        provider,
+        space_id=space_id,
+        file_name=file_name,
+        expected_content=expected_content,
+        access_token=access_token,
+    )
 
 
 @log_step("Checking Oneprovider space support")
@@ -151,7 +158,6 @@ def assert_space_support(
     provider: Oneprovider,
     *,
     space_id: str,
-    expected: bool,
     access_token: str,
 ) -> None:
     supported_space_ids = _oneprovider_rest_client(
@@ -159,16 +165,14 @@ def assert_space_support(
         access_token,
     ).supported_space_ids()
 
-    actual = space_id in supported_space_ids
-    assert actual is expected, (
-        f"Expected space {space_id} to "
-        f"{'be' if expected else 'not be'} supported by {provider.container}"
+    assert space_id in supported_space_ids, (
+        f"Expected space {space_id} to be supported by {provider.container}"
     )
 
 
 def _onezone_rest_client(
     onezone: Onezone,
-    access_token: str | None = None,
+    access_token: str,
 ) -> OnezoneRestClient:
     return OnezoneRestClient(
         host=container_ip(onezone.container),
@@ -178,7 +182,7 @@ def _onezone_rest_client(
 
 def _oneprovider_rest_client(
     oneprovider: Oneprovider,
-    access_token: str | None = None,
+    access_token: str,
 ) -> OneproviderRestClient:
     return OneproviderRestClient(
         host=container_ip(oneprovider.container),
@@ -206,16 +210,15 @@ def _assert_file_content(
     )
 
 
-def _is_missing_file_error(error: HTTPBadRequest) -> bool:
-    try:
-        response_body = error.response.json()
-    except ValueError:
-        return False
-
-    if not isinstance(response_body, dict):
-        return False
-    error_body = response_body.get("error")
-    if not isinstance(error_body, dict):
-        return False
-    details = error_body.get("details")
-    return isinstance(details, dict) and details.get("errno") == "enoent"
+@repeat_failed(
+    timeout=SPACE_APPEARANCE_TIMEOUT,
+    interval=1,
+    exceptions=AssertionError,
+)
+def _await_accessible_space(
+    provider_client: OneproviderRestClient,
+    space_id: str,
+) -> None:
+    assert space_id in provider_client.accessible_space_ids(), (
+        f"Space {space_id} has not appeared at {provider_client.host}"
+    )
