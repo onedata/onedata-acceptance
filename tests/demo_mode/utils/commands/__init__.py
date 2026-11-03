@@ -4,7 +4,6 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.demo_mode.utils.commands.command import Command
 from tests.demo_mode.utils.commands.command_template import CommandTemplate
 
 RUN_ONEZONE_FOREGROUND = CommandTemplate("run_in_foreground/run_onezone.sh")

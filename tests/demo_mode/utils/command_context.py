@@ -56,10 +56,7 @@ class CommandContext:
 
         running_processes = [process for process in self._processes if process.poll() is None]
         for process in running_processes:
-            with suppress(ProcessLookupError):
-                os.killpg(process.pid, signal.SIGKILL)
-        for process in running_processes:
-            process.wait()
+            kill_process_group(process)
 
         self._processes.clear()
 
@@ -93,6 +90,14 @@ def command_context(
         yield context
     finally:
         _current_command_context.reset(token)
+
+
+def kill_process_group(process: subprocess.Popen[str]) -> tuple[str, str]:
+    """Kill and reap a process together with its process group."""
+    with suppress(ProcessLookupError):
+        os.killpg(process.pid, signal.SIGKILL)
+    stdout, stderr = process.communicate()
+    return stdout or "", stderr or ""
 
 
 def _safe_log_name(name: str) -> str:

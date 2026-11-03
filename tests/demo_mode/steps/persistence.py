@@ -16,7 +16,6 @@ from tests.demo_mode.type_definitions import DemoService, Oneprovider, Onezone
 from tests.demo_mode.utils.commands import (
     RUN_ONEPROVIDER_PERSISTENT,
     RUN_ONEZONE_PERSISTENT,
-    Command,
 )
 from tests.demo_mode.utils.logging import log_step
 from tests.utils.docker_utils import wait_for_running_container
@@ -63,7 +62,6 @@ def stop_persistent_service(service: DemoService, timeout: float) -> None:
     try:
         service.process.wait(timeout=timeout)
     except subprocess.TimeoutExpired as error:
-        Command.stop_process(service.process, timeout)
         raise AssertionError(
             f"The command running {service.container} did not exit after Docker stop"
         ) from error

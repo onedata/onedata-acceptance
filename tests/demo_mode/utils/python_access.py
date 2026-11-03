@@ -8,7 +8,7 @@ from pathlib import Path
 from shlex import quote
 
 from tests.demo_mode.utils.commands.command import Command
-from tests.demo_mode.utils.commands.helpers import command_path
+from tests.demo_mode.utils.commands.command_template import command_path
 
 _SETUP_SCRIPT = command_path("python_access/setup_environment.sh")
 _ACCESS_SCRIPT = command_path("python_access/check_python_access.py")
