@@ -4,14 +4,13 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.demo_mode.constants import DEMO_SPACE_ID
-from tests.demo_mode.meta_steps.environment import guide_environment
-from tests.demo_mode.steps.comprehensive_example import run_comprehensive_example
-from tests.demo_mode.steps.environment import get_demo_access_token
-from tests.demo_mode.steps.rest import assert_file_content
-from tests.demo_mode.utils.comprehensive_example import (
+from tests.demo_mode.comprehensive_example import (
     get_comprehensive_example_file_name,
+    run_comprehensive_example,
 )
+from tests.demo_mode.constants import DEMO_SPACE_ID
+from tests.demo_mode.data import assert_file_content
+from tests.demo_mode.environment import get_demo_access_token, guide_environment
 
 
 def test_comprehensive_example() -> None:

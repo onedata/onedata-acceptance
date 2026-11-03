@@ -106,14 +106,15 @@ When adding a scenario:
 1. Add or reuse a guide fragment under the matching `commands/` section.
 2. Register its `CommandTemplate` path in `utils/commands/`; paths must not
    appear elsewhere. The setup and script paths for `python_access` are an
-   intentional exception: both are assembled in `utils/python_access.py` into
+   intentional exception: both are assembled in `python_access.py` into
    one low-level command.
-3. Put external operations in `steps/` and reusable guide-level procedures in
-   `meta_steps/`; steps must never import meta steps.
+3. Put guide operations and procedures in the module matching the guide
+   section, such as `environment.py`, `data.py`, or `persistence.py`. Keep
+   implementation mechanics without guide knowledge in `utils/`.
 4. Keep scenario data, ordering, and comparisons of already-fetched values in
    `scenarios/`.
 5. Add a Bamboo job and keep its final container list synchronized with
    `constants.py`.
 
 Implementation mechanics belong in docstrings near `utils/test_runner.py`,
-`utils/command_context.py`, `utils/commands/`, and `steps/environment.py`.
+`utils/command_context.py`, `utils/commands/`, and `environment.py`.

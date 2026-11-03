@@ -5,9 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.demo_mode.constants import DEMO_SPACE_ID, DEMO_SPACE_NAME
-from tests.demo_mode.meta_steps.environment import start_foreground_environment
-from tests.demo_mode.steps.environment import get_demo_access_token
-from tests.demo_mode.steps.rest import (
+from tests.demo_mode.data import (
     assert_file_content,
     assert_space_support,
     await_file_content,
@@ -15,6 +13,7 @@ from tests.demo_mode.steps.rest import (
     get_space_id,
     upload_file,
 )
+from tests.demo_mode.environment import get_demo_access_token, start_foreground_environment
 
 
 def test_distributed_environment() -> None:

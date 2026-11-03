@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import pytest
 
-from tests.demo_mode.meta_steps.persistence import (
+from tests.demo_mode.persistence import (
     assert_persistent_state,
     save_persistent_state,
     start_persistent_environment,

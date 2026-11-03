@@ -17,12 +17,19 @@ from itertools import count
 from pathlib import Path
 from typing import Final
 
-from tests.demo_mode.type_definitions import DemoImages
 from tests.utils.path_utils import make_logdir
 
 COMMAND_LOGS_ROOT: Final = Path(__file__).resolve().parents[1] / "logs"
 COMMAND_LOGS_DIRECTORY: Final = Path(make_logdir(str(COMMAND_LOGS_ROOT), "report"))
 _current_command_context: ContextVar["CommandContext"] = ContextVar("current_command_context")
+
+
+@dataclass(frozen=True)
+class DemoImages:
+    """Docker images selected for a demo-mode test session."""
+
+    onezone: str
+    oneprovider: str
 
 
 @dataclass

@@ -1,11 +1,11 @@
-"""Steps for demo-mode REST operations."""
+"""Create and inspect data in a running demo-mode environment."""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.demo_mode.constants import SPACE_APPEARANCE_TIMEOUT, SPACE_SYNC_TIMEOUT
-from tests.demo_mode.type_definitions import Oneprovider, Onezone
+from tests.demo_mode.environment import Oneprovider, Onezone
 from tests.demo_mode.utils.logging import log_step
 from tests.demo_mode.utils.rest import (
     OneproviderRestClient,
@@ -70,9 +70,7 @@ def upload_file(
     )
 
 
-def get_oneprovider_id(
-    provider: Oneprovider,
-) -> str:
+def get_oneprovider_id(provider: Oneprovider) -> str:
     """Return the validated ID exposed by a Oneprovider."""
     configuration = get_oneprovider_configuration(container_ip(provider.container))
     provider_id = configuration.get("providerId")

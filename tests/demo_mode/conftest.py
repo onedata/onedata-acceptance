@@ -18,9 +18,8 @@ from tests.demo_mode.constants import (
     CONTAINER_REMOVAL_TIMEOUT,
     PROCESS_EXIT_TIMEOUT,
 )
-from tests.demo_mode.type_definitions import DemoImages
-from tests.demo_mode.utils.command_context import command_context
-from tests.demo_mode.utils.persistence import (
+from tests.demo_mode.utils.command_context import DemoImages, command_context
+from tests.demo_mode.utils.host_persistence import (
     prepare_demo_persistence,
     remove_demo_persistence,
 )

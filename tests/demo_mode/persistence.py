@@ -1,35 +1,59 @@
-"""Composite steps for persistent demo-mode state."""
+"""Run persistent demo-mode environments and verify retained state."""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.demo_mode.constants import SHORT_COMMAND_TIMEOUT, oneprovider_container
-from tests.demo_mode.steps.environment import (
-    await_oneprovider,
-    await_onezone,
-    get_demo_access_token,
+import subprocess
+from dataclasses import dataclass
+
+from environment import docker
+
+from tests.demo_mode.constants import (
+    ONEZONE_CONTAINER,
+    SERVICE_READY_TIMEOUT,
+    SHORT_COMMAND_TIMEOUT,
+    oneprovider_container,
 )
-from tests.demo_mode.steps.persistence import (
-    start_persistent_oneprovider,
-    start_persistent_onezone,
-    stop_persistent_service,
-)
-from tests.demo_mode.steps.rest import (
+from tests.demo_mode.data import (
     assert_file_content,
     assert_space_support,
     create_space_for_provider,
     get_oneprovider_id,
     upload_file,
 )
-from tests.demo_mode.type_definitions import DemoEnvironment, PersistentState
+from tests.demo_mode.environment import (
+    DemoEnvironment,
+    DemoService,
+    Oneprovider,
+    Onezone,
+    await_oneprovider,
+    await_onezone,
+    get_demo_access_token,
+)
+from tests.demo_mode.utils.commands import (
+    RUN_ONEPROVIDER_PERSISTENT,
+    RUN_ONEZONE_PERSISTENT,
+)
+from tests.demo_mode.utils.logging import log_step
+from tests.utils.docker_utils import wait_for_running_container
+
+
+@dataclass(frozen=True)
+class PersistentState:
+    """Demo-mode state expected to survive an environment restart."""
+
+    access_token: str
+    provider_id: str
+    space_id: str
+    file_name: str
+    file_content: bytes
 
 
 def start_persistent_environment() -> DemoEnvironment:
     """Start both persistent commands before awaiting their services."""
-    onezone = start_persistent_onezone()
-
-    oneprovider = start_persistent_oneprovider(
+    onezone = _start_persistent_onezone()
+    oneprovider = _start_persistent_oneprovider(
         oneprovider_container(1),
         onezone,
     )
@@ -115,4 +139,50 @@ def stop_persistent_environment(
     """Gracefully stop and reap a persistent demo-mode environment."""
     services = (*environment.oneproviders, environment.onezone)
     for service in services:
-        stop_persistent_service(service, timeout)
+        _stop_persistent_service(service, timeout)
+
+
+@log_step("Starting persistent Onezone")
+def _start_persistent_onezone() -> Onezone:
+    """Start Onezone using the unmodified persistence command."""
+    onezone = Onezone(
+        container=ONEZONE_CONTAINER,
+        process=RUN_ONEZONE_PERSISTENT.start(),
+    )
+    wait_for_running_container(
+        onezone.container,
+        onezone.process,
+        timeout=SERVICE_READY_TIMEOUT,
+    )
+    return onezone
+
+
+@log_step("Starting persistent Oneprovider")
+def _start_persistent_oneprovider(
+    container: str,
+    onezone: Onezone,
+) -> Oneprovider:
+    """Start Oneprovider using the unmodified persistence command."""
+    if onezone.process is None or onezone.process.poll() is not None:
+        raise AssertionError("Onezone stopped before Oneprovider could be started")
+
+    return Oneprovider(
+        container=container,
+        process=RUN_ONEPROVIDER_PERSISTENT.start(container),
+    )
+
+
+@log_step("Stopping persistent demo-mode service")
+def _stop_persistent_service(service: DemoService, timeout: float) -> None:
+    docker.stop(
+        service.container,
+        command_timeout=timeout,
+    )
+    if service.process is None:
+        raise AssertionError(f"Persistent service {service.container} has no launcher process")
+    try:
+        service.process.wait(timeout=timeout)
+    except subprocess.TimeoutExpired as error:
+        raise AssertionError(
+            f"The command running {service.container} did not exit after Docker stop"
+        ) from error
