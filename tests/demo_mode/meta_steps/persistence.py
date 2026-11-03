@@ -4,8 +4,6 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import pytest
-
 from tests.demo_mode.constants import SHORT_COMMAND_TIMEOUT, oneprovider_container
 from tests.demo_mode.steps.environment import (
     await_oneprovider,
@@ -51,7 +49,6 @@ def save_persistent_state(
     space_name: str,
     file_name: str,
     file_content: bytes,
-    request: pytest.FixtureRequest,
 ) -> PersistentState:
     """Create and return state that must survive a demo-mode restart."""
     onezone = environment.onezone
@@ -70,7 +67,6 @@ def save_persistent_state(
         file_name=file_name,
         content=file_content,
         access_token=access_token,
-        request=request,
     )
     return PersistentState(
         access_token=access_token,

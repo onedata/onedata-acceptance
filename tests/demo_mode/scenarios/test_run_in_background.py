@@ -4,17 +4,13 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import pytest
-
 from tests.demo_mode.constants import DEMO_SPACE_ID, DEMO_SPACE_NAME
 from tests.demo_mode.meta_steps.environment import start_background_environment
 from tests.demo_mode.steps.environment import get_demo_access_token
 from tests.demo_mode.steps.rest import assert_file_content, get_space_id, upload_file
 
 
-def test_run_in_background(
-    request: pytest.FixtureRequest,
-) -> None:
+def test_run_in_background() -> None:
     file_name = "background-rest-test.txt"
     file_content = b"Onedata demo-mode background REST test\n"
 
@@ -31,7 +27,6 @@ def test_run_in_background(
         file_name=file_name,
         content=file_content,
         access_token=access_token,
-        request=request,
     )
     assert_file_content(
         provider,

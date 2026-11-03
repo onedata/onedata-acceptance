@@ -13,7 +13,6 @@ from tests.type_definitions import JsonObject
 from tests.utils.rest_utils import (
     get_panel_rest_path,
     get_provider_rest_path,
-    http_delete,
     http_get,
     http_post,
     http_put,
@@ -91,15 +90,6 @@ class OneproviderRestClient:
             path=file_path,
             headers=self._authenticated_headers(),
         ).content
-
-    def remove(self, *, space_id: str, file_name: str) -> None:
-        file_path = get_provider_rest_path("data", space_id, "path", file_name)
-        http_delete(
-            ip=self.host,
-            port=OP_REST_PORT,
-            path=file_path,
-            headers=self._authenticated_headers(),
-        )
 
     def _authenticated_headers(self) -> dict[str, str]:
         return {"X-Auth-Token": self.access_token}

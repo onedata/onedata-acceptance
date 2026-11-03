@@ -4,10 +4,6 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from functools import partial
-
-import pytest
-
 from tests.demo_mode.constants import SPACE_APPEARANCE_TIMEOUT, SPACE_SYNC_TIMEOUT
 from tests.demo_mode.type_definitions import Oneprovider, Onezone
 from tests.demo_mode.utils.logging import log_step
@@ -57,21 +53,6 @@ def get_space_id(
     return _oneprovider_rest_client(provider, access_token).space_id(name=space_name)
 
 
-@log_step("Removing file")
-def remove_file(
-    provider: Oneprovider,
-    *,
-    space_id: str,
-    file_name: str,
-    access_token: str,
-) -> None:
-    """Remove a file through the selected Oneprovider."""
-    _oneprovider_rest_client(provider, access_token).remove(
-        space_id=space_id,
-        file_name=file_name,
-    )
-
-
 @log_step("Uploading file")
 def upload_file(
     provider: Oneprovider,
@@ -80,22 +61,12 @@ def upload_file(
     file_name: str,
     content: bytes,
     access_token: str,
-    request: pytest.FixtureRequest,
 ) -> None:
-    """Upload a REST file and schedule its removal after the test."""
+    """Upload a file through the selected Oneprovider."""
     _oneprovider_rest_client(provider, access_token).upload(
         space_id=space_id,
         file_name=file_name,
         content=content,
-    )
-    request.addfinalizer(
-        partial(
-            remove_file,
-            provider,
-            space_id=space_id,
-            file_name=file_name,
-            access_token=access_token,
-        )
     )
 
 

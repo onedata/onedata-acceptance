@@ -4,8 +4,6 @@ __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import pytest
-
 from tests.demo_mode.constants import DEMO_SPACE_ID, DEMO_SPACE_NAME
 from tests.demo_mode.meta_steps.environment import start_foreground_environment
 from tests.demo_mode.steps.environment import get_demo_access_token
@@ -19,9 +17,7 @@ from tests.demo_mode.steps.rest import (
 )
 
 
-def test_distributed_environment(
-    request: pytest.FixtureRequest,
-) -> None:
+def test_distributed_environment() -> None:
     local_content = b"Data stored through the local Oneprovider\n"
     shared_content = b"Data written through op_test1, read through op_test2\n"
 
@@ -55,7 +51,6 @@ def test_distributed_environment(
             file_name=file_name,
             content=local_content,
             access_token=access_token,
-            request=request,
         )
         assert_file_content(
             provider,
@@ -74,7 +69,6 @@ def test_distributed_environment(
         file_name="shared.txt",
         content=shared_content,
         access_token=access_token,
-        request=request,
     )
     await_file_content(
         second,

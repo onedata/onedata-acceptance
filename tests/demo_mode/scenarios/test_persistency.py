@@ -15,9 +15,7 @@ from tests.demo_mode.meta_steps.persistence import (
 
 
 @pytest.mark.usefixtures("isolated_persistence_directories")
-def test_persistency(
-    request: pytest.FixtureRequest,
-) -> None:
+def test_persistency() -> None:
     space_name = "demo-mode-persistence-space"
     file_name = "persistence-rest-test.txt"
     file_content = b"Onedata demo-mode persistence REST test\n"
@@ -29,7 +27,6 @@ def test_persistency(
         space_name=space_name,
         file_name=file_name,
         file_content=file_content,
-        request=request,
     )
     stop_persistent_environment(environment)
     restarted_environment = start_persistent_environment()
