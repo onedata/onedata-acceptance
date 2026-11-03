@@ -1,4 +1,10 @@
-"""Steps for starting demo-mode environments."""
+"""Steps for starting demo-mode environments and establishing readiness.
+
+Readiness has two phases: the Docker container must be running, then the
+guide's `await` or `await-demo` command must succeed. Oneprovider is started
+only after the Onezone container is available because its guide command reads
+the Onezone container IP before launching the service.
+"""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
@@ -67,6 +73,7 @@ def run_background_oneprovider(
 def await_onezone(
     onezone: Onezone,
 ) -> None:
+    """Wait for the Onezone container and then for its service readiness command."""
     _await_running_container(onezone)
     AWAIT_ONEZONE.run_until_success(timeout=SERVICE_READY_TIMEOUT)
 
@@ -75,6 +82,7 @@ def await_onezone(
 def await_oneprovider(
     oneprovider: Oneprovider,
 ) -> None:
+    """Wait for the Oneprovider container and then for `await-demo`."""
     _await_running_container(oneprovider)
     AWAIT_ONEPROVIDER.run_until_success(
         oneprovider.container,
@@ -85,4 +93,5 @@ def await_oneprovider(
 def _await_running_container(
     service: DemoService,
 ) -> None:
+    """Wait for the container-running phase without asserting service readiness."""
     wait_for_running_container(service.container, service.process, timeout=SERVICE_READY_TIMEOUT)

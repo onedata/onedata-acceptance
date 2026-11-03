@@ -9,9 +9,9 @@ from collections.abc import Iterator
 
 import pytest
 from _pytest.config.argparsing import Parser
+from environment import docker
 from urllib3.exceptions import InsecureRequestWarning
 
-from bamboos.docker.environment.docker import pull_image_with_retries
 from bamboos.docker.images_branch_config import resolve_image
 from tests.demo_mode.constants import (
     CONTAINER_NAMES,
@@ -54,7 +54,7 @@ def demo_images(request: pytest.FixtureRequest) -> DemoImages:
         ("oneprovider", images.oneprovider),
     ):
         print(f"\n[INFO] Using image {image} for service {service}")
-        pull_image_with_retries(image)
+        docker.pull_image_with_retries(image)
 
     return images
 
@@ -82,6 +82,14 @@ def demo_test_context(
     request: pytest.FixtureRequest,
     demo_images: DemoImages,
 ) -> Iterator[None]:
+    """Isolate containers and command processes owned by one test.
+
+    Teardown removes the containers before reaping their launcher processes.
+    Reaping an attached `docker run -i` while its container still exists can
+    consume the full process timeout, and signals sent to the launcher can be
+    forwarded to the container. Removing the container first lets the Docker
+    client exit promptly.
+    """
     remove_containers(CONTAINER_NAMES, timeout=CONTAINER_REMOVAL_TIMEOUT)
 
     with command_context(request.node.name, demo_images) as context:

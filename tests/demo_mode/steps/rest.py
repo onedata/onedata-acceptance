@@ -49,7 +49,7 @@ def get_space_id(
     space_name: str,
     access_token: str,
 ) -> str:
-    """Get the ID of the demo space accessible through a Oneprovider."""
+    """Get the ID of the named space accessible through a Oneprovider."""
     return _oneprovider_rest_client(provider, access_token).space_id(name=space_name)
 
 

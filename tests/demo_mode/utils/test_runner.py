@@ -1,4 +1,10 @@
-"""Start demo-mode pytest with the host user's permissions."""
+"""Start demo-mode pytest with access to Docker but as the host user.
+
+The runner starts as root only to join the Docker socket's group. Before
+executing pytest, it prepares a writable home outside the read-only repository
+and drops to the host UID and GID. As a result, bind-mounted logs, reports, and
+persistence directories are not left owned by root on the host.
+"""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
@@ -15,6 +21,7 @@ RUNNER_HOME: Final = "/tmp/demo-mode-test-runner"
 
 
 def main() -> NoReturn:
+    """Prepare Docker access, drop root privileges, and replace the runner with pytest."""
     host_uid = _read_host_id(HOST_UID_ENV)
     host_gid = _read_host_id(HOST_GID_ENV)
     docker_gid = os.stat(DOCKER_SOCKET).st_gid

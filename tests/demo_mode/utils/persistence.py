@@ -1,4 +1,9 @@
-"""Persistence-directory lifecycle helpers for demo-mode tests."""
+"""Safely manage host persistence directories used by demo-mode tests.
+
+The ownership marker proves that fixed paths belong to this suite. Cleanup
+refuses to remove existing paths without a valid marker, protecting directories
+left by someone who followed the demo-mode guide manually.
+"""
 
 __author__ = "Mateusz Zajac"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"

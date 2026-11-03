@@ -83,6 +83,9 @@ report.<timestamp>/
 Each numbered log contains the rendered command and output. Command failures
 name the template; readiness failures point to `await-*` and launcher logs.
 Python failures preserve `setup.log`; REST failures appear in pytest and JUnit.
+If an HTTP call times out with the `HTTP CALL HUNG` banner, the test
+intentionally remains blocked and leaves its containers on the agent so the
+backend can be inspected before the job is stopped.
 
 ## Changing guide commands
 
@@ -101,7 +104,10 @@ here rather than adding a test-only workaround.
 When adding a scenario:
 
 1. Add or reuse a guide fragment under the matching `commands/` section.
-2. Register its path in `utils/commands/`; paths must not appear elsewhere.
+2. Register its `CommandTemplate` path in `utils/commands/`; paths must not
+   appear elsewhere. The setup and script paths for `python_access` are an
+   intentional exception: both are assembled in `utils/python_access.py` into
+   one low-level command.
 3. Put external operations in `steps/` and reusable guide-level procedures in
    `meta_steps/`; steps must never import meta steps.
 4. Keep scenario data, ordering, and comparisons of already-fetched values in

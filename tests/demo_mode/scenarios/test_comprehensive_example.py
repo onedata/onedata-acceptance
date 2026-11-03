@@ -15,6 +15,7 @@ from tests.demo_mode.utils.comprehensive_example import (
 
 
 def test_comprehensive_example() -> None:
+    # The guide's `curl -d "hello world\n"` sends a literal backslash and `n`.
     expected_file_content = b"hello world\\n"
     command_output = run_comprehensive_example()
     environment = guide_environment(oneprovider_count=1)
