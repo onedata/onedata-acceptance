@@ -1,7 +1,7 @@
 """This module contains utility functions for running commands in docker"""
 
-__author__ = "Jakub Kudzia"
-__copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
+__author__ = "Jakub Kudzia, Mateusz Zajac"
+__copyright__ = "Copyright (C) 2016-2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
@@ -11,7 +11,7 @@ from collections.abc import Collection
 
 from environment import docker
 
-from tests.utils.time_utils import deadline_after, remaining_time, sleep_before_retry
+from tests.utils.utils import perform_action_with_timeout
 
 DockerCommand = str | list[str]
 
@@ -72,7 +72,8 @@ def container_ip(container: str) -> str:
 
 def remove_containers(
     container_names: Collection[str],
-    timeout: float = 60,
+    *,
+    timeout: float,
     interval: float = 1,
 ) -> None:
     """Force-remove Docker containers with the specified names."""
@@ -80,11 +81,8 @@ def remove_containers(
         return
 
     name_filters = [("name", rf"^/{re.escape(name)}$") for name in container_names]
-    deadline = deadline_after(timeout)
-    removal_started = False
-    last_error: subprocess.CalledProcessError | None = None
 
-    while remaining_time(deadline) > 0:
+    def remove_existing_containers() -> None:
         containers = docker.ps(
             all=True,
             quiet=True,
@@ -93,44 +91,33 @@ def remove_containers(
         if not containers:
             return
 
-        if not removal_started:
-            print("\nRemoved docker containers:", flush=True)
-            removal_started = True
+        print("\nRemoved docker containers:", flush=True)
 
-        try:
-            docker.remove(
-                containers,
-                force=True,
-                stderr=subprocess.DEVNULL,
-            )
-        except subprocess.CalledProcessError as error:
-            last_error = error
-            sleep_before_retry(deadline, interval)
-        else:
-            return
+        docker.remove(
+            containers,
+            force=True,
+            stderr=subprocess.DEVNULL,
+        )
 
-    remaining_containers = docker.ps(
-        all=True,
-        quiet=True,
-        filters=name_filters,
+    perform_action_with_timeout(
+        remove_existing_containers,
+        timeout=timeout,
+        ignored_exceptions=subprocess.CalledProcessError,
+        interval=interval,
     )
-    if remaining_containers:
-        raise AssertionError(
-            f"Could not remove demo-mode containers within {timeout}s: {', '.join(container_names)}"
-        ) from last_error
 
 
 def wait_for_running_container(
     container_name: str,
     startup_process: subprocess.Popen[str] | None = None,
-    timeout: float = 600,
+    *,
+    timeout: float,
     interval: float = 1,
 ) -> None:
     """Wait until an exact-name container is running."""
-    deadline = deadline_after(timeout)
     name_filters = [("name", rf"^/{re.escape(container_name)}$")]
 
-    while remaining_time(deadline) > 0:
+    def assert_container_is_running() -> None:
         if startup_process is not None and startup_process.poll() is not None:
             raise AssertionError(
                 f"Startup command exited before {container_name} was running "
@@ -141,9 +128,18 @@ def wait_for_running_container(
             quiet=True,
             filters=name_filters,
         )
-        if containers:
-            return
+        if not containers:
+            raise _ContainerNotRunningError(
+                f"Container {container_name} did not start within {timeout}s"
+            )
 
-        sleep_before_retry(deadline, interval)
+    perform_action_with_timeout(
+        assert_container_is_running,
+        timeout=timeout,
+        ignored_exceptions=_ContainerNotRunningError,
+        interval=interval,
+    )
 
-    raise AssertionError(f"Container {container_name} did not start within {timeout}s")
+
+class _ContainerNotRunningError(AssertionError):
+    """Raised when a container has not reached the running state yet."""
