@@ -1,18 +1,19 @@
 version: 2
 plan:
-  key: AT-WP
+  key: ODSRV-WP
 plan-permissions:
-- roles:
-  - logged-in
-  - anonymous
-  permissions:
-  - view
-- users:
-  - plgnikolow
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-  - admin
-  - view-configuration
+  - users:
+      - plgjliput
+      - plglopiola
+      - plgmstanisz
+      - plgdutka
+      - plgagneska
+      - wojciech
+    groups:
+      - plggveildev
+    permissions:
+      - view
+      - edit
+      - build
+      - clone
+      - admin

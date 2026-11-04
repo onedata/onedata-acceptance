@@ -277,7 +277,7 @@ _Type_check:
 
 
 Many items: &acceptance-tests-in-chrome-job
-  key: COAWEX
+  key: CMN
   other: *common-opts
   tasks:
     - script: &clear-env

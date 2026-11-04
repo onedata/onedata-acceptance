@@ -1,12 +1,49 @@
 version: 2
 plan:
-  project-key: AT
+  project-key: ODSRV
   key: WP
-  name: workflow pkg
+  name: workflow acceptance pkg
   description: Workflow, automation and ATM acceptance tests using an environment deployed from packages.
 variables:
-  quarantineSourcePlan: AT-WP
+  quarantineSourcePlan: ODSRV-WP
   quarantineSourceBranch: develop
+repositories:
+  - onedata-acceptance:
+      scope: global
+branches:
+  create:
+    for-new-branch: release/.*
+  delete:
+    after-deleted-days: 7
+    after-inactive-days: 30
+  link-to-jira: true
+notifications:
+  - events:
+      - plan-failed
+    recipients:
+      - users:
+          - plgjliput
+labels: []
+triggers: []
+dependencies:
+  require-all-stages-passing: true
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: "3"
+  all-other-apps:
+    custom:
+      com.atlassian.bamboo.plugin.hungbuildkiller:
+        stopped.enabled: "true"
+        add_comment_when_hung.enabled: "true"
+      buildExpiryConfig:
+        period: weeks
+        expiryTypeBuildLog: "true"
+        enabled: "true"
+        expiryTypeArtifact: "true"
+        duration: "1"
+
 stages:
   - Qnthack - copy quarantine:
       manual: false
@@ -675,22 +712,3 @@ Qnthack - rerun:
                 bamboo.buildNumber: '2'
     - script: *always-successful
   artifact-subscriptions: []
-
-repositories:
-- onedata-acceptance:
-    scope: global
-triggers:
-- bitbucket-server-trigger
-branches:
-  create: manually
-  delete: never
-  link-to-jira: true
-notifications: []
-labels: []
-dependencies:
-  require-all-stages-passing: false
-  enabled-for-branches: true
-  block-strategy: none
-  plans: []
-other:
-  concurrent-build-plugin: system-default
