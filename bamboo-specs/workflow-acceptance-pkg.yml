@@ -59,23 +59,23 @@ stages:
         - _Autoformatter check
         - _Static analysis
         - _Type_check
-        - Atm examples workflows 1
-        - Atm examples workflows 2
-        - Atm pods
-        - Atm stores basic
-        - Atm workflow execution
-        - Atm workflows pausing and cancelling
-        - Atm workflows status
-        - Atm workflows stores
-        - Atm BagIt 1
-        - Atm BagIt 2
-        - Onezone automations
-        - Onezone automations members and privileges
-        - Automation
-        - Workflows bagit with 3gb archive
-        - Workflows bagit with fetch archives
-        - Workflows bagit with unpack archives
-        - Workflows without bagit
+        - GUI - Automation example workflows
+        - GUI - Automation examples using input files and Eureka3D
+        - GUI - Automation inventory, lambda and workflow management
+        - GUI - Automation members, privileges and execution authorization
+        - GUI - BagIt uploader execution and archive handling
+        - GUI - BagIt uploader invalid archives
+        - GUI - Lambda pod status and termination
+        - GUI - Workflow execution
+        - GUI - Workflow pausing and cancellation
+        - GUI - Workflow result mappings, stores and audit logs
+        - GUI - Workflow statuses and reruns
+        - GUI - Workflow store data types and example coverage
+        - Mixed - BagIt archive fetching
+        - Mixed - BagIt archive unpacking
+        - Mixed - BagIt execution with 3 GB archive
+        - Mixed - Workflow execution REST operations
+        - Mixed - Workflow execution without BagIt
   - Qnthack - rerun:
       manual: false
       final: true
@@ -210,7 +210,7 @@ _Type_check:
           - make type-check
         description: Type checker
 
-Atm examples workflows 1: &acceptance-tests-in-chrome-job
+GUI - Automation example workflows: &acceptance-tests-in-chrome-job
   key: COAWEX2
   other: *common-opts
   tasks:
@@ -330,7 +330,7 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
     - minikube
   artifact-subscriptions: [ ]
 
-Atm examples workflows 2:
+GUI - Automation examples using input files and Eureka3D:
   <<: *acceptance-tests-in-chrome-job
   key: COASB2
   tasks:
@@ -345,127 +345,7 @@ Atm examples workflows 2:
         scripts:
           - make SUITE=test_automation_examples_workflows_tests2 ENV_FILE=1oz_1op_openfaas test_gui_pkg
 
-Atm pods:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_pods ENV_FILE=1oz_1op_openfaas_normal test_gui_pkg
-
-Atm stores basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COASB
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm workflow execution:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWET
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_execution ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm workflows pausing and cancelling:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWPC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm workflows status:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWST
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm workflows stores:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm BagIt 1:
-  <<: *acceptance-tests-in-chrome-job
-  key: COB
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_automation_bagit1 ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Atm BagIt 2:
-  <<: *acceptance-tests-in-chrome-job
-  key: COB2
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_automation_bagit2 ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Onezone automations:
+GUI - Automation inventory, lambda and workflow management:
   <<: *acceptance-tests-in-chrome-job
   key: COAT
   tasks:
@@ -480,7 +360,7 @@ Onezone automations:
         scripts:
           - make SUITE=test_onezone_automation test_gui_pkg
 
-Onezone automations members and privileges:
+GUI - Automation members, privileges and execution authorization:
   <<: *acceptance-tests-in-chrome-job
   key: COATMP
   tasks:
@@ -495,8 +375,128 @@ Onezone automations members and privileges:
         scripts:
           - make SUITE=test_onezone_automation_members_and_privileges test_gui_pkg
 
-Automation: &acceptance-mixed-tests-in-chrome-job
-  key: CAT4
+GUI - BagIt uploader execution and archive handling:
+  <<: *acceptance-tests-in-chrome-job
+  key: COB2
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_automation_bagit2 ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+GUI - BagIt uploader invalid archives:
+  <<: *acceptance-tests-in-chrome-job
+  key: COB
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_automation_bagit1 ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+GUI - Lambda pod status and termination:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_pods ENV_FILE=1oz_1op_openfaas_normal test_gui_pkg
+
+GUI - Workflow execution:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWET
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_execution ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+GUI - Workflow pausing and cancellation:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWPC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+GUI - Workflow result mappings, stores and audit logs:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+GUI - Workflow statuses and reruns:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWST
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+GUI - Workflow store data types and example coverage:
+  <<: *acceptance-tests-in-chrome-job
+  key: COASB
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Mixed - BagIt archive fetching: &acceptance-mixed-tests-in-chrome-job
+  key: CWIF2
   other: *common-opts
   tasks:
     - script: &mixed-clear-env
@@ -564,7 +564,7 @@ Automation: &acceptance-mixed-tests-in-chrome-job
     - script: &mixed-run-acceptance-tests
         <<: *run-script-working-dir
         scripts:
-          - make SUITE=test_automation ENV_FILE=1oz_1op_openfaas test_mixed_pkg
+          - make SUITE=test_workflows_bagit_with_fetch_archives ENV_FILE=1oz_1op_openfaas test_mixed_pkg
         description: Run acceptance mixed tests in Chrome
   final-tasks:
     - test-parser:
@@ -620,39 +620,7 @@ Automation: &acceptance-mixed-tests-in-chrome-job
     - minikube
   artifact-subscriptions: []
 
-Workflows bagit with 3gb archive:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CWIF
-  tasks:
-    - script: *mixed-clear-env
-    - script: *mixed-restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *mixed-init-submodules
-    - script: *mixed-quarantine-hack-pull-surefire
-    - script: *mixed-download-artifacts
-    - script: *mixed-build-swaggers
-    - script:
-        <<: *mixed-run-acceptance-tests
-        scripts:
-          - make SUITE=test_workflows_bagit_with_3gb_archive ENV_FILE=1oz_1op_openfaas test_mixed_pkg
-
-Workflows bagit with fetch archives:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CWIF2
-  tasks:
-    - script: *mixed-clear-env
-    - script: *mixed-restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *mixed-init-submodules
-    - script: *mixed-quarantine-hack-pull-surefire
-    - script: *mixed-download-artifacts
-    - script: *mixed-build-swaggers
-    - script:
-        <<: *mixed-run-acceptance-tests
-        scripts:
-          - make SUITE=test_workflows_bagit_with_fetch_archives ENV_FILE=1oz_1op_openfaas test_mixed_pkg
-
-Workflows bagit with unpack archives:
+Mixed - BagIt archive unpacking:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CWIF3
   tasks:
@@ -668,7 +636,39 @@ Workflows bagit with unpack archives:
         scripts:
           - make SUITE=test_workflows_bagit_with_unpack_archives ENV_FILE=1oz_1op_openfaas test_mixed_pkg
 
-Workflows without bagit:
+Mixed - BagIt execution with 3 GB archive:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CWIF
+  tasks:
+    - script: *mixed-clear-env
+    - script: *mixed-restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *mixed-init-submodules
+    - script: *mixed-quarantine-hack-pull-surefire
+    - script: *mixed-download-artifacts
+    - script: *mixed-build-swaggers
+    - script:
+        <<: *mixed-run-acceptance-tests
+        scripts:
+          - make SUITE=test_workflows_bagit_with_3gb_archive ENV_FILE=1oz_1op_openfaas test_mixed_pkg
+
+Mixed - Workflow execution REST operations:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CAT4
+  tasks:
+    - script: *mixed-clear-env
+    - script: *mixed-restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *mixed-init-submodules
+    - script: *mixed-quarantine-hack-pull-surefire
+    - script: *mixed-download-artifacts
+    - script: *mixed-build-swaggers
+    - script:
+        <<: *mixed-run-acceptance-tests
+        scripts:
+          - make SUITE=test_automation ENV_FILE=1oz_1op_openfaas test_mixed_pkg
+
+Mixed - Workflow execution without BagIt:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CWIF4
   tasks:
