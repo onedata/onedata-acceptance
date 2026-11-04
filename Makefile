@@ -129,13 +129,20 @@ test_upgrade_src:
 	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_TEST_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/src/"${CONFIG_FILE}".yaml
 
 DEMO_MODE_SCENARIOS_ROOT := tests/demo_mode/scenarios
+DEMO_MODE_TESTS := \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_run_in_foreground.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_distributed_environment.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_run_in_background.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_comprehensive_example.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_python_access.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_persistency.py
 DEMO_MODE_TEST_REPORTS_DIR := $(CURDIR)/test-reports
 DEMO_MODE_LOGS_DIR := $(CURDIR)/tests/demo_mode/logs
 DEMO_MODE_DOCKER_CONFIG_DIR := $(if $(DOCKER_CONFIG),$(DOCKER_CONFIG),$(HOME)/.docker)
 ifdef SCENARIO
 DEMO_MODE_TEST_PATH := ${DEMO_MODE_SCENARIOS_ROOT}/${SCENARIO}.py
 else
-DEMO_MODE_TEST_PATH := ${DEMO_MODE_SCENARIOS_ROOT}
+DEMO_MODE_TEST_PATH := $(DEMO_MODE_TESTS)
 endif
 ifdef RUNNER_NAME
 DEMO_MODE_RUNNER_NAME_OPTION := --name="${RUNNER_NAME}"

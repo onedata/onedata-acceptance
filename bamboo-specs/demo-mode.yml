@@ -14,11 +14,11 @@ stages:
     - _Autoformatter check
     - _Static analysis
     - _Type_check
-    - Comprehensive example
-    - Distributed environment
-    - Python access
-    - Run in background
     - Run in foreground
+    - Distributed environment
+    - Run in background
+    - Comprehensive example
+    - Python access
     # TODO: VFS-13556 Uncomment after fixing the persistency tutorial
     # - Persistency
 
@@ -49,44 +49,6 @@ _Codetag Tracker:
       working-dir: onedata-acceptance
       description: Codetag Tracker
   requirements: []
-  artifact-subscriptions: []
-
-Comprehensive example:
-  key: CEX
-  other: *common-opts
-  tasks:
-  - script: &clear-env
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: &run-demo-mode-test
-      interpreter: SHELL
-      scripts:
-      - make test_demo_mode SCENARIO=test_comprehensive_example RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
-      working-dir: onedata-acceptance
-      description: Run demo mode test
-  final-tasks: &final-tasks
-  - test-parser:
-      type: junit
-      ignore-time: false
-      test-results: onedata-acceptance/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
-  requirements: &requirements
-  - minikube
-  artifacts: &command-log-artifacts
-  - name: command-logs
-    location: onedata-acceptance/tests/demo_mode/logs
-    pattern: "**/*.log"
-    shared: false
-    required: false
   artifact-subscriptions: []
 
 _Autoformatter check:
@@ -126,6 +88,44 @@ _Type_check:
       description: Type checker
   artifact-subscriptions: []
 
+Run in foreground:
+  key: FOREGROUND
+  other: *common-opts
+  tasks:
+  - script: &clear-env
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
+  - script: &run-demo-mode-test
+      interpreter: SHELL
+      scripts:
+      - make test_demo_mode SCENARIO=test_run_in_foreground RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+      working-dir: onedata-acceptance
+      description: Run demo mode test
+  final-tasks: &final-tasks
+  - test-parser:
+      type: junit
+      ignore-time: false
+      test-results: onedata-acceptance/test-reports/results*.xml
+      description: Parse test results
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  requirements: &requirements
+  - minikube
+  artifacts: &command-log-artifacts
+  - name: command-logs
+    location: onedata-acceptance/tests/demo_mode/logs
+    pattern: "**/*.log"
+    shared: false
+    required: false
+  artifact-subscriptions: []
+
 Distributed environment:
   key: DISTENV
   other: *common-opts
@@ -137,39 +137,6 @@ Distributed environment:
       <<: *run-demo-mode-test
       scripts:
       - make test_demo_mode SCENARIO=test_distributed_environment RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
-  final-tasks: *final-tasks
-  requirements: *requirements
-  artifacts: *command-log-artifacts
-  artifact-subscriptions: []
-
-# TODO: VFS-13556 Uncomment after fixing the persistency tutorial
-# Persistency:
-#   key: PERSIST
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script:
-#       <<: *run-demo-mode-test
-#       scripts:
-#       - make test_demo_mode SCENARIO=test_persistency RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
-#   final-tasks: *final-tasks
-#   requirements: *requirements
-#   artifacts: *command-log-artifacts
-#   artifact-subscriptions: []
-
-Python access:
-  key: PYACCESS
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script:
-      <<: *run-demo-mode-test
-      scripts:
-      - make test_demo_mode SCENARIO=test_python_access RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
   artifacts: *command-log-artifacts
@@ -191,8 +158,8 @@ Run in background:
   artifacts: *command-log-artifacts
   artifact-subscriptions: []
 
-Run in foreground:
-  key: FOREGROUND
+Comprehensive example:
+  key: CEX
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -201,11 +168,44 @@ Run in foreground:
   - script:
       <<: *run-demo-mode-test
       scripts:
-      - make test_demo_mode SCENARIO=test_run_in_foreground RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+      - make test_demo_mode SCENARIO=test_comprehensive_example RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
   final-tasks: *final-tasks
   requirements: *requirements
   artifacts: *command-log-artifacts
   artifact-subscriptions: []
+
+Python access:
+  key: PYACCESS
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode SCENARIO=test_python_access RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+  final-tasks: *final-tasks
+  requirements: *requirements
+  artifacts: *command-log-artifacts
+  artifact-subscriptions: []
+
+# TODO: VFS-13556 Uncomment after fixing the persistency tutorial
+# Persistency:
+#   key: PERSIST
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - checkout: *checkout-default-repository
+#   - script: *init-submodules
+#   - script:
+#       <<: *run-demo-mode-test
+#       scripts:
+#       - make test_demo_mode SCENARIO=test_persistency RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+#   final-tasks: *final-tasks
+#   requirements: *requirements
+#   artifacts: *command-log-artifacts
+#   artifact-subscriptions: []
 
 repositories:
 - onedata-acceptance:
