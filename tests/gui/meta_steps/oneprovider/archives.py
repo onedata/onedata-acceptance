@@ -27,12 +27,13 @@ from tests.gui.steps.modals.modal import (
 )
 from tests.gui.steps.oneprovider.archives import (
     assert_archive_info_in_properties_modal,
+    assert_archive_row_menu_open,
     assert_not_archive_with_description,
     assert_number_of_archives_for_item_in_dataset_browser,
     assert_tag_for_archive_in_archive_browser,
     check_toggle_in_create_archive_modal,
     click_and_press_enter_on_archive,
-    click_menu_for_archive,
+    click_menu_button_for_archive,
     get_archive_with_description,
     wait_for_archive_to_enter_or_exit_states,
     wait_for_expected_archive_state,
@@ -82,6 +83,24 @@ OPTION_IN_SPACE: Final[str] = "Datasets, Archives"
 DATASET_BROWSER: Final[str] = "dataset browser"
 ARCHIVE_BROWSER: Final[str] = "archive browser"
 ARCHIVE_FILE_BROWSER: Final[str] = "archive file browser"
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks on menu for archive "
+        'with description: "{description}" in {which_browser:WhichBrowser}',
+        extra_types={"WhichBrowser": WhichBrowser},
+    )
+)
+def click_menu_for_archive(
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    selenium: SeleniumDrivers,
+    which_browser: WhichBrowser = WhichBrowser.ARCHIVE_BROWSER,
+) -> None:
+    click_menu_button_for_archive(browser_id, tmp_memory, description, which_browser)
+    assert_archive_row_menu_open(browser_id, description, selenium)
 
 
 @wt(
