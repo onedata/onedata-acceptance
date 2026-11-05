@@ -15,7 +15,7 @@ from tests.demo_mode.persistence import (
 
 
 @pytest.mark.usefixtures("isolated_persistence_directories")
-def test_persistency() -> None:
+def test_persistence() -> None:
     space_name = "demo-mode-persistence-space"
     file_name = "persistence-rest-test.txt"
     file_content = b"Onedata demo-mode persistence REST test\n"

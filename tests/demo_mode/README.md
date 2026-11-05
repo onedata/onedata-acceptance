@@ -22,7 +22,7 @@ Unlike the other acceptance suites, demo mode uses neither one-env,
 | `test_distributed_environment` | Distributed environment | `run_in_foreground/`, `access_token/` | Distributed environment |
 | `test_comprehensive_example` | Comprehensive example | `comprehensive_example/`, `access_token/` | Comprehensive example |
 | `test_python_access` | Data access using Python | `run_in_foreground/`, `python_access/` | Python access |
-| `test_persistency` | Retaining persistence between restarts | `persistency/`, `access_token/` | disabled (`VFS-13556`) |
+| `test_persistence` | Retaining persistence between restarts | `persistence/`, `access_token/` | disabled (`VFS-13556`) |
 
 ## Running
 

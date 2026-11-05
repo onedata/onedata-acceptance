@@ -135,7 +135,7 @@ DEMO_MODE_TESTS := \
 	$(DEMO_MODE_SCENARIOS_ROOT)/test_run_in_background.py \
 	$(DEMO_MODE_SCENARIOS_ROOT)/test_comprehensive_example.py \
 	$(DEMO_MODE_SCENARIOS_ROOT)/test_python_access.py \
-	$(DEMO_MODE_SCENARIOS_ROOT)/test_persistency.py
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_persistence.py
 DEMO_MODE_TEST_REPORTS_DIR := $(CURDIR)/test-reports
 DEMO_MODE_LOGS_DIR := $(CURDIR)/tests/demo_mode/logs
 DEMO_MODE_DOCKER_CONFIG_DIR := $(if $(DOCKER_CONFIG),$(DOCKER_CONFIG),$(HOME)/.docker)

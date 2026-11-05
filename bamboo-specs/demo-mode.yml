@@ -19,8 +19,8 @@ stages:
     - Run in background
     - Comprehensive example
     - Python access
-    # TODO: VFS-13556 Uncomment after fixing the persistency tutorial
-    # - Persistency
+    # TODO: VFS-13556 Uncomment after fixing the persistence tutorial
+    # - Persistence
 
 _Codetag Tracker:
   key: CDTR
@@ -190,8 +190,8 @@ Python access:
   artifacts: *command-log-artifacts
   artifact-subscriptions: []
 
-# TODO: VFS-13556 Uncomment after fixing the persistency tutorial
-# Persistency:
+# TODO: VFS-13556 Uncomment after fixing the persistence tutorial
+# Persistence:
 #   key: PERSIST
 #   other: *common-opts
 #   tasks:
@@ -201,7 +201,7 @@ Python access:
 #   - script:
 #       <<: *run-demo-mode-test
 #       scripts:
-#       - make test_demo_mode SCENARIO=test_persistency RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+#       - make test_demo_mode SCENARIO=test_persistence RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
 #   final-tasks: *final-tasks
 #   requirements: *requirements
 #   artifacts: *command-log-artifacts
