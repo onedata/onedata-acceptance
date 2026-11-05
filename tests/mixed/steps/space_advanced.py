@@ -74,7 +74,7 @@ def create_n_spaces_with_shares(
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
     for i in range(int(number)):
-        space_name = f"{name_prefix}{i}"
+        space_name = f"{name_prefix}{i:03d}"
         space_id = _create_space(
             zone_hostname,
             owner.username,
