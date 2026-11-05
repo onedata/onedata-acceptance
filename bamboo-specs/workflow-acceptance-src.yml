@@ -1,11 +1,11 @@
 version: 2
 plan:
-  project-key: VFS
+  project-key: AT
   key: WS
   name: workflow acceptance src
   description: Workflow, automation and ATM acceptance tests using an environment deployed from sources.
 variables:
-  quarantineSourcePlan: VFS-WS
+  quarantineSourcePlan: AT-WS
   quarantineSourceBranch: develop
 repositories:
   - onedata-acceptance:

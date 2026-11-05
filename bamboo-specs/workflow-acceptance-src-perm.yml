@@ -1,6 +1,6 @@
 version: 2
 plan:
-  key: VFS-WS
+  key: AT-WS
 plan-permissions:
   - users:
       - plgjliput

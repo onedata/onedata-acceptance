@@ -1,6 +1,6 @@
 version: 2
 plan:
-  key: ODSRV-WP
+  key: AT-WP
 plan-permissions:
   - users:
       - plgjliput
