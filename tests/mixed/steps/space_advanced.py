@@ -37,8 +37,8 @@ def create_n_spaces_without_support(
     zone_hostname = hosts[zone_host]["hostname"]
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
-    for i in range(int(number)):
-        space_name = f"{name_prefix}{i}"
+    for index in range(int(number)):
+        space_name = f"{name_prefix}{index:03d}"
         space_id = _create_space(
             zone_hostname,
             owner.username,

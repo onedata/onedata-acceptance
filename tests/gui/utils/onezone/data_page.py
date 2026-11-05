@@ -4,12 +4,19 @@ __author__ = "Michal Stanisz, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import math
 import re
 
-from selenium.webdriver import ActionChains
+from selenium.common.exceptions import (
+    StaleElementReferenceException,
+)
+from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
+from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -248,6 +255,87 @@ class DataPage(SidebarPanelPage):
         ".sidebar-spaces li.one-list-item.clickable.resource-item .item-header:not(.truncate)",
         cls=SpaceHeader,
     )
+    sidebar_element = WebElement(".sidebar-spaces .two-level-sidebar", scroll=False)
+
+    def scroll_to_top(self) -> None:
+        self.driver.execute_script(
+            "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
+        )
+
+        def is_top_window_loaded(_: WebDriver) -> bool:
+            visible_headers = self.get_visible_spaces_list()
+            return bool(visible_headers and visible_headers[0].name)
+
+        WebDriverWait(
+            self.driver,
+            WAIT_FRONTEND,
+            ignored_exceptions=(StaleElementReferenceException,),
+        ).until(is_top_window_loaded)
+
+    def scroll_by_down_arrow(self) -> None:
+        ActionChains(self.driver).move_to_element(self.sidebar_element).send_keys(
+            Keys.ARROW_DOWN
+        ).perform()
+
+    def get_space_header_by_index(self, index: int, first_scroll: bool = True) -> SpaceHeader:
+        if first_scroll:
+            first_scroll_window = (23, 38)
+            second_scroll_window = (33, 48)
+            next_scroll_shift = 9
+        else:
+            first_scroll_window = (8, 23)
+            second_scroll_window = (17, 32)
+            next_scroll_shift = 9
+
+        self.scroll_to_top()
+        loaded_headers = self.get_visible_spaces_list()
+
+        if index < len(loaded_headers):
+            return loaded_headers[index]
+        if index <= first_scroll_window[1]:
+            number_of_scrolls = 1
+        elif index <= second_scroll_window[1]:
+            number_of_scrolls = 2
+        else:
+            number_of_scrolls = 2 + math.ceil((index - second_scroll_window[1]) / next_scroll_shift)
+
+        selector = ".sidebar-spaces .two-level-sidebar .data-row:nth-of-type(26)"
+
+        def get_space_header() -> SpaceHeader:
+            return SpaceHeader(
+                self.driver,
+                self.web_elem.find_element(By.CSS_SELECTOR, selector),
+            )
+
+        def create_selector_scroll_and_get_header(prev_val: str) -> SpaceHeader:
+            scroll_to_css_selector(self.driver, selector)
+
+            def get_changed_header(_: WebDriver) -> SpaceHeader | bool:
+                header = get_space_header()
+                return header if header.name and header.name != prev_val else False
+
+            return WebDriverWait(
+                self.driver,
+                WAIT_FRONTEND,
+                ignored_exceptions=(StaleElementReferenceException,),
+            ).until(get_changed_header)
+
+        prev_name = get_space_header().name
+        for _ in range(number_of_scrolls):
+            space_header = create_selector_scroll_and_get_header(prev_name)
+            name = space_header.name
+            prev_name = name
+
+        if number_of_scrolls == 1:
+            window_start = first_scroll_window[0]
+        elif number_of_scrolls == 2:  # ruff: ignore[magic-value-comparison]
+            window_start = second_scroll_window[0]
+        else:
+            window_start = second_scroll_window[0] + (number_of_scrolls - 2) * next_scroll_shift
+        local_index = index - window_start
+
+        headers = self.get_visible_spaces_list()
+        return headers[local_index]
 
     spaces_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space

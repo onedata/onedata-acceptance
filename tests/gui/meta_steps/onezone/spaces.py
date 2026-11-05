@@ -531,32 +531,31 @@ def copy_command_from_rest_api_modal(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} opens "{space_name}" space on the spaces list in the sidebar'
+        'user of {browser_id} opens "{space_name}" space on the lexicographically sorted list of {number} spaces in the sidebar'
     )
 )
-def open_space_in_spaces_list(selenium: SeleniumDrivers, browser_id: str, space_name: str) -> None:
+def open_space_in_spaces_list(
+    selenium: SeleniumDrivers, browser_id: str, number: int, space_name: str
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data
-    seen_spaces = set()
-    stop_scrolling_flag = False
-    while not stop_scrolling_flag:
-        new_spaces = get_visible_items_list(
-            page, items_type=ListElement.SPACES_HEADERS, main_field="name"
-        )
-        currently_seen_names = [new_space.name for new_space in new_spaces]
+    bottom_idx, top_idx = 0, number - 1
+    is_first_scroll = True
 
-        if space_name in currently_seen_names:
-            space = [space for space in new_spaces if space.name == space_name][0]
-            driver.execute_script(
-                "arguments[0].scrollIntoView();",
-                space.web_elem,
-            )
-            space.click()
+    while bottom_idx <= top_idx:
+        mid_idx = (bottom_idx + top_idx) // 2
+        mid_space_header = page.get_space_header_by_index(mid_idx, is_first_scroll)
+        mid_space_header_name = mid_space_header.name
+
+        if mid_space_header_name == space_name:
+            driver.execute_script("arguments[0].scrollIntoView();", mid_space_header.web_elem)
+            mid_space_header.click()
             return
-
-        stop_scrolling_flag = not any(el not in seen_spaces for el in currently_seen_names)
-        seen_spaces.update(currently_seen_names)
-        driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1].web_elem)
+        if space_name.casefold() < mid_space_header_name.casefold():
+            top_idx = mid_idx - 1
+        else:
+            bottom_idx = mid_idx + 1
+        is_first_scroll = False
 
     raise AssertionError(f"did not manage to open space {space_name}")
 
