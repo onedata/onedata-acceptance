@@ -1,0 +1,26 @@
+# Name of the scenario to run
+scenario: "scenario-1oz-3op"
+
+spaces: false
+
+onezone:
+  batchConfig:
+    createUsers: false
+  workerOverlayConfig: |-
+    [
+      {ctool, [
+        {provider_sync_progress_desync_threshold_seconds, 5}
+      ]}
+    ].
+
+oneprovider-1:
+  batchConfig:
+    createUsers: false
+
+oneprovider-2:
+  batchConfig:
+    createUsers: false
+
+oneprovider-3:
+  batchConfig:
+    createUsers: false

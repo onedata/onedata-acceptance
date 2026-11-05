@@ -1,0 +1,214 @@
+TEST_RUN := ./test_run.py
+
+ifdef ENV_FILE
+TEST_RUN := $(TEST_RUN) --env-file $(ENV_FILE)
+endif
+
+GIT_URL := $(shell git config --get remote.origin.url | sed -e 's/\(\/[^/]*\)$$//g')
+GIT_URL := $(shell if [ "${GIT_URL}" = "file:/" ]; then echo 'ssh://git@git.plgrid.pl:7999/vfs'; else echo ${GIT_URL}; fi)
+ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL}; else echo ${ONEDATA_GIT_URL}; fi)
+export ONEDATA_GIT_URL
+
+# TODO: VFS-12424 Try latest Chrome (newer than 128.0.6613.86) with fix from this issue
+ACCEPTANCE_TEST_IMAGE := onedata/acceptance_tests:v3.131
+
+unpack = tar xzf $(1).tar.gz
+
+##
+## Artifacts
+##
+
+artifact: artifact_op_worker artifact_oz_worker artifact_cluster_manager artifact_onepanel artifact_onezone artifact_onedata
+
+artifact_op_worker:
+	$(call unpack, op_worker)
+
+artifact_oz_worker:
+	$(call unpack, oz_worker)
+
+artifact_cluster_manager:
+	$(call unpack, cluster_manager)
+
+artifact_onepanel:
+	$(call unpack, onepanel)
+
+artifact_onezone:
+	$(call unpack, onezone)
+
+artifact_onedata:
+	$(call unpack, onedata)
+
+artifact_oneclient:
+	$(call unpack, oneclient)
+
+artifact_luma_docker_build:
+	$(call unpack, luma_docker_build)
+
+artifact_rest_cli_docker_build:
+	$(call unpack, rest_cli_docker_build)
+
+artifact_oneclient_docker_build:
+	$(call unpack, oneclient_docker_build)
+
+##
+## Submodules
+##
+
+branch = $(shell git rev-parse --abbrev-ref HEAD)
+submodules:
+	git submodule init ${submodule}
+	git submodule update --init --recursive ${submodule}
+
+checkout_getting_started:
+	git submodule init getting_started
+	git submodule update --remote getting_started
+
+##
+## Test
+##
+
+RECORDING_OPTION            ?= failed
+BROWSER                     ?= Chrome
+TIMEOUT			            ?= 600
+COUNT                       ?= 1
+RERUNS                      ?= 1
+LOCAL_CHARTS_PATH           ?= ""
+PULL_ONLY_MISSING_IMAGES    ?= ""
+FILE_MODE                   ?= regular
+MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
+
+ifdef bamboo_GUI_PKG_VERIFICATION
+    GUI_PKG_VERIFICATION = --gui-pkg-verification
+endif
+
+# TODO VFS-9779 - reorganize test targets after introducing bamboo specs
+.PHONY: test_gui test_gui_pkg test_gui_src
+.PHONY: test_mixed test_mixed_pkg test_mixed_src
+.PHONY: test_oneclient test_oneclient_pkg test_oneclient_src
+.PHONY: test_performance test_performance_pkg test_performance_src
+.PHONY: test_upgrade_pkg test_upgrade_src
+.PHONY: format format-check static-analysis type-check
+
+test_gui:
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	-k=${KEYWORDS} --timeout ${TIMEOUT} --reruns ${RERUNS} --count ${COUNT} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
+
+test_gui_pkg: test_gui
+test_gui_src: SOURCES = --sources
+test_gui_src: test_gui
+
+test_mixed:
+	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	 -k=${KEYWORDS} --count ${COUNT} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
+
+test_mixed_pkg: test_mixed
+test_mixed_src: SOURCES = --sources
+test_mixed_src: test_mixed
+
+test_oneclient:
+	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_TEST_IMAGE} -k=${KEYWORDS} \
+	 --count ${COUNT} --timeout ${TIMEOUT} --file-mode ${FILE_MODE} ${SOURCES} ${OPTS}
+
+test_oneclient_pkg: test_oneclient
+test_oneclient_src: SOURCES = --sources
+test_oneclient_src: test_oneclient
+
+test_performance:
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image ${ACCEPTANCE_TEST_IMAGE} -k=${KEYWORDS} ${SOURCES} ${OPTS}
+
+test_performance_pkg: test_performance
+test_performance_src: SOURCES = --sources
+test_performance_src: test_performance
+
+test_upgrade_pkg:
+	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_TEST_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/pkg/"${CONFIG_FILE}".yaml
+test_upgrade_src:
+	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_TEST_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/src/"${CONFIG_FILE}".yaml
+
+
+##
+## Build python REST clients generated from swaggers. (used in mixed tests)
+##
+
+build_swaggers:
+	cd onezone_swagger && make python-client && cd generated/python && mv onezone_client ${MIXED_TESTS_ROOT}
+	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ${MIXED_TESTS_ROOT}
+	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ${MIXED_TESTS_ROOT}
+	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ${MIXED_TESTS_ROOT}
+
+##
+## Clean
+##
+
+clean: clean_swaggers
+
+clean_swaggers:
+	cd onezone_swagger && make clean
+	cd onepanel_swagger && make clean
+	cd oneprovider_swagger && make clean
+	cd cdmi_swagger && make clean
+	rm -rf ${MIXED_TESTS_ROOT}/onezone_client
+	rm -rf ${MIXED_TESTS_ROOT}/onepanel_client
+	rm -rf ${MIXED_TESTS_ROOT}/oneprovider_client
+	rm -rf ${MIXED_TESTS_ROOT}/cdmi_client
+
+codetag-tracker:
+	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
+
+
+##
+## Formatting
+##
+
+STATIC_ANALYSER_IMAGE := docker.onedata.org/python_static_analyser:v14
+PYTHON_CONFIG := pyproject.toml
+UID := $(shell id -u)
+GID := $(shell id -g)
+
+define docker_run
+	docker run --rm -i -v $(CURDIR):$(CURDIR) -w $(CURDIR) -u $(UID):$(GID) $(STATIC_ANALYSER_IMAGE) $1
+endef
+
+
+ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/constants.py tests/gui/__init__.py tests/__init__.py \
+ tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
+ tests/performance/__init__.py tests/performance/type_definitions.py tests/performance/test_*.py \
+ tests/oneclient/steps tests/oneclient/__init__.py tests/utils tests/upgrade
+ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py \
+ tests/oneclient/conftest.py tests/performance/conftest.py
+ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios
+
+
+format:
+	# Select Ruff's "I" (isort) rules to sort imports before formatting.
+	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache --select I --fix $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
+	$(docker_run) ruff format --config $(PYTHON_CONFIG) --no-cache $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
+
+
+format-check:
+	# Check import sorting using Ruff's "I" (isort) rules.
+	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache --select I $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
+	$(docker_run) ruff format --config $(PYTHON_CONFIG) --no-cache --check $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES) || \
+	 (echo "Code failed Ruff format checking. Please run 'make format' before committing your changes. "; exit 1)
+
+
+##
+## Static analysis
+##
+
+static-analysis:
+	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache $(ALL_FILES)
+	$(docker_run) ruff check --config $(PYTHON_CONFIG) --no-cache \
+	--ignore=ARG,PLC0415,SLF001 $(ALL_CONFTEST_FILES)
+
+# Rules ignored for conftest files:
+# - ARG (unused arguments): pytest and pytest-bdd require fixed fixture and hook
+#   signatures even when some injected arguments are unused.
+# - PLC0415 (import outside top level): GUI fixtures defer imports to avoid
+#   circular dependencies and keep platform-specific setup local.
+# - SLF001 (private member access): WebDriver instances are deliberately stored
+#   in pytest's private node state under `_driver` for sharing between fixtures
+#   and hooks.
+
+type-check:
+	$(docker_run) mypy $(ALL_FILES) $(ALL_CONFTEST_FILES) --config-file=$(PYTHON_CONFIG)

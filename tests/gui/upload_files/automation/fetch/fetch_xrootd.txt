@@ -1,0 +1,1 @@
+root://eospublic.cern.ch//eos/opendata/alice/LHC10c_pp_ESD_120076.json 279769 data/data/LHC10c_pp_ESD_120076.json

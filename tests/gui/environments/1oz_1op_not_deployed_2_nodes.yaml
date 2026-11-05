@@ -1,0 +1,28 @@
+# Name of the scenario to run
+scenario: "scenario-1oz-1op"
+
+spaces: false
+
+onezone:
+  batchConfig: false
+  workerOverlayConfig: |-
+    [
+      {oz_worker, [
+        {gui_package_verification, false},
+        {gui_debug_mode, true}
+      ]}
+    ].
+  panelOverlayConfig: |-
+    [
+      {onepanel, [
+        {gui_debug_mode, true}
+      ]}
+    ].
+
+oneprovider-1:
+  batchConfig: false
+  clusterConfig:
+    managers: [node-1]
+    workers: [node-2]
+    databases: [node-1]
+  addTestDomain: true

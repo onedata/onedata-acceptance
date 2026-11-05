@@ -1,0 +1,404 @@
+"""This module contains meta steps for operations on automation page concerning
+lambda creation in Onezone using web GUI
+"""
+
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+import contextlib
+import json
+import os
+import time
+from typing import cast
+
+import yaml
+from _pytest._py.path import LocalPath
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+)
+
+from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
+from tests.gui.steps.onezone.automation.automation_basic import (
+    assert_lambda_exists,
+    click_on_lambda_menu,
+    click_on_popup_in_lambda_menu,
+    click_option_in_revision_menu_button,
+    go_to_inventory_subpage,
+    has_downloaded_workflow_file_content,
+    try_to_close_workflow_creation_popup,
+    upload_lambda_from_repository,
+)
+from tests.gui.steps.onezone.automation.workflow_creation import (
+    click_add_new_button_in_menu_bar,
+    click_add_parameter_button_in_lambda_form,
+    confirm_lambda_creation_or_edition,
+    enter_parameter_name_in_lambda_form,
+    select_parameter_type_in_lambda_form,
+    switch_toggle_in_lambda_form,
+    write_text_into_lambda_form,
+)
+from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.core import scroll_to_css_selector
+from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.generic import transform, upload_lambda_path
+from tests.type_definitions import JsonObject, SeleniumDrivers
+from tests.utils.acceptance_utils import get_lambda_dump
+from tests.utils.bdd_utils import parsers, wt
+
+ALL_LAMBDA_NAMES: list[str] = []
+ORDINAL_SUFFIXES = "tsnrhtdd"
+ORDINAL_SUFFIX_COUNT = 4
+
+
+@wt(parsers.parse("user of {browser_id} creates lambda with following configuration:\n{config}"))
+def create_lambda_manually(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
+    """Create lambda according to given config.
+
+    Config format given in yaml is as follows:
+        name: lambda_name
+        docker image: docker image
+        mount space: True/False                 ---> optional
+        read-only: True/False                   ---> optional
+        arguments:
+          - name: argument_name
+            type: argument_type
+          - name: 2nd_argument_name             ---> optional
+            type: 2nd_argument_type
+        results:                                ---> optional
+          - name: result_name
+            type: result_type
+
+
+    Example configuration:
+
+        name: "checksum-counting-oneclient"
+        docker image: "docker.onedata.org/checksum-counting-oneclient:v8"
+        read-only: False
+        arguments:
+          - name: "file"
+            type: File
+          - name: "metadata_key"
+            type: String
+          - name: "algorithm"
+            type: String
+        results:
+          - name: "result"
+            type: Object
+    """
+    _create_lambda_manually(browser_id, config, selenium)
+
+
+def _create_lambda_manually(browser_id: str, config: str, selenium: SeleniumDrivers) -> None:
+    data = cast(JsonObject, yaml.load(config, yaml.Loader))
+    _fill_lambda_basic_fields(selenium, browser_id, data)
+    _add_lambda_parameters(
+        selenium,
+        browser_id,
+        cast(list[JsonObject], data.get("configuration parameters", [])),
+        "configuration parameters",
+    )
+    _add_lambda_parameters(
+        selenium,
+        browser_id,
+        cast(list[JsonObject], data.get("arguments", [])),
+        "argument",
+    )
+    _add_lambda_parameters(
+        selenium,
+        browser_id,
+        cast(list[JsonObject], data.get("results", [])),
+        "result",
+    )
+    confirm_lambda_creation_or_edition(selenium, browser_id, "lambda")
+
+
+def _fill_lambda_basic_fields(selenium: SeleniumDrivers, browser_id: str, data: JsonObject) -> None:
+    click_add_new_button_in_menu_bar(selenium, browser_id, "Add new lambda")
+    write_text_into_lambda_form(selenium, browser_id, cast(str, data["name"]), "lambda name")
+    write_text_into_lambda_form(
+        selenium, browser_id, cast(str, data["docker image"]), "docker image"
+    )
+    read_only_option = "checks" if data.get("read-only", True) else "unchecks"
+    mount_space_option = "checks" if data.get("mount space", True) else "unchecks"
+    switch_toggle_in_lambda_form(selenium, browser_id, read_only_option, "Read only")
+    switch_toggle_in_lambda_form(selenium, browser_id, mount_space_option, "Mount space")
+
+
+def _add_lambda_parameters(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    parameters: list[JsonObject],
+    parameter_option: str,
+) -> None:
+    for index, parameter in enumerate(parameters, start=1):
+        add_parameter_into_lambda_form(
+            selenium,
+            browser_id,
+            parameter_option,
+            cast(str, parameter["name"]),
+            cast(str, parameter["type"]),
+            _ordinal(index),
+        )
+
+
+def _ordinal(number: int) -> str:
+    suffix_index = (number // 10 % 10 != 1) * (number % 10 < ORDINAL_SUFFIX_COUNT) * number % 10
+    return f"{number}{ORDINAL_SUFFIXES[suffix_index::ORDINAL_SUFFIX_COUNT]}"
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} creates "{lambda_name}" lambda from '
+        '"{docker_image}" docker image in "{inventory}" inventory'
+    )
+)
+def create_lambda_using_gui(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    lambda_name: str,
+    docker_image: str,
+    inventory: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
+    go_to_inventory_subpage(selenium, browser_id, inventory, "lambdas", tmp_memory)
+    click_add_new_button_in_menu_bar(selenium, browser_id, "Add new lambda")
+    write_text_into_lambda_form(selenium, browser_id, lambda_name, "lambda name")
+    write_text_into_lambda_form(selenium, browser_id, docker_image, "docker image")
+
+    confirm_lambda_creation_or_edition(selenium, browser_id, "lambda")
+
+    go_to_inventory_subpage(selenium, browser_id, inventory, "lambdas", tmp_memory)
+
+    assert_lambda_exists(selenium, browser_id, lambda_name)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) changes (?P<ordinal>|1st |2nd |3rd "
+        r"|4th )(?P<option>argument|result|configuration parameters) "
+        r'named "(?P<name>.*)" to be "(?P<param_type>.*)" type'
+    )
+)
+def change_parameter_type_in_lambda_form(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    param_type: str,
+    ordinal: str,
+) -> None:
+    driver = selenium[browser_id]
+    param_type = param_type.lower()
+    page = OZLoggedIn(driver).automation.lambdas_page.form
+    subpage = getattr(page, transform(option))
+
+    ordinal = ordinal if ordinal else "1st"
+    bracket_name = "bracket_" + ordinal.strip()
+    object_bracket = getattr(subpage, bracket_name)
+    css_selector = "#" + object_bracket.name.web_elem.get_attribute("id")
+
+    try_to_close_workflow_creation_popup(driver)
+
+    scroll_to_css_selector(driver, css_selector)
+
+    split_type = param_type.replace(")", "").split(" (")
+    new_type = split_type[0] if "array" in param_type else param_type
+
+    # TODO VFS-12315 remove sleep in acc tests
+    time.sleep(1)
+    object_bracket.remove_element()
+    object_bracket.type_dropdown.click()
+
+    Popups(driver).power_select.choose_item(new_type)
+
+    if "array" in param_type:
+        object_bracket.type_dropdown.click()
+        Popups(driver).power_select.choose_item(split_type[1])
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) adds "
+        r"(?P<ordinal>|1st |2nd |3rd |4th )(?P<option>argument|result"
+        r'|configuration parameters) named "(?P<name>.*)" '
+        r'of "(?P<param_type>.*)" type'
+    )
+)
+def add_parameter_into_lambda_form(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    name: str,
+    param_type: str,
+    ordinal: str,
+) -> None:
+    click_add_parameter_button_in_lambda_form(selenium, browser_id, option)
+    enter_parameter_name_in_lambda_form(selenium, browser_id, option, ordinal, name)
+    select_parameter_type_in_lambda_form(selenium, browser_id, option, ordinal, param_type)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) modifies "
+        r"(?P<ordinal>|1st |2nd |3rd |4th )argument named "
+        r'"(?P<name>.*)" by:\n(?P<config>(.|\s)*)'
+    )
+)
+def modify_parameter_in_lambda_form(
+    selenium: SeleniumDrivers, browser_id: str, ordinal: str, config: str
+) -> None:
+    driver = selenium[browser_id]
+    page = OZLoggedIn(driver).automation.lambdas_page.form
+    data = yaml.load(config, yaml.Loader)
+    subpage = page.argument
+    ordinal = ordinal if ordinal else "1st"
+    bracket_name = "bracket_" + ordinal.strip()
+    object_bracket = getattr(subpage, bracket_name)
+    object_bracket.settings()
+    setts = object_bracket.parameter_settings
+    for item in data:
+        [(arg, val)] = item.items()
+        if arg == "File type":
+            setts.file_type()
+            Popups(driver).power_select.choose_item(val)
+        if arg == "Carried file attributes":
+            # remove default file attributes
+            for attribute in setts.attributes:
+                attribute.x()
+            setts.carried_file_attrs()
+            for el in val:
+                try:
+                    Popups(driver).options_selector.choose_option(transform(el))
+                except (
+                    ElementNotInteractableException,
+                    NoSuchElementException,
+                    PageObjectNotFoundError,
+                ):
+                    time.sleep(1)
+                    Popups(driver).options_selector.choose_option(transform(el))
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} uploads all lambda dumps from "
+        'automation-examples repository to "{inventory}" inventory'
+    )
+)
+def upload_all_lambda_dumps_from_automation_examples(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    ALL_LAMBDA_NAMES.clear()
+    ALL_LAMBDA_NAMES.extend(
+        f for f in os.listdir(upload_lambda_path(None)) if os.path.isdir(upload_lambda_path(f))
+    )
+    for lambda_name in ALL_LAMBDA_NAMES:
+        _upload_lambda_dump_from_automation_examples(
+            selenium,
+            browser_id,
+            inventory,
+            lambda_name,
+            tmp_memory,
+        )
+
+
+def _upload_lambda_dump_from_automation_examples(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    inventory: str,
+    lambda_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    subpage = "lambdas"
+    modal = "Upload workflow"
+    button = "Apply"
+
+    upload_lambda_from_repository(selenium, browser_id, lambda_name)
+    click_modal_button(selenium, browser_id, button, modal)
+    # hide lambda revision page
+    go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} downloads and removes each lambda from "{inventory}" inventory'
+    )
+)
+def download_and_remove_all_lambda_dumps_from_inventory(
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
+) -> None:
+    for lamda_name in sorted(ALL_LAMBDA_NAMES):
+        visible_lambda_name = get_lambda_dump(lamda_name)["revision"]["atmLambdaRevision"]["_data"][
+            "name"
+        ]
+        download_and_remove_lambda_dump_from_inventory(
+            selenium,
+            browser_id,
+            tmp_memory,
+            visible_lambda_name,
+        )
+
+
+def download_and_remove_lambda_dump_from_inventory(
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory, lambda_name: str
+) -> None:
+    option = "Download (json)"
+    option_unlink = "Unlink"
+    page_name = "lambda"
+    modal = "Unlink lambda"
+    driver = selenium[browser_id]
+
+    click_option_in_revision_menu_button(
+        selenium,
+        browser_id,
+        option,
+        lambda_name,
+        page_name,
+    )
+
+    click_on_lambda_menu(driver, lambda_name)
+    click_on_popup_in_lambda_menu(driver, option_unlink)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal, tmp_memory)
+    click_modal_button(selenium, browser_id, option_unlink, modal)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that each newly downloaded lambda "
+        "dump has the same content as previously uploaded dump"
+    )
+)
+def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(
+    browser_id: str, tmpdir: LocalPath
+) -> None:
+    for lamda_name in ALL_LAMBDA_NAMES:
+        assert_downloaded_and_uploaded_lambda_dumps_the_same(browser_id, lamda_name, tmpdir)
+
+
+def assert_downloaded_and_uploaded_lambda_dumps_the_same(
+    browser_id: str, lambda_name: str, tmpdir: LocalPath
+) -> None:
+    uploaded_dump = get_lambda_dump(lambda_name)
+    dump_lambda_name = uploaded_dump["revision"]["atmLambdaRevision"]["_data"]["name"]
+    has_downloaded_workflow_file_content(browser_id, tmpdir, dump_lambda_name + ".json")
+
+    with open(
+        tmpdir.join(browser_id, "download", dump_lambda_name + ".json"), encoding="utf-8"
+    ) as f:
+        downloaded_dump = json.load(f)
+
+    # remove keys
+    downloaded_dump.pop("originalAtmLambdaId")
+    uploaded_dump.pop("originalAtmLambdaId")
+    with contextlib.suppress(KeyError):
+        uploaded_dump["revision"]["atmLambdaRevision"]["_data"].pop("checksum")
+    error_message = f"Lambda dumps differ, uploaded: {uploaded_dump}, downloaded: {downloaded_dump}"
+    # test may start failing, because correct order in dicts is not guaranteed
+    # in order to fix implement keys sorting
+    assert downloaded_dump == uploaded_dump, error_message

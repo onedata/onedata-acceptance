@@ -1,0 +1,150 @@
+"""Operations on files structure in data tab in Oneprovider"""
+
+__author__ = "Wojciech Szmelich"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+
+import yaml
+from _pytest._py.path import LocalPath
+
+from tests.gui.steps.oneprovider.browser import (
+    assert_num_of_files_are_displayed_in_browser,
+    assert_only_expected_items_presence_in_browser,
+    check_if_item_is_dir_in_browser,
+    click_and_press_enter_on_item_in_browser,
+)
+from tests.gui.steps.oneprovider.data_tab import (
+    go_one_back_using_breadcrumbs_in_data_tab_in_op,
+    has_downloaded_file_content,
+)
+from tests.gui.type_definitions import TmpMemory, TreeConfig
+from tests.gui.utils.generic import transform
+from tests.gui.utils.oneprovider.file_browser.file_tree_node import Node
+from tests.type_definitions import SeleniumDrivers
+from tests.utils.bdd_utils import parsers, wt
+
+
+def build_tree_config(data: TreeConfig, root_path: str = "") -> Node:
+    root = Node("root")
+    root.path = root_path
+    _build_tree_config(data, root)
+    return root
+
+
+def _build_tree_config(data: TreeConfig, parent: Node) -> None:
+    for item in data:
+        if isinstance(item, dict):
+            [(item_name, item_subtree)] = item.items()
+            node = Node(item_name)
+            node.set_parent(parent)
+            parent.nodes.append(node)
+            if isinstance(item_subtree, list):
+                _build_tree_config(item_subtree, node)
+            else:
+                node.content = item_subtree
+        else:
+            node = Node(item)
+            node.set_parent(parent)
+            parent.nodes.append(node)
+
+
+def check_tree_browser(
+    parent: Node,
+    selenium: SeleniumDrivers,
+    user: str,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    which_browser: str,
+) -> None:
+    assert_only_expected_items_presence_in_browser(
+        selenium, user, parent.get_items(), tmp_memory, which_browser
+    )
+    browser = tmp_memory[user][transform(which_browser)]
+    for child in parent.nodes:
+        if check_if_item_is_dir_in_browser(selenium, user, child.name, tmp_memory, which_browser):
+            browser.scroll_to_top()
+            click_and_press_enter_on_item_in_browser(
+                selenium,
+                user,
+                child.name,
+                tmp_memory,
+                which_browser,
+            )
+            if child.content is not None:
+                # checking only number of children
+                assert_num_of_files_are_displayed_in_browser(
+                    user, int(child.content), tmp_memory, which_browser
+                )
+            else:
+                check_tree_browser(
+                    child,
+                    selenium,
+                    user,
+                    tmp_memory,
+                    tmpdir,
+                    which_browser,
+                )
+            go_one_back_using_breadcrumbs_in_data_tab_in_op(selenium, user, which_browser)
+        elif child.content is not None:
+            click_and_press_enter_on_item_in_browser(
+                selenium,
+                user,
+                child.name,
+                tmp_memory,
+                which_browser,
+            )
+            has_downloaded_file_content(user, child.name, str(child.content), tmpdir)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>\w+) sees that the (file|item) "
+        r"structure in (?P<which_browser>.*) "
+        r"is as follow:\n(?P<config>(.|\s)*)"
+    )
+)
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>\w+) sees that the file structure "
+        r'for archive with description: "(?P<description>.*)" '
+        r"in (?P<which_browser>.*) "
+        r"is as follow:\n(?P<config>(.|\s)*)"
+    )
+)
+def wt_check_file_structure_in_browser(
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    which_browser: str,
+) -> None:
+    check_file_structure_in_browser(
+        browser_id,
+        config,
+        selenium,
+        tmp_memory,
+        tmpdir,
+        which_browser=which_browser,
+    )
+
+
+def check_file_structure_in_browser(
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    which_browser: str = "file browser",
+) -> None:
+    tree = yaml.load(config, yaml.Loader)
+    root = build_tree_config(tree)
+    check_tree_browser(
+        root,
+        selenium,
+        browser_id,
+        tmp_memory,
+        tmpdir,
+        which_browser,
+    )

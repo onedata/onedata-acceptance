@@ -1,0 +1,165 @@
+"""Steps used for common operations in Oneprovider GUI"""
+
+__author__ = "Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+
+import os
+import time
+
+import yaml
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
+from selenium.webdriver.support.expected_conditions import invisibility_of_element
+from selenium.webdriver.support.ui import WebDriverWait
+
+from tests.gui.constants import (
+    WAIT_BACKEND,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_DOWNLOAD,
+)
+from tests.gui.type_definitions import FilePath, TmpMemory
+from tests.gui.utils import OPLoggedIn
+from tests.gui.utils.generic import (
+    ELEMENTS_SEQUENCE_PATTERN,
+    parse_elements_sequence,
+    parse_url,
+)
+from tests.type_definitions import Hosts, SeleniumDrivers
+from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.utils import repeat_failed
+
+
+def _wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
+    @repeat_failed(timeout=WAIT_BACKEND)
+    def _assert_correct_url(d: WebDriver) -> None:
+        try:
+            found = parse_url(d.current_url).group("where")
+        except AttributeError as exc:
+            raise AssertionError("no access part found in url") from exc
+        if found.lower() != "opw":
+            raise AssertionError(f"expected opw as access part in url instead got: {found}")
+
+    time.sleep(12)
+    for browser_id in browser_id_list:
+        driver = selenium[browser_id]
+
+        _assert_correct_url(driver)
+
+
+@given(
+    parsers.re(
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) seen that"
+        r" Oneprovider session has started"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
+)
+def g_wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
+    _wait_for_op_session_to_start(selenium, browser_id_list)
+
+
+@wt(
+    parsers.re(
+        rf"users? of (?P<browser_id_list>{ELEMENTS_SEQUENCE_PATTERN}) sees that"
+        r" Oneprovider session has started"
+    ),
+    converters={
+        "browser_id_list": parse_elements_sequence,
+    },
+)
+def wt_wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: list[str]) -> None:
+    _wait_for_op_session_to_start(selenium, browser_id_list)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that provider name displayed in "
+        'Oneprovider page is equal to the name of "{val}" provider'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_assert_provider_name_prov_in_op(
+    selenium: SeleniumDrivers, browser_id: str, val: str, hosts: Hosts
+) -> None:
+    val = hosts[val]["name"]
+    displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
+    assert displayed_name == val, (
+        f"displayed {displayed_name} provider name in Oneprovider GUI instead of expected {val}"
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that provider name displayed in "
+        'Oneprovider page is equal to "{val}"'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_assert_provider_name_in_op(selenium: SeleniumDrivers, browser_id: str, val: str) -> None:
+    displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
+    assert displayed_name == val, (
+        f"displayed {displayed_name} provider name in Oneprovider GUI instead of expected {val}"
+    )
+
+
+@given(parsers.parse("possible exception messages appearing for workflow files:\n{config}"))
+def load_exceptions_for_input_files(tmp_memory: TmpMemory, config: str) -> None:
+    """
+    Configuration is as follows
+    - file_name:
+        - exception1
+        - exception2
+        ...
+    - file_name2:
+    ...
+    """
+
+    _load_exceptions_for_input_files(tmp_memory, config)
+
+
+def _load_exceptions_for_input_files(tmp_memory: TmpMemory, config: str) -> None:
+    data = yaml.load(config, yaml.Loader)
+    for el in data:
+        file = list(el.keys())[0]
+        exceptions = list(el.values())[0]
+        tmp_memory["exceptions"][file] = exceptions
+
+
+def wait_for_item_to_appear(item: SeleniumWebElement) -> None:
+    for _ in range(50):
+        try:
+            if item.is_displayed():
+                return
+            time.sleep(0.1)
+        except StaleElementReferenceException:
+            time.sleep(0.1)
+    raise TimeoutError(f"item {item} did not appear")
+
+
+def wait_for_item_to_disappear(
+    item: SeleniumWebElement, driver: WebDriver, timeout: float = WAIT_FRONTEND
+) -> None:
+    WebDriverWait(driver, timeout=timeout).until(
+        invisibility_of_element(item), message="Element is visible"
+    )
+
+
+@repeat_failed(timeout=WAIT_NORMAL_DOWNLOAD)
+def wait_for_file_with_unknown_name_to_download(
+    n_files_before_download: int, directory_path: FilePath
+) -> None:
+    # wait for a file to download, we don`t know the name of the file
+    # so there is a way we can check that file was downloaded
+    n_files_after_download = len(os.listdir(directory_path))
+    assert n_files_after_download > n_files_before_download, "Downloading did not start"
+    file_name = os.listdir(directory_path)[-1]
+    assert_file_download_finished(file_name)
+
+
+def assert_file_download_finished(file_name: str) -> None:
+    _, ext = os.path.splitext(file_name)
+    assert ext != ".crdownload", f"Downloading file {file_name} did not finish"

@@ -1,0 +1,16 @@
+scenario: "1oz_1op_2oc.yaml"
+
+
+oneclient:
+  oneclient-1:
+    clients:
+      client1:
+        provider: "oneprovider-1"
+        mode: proxyio
+        default timeout: 10
+  oneclient-2:
+    clients:
+      client2:
+        provider: "oneprovider-1"
+        mode: proxyio
+        default timeout: 10

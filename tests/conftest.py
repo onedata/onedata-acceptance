@@ -1,0 +1,1051 @@
+"""
+Definitions of fixtures used in acceptance tests.
+"""
+
+__author__ = "Jakub Kudzia, Michal Cwiertnia"
+__copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+import copy
+import os
+import re
+import warnings
+from collections import defaultdict
+from collections.abc import Generator
+from copy import deepcopy
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import cast
+
+import pytest
+import yaml
+from _pytest.config.argparsing import Parser
+from _pytest.python import Metafunc
+from _pytest.reports import TestReport
+from py.xml import html
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver import Chrome
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.events import EventFiringWebDriver
+from urllib3.exceptions import MaxRetryError
+
+from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
+from tests.type_definitions import (
+    EnvDesc,
+    FactoryCallable,
+    FactoryFunction,
+    FactoryParams,
+    FactoryResult,
+    HookOutcome,
+    Hosts,
+    JsonObject,
+    LogEntry,
+    PreviousEnv,
+    SeleniumFixtureState,
+    Storages,
+    TestType,
+    Tokens,
+    WebDriverConfigurator,
+    WebDriverFactory,
+    WebDriverWithAllLogs,
+    WorkflowExecutions,
+)
+from tests.utils import CLIENT_POD_LOGS_DIR, onenv_utils
+from tests.utils.bdd_utils import scenarios_to_rerun
+from tests.utils.environment_utils import clean_env, start_environment
+from tests.utils.ffmpeg_utils import RecorderManager
+from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
+from tests.utils.user_utils import User, Users
+
+html.__tagspec__.update(dict.fromkeys(("video", "source"), 1))
+VIDEO_ATTRS = {
+    "controls": "",
+    "poster": "",
+    "play-pause-on-click": "",
+    "style": (
+        "border:1px solid #e6e6e6; "
+        "float:right; height:240px; "
+        "margin-left:5px; overflow:hidden; "
+        "width:320px"
+    ),
+    "class": "visible",
+}
+
+DEFAULT_ENV_FILES: dict[TestType, str] = {
+    "gui": "1oz_1op_deployed",
+    "mixed": "1oz_1op_1oc",
+    "oneclient": "singleprovider_singleclient_proxyio",
+}
+
+REQUEST_TIMEOUT = 10
+
+# ============================================================================
+# PYTEST CONFIGURATION
+# =============================================================================
+
+
+def pytest_addoption(parser: Parser) -> None:
+    parser.addoption(
+        "--test-type",
+        action="store",
+        default="oneclient",
+        help="type of test (oneclient, env_up, packaging, gui)",
+    )
+
+    parser.addoption(
+        "--local",
+        action="store_true",
+        help="If specified tests are assumed to be stared on local machine",
+    )
+    parser.addoption(
+        "--pull-only-missing-images",
+        action="store_true",
+        help=(
+            "By default all test scenarios force pulling docker "
+            "images even if they are already present on host. "
+            "When this option is passed only missing images "
+            "will be downloaded."
+        ),
+    )
+    parser.addoption("--ignore-xfail", action="store_true", help="Ignores xfail mark")
+    parser.addoption(
+        "--env-file",
+        action="store",
+        default=None,
+        help="description of environment that will be tested",
+    )
+
+    parser.addoption("--oz-image", action="store", help="onezone imageto use in tests")
+    parser.addoption("--op-image", action="store", help="oneprovider imageto use in tests")
+    parser.addoption("--oc-image", action="store", help="oneclient imageto use in tests")
+    parser.addoption(
+        "--rest-cli-image",
+        action="store",
+        help="rest cli image to use in tests",
+    )
+    parser.addoption(
+        "--openfaas-pod-status-monitor-image",
+        action="store",
+        help="OpenFaaS pod status monitor image to use in tests",
+    )
+    parser.addoption(
+        "--openfaas-lambda-result-streamer-image",
+        action="store",
+        help="OpenFaaS lambda result streamer image to use in tests",
+    )
+    parser.addoption(
+        "--sources",
+        action="store_true",
+        help="If present run environment using sources",
+    )
+
+    parser.addoption("--timeout", action="store", help="onenv wait timeout")
+    parser.addoption(
+        "--file-mode",
+        action="store",
+        default="regular",
+        help="""Determines how files in a test are created:
+                    * regular - a file is created as standard regular file (default);
+                    * hardlink - a file is created as a hardlink to a
+                    regular file in a space, all created files are hardlinks to a different file;
+                    * symlink - a file is created as a symlink to a
+                    regular file in a space, all created files are symlinks to a different file""",
+    )
+
+    group = parser.getgroup("onedata", description="option specific to onedata tests")
+
+    group.addoption(
+        "--admin",
+        default=["admin", "password"],
+        nargs=2,
+        help="admin credentials in form: -u username password",
+        metavar=("username", "password"),
+        dest="admin",
+    )
+    group.addoption(
+        "--preserve-users",
+        action="store_true",
+        help=(
+            "If set users created in previous tests will not be "
+            "removed if their names collide with the names "
+            "of users that will be created in current test. "
+            "Instead such a test will be skipped."
+        ),
+    )
+    group.addoption(
+        "--add-test-domain",
+        action="store_true",
+        help="If set test domain is added to /etc/hosts",
+    )
+
+    onenv = parser.getgroup("onenv", description="option specific to onenv")
+    onenv.addoption("--local-charts-path", action="store", help="Path to local charts")
+    onenv.addoption(
+        "--no-clean",
+        action="store_true",
+        help="If present prevents cleaning environment created by one-env",
+    )
+    onenv.addoption(
+        "--gui-pkg-verification",
+        action="store_true",
+        help="enables verification of GUI packages",
+    )
+
+    _capture_choices = ("never", "failure", "always")
+    parser.addini(
+        "selenium_capture_debug",
+        help=f"when debug is captured {_capture_choices}",
+        default=os.getenv("SELENIUM_CAPTURE_DEBUG", "failure"),
+    )
+
+    group = parser.getgroup("selenium", "selenium")
+    group.addoption(
+        "--xvfb-recording",
+        help=(
+            "record tests (possible options: all | none | failed) "
+            "using ffmpeg and save results to <logdir>/movies/"
+        ),
+        dest="xvfb_recording",
+        choices=["all", "none", "failed"],
+        default="none",
+    )
+
+
+def pytest_generate_tests(metafunc: Metafunc) -> None:
+    if not metafunc.config.option.test_type:
+        return
+
+    test_type = metafunc.config.option.test_type
+    env_file = metafunc.config.getoption("env_file")
+
+    if test_type == "upgrade":
+        if not env_file:
+            raise pytest.UsageError("In upgrade tests --env-file option must be provided")
+
+        with open(env_file, encoding="utf-8") as f:
+            test_config = yaml.load(f, yaml.Loader)
+        scenarios = test_config["scenarios"]
+        metafunc.parametrize(
+            "env_description_file",
+            list(scenarios),
+            scope="session",
+        )
+        return
+
+    if not env_file:
+        env_file = DEFAULT_ENV_FILES.get(test_type, "1oz_1op_1oc")
+
+    metafunc.parametrize("env_description_file", [env_file], scope="session")
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    if hasattr(config, "slaveinput"):
+        return  # xdist slave
+    config.addinivalue_line(
+        "markers",
+        "capabilities(kwargs): add or change existing "
+        "capabilities. specify capabilities as keyword arguments, for example "
+        "capabilities(foo="
+        "bar"
+        ")",
+    )
+    config.addinivalue_line(
+        "markers",
+        "clean_environment: clean the environment after the test and recreate it "
+        "before a repeated test",
+    )
+
+
+def pytest_report_header(config: pytest.Config, start_path: Path) -> str:
+    driver = config.getoption("driver")
+    if driver is not None:
+        return f"driver: {driver}"
+    return "no driver"
+
+
+def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+    last_items = []
+    normal_items = []
+
+    for item in items:
+        if item.name.split("[")[0] in scenarios_to_rerun:
+            item.add_marker(pytest.mark.flaky(reruns=3, reruns_delay=1))
+
+        if item.get_closest_marker("last"):
+            last_items.append(item)
+        else:
+            normal_items.append(item)
+
+    items[:] = normal_items + last_items
+
+
+# =============================================================================
+# PYTEST FIXTURES
+# =============================================================================
+
+
+@pytest.fixture(scope="session")
+def test_config(request: pytest.FixtureRequest) -> JsonObject:
+    """Loaded yaml with test config"""
+    test_type = get_test_type(request)
+    if test_type == "upgrade":
+        with open(request.config.option.env_file, encoding="utf-8") as f:
+            return yaml.load(f, yaml.Loader)
+    return {}
+
+
+@pytest.fixture(scope="session")
+def entities_config(
+    request: pytest.FixtureRequest,
+    env_desc: EnvDesc,
+) -> JsonObject:
+    file_name = env_desc.get("entities_config")
+    if file_name is None:
+        raise ValueError("Missing entities_config in environment description")
+    config_dir_path = ENTITIES_CONFIG_DIR.get(get_test_type(request))
+    if config_dir_path is None:
+        raise ValueError(f"No config directory for test type {get_test_type(request)}")
+    config_path = os.path.join(config_dir_path, file_name)
+    with open(config_path, encoding="utf-8") as config_file:
+        return yaml.load(config_file, yaml.Loader)
+
+
+@pytest.fixture(autouse=True)
+def onepanel_credentials(
+    users: Users,
+    hosts: Hosts,
+    emergency_passphrase: str,
+) -> User:
+    creds = users["onepanel"] = User(hosts["onezone"]["hostname"], "onepanel", emergency_passphrase)
+    return creds
+
+
+@pytest.fixture(autouse=True)
+def emergency_passphrase(
+    request: pytest.FixtureRequest,
+    users: Users,
+    hosts: Hosts,
+) -> str:
+    # Autouse fixtures run before fixtures requested with mark.usefixtures.
+    if "clean_environment" in request.fixturenames:
+        request.getfixturevalue("clean_environment")
+
+    zone_pod_name = hosts["onezone"]["pod_name"]
+    zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
+    passphrase = onenv_utils.get_env_variable(zone_pod, "ONEPANEL_EMERGENCY_PASSPHRASE")
+    if passphrase is None:
+        raise ValueError("ONEPANEL_EMERGENCY_PASSPHRASE is not set")
+    return passphrase
+
+
+@pytest.fixture(autouse=True)
+def admin_credentials(
+    request: pytest.FixtureRequest,
+    users: Users,
+    hosts: Hosts,
+) -> User:
+    admin_username, admin_password = request.config.getoption("admin")
+    admin_user = users[admin_username] = User(
+        hosts["onezone"]["hostname"], admin_username, admin_password
+    )
+    return admin_user
+
+
+@pytest.fixture(scope="session")
+def users() -> Users:
+    return {}
+
+
+@pytest.fixture(scope="session")
+def browsers_to_users() -> dict[str, str]:
+    return {}
+
+
+@pytest.fixture
+def clients() -> dict[str, object]:
+    return {}
+
+
+@pytest.fixture
+def groups() -> dict[str, str]:
+    return {}
+
+
+@pytest.fixture
+def inventories() -> dict[str, str]:
+    return {}
+
+
+@pytest.fixture
+def spaces() -> dict[str, str]:
+    return {}
+
+
+@pytest.fixture
+def space_aliases() -> dict[str, dict[str, str]]:
+    return {}
+
+
+@pytest.fixture
+def storages() -> Storages:
+    return {}
+
+
+@pytest.fixture
+def harvesters() -> dict[str, str]:
+    return {}
+
+
+@pytest.fixture
+def context() -> dict[str, object]:
+    return {}
+
+
+@pytest.fixture(scope="session")
+def hosts() -> Hosts:
+    return {}
+
+
+@pytest.fixture
+def tokens() -> Tokens:
+    return {}
+
+
+@pytest.fixture
+def shares() -> dict[str, str]:
+    return {}
+
+
+@pytest.fixture
+def workflows() -> dict[str, str]:
+    return {}
+
+
+@pytest.fixture
+def workflow_executions() -> WorkflowExecutions:
+    return {}
+
+
+@pytest.fixture
+def rm_users(request: pytest.FixtureRequest) -> bool:
+    return not request.config.getoption("--preserve-users")
+
+
+@pytest.fixture
+def selenium(request: pytest.FixtureRequest) -> SeleniumFixtureState:
+    """Returns a WebDriver instance based on options and capabilities"""
+    return {"request": request}
+
+
+@pytest.fixture(scope="session")
+def session_capabilities(
+    request: pytest.FixtureRequest,
+    variables: dict[str, object],
+) -> JsonObject:
+    """Returns combined capabilities from pytest-variables and command line"""
+    capabilities = cast(JsonObject, variables.get("capabilities", {}))
+    for capability in request.config.getoption("capabilities"):
+        capabilities[capability[0]] = capability[1]
+    return capabilities
+
+
+@pytest.fixture
+def capabilities(
+    request: pytest.FixtureRequest,
+    session_capabilities: JsonObject,
+) -> JsonObject:
+    """Returns combined capabilities"""
+    capabilities = copy.deepcopy(session_capabilities)  # make a copy
+    capabilities_marker = request.node.get_closest_marker("capabilities")
+    if capabilities_marker is not None:
+        # add capabilities from the marker
+        capabilities.update(capabilities_marker.kwargs)
+    return capabilities
+
+
+# ============================================================================
+# WEBDRIVER
+# ============================================================================
+
+
+@pytest.fixture
+def driver(request: pytest.FixtureRequest) -> WebDriverFactory:
+    """Return a factory function creating WebDriver instances."""
+    driver_factory: WebDriverFactory = request.getfixturevalue("chrome_driver")
+    event_listener_path = request.config.getoption("event_listener")
+    event_listener_cls: type | None = None
+
+    if event_listener_path:
+        mod_name, class_name = event_listener_path.rsplit(".", 1)
+        mod = __import__(mod_name, fromlist=[class_name])
+        event_listener_cls = getattr(mod, class_name)
+
+    @factory
+    def _get_instance() -> WebDriver:
+        web_driver = driver_factory.get_instance()
+        if event_listener_cls and not isinstance(web_driver, EventFiringWebDriver):
+            web_driver = EventFiringWebDriver(web_driver, event_listener_cls())
+        request.node._driver = web_driver
+        request.addfinalizer(web_driver.quit)
+        return web_driver
+
+    return _get_instance
+
+
+@pytest.fixture
+def config_driver() -> WebDriverConfigurator:
+    def _configure(driver: WebDriver) -> WebDriver:
+        return driver
+
+    return _configure
+
+
+@pytest.fixture
+def chrome_driver(capabilities: JsonObject) -> WebDriverFactory:
+    """Return a factory function creating Chrome WebDriver instances."""
+
+    @factory
+    def _get_instance() -> WebDriver:
+        """Return Chrome WebDriver instance based on given options."""
+        kwargs = {}
+        if capabilities:
+            kwargs["options"] = deepcopy(capabilities["options"])
+        return ChromeWithAllLogs(**kwargs)
+
+    return _get_instance
+
+
+# The reason of using this class is gathering all logs.
+# Without it each call of get_log() returns but also removes logs,
+# so calling it before making report causes loss of logs.
+class ChromeWithAllLogs(Chrome):
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        self.all_logs: defaultdict[str, list[LogEntry]] = defaultdict(list)
+        super().__init__(*args, **kwargs)
+
+    def get_log(self, log_type: str) -> list[LogEntry]:
+        temp = super().get_log(log_type)
+        self.all_logs[log_type].extend(temp)
+        return temp
+
+    def get_all_logs(self) -> defaultdict[str, list[LogEntry]]:
+        return self.all_logs
+
+
+def factory(
+    fun: FactoryFunction[FactoryParams, FactoryResult],
+) -> FactoryCallable[FactoryParams, FactoryResult]:
+    if "get_instance" in dir(fun):
+        raise AttributeError(f'object {fun.__name__} already has "get_instance" attribute')
+    fun.get_instance = fun
+    return cast(FactoryCallable[FactoryParams, FactoryResult], fun)
+
+
+# ============================================================================
+# TEST REPORT
+# ============================================================================
+
+
+_movies: set[str] = set()
+
+
+def get_log_dir_path(
+    request: pytest.FixtureRequest,
+    env_description_abs_path: str | None = None,
+    logdir_prefix: str = "",
+) -> str:
+    test_type = get_test_type(request)
+    logdir_path = LOGDIRS[test_type]
+
+    if test_type in ["oneclient", "upgrade"]:
+        try:
+            if env_description_abs_path is None:
+                raise AttributeError
+            feature_name = request.module.__name__.split(".")[-1]
+            test_path = os.path.join(get_file_name(env_description_abs_path), feature_name)
+        except AttributeError:
+            test_path = "test"
+        logdir_path = make_logdir(logdir_path, test_path)
+    else:
+        timestamped_logdirs = os.listdir(logdir_path)
+        latest_logdir = max(timestamped_logdirs, key=extract_timestamp, default=None)
+        if latest_logdir is None:
+            raise ValueError("No log directories found")
+        logdir_path = os.path.join(logdir_path, latest_logdir)
+
+    if logdir_prefix:
+        dirpath, name = os.path.split(logdir_path)
+        logdir_path = os.path.join(dirpath, logdir_prefix + "." + name)
+    return logdir_path
+
+
+def export_logs(
+    request: pytest.FixtureRequest,
+    env_description_abs_path: str | None = None,
+    logdir_prefix: str = "",
+) -> None:
+    logdir_path = get_log_dir_path(
+        request,
+        env_description_abs_path=env_description_abs_path,
+        logdir_prefix=logdir_prefix,
+    )
+    onenv_utils.run_onenv_command(
+        "export",
+        [logdir_path, "-c", CLIENT_POD_LOGS_DIR],
+        fail_with_error=False,
+    )
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(
+    item: pytest.Item,
+    call: pytest.CallInfo[None],
+) -> Generator[None, HookOutcome, None]:
+    outcome = yield
+    report = cast(TestReport, outcome.get_result())
+    if call.when != "call":
+        return
+    request = cast(pytest.FixtureRequest, item.funcargs["request"])
+    drivers = cast(SeleniumFixtureState, request.getfixturevalue("selenium")).copy()
+    drivers.pop("request", None)
+
+    summary: list[str] = []
+    extras: list[object] = []
+    xfail = hasattr(report, "wasxfail")
+    failure = (report.skipped and xfail) or (report.failed and not xfail)
+    when = item.config.getini("selenium_capture_debug").lower()
+    capture_debug = when == "always" or (when == "failure" and failure)
+    RecorderManager(request).handle_stop_recording(report)
+    for name, driver in drivers.items():
+        if capture_debug:
+            exclude = item.config.getini("selenium_exclude_debug").lower()
+            if "url" not in exclude:
+                _gather_url(item, report, driver, summary, extras, name)
+            if "screenshot" not in exclude:
+                _gather_screenshot(item, report, driver, summary, extras, name)
+            if "html" not in exclude:
+                _gather_html(item, report, driver, summary, extras, name)
+            if "logs" not in exclude:
+                _gather_logs(item, report, driver, summary, extras, name)
+
+    _gather_movie(item, report, extras)
+    # replace report extras
+    report.extras = extras
+
+
+def _gather_url(
+    item: pytest.Item,
+    report: TestReport,
+    driver: WebDriver,
+    summary: list[str],
+    extras: list[object],
+    browser_name: str,
+) -> None:
+    try:
+        url = driver.current_url
+    except (WebDriverException, MaxRetryError, TypeError) as e:
+        summary.append(f"WARNING: Failed to gather URL: {e}")
+        return
+    pytest_html = item.config.pluginmanager.getplugin("html")
+    if pytest_html is not None:
+        # add url to the html report
+        extras.append(pytest_html.extras.url(url, f"{browser_name} URL"))
+    summary.append(f"{browser_name} URL: {url}")
+
+
+def _gather_screenshot(
+    item: pytest.Item,
+    report: TestReport,
+    driver: WebDriver,
+    summary: list[str],
+    extras: list[object],
+    browser_name: str,
+) -> None:
+    try:
+        screenshot = driver.get_screenshot_as_base64()
+    except (WebDriverException, MaxRetryError, TypeError) as e:
+        summary.append(f"WARNING: Failed to gather screenshot: {e}")
+        return
+    pytest_html = item.config.pluginmanager.getplugin("html")
+    if pytest_html is not None:
+        # add screenshot to the html report
+        extras.append(pytest_html.extras.image(screenshot, f"{browser_name} Screenshot"))
+
+
+def _gather_html(
+    item: pytest.Item,
+    report: TestReport,
+    driver: WebDriver,
+    summary: list[str],
+    extras: list[object],
+    browser_name: str,
+) -> None:
+    try:
+        html = driver.page_source
+    except (WebDriverException, MaxRetryError, TypeError) as e:
+        summary.append(f"WARNING: Failed to gather HTML: {e}")
+        return
+    pytest_html = item.config.pluginmanager.getplugin("html")
+    if pytest_html is not None:
+        # add page source to the html report
+        extras.append(pytest_html.extras.text(html, f"{browser_name} HTML"))
+
+
+def _gather_logs(
+    item: pytest.Item,
+    report: TestReport,
+    driver: WebDriver,
+    summary: list[str],
+    extras: list[object],
+    browser_name: str,
+) -> None:
+    try:
+        log_types = driver.log_types
+    except (WebDriverException, MaxRetryError, TypeError) as e:
+        # note that some drivers may not implement log types
+        summary.append(f"WARNING: Failed to gather log types: {e}")
+        return
+    for log_name in log_types:
+        try:
+            driver.get_log(log_name)
+            log = cast(WebDriverWithAllLogs, driver).get_all_logs()[log_name]
+        except (WebDriverException, MaxRetryError, TypeError) as e:
+            summary.append(f"WARNING: Failed to gather {log_name} log: {e}")
+            break
+        pytest_html = item.config.pluginmanager.getplugin("html")
+
+        if pytest_html is not None:
+            extras.append(
+                pytest_html.extras.text(format_log(log), f"{browser_name} {log_name.title()} Log")
+            )
+
+
+def _gather_movie(item: pytest.Item, report: TestReport, extras: list[object]) -> None:
+    recording = item.config.getoption("--xvfb-recording")
+    if recording == "none" or (recording == "failed" and not report.failed):
+        return
+    log_dir = os.path.dirname(item.config.option.htmlpath)
+    pytest_html = item.config.pluginmanager.getplugin("html")
+    for movie_path in getattr(item, "_movies", []):
+        src_attrs = {
+            "src": os.path.relpath(movie_path, log_dir),
+            "type": "video/mp4",
+        }
+        video_html = str(html.video(html.source(**src_attrs), **VIDEO_ATTRS))
+        # first html element added to the report section gets .hidden css sel
+        # in order to get around this, this line is added
+        extras.append(pytest_html.extras.html("<video>nothing</video>"))
+        extras.append(pytest_html.extras.html(video_html))
+
+    xvfb_rec = item.config.option.xvfb_recording
+    xfail = hasattr(report, "wasxfail")
+    failure = (report.skipped and xfail) or (report.failed and not xfail)
+    if xvfb_rec != "none":
+        movie_name = f"{item.name}.mp4"
+        if (xvfb_rec == "failed") and (movie_name not in _movies) and not failure:
+            movie_path = os.path.join(log_dir, "movies", movie_name)
+            if os.path.isfile(movie_path):
+                os.remove(movie_path)
+        else:
+            _movies.add(movie_name)
+
+
+def format_timestamp(timestamp: int) -> str:
+    return datetime.fromtimestamp(timestamp / 1000.0, UTC).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def format_log(log: list[LogEntry]) -> str:
+    formatted_logs = []
+    if len(log) == 0:
+        return "--- no logs captured ---"
+    for entry in log:
+        timestamp = format_timestamp(entry["timestamp"])
+        log_level = entry["level"]
+        message = entry["message"]
+        formatted_logs.append(f"[{timestamp}] [{log_level}] {message} \n")
+    return "\n".join(formatted_logs)
+
+
+def extract_timestamp(filename: str) -> float:
+    s = re.findall(r"\d+\.\d+$", filename)
+    return float(s[0]) if s else -1
+
+
+@pytest.fixture(autouse=True)
+def capture_all_warnings() -> Generator[list[warnings.WarningMessage], None, None]:
+    with warnings.catch_warnings(record=True, category=DeprecationWarning) as w:
+        warnings.simplefilter("always")
+        yield w
+
+        with open("warnings.log", "a", encoding="utf-8") as log_file:
+            for warning in w:
+                log_file.write(
+                    f"{warning.filename}:{warning.lineno}: {warning.category.__name__}:"
+                    f" {warning.message}\n"
+                )
+
+
+# =============================================================================
+# ENVIRONMENT
+# =============================================================================
+
+
+def _should_start_new_env(
+    env_description_abs_path: str,
+    previous_env: PreviousEnv,
+) -> bool:
+    previous_env_path = previous_env.get("env_path", "")
+    previous_env_started = previous_env.get("started", False)
+    start_env = True
+
+    # Check which environment was started last time to avoid starting
+    # the same env multiple times
+    if previous_env_path == env_description_abs_path:
+        if previous_env_started:
+            start_env = False
+        else:
+            # Since the same env failed to start last time assume
+            # problem with k8s - skip tests
+            pytest.skip("Environment error.")
+    else:
+        start_env = True
+        previous_env["env_path"] = env_description_abs_path
+
+    return start_env
+
+
+def handle_env_init_error(
+    request: pytest.FixtureRequest,
+    env_description_abs_path: str,
+    error_msg: str,
+) -> None:
+    export_logs(request, env_description_abs_path)
+    clean_env()
+    pytest.skip(error_msg)
+
+
+def start_test_env(
+    request: pytest.FixtureRequest,
+    test_type: TestType,
+    env_desc: EnvDesc,
+    hosts: Hosts,
+    users: Users,
+    env_description_abs_path: str,
+    test_config: JsonObject,
+    previous_env: PreviousEnv,
+    scenario_abs_path: str,
+) -> None:
+    patch_path = ""
+    # scenario path according to which environment is started
+    scenario_path = ""
+    if test_type in ["gui"]:
+        scenario_path = env_description_abs_path
+    elif test_type in ["oneclient", "mixed"]:
+        scenario_path = scenario_abs_path
+    elif test_type in ["performance", "upgrade"]:
+        scenario_path = scenario_abs_path
+        patch = env_desc.get("patch")
+        if patch is None:
+            raise ValueError("Missing patch in environment description")
+        patch_dir_path = PATCHES_DIR[get_test_type(request)]
+        patch_path = os.path.join(patch_dir_path, patch)
+
+    result = start_environment(scenario_path, request, hosts, patch_path, users, test_config)
+    if result != "ok":
+        previous_env["started"] = False
+        handle_env_init_error(request, env_description_abs_path, "Environment error")
+    else:
+        previous_env["started"] = True
+
+
+@pytest.fixture(scope="session")
+def env_description_abs_path(
+    request: pytest.FixtureRequest,
+    env_description_file: str,
+) -> str:
+    """
+    An env_description_file is a file which describes environment used to run
+    all tests in one test suite. That file name is passed as an argument
+    when running tests.
+    In some tests test`s types (e.g. mixed, oneclient) it only describes environment, such
+    information can be used later in tests. In those cases actual running scenario can
+    be found in that file in following section:
+     scenario: "<scenario name>".
+    That file is hold in another directory (directory within environments directory).
+    Fixture env_description_abs_path returns absolute path to env_description_file.
+    """
+    env_dir = ENV_DIRS.get(get_test_type(request))
+    return absolute_path_to_env_file(env_dir, env_description_file)
+
+
+@pytest.fixture(scope="session")
+def env_desc(env_description_abs_path: str) -> EnvDesc:
+    with open(env_description_abs_path, encoding="utf-8") as env_desc_file:
+        return yaml.load(env_desc_file, yaml.Loader)
+
+
+@pytest.fixture(scope="session")
+def previous_env() -> PreviousEnv:
+    return {}
+
+
+@pytest.fixture(scope="session", autouse=True)
+def maybe_start_env(
+    env_description_abs_path: str,
+    hosts: Hosts,
+    request: pytest.FixtureRequest,
+    env_desc: EnvDesc,
+    users: Users,
+    previous_env: PreviousEnv,
+    test_config: JsonObject,
+    scenario_abs_path: str,
+) -> None:
+    test_type = get_test_type(request)
+
+    if _should_start_new_env(env_description_abs_path, previous_env):
+        start_test_env(
+            request,
+            test_type,
+            env_desc,
+            hosts,
+            users,
+            env_description_abs_path,
+            test_config,
+            previous_env,
+            scenario_abs_path,
+        )
+
+
+def _get_repeat_progress(request: pytest.FixtureRequest) -> tuple[int, int]:
+    repeat_marker = request.node.get_closest_marker("repeat")
+    repeat_count = (
+        int(repeat_marker.args[0])
+        if repeat_marker is not None
+        else request.config.getoption("count", default=1)
+    )
+    if repeat_count <= 1:
+        return 0, 1
+
+    repeat_number = request.getfixturevalue("__pytest_repeat_step_number")
+    return cast(int, repeat_number), repeat_count
+
+
+@pytest.fixture
+def clean_environment(
+    request: pytest.FixtureRequest,
+    maybe_start_env: None,
+    env_description_abs_path: str,
+    hosts: Hosts,
+    env_desc: EnvDesc,
+    users: Users,
+    previous_env: PreviousEnv,
+    test_config: JsonObject,
+    scenario_abs_path: str,
+) -> Generator[None, None, None]:
+    """Reset the environment between deployment test repetitions."""
+    if not previous_env.get("started", False):
+        hosts.clear()
+        users.clear()
+        start_test_env(
+            request,
+            get_test_type(request),
+            env_desc,
+            hosts,
+            users,
+            env_description_abs_path,
+            test_config,
+            previous_env,
+            scenario_abs_path,
+        )
+
+    repeat_number, repeat_count = _get_repeat_progress(request)
+
+    yield
+
+    is_last_repeat = repeat_number == repeat_count - 1
+    preserve_environment = request.config.getoption("--no-clean") and is_last_repeat
+
+    if not preserve_environment:
+        export_logs(request, env_description_abs_path)
+        clean_env()
+        previous_env["started"] = False
+
+
+@pytest.fixture(scope="session")
+def scenario_abs_path(request: pytest.FixtureRequest, env_desc: EnvDesc) -> str:
+    scenario = env_desc.get("scenario")
+    if scenario is None:
+        raise ValueError("Missing scenario in environment description")
+    scenarios_dir_path = SCENARIO_DIRS[get_test_type(request)]
+    return os.path.abspath(os.path.join(scenarios_dir_path, scenario))
+
+
+# ============================================================================
+# Miscellaneous.
+# ============================================================================
+
+
+def get_test_type(request: pytest.FixtureRequest) -> TestType:
+    return cast(TestType, request.config.getoption("test_type"))
+
+
+@pytest.fixture
+def skip_by_env(request: pytest.FixtureRequest, env_description_file: str) -> None:
+    """This function skips test cases decorated with:
+    @pytest.mark.skip_env(*envs).
+    Test won't start for each env in envs.
+    If you want to skip whole module, you must define
+    global variable in that module named pytestmark in
+    the following way:
+    pytestmark = pytest.mark.skip_env(*envs)
+    """
+    if request.node.get_closest_marker("skip_env"):
+        env = get_file_name(env_description_file)
+        args = request.node.get_closest_marker("skip_env").kwargs
+        reason = args["reason"]
+        arg_envs = [get_file_name(e) for e in args["envs"]]
+        if env in arg_envs:
+            pytest.skip(f"skipped on env: {env} with reason: {reason}")
+
+
+@pytest.fixture
+def xfail_by_env(request: pytest.FixtureRequest, env_description_file: str) -> None:
+    """This function marks test cases decorated with:
+    @pytest.mark.skip_env(*envs)
+    as expected to fail:
+    Test will be marked as expected to fail for each
+    env in envs.
+    If you want to mark whole module, you must define
+    global variable in that module named pytestmark in
+    the following way:
+    pytestmark = pytest.mark.xfail_env(*envs)
+    Running tests with --ignore-xfail causes xfail marks to be ignored.
+    """
+    if request.node.get_closest_marker("xfail_env"):
+        env = get_file_name(env_description_file)
+        args = request.node.get_closest_marker("xfail_env").kwargs
+        reason = args["reason"]
+        arg_envs = [get_file_name(e) for e in args["envs"]]
+        ignore = request.config.getoption("--ignore-xfail")
+        if env in arg_envs and not ignore:
+            request.node.add_marker(
+                pytest.mark.xfail(reason=f"xfailed on env: {env} with reason: {reason}")
+            )
+
+
+def select_browser(selenium: SeleniumFixtureState, browser_id: str) -> WebDriver:
+    browser = cast(WebDriver, selenium[browser_id])
+    request = cast(pytest.FixtureRequest, selenium["request"])
+    request.node._driver = browser
+    return browser
+
+
+def split_class_and_test_names(nodeid: str) -> tuple[str, str]:
+    """Returns the class and method name from the current test"""
+    names = nodeid.split("::")
+    names[0] = names[0].replace("/", ".")
+    names = [x.replace(".py", "") for x in names if x != "()"]
+    classnames = names[:-1]
+    classname = ".".join(classnames)
+    name = names[-1]
+    return (classname, name)

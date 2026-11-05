@@ -1,0 +1,668 @@
+"""Utils to facilitate data operations in Oneprovider using REST API."""
+
+__author__ = "Michal Cwiertnia, Michal Stanisz"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+from collections.abc import Iterable, Mapping
+from datetime import datetime
+from functools import partial
+from http import HTTPStatus
+from typing import cast
+
+import pytest
+import yaml
+
+from cdmi_client import ContainerApi, DataObjectApi
+from cdmi_client.rest import ApiException as CdmiException
+from oneprovider_client import (
+    BasicFileOperationsApi,
+    FilePathResolutionApi,
+    ShareApi,
+    SpaceApi,
+)
+from oneprovider_client.rest import ApiException as OPException
+from tests import OP_REST_PORT
+from tests.gui.constants import NUMERALS
+from tests.gui.type_definitions import TmpMemory
+from tests.gui.utils import CDMIClient as cdmi
+from tests.gui.utils.generic import parse_elements_sequence
+from tests.mixed.oneprovider_client import ApiClient
+from tests.mixed.oneprovider_client.models.inline_response2015 import InlineResponse2015
+from tests.mixed.oneprovider_client.models.share import Share
+from tests.mixed.oneprovider_client.models.space import Space
+from tests.mixed.steps.rest.oneprovider.basic import (
+    HostsConfig,
+    see_item_is_dir_op_rest,
+)
+from tests.mixed.utils.common import login_to_cdmi, login_to_provider
+from tests.mixed.utils.data import (
+    Content,
+    ContentItem,
+    CreateItem,
+    assert_ace,
+    check_files_tree,
+    create_content,
+    get_acl_metadata,
+)
+from tests.type_definitions import Hosts
+from tests.utils.acceptance_utils import compare, time_attr
+from tests.utils.http_exceptions import HTTPError
+from tests.utils.rest_utils import get_provider_rest_path, http_post
+from tests.utils.user_utils import Users
+
+
+def _as_basic_users(users: Users) -> Users:
+    return users
+
+
+def _as_basic_hosts(hosts: Hosts) -> HostsConfig:
+    return cast(HostsConfig, hosts)
+
+
+def _lookup_file_id(path: str, user_client_op: ApiClient) -> str:
+    resolve_file_path_api = FilePathResolutionApi(user_client_op)
+    return resolve_file_path_api.lookup_file_id(path).file_id
+
+
+def _read_file(path: str, user: str, users: Users, provider: str, hosts: Hosts) -> str:
+    cli = login_to_cdmi(user, users, hosts[provider]["hostname"])
+    dao = DataObjectApi(cli)
+    return dao.read_data_object(path)
+
+
+def _list_files(path: str, user: str, users: Users, provider: str, hosts: Hosts) -> list[str]:
+    user_client_op = login_to_provider(user, users, hosts[provider]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_id = _lookup_file_id(path, user_client_op)
+    return [file.name for file in file_api.list_children(file_id).children]
+
+
+def assert_file_content_in_op_rest(
+    path: str, text: str, user: str, users: Users, provider: str, hosts: Hosts
+) -> None:
+    file_content = _read_file(path, user, users, provider, hosts)
+    assert_msg = f"Expected file named {path} content to be {text} but found {file_content}"
+    assert file_content == text, assert_msg
+
+
+def assert_space_content_in_op_rest(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    config: str,
+    space_name: str,
+    _spaces: Mapping[str, str],
+    host: str,
+) -> None:
+    cwd = "/" + space_name
+    ls_fun = partial(_list_files, user=user, users=users, provider=host, hosts=hosts)
+    assert_file_content_fun = partial(
+        assert_file_content_in_op_rest,
+        user=user,
+        users=users,
+        provider=host,
+        hosts=hosts,
+    )
+    is_dir_fun = partial(
+        see_item_is_dir_op_rest,
+        user=user,
+        users=_as_basic_users(users),
+        host=host,
+        hosts=_as_basic_hosts(hosts),
+    )
+    check_files_tree(config, cwd, is_dir_fun, ls_fun, assert_file_content_fun)
+
+
+def assert_num_of_files_in_path_in_op_rest(
+    num: int, path: str, user: str, users: Users, host: str, hosts: Hosts
+) -> None:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_id = _lookup_file_id(path, user_client_op)
+    children = file_api.list_children(file_id).children
+    assert_msg = f"Expected exactly {num} items in {path} but found {len(children)} items"
+    assert num == len(children), assert_msg
+
+
+def create_dir_in_op_rest(
+    user: str, users: Users, host: str, hosts: Hosts, path: str, result: str
+) -> None:
+    client = login_to_cdmi(user, users, hosts[host]["hostname"])
+
+    c_api = ContainerApi(client)
+    if result == "fails":
+        with pytest.raises(CdmiException):
+            c_api.create_container(path)
+    else:
+        c_api.create_container(path)
+
+
+def remove_dir_in_op_rest(user: str, users: Users, host: str, hosts: Hosts, path: str) -> None:
+    client = login_to_cdmi(user, users, hosts[host]["hostname"])
+
+    c_api = ContainerApi(client)
+    c_api.delete_container(path)
+
+
+def create_file_in_op_rest(
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    path: str,
+    result: str,
+    access_token: str | None = None,
+    identity_token: str | None = None,
+) -> None:
+    client = login_to_cdmi(
+        user,
+        users,
+        hosts[host]["hostname"],
+        access_token=access_token,
+        identity_token=identity_token,
+    )
+
+    do_api = DataObjectApi(client)
+    if result == "fails":
+        with pytest.raises(CdmiException):
+            do_api.create_data_object(path, "")
+    else:
+        do_api.create_data_object(path, "")
+
+
+def remove_file_in_op_rest(
+    user: str, users: Users, host: str, hosts: Hosts, path: str, result: str
+) -> None:
+    client = login_to_cdmi(user, users, hosts[host]["hostname"])
+
+    do_api = DataObjectApi(client)
+    if result == "fails":
+        with pytest.raises(CdmiException):
+            do_api.delete_data_object(path)
+    else:
+        do_api.delete_data_object(path)
+
+
+def remove_file_using_token_in_op_rest(
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    path: str,
+    result: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    access_token = cast(Mapping[str, str], tmp_memory[user]["mailbox"]).get("token")
+    client = login_to_cdmi(user, users, hosts[host]["hostname"], access_token=access_token)
+    do_api = DataObjectApi(client)
+    if result == "fails":
+        with pytest.raises(CdmiException):
+            do_api.delete_data_object(path)
+    else:
+        do_api.delete_data_object(path)
+
+
+def see_items_in_op_rest(
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    path_list: list[str],
+    result: str,
+    space: str,
+) -> None:
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(client)
+    for relative_path in path_list:
+        space_path = f"{space}/{relative_path}"
+        check_if_item_exists_or_not_exists(result, space_path, client, file_api)
+
+
+def see_item_in_op_rest_using_token(
+    user: str,
+    name: str,
+    space: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    result: str,
+) -> None:
+    path = f"{space}/{name}"
+    access_token = cast(Mapping[str, str], tmp_memory[user]["mailbox"]).get("token")
+    client = login_to_provider(user, users, hosts[host]["hostname"], access_token=access_token)
+    file_api = BasicFileOperationsApi(client)
+    check_if_item_exists_or_not_exists(result, path, client, file_api)
+
+
+def check_if_item_id_in_items(
+    path: str, client: ApiClient, file_api: BasicFileOperationsApi
+) -> None:
+    file_id = _lookup_file_id(path, client)
+    file_api.list_children(file_id)
+
+
+def check_if_item_exists_or_not_exists(
+    result: str, path: str, client: ApiClient, file_api: BasicFileOperationsApi
+) -> None:
+    if result == "fails":
+        with pytest.raises(OPException):
+            check_if_item_id_in_items(path, client, file_api)
+    else:
+        check_if_item_id_in_items(path, client, file_api)
+
+
+def create_directory_structure_in_op_rest(
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    config: str,
+    space: str,
+    request: pytest.FixtureRequest,
+) -> None:
+    items = cast(Iterable[ContentItem], yaml.load(config, yaml.Loader))
+    cwd = space
+    create_content(user, users, cwd, items, create_item_in_op_rest, host, hosts, request)
+
+
+def create_item_in_op_rest(
+    user: str,
+    users: Users,
+    cwd: str,
+    name: str,
+    content: Content,
+    create_item_fun: CreateItem,
+    host: str,
+    hosts: Hosts,
+    request: pytest.FixtureRequest,
+) -> None:
+    if name.startswith("dir"):
+        create_dir_in_op_rest(user, users, host, hosts, f"{cwd}/{name}", "")
+    else:
+        create_file_in_op_rest(user, users, host, hosts, f"{cwd}/{name}", "")
+    if not content:
+        return
+    cwd += "/" + name
+    create_content(
+        user,
+        users,
+        cwd,
+        content,
+        create_item_fun,
+        host,
+        hosts,
+        request,
+    )
+
+
+def assert_ace_in_op_rest(
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    path: str,
+    num: str,
+    privileges: str,
+    item_type: str,
+    name: str,
+) -> None:
+    client = cdmi(hosts[host]["hostname"], users[user].token)
+    ace = client.read_metadata(path)["metadata"]["cdmi_acl"][NUMERALS[num]]
+    assert_ace(parse_elements_sequence(privileges), item_type, ace, name, num, path)
+
+
+def grant_acl_privileges_in_op_rest(
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    path: str,
+    privileges: str,
+    item_type: str,
+    name: str,
+    groups: Mapping[str, str],
+) -> None:
+    client = cdmi(hosts[host]["hostname"], users[user].token)
+    try:
+        acl = client.read_metadata(path)["metadata"]["cdmi_acl"]
+    except KeyError:
+        acl = []
+    acl = get_acl_metadata(
+        acl,
+        parse_elements_sequence(privileges),
+        item_type,
+        groups,
+        name,
+        users,
+        path,
+    )
+    client.write_metadata(path, {"cdmi_acl": acl})
+
+
+def write_to_file_in_op_rest(
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    path: str,
+    text: str,
+    offset: int = 0,
+) -> None:
+    client = cdmi(hosts[host]["hostname"], users[user].token)
+    client.write_to_file(path, text, offset)
+
+
+def append_to_file_in_op_rest(
+    user: str, users: Users, host: str, hosts: Hosts, path: str, text: str
+) -> None:
+    client = cdmi(hosts[host]["hostname"], users[user].token)
+    metadata = client.read_metadata(path)["metadata"]
+    try:
+        file_size = int(metadata["cdmi_size"])
+    except KeyError as exc:
+        raise AssertionError(f"File {path} has no size metadata") from exc
+    else:
+        client.write_to_file(path, text, file_size)
+
+
+def move_item_in_op_rest(
+    src_path: str,
+    dst_path: str,
+    result: str,
+    host: str,
+    hosts: Hosts,
+    user: str,
+    users: Users,
+) -> None:
+    client = cdmi(hosts[host]["hostname"], users[user].token)
+    if result == "fails":
+        with pytest.raises(HTTPError):
+            client.move_item(src_path, dst_path)
+    else:
+        client.move_item(src_path, dst_path)
+
+
+def move_item_in_op_rest_using_token(
+    src_path: str,
+    dst_path: str,
+    result: str,
+    host: str,
+    hosts: Hosts,
+    user: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    access_token = cast(Mapping[str, str], tmp_memory[user]["mailbox"]).get("token")
+    assert access_token is not None
+    client = cdmi(hosts[host]["hostname"], access_token)
+    if result == "fails":
+        with pytest.raises(HTTPError):
+            client.move_item(src_path, dst_path)
+    else:
+        client.move_item(src_path, dst_path)
+
+
+def copy_item_in_op_rest(
+    src_path: str, dst_path: str, host: str, hosts: Hosts, user: str, users: Users
+) -> None:
+    client = cdmi(hosts[host]["hostname"], users[user].token)
+    client.copy_item(src_path, dst_path)
+
+
+def assert_posix_permissions_in_op_rest(
+    path: str, perms: str, user: str, users: Users, host: str, hosts: Hosts
+) -> None:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_id = _lookup_file_id(path, user_client_op)
+    file_attrs = file_api.get_attrs(file_id, data={"attributes": ["posix_permissions"]})
+    try:
+        file_perms = int(file_attrs.posix_permissions) % 1000
+    except KeyError as exc:
+        raise AssertionError(f"File {path} has no mode metadata") from exc
+
+    assert file_perms == int(perms), (
+        f"Expected file POSIX permissions for {path} to be {perms} but got {file_perms}"
+    )
+
+
+def set_posix_permissions_in_op_rest(
+    path: str,
+    perm: str,
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    result: str,
+) -> None:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_id = _lookup_file_id(path, user_client_op)
+
+    if result == "fails":
+        with pytest.raises(OPException):
+            file_api.set_attr(file_id, attribute={"mode": perm})
+    else:
+        file_api.set_attr(file_id, attribute={"mode": perm})
+
+
+def get_time_for_file_in_op_rest(
+    path: str, user: str, users: Users, host: str, hosts: Hosts, time_name: str
+) -> float:
+    client = cdmi(hosts[host]["hostname"], users[user].token)
+    metadata = client.read_metadata(path)["metadata"]
+    attribute = time_attr(time_name, "cdmi")
+    date_fmt = "%Y-%m-%dT%H:%M:%SZ"
+
+    try:
+        time = datetime.strptime(metadata[attribute], date_fmt)
+    except KeyError as ex:
+        raise AssertionError(f"File {path} has no {ex.args[0]} metadata") from ex
+
+    return time.timestamp()
+
+
+def compare_file_time_with_copied_time_in_op_rest(
+    path: str,
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    time_name1: str,
+    time2: float,
+    comparator: str,
+    time_name2: str,
+) -> None:
+    time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time_name1)
+    error_message = (
+        f"Time comparison failed. \nTime1: {time_name1} = {time1} \n"
+        f"Time2: {time_name2} = {time2} \nComparator: {comparator}"
+    )
+    assert compare(time1, time2, comparator), error_message
+
+
+def assert_files_time_relation_in_op_rest(
+    path: str,
+    path2: str,
+    time1_name: str,
+    time2_name: str,
+    comparator: str,
+    host: str,
+    hosts: Hosts,
+    user: str,
+    users: Users,
+) -> None:
+    time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time1_name)
+    time2 = get_time_for_file_in_op_rest(path2, user, users, host, hosts, time2_name)
+
+    error_message = (
+        f"Time comparison failed. \nTime1: {time1_name} = {time1} \n"
+        f"Time2: {time2_name} = {time2} \nComparator: {comparator}"
+    )
+
+    assert compare(time1, time2, comparator), error_message
+
+
+def assert_time_relation_in_op_rest(
+    path: str,
+    time1_name: str,
+    time2_name: str,
+    comparator: str,
+    host: str,
+    hosts: Hosts,
+    user: str,
+    users: Users,
+) -> None:
+    assert_files_time_relation_in_op_rest(
+        path,
+        path,
+        time1_name,
+        time2_name,
+        comparator,
+        host,
+        hosts,
+        user,
+        users,
+    )
+
+
+def upload_file_rest(
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    path: str,
+    file_name: str,
+    parent_id: str,
+) -> None:
+    if path == "":
+        data = None
+    else:
+        with open(path, "rb") as f:
+            data = f.read()
+    provider_hostname = hosts[host]["hostname"]
+    # standard urllib2 cannot handle streaming bytes
+    _ = http_post(
+        ip=provider_hostname,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", parent_id, f"children?name={file_name}"),
+        headers={
+            "X-Auth-Token": users[user].token,
+            "Content-Type": "application/octet-stream",
+        },
+        data=data,
+    )
+
+
+def get_space_details_rest(
+    users: Users, user: str, hosts: Hosts, host: str, space_id: str
+) -> Space:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    space_api = SpaceApi(user_client_op)
+    return space_api.get_space(space_id)
+
+
+def get_share_details_rest(
+    users: Users, user: str, hosts: Hosts, host: str, share_id: str
+) -> Share:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    share_api = ShareApi(user_client_op)
+    return share_api.get_share(share_id)
+
+
+def create_share_rest(
+    users: Users, user: str, hosts: Hosts, host: str, file_id: str, name: str
+) -> InlineResponse2015:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    share_api = ShareApi(user_client_op)
+    return share_api.create_share(data={"name": name, "rootFileId": file_id})
+
+
+def remove_file_by_id_rest(users: Users, user: str, hosts: Hosts, host: str, file_id: str) -> None:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_api.remove_file(file_id)
+
+
+def create_empty_file_in_dir_rest(
+    users: Users, user: str, hosts: Hosts, host: str, dir_id: str, name: str
+) -> None:
+    upload_file_rest(users, user, hosts, host, "", name, dir_id)
+
+
+def get_file_hardlinks_rest(
+    users: Users, user: str, hosts: Hosts, host: str, file_id: str
+) -> list[str]:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    return file_api.get_file_hardlinks(file_id)
+
+
+def get_file_symlink_value_rest(
+    users: Users, user: str, hosts: Hosts, host: str, file_id: str
+) -> str:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    return file_api.get_symlink_value(file_id)
+
+
+def check_for_hardlink_between_files_rest(
+    users: Users, user: str, hosts: Hosts, host: str, hardlink_id: str, file_id: str
+) -> bool:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    try:
+        file_api.test_for_hardlink_between_files(hardlink_id, file_id)
+        return True
+    except OPException as e:
+        if e.status != HTTPStatus.NOT_FOUND:
+            raise e
+        return False
+
+
+def create_hardlink_rest(
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    destination_dir_id: str,
+    target_id: str,
+    name: str,
+) -> None:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_api.create_file(
+        id=destination_dir_id,
+        name=name,
+        type="LNK",
+        target_file_id=target_id,
+        content="example",
+    )
+    # Providing non-empty content is necessary due to Swagger issues.
+    # It is probably related to the fact that creating file with swaggers
+    # sets: header_params['Content-Type'] = ['application/octet-stream'],
+    # which only accepts non empty body.
+    # Also the given content is ignored further by backend and in GUI we
+    # can see the hardlink/symlink with empty content.
+
+
+def create_symlink_rest(
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    destination_dir_id: str,
+    target_path: str,
+    name: str,
+) -> None:
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_api.create_file(
+        id=destination_dir_id,
+        name=name,
+        type="SYMLNK",
+        target_file_path=target_path,
+        content="example",
+    )
+    # Providing content parameter for the same reason as in the function above

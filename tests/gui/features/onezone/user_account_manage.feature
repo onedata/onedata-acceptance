@@ -1,0 +1,63 @@
+Feature: Onezone account manage page
+
+
+  Background:
+    Given initial users configuration in "onezone" Onezone service:
+            - user1
+    And user opened browser window
+    And user of browser opened onezone page
+    And user of browser logged as user1 to Onezone service
+
+
+  Scenario: User successfully changes username in Profile page
+    When user of browser changes user1 username to new_username
+    Then user of browser sees that the user's name displayed in Profile page is "new_username"
+    And user of browser logs out from Onezone page
+
+    # fail to log in with old username
+    And user of browser types "user1" to Username input in Onezone login form
+    And user of browser types password of "user1" to Password input in Onezone login form
+    And user of browser fails to sign in Onezone due to invalid credentials
+
+    # successfully log in with new username
+    And user of browser types "new_username" to Username input in Onezone login form
+    And user of browser types password of "user1" to Password input in Onezone login form
+    And user of browser successfully signs in to Onezone
+
+
+ Scenario: User successfully changes password in Profile page
+    When user of browser changes user1 password to new_password
+    And user of browser logs out from Onezone page
+
+    # fail to log in with old password
+    And user of browser types "user1" to Username input in Onezone login form
+    And user of browser types "password" to Password input in Onezone login form
+    Then user of browser fails to sign in Onezone due to invalid credentials
+
+    # successfully log in with new password
+    And user of browser types "user1" to Username input in Onezone login form
+    And user of browser types "new_password" to Password input in Onezone login form
+    And user of browser successfully signs in to Onezone
+
+
+ Scenario: User successfully logs in using new username and new password
+
+    # change username
+    When user of browser changes user1 username to new_username
+
+    # change password
+    And user of browser changes user1 password to new_password
+
+    And user of browser logs out from Onezone page
+
+    # successfully log in with new login and new password
+    And user of browser types "new_username" to Username input in Onezone login form
+    And user of browser types "new_password" to Password input in Onezone login form
+    Then user of browser successfully signs in to Onezone
+
+
+ Scenario: User sees that alias displayed in MANAGE ACCOUNT is tha same as in the USER ALIAS sidebar panel
+   When user of browser expands account settings dropdown in the sidebar
+   And user of browser clicks on Manage account item in expanded settings dropdown in the sidebar
+   Then user of browser sees that the user full name displayed in Profile page is "user1"
+   And user of browser sees "user1" alias in the sidebar panel

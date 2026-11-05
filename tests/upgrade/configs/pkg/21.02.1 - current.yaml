@@ -1,0 +1,13 @@
+scenarios:  # names of files in `environments/scenarios` directory without .yaml suffix
+  - 1op
+  - 2op
+initialVersions:
+  onezone: 21.02.1
+  oneprovider: 21.02.1
+  # NOTE: RPYC version in initial image must be compatible with RPYC version in test runner image (onedata/acceptance_mixed)
+  oneclient: 21.02.1
+targetVersions:
+  onezone: default
+  oneprovider: default
+  # NOTE: RPYC version in target image must be compatible with RPYC version in test runner image (onedata/acceptance_mixed)
+  oneclient: default

@@ -1,0 +1,69 @@
+"""Utils and fixtures to facilitate operations on Function pods activity modal."""
+
+__author__ = "Rafał Widziszewski"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+import re
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from tests.gui.utils.common.modals.modal import Modal
+from tests.gui.utils.core import scroll_to_css_selector
+from tests.gui.utils.core.base import NamedElement, PageObject
+from tests.gui.utils.core.web_elements import (
+    Button,
+    Label,
+    WebElement,
+    WebItemsSequence,
+)
+
+
+class FilterTab(NamedElement):
+    name = id = Label(".text")
+
+
+class PodsRecordStatus(PageObject):
+    pod_name = id = Label(".pod-id")
+    readiness = Label(".pod-readiness")
+    status = Label(".pod-status")
+
+
+class EventRecord(PageObject):
+    reason = id = Label(".event-reason")
+    type = Label(".event-type")
+    message = Label(".event-message")
+
+
+class PodsActivity(Modal):
+    tabs = WebItemsSequence(".pods-filter-btn-group .btn-sm", cls=FilterTab)
+
+    pods_list = WebItemsSequence(".pods-table-section .pods-table-pod-row", cls=PodsRecordStatus)
+
+    events_list = WebItemsSequence(".events-table-section .audit-log-table-entry", cls=EventRecord)
+
+    events_list_scrollbar = WebElement(".events-table-section .perfect-scrollbar-element")
+    x = Button(".close")
+
+    def __str__(self) -> str:
+        return "Function pods activity modal"
+
+    def get_css_selector(self) -> str:
+        css_selector = self.web_elem.get_attribute("class")
+        css_selector = re.sub(r"\s+", ".", css_selector.strip())
+        return "." + css_selector
+
+    def get_elem_by_data_row_id(self, number: int, driver: WebDriver, option: str) -> str:
+        selector = f'{self.get_css_selector()} [data-row-id="{number}"]'
+        elem_sel = f".event-{option}"
+        scroll_to_css_selector(driver, selector)
+        row = driver.find_elements(By.CSS_SELECTOR, selector)[0]
+        return row.find_elements(By.CSS_SELECTOR, elem_sel)[0].text
+
+    def get_number_of_data_rows(self, driver: WebDriver) -> str:
+        element = driver.find_elements(By.CSS_SELECTOR, ".audit-log-table-entry")[0]
+        number = element.get_attribute("data-row-id")
+        if number is None:
+            raise AttributeError("event row has no data-row-id")
+        return number

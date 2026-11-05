@@ -1,0 +1,22 @@
+---
+version: 2
+plan:
+  key: VFS-UP
+plan-permissions:
+- roles:
+  - logged-in
+  - anonymous
+  permissions:
+  - view
+- users:
+  - plgmstanisz
+  - plgagneska
+  - wojciech
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+  - view-configuration
+...

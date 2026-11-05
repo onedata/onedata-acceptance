@@ -1,0 +1,22 @@
+version: 2
+plan:
+  key: VFS-OAS
+plan-permissions:
+  - users:
+      - plglopiola
+      - plgmstanisz
+      - plgagneska
+      - wojciech
+    groups:
+      - plggveildev
+    permissions:
+      - view
+      - edit
+      - build
+      - clone
+      - admin
+  - roles:
+      - logged-in
+      - anonymous
+    permissions:
+      - view

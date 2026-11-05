@@ -1,0 +1,185 @@
+"""Utils and fixtures to facilitate operations on transfers in Oneprovider GUI"""
+
+__author__ = "Michal Stanisz, Michal Cwiertnia"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+from enum import Enum
+from functools import partial
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
+
+from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.web_elements import (
+    Button,
+    ButtonWithTextPageObject,
+    Icon,
+    Label,
+    WebElement,
+    WebItem,
+    WebItemsSequence,
+)
+from tests.gui.utils.core.web_objects import (
+    PageObjectNotFoundError,
+    PageObjectsSequence,
+)
+from tests.gui.utils.generic import TransferState
+from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
+
+TRANSFER_STATUS_LIST = [
+    "completed",
+    "skipped",
+    "cancelled",
+    "failed",
+    "replicating",
+    "evicting",
+    "scheduled",
+    "enqueued",
+]
+TRANSFER_TYPE_LIST = ["migration", "replication", "eviction"]
+
+
+class TransferItemType(Enum):
+    FILE = "file"
+    DIRECTORY = "directory"
+
+
+class TypeAndDestination(PageObject):
+    destination = Label(".truncated-string")
+    type_icon = Icon(".cell-type-destination")
+
+
+class TransferRecord(PageObject):
+    id = name = Label(".cell-data-name .transfer-file-name")
+    file_icon = Icon(".cell-data-name .transfer-file-icon")
+    username = Label("td:nth-of-type(2)")
+    status_icon = Icon(".cell-status")
+    menu_button = Button(".cell-actions")
+    _type_and_destination = WebItem(".transfers-table-cell-typeDestination", cls=TypeAndDestination)
+
+    @property
+    def status(self) -> str:
+        return self._get_icon_class(self.status_icon, TRANSFER_STATUS_LIST)
+
+    @property
+    def type_and_destination(self) -> str:
+        return self._get_icon_class(self._type_and_destination.type_icon, TRANSFER_TYPE_LIST)
+
+    def _get_icon_class(self, icon: SeleniumWebElement, expected_tokens: list[str]) -> str:
+        icon_classes = icon.get_attribute("class").split()
+
+        for icon_class in icon_classes:
+            if icon_class in expected_tokens:
+                return icon_class
+
+        raise ValueError(f"no transfer state matching {expected_tokens} found in {self}")
+
+    def get_chart(self) -> "TransferChart":
+        return TransferChart(
+            self.driver,
+            self.web_elem.find_element(By.XPATH, " .//following-sibling::tr"),
+            self.web_elem,
+        )
+
+    def is_expanded(self) -> bool:
+        return "expanded-row" in self.web_elem.get_attribute("class")
+
+    def expand(self) -> None:
+        self.web_elem.click()
+
+    def collapse(self) -> None:
+        if self.is_expanded():
+            self.web_elem.click()
+
+    def is_file(self) -> bool:
+        return "oneicon-browser-file" in self.file_icon.get_attribute("class")
+
+    def is_directory(self) -> bool:
+        return "oneicon-browser-directory" in self.file_icon.get_attribute("class")
+
+    def __str__(self) -> str:
+        return f"Transfer row {self.name} in {self.parent}"
+
+
+class TransferRecordHistory(TransferRecord):
+    replicated = Label(".replicated-bytes")
+    total_files = Label(".evicted-files")
+
+
+class TransferRecordActive(TransferRecord):
+    transferred = Label("td:nth-of-type(5)")
+    total_files = Label("td:nth-of-type(6)")
+
+
+class TransferChart(PageObject):
+    minute = WebItemsSequence("button.btn-default", cls=ButtonWithTextPageObject)
+    hour = WebItemsSequence("button.btn-default", cls=ButtonWithTextPageObject)
+    active = Label("button.btn-default.active")
+    # We take only last point in the chart
+    _speed = WebElement(".transfers-transfer-chart .ct-series line:last-of-type")
+
+    def get_speed(self) -> str:
+        return self._speed.get_attribute("ct:value").split(",")[1]
+
+
+class TabHeader(PageObject):
+    name = Label(".tab-label")
+
+    def click(self) -> None:
+        self.web_elem.click()
+
+
+class TransferColumnHeader(PageObject):
+    name = id = Label(".column-name")
+
+
+class _TransfersTab(PageObject):
+    providers_table = WebElement(".providers-table")
+    spaces = WebItemsSequence("ul.spaces-list li", cls=SpaceRecord)
+    tabs = WebItemsSequence(".providers-table .nav-tabs li", cls=TabHeader)
+    active_tab = WebItem(".providers-table .nav-tabs li.active", cls=TabHeader)
+    _ended_list = WebItemsSequence(".col-ended-transfers tr.data-row", cls=TransferRecordHistory)
+    _ongoing_list = WebItemsSequence(".col-ongoing-transfers tr.data-row", cls=TransferRecordActive)
+    _waiting_list = WebItemsSequence(
+        ".col-waiting-transfers tr.data-row", cls=TransferRecordHistory
+    )
+    _transfers_list_for_certain_file = WebItemsSequence(
+        ".transfers-table-container .transfer-row", cls=TransferRecord
+    )
+    configure_columns = Button(".columns-configuration-button")
+    column_headers = WebItemsSequence(
+        ".transfers-table th:not(:last-child, :first-of-type)",
+        cls=TransferColumnHeader,
+    )
+
+    @property
+    def ongoing(self) -> PageObjectsSequence:
+        self[TransferState.ONGOING].click()
+        return self._ongoing_list
+
+    @property
+    def ended(self) -> PageObjectsSequence:
+        self[TransferState.ENDED].click()
+        return self._ended_list
+
+    @property
+    def waiting(self) -> PageObjectsSequence:
+        self[TransferState.WAITING].click()
+        return self._waiting_list
+
+    @property
+    def certain_file(self) -> PageObjectsSequence:
+        return self._transfers_list_for_certain_file
+
+    def __getitem__(self, state: TransferState) -> TabHeader:
+        for tab in self.tabs:
+            if state.value in tab.name.lower():
+                return tab
+        raise PageObjectNotFoundError(f"no tab named {state.value} in transfer tab")
+
+    def get_active_tab(self) -> TransferState:
+        return TransferState(self.active_tab.name.lower())
+
+
+TransfersTab = partial(WebItem, cls=_TransfersTab)

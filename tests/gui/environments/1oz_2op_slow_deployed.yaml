@@ -1,0 +1,30 @@
+# Name of the scenario to run
+scenario: "scenario-1oz-2op"
+
+spaces: false
+
+onezone:
+  batchConfig:
+    createUsers: false
+
+oneprovider-1:
+  batchConfig:
+    createUsers: false
+  workerOverlayConfig: |-
+    [
+      {op_worker, [
+          {rtransfer_block_size, 1},
+          {file_upload_verbose_logs_enabled, true}
+      ]}
+    ].
+
+oneprovider-2:
+  batchConfig:
+    createUsers: false
+  workerOverlayConfig: |-
+    [
+      {op_worker, [
+          {rtransfer_block_size, 1},
+          {file_upload_verbose_logs_enabled, true}
+      ]}
+    ].

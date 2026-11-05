@@ -1,0 +1,18 @@
+# Name of the scenario to run
+scenario: "scenario-1oz-1op"
+
+spaces: false
+
+elasticSearch: true
+
+onezone:
+  batchConfig:
+    createUsers: false
+
+oneprovider-1:
+  batchConfig:
+    createUsers: false
+  workerOverlayConfig: |-
+    [{op_worker, [
+      {file_upload_verbose_logs_enabled, true}
+    ]}].

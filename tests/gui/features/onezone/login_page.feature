@@ -1,0 +1,21 @@
+Feature: Onezone login page
+  A site where you can login to Onezone.
+
+  Background:
+    Given initial users configuration in "onezone" Onezone service:
+            - user1
+    And user opened browser window
+    And user of browser opened onezone page
+
+
+  Scenario: Onezone login page renders with proper title
+    Then user of browser should see that the page title contains "Onezone"
+
+
+  Scenario: User successfully logins and logouts
+    When user of browser logins as "user1" without closing authentication info alert
+    And user of browser sees the "authentication succeeded" notify
+    And user of browser expands account settings dropdown in the sidebar
+    And user of browser clicks on Logout item in expanded settings dropdown in the sidebar
+    Then user of browser sees that URL matches: https?://[^/]*/ozw/onezone/i#/login
+    And user of browser should see that the page title contains "Onezone"

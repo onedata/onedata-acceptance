@@ -1,0 +1,40 @@
+groups:
+  group1:
+    owner: user1
+    users:
+      - user2
+
+users:
+  - space_owner
+  - user1
+  - user2
+
+spaces:
+  space1:
+    owner: space_owner
+    users:
+      - user1
+      - user2
+    groups:
+      - group1
+    providers:
+      - oneprovider-1:
+          storage: local-volume-1
+          size: '1000000000'
+      - oneprovider-2:
+          storage: local-volume-1
+          size: '1000000000'
+  space2:
+    owner: space_owner
+    users:
+      - user1
+      - user2
+    groups:
+      - group1
+    providers:
+      - oneprovider-1:
+          storage: local-volume-1
+          size: '1000000000'
+      - oneprovider-2:
+          storage: local-volume-1
+          size: '1000000000'

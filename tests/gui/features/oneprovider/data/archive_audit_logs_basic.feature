@@ -1,0 +1,166 @@
+Feature: Archive audit logs
+
+  Background:
+    Given initial users configuration in "onezone" Onezone service:
+            - user1
+    And initial spaces configuration in "onezone" Onezone service:
+        space1:
+            owner: user1
+            providers:
+                - oneprovider-1:
+                    storage: posix
+                    size: 1000000
+            storage:
+                defaults:
+                    provider: oneprovider-1
+                directory tree:
+                  - dir1:
+                    - dir2
+                    - dir3
+                  - dir4:
+                    - file1
+                    - file2
+                  - dir5:
+                    - file3
+                    - dir6:
+                      - file3
+                      - dir7:
+                        - file3
+                      
+
+    And user opened browser window
+    And user of browser opened onezone page
+    And user of browser logged as user1 to Onezone service
+
+  Scenario: User sees logs about first 200 successfully archived files and 3 directories after creating archive
+    Given using REST, user1 creates 100 empty files in directories ["space1/dir1/dir2", "space1/dir1/dir3"] named "file_001", "file_002", ..., "file_N" supported by "oneprovider-1" provider
+
+    When user of browser opens file browser for "space1" space
+    And user of browser creates dataset for item "dir1" in "space1"
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
+        description: first archive
+        layout: plain
+    And user of browser waits for "Preserved" state for archive with description "first archive" in archive browser
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    Then user of browser sees non-empty ["Time", "Time taken"] fields of first 203 files and directories in archive audit log
+
+
+  Scenario: User sees details about archived file or directory
+    When user of browser opens file browser for "space1" space
+    And user of browser creates dataset for item "dir4" in "space1"
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
+        description: second archive
+        layout: plain
+    And user of browser waits for "Preserved" state for archive with description "second archive" in archive browser
+    And user of browser clicks on menu for archive with description: "second archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+
+    # check logs about directory creation
+    And user of browser clicks on item "dir4" in archive audit log
+    Then user of browser sees that details for archived item in archive audit log are as follow:
+        Event: Directory archivisation finished.
+        Relative location: dir4
+        Started at:
+          type: date
+        Finished at:
+          type: date
+        Time taken:
+          type: time_taken
+        Archived item absolute location:
+          type: location_path
+        File ID:
+          type: file_id
+        Source item absolute location: /space1/dir4
+    And user of browser closes "Audit log entry details" panel
+
+    # check logs about file creation
+    And user of browser clicks on item "file1" in archive audit log
+    And user of browser sees that details for archived item in archive audit log are as follow:
+        Event: Regular file archivisation finished.
+        Relative location: dir4/file1
+        Started at:
+          type: date
+        Finished at:
+          type: date
+        Time taken:
+          type: time_taken
+        Archived item absolute location:
+          type: location_path
+        File ID:
+          type: file_id
+        Source item absolute location: /space1/dir4/file1
+
+
+  Scenario: User sees logs about nested dirs in correct order after creating archive
+    Given using REST, user1 creates a path with 20 nested directories named "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
+    And using REST, user1 creates "file_20" file in the last of 20 nested directories "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
+
+    When user of browser opens file browser for "space1" space
+    And user of browser creates dataset for item "dir_0" in "space1"
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser succeeds to create archive for item "dir_0" in "space1" with following configuration:
+        description: nested archive
+        layout: plain
+    And user of browser waits for "Preserved" state for archive with description "nested archive" in archive browser
+
+    And user of browser clicks on menu for archive with description: "nested archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    Then user of browser sees logs about directories or files ordered ascendingly by name index with prefix dir_ or file_ in archive audit log
+
+    And user of browser scrolls to top in archive audit log
+    And user of browser sees entries ordered from latest to oldest in column "Time" in archive audit log
+
+    And user of browser scrolls to top in archive audit log
+    And user of browser sees that 21 first logs contain events about finished archivisation of files, directories or symbolic links in archive audit log
+
+    And user of browser scrolls to top in archive audit log
+    And user of browser sees entries ordered from shortest to longest times in column "Time taken" in archive audit log
+
+
+  Scenario: User sees correct shortened paths for archived nested directories with long names
+    Given using REST, user1 creates a path with 20 nested directories named "long-directory_0/.../long-directory_19" in "space1" supported by "oneprovider-1" provider
+    And using REST, user1 creates "very-long-file_20" file in the last of 20 nested directories "long-directory_0/.../long-directory_19" in "space1" supported by "oneprovider-1" provider
+
+    When user of browser opens file browser for "space1" space
+    And user of browser creates dataset for item "long-directory_0" in "space1"
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
+
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+
+    And user of browser succeeds to create archive for item "long-directory_0" in "space1" with following configuration:
+        description: first archive
+        layout: plain
+    
+    And user of browser waits for "Preserved" state for archive with description "first archive" in archive browser
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+
+    And user of browser clicks on item "very-long-file_20" using scroll in archive audit log
+
+    Then user of browser sees that path in Entry Details in archive audit log matches the config and displayed archive name is correct for different screen sizes:
+        First directory index: 0
+        Last directory index: 19
+        Directory prefix: long-directory
+        File name: very-long-file_20
+
+
+  Scenario: User creates nested archive with duplicated file names and sees that their entries in archive audit log have different hashes
+    When user of browser creates dataset for item "dir5" in "space1"
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
+    
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser succeeds to create archive for item "dir5" in "space1" with following configuration:
+        description: first archive
+        layout: plain
+
+    And user of browser waits for "Preserved" state for archive with description "first archive" in archive browser
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    
+    Then user of browser sees that all entries with filename: "file3" have different hashes and sees exactly "3" of them
