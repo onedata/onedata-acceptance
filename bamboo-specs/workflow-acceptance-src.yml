@@ -58,23 +58,23 @@ stages:
         - _Autoformatter check
         - _Static analysis
         - _Type_check
-        - GUI - Automation example workflows
-        - GUI - Automation examples using input files and Eureka3D
-        - GUI - Automation inventory, lambda and workflow management
-        - GUI - Automation members, privileges and execution authorization
+        - GUI - Example workflows
+        - GUI - Example workflows using input files and Eureka3D
+        - GUI - Inventory, lambda and workflow management
+        - GUI - Members, privileges and execution authorization
         - GUI - BagIt uploader execution and archive handling
         - GUI - BagIt uploader invalid archives
         - GUI - Lambda pod status and termination
-        - GUI - Workflow execution
-        - GUI - Workflow pausing and cancellation
-        - GUI - Workflow result mappings, stores and audit logs
-        - GUI - Workflow statuses and reruns
-        - GUI - Workflow store data types and example coverage
+        - GUI - Execution
+        - GUI - Pausing and cancellation
+        - GUI - Result mappings, stores and audit logs
+        - GUI - Statuses and reruns
+        - GUI - Store data types and example coverage
         - Mixed - BagIt archive fetching
         - Mixed - BagIt archive unpacking
         - Mixed - BagIt execution with 3 GB archive
-        - Mixed - Workflow execution REST operations
-        - Mixed - Workflow execution without BagIt
+        - Mixed - Execution REST operations
+        - Mixed - Execution without BagIt
   - Qnthack - rerun:
       manual: false
       final: true
@@ -210,7 +210,7 @@ _Type_check:
         description: Type checker
 
 
-GUI - Automation example workflows: &acceptance-tests-in-chrome-job
+GUI - Example workflows: &acceptance-tests-in-chrome-job
   key: COAWEX
   other: *common-opts
   tasks:
@@ -330,7 +330,7 @@ GUI - Automation example workflows: &acceptance-tests-in-chrome-job
     - minikube
   artifact-subscriptions: []
 
-GUI - Automation examples using input files and Eureka3D:
+GUI - Example workflows using input files and Eureka3D:
   <<: *acceptance-tests-in-chrome-job
   key: COAWEX2
   tasks:
@@ -345,7 +345,7 @@ GUI - Automation examples using input files and Eureka3D:
         scripts:
           - make SUITE=test_automation_examples_workflows_tests2 ENV_FILE=1oz_1op_openfaas test_gui_src
 
-GUI - Automation inventory, lambda and workflow management:
+GUI - Inventory, lambda and workflow management:
   <<: *acceptance-tests-in-chrome-job
   key: COAT
   tasks:
@@ -360,7 +360,7 @@ GUI - Automation inventory, lambda and workflow management:
         scripts:
           - make SUITE=test_onezone_automation test_gui_src
 
-GUI - Automation members, privileges and execution authorization:
+GUI - Members, privileges and execution authorization:
   <<: *acceptance-tests-in-chrome-job
   key: COATMP
   tasks:
@@ -420,7 +420,7 @@ GUI - Lambda pod status and termination:
         scripts:
           - make SUITE=test_atm_pods ENV_FILE=1oz_1op_openfaas_normal test_gui_src
 
-GUI - Workflow execution:
+GUI - Execution:
   <<: *acceptance-tests-in-chrome-job
   key: COAWET
   tasks:
@@ -435,7 +435,7 @@ GUI - Workflow execution:
         scripts:
           - make ENV_FILE=1oz_1op_openfaas SUITE=test_atm_workflows_execution test_gui_src
 
-GUI - Workflow pausing and cancellation:
+GUI - Pausing and cancellation:
   <<: *acceptance-tests-in-chrome-job
   key: COAWPC
   tasks:
@@ -450,7 +450,7 @@ GUI - Workflow pausing and cancellation:
         scripts:
           - make SUITE=test_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_src
 
-GUI - Workflow result mappings, stores and audit logs:
+GUI - Result mappings, stores and audit logs:
   <<: *acceptance-tests-in-chrome-job
   key: COAWS
   tasks:
@@ -465,7 +465,7 @@ GUI - Workflow result mappings, stores and audit logs:
         scripts:
           - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_src
 
-GUI - Workflow statuses and reruns:
+GUI - Statuses and reruns:
   <<: *acceptance-tests-in-chrome-job
   key: COAWST
   tasks:
@@ -480,7 +480,7 @@ GUI - Workflow statuses and reruns:
         scripts:
           - make SUITE=test_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_src
 
-GUI - Workflow store data types and example coverage:
+GUI - Store data types and example coverage:
   <<: *acceptance-tests-in-chrome-job
   key: COASB
   tasks:
@@ -568,7 +568,7 @@ Mixed - BagIt execution with 3 GB archive:
         scripts:
           - make SUITE=test_workflows_bagit_with_3gb_archive ENV_FILE=1oz_1op_openfaas test_mixed_src
 
-Mixed - Workflow execution REST operations:
+Mixed - Execution REST operations:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CAT4
   tasks:
@@ -584,7 +584,7 @@ Mixed - Workflow execution REST operations:
         scripts:
           - make SUITE=test_automation ENV_FILE=1oz_1op_openfaas test_mixed_src
 
-Mixed - Workflow execution without BagIt:
+Mixed - Execution without BagIt:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CWIF4
   tasks:
