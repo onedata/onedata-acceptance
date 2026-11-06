@@ -150,6 +150,9 @@ endif
 ifdef DOCKER_API_VERSION
 DEMO_MODE_DOCKER_API_VERSION_OPTION := -e DOCKER_API_VERSION="${DOCKER_API_VERSION}"
 endif
+
+# ONEZONE_IMAGE and ONEPROVIDER_IMAGE can be used to override the defaults, 
+# which are resolved based on branchConfig
 ifdef ONEZONE_IMAGE
 DEMO_MODE_ONEZONE_IMAGE_OPTION := --onezone-image="${ONEZONE_IMAGE}"
 endif
