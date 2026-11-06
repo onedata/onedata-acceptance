@@ -1,0 +1,233 @@
+version: 2
+plan:
+  project-key: AT
+  key: DMA
+  name: demo mode acceptance
+variables:
+  dockerApiVersion: "1.41"
+stages:
+- Demo mode tests:
+    manual: false
+    final: false
+    jobs:
+    - _Codetag Tracker
+    - _Autoformatter check
+    - _Static analysis
+    - _Type_check
+    - Run in foreground
+    - Distributed environment
+    - Run in background
+    - Comprehensive example
+    - Python access
+    # TODO: VFS-13556 Uncomment after fixing the persistence tutorial
+    # - Persistence
+
+_Codetag Tracker:
+  key: CDTR
+  other: &common-opts
+    clean-working-dir: true
+  tasks:
+  - checkout: &checkout-default-repository
+      path: onedata-acceptance
+      force-clean-build: true
+      description: Checkout Default Repository
+  - script: &init-submodules
+      interpreter: SHELL
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+        make submodules
+      working-dir: onedata-acceptance
+      description: Init submodules
+  - script:
+      interpreter: SHELL
+      scripts:
+      - |-
+        echo ${bamboo.planRepository.branchName}
+        make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+      working-dir: onedata-acceptance
+      description: Codetag Tracker
+  requirements: []
+  artifact-subscriptions: []
+
+_Autoformatter check:
+  key: RUFF
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script: &run-check
+      interpreter: SHELL
+      scripts:
+      - make format-check
+      working-dir: onedata-acceptance
+      description: Ruff formatting
+  artifact-subscriptions: []
+
+_Static analysis:
+  key: STAN
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script:
+      <<: *run-check
+      scripts:
+      - make static-analysis
+      description: Static analysis
+  artifact-subscriptions: []
+
+_Type_check:
+  key: TCH
+  other: *common-opts
+  tasks:
+  - checkout: *checkout-default-repository
+  - script:
+      <<: *run-check
+      scripts:
+      - make type-check
+      description: Type checker
+  artifact-subscriptions: []
+
+Run in foreground:
+  key: FOREGROUND
+  other: *common-opts
+  tasks:
+  - script: &clear-env
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
+  - script: &run-demo-mode-test
+      interpreter: SHELL
+      scripts:
+      - make test_demo_mode SCENARIO=test_run_in_foreground RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+      working-dir: onedata-acceptance
+      description: Run demo mode test
+  final-tasks: &final-tasks
+  - test-parser:
+      type: junit
+      ignore-time: false
+      test-results: onedata-acceptance/test-reports/results*.xml
+      description: Parse test results
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  requirements: &requirements
+  - minikube
+  artifacts: &command-log-artifacts
+  - name: command-logs
+    location: onedata-acceptance/tests/demo_mode/logs
+    pattern: "**/*.log"
+    shared: false
+    required: false
+  artifact-subscriptions: []
+
+Distributed environment:
+  key: DISTENV
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode SCENARIO=test_distributed_environment RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+  final-tasks: *final-tasks
+  requirements: *requirements
+  artifacts: *command-log-artifacts
+  artifact-subscriptions: []
+
+Run in background:
+  key: BACKGROUND
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode SCENARIO=test_run_in_background RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+  final-tasks: *final-tasks
+  requirements: *requirements
+  artifacts: *command-log-artifacts
+  artifact-subscriptions: []
+
+Comprehensive example:
+  key: CEX
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode SCENARIO=test_comprehensive_example RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+  final-tasks: *final-tasks
+  requirements: *requirements
+  artifacts: *command-log-artifacts
+  artifact-subscriptions: []
+
+Python access:
+  key: PYACCESS
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
+  - script:
+      <<: *run-demo-mode-test
+      scripts:
+      - make test_demo_mode SCENARIO=test_python_access RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+  final-tasks: *final-tasks
+  requirements: *requirements
+  artifacts: *command-log-artifacts
+  artifact-subscriptions: []
+
+# TODO: VFS-13556 Uncomment after fixing the persistence tutorial
+# Persistence:
+#   key: PERSIST
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - checkout: *checkout-default-repository
+#   - script: *init-submodules
+#   - script:
+#       <<: *run-demo-mode-test
+#       scripts:
+#       - make test_demo_mode SCENARIO=test_persistence RUNNER_NAME="demo-mode-runner-${bamboo.buildResultKey}" DOCKER_API_VERSION="${bamboo.dockerApiVersion}"
+#   final-tasks: *final-tasks
+#   requirements: *requirements
+#   artifacts: *command-log-artifacts
+#   artifact-subscriptions: []
+
+repositories:
+- onedata-acceptance:
+    scope: global
+triggers: []
+branches:
+  create: manually
+  delete:
+    after-deleted-days: never
+    after-inactive-days: 30
+  link-to-jira: true
+notifications: []
+labels: []
+dependencies:
+  require-all-stages-passing: false
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: "3"
+  all-other-apps:
+    custom:
+      com.atlassian.bamboo.plugin.hungbuildkiller:
+        stopped.enabled: "true"
+        add_comment_when_hung.enabled: "true"

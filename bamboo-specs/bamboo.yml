@@ -35,6 +35,10 @@
 ---
 !include 'upgrade-src-perm.yml'
 ---
+!include 'demo-mode.yml'
+---
+!include 'demo-mode-perm.yml'
+---
 !include 'workflow-acceptance-pkg.yml'
 ---
 !include 'workflow-acceptance-pkg-perm.yml'

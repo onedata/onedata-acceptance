@@ -10,7 +10,7 @@ ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL
 export ONEDATA_GIT_URL
 
 # TODO: VFS-12424 Try latest Chrome (newer than 128.0.6613.86) with fix from this issue
-ACCEPTANCE_TEST_IMAGE := onedata/acceptance_tests:v3.131
+ACCEPTANCE_TEST_IMAGE := onedata/acceptance_tests:v3.132
 
 unpack = tar xzf $(1).tar.gz
 
@@ -90,6 +90,7 @@ endif
 .PHONY: test_upgrade_pkg test_upgrade_src
 .PHONY: format format-check static-analysis type-check
 .PHONY: submodules
+.PHONY: test_demo_mode
 
 test_gui:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
@@ -126,6 +127,59 @@ test_upgrade_pkg:
 	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_TEST_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/pkg/"${CONFIG_FILE}".yaml
 test_upgrade_src:
 	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_TEST_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/src/"${CONFIG_FILE}".yaml
+
+DEMO_MODE_SCENARIOS_ROOT := tests/demo_mode/scenarios
+DEMO_MODE_TESTS := \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_run_in_foreground.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_distributed_environment.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_run_in_background.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_comprehensive_example.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_python_access.py \
+	$(DEMO_MODE_SCENARIOS_ROOT)/test_persistence.py
+DEMO_MODE_TEST_REPORTS_DIR := $(CURDIR)/test-reports
+DEMO_MODE_LOGS_DIR := $(CURDIR)/tests/demo_mode/logs
+DEMO_MODE_DOCKER_CONFIG_DIR := $(if $(DOCKER_CONFIG),$(DOCKER_CONFIG),$(HOME)/.docker)
+ifdef SCENARIO
+DEMO_MODE_TEST_PATH := ${DEMO_MODE_SCENARIOS_ROOT}/${SCENARIO}.py
+else
+DEMO_MODE_TEST_PATH := $(DEMO_MODE_TESTS)
+endif
+ifdef RUNNER_NAME
+DEMO_MODE_RUNNER_NAME_OPTION := --name="${RUNNER_NAME}"
+endif
+ifdef DOCKER_API_VERSION
+DEMO_MODE_DOCKER_API_VERSION_OPTION := -e DOCKER_API_VERSION="${DOCKER_API_VERSION}"
+endif
+ifdef ONEZONE_IMAGE
+DEMO_MODE_ONEZONE_IMAGE_OPTION := --onezone-image="${ONEZONE_IMAGE}"
+endif
+ifdef ONEPROVIDER_IMAGE
+DEMO_MODE_ONEPROVIDER_IMAGE_OPTION := --oneprovider-image="${ONEPROVIDER_IMAGE}"
+endif
+
+test_demo_mode:
+	@test -z "${SCENARIO}" || test -f "${DEMO_MODE_TEST_PATH}" || (echo "Unknown demo-mode scenario: ${SCENARIO}"; exit 2)
+	@mkdir -p "${DEMO_MODE_TEST_REPORTS_DIR}" "${DEMO_MODE_LOGS_DIR}"
+	@rm -f "${DEMO_MODE_TEST_REPORTS_DIR}/results-demo-mode.xml"
+	docker run ${DEMO_MODE_RUNNER_NAME_OPTION} ${DEMO_MODE_DOCKER_API_VERSION_OPTION} --rm -i --network=host \
+	 -e PYTHONDONTWRITEBYTECODE=1 \
+	 -e DEMO_MODE_HOST_TMP=/demo-mode-host-tmp \
+	 -e DEMO_MODE_HOST_UID="$$(id -u)" \
+	 -e DEMO_MODE_HOST_GID="$$(id -g)" \
+	 -e DOCKER_CONFIG=/demo-mode-docker-config \
+	 -e bamboo_planRepository_branchName \
+	 -v $(CURDIR):$(CURDIR):ro \
+	 -v ${DEMO_MODE_TEST_REPORTS_DIR}:${DEMO_MODE_TEST_REPORTS_DIR} \
+	 -v ${DEMO_MODE_LOGS_DIR}:${DEMO_MODE_LOGS_DIR} \
+	 -v ${DEMO_MODE_DOCKER_CONFIG_DIR}:/demo-mode-docker-config:ro \
+	 -v /tmp:/demo-mode-host-tmp \
+	 -v /var/run/docker.sock:/var/run/docker.sock \
+	 -w $(CURDIR) ${ACCEPTANCE_TEST_IMAGE} \
+	 python3 -m tests.demo_mode.utils.test_runner \
+	 --color=yes -p no:cacheprovider -rs -s -v \
+	 --confcutdir=tests/demo_mode \
+	 --junitxml=${DEMO_MODE_TEST_REPORTS_DIR}/results-demo-mode.xml \
+	 ${DEMO_MODE_TEST_PATH} ${DEMO_MODE_ONEZONE_IMAGE_OPTION} ${DEMO_MODE_ONEPROVIDER_IMAGE_OPTION}
 
 
 ##
@@ -176,9 +230,13 @@ endef
 ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/constants.py tests/gui/__init__.py tests/__init__.py \
  tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
  tests/performance/__init__.py tests/performance/type_definitions.py tests/performance/test_*.py \
- tests/oneclient/steps tests/oneclient/meta_steps tests/oneclient/__init__.py tests/utils tests/upgrade
+ tests/oneclient/steps tests/oneclient/meta_steps tests/oneclient/__init__.py tests/utils tests/upgrade \
+ tests/demo_mode/utils tests/demo_mode/scenarios tests/demo_mode/environment.py \
+ tests/demo_mode/persistence.py tests/demo_mode/comprehensive_example.py \
+ tests/demo_mode/python_access.py tests/demo_mode/data.py tests/demo_mode/constants.py \
+ tests/demo_mode/__init__.py
 ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py \
- tests/oneclient/conftest.py tests/performance/conftest.py
+ tests/oneclient/conftest.py tests/performance/conftest.py tests/demo_mode/conftest.py
 ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios
 
 

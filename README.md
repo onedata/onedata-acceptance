@@ -65,7 +65,9 @@ The exact procedure of running tests is described in:
 * [tests/gui/README.md](./tests/gui/README.md) for **GUI** tests,
 * [tests/mixed/README.md](./tests/mixed/README.md) for **Mixed** tests
   (these tests use GUI, REST and Oneclient at the same time)
-* [tests/oneclient/README.md](./tests/oneclient/README.md) for **Oneclient** tests.
+* [tests/oneclient/README.md](./tests/oneclient/README.md) for **Oneclient** tests,
+* [tests/demo_mode/README.md](./tests/demo_mode/README.md) for **Demo-mode** tests,
+  which run the commands published in the administrator guide directly.
 
 For use in CI (Bamboo), see Bamboo Specs files placed in [bamboo-specs](bamboo-specs)
 directory in root of this repository. These specs use the `Makefile` targets directly.
