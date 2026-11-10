@@ -135,24 +135,26 @@ def set_description_of_a_space(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_tags_in_space_configuration_tab(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    tags_to_add: dict[str, list[str]],
-    with_save: bool = True,
-) -> None:
+def open_space_tags_editor(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.configuration_page
-    page.space_tags_editor.click()
+    page.space_tags_editor.edit_button.click()
     page.space_tags_editor.add_tag.click()
-    for tag_type, tags in tags_to_add.items():
-        getattr(Popups(driver).spaces_tags, tag_type).click()
-        for tag in tags:
-            Popups(driver).spaces_tags.search_bar = tag
-            Popups(driver).spaces_tags.tags_list[tag].click()
 
-    if with_save:
-        page.space_tags_editor.save_button.click()
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def save_space_tags_editor(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    page = OZLoggedIn(driver).data.configuration_page
+    page.space_tags_editor.save_button.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def exit_space_tags_editor_without_saving(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    page = OZLoggedIn(driver).data.configuration_page
+    # click any visible element so the popup disappears
+    page.space_tags_editor.tags_label.click()
 
 
 @wt(

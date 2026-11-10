@@ -10,7 +10,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import yaml
 
 from tests.gui.steps.onezone.space_configuration import (
-    add_tags_in_space_configuration_tab,
+    exit_space_tags_editor_without_saving,
+    open_space_tags_editor,
+    save_space_tags_editor,
     set_description_of_a_space,
     set_space_data_in_configuration_tab,
 )
@@ -22,8 +24,8 @@ from tests.gui.steps.onezone.space_marketplace import (
     assert_space_with_request_access_in_marketplace_subpage,
     clear_marketplace_tags_filter,
     click_marketplace_tags_selector_trigger,
-    select_marketplace_tag,
-    select_marketplace_tag_category,
+    select_space_tag,
+    select_space_tag_category,
     write_into_marketplace_search_input,
 )
 from tests.gui.steps.rest.spaces import modify_space_using_rest
@@ -63,10 +65,28 @@ def update_marketplace_tags_filter(selenium: SeleniumDrivers, browser_id: str, c
     clear_marketplace_tags_filter(selenium, browser_id)
     click_marketplace_tags_selector_trigger(selenium, browser_id)
     for tag_type, tags in tags_to_add.items():
-        select_marketplace_tag_category(selenium, browser_id, tag_type)
+        select_space_tag_category(selenium, browser_id, tag_type)
         for tag in tags:
-            select_marketplace_tag(selenium, browser_id, tag)
+            select_space_tag(selenium, browser_id, tag)
     click_marketplace_tags_selector_trigger(selenium, browser_id)
+
+
+def add_tags_in_space_configuration_tab(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tags_to_add: dict[str, list[str]],
+    with_save: bool = True,
+) -> None:
+    open_space_tags_editor(selenium, browser_id)
+    for tag_type, tags in tags_to_add.items():
+        select_space_tag_category(selenium, browser_id, tag_type)
+        for tag in tags:
+            select_space_tag(selenium, browser_id, tag)
+
+    if with_save:
+        save_space_tags_editor(selenium, browser_id)
+    else:
+        exit_space_tags_editor_without_saving(selenium, browser_id)
 
 
 @wt(parsers.parse("user of {browser_id} sets Marketplace filters as follows:\n{config}"))

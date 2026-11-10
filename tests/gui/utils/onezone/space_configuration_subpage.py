@@ -31,6 +31,8 @@ class SpaceTagsEditor(PageObject):
     tags = WebItemsSequence(".tag-item", cls=SpaceTag)
     add_tag = Button(".tag-creator-trigger")
     save_button = Button(".save-icon")
+    edit_button = Button(".edit-icon")
+    tags_label = WebElement(".control-label")
 
 
 class MarketplaceContactEmail(PageObject):
@@ -44,7 +46,7 @@ class MarketplaceContactEmail(PageObject):
 class SpaceConfigurationPage(PageObject):
     space_name = WebItem(".space-name", cls=EditBox)
     organization_name = WebItem(".organization-name", cls=EditBox)
-    space_tags_editor = WebItem(".space-tags", cls=SpaceTagsEditor)
+    space_tags_editor = WebItem(".space-tags-form-group", cls=SpaceTagsEditor)
 
     preview_description_mode = Button(".btn-description-view")
     editor_description_mode = Button(".btn-description-edit")

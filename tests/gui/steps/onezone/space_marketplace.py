@@ -113,14 +113,12 @@ def click_marketplace_tags_selector_trigger(selenium: SeleniumDrivers, browser_i
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_marketplace_tag_category(
-    selenium: SeleniumDrivers, browser_id: str, tag_type: str
-) -> None:
+def select_space_tag_category(selenium: SeleniumDrivers, browser_id: str, tag_type: str) -> None:
     getattr(Popups(selenium[browser_id]).spaces_tags, tag_type).click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_marketplace_tag(selenium: SeleniumDrivers, browser_id: str, tag: str) -> None:
+def select_space_tag(selenium: SeleniumDrivers, browser_id: str, tag: str) -> None:
     tags_popup = Popups(selenium[browser_id]).spaces_tags
     tags_popup.search_bar = tag
     tags_popup.tags_list[tag].click()

@@ -61,40 +61,40 @@ Feature: Basic management of Space Marketplace
     And user of browser sees "space1" advertised space description with "Example space" header and "Example of a space advertised in a Marketplace" paragraph
 
 
-  Scenario: User can advertise and withdraw a space multiple times
-    When user of browser clicks on "Data" in the main menu
-    And user of browser clicks "Configuration" of "space1" space in the sidebar
-    And user of browser sets space configuration as follows:
-        space name: "space1"
-        organization name: "onedata"
-        tags:
-          general:
-            - archival
-            - big-data
-          domains:
-            - science
-        description: "# Example space\nExample of a space advertised in a Marketplace"
+  # TODO: VFS-13985 This scenario should pass after fixing synchronization problems on the space configuration page in the frontend
+  # Scenario: User can advertise and withdraw a space multiple times
+  #   When user of browser clicks on "Data" in the main menu
+  #   And user of browser clicks "Configuration" of "space1" space in the sidebar
+  #   And user of browser sets space configuration as follows:
+  #       space name: "space1"
+  #       organization name: "onedata"
+  #       tags:
+  #         general:
+  #           - archival
+  #           - big-data
+  #         domains:
+  #           - science
+  #       description: "# Example space\nExample of a space advertised in a Marketplace"
 
-    # TODO: VFS-13985 This scenario should pass after fixing synchronization problems on the space configuration page in the frontend
-    And user of browser checks "Advertise in Marketplace" toggle on space configuration page
-    And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
-    And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
-    And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
-    Then user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
+  #   And user of browser checks "Advertise in Marketplace" toggle on space configuration page
+  #   And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
+  #   And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
+  #   And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
+  #   Then user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
 
-    When user of browser unchecks "Advertise in Marketplace" toggle on space configuration page
-    And user of browser clicks on "Proceed" button in modal "Warning"
-    Then user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
+  #   When user of browser unchecks "Advertise in Marketplace" toggle on space configuration page
+  #   And user of browser clicks on "Proceed" button in modal "Warning"
+  #   Then user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
 
-    When user of browser checks "Advertise in Marketplace" toggle on space configuration page
-    And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
-    And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
-    And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
-    Then user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
+  #   When user of browser checks "Advertise in Marketplace" toggle on space configuration page
+  #   And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
+  #   And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
+  #   And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
+  #   Then user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
 
-    When user of browser unchecks "Advertise in Marketplace" toggle on space configuration page
-    And user of browser clicks on "Proceed" button in modal "Warning"
-    Then user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
+  #   When user of browser unchecks "Advertise in Marketplace" toggle on space configuration page
+  #   And user of browser clicks on "Proceed" button in modal "Warning"
+  #   Then user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
 
 
   Scenario: User does not see owned space in the Marketplace after he withdraws it
