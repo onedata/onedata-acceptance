@@ -13,7 +13,7 @@ Feature: Management of a great number of spaces
     And user of browser sees that "space001" has appeared on the spaces list in the sidebar
     And user of browser is idle for 5 seconds
     And user of browser clicks on "Shares" in the main menu
-    Then user of browser can see there are 150 shares on the shares list in the sidebar
+    Then user of browser can see there are 150 unique shares on the shares list in the sidebar
 
 
   Scenario: User can see correct number of shares created in single space
@@ -28,7 +28,7 @@ Feature: Management of a great number of spaces
     And user of browser sees that "space1" has appeared on the spaces list in the sidebar
     And user of browser is idle for 5 seconds
     And user of browser clicks on "Shares" in the main menu
-    Then user of browser can see there are 150 shares on the shares list in the sidebar
+    Then user of browser can see there are 150 unique shares on the shares list in the sidebar
     And user of browser closes the temporary sidebar by clicking on the background
     And user of browser clicks "Shares, Public Data" of "space1" space in the sidebar
     And user of browser can see there are 150 shares in shares view

@@ -8,8 +8,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Iterable
 from typing import ClassVar
 
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
+
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.type_definitions import ListItemMainField, PageName
+from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import NamedElement, PageObject, PageObjectMeta
 from tests.gui.utils.core.web_elements import Label, NamedButton
 from tests.utils.utils import repeat_failed
@@ -31,8 +37,49 @@ class GenericPage(PageObject, metaclass=PageObjectMeta):
 class ListPage(PageObject):
     """
     Base class for Onezone pages exposing one or more element lists.
-    This class is basically needed for function get_visible_items_list
+    This class is basically needed for function get_visible_items_list and
+    provides helpers for interacting with virtualized lists.
     """
+
+    @staticmethod
+    def create_nth_of_type_selector(prefix: str, selector_idx: int) -> str:
+        return f"{prefix}({selector_idx})"
+
+    def get_item_row[T: NamedElement](
+        self,
+        cls: type[T],
+        selector_prefix: str,
+        selector_idx: int,
+    ) -> T:
+        selector = self.create_nth_of_type_selector(selector_prefix, selector_idx)
+        return cls(
+            self.driver,
+            self.web_elem.find_element(By.CSS_SELECTOR, selector),
+        )
+
+    def scroll_to_nth_type_selector(self, selector_prefix: str, selector_idx: int) -> None:
+        selector = self.create_nth_of_type_selector(selector_prefix, selector_idx)
+        scroll_to_css_selector(self.driver, selector)
+
+    def scroll_and_get_element[T: NamedElement](
+        self,
+        previous_name: str,
+        cls: type[T],
+        selector_prefix: str,
+        selector_idx: int,
+        timeout: int = WAIT_FRONTEND,
+    ) -> T:
+        self.scroll_to_nth_type_selector(selector_prefix, selector_idx)
+
+        def get_changed_element(_: WebDriver) -> T | bool:
+            element = self.get_item_row(cls, selector_prefix, selector_idx)
+            return element if element.name and element.name != previous_name else False
+
+        return WebDriverWait(
+            self.driver,
+            timeout=timeout,
+            ignored_exceptions=(StaleElementReferenceException,),
+        ).until(get_changed_element)
 
 
 class SidebarPanelPage(GenericPage, ListPage):

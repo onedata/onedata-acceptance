@@ -346,7 +346,7 @@ def create_n_groups_using_rest(
 ) -> None:
     zone_hostname = hosts[host]["hostname"]
     for i in range(int(number)):
-        group_name = f"group{i}"
+        group_name = f"group{i:03d}"
         group_id = _create_group(
             zone_hostname,
             users[user].username,

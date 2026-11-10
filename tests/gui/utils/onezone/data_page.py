@@ -9,6 +9,7 @@ import re
 
 from selenium.common.exceptions import (
     StaleElementReferenceException,
+    TimeoutException,
 )
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
@@ -16,7 +17,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_FRONTEND
-from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -31,12 +31,15 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
 from tests.gui.utils.onezone.generic_page import SidebarPanelPage
-from tests.utils.utils import element_has_class
+from tests.utils.utils import element_has_class, repeat_failed
 
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
 from .space_configuration_subpage import SpaceConfigurationPage
 from .space_marketplace import SpaceMarketplacePage
+
+SPACE_HEADER_SELECTOR_PREFIX = ".sidebar-spaces .two-level-sidebar .data-row:nth-of-type"
+NEXT_SCROLL_SHIFT = 9
 
 
 class Space(NamedElement):
@@ -272,71 +275,6 @@ class DataPage(SidebarPanelPage):
             ignored_exceptions=(StaleElementReferenceException,),
         ).until(is_top_window_loaded)
 
-    def scroll_by_down_arrow(self) -> None:
-        ActionChains(self.driver).move_to_element(self.sidebar_element).send_keys(
-            Keys.ARROW_DOWN
-        ).perform()
-
-    def get_space_header_by_index(self, index: int, first_scroll: bool = True) -> SpaceHeader:
-        if first_scroll:
-            first_scroll_window = (23, 38)
-            second_scroll_window = (33, 48)
-            next_scroll_shift = 9
-        else:
-            first_scroll_window = (8, 23)
-            second_scroll_window = (17, 32)
-            next_scroll_shift = 9
-
-        self.scroll_to_top()
-        loaded_headers = self.get_visible_spaces_list()
-
-        if index < len(loaded_headers):
-            return loaded_headers[index]
-        if index <= first_scroll_window[1]:
-            number_of_scrolls = 1
-        elif index <= second_scroll_window[1]:
-            number_of_scrolls = 2
-        else:
-            number_of_scrolls = 2 + math.ceil((index - second_scroll_window[1]) / next_scroll_shift)
-
-        selector = ".sidebar-spaces .two-level-sidebar .data-row:nth-of-type(26)"
-
-        def get_space_header() -> SpaceHeader:
-            return SpaceHeader(
-                self.driver,
-                self.web_elem.find_element(By.CSS_SELECTOR, selector),
-            )
-
-        def create_selector_scroll_and_get_header(prev_val: str) -> SpaceHeader:
-            scroll_to_css_selector(self.driver, selector)
-
-            def get_changed_header(_: WebDriver) -> SpaceHeader | bool:
-                header = get_space_header()
-                return header if header.name and header.name != prev_val else False
-
-            return WebDriverWait(
-                self.driver,
-                WAIT_FRONTEND,
-                ignored_exceptions=(StaleElementReferenceException,),
-            ).until(get_changed_header)
-
-        prev_name = get_space_header().name
-        for _ in range(number_of_scrolls):
-            space_header = create_selector_scroll_and_get_header(prev_name)
-            name = space_header.name
-            prev_name = name
-
-        if number_of_scrolls == 1:
-            window_start = first_scroll_window[0]
-        elif number_of_scrolls == 2:  # ruff: ignore[magic-value-comparison]
-            window_start = second_scroll_window[0]
-        else:
-            window_start = second_scroll_window[0] + (number_of_scrolls - 2) * next_scroll_shift
-        local_index = index - window_start
-
-        headers = self.get_visible_spaces_list()
-        return headers[local_index]
-
     spaces_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
     )
@@ -376,5 +314,142 @@ class DataPage(SidebarPanelPage):
                     return
         raise PageObjectNotFoundError(f"{name} space not found")
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_spaces_list(self) -> list[SpaceHeader]:
         return [space for space in self.spaces_headers_list if space.name != ""]
+
+    def scroll_by_down_arrow(self) -> None:
+        ActionChains(self.driver).move_to_element(self.sidebar_element).send_keys(
+            Keys.ARROW_DOWN
+        ).perform()
+
+    def get_initial_scroll_windows_bounds(
+        self, first_scroll: bool = True, const_scroll_idx: int = 24
+    ) -> list[dict[str, int]]:
+        initial_items = self.get_visible_spaces_list()
+        initial_items_count = len(initial_items)
+        initial_last_item = initial_items[-1]
+
+        try:
+            self.scroll_and_get_element(
+                "",
+                SpaceHeader,
+                SPACE_HEADER_SELECTOR_PREFIX,
+                const_scroll_idx,
+                timeout=WAIT_FRONTEND // 2,
+            )
+            if self.get_visible_spaces_list()[-1] == initial_last_item:
+                return [{"start": 0, "end": initial_items_count - 1}]
+        except TimeoutException:
+            if self.get_visible_spaces_list()[-1].name == "":
+                raise
+            return [{"start": 0, "end": initial_items_count - 1}]
+
+        next_visible_count = len(self.get_visible_spaces_list())
+
+        window_starts = (
+            [0, const_scroll_idx - 3, (const_scroll_idx - 3) + NEXT_SCROLL_SHIFT + 1]
+            if first_scroll
+            else [0, NEXT_SCROLL_SHIFT - 1, 2 * NEXT_SCROLL_SHIFT - 1]
+        )
+
+        return [{"start": window_starts[0], "end": window_starts[0] + initial_items_count - 1}] + [
+            {"start": window_starts[i], "end": window_starts[i] + next_visible_count - 1}
+            for i in range(1, 3)
+        ]
+
+    def get_space_header_by_index(
+        self, index: int, first_scroll: bool = True, const_scroll_idx: int = 24
+    ) -> SpaceHeader:
+        gui_scroll_idx = const_scroll_idx + 2
+
+        self.scroll_to_top()
+        loaded_headers = self.get_visible_spaces_list()
+
+        if index < len(loaded_headers):
+            return loaded_headers[index]
+
+        scroll_windows = self.get_initial_scroll_windows_bounds(first_scroll, const_scroll_idx)
+
+        if index <= scroll_windows[1]["end"]:
+            number_of_scrolls = 1
+        elif index <= scroll_windows[2]["end"]:
+            number_of_scrolls = 2
+        else:
+            number_of_scrolls = 2 + math.ceil(
+                (index - scroll_windows[2]["end"]) / NEXT_SCROLL_SHIFT
+            )
+
+        prev_name = self.get_item_row(
+            SpaceHeader,
+            SPACE_HEADER_SELECTOR_PREFIX,
+            gui_scroll_idx,
+        ).name
+
+        for _ in range(number_of_scrolls):
+            space_header = self.scroll_and_get_element(
+                prev_name,
+                SpaceHeader,
+                SPACE_HEADER_SELECTOR_PREFIX,
+                const_scroll_idx,
+            )
+            name = space_header.name
+            prev_name = name
+
+        if number_of_scrolls <= 2:  # ruff: ignore[magic-value-comparison]
+            window_start = scroll_windows[number_of_scrolls]["start"]
+        else:
+            window_start = scroll_windows[2]["start"] + (number_of_scrolls - 2) * NEXT_SCROLL_SHIFT
+        local_index = index - window_start
+
+        return self.get_visible_spaces_list()[local_index]
+
+    def count_space_headers(self, first_scroll: bool=True, const_scroll_idx: int = 24) -> int:
+        scroll_windows = self.get_initial_scroll_windows_bounds(first_scroll, const_scroll_idx)
+        if len(scroll_windows) == 1:
+            return scroll_windows[0]["end"] + 1
+
+        prev_name = self.get_item_row(
+            SpaceHeader,
+            SPACE_HEADER_SELECTOR_PREFIX,
+            const_scroll_idx + 2,
+        ).name
+
+        number_of_scrolls = 1
+
+        def get_new_name(prev_name: str, idx: int) -> str:
+            return self.scroll_and_get_element(
+                prev_name,
+                SpaceHeader,
+                SPACE_HEADER_SELECTOR_PREFIX,
+                idx,
+                timeout=WAIT_FRONTEND // 2,
+            ).name
+
+        while True:
+            try:
+                new_name = get_new_name(prev_name, const_scroll_idx)
+            except TimeoutException:
+                break
+            prev_name = new_name
+            number_of_scrolls += 1
+
+        if number_of_scrolls <= 2:  # ruff: ignore[magic-value-comparison]
+            elements_count = scroll_windows[number_of_scrolls]["start"]
+        else:
+            elements_count = (
+                scroll_windows[2]["start"] + (number_of_scrolls - 2) * NEXT_SCROLL_SHIFT
+            )
+
+        def get_element_names() -> list[str]:
+            return [space.name for space in self.get_visible_spaces_list()]
+
+        elements = get_element_names()
+        first_name_on_last_page = elements[0]
+        scroll_back_idx = const_scroll_idx - elements.index(prev_name) - 3
+
+        self.scroll_to_nth_type_selector(SPACE_HEADER_SELECTOR_PREFIX, scroll_back_idx)
+        elements_count += get_element_names().index(first_name_on_last_page) - 1
+        elements_count += len(get_element_names()) - NEXT_SCROLL_SHIFT
+
+        return elements_count
