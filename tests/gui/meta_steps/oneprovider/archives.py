@@ -86,6 +86,47 @@ ARCHIVE_FILE_BROWSER: Final[str] = "archive file browser"
 
 @wt(
     parsers.parse(
+        "user of {browser_id} starts creating archive for item "
+        '"{item_name}" in "{space_name}" with following '
+        "configuration:\n{config}"
+    )
+)
+def start_creating_archive(
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    config: str,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+) -> str:
+    """Start archive creation without waiting for archivisation to finish."""
+    _open_dataset_item_menu_for_archive_creation(
+        browser_id,
+        selenium,
+        item_name,
+        space_name,
+        tmp_memory,
+    )
+    click_option_in_data_row_menu_in_browser(
+        selenium,
+        browser_id,
+        "Create archive",
+        DATASET_BROWSER,
+    )
+    description = _configure_create_archive_modal(selenium, browser_id, config)
+
+    click_modal_button(selenium, browser_id, "Create", modal_name="Create archive")
+    check_browser_to_load(
+        selenium,
+        browser_id,
+        tmp_memory,
+        browser=WhichBrowser.ARCHIVE_BROWSER,
+    )
+    return description
+
+
+@wt(
+    parsers.parse(
         "user of {browser_id} {option} to create archive for item "
         '"{item_name}" in "{space_name}" with following '
         "configuration:\n{config}"
@@ -144,39 +185,14 @@ def _create_archive(
     displays: dict[str, str],
     option: str,
 ) -> None:
-    try:
-        _ = OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
-    except NoSuchElementException:
-        click_on_option_of_space_on_left_sidebar_menu(
-            selenium, browser_id, space_name, OPTION_IN_SPACE
-        )
-        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, DATASET_BROWSER)
-
-    if "/" in item_name:
-        go_to_path_without_last_elem(
-            selenium,
-            browser_id,
-            tmp_memory,
-            item_name,
-            DATASET_BROWSER,
-        )
-        item_name = item_name.rsplit("/", maxsplit=1)[-1]
-    click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory, DATASET_BROWSER)
     if option in ("succeeds", "tries"):
-        click_option_in_data_row_menu_in_browser(
-            selenium,
+        description = start_creating_archive(
             browser_id,
-            "Create archive",
-            DATASET_BROWSER,
-        )
-        description = _configure_create_archive_modal(selenium, browser_id, config)
-
-        click_modal_button(selenium, browser_id, "Create", modal_name="Create archive")
-        check_browser_to_load(
             selenium,
-            browser_id,
+            config,
+            item_name,
+            space_name,
             tmp_memory,
-            browser=WhichBrowser.ARCHIVE_BROWSER,
         )
 
         if option == "succeeds":
@@ -205,6 +221,13 @@ def _create_archive(
                 description,
             )
     elif option == "fails":
+        _open_dataset_item_menu_for_archive_creation(
+            browser_id,
+            selenium,
+            item_name,
+            space_name,
+            tmp_memory,
+        )
         assert_option_state_in_data_row_menu(
             selenium,
             browser_id,
@@ -212,6 +235,33 @@ def _create_archive(
             "disabled",
             DATASET_BROWSER,
         )
+
+
+def _open_dataset_item_menu_for_archive_creation(
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    try:
+        _ = OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
+    except NoSuchElementException:
+        click_on_option_of_space_on_left_sidebar_menu(
+            selenium, browser_id, space_name, OPTION_IN_SPACE
+        )
+        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, DATASET_BROWSER)
+
+    if "/" in item_name:
+        go_to_path_without_last_elem(
+            selenium,
+            browser_id,
+            tmp_memory,
+            item_name,
+            DATASET_BROWSER,
+        )
+        item_name = item_name.rsplit("/", maxsplit=1)[-1]
+    click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory, DATASET_BROWSER)
 
 
 def _configure_create_archive_modal(
