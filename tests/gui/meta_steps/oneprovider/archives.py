@@ -97,7 +97,7 @@ def click_menu_for_archive(
     tmp_memory: TmpMemory,
     description: str,
     selenium: SeleniumDrivers,
-    which_browser: WhichBrowser = WhichBrowser.ARCHIVE_BROWSER,
+    which_browser: WhichBrowser,
 ) -> None:
     click_menu_button_for_archive(browser_id, tmp_memory, description, which_browser)
     assert_archive_row_menu_open(browser_id, description, selenium)
@@ -328,7 +328,13 @@ def copy_archive_id_to_tmp_memory(
     if client.lower() == "web gui":
         option_in_menu = "Copy archive ID"
         assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, ARCHIVE_BROWSER)
-        click_menu_for_archive(browser_id, tmp_memory, description, selenium)
+        click_menu_for_archive(
+            browser_id,
+            tmp_memory,
+            description,
+            selenium,
+            which_browser=WhichBrowser.ARCHIVE_BROWSER,
+        )
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
         )
@@ -437,7 +443,13 @@ def remove_archive_in_op_gui(
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
-    click_menu_for_archive(browser_id, tmp_memory, description, selenium)
+    click_menu_for_archive(
+        browser_id,
+        tmp_memory,
+        description,
+        selenium,
+        which_browser=WhichBrowser.ARCHIVE_BROWSER,
+    )
 
     if option == "succeeds":
         click_option_in_data_row_menu_in_browser(
@@ -581,7 +593,13 @@ def assert_archive_callback_in_op_gui(
     option_in_menu = "Properties"
     info = f"{option} callback URL"
     button_name = "X"
-    click_menu_for_archive(browser_id, tmp_memory, description, selenium)
+    click_menu_for_archive(
+        browser_id,
+        tmp_memory,
+        description,
+        selenium,
+        which_browser=WhichBrowser.ARCHIVE_BROWSER,
+    )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_menu, ARCHIVE_BROWSER)
     assert_archive_info_in_properties_modal(selenium, browser_id, expected, info)
     click_modal_button(selenium, browser_id, button_name, modal)
@@ -598,7 +616,13 @@ def recall_archive_for_archive_in_op_gui(
     modal_name = "Recall archive"
     name_textfield = "target name input"
     button_name = "Recall"
-    click_menu_for_archive(browser_id, tmp_memory, description, selenium)
+    click_menu_for_archive(
+        browser_id,
+        tmp_memory,
+        description,
+        selenium,
+        which_browser=WhichBrowser.ARCHIVE_BROWSER,
+    )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_menu, ARCHIVE_BROWSER)
     write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name, name_textfield)
     click_modal_button(selenium, browser_id, button_name, modal_name)
