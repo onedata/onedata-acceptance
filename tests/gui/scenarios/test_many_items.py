@@ -54,6 +54,7 @@ from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
+from tests.mixed.steps.space_basic import *
 
 
 @pytest.fixture(scope="module")
