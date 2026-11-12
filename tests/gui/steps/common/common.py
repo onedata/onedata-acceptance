@@ -103,6 +103,7 @@ def assert_n_items_in_items_list(
 
     if not unique and items_type == "spaces headers" and isinstance(page, DataPage) and number is not None:
         counted_items = page.count_space_headers(24 if DEFAULT_SCREEN_SIZE == ScreenSize.LARGE else 20)
+        page.scroll_to_top()
         assert counted_items == number, f"Counted {counted_items} but expected {number}"
         return set()
 

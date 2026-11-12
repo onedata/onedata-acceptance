@@ -61,7 +61,7 @@ class ListPage(PageObject):
         selector = self.create_nth_of_type_selector(selector_prefix, selector_idx)
         scroll_to_css_selector(self.driver, selector)
 
-    def scroll_and_get_element[T: NamedElement](
+    def get_element_and_wait[T: NamedElement](
         self,
         previous_name: str,
         cls: type[T],
@@ -69,8 +69,6 @@ class ListPage(PageObject):
         selector_idx: int,
         timeout: int = WAIT_FRONTEND,
     ) -> T:
-        self.scroll_to_nth_type_selector(selector_prefix, selector_idx)
-
         def get_changed_element(_: WebDriver) -> T | bool:
             element = self.get_item_row(cls, selector_prefix, selector_idx)
             return element if element.name and element.name != previous_name else False

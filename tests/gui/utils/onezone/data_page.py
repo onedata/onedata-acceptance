@@ -17,7 +17,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_BACKEND, WAIT_FRONTEND, ScreenSize
 from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -31,6 +31,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
+from tests.gui.utils.generic import perform_action
 from tests.gui.utils.onezone.generic_page import SidebarPanelPage
 from tests.utils.utils import element_has_class, repeat_failed
 
@@ -262,7 +263,7 @@ class DataPage(SidebarPanelPage):
     )
     sidebar_element = WebElement(".sidebar-spaces .two-level-sidebar", scroll=False)
 
-    def scroll_to_top(self) -> None:
+    def scroll_to_top(self, timeout: float = 2 * WAIT_BACKEND) -> None:
         self.driver.execute_script(
             "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
         )
@@ -273,7 +274,7 @@ class DataPage(SidebarPanelPage):
 
         WebDriverWait(
             self.driver,
-            WAIT_FRONTEND,
+            timeout=timeout,
             ignored_exceptions=(StaleElementReferenceException,),
         ).until(is_top_window_loaded)
 
@@ -322,14 +323,14 @@ class DataPage(SidebarPanelPage):
 
     def scroll_by_arrow(self, direction: Literal["up", "down"] = "up") -> None:
         key = Keys.ARROW_DOWN if direction == "down" else Keys.ARROW_UP
-        ActionChains(self.driver).move_to_element(self.sidebar_element).send_keys(
-            key
-        ).perform()
+        ActionChains(self.driver).move_to_element(self.sidebar_element).send_keys(key).perform()
 
     def get_element_names(self) -> list[str]:
         return [space.name for space in self.get_visible_spaces_list()]
 
-    def get_first_window_bounds_and_number_of_items_per_window(self, initial_scroll_idx) -> tuple[int, int]:
+    def get_first_window_bounds_and_number_of_items_per_window(
+        self, initial_scroll_idx
+    ) -> tuple[int, int]:
         initial_items_count = len(self.get_element_names())
 
         if initial_items_count == len(self.spaces_headers_list):
@@ -345,16 +346,17 @@ class DataPage(SidebarPanelPage):
 
         next_visible_count = len(self.get_element_names())
         return {
-            "window_bounds":[
+            "window_bounds": [
                 {"start": 0, "end": initial_items_count - 1},
-                {"start": NEXT_SCROLL_SHIFT - 2, "end": (NEXT_SCROLL_SHIFT - 2) + next_visible_count - 1}
+                {
+                    "start": NEXT_SCROLL_SHIFT - 2,
+                    "end": (NEXT_SCROLL_SHIFT - 2) + next_visible_count - 1,
+                },
             ],
-            "next_visible": next_visible_count
+            "next_visible": next_visible_count,
         }
 
-    def get_space_header_by_index(
-        self, index: int, initial_scroll_idx: int = 24
-    ) -> SpaceHeader:
+    def get_space_header_by_index(self, index: int, initial_scroll_idx: int = 24) -> SpaceHeader:
         self.scroll_to_top()
         loaded_headers = self.get_visible_spaces_list()
 
@@ -369,7 +371,7 @@ class DataPage(SidebarPanelPage):
 
         second_window = params["window_bounds"][1]
         if index > second_window["end"]:
-            additional_scrolls = math.ceil((index - second_window["end"])/NEXT_SCROLL_SHIFT)
+            additional_scrolls = math.ceil((index - second_window["end"]) / NEXT_SCROLL_SHIFT)
         else:
             additional_scrolls = 0
 
@@ -388,7 +390,8 @@ class DataPage(SidebarPanelPage):
         return self.get_visible_spaces_list()[local_index]
 
     def scroll_and_get_space_header(self, prev_name: str, idx: int = CONST_SCROLL_IDX) -> str:
-        return self.scroll_and_get_element(
+        self.scroll_to_nth_type_selector(SPACE_HEADER_SELECTOR_PREFIX, idx)
+        return self.get_element_and_wait(
             prev_name,
             SpaceHeader,
             SPACE_HEADER_SELECTOR_PREFIX,
@@ -404,37 +407,45 @@ class DataPage(SidebarPanelPage):
         ).name
 
     def count_space_headers(self, initial_scroll_idx: int = 24) -> int:
+        self.scroll_to_top()
         params = self.get_first_window_bounds_and_number_of_items_per_window(initial_scroll_idx)
         scroll_windows = params["window_bounds"]
 
         if len(params["window_bounds"]) == 1:
             return scroll_windows[0]["end"] + 1
 
-        prev_name = self.get_space_header()
+        prev_name = self.get_element_and_wait("", SpaceHeader, SPACE_HEADER_SELECTOR_PREFIX, CONST_SCROLL_IDX).name
+        first_item_next_window = self.get_space_header(
+            idx=CONST_SCROLL_IDX - 14 + NEXT_SCROLL_SHIFT
+        )
 
         additional_scrolls = 0
-
+        partial_scroll = False
         while True:
+            self.scroll_to_nth_type_selector(SPACE_HEADER_SELECTOR_PREFIX, CONST_SCROLL_IDX)
+
             try:
-                new_name = self.scroll_and_get_space_header(prev_name)
+                new_name = self.get_element_and_wait(prev_name, SpaceHeader, SPACE_HEADER_SELECTOR_PREFIX, CONST_SCROLL_IDX).name
             except TimeoutException:
                 break
+
+            first_item_this_window = self.get_space_header(idx=CONST_SCROLL_IDX - 10)
+            if first_item_this_window != first_item_next_window:
+                partial_scroll = True
+                break
+
+            first_item_next_window = self.get_space_header(
+                idx=CONST_SCROLL_IDX - 10 + NEXT_SCROLL_SHIFT
+            )
+
             prev_name = new_name
             additional_scrolls += 1
 
-        elements_count = (
-            scroll_windows[1]["start"] + additional_scrolls * NEXT_SCROLL_SHIFT
-        )
-
+        elements_count = scroll_windows[1]["start"] + additional_scrolls * NEXT_SCROLL_SHIFT
         elements = self.get_element_names()
-        first_name_on_last_page = elements[0]
-        scroll_back_idx = CONST_SCROLL_IDX - elements.index(prev_name) - 5
 
-        self.scroll_to_nth_type_selector(SPACE_HEADER_SELECTOR_PREFIX, scroll_back_idx)
-        new_elements = self.get_element_names()
-        first_item_idx = new_elements.index(first_name_on_last_page)
+        if partial_scroll:
+            elements_count += NEXT_SCROLL_SHIFT - elements.index(first_item_next_window)
 
-        elements_count += first_item_idx
-        elements_count += len(elements) - (NEXT_SCROLL_SHIFT if first_item_idx > 0 else 0)
-
+        elements_count += len(elements)
         return elements_count
