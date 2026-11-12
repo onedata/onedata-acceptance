@@ -10,12 +10,13 @@ import contextlib
 import time
 
 from selenium.common.exceptions import (
+    ElementClickInterceptedException,
     ElementNotInteractableException,
     NoSuchElementException,
 )
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.constants import WAIT_FRONTEND
+from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_FRONTEND, ScreenSize
 from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -540,22 +541,27 @@ def open_space_in_spaces_list(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data
     bottom_idx, top_idx = 0, number - 1
-    is_first_scroll = True
+
+    scroll_idx = 24 if DEFAULT_SCREEN_SIZE is ScreenSize.LARGE else 20
 
     while bottom_idx <= top_idx:
         mid_idx = (bottom_idx + top_idx) // 2
-        mid_space_header = page.get_space_header_by_index(mid_idx, is_first_scroll)
+        mid_space_header = page.get_space_header_by_index(mid_idx, scroll_idx)
         mid_space_header_name = mid_space_header.name
 
         if mid_space_header_name == space_name:
-            driver.execute_script("arguments[0].scrollIntoView();", mid_space_header.web_elem)
-            mid_space_header.click()
+            try:
+                mid_space_header.click()
+            except ElementClickInterceptedException:
+                driver.execute_script("arguments[0].scrollIntoView();", mid_space_header.web_elem)
+                page.scroll_by_arrow(direction="up")
+                mid_space_header.click()
             return
+
         if space_name.casefold() < mid_space_header_name.casefold():
             top_idx = mid_idx - 1
         else:
             bottom_idx = mid_idx + 1
-        is_first_scroll = False
 
     raise AssertionError(f"did not manage to open space {space_name}")
 

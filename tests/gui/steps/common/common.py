@@ -22,7 +22,7 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_BACKEND, WAIT_FRONTEND, ScreenSize
 from tests.gui.type_definitions import (
     Clickable,
     ListItemMainField,
@@ -101,8 +101,10 @@ def assert_n_items_in_items_list(
     items = get_visible_items_list(page, items_type, main_field)
     item_fields = [getattr(item, main_field) for item in items]
 
-    if not unique and items_type == "spaces headers" and isinstance(page, DataPage) and number is None:
-        assert page.count_space_headers(first_scroll=True) == number
+    if not unique and items_type == "spaces headers" and isinstance(page, DataPage) and number is not None:
+        counted_items = page.count_space_headers(24 if DEFAULT_SCREEN_SIZE == ScreenSize.LARGE else 20)
+        assert counted_items == number, f"Counted {counted_items} but expected {number}"
+        return set()
 
     if unique:
         seen_items = set()

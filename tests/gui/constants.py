@@ -73,8 +73,9 @@ class ScreenSize(Enum):
     SMALL = WindowSize(width=800, height=600)
 
 
+DEFAULT_SCREEN_SIZE = ScreenSize.LARGE
 SCREEN_PARAMETERS: Final[dict[str, int]] = {
-    "width": ScreenSize.LARGE.value.width,
-    "height": ScreenSize.LARGE.value.height,
+    "width": DEFAULT_SCREEN_SIZE.value.width,
+    "height": DEFAULT_SCREEN_SIZE.value.height,
     "depth": 24,
 }
