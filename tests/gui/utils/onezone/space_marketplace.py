@@ -57,7 +57,7 @@ class SpaceMarketplacePage(ListPage):
     advertise_space_button = NamedButton(".one-button", text="Advertise your space")
     refresh_button = Button(".refresh-advertised-spaces-list")
     filter_header = WebItem(".spaces-marketplace-filter-header", cls=SpaceMarketplaceFilter)
-    spaces_marketplace_list = WebItemsSequence(
+    marketplace_spaces_list = WebItemsSequence(
         ".spaces-marketplace-list .spaces-marketplace-item",
         cls=MarketplaceSpace,
     )

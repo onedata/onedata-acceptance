@@ -176,7 +176,7 @@ def get_page_for_list(
             page = oz.automation.workflows_page
         case ListElement.LAMBDAS:
             page = oz.automation.lambdas_page
-        case ListElement.SPACES_MARKETPLACE:
+        case ListElement.MARKETPLACE_SPACES:
             page = oz.data.space_marketplace_page
         case _:
             page = getattr(oz, list_element.value)

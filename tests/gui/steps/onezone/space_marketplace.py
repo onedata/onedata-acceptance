@@ -9,7 +9,10 @@ from datetime import date
 from selenium.webdriver.common.by import By
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import assert_n_items_in_items_list
+from tests.gui.steps.common.common import (
+    assert_n_items_in_items_list,
+    wt_assert_n_items_in_items_list,
+)
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.enums import ListElement
 from tests.gui.utils.generic import transform
@@ -43,10 +46,30 @@ def scroll_to_top_of_marketplace_spaces_list(selenium: SeleniumDrivers, browser_
     driver.execute_script("arguments[0].scrollIntoView();", page.filter_header.web_elem)
 
 
+@wt(parsers.parse("user of {browser_id} sees that there is {number:d} space in the Marketplace"))
+@wt(parsers.parse("user of {browser_id} sees that there are {number:d} spaces in the Marketplace"))
+def assert_marketplace_spaces_count(
+    selenium: SeleniumDrivers, browser_id: str, number: int
+) -> None:
+    """Use a concise Marketplace-specific alias for the generic list-count step."""
+    wt_assert_n_items_in_items_list(
+        selenium=selenium,
+        browser_id=browser_id,
+        number=number,
+        items_type=ListElement.MARKETPLACE_SPACES,
+        list_type=ListElement.MARKETPLACE_SPACES,
+    )
+
+
 @wt(
     parsers.parse(
         "user of {browser_id} sees {number:d} Marketplace spaces and all their names "
         'contain "{subtext}"'
+    )
+)
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees {number:d} Marketplace space and its name contains "{subtext}"'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -60,7 +83,7 @@ def assert_marketplace_space_count_and_names_contain(
         selenium,
         browser_id,
         number=number,
-        items_type=ListElement.SPACES_MARKETPLACE,
+        items_type=ListElement.MARKETPLACE_SPACES,
         main_field="name",
     )
     non_matching_names = sorted(name for name in space_names if subtext not in name)
@@ -86,7 +109,7 @@ def assert_only_named_marketplace_spaces_are_displayed(
         selenium,
         browser_id,
         number=len(space_names),
-        items_type=ListElement.SPACES_MARKETPLACE,
+        items_type=ListElement.MARKETPLACE_SPACES,
         main_field="name",
     )
     expected_space_names = set(space_names)
@@ -148,7 +171,7 @@ def assert_space_with_request_access_in_marketplace_subpage(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
-    space = OZLoggedIn(driver).data.space_marketplace_page.spaces_marketplace_list[space_name]
+    space = OZLoggedIn(driver).data.space_marketplace_page.marketplace_spaces_list[space_name]
     assert space.request_access.is_displayed(), (
         f"'Request access' button is not displayed for {space_name}"
     )
@@ -174,7 +197,7 @@ def get_space_from_marketplace_list(
 ) -> MarketplaceSpace:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.space_marketplace_page
-    return page.spaces_marketplace_list[space_name]
+    return page.marketplace_spaces_list[space_name]
 
 
 @wt(
@@ -188,7 +211,7 @@ def assert_space_not_in_marketplace_list(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.space_marketplace_page
-    assert space_name not in page.spaces_marketplace_list, (
+    assert space_name not in page.marketplace_spaces_list, (
         f'Space "{space_name}" unexpectedly found in Space Marketplace'
     )
 

@@ -112,7 +112,7 @@ class ListElement(Enum):
     AUTOMATIONS = "automations"
     LAMBDAS = "lambdas"
     WORKFLOWS = "workflows"
-    SPACES_MARKETPLACE = "spaces marketplace"
+    MARKETPLACE_SPACES = "marketplace spaces"
 
 
 class HostPattern(Enum):

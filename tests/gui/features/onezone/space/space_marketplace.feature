@@ -17,6 +17,14 @@ Feature: Basic management of Space Marketplace
     And user of browser logged as space-owner-user to Onezone service
 
 
+  Scenario: User opens advertisement configuration from the Marketplace tile of an unadvertised space
+    When user of browser clicks "Overview" of "space1" space in the sidebar
+    And user of browser sees that the space is not advertised in the Marketplace tile in space overview subpage
+    And user of browser clicks "Configure advertisement" link in the Marketplace tile in space overview subpage
+    Then user of browser sees "space configuration" label of current page
+    And user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
+
+
   Scenario: User sees own space in the Marketplace after configuring it
     When user of browser clicks on "Data" in the main menu
     And user of browser clicks on "Marketplace" button in spaces sidebar
@@ -38,16 +46,16 @@ Feature: Basic management of Space Marketplace
     # TODO: VFS-13985 Either uncomment it or add a new meta step to check if space configuration is correct before advertising
     # And user of browser sees tags "[archival, big-data, science]" in space configuration subpage
     And user of browser checks "Advertise in Marketplace" toggle on space configuration page
-    And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
+    And user of browser writes "example@onedata.test" into contact email text field in modal "Advertise space in the Marketplace"
     And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
     And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
     And user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
-    And user of browser sees "example@gmail.com" in marketplace contact e-mail address text field
+    And user of browser sees "example@onedata.test" in marketplace contact e-mail address text field
     And user of browser sees that "space1" space is advertised in the marketplace in space sidebar
     And user of browser clicks "Overview" of "space1" space in the sidebar
     Then user of browser sees that the space is advertised in the Marketplace tile in space overview subpage
     And user of browser clicks "Show" link in the Marketplace tile in space overview subpage
-    Then user of browser can see there are 1 spaces marketplace on the spaces marketplace list in the sidebar
+    Then user of browser sees that there is 1 space in the Marketplace
     And user of browser sees "space1" space in Space Marketplace subpage with following details:
         access state: membership granted
         tags:
@@ -77,7 +85,7 @@ Feature: Basic management of Space Marketplace
   #       description: "# Example space\nExample of a space advertised in a Marketplace"
 
   #   And user of browser checks "Advertise in Marketplace" toggle on space configuration page
-  #   And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
+  #   And user of browser writes "example@onedata.test" into contact email text field in modal "Advertise space in the Marketplace"
   #   And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
   #   And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
   #   Then user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
@@ -87,7 +95,7 @@ Feature: Basic management of Space Marketplace
   #   Then user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
 
   #   When user of browser checks "Advertise in Marketplace" toggle on space configuration page
-  #   And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
+  #   And user of browser writes "example@onedata.test" into contact email text field in modal "Advertise space in the Marketplace"
   #   And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
   #   And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
   #   Then user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
@@ -102,7 +110,7 @@ Feature: Basic management of Space Marketplace
         organizationName: "onedata"
         description: "Example of a space advertised in a Marketplace"
         advertisedInMarketplace: true
-        marketplaceContactEmail: "example@gmail.com"
+        marketplaceContactEmail: "example@onedata.test"
 
     When user of browser clicks on "Data" in the main menu
     And user of browser clicks on "Marketplace" button in spaces sidebar
@@ -132,16 +140,19 @@ Feature: Basic management of Space Marketplace
         organizationName: "Onedata"
         description: "Original marketplace description"
         advertisedInMarketplace: true
-        marketplaceContactEmail: "example@gmail.com"
-    And opened [space_owner_browser, marketplace_browser] with [space-owner-user, marketplace-user] signed in to [Onezone, Onezone] service
+        marketplaceContactEmail: "example@onedata.test"
+    And opened marketplace_browser with marketplace-user signed in to Onezone service
 
-    When user of space_owner_browser clicks on "Data" in the main menu
-    And user of space_owner_browser clicks "Configuration" of "space1" space in the sidebar
+    When user of browser clicks on "Data" in the main menu
+    And user of browser clicks "Configuration" of "space1" space in the sidebar
     And user of marketplace_browser clicks on "Data" in the main menu
     And user of marketplace_browser clicks on "Marketplace" button in spaces sidebar
-    Then user of marketplace_browser sees "space1" space with a "Request access" button in Space Marketplace subpage
+    And user of marketplace_browser sees "space1" space in Space Marketplace subpage with following details:
+        access state: request access
+        organization name: "Onedata"
+        description: "Original marketplace description"
 
-    When user of space_owner_browser sets space configuration as follows:
+    And user of browser sets space configuration as follows:
         space name: "space1-updated"
         organization name: "Onedata Research"
         tags:
@@ -149,7 +160,6 @@ Feature: Basic management of Space Marketplace
             - archival
             - big-data
         description: "Updated marketplace description"
-
     Then user of marketplace_browser sees "space1-updated" space in Space Marketplace subpage with following details:
         access state: request access
         tags:
@@ -204,31 +214,29 @@ Feature: Basic management of Space Marketplace
     And using REST, user space-owner-user configures "Hello02" space in "onezone" Onezone service as follows:
         tags:
           - demo
-    And opened [space_owner_browser, marketplace_browser] with [space-owner-user, marketplace-user] signed in to [Onezone, Onezone] service
+    When user of browser clicks on "Data" in the main menu
+    And user of browser clicks on "Marketplace" button in spaces sidebar
 
-    When user of marketplace_browser clicks on "Data" in the main menu
-    And user of marketplace_browser clicks on "Marketplace" button in spaces sidebar
-
-    And user of marketplace_browser sets Marketplace filters as follows:
+    And user of browser sets Marketplace filters as follows:
         search: "1"
-    Then user of marketplace_browser sees 28 Marketplace spaces and all their names contain "1"
+    Then user of browser sees 28 Marketplace spaces and all their names contain "1"
 
-    And user of marketplace_browser sets Marketplace filters as follows:
+    And user of browser sets Marketplace filters as follows:
         search: "AGH"
-    Then user of marketplace_browser sees only Marketplace spaces named ["World01"]
+    Then user of browser sees only Marketplace spaces named ["World01"]
 
-    And user of marketplace_browser sets Marketplace filters as follows:
+    And user of browser sets Marketplace filters as follows:
         search: "Test"
-    Then user of marketplace_browser sees only Marketplace spaces named ["World00"]
+    Then user of browser sees only Marketplace spaces named ["World00"]
 
-    And user of marketplace_browser sets Marketplace filters as follows:
+    And user of browser sets Marketplace filters as follows:
         search: ""
         tags:
           general:
             - archival
             - demo
-    Then user of marketplace_browser sees only Marketplace spaces named ["Hello01", "Hello02", "World00"]
+    Then user of browser sees only Marketplace spaces named ["Hello01", "Hello02", "World00"]
 
-    And user of marketplace_browser sets Marketplace filters as follows:
+    And user of browser sets Marketplace filters as follows:
         search: "01"
-    Then user of marketplace_browser sees only Marketplace spaces named ["Hello01"]
+    Then user of browser sees only Marketplace spaces named ["Hello01"]
