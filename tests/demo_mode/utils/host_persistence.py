@@ -1,0 +1,110 @@
+"""Safely manage host persistence directories used by demo-mode tests.
+
+The ownership marker proves that fixed paths belong to this suite. Cleanup
+refuses to remove existing paths without a valid marker, protecting directories
+left by someone who followed the demo-mode guide manually.
+"""
+
+__author__ = "Mateusz Zajac"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+import os
+from pathlib import Path
+from shutil import rmtree
+from typing import Final
+
+from tests.demo_mode.constants import (
+    CONTAINER_NAMES,
+    CONTAINER_REMOVAL_TIMEOUT,
+    PERSISTENCE_HOST_DIRS,
+)
+from tests.utils.docker_utils import remove_containers
+
+HOST_TMP_ENVIRONMENT_VARIABLE: Final = "DEMO_MODE_HOST_TMP"
+OWNERSHIP_MARKER_NAME: Final = ".onedata-demo-mode-persistence-test-owned"
+OWNERSHIP_MARKER_CONTENT: Final = "onedata-demo-mode-persistence-test-v1\n"
+
+
+def remove_demo_persistence() -> None:
+    """Remove containers and all bind-mounted state owned by the persistence test."""
+    remove_containers(CONTAINER_NAMES, timeout=CONTAINER_REMOVAL_TIMEOUT)
+    existing_paths, marker, marker_exists = _assert_and_get_test_owns_existing_paths()
+    _remove_persistence_paths_and_marker(existing_paths, marker, marker_exists)
+
+    remaining_paths = [path for path in _persistence_paths() if _path_exists(path)]
+    if _path_exists(marker):
+        remaining_paths.append(marker)
+    assert not remaining_paths, (
+        "Demo-mode persistence paths remain after cleanup: "
+        f"{', '.join(str(path) for path in remaining_paths)}"
+    )
+
+
+def prepare_demo_persistence() -> None:
+    """Reserve the clean fixed host paths used by persistence commands."""
+    remove_demo_persistence()
+    marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
+    marker.write_text(OWNERSHIP_MARKER_CONTENT, encoding="utf-8")
+
+
+def _host_tmp_path() -> Path:
+    """Return the host temporary directory mounted into the test runner."""
+    return Path(os.environ.get(HOST_TMP_ENVIRONMENT_VARIABLE, "/tmp"))
+
+
+def _persistence_paths() -> tuple[Path, ...]:
+    host_tmp_path = _host_tmp_path()
+    return tuple(host_tmp_path / name for name in PERSISTENCE_HOST_DIRS)
+
+
+def _path_exists(path: Path) -> bool:
+    """Return whether a path or symlink exists, including a broken symlink."""
+    return os.path.lexists(path)
+
+
+def _is_valid_ownership_marker(marker: Path) -> bool:
+    return (
+        marker.is_file()
+        and not marker.is_symlink()
+        and marker.read_text(encoding="utf-8") == OWNERSHIP_MARKER_CONTENT
+    )
+
+
+def _assert_and_get_test_owns_existing_paths() -> tuple[list[Path], Path, bool]:
+    marker = _host_tmp_path() / OWNERSHIP_MARKER_NAME
+    marker_exists = _path_exists(marker)
+    existing_paths = [path for path in _persistence_paths() if _path_exists(path)]
+
+    if marker_exists:
+        if not _is_valid_ownership_marker(marker):
+            raise AssertionError(f"Invalid demo-mode persistence test ownership marker: {marker}")
+    elif existing_paths:
+        formatted_paths = ", ".join(str(path) for path in existing_paths)
+        raise AssertionError(
+            "Refusing to remove demo-mode persistence paths not owned by the test: "
+            f"{formatted_paths}"
+        )
+
+    non_directory_paths = [
+        path for path in existing_paths if not path.is_dir() or path.is_symlink()
+    ]
+    if non_directory_paths:
+        formatted_paths = ", ".join(str(path) for path in non_directory_paths)
+        raise AssertionError(
+            "Refusing to remove demo-mode persistence paths that are not actual directories: "
+            f"{formatted_paths}"
+        )
+
+    return existing_paths, marker, marker_exists
+
+
+def _remove_persistence_paths_and_marker(
+    existing_paths: list[Path],
+    marker: Path,
+    marker_exists: bool,
+) -> None:
+    for path in existing_paths:
+        rmtree(path)
+    if marker_exists:
+        marker.unlink()

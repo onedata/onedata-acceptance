@@ -1,0 +1,120 @@
+# Demo-mode acceptance tests
+
+This suite guards the source [demo-mode admin guide](https://github.com/onedata/onedata-documentation/blob/develop/docs/admin-guide/demo-mode.md):
+it runs its Docker commands and verifies the resulting Onezone and Oneprovider
+services through their public interfaces.
+
+Unlike the other acceptance suites, demo mode uses neither one-env,
+`test_run.py`, nor pytest-bdd. `ENV_FILE`, `SUITE`, `KEYWORDS`, `OPTS`, and
+`--no-clean` do not apply; plain pytest starts a fresh environment per scenario.
+
+> **Warning:** every scenario force-removes `oz_test`, `op_test1`, and
+> `op_test2`. Persistence also owns `/tmp/oz-pers`, `/tmp/op_test<N>-pers`, and
+> `/tmp/op_test<N>-storage`; without the suite's marker it refuses to remove
+> existing paths and fails instead.
+
+## Scenarios
+
+| Scenario | Guide section | Command directories | Bamboo job |
+|---|---|---|---|
+| `test_run_in_foreground` | Running in the foreground; Acquiring an access token | `run_in_foreground/`, `access_token/` | Run in foreground |
+| `test_run_in_background` | Running in the background; Acquiring an access token | `run_in_background/`, `access_token/` | Run in background |
+| `test_distributed_environment` | Distributed environment | `run_in_foreground/`, `access_token/` | Distributed environment |
+| `test_comprehensive_example` | Comprehensive example | `comprehensive_example/`, `access_token/` | Comprehensive example |
+| `test_python_access` | Data access using Python | `run_in_foreground/`, `python_access/` | Python access |
+| `test_persistence` | Retaining persistence between restarts | `persistence/`, `access_token/` | disabled (`VFS-13556`) |
+
+## Running
+
+You need `/var/run/docker.sock`, Docker credentials with access to the service
+image registry, initialized submodules (`make submodules`), and the
+acceptance-test image. The runner mounts the Docker configuration from
+`DOCKER_CONFIG`, or from `~/.docker` when `DOCKER_CONFIG` is unset. By default,
+Onezone and Oneprovider images are resolved from `branchConfig.yaml` and pulled
+once per test session. Python access also needs PyPI while creating its virtual
+environment.
+
+```bash
+# All scenarios
+make test_demo_mode
+
+# One scenario (filename without .py)
+make test_demo_mode SCENARIO=test_distributed_environment
+
+# Explicit images instead of branchConfig.yaml
+make test_demo_mode \
+    ONEZONE_IMAGE=onedata/onezone:25.1 \
+    ONEPROVIDER_IMAGE=onedata/oneprovider:25.1
+```
+
+| Make variable | Required | Meaning |
+|---|---|---|
+| `SCENARIO` | no | one file from `scenarios/`, without `.py` |
+| `ONEZONE_IMAGE` | no | complete Onezone image reference overriding `branchConfig.yaml` |
+| `ONEPROVIDER_IMAGE` | no | complete Oneprovider image reference overriding `branchConfig.yaml` |
+| `DOCKER_API_VERSION` | no | Docker API compatibility version, e.g. `1.41` |
+| `RUNNER_NAME` | no | explicit test-runner name, primarily for Bamboo cleanup |
+
+For IDE integration or debugging in a prepared local environment:
+
+```bash
+python3 -m pytest --confcutdir=tests/demo_mode -rs -s -v \
+    tests/demo_mode/scenarios \
+    --onezone-image=onedata/onezone:25.1 \
+    --oneprovider-image=onedata/oneprovider:25.1
+```
+
+`--confcutdir` prevents loading repository-wide, one-env-based fixtures.
+
+## Diagnosing failures
+
+JUnit output is written to `test-reports/results-demo-mode.xml`. Command logs
+are stored under `tests/demo_mode/logs/report.<timestamp>/` and published by
+Bamboo as the `command-logs` artifact:
+
+```text
+report.<timestamp>/
+└── <scenario>/
+    ├── command-001-<name>.log
+    ├── command-002-<name>.log
+    └── setup.log                 # python_access only
+```
+
+Each numbered log contains the rendered command and output. Command failures
+name the template; readiness failures point to `await-*` and launcher logs.
+Python failures preserve `setup.log`; REST failures appear in pytest and JUnit.
+If an HTTP call times out with the `HTTP CALL HUNG` banner, the test
+intentionally remains blocked and leaves its containers on the agent so the
+backend can be inspected before the job is stopped.
+
+## Changing guide commands
+
+Files in `commands/` are tested guide fragments, not test helpers. Keep them in
+sync with the source guide. The intentional test-only adaptations are:
+
+- `docker run -it` becomes `docker run -i`, because the runner has no TTY;
+- complete image names become `xONEZONExIMAGEx` and
+  `xONEPROVIDERxIMAGEx`, which the tests resolve from `branchConfig.yaml`;
+- the Python REPL session becomes a script whose results are printed.
+
+Use `xCONTAINERxNAMEx` only where the guide permits selecting a container name.
+If the guide itself is wrong, fix it there and then copy the corrected command
+here rather than adding a test-only workaround.
+
+When adding a scenario:
+
+1. Add or reuse a guide fragment under the matching `commands/` section.
+2. Register its `CommandTemplate` path in `utils/commands/`; paths must not
+   appear elsewhere. The setup and script paths for `python_access` are an
+   intentional exception: both are assembled in `python_access.py` into
+   one low-level command.
+3. Put guide operations and procedures in the module matching the guide
+   section, such as `environment.py`, `data.py`, or `persistence.py`. Keep
+   implementation mechanics without guide knowledge in `utils/`.
+4. Keep scenario data, ordering, and comparisons of already-fetched values in
+   `scenarios/`.
+5. Add a Bamboo job and keep its final container list synchronized with
+   `constants.py`.
+
+Implementation mechanics belong in docstrings near `utils/test_runner.py`,
+`utils/command_context.py`, `utils/commands/`, and `environment.py`.

@@ -8,8 +8,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import errno
 import os.path
+import stat as stat_lib
 import subprocess as sp
 import time
+from contextlib import suppress
 from typing import Literal
 
 from tests.oneclient.constants import ONECLIENT_REPEATS_INTERVAL as INTERVAL
@@ -43,7 +45,7 @@ def try_to_create_directory(
         timeout=client.timeout,
         should_fail=should_fail,
         message="Directory creation succeeded, expected it to fail",
-        exceptions=OSError if should_fail else Exception,
+        expected_failure_exception=OSError,
     )
 
 
@@ -95,9 +97,11 @@ def try_to_remove_directory(
 
     assert_with_expected_fail(
         condition,
-        client.timeout,
+        timeout=client.timeout,
         should_fail=should_fail,
         message=f"Operation of removing directory: {dir_name} expected to fail, but did not",
+        retryable_exceptions=OSError,
+        expected_failure_exception=OSError,
     )
 
 
@@ -130,39 +134,44 @@ def fail_to_delete_empty(user: str, dirs: str, client_node: str, users: Users) -
     delete_empty_base(user, dirs, client_node, users, should_fail=True)
 
 
+def clear_directory(client: Client, path: str) -> None:
+    mode = client.lstat(path).st_mode
+
+    if stat_lib.S_ISLNK(mode):
+        raise ValueError(f"Refusing to clear a symlink: {path}")
+
+    if not stat_lib.S_ISDIR(mode):
+        raise NotADirectoryError(path)
+
+    for name in client.ls(path):
+        child = os.path.join(path, name)
+        child_mode = client.lstat(child).st_mode
+        client.rm(
+            path=child,
+            recursive=stat_lib.S_ISDIR(child_mode),
+        )
+
+
 def purge_all_spaces(client: Client) -> None:
-    try:
+    spaces = client.list_spaces()
+
+    for space in spaces:
+        space_path = client.absolute_path(space)
+        retries = 10
         retry_delay = 5
-
-        spaces = client.list_spaces()
-
-        for space in spaces:
-            space_path = client.absolute_path(space)
-            retries = 10
-            space_purged = False
-            while retries > 0 and not space_purged:
-                try:
-                    print(f"\nCleaning space {space_path} (retries left {retries})")
-                    client.rm(path=space_path, recursive=True)
-                    space_purged = True
-                except FileNotFoundError:
-                    space_purged = True
-                except OSError as e:
-                    if e.errno in (errno.ENOTEMPTY, errno.EAGAIN) and (retries > 0):
-                        # retry in case events between providers haven't synchronized yet
-                        retries = retries - 1
-                        time.sleep(retry_delay)
-                    elif e.errno in (errno.EPERM, errno.EACCES, errno.EIO):
-                        # ignore permission errors during cleaning
-                        space_purged = True
-                    else:
-                        print(f"Unexpected error '{e.errno}' when cleaning space: {space_path}")
-                        raise e
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        print(f"Error during cleaning up spaces: {e}")
-        raise e
+        for i in range(retries):
+            print(f"\nCleaning space {space_path} (retries left {retries - (i + 1)})")
+            try:
+                with suppress(FileNotFoundError):
+                    clear_directory(client, space_path)
+                break
+            except OSError as e:
+                if e.errno in (errno.ENOTEMPTY, errno.EAGAIN):
+                    # retry in case events between providers haven't synchronized yet
+                    time.sleep(retry_delay)
+            except Exception as e:
+                # raise for every other exception
+                raise RuntimeError("Error during cleaning up spaces") from e
 
 
 @wt(parsers.re(r"(?P<user>\w+) purges all spaces on (?P<client_node>.*)"))
@@ -196,28 +205,28 @@ def delete_non_empty(user: str, dirs: str, client_node: str, users: Users) -> No
 
 def try_to_delete_root_dir(user: str, client_node: str, users: Users) -> None:
     client = users[user].clients[client_node]
-    client.rm(client.get_mount_path(), recursive=True)
+    # Keep this to one syscall; rmtree would descend into the mounted spaces.
+    client.rmdir(client.get_mount_path())
 
 
 def try_to_move_root_dir(user: str, client_node: str, users: Users, dst: str) -> None:
     client = users[user].clients[client_node]
-    client.mv(client.get_mount_path(), os.path.join(ONECLIENT_MOUNT_DIR, dst))
+    # shutil.move falls back to copying after the expected rename failure.
+    client.osrename(client.get_mount_path(), os.path.join(ONECLIENT_MOUNT_DIR, dst))
 
 
 def move_dir_by_id(user: str, client_node: str, users: Users, file_id: str, dst: str) -> None:
     client = users[user].clients[client_node]
-    client.mv(
+    # Rename inside the mount so EXDEV cannot mask the Oneclient response.
+    client.osrename(
         f"{client.get_mount_path()}/.__onedata__file_id__{file_id}",
-        os.path.join(ONECLIENT_MOUNT_DIR, dst),
+        os.path.join(client.get_mount_path(), dst),
     )
 
 
 def delete_dir_by_id(user: str, client_node: str, users: Users, file_id: str) -> None:
     client = users[user].clients[client_node]
-    client.rm(
-        f"{client.get_mount_path()}/.__onedata__file_id__{file_id}",
-        recursive=True,
-    )
+    client.rmdir(f"{client.get_mount_path()}/.__onedata__file_id__{file_id}")
 
 
 def remove_directory(user_name: str, client_node: str, dir_path: str, users: Users) -> None:
@@ -249,7 +258,7 @@ def list_dirs_base(
     directory: str,
     client_node: str,
     users: Users,
-    should_fail: bool = False,
+    expected_error: type[OSError] | None = None,
 ) -> list[str]:
     client = users[user].clients[client_node]
     path = client.absolute_path(directory)
@@ -259,16 +268,36 @@ def list_dirs_base(
         try:
             content = client.ls(path=path)
         except OSError as ex:
-            if ex.errno == errno.EPERM:
+            if ex.errno in (errno.EPERM, errno.EACCES):
                 raise PermissionError(ex.errno, ex.strerror, ex.filename) from ex
+            if ex.errno == errno.ENOENT:
+                raise FileNotFoundError(ex.errno, ex.strerror, ex.filename) from ex
             raise
         path_content[:] = content
 
+    failure_message = (
+        f"Directory {directory!r} was accessible, expected {expected_error.__name__}"
+        if expected_error is not None
+        else ""
+    )
+
+    retryable_exceptions = (
+        tuple(
+            exception
+            for exception in (PermissionError, FileNotFoundError)
+            if exception is not expected_error
+        )
+        if expected_error is not None
+        else (OSError,)
+    )
+
     assert_with_expected_fail(
         condition,
-        client.timeout,
-        should_fail=should_fail,
-        exceptions=PermissionError if should_fail else Exception,
+        timeout=client.timeout,
+        should_fail=expected_error is not None,
+        message=failure_message,
+        retryable_exceptions=retryable_exceptions,
+        expected_failure_exception=expected_error,
     )
     return path_content
 
@@ -278,9 +307,28 @@ def list_dir(user: str, directory: str, client_node: str, users: Users) -> None:
     list_dirs_base(user, directory, client_node, users)
 
 
-@wt(parsers.re(r"(?P<user>\w+) can't list (?P<directory>.*) on (?P<client_node>.*)"))
-def cannot_list_dir(user: str, directory: str, client_node: str, users: Users) -> None:
-    list_dirs_base(user, directory, client_node, users, should_fail=True)
+@wt(
+    parsers.re(
+        r"(?P<user>\w+) can't list (?P<directory>.*) on (?P<client_node>.*) "
+        r"due to permission error"
+    )
+)
+def cannot_list_dir_due_to_permission_error(
+    user: str, directory: str, client_node: str, users: Users
+) -> None:
+    list_dirs_base(user, directory, client_node, users, expected_error=PermissionError)
+
+
+@wt(
+    parsers.re(
+        r"(?P<user>\w+) can't list (?P<directory>.*) on (?P<client_node>.*) "
+        r"due to file not found error"
+    )
+)
+def cannot_list_dir_due_to_file_not_found_error(
+    user: str, directory: str, client_node: str, users: Users
+) -> None:
+    list_dirs_base(user, directory, client_node, users, expected_error=FileNotFoundError)
 
 
 @when(
@@ -293,6 +341,8 @@ def copy_dir(user: str, dir1: str, dir2: str, client_node: str, users: Users) ->
     client = users[user].clients[client_node]
     src_path = client.absolute_path(dir1)
     dest_path = client.absolute_path(dir2)
+    if client.is_dir(dest_path):
+        dest_path = os.path.join(dest_path, os.path.basename(os.path.normpath(src_path)))
 
     def assert_action() -> None:
         client.cp(src_path, dest_path, recursive=True)

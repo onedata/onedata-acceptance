@@ -12,7 +12,7 @@ import traceback
 from collections.abc import Callable, Sequence
 from time import sleep, time
 from types import ModuleType
-from typing import Final, ParamSpec, TypeVar, cast
+from typing import Final, ParamSpec, TypedDict, TypeVar, cast
 
 import pytest
 from decorator import decorator
@@ -23,6 +23,11 @@ from tests.type_definitions import IgnoredExceptions
 
 P = ParamSpec("P")
 T = TypeVar("T")
+
+
+class RepeatArgs(TypedDict, total=False):
+    timeout: float | None
+    attempts: int
 
 
 def check_call_with_logging(cmd: str | Sequence[str]) -> None:
@@ -43,25 +48,36 @@ GENERIC_MESSAGE: Final[str] = "Operation succeeded, expected it to fail"
 
 def assert_with_expected_fail(
     condition: Callable[[], object],
-    timeout: float,
+    timeout: float | None = None,
     should_fail: bool = False,
     interval: float = ONECLIENT_REPEATS_INTERVAL,
+    attempts: int | None = None,
     message: str = GENERIC_MESSAGE,
-    exceptions: IgnoredExceptions = (Exception,),
+    retryable_exceptions: IgnoredExceptions = (Exception,),
+    expected_failure_exception: type[BaseException] | None = None,
 ) -> None:
+    effective_expected_failure_exception = (
+        expected_failure_exception
+        if expected_failure_exception is not None
+        else retryable_exceptions
+    )
+
     try:
-        perform_action_with_timeout(
+        result = perform_action_with_timeout(
             condition,
             timeout=timeout,
             interval=interval,
-            ignored_exceptions=exceptions,
+            attempts=attempts,
+            ignored_exceptions=retryable_exceptions,
         )
-    except exceptions:
+    except effective_expected_failure_exception:
         if should_fail:
             return
         raise
 
-    if should_fail:
+    # None also counts as successful result, so we check for False explicitly.
+    failed = result is False
+    if failed != should_fail:
         raise AssertionError(message)
 
 
@@ -122,11 +138,22 @@ def repeat_failed(
 def perform_action_with_timeout[ActionResultT](
     action: Callable[[], ActionResultT],
     /,
-    timeout: float,
+    timeout: float | None = None,
     ignored_exceptions: IgnoredExceptions = (Exception,),
     interval: float = 0.1,
+    attempts: int | None = None,
 ) -> ActionResultT:
-    @repeat_failed(timeout=timeout, exceptions=ignored_exceptions, interval=interval)
+
+    assert timeout is not None or attempts is not None, "Either timeout or attempts must be given"
+
+    # An explicit attempt count takes precedence over the timeout.
+    repeat_args: RepeatArgs = {"timeout": timeout} if attempts is None else {"attempts": attempts}
+
+    @repeat_failed(
+        exceptions=ignored_exceptions,
+        interval=interval,
+        **repeat_args,
+    )
     def attempt() -> ActionResultT:
         return action()
 

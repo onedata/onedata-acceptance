@@ -30,12 +30,12 @@ from tests.gui.steps.onezone.providers import (
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups.generic import AlertPopup
-from tests.type_definitions import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers, SeleniumFixtureState
 from tests.utils.bdd_utils import parsers, wt
 
 
 def assert_provider_has_name_and_hostname_in_oz_gui(
-    selenium: SeleniumDrivers,
+    selenium: SeleniumFixtureState,
     user: str,
     provider_name: str,
     domain_provider: str,
@@ -52,7 +52,7 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
     click_on_provider_in_providers_sidebar_with_provider_name(selenium, user, provider_name)
 
     if test_domain:
-        request = selenium["request"]
+        request = selenium.request
         displays = request.getfixturevalue("displays")
         clipboard = request.getfixturevalue("clipboard")
         assert_provider_hostname_matches_test_hostname(

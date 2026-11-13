@@ -137,6 +137,7 @@ Feature: Datasets mixed tests
     And if <client_inviting> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client_creating>, user2 successfully joins space space1 with received token
+    And using REST, user2 waits for space "space1" support in oneprovider-1
     Then using <client_creating>, user2 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using <client_inviting>, user1 sees dataset for item "dir1" in space "space1" in oneprovider-1
 
@@ -155,6 +156,7 @@ Feature: Datasets mixed tests
     And if <client_inviting> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client_creating>, user2 successfully joins space space1 with received token
+    And using REST, user2 waits for space "space1" support in oneprovider-1
     Then using <client_creating>, user2 fails to create dataset for item "dir1" in space "space1" in oneprovider-1
     And using <client_inviting>, user1 does not see dataset for item "dir1" in space "space1" in oneprovider-1
 

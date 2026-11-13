@@ -13,6 +13,7 @@ from pytest import fixture, mark
 from pytest_bdd import scenario, scenarios
 
 from tests.gui.meta_steps.oneprovider.archives import *
+from tests.gui.meta_steps.oneprovider.browser import *
 from tests.gui.meta_steps.oneprovider.browser_columns_configuration import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -70,6 +71,6 @@ scenarios("../features/oneprovider/data/empty_file_browser.feature")
 scenarios("../features/oneprovider/data/single_directory.feature")
 scenarios("../features/oneprovider/data/nested_directories.feature")
 scenarios("../features/oneprovider/data/size_statistics.feature")
-scenarios("../features/oneprovider/data/jump_input.feature")
-scenarios("../features/oneprovider/data/multibrowser_jump_input.feature")
+scenarios("../features/oneprovider/data/many_files.feature")
+scenarios("../features/oneprovider/data/multibrowser_many_files.feature")
 scenarios("../features/oneprovider/data/download_tar_files.feature")

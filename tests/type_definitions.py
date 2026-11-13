@@ -16,6 +16,7 @@ from typing import (
 )
 
 from _pytest.fixtures import FixtureRequest
+from pytest import TestReport
 from selenium.webdriver.remote.webdriver import WebDriver
 
 type JsonValue = None | str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
@@ -40,7 +41,18 @@ class HostDescription(TypedDict, total=False):
 
 type Hosts = dict[str, HostDescription]
 type SeleniumDrivers = dict[str, WebDriver]
-type SeleniumFixtureState = dict[str, WebDriver | FixtureRequest]
+
+
+class SeleniumFixtureState(dict[str, WebDriver]):
+    def __init__(
+        self,
+        request: FixtureRequest,
+        drivers: dict[str, WebDriver] | None = None,
+    ) -> None:
+        super().__init__(drivers or {})
+        self.request = request
+
+
 type Storages = MutableMapping[str, MutableMapping[str, str]]
 type Tokens = dict[str, dict[str, str]]
 type WorkflowExecutions = dict[str, dict[str, object]]
@@ -71,7 +83,7 @@ type WebDriverFactory = FactoryCallable[[], WebDriver]
 
 
 class HookOutcome(Protocol):
-    def get_result(self) -> object: ...
+    def get_result(self) -> TestReport: ...
 
 
 class LogEntry(TypedDict):

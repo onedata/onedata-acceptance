@@ -195,6 +195,11 @@ def remove_space_with_alias_in_oz(
         user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
         space_api = SpaceApi(user_client)
         space_api.remove_space(space_aliases[alias]["sid"])
+        # Keep the alias because some scenarios verify that an already mounted
+        # Oneclient can still access the removed space through its cached,
+        # id-annotated path.  It must not, however, make active spaces with the
+        # same name look ambiguous.
+        space_aliases[alias]["removed"] = True
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -224,6 +229,8 @@ def rename_space_with_alias_in_oz(
         space = user_api.get_user_space(space_aliases[alias]["sid"])
         space.name = new_space_name
         space_api.modify_space(space.space_id, space)
+        space_aliases[alias]["name"] = new_space_name
+        space_aliases[alias]["removed"] = False
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -237,5 +244,14 @@ def create_path_for_item_in_space_with_alias(
 
 
 def check_whether_space_names_repeats_for_alias(alias: str, space_aliases: SpaceAliases) -> bool:
-    space_name = space_aliases[alias]["name"]
-    return any(k != alias and v["name"] == space_name for k, v in space_aliases.items())
+    aliased_space = space_aliases[alias]
+    if aliased_space.get("removed", False):
+        return True
+
+    space_name = aliased_space["name"]
+    return any(
+        other_alias != alias
+        and not other_space.get("removed", False)
+        and other_space["name"] == space_name
+        for other_alias, other_space in space_aliases.items()
+    )

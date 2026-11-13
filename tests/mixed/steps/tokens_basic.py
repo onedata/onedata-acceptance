@@ -4,6 +4,7 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from onezone_client import UserApi
 from tests.gui.constants import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.tokens import (
     assert_token_configuration_gui,
@@ -22,7 +23,7 @@ from tests.mixed.steps.rest.onezone.tokens import (
     create_token_with_config_rest,
     revoke_token_rest,
 )
-from tests.mixed.utils.common import NoSuchClientException
+from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.type_definitions import Hosts, SeleniumDrivers, Tokens
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
@@ -202,6 +203,7 @@ def join_space_with_token(
     users: Users,
     hosts: Hosts,
     space_name: str,
+    spaces: dict[str, str],
 ) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -216,6 +218,16 @@ def join_space_with_token(
             space_name,
             tmp_memory,
         )
-        assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
+
+        @repeat_failed(timeout=WAIT_BACKEND * 4)
+        def assert_joined_space_is_visible_via_rest() -> None:
+            user_client = login_to_oz(user, users[user].password, hosts["onezone"]["hostname"])
+            user_space_ids = UserApi(user_client).list_user_spaces().spaces
+            expected_space_id = spaces[space_name]
+            assert expected_space_id in user_space_ids, (
+                f'Space "{space_name}" ({expected_space_id}) not found among user spaces'
+            )
+
+        assert_joined_space_is_visible_via_rest()
     else:
         raise NoSuchClientException(f"Client: {client} not found")

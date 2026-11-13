@@ -78,6 +78,7 @@ def assert_transfers(
         )
 
 
+@repeat_failed(attempts=10, interval=0.5)
 def assert_first_transfer(
     selenium: SeleniumDrivers,
     browser_id: str,

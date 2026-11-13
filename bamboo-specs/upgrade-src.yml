@@ -26,10 +26,16 @@ other:
   concurrent-build-plugin: '3'
   force-stop-build: true
   all-other-apps:
-    custom.com.atlassian.bamboo.plugin.hungbuildkiller:
-      stopped.enabled: 'true'
-      add_comment_when_hung.enabled: 'true'
-
+    custom:
+      com.atlassian.bamboo.plugin.hungbuildkiller:
+        stopped.enabled: "true"
+        add_comment_when_hung.enabled: "true"
+      buildExpiryConfig:
+        period: weeks
+        expiryTypeBuildLog: "true"
+        enabled: "true"
+        expiryTypeArtifact: "true"
+        duration: "1"
 stages:
 - Upgrade Test:
     manual: false

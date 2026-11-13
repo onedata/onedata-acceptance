@@ -4,7 +4,6 @@ using web GUI
 
 from collections.abc import Callable
 from itertools import zip_longest
-from typing import cast
 
 from _pytest._py.path import LocalPath
 from selenium.webdriver.common.by import By
@@ -52,7 +51,7 @@ from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.onezone.members_subpage import MembershipRow
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
-from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers
+from tests.type_definitions import Hosts, JsonObject, SeleniumDrivers, SeleniumFixtureState
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import Users
 
@@ -71,7 +70,7 @@ from tests.utils.user_utils import Users
 )
 def login_using_gui(
     host_list: list[str],
-    selenium: SeleniumDrivers,
+    selenium: SeleniumFixtureState,
     driver: WebDriver,
     tmpdir: LocalPath,
     tmp_memory: TmpMemory,
@@ -97,7 +96,7 @@ def login_using_gui(
         capabilities,
     )
     g_open_onedata_service_page(selenium, user_list, host_list, hosts)
-    browsers_to_users = selenium["request"].getfixturevalue("browsers_to_users")
+    browsers_to_users = selenium.request.getfixturevalue("browsers_to_users")
 
     for browser, user in zip(browser_id_list, user_list, strict=False):
         browsers_to_users[browser] = user
@@ -263,13 +262,12 @@ def wt_visit_file_browser(
 
 def search_for_members(
     driver: WebDriver,
-    records: PageObjectsSequence,
+    records: PageObjectsSequence[MembershipRow],
     member_name: str,
     parent_name: str,
     fun: Callable[[MembershipRow, int], bool],
 ) -> bool:
     for record in records:
-        record = cast(MembershipRow, record)
         record_id = record.clickable_name.get_attribute("id")
         scroll_to_css_selector(driver, f"#{record_id}")
         elements = driver.find_elements(

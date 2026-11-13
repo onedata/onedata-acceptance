@@ -35,6 +35,7 @@ from tests.mixed.utils.privileges import (
     space_member_privileges,
     space_owner_privileges,
 )
+from tests.type_definitions import SeleniumFixtureState
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -208,7 +209,7 @@ def execute_copied_curl_command_with_env_vars(
     displays: dict[str, str],
     clipboard: Clipboard,
     tmp_memory: TmpMemory,
-    selenium: Mapping[str, FixtureRequestLike],
+    selenium: SeleniumFixtureState,
     config: str,
 ) -> None:
     """
@@ -218,7 +219,7 @@ def execute_copied_curl_command_with_env_vars(
     """
     loaded_config = yaml.load(config, yaml.Loader)
     resolved_config = {
-        k: try_to_resolve_items(v, selenium["request"]) for k, v in loaded_config.items()
+        k: try_to_resolve_items(v, selenium.request) for k, v in loaded_config.items()
     }
     execute_copied_curl_command(browser_id, displays, clipboard, tmp_memory, config=resolved_config)
 

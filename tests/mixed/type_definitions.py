@@ -76,9 +76,10 @@ type LumaMappings = dict[str, dict[str, StorageMappings]]
 class SpaceAlias(TypedDict):
     name: str
     sid: str
+    removed: NotRequired[bool]
 
 
-type SpaceAliases = MutableMapping[str, SpaceAlias]
+type SpaceAliases = dict[str, SpaceAlias]
 
 
 class UserMemory(TypedDict):

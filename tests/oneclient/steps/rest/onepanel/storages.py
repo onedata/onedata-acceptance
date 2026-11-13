@@ -23,7 +23,9 @@ def modify_storage_parameters(
     onepanel_host: str,
     onepanel_credentials: User,
 ) -> None:
-    assert onepanel_credentials.password is not None
+    assert onepanel_credentials.password is not None, (
+        f"Missing Onepanel password for user {onepanel_credentials.username!r} on {onepanel_host}"
+    )
     user_client = login_to_panel(
         onepanel_credentials.username,
         onepanel_credentials.password,

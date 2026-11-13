@@ -51,7 +51,7 @@ def mount_new_oneclient_with_token(
     users[user].mount_client(
         "oneclient-1",
         "client1",
-        cast(Mapping[str, Mapping[str, str]], hosts),
+        hosts,
         env_desc,
         token,
     )
@@ -70,7 +70,7 @@ def mount_new_oneclient_with_token_fail(
         users[user].mount_client(
             "oneclient-1",
             "client1",
-            cast(Mapping[str, Mapping[str, str]], hosts),
+            hosts,
             env_desc,
             token,
         )
@@ -108,9 +108,9 @@ def create_file_in_op_oneclient(
     request: pytest.FixtureRequest,
 ) -> None:
     if result == "fails":
-        multi_file_steps.create_reg_file_fail(user, path, host, users, request)
+        multi_file_steps.create_reg_file_fail(user, [path], host, users, request)
     else:
-        multi_file_steps.create_reg_file(user, path, host, users, request)
+        multi_file_steps.create_reg_file(user, [path], host, users, request)
 
 
 def create_file_in_op_oneclient_with_tokens(
@@ -148,7 +148,9 @@ def see_items_in_op_oneclient(
         if last_elem_in_path.startswith("dir"):
             full_path = f"{space}/{item}"
             if result == "fails":
-                multi_dir_steps.cannot_list_dir(user, full_path, host, users)
+                multi_dir_steps.cannot_list_dir_due_to_file_not_found_error(
+                    user, full_path, host, users
+                )
             else:
                 multi_dir_steps.list_dir(user, full_path, host, users)
         elif result == "fails":
@@ -202,7 +204,7 @@ def create_item_in_op_oneclient(
     if name.startswith("dir"):
         multi_dir_steps.try_to_create_directory(user, host, f"{cwd}/{name}", users)
     else:
-        multi_file_steps.create_reg_file(user, f"{cwd}/{name}", host, users, request)
+        multi_file_steps.create_reg_file(user, [f"{cwd}/{name}"], host, users, request)
     if not content:
         return
     cwd += "/" + name

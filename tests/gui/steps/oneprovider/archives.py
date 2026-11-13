@@ -8,9 +8,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import contextlib
 import re
-import time
 
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
@@ -363,26 +364,63 @@ def assert_page_with_error_appeared(
     assert browser.message == text, f'page with text "{text}" not  found'
 
 
+def wait_for_archive_to_enter_or_exit_states(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    description: str,
+    tmp_memory: TmpMemory,
+    expected_states: list[str] | None,
+    excluded_states: list[str] | None,
+) -> None:
+    if expected_states is None and excluded_states is None:
+        raise AssertionError("Either expected or excluded statuses list must be given")
+
+    browser = tmp_memory[browser_id]["archive_browser"]
+    driver = selenium[browser_id]
+
+    def state_condition(_: WebDriver) -> bool:
+        archive = perform_action(
+            lambda: get_archive_with_description(browser, description),
+            timeout=WAIT_FRONTEND // 4,
+        )
+        archive_state = archive.state.state_type
+        if expected_states:
+            return archive_state in expected_states
+        if excluded_states:
+            return archive_state not in excluded_states
+        return False
+
+    expected_state_description = (
+        f"reach one of the expected states {expected_states}"
+        if expected_states
+        else f"leave the excluded states {excluded_states}"
+    )
+    WebDriverWait(
+        driver, timeout=300, poll_frequency=0.5, ignored_exceptions=[PageObjectNotFoundError]
+    ).until(
+        state_condition,
+        message=(f'Archive with description "{description}" did not {expected_state_description}'),
+    )
+
+
 @wt(
-    parsers.parse(
-        'user of {browser_id} waits for "{status}" state for archive'
-        ' with description "{description}" in archive browser'
+    parsers.re(
+        r'user of (?P<browser_id>.*?) waits for "(?P<state>.*?)" state'
+        r" for archive with description "
+        r'"(?P<description>.*?)" in archive browser'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def waits_for_preserved_state(
-    browser_id: str, status: str, description: str, tmp_memory: TmpMemory
+def wait_for_expected_archive_state(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    state: str,
+    description: str,
+    tmp_memory: TmpMemory,
 ) -> None:
-    browser = tmp_memory[browser_id]["archive_browser"]
-    archive = get_archive_with_description(browser, description)
-    for _ in range(150):
-        if archive.state.state_type == status:
-            break
-        time.sleep(2)
-    else:
-        raise TimeoutError(
-            f'failed to see "{status}" state for archive with description "{description}"'
-        )
+    wait_for_archive_to_enter_or_exit_states(
+        selenium, browser_id, description, tmp_memory, [state], None
+    )
 
 
 @wt(parsers.parse("user of {browser_id} sees archive ID in Archive details modal"))
