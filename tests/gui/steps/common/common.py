@@ -101,8 +101,16 @@ def assert_n_items_in_items_list(
     items = get_visible_items_list(page, items_type, main_field)
     item_fields = [getattr(item, main_field) for item in items]
 
-    if not unique and items_type == "spaces headers" and isinstance(page, DataPage) and number is not None:
-        counted_items = page.count_space_headers(24 if DEFAULT_SCREEN_SIZE == ScreenSize.LARGE else 20)
+    # currently only DataPage space headers use a dedicated virtualized-list counter.
+    # When uniqueness is not required, counting all headers is sufficient;
+    # collecting their field values would be unnecessary.
+    if (
+        not unique
+        and items_type == ListElement.SPACES_HEADERS
+        and isinstance(page, DataPage)
+        and number is not None
+    ):
+        counted_items = page.count_items(24 if DEFAULT_SCREEN_SIZE == ScreenSize.LARGE else 20)
         page.scroll_to_top()
         assert counted_items == number, f"Counted {counted_items} but expected {number}"
         return set()

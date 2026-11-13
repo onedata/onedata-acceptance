@@ -546,7 +546,7 @@ def open_space_in_spaces_list(
 
     while bottom_idx <= top_idx:
         mid_idx = (bottom_idx + top_idx) // 2
-        mid_space_header = page.get_space_header_by_index(mid_idx, scroll_idx)
+        mid_space_header = page.get_item_by_index(mid_idx, scroll_idx)
         mid_space_header_name = mid_space_header.name
 
         if mid_space_header_name == space_name:

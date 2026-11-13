@@ -5,10 +5,11 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from collections.abc import Iterable
+import math
+from collections.abc import Collection, Iterable
 from typing import ClassVar
 
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -78,6 +79,131 @@ class ListPage(PageObject):
             timeout=timeout,
             ignored_exceptions=(StaleElementReferenceException,),
         ).until(get_changed_element)
+
+
+class VirtualizedListPage[T: NamedElement](ListPage):
+    """Base class for lists that render only a moving window of their items."""
+
+    item_cls: type[T]
+    item_selector_prefix: str
+    scroll_shift: int
+    scroll_anchor_index: int
+
+    def get_visible_items(self) -> list[T]:
+        raise NotImplementedError
+
+    def get_all_rendered_items(self) -> Collection[T]:
+        """Return rendered items, including empty virtualized placeholders."""
+        raise NotImplementedError
+
+    def scroll_to_list_top(self) -> None:
+        raise NotImplementedError
+
+    def get_initial_window_layout(self, initial_scroll_idx: int) -> list[dict[str, int]]:
+        initial_items_count = len(self.get_visible_items())
+        if initial_items_count == len(self.get_all_rendered_items()):
+            return [{"start": 0, "end": initial_items_count - 1}]
+
+        # Trigger rendering of the first full window before measuring it.
+        self.scroll_to_nth_type_selector(self.item_selector_prefix, initial_scroll_idx)
+        self.scroll_to_list_top()
+        self.scroll_to_nth_type_selector(self.item_selector_prefix, initial_scroll_idx)
+
+        next_visible_count = len(self.get_visible_items())
+        return [
+            {"start": 0, "end": initial_items_count - 1},
+            {
+                "start": self.scroll_shift - 2,
+                "end": self.scroll_shift - 2 + next_visible_count - 1,
+            },
+        ]
+
+    def get_item_name_at_slot(self, idx: int | None = None) -> str:
+        return self.get_item_row(
+            self.item_cls,
+            self.item_selector_prefix,
+            self.scroll_anchor_index if idx is None else idx,
+        ).name
+
+    def scroll_and_wait_for_item_change(self, previous_name: str) -> str:
+        self.scroll_to_nth_type_selector(self.item_selector_prefix, self.scroll_anchor_index)
+        return self.get_element_and_wait(
+            previous_name,
+            self.item_cls,
+            self.item_selector_prefix,
+            self.scroll_anchor_index,
+            timeout=WAIT_FRONTEND // 2,
+        ).name
+
+    def get_item_by_index(self, index: int, initial_scroll_idx: int) -> T:
+        self.scroll_to_list_top()
+        loaded_items = self.get_visible_items()
+        if index < len(loaded_items):
+            return loaded_items[index]
+
+        windows = self.get_initial_window_layout(initial_scroll_idx)
+        if len(windows) == 1:
+            raise IndexError(f"Index {index} is larger than number of elements")
+
+        second_window = windows[1]
+        additional_scrolls = (
+            math.ceil((index - second_window["end"]) / self.scroll_shift)
+            if index > second_window["end"]
+            else 0
+        )
+        previous_name = self.get_item_name_at_slot()
+        for _ in range(additional_scrolls):
+            previous_name = self.scroll_and_wait_for_item_change(previous_name)
+
+        window_start = second_window["start"] + additional_scrolls * self.scroll_shift
+        return self.get_visible_items()[index - window_start]
+
+    def count_items(self, initial_scroll_idx: int) -> int:
+        self.scroll_to_list_top()
+        windows = self.get_initial_window_layout(initial_scroll_idx)
+        if len(windows) == 1:
+            return windows[0]["end"] + 1
+
+        previous_name = self.get_element_and_wait(
+            "",
+            self.item_cls,
+            self.item_selector_prefix,
+            self.scroll_anchor_index,
+        ).name
+        expected_first_item_next_window = self.get_item_name_at_slot(
+            self.scroll_anchor_index - 14 + self.scroll_shift
+        )
+
+        additional_scrolls = 0
+        partial_scroll = False
+        while True:
+            self.scroll_to_nth_type_selector(self.item_selector_prefix, self.scroll_anchor_index)
+            try:
+                new_name = self.get_element_and_wait(
+                    previous_name,
+                    self.item_cls,
+                    self.item_selector_prefix,
+                    self.scroll_anchor_index,
+                ).name
+            except TimeoutException:
+                break
+
+            first_item_this_window = self.get_item_name_at_slot(self.scroll_anchor_index - 10)
+            if first_item_this_window != expected_first_item_next_window:
+                partial_scroll = True
+                break
+
+            expected_first_item_next_window = self.get_item_name_at_slot(
+                self.scroll_anchor_index - 10 + self.scroll_shift
+            )
+            previous_name = new_name
+            additional_scrolls += 1
+
+        elements_count = windows[1]["start"] + additional_scrolls * self.scroll_shift
+        item_names = [item.name for item in self.get_visible_items()]
+        if partial_scroll:
+            elements_count += self.scroll_shift - item_names.index(expected_first_item_next_window)
+        return elements_count + len(item_names)
 
 
 class SidebarPanelPage(GenericPage, ListPage):
