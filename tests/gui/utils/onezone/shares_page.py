@@ -32,7 +32,6 @@ class SharesPage(SidebarPanelPage, VirtualizedListPage[SharesSidebarRecord]):
     item_cls = SharesSidebarRecord
     item_selector_prefix = SHARES_SIDEBAR_SELECTOR_PREFIX
     scroll_shift = NEXT_SCROLL_SHIFT
-    initial_window_offset = -1
     next_window_offset = -10
 
     shares_list = WebItemsSequence(".sidebar-shares .one-list-item", cls=SharesSidebarRecord)

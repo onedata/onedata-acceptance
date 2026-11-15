@@ -128,23 +128,37 @@ class VirtualizedListPage[T: NamedElement](ListPage):
     def scroll_to_list_top(self) -> None:
         raise NotImplementedError
 
-    def get_initial_window_layout(self) -> list[dict[str, int]]:
-        initial_scroll_idx = self.get_initial_and_next_scroll_anchors().initial_window
-        initial_items_count = len(self.get_visible_items())
-        if initial_items_count == len(self.get_all_rendered_items()):
-            return [{"start": 0, "end": initial_items_count - 1}]
-
+    def trigger_first_render_using_scroll(self) -> None:
         # Trigger rendering of the first full window before measuring it.
+        initial_scroll_idx = self.get_initial_and_next_scroll_anchors().initial_window
         self.scroll_to_nth_type_selector(self.item_selector_prefix, initial_scroll_idx)
         self.scroll_to_list_top()
         self.scroll_to_nth_type_selector(self.item_selector_prefix, initial_scroll_idx)
 
-        next_visible_count = len(self.get_visible_items())
+    def get_some_first_visible_names_and_first_page_count(self) -> tuple[int, list[str]]:
+        visible_names = self.get_element_names()
+        first_page_count = len(visible_names)
+        self.scroll_to_nth_type_selector(self.item_selector_prefix, first_page_count)
+
+        new_visible_names = self.get_element_names()
+        prev_last_name_idx = new_visible_names.index(visible_names[-1])
+
+        visible_names.extend(new_visible_names[prev_last_name_idx:])
+        self.scroll_to_list_top()
+        return first_page_count, visible_names
+
+    def get_initial_window_layout(self) -> list[dict[str, int]]:
+        first_page_count, visible_names = self.get_some_first_visible_names_and_first_page_count()
+        self.trigger_first_render_using_scroll()
+        next_visible_items = self.get_visible_items()
+        first_name_after_scroll = next_visible_items[0].name
+        first_idx_after_scroll = visible_names.index(first_name_after_scroll) - 1
+
         return [
-            {"start": 0, "end": initial_items_count - 1},
+            {"start": 0, "end": first_page_count - 1},
             {
-                "start": self.scroll_shift + self.initial_window_offset,
-                "end": self.scroll_shift + self.initial_window_offset + next_visible_count - 1,
+                "start": first_idx_after_scroll,
+                "end": first_idx_after_scroll + len(next_visible_items) - 1,
             },
         ]
 
@@ -199,6 +213,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
         if len(windows) == 1:
             return windows[0]["end"] + 1
 
+        self.initial_window_offset = windows[1]["start"] - self.scroll_shift
         previous_name = self.get_element_and_wait(
             "",
             self.item_cls,
