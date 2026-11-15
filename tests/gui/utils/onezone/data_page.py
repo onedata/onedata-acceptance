@@ -8,13 +8,11 @@ import re
 from collections.abc import Collection
 from typing import Literal
 
-from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_FRONTEND, ScreenSize
 from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -28,7 +26,11 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.onezone.generic_page import SidebarPanelPage, VirtualizedListPage
+from tests.gui.utils.onezone.generic_page import (
+    ScrollAnchors,
+    SidebarPanelPage,
+    VirtualizedListPage,
+)
 from tests.utils.utils import element_has_class, repeat_failed
 
 from .common import EditBox, InputBox
@@ -37,7 +39,6 @@ from .space_configuration_subpage import SpaceConfigurationPage
 from .space_marketplace import SpaceMarketplacePage
 
 SPACE_HEADER_SELECTOR_PREFIX = ".sidebar-spaces .two-level-sidebar .data-row:nth-of-type"
-NEXT_SCROLL_SHIFT = 9
 CONST_SCROLL_IDX = 24
 
 
@@ -250,8 +251,9 @@ class DataPage(VirtualizedListPage[SpaceHeader], SidebarPanelPage):
     panel_name = "data"
     item_cls = SpaceHeader
     item_selector_prefix = SPACE_HEADER_SELECTOR_PREFIX
-    scroll_shift = NEXT_SCROLL_SHIFT
-    scroll_anchor_index = CONST_SCROLL_IDX
+    scroll_shift = 9
+    initial_window_offset = -2
+    next_window_offset = -10
 
     create_space_button = Button(".one-sidebar-toolbar-button .oneicon-add-filled")
 
@@ -262,21 +264,6 @@ class DataPage(VirtualizedListPage[SpaceHeader], SidebarPanelPage):
         cls=SpaceHeader,
     )
     sidebar_element = WebElement(".sidebar-spaces .two-level-sidebar", scroll=False)
-
-    def scroll_to_top(self, timeout: float = 2 * WAIT_BACKEND) -> None:
-        self.driver.execute_script(
-            "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
-        )
-
-        def is_top_window_loaded(_: WebDriver) -> bool:
-            visible_headers = self.get_visible_spaces_list()
-            return bool(visible_headers and visible_headers[0].name)
-
-        WebDriverWait(
-            self.driver,
-            timeout=timeout,
-            ignored_exceptions=(StaleElementReferenceException,),
-        ).until(is_top_window_loaded)
 
     spaces_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
@@ -336,3 +323,6 @@ class DataPage(VirtualizedListPage[SpaceHeader], SidebarPanelPage):
 
     def scroll_to_list_top(self) -> None:
         self.scroll_to_top()
+
+    def get_initial_and_next_scroll_anchors(self) -> ScrollAnchors:
+        return ScrollAnchors(20 if DEFAULT_SCREEN_SIZE == ScreenSize.MEDIUM else 24, 24)

@@ -296,7 +296,7 @@ def wt_assert_n_shares_in_shares_view(
     switch_to_iframe(selenium, browser_id)
     page = get_shares_page(driver)
     assert_n_items_in_items_list(
-        page, selenium, browser_id, int(number), ListElement.SHARES, "name"
+        page, selenium, browser_id, int(number), ListElement.SHARES, "name", unique=False
     )
 
 

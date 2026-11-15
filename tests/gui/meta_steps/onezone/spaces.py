@@ -16,7 +16,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_FRONTEND, ScreenSize
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import paste_and_consume_received_token
 from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -542,11 +542,9 @@ def open_space_in_spaces_list(
     page = OZLoggedIn(driver).data
     bottom_idx, top_idx = 0, number - 1
 
-    scroll_idx = 24 if DEFAULT_SCREEN_SIZE is ScreenSize.LARGE else 20
-
     while bottom_idx <= top_idx:
         mid_idx = (bottom_idx + top_idx) // 2
-        mid_space_header = page.get_item_by_index(mid_idx, scroll_idx)
+        mid_space_header = page.get_item_by_index(mid_idx)
         mid_space_header_name = mid_space_header.name
 
         if mid_space_header_name == space_name:

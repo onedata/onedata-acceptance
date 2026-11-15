@@ -22,7 +22,7 @@ from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElemen
 from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_BACKEND, WAIT_FRONTEND, ScreenSize
+from tests.gui.constants import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.type_definitions import (
     Clickable,
     ListItemMainField,
@@ -50,6 +50,7 @@ from tests.gui.utils.onezone.discovery_page import DiscoveryPage
 from tests.gui.utils.onezone.generic_page import (
     ListPage,
     SidebarPanelPage,
+    VirtualizedListPage,
     get_visible_elements_list,
 )
 from tests.gui.utils.onezone.groups.groups_page import GroupsPage
@@ -80,18 +81,18 @@ def assert_n_items_in_items_list(
     items = get_visible_items_list(page, items_type, main_field)
     item_fields = [getattr(item, main_field) for item in items]
 
-    # currently only DataPage space headers use a dedicated virtualized-list counter.
+    # currently only DataPage space headers and SharesPage shares use a dedicated virtualized-list counter.
     # When uniqueness is not required, counting all headers is sufficient;
     # collecting their field values would be unnecessary.
     if (
         not unique
-        and items_type == ListElement.SPACES_HEADERS
-        and isinstance(page, DataPage)
+        and items_type in [ListElement.SPACES_HEADERS, ListElement.SHARES]
         and number is not None
+        and isinstance(page, VirtualizedListPage)
     ):
-        counted_items = page.count_items(24 if DEFAULT_SCREEN_SIZE == ScreenSize.LARGE else 20)
-        page.scroll_to_top()
+        counted_items = page.count_items()
         assert counted_items == number, f"Counted {counted_items} but expected {number}"
+        page.scroll_to_top(timeout=2 * WAIT_BACKEND)
         return set()
 
     if unique:

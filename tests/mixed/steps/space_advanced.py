@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 
 from tests.gui.meta_steps.rest.shares import create_share_using_rest
+from tests.gui.steps.rest.spaces import delete_space_if_present_using_rest
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
@@ -30,6 +31,7 @@ def create_n_spaces_without_support(
     user: str,
     hosts: Hosts,
     number: str,
+    spaces: dict[str, str],
     request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
 ) -> None:
@@ -45,7 +47,30 @@ def create_n_spaces_without_support(
             owner.password,
             space_name,
         )
+        spaces[space_name] = space_id
         _register_space_finalizer(request, zone_hostname, admin_credentials, space_id)
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} removes space named "{space_name}" in "{zone_host}" Onezone service'
+    )
+)
+def remove_space(
+    zone_host: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: dict[str, str],
+) -> None:
+    owner = users[user]
+    delete_space_if_present_using_rest(
+        hosts[zone_host]["hostname"],
+        owner.username,
+        owner.password,
+        spaces.pop(space_name),
+    )
 
 
 @wt(
