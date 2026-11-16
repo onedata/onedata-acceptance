@@ -81,20 +81,6 @@ def assert_n_items_in_items_list(
     items = get_visible_items_list(page, items_type, main_field)
     item_fields = [getattr(item, main_field) for item in items]
 
-    # currently only DataPage space headers and SharesPage shares use a dedicated virtualized-list counter.
-    # When uniqueness is not required, counting all headers is sufficient;
-    # collecting their field values would be unnecessary.
-    if (
-        not unique
-        and items_type in [ListElement.SPACES_HEADERS, ListElement.SHARES]
-        and number is not None
-        and isinstance(page, VirtualizedListPage)
-    ):
-        counted_items = page.count_items()
-        assert counted_items == number, f"Counted {counted_items} but expected {number}"
-        page.scroll_to_top(timeout=2 * WAIT_BACKEND)
-        return set()
-
     if unique:
         seen_items = set()
         while any(item not in seen_items for item in item_fields):
@@ -107,6 +93,19 @@ def assert_n_items_in_items_list(
         actual_number = len(seen_items)
         found_items: list[str] | set[str] = seen_items
     else:
+        # currently only DataPage space headers and SharesPage/SharesContentPage shares use a dedicated virtualized-list counter.
+        # When uniqueness is not required, counting all headers is sufficient;
+        # collecting their field values would be unnecessary.
+        if (
+            items_type in [ListElement.SPACES_HEADERS, ListElement.SHARES]
+            and number is not None
+            and isinstance(page, VirtualizedListPage)
+        ):
+            counted_items = page.count_items()
+            assert counted_items == number, f"Counted {counted_items} but expected {number}"
+            page.scroll_to_top(timeout=2 * WAIT_BACKEND)
+            return set()
+
         actual_number = len(item_fields)
         found_items = item_fields
         seen_items = set(item_fields)
