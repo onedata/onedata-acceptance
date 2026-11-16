@@ -29,6 +29,9 @@ class ScrollAnchors:
     next_windows: int
 
 
+DEFAULT_SCROLLBAR_SELECTOR = ".perfect-scrollbar-element.ps--active-y"
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_visible_elements_list[T: NamedElement](
     elements_list: Iterable[T],
@@ -97,10 +100,10 @@ class VirtualizedListPage[T: NamedElement](ListPage):
     initial_window_offset: int
     next_window_offset: int
 
-    def scroll_to_top(self, timeout: float = WAIT_FRONTEND) -> None:
-        self.driver.execute_script(
-            "document.querySelector('.perfect-scrollbar-element.ps--active-y').scrollTo(0, 0)"
-        )
+    def scroll_to_top(
+        self, timeout: float = WAIT_FRONTEND, selector: str = DEFAULT_SCROLLBAR_SELECTOR
+    ) -> None:
+        self.driver.execute_script(f"document.querySelector('{selector}').scrollTo(0, 0)")
 
         def is_top_window_loaded(_: WebDriver) -> bool:
             visible_items = self.get_visible_items()
@@ -143,7 +146,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
         new_visible_names = self.get_element_names()
         prev_last_name_idx = new_visible_names.index(visible_names[-1])
 
-        visible_names.extend(new_visible_names[prev_last_name_idx:])
+        visible_names.extend(new_visible_names[prev_last_name_idx + 1 :])
         self.scroll_to_list_top()
         return first_page_count, visible_names
 
@@ -152,7 +155,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
         self.trigger_first_render_using_scroll()
         next_visible_items = self.get_visible_items()
         first_name_after_scroll = next_visible_items[0].name
-        first_idx_after_scroll = visible_names.index(first_name_after_scroll) - 1
+        first_idx_after_scroll = visible_names.index(first_name_after_scroll)
 
         return [
             {"start": 0, "end": first_page_count - 1},

@@ -20,6 +20,7 @@ from tests.utils.utils import repeat_failed
 SHARES_SIDEBAR_SELECTOR_PREFIX = ".sidebar-shares .one-list-item.data-row:nth-of-type"
 NEXT_SCROLL_SHIFT = 9
 CONST_SCROLL_IDX = 24
+SHARES_SCROLLBAR = ".perfect-scrollbar-element.ps--active-y:not(.col-sidebar)"
 
 
 class SharesSidebarRecord(NamedElement):
@@ -42,8 +43,8 @@ class SharesPage(SidebarPanelPage, VirtualizedListPage[SharesSidebarRecord]):
     def get_all_rendered_items(self) -> Collection[SharesSidebarRecord]:
         return self.shares_list
 
-    def scroll_to_list_top(self) -> None:
-        self.scroll_to_top()
+    def scroll_to_list_top(self, timeout: float = WAIT_FRONTEND) -> None:
+        self.scroll_to_top(timeout=timeout, selector=SHARES_SCROLLBAR)
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_shares_list(self) -> list[SharesSidebarRecord]:

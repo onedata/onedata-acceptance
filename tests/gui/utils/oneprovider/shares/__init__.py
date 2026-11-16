@@ -17,7 +17,11 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.oneprovider.browser import Browser
-from tests.gui.utils.onezone.generic_page import ScrollAnchors, VirtualizedListPage
+from tests.gui.utils.onezone.generic_page import (
+    DEFAULT_SCROLLBAR_SELECTOR,
+    ScrollAnchors,
+    VirtualizedListPage,
+)
 from tests.utils.utils import repeat_failed
 
 from ..breadcrumbs import Breadcrumbs
@@ -76,6 +80,8 @@ class SharesContentPage(Browser, VirtualizedListPage[SharesOptions]):
     def get_initial_and_next_scroll_anchors(self) -> ScrollAnchors:
         return ScrollAnchors(20, 20)
 
-    def scroll_to_top(self, timeout: float = WAIT_FRONTEND) -> None:
+    def scroll_to_top(
+        self, timeout: float = WAIT_FRONTEND, selector: str = DEFAULT_SCROLLBAR_SELECTOR
+    ) -> None:
         # Overrides function scroll_to_top from class Browser
-        VirtualizedListPage.scroll_to_top(self, timeout)
+        VirtualizedListPage.scroll_to_top(self, timeout, selector)
