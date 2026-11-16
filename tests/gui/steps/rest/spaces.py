@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import json
 from contextlib import suppress
 from typing import Any
 
@@ -16,6 +17,7 @@ from tests.utils.rest_utils import (
     get_zone_rest_path,
     http_delete,
     http_get,
+    http_patch,
 )
 from tests.utils.user_utils import Users
 from tests.utils.utils import repeat_failed
@@ -147,3 +149,19 @@ def get_space_details_in_oz(
         path=get_zone_rest_path("spaces", space_id),
         auth=(owner_username, owner_password),
     ).json()
+
+
+def modify_space_using_rest(
+    zone_hostname: str,
+    owner_username: str,
+    owner_password: str,
+    space_id: str,
+    space_data: dict[str, Any],
+) -> None:
+    http_patch(
+        ip=zone_hostname,
+        port=OZ_REST_PORT,
+        path=get_zone_rest_path("spaces", space_id),
+        auth=(owner_username, owner_password),
+        data=json.dumps(space_data),
+    )

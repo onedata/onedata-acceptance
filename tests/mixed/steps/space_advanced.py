@@ -8,13 +8,16 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import pytest
+import yaml
 
 from tests.gui.meta_steps.rest.shares import create_share_using_rest
+from tests.gui.steps.rest.spaces import modify_space_using_rest
 from tests.type_definitions import Hosts
-from tests.utils.bdd_utils import parsers, wt
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import (
     CredentialsLike,
     ProviderEntry,
+    Spaces,
     _create_space,
     _get_support,
     _register_space_finalizer,
@@ -35,10 +38,9 @@ def create_n_spaces_without_support(
 ) -> None:
     name_prefix = "space"
     zone_hostname = hosts[zone_host]["hostname"]
-    # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
-    for i in range(int(number)):
-        space_name = f"{name_prefix}{i}"
+    for index in range(int(number)):
+        space_name = f"{name_prefix}{index}"
         space_id = _create_space(
             zone_hostname,
             owner.username,
@@ -46,6 +48,49 @@ def create_n_spaces_without_support(
             space_name,
         )
         _register_space_finalizer(request, zone_hostname, admin_credentials, space_id)
+
+
+@given(
+    parsers.parse(
+        'using REST, {user} creates and advertises {number} spaces with "{name_prefix}" '
+        'prefix in "{zone_host}" Onezone service as follows:\n{config}'
+    )
+)
+def create_and_advertise_n_prefixed_spaces(
+    zone_host: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    number: str,
+    name_prefix: str,
+    config: str,
+    request: pytest.FixtureRequest,
+    admin_credentials: CredentialsLike,
+    spaces: Spaces,
+) -> None:
+    zone_hostname = hosts[zone_host]["hostname"]
+    owner = users[user]
+    space_data = yaml.load(config, yaml.Loader)
+    space_data["advertisedInMarketplace"] = True
+    number_of_spaces = int(number)
+    index_width = max(2, len(str(number_of_spaces - 1)))
+
+    for index in range(number_of_spaces):
+        space_name = f"{name_prefix}{index:0{index_width}d}"
+        spaces[space_name] = space_id = _create_space(
+            zone_hostname,
+            owner.username,
+            owner.password,
+            space_name,
+        )
+        _register_space_finalizer(request, zone_hostname, admin_credentials, space_id)
+        modify_space_using_rest(
+            zone_hostname,
+            owner.username,
+            owner.password,
+            space_id,
+            space_data,
+        )
 
 
 @wt(

@@ -10,6 +10,7 @@ from typing import Any
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.text import transform
 from tests.gui.utils.web_elem_utils import find_web_elem, find_web_elem_with_text
@@ -138,12 +139,24 @@ class Input(WebElement):
 
     def __set__(self, instance: Any, val: Any) -> None:
         input_box = super().__get__(instance, type(instance))
-        input_box.clear()
+        current_value = input_box.get_attribute("value")
+
+        if current_value == val:
+            return
+
+        if current_value != "":
+            if val == "":
+                input_box.send_keys(Keys.CONTROL, "a")
+                input_box.send_keys(Keys.BACKSPACE)
+            else:
+                input_box.clear()
+
         if val != "":
             input_box.send_keys(val)
-            assert input_box.get_attribute("value") == val, (
-                f'entering "{val}" to {self.descriptor_name} in {instance} failed'
-            )
+
+        assert input_box.get_attribute("value") == val, (
+            f'entering "{val}" to {self.descriptor_name} in {instance} failed'
+        )
 
 
 class AceEditor(WebElement):
@@ -159,12 +172,12 @@ class AceEditor(WebElement):
         driver = instance.web_elem.parent
         selector = self.css_selector + " .ace_text-input"
         script = (
-            f"var textarea = document.querySelector('{selector}');"
-            f"textarea.value = '{val}';"
+            "var textarea = document.querySelector(arguments[0]);"
+            "textarea.value = arguments[1];"
             "textarea.dispatchEvent(new Event('input', { bubbles: true}));"
             "return textarea.value"
         )
-        inserted_val = driver.execute_script(script)
+        inserted_val = driver.execute_script(script, selector, val)
         msg = f"Inserted val is {inserted_val} instead of {val}"
         assert val == inserted_val, msg
 

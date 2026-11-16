@@ -7,10 +7,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
+    Input,
     Label,
     NamedButton,
+    WebElement,
+    WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.onezone.generic_page import ListPage
 from tests.gui.utils.onezone.space_configuration_subpage import SpaceTag
 
 
@@ -19,7 +23,7 @@ class SpaceSupportItem(PageObject):
 
 
 class MarketplaceSpace(PageObject):
-    space_name = id = Label(".space-name .item-name")
+    name = id = Label(".space-name .item-name", scroll=False)
     tags_list = WebItemsSequence(".tags-input .tag-item", cls=SpaceTag)
     access_info = Label(".access-info-head-container")
 
@@ -31,14 +35,29 @@ class MarketplaceSpace(PageObject):
 
     visit_space = Button(".visit-space-link")
     configure_space = Button(".configure-space-link")
+    request_access = Button(".access-info-col .btn")
 
     show_description_button = Button(".expand-btn")
     description = Label(".marketplace-space-description")
+    description_element = WebElement(".marketplace-space-description")
 
 
-class SpaceMarketplacePage(PageObject):
+class SpaceTagsFilter(PageObject):
+    tags = WebItemsSequence(".tag-item", cls=SpaceTag)
+    add_tag = Button(".tag-creator-trigger")
+    clear = Button(".input-clear-trigger")
+
+
+class SpaceMarketplaceFilter(PageObject):
+    search_input = Input(".input-group .search-bar")
+    tags_input = WebItem(".tags-input", cls=SpaceTagsFilter)
+
+
+class SpaceMarketplacePage(ListPage):
     advertise_space_button = NamedButton(".one-button", text="Advertise your space")
-    spaces_marketplace_list = WebItemsSequence(
+    refresh_button = Button(".refresh-advertised-spaces-list")
+    filter_header = WebItem(".spaces-marketplace-filter-header", cls=SpaceMarketplaceFilter)
+    marketplace_spaces_list = WebItemsSequence(
         ".spaces-marketplace-list .spaces-marketplace-item",
         cls=MarketplaceSpace,
     )
