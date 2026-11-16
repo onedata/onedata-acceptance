@@ -91,7 +91,17 @@ def create_n_shares_in_space(
     space_name: str,
     shares: dict[str, str],
 ) -> None:
-    for i in range(int(number)):
-        item_path = f"{space_name}/file{i}"
+    number_of_shares = int(number)
+    index_width = len(str(number_of_shares))
+    for i in range(number_of_shares):
+        item_path = f"{space_name}/file{i:0{index_width}d}"
         create_empty_file(item_path, users, user, host, hosts)
-        create_share_using_rest(item_path, host, user, f"share{i}", hosts, users, shares)
+        create_share_using_rest(
+            item_path,
+            host,
+            user,
+            f"share{i:0{index_width}d}",
+            hosts,
+            users,
+            shares,
+        )

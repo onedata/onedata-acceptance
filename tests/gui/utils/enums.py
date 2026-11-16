@@ -76,7 +76,7 @@ class FileAttr(Enum):
     XATTR_KEY = "xattr.key"
 
 
-class ListElement(Enum):
+class ListElement(StrEnum):
     """
     Represents supported list-like element types available on pages.
 

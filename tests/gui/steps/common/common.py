@@ -50,6 +50,7 @@ from tests.gui.utils.onezone.discovery_page import DiscoveryPage
 from tests.gui.utils.onezone.generic_page import (
     ListPage,
     SidebarPanelPage,
+    VirtualizedListPage,
     get_visible_elements_list,
 )
 from tests.gui.utils.onezone.groups.groups_page import GroupsPage
@@ -68,28 +69,51 @@ def assert_n_items_in_items_list(
     number: int | None,
     items_type: ListElement,
     main_field: ListItemMainField,
+    unique: bool = True,
 ) -> set[str]:
     driver = selenium[browser_id]
-    seen_items = set()
-    stop_scrolling_flag = False
 
     if not wait_for_initial_items_and_validate_empty_state(
         page, driver, number, items_type, main_field
     ):
         return set()
 
-    while not stop_scrolling_flag:
-        new_items = get_visible_items_list(page, items_type, main_field)
-        new_items_fields = [getattr(el, main_field) for el in new_items]
+    items = get_visible_items_list(page, items_type, main_field)
+    item_fields = [getattr(item, main_field) for item in items]
 
-        stop_scrolling_flag = not any(el not in seen_items for el in new_items_fields)
-        seen_items.update(new_items_fields)
-        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
+    if unique:
+        seen_items = set()
+        while any(item not in seen_items for item in item_fields):
+            seen_items.update(item_fields)
+            driver.execute_script("arguments[0].scrollIntoView();", items[-1].web_elem)
+
+            items = get_visible_items_list(page, items_type, main_field)
+            item_fields = [getattr(item, main_field) for item in items]
+
+        actual_number = len(seen_items)
+        found_items: list[str] | set[str] = seen_items
+    else:
+        # currently only DataPage space headers and SharesPage/SharesContentPage shares use a dedicated virtualized-list counter.
+        # When uniqueness is not required, counting all headers is sufficient;
+        # collecting their field values would be unnecessary.
+        if (
+            items_type in [ListElement.SPACES_HEADERS, ListElement.SHARES]
+            and number is not None
+            and isinstance(page, VirtualizedListPage)
+        ):
+            counted_items = page.count_items()
+            assert counted_items == number, f"Counted {counted_items} but expected {number}"
+            page.scroll_to_top(timeout=2 * WAIT_BACKEND)
+            return set()
+
+        actual_number = len(item_fields)
+        found_items = item_fields
+        seen_items = set(item_fields)
 
     if number is not None:
-        assert len(seen_items) == number, (
-            f"There are {len(seen_items)} items, but should be: {number}. All found"
-            f" items:\n {seen_items}"
+        assert actual_number == number, (
+            f"There are {actual_number} items, but should be: {number}. All found"
+            f" items:\n {found_items}"
         )
     return seen_items
 
@@ -187,10 +211,10 @@ def get_page_for_list(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) can see there are (?P<number>\d+)"
-        r" (?P<items_type>.*) on the (?P<list_type>.*) list in the sidebar",
+        r" (?:(?P<unique>unique) )?(?P<items_type>.*)"
+        r" on the (?P<list_type>.*) list in the sidebar",
     ),
     converters={
-        "number": int,
         "items_type": ListElement,
         "list_type": ListElement,
     },
@@ -199,12 +223,15 @@ def wt_assert_n_items_in_items_list(
     selenium: dict[str, WebDriver],
     browser_id: str,
     number: int,
+    unique: bool,
     items_type: ListElement,
     list_type: ListElement,
 ) -> None:
     driver = selenium[browser_id]
     page = get_page_for_list(list_type, driver)
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
+    assert_n_items_in_items_list(
+        page, selenium, browser_id, number, items_type, "name", unique=unique
+    )
 
 
 def get_last_item_number_in_table(driver: WebDriver) -> int:

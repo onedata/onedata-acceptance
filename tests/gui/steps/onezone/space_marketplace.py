@@ -58,6 +58,7 @@ def assert_marketplace_spaces_count(
         number=number,
         items_type=ListElement.MARKETPLACE_SPACES,
         list_type=ListElement.MARKETPLACE_SPACES,
+        unique=True,
     )
 
 

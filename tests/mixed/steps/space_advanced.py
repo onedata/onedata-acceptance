@@ -11,7 +11,7 @@ import pytest
 import yaml
 
 from tests.gui.meta_steps.rest.shares import create_share_using_rest
-from tests.gui.steps.rest.spaces import modify_space_using_rest
+from tests.gui.steps.rest.spaces import delete_space_if_present_using_rest, modify_space_using_rest
 from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import (
@@ -33,20 +33,24 @@ def create_n_spaces_without_support(
     user: str,
     hosts: Hosts,
     number: str,
+    spaces: dict[str, str],
     request: pytest.FixtureRequest,
     admin_credentials: CredentialsLike,
 ) -> None:
     name_prefix = "space"
     zone_hostname = hosts[zone_host]["hostname"]
     owner = users[user]
-    for index in range(int(number)):
-        space_name = f"{name_prefix}{index}"
+    number_of_spaces = int(number)
+    index_width = len(str(number_of_spaces))
+    for index in range(number_of_spaces):
+        space_name = f"{name_prefix}{index:0{index_width}d}"
         space_id = _create_space(
             zone_hostname,
             owner.username,
             owner.password,
             space_name,
         )
+        spaces[space_name] = space_id
         _register_space_finalizer(request, zone_hostname, admin_credentials, space_id)
 
 
@@ -95,6 +99,28 @@ def create_and_advertise_n_prefixed_spaces(
 
 @wt(
     parsers.parse(
+        'using REST, {user} removes space named "{space_name}" in "{zone_host}" Onezone service'
+    )
+)
+def remove_space(
+    zone_host: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: dict[str, str],
+) -> None:
+    owner = users[user]
+    delete_space_if_present_using_rest(
+        hosts[zone_host]["hostname"],
+        owner.username,
+        owner.password,
+        spaces.pop(space_name),
+    )
+
+
+@wt(
+    parsers.parse(
         "using REST, {user} creates {number} spaces with one share for each, in"
         ' "{zone_host}" Onezone service'
     )
@@ -118,8 +144,10 @@ def create_n_spaces_with_shares(
     providers: list[ProviderEntry] = [{"oneprovider-1": {"storage": "posix", "size": 1000000}}]
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
-    for i in range(int(number)):
-        space_name = f"{name_prefix}{i}"
+    number_of_spaces = int(number)
+    index_width = len(str(number_of_spaces))
+    for i in range(number_of_spaces):
+        space_name = f"{name_prefix}{i:0{index_width}d}"
         space_id = _create_space(
             zone_hostname,
             owner.username,

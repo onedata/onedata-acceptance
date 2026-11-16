@@ -5,11 +5,14 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from collections.abc import Collection
+from typing import Literal
 
-from selenium.webdriver import ActionChains
+from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_FRONTEND, ScreenSize
 from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -23,13 +26,20 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.onezone.generic_page import SidebarPanelPage
-from tests.utils.utils import element_has_class
+from tests.gui.utils.onezone.generic_page import (
+    ScrollAnchors,
+    SidebarPanelPage,
+    VirtualizedListPage,
+)
+from tests.utils.utils import element_has_class, repeat_failed
 
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
 from .space_configuration_subpage import SpaceConfigurationPage
 from .space_marketplace import SpaceMarketplacePage
+
+SPACE_HEADER_SELECTOR_PREFIX = ".sidebar-spaces .two-level-sidebar .data-row:nth-of-type"
+CONST_SCROLL_IDX = 24
 
 
 class Space(NamedElement):
@@ -237,8 +247,12 @@ class ArchiveHeader(PageObject):
     back_to_dataset_page = Button(".content-back-arrow-icon")
 
 
-class DataPage(SidebarPanelPage):
+class DataPage(VirtualizedListPage[SpaceHeader], SidebarPanelPage):
     panel_name = "data"
+    item_cls = SpaceHeader
+    item_selector_prefix = SPACE_HEADER_SELECTOR_PREFIX
+    scroll_shift = 9
+    next_window_offset = -10
 
     create_space_button = Button(".one-sidebar-toolbar-button .oneicon-add-filled")
 
@@ -248,6 +262,7 @@ class DataPage(SidebarPanelPage):
         ".sidebar-spaces li.one-list-item.clickable.resource-item .item-header:not(.truncate)",
         cls=SpaceHeader,
     )
+    sidebar_element = WebElement(".sidebar-spaces .two-level-sidebar", scroll=False)
 
     spaces_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
@@ -288,5 +303,25 @@ class DataPage(SidebarPanelPage):
                     return
         raise PageObjectNotFoundError(f"{name} space not found")
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_spaces_list(self) -> list[SpaceHeader]:
         return [space for space in self.spaces_headers_list if space.name != ""]
+
+    def scroll_by_arrow(self, direction: Literal["up", "down"] = "up") -> None:
+        key = Keys.ARROW_DOWN if direction == "down" else Keys.ARROW_UP
+        ActionChains(self.driver).move_to_element(self.sidebar_element).send_keys(key).perform()
+
+    def get_element_names(self) -> list[str]:
+        return [space.name for space in self.get_visible_spaces_list()]
+
+    def get_visible_items(self) -> list[SpaceHeader]:
+        return self.get_visible_spaces_list()
+
+    def get_all_rendered_items(self) -> Collection[SpaceHeader]:
+        return self.spaces_headers_list
+
+    def scroll_to_list_top(self) -> None:
+        self.scroll_to_top()
+
+    def get_initial_and_next_scroll_anchors(self) -> ScrollAnchors:
+        return ScrollAnchors(20 if DEFAULT_SCREEN_SIZE == ScreenSize.MEDIUM else 24, 24)

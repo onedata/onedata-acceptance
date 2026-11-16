@@ -11,6 +11,6 @@ Feature: Management of a great number of groups
   Scenario: User can see correct number of previously created groups in groups sidebar
     When using REST, user user1 creates 500 groups
     And user of browser clicks on "Groups" in the main menu
-    Then user of browser can see there is group "group0" on the groups list in the sidebar
+    Then user of browser can see there is group "group000" on the groups list in the sidebar
     And user of browser is idle for 5 seconds
-    And user of browser can see there are 500 groups headers on the groups list in the sidebar
+    And user of browser can see there are 500 unique groups headers on the groups list in the sidebar
