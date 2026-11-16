@@ -54,7 +54,7 @@ class Browser(ABC, PageObject):
     configure_columns = Button(".columns-configuration-button")
     empty_dir_msg = Label(".empty-dir-text")
     error_msg = Label(".error-dir-text")
-    _empty_dir_icon = WebElement(".empty-dir-image")
+    _empty_dir_msg_elem = WebElement(".empty-dir-text")
 
     _bottom = WebElement(".table-bottom-spacing")
 
@@ -152,7 +152,8 @@ class Browser(ABC, PageObject):
 
     def is_empty(self) -> bool:
         return (
-            is_element_visible_using_getter(self.driver, lambda _: self._empty_dir_icon) is not None
+            is_element_visible_using_getter(self.driver, lambda _: self._empty_dir_msg_elem)
+            is not None
         )
 
     def get_css_selector(self) -> str:

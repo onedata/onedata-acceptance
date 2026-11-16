@@ -27,12 +27,13 @@ from tests.gui.steps.modals.modal import (
 )
 from tests.gui.steps.oneprovider.archives import (
     assert_archive_info_in_properties_modal,
+    assert_archive_row_menu_open,
     assert_not_archive_with_description,
     assert_number_of_archives_for_item_in_dataset_browser,
     assert_tag_for_archive_in_archive_browser,
     check_toggle_in_create_archive_modal,
     click_and_press_enter_on_archive,
-    click_menu_for_archive,
+    click_menu_button_for_archive,
     get_archive_with_description,
     wait_for_archive_to_enter_or_exit_states,
     wait_for_expected_archive_state,
@@ -82,6 +83,65 @@ OPTION_IN_SPACE: Final[str] = "Datasets, Archives"
 DATASET_BROWSER: Final[str] = "dataset browser"
 ARCHIVE_BROWSER: Final[str] = "archive browser"
 ARCHIVE_FILE_BROWSER: Final[str] = "archive file browser"
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks on menu for archive "
+        'with description: "{description}" in {which_browser:WhichBrowser}',
+        extra_types={"WhichBrowser": WhichBrowser},
+    )
+)
+def click_menu_for_archive(
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    selenium: SeleniumDrivers,
+    which_browser: WhichBrowser,
+) -> None:
+    click_menu_button_for_archive(browser_id, tmp_memory, description, which_browser)
+    assert_archive_row_menu_open(browser_id, description, selenium)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} starts creating archive for item "
+        '"{item_name}" in "{space_name}" with following '
+        "configuration:\n{config}"
+    )
+)
+def start_creating_archive(
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    config: str,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+) -> str:
+    """Start archive creation without waiting for archivisation to finish."""
+    _open_dataset_item_menu_for_archive_creation(
+        browser_id,
+        selenium,
+        item_name,
+        space_name,
+        tmp_memory,
+    )
+    click_option_in_data_row_menu_in_browser(
+        selenium,
+        browser_id,
+        "Create archive",
+        DATASET_BROWSER,
+    )
+    description = _configure_create_archive_modal(selenium, browser_id, config)
+
+    click_modal_button(selenium, browser_id, "Create", modal_name="Create archive")
+    check_browser_to_load(
+        selenium,
+        browser_id,
+        tmp_memory,
+        browser=WhichBrowser.ARCHIVE_BROWSER,
+    )
+    return description
 
 
 @wt(
@@ -144,39 +204,14 @@ def _create_archive(
     displays: dict[str, str],
     option: str,
 ) -> None:
-    try:
-        _ = OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
-    except NoSuchElementException:
-        click_on_option_of_space_on_left_sidebar_menu(
-            selenium, browser_id, space_name, OPTION_IN_SPACE
-        )
-        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, DATASET_BROWSER)
-
-    if "/" in item_name:
-        go_to_path_without_last_elem(
-            selenium,
-            browser_id,
-            tmp_memory,
-            item_name,
-            DATASET_BROWSER,
-        )
-        item_name = item_name.rsplit("/", maxsplit=1)[-1]
-    click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory, DATASET_BROWSER)
     if option in ("succeeds", "tries"):
-        click_option_in_data_row_menu_in_browser(
-            selenium,
+        description = start_creating_archive(
             browser_id,
-            "Create archive",
-            DATASET_BROWSER,
-        )
-        description = _configure_create_archive_modal(selenium, browser_id, config)
-
-        click_modal_button(selenium, browser_id, "Create", modal_name="Create archive")
-        check_browser_to_load(
             selenium,
-            browser_id,
+            config,
+            item_name,
+            space_name,
             tmp_memory,
-            browser=WhichBrowser.ARCHIVE_BROWSER,
         )
 
         if option == "succeeds":
@@ -205,6 +240,13 @@ def _create_archive(
                 description,
             )
     elif option == "fails":
+        _open_dataset_item_menu_for_archive_creation(
+            browser_id,
+            selenium,
+            item_name,
+            space_name,
+            tmp_memory,
+        )
         assert_option_state_in_data_row_menu(
             selenium,
             browser_id,
@@ -212,6 +254,33 @@ def _create_archive(
             "disabled",
             DATASET_BROWSER,
         )
+
+
+def _open_dataset_item_menu_for_archive_creation(
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    try:
+        _ = OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
+    except NoSuchElementException:
+        click_on_option_of_space_on_left_sidebar_menu(
+            selenium, browser_id, space_name, OPTION_IN_SPACE
+        )
+        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, DATASET_BROWSER)
+
+    if "/" in item_name:
+        go_to_path_without_last_elem(
+            selenium,
+            browser_id,
+            tmp_memory,
+            item_name,
+            DATASET_BROWSER,
+        )
+        item_name = item_name.rsplit("/", maxsplit=1)[-1]
+    click_menu_for_elem_in_browser(selenium, browser_id, item_name, tmp_memory, DATASET_BROWSER)
 
 
 def _configure_create_archive_modal(
@@ -259,7 +328,13 @@ def copy_archive_id_to_tmp_memory(
     if client.lower() == "web gui":
         option_in_menu = "Copy archive ID"
         assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, ARCHIVE_BROWSER)
-        click_menu_for_archive(browser_id, tmp_memory, description, selenium)
+        click_menu_for_archive(
+            browser_id,
+            tmp_memory,
+            description,
+            selenium,
+            which_browser=WhichBrowser.ARCHIVE_BROWSER,
+        )
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
         )
@@ -368,7 +443,13 @@ def remove_archive_in_op_gui(
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
-    click_menu_for_archive(browser_id, tmp_memory, description, selenium)
+    click_menu_for_archive(
+        browser_id,
+        tmp_memory,
+        description,
+        selenium,
+        which_browser=WhichBrowser.ARCHIVE_BROWSER,
+    )
 
     if option == "succeeds":
         click_option_in_data_row_menu_in_browser(
@@ -512,7 +593,13 @@ def assert_archive_callback_in_op_gui(
     option_in_menu = "Properties"
     info = f"{option} callback URL"
     button_name = "X"
-    click_menu_for_archive(browser_id, tmp_memory, description, selenium)
+    click_menu_for_archive(
+        browser_id,
+        tmp_memory,
+        description,
+        selenium,
+        which_browser=WhichBrowser.ARCHIVE_BROWSER,
+    )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_menu, ARCHIVE_BROWSER)
     assert_archive_info_in_properties_modal(selenium, browser_id, expected, info)
     click_modal_button(selenium, browser_id, button_name, modal)
@@ -529,7 +616,13 @@ def recall_archive_for_archive_in_op_gui(
     modal_name = "Recall archive"
     name_textfield = "target name input"
     button_name = "Recall"
-    click_menu_for_archive(browser_id, tmp_memory, description, selenium)
+    click_menu_for_archive(
+        browser_id,
+        tmp_memory,
+        description,
+        selenium,
+        which_browser=WhichBrowser.ARCHIVE_BROWSER,
+    )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option_in_menu, ARCHIVE_BROWSER)
     write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name, name_textfield)
     click_modal_button(selenium, browser_id, button_name, modal_name)

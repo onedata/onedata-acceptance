@@ -6,10 +6,9 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import contextlib
 import re
 
-from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -249,39 +248,27 @@ def assert_name_same_as_latest_created(
     assert latest_created_name == base_archive_name, error_message
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on menu for archive "
-        'with description: "{description}" in {which_browser:WhichBrowser}',
-        extra_types={"WhichBrowser": WhichBrowser},
-    )
-)
-def wt_click_menu_for_archive(
-    browser_id: str,
-    tmp_memory: TmpMemory,
-    description: str,
-    selenium: SeleniumDrivers,
-    which_browser: WhichBrowser,
-) -> None:
-    click_menu_for_archive(
-        browser_id, tmp_memory, description, selenium, which_browser=which_browser
-    )
-
-
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_menu_for_archive(
+def click_menu_button_for_archive(
     browser_id: str,
     tmp_memory: TmpMemory,
     description: str,
-    selenium: SeleniumDrivers,
     which_browser: WhichBrowser = WhichBrowser.ARCHIVE_BROWSER,
 ) -> None:
     browser = tmp_memory[browser_id][transform(which_browser.value)]
-    with contextlib.suppress(PageObjectNotFoundError, ElementClickInterceptedException):
-        archive = get_archive_with_description(browser, description)
-        archive.menu_button.click()
-    if Popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
-        raise AssertionError(f"Archive with description {description} did not open")
+    archive = get_archive_with_description(browser, description)
+    archive.menu_button.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archive_row_menu_open(
+    browser_id: str,
+    description: str,
+    selenium: SeleniumDrivers,
+) -> None:
+    assert Popups(selenium[browser_id]).archive_row_menu.options[0].name != "", (
+        f"Archive with description {description} did not open"
+    )
 
 
 @wt(
