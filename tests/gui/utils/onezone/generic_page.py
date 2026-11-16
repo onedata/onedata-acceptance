@@ -141,7 +141,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
     def get_some_first_visible_names_and_first_page_count(self) -> tuple[int, list[str]]:
         visible_names = self.get_element_names()
         first_page_count = len(visible_names)
-        self.scroll_to_nth_type_selector(self.item_selector_prefix, first_page_count)
+        self.scroll_to_nth_type_selector(self.item_selector_prefix, first_page_count - 1)
 
         new_visible_names = self.get_element_names()
         prev_last_name_idx = new_visible_names.index(visible_names[-1])
@@ -152,10 +152,12 @@ class VirtualizedListPage[T: NamedElement](ListPage):
 
     def get_initial_window_layout(self) -> list[dict[str, int]]:
         first_page_count, visible_names = self.get_some_first_visible_names_and_first_page_count()
+        print(visible_names)
         self.trigger_first_render_using_scroll()
         next_visible_items = self.get_visible_items()
         first_name_after_scroll = next_visible_items[0].name
         first_idx_after_scroll = visible_names.index(first_name_after_scroll)
+        print(first_name_after_scroll, first_idx_after_scroll)
 
         return [
             {"start": 0, "end": first_page_count - 1},
@@ -231,6 +233,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
         partial_scroll = False
 
         while True:
+            print("Expected first: ", expected_first_item_next_window)
             self.scroll_to_nth_type_selector(self.item_selector_prefix, scroll_anchor_index)
             try:
                 new_name = self.get_element_and_wait(
@@ -245,6 +248,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
             first_item_this_window = self.get_item_name_at_slot(
                 scroll_anchor_index + self.next_window_offset
             )
+            print("Current first:", first_item_this_window)
             if first_item_this_window != expected_first_item_next_window:
                 partial_scroll = True
                 break
@@ -257,7 +261,6 @@ class VirtualizedListPage[T: NamedElement](ListPage):
 
         elements_count = windows[1]["start"] + additional_scrolls * self.scroll_shift
         item_names = self.get_element_names()
-
         if partial_scroll:
             elements_count += self.scroll_shift - item_names.index(expected_first_item_next_window)
         return elements_count + len(item_names)

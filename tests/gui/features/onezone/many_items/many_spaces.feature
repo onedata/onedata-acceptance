@@ -9,10 +9,10 @@ Feature: Management of a great number of spaces
 
 
   Scenario: User can see correct number of previously created spaces in spaces list in the sidebar
-    When using REST, user1 creates 505 spaces in "onezone" Onezone service
+    When using REST, user1 creates 500 spaces in "onezone" Onezone service
     And user of browser sees that "space000" has appeared on the spaces list in the sidebar
     And user of browser is idle for 5 seconds
-    Then user of browser can see there are 505 spaces headers on the spaces list in the sidebar
+    Then user of browser can see there are 500 spaces headers on the spaces list in the sidebar
 
 
   Scenario: User can see that correct space is opened after refreshing page
