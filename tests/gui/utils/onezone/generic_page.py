@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import math
 from collections.abc import Collection, Iterable
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
@@ -97,7 +97,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
     item_cls: type[T]
     item_selector_prefix: str
     scroll_shift: int
-    initial_window_offset: int
+    look_back_idx: int
     next_window_offset: int
 
     def scroll_to_top(
@@ -150,29 +150,35 @@ class VirtualizedListPage[T: NamedElement](ListPage):
         self.scroll_to_list_top()
         return first_page_count, visible_names
 
-    def get_initial_window_layout(self) -> list[dict[str, int]]:
+    def get_initial_window_layout(self) -> dict[str, Any]:
         first_page_count, visible_names = self.get_some_first_visible_names_and_first_page_count()
-        print(visible_names)
         self.trigger_first_render_using_scroll()
-        next_visible_items = self.get_visible_items()
-        first_name_after_scroll = next_visible_items[0].name
-        first_idx_after_scroll = visible_names.index(first_name_after_scroll)
-        print(first_name_after_scroll, first_idx_after_scroll)
 
-        return [
-            {"start": 0, "end": first_page_count - 1},
-            {
-                "start": first_idx_after_scroll,
-                "end": first_idx_after_scroll + len(next_visible_items) - 1,
-            },
-        ]
+        scroll_anchor_index = self.get_initial_and_next_scroll_anchors().next_windows
+        next_visible_names = self.get_element_names()
+        first_name_after_scroll = next_visible_names[0]
+        first_idx_after_scroll = visible_names.index(first_name_after_scroll)
+
+        return {
+            "windows": [
+                {"start": 0, "end": first_page_count - 1},
+                {
+                    "start": first_idx_after_scroll,
+                    "end": first_idx_after_scroll + len(next_visible_names) - 1,
+                },
+            ],
+            "second_window_first_item_gui_idx": scroll_anchor_index
+            - next_visible_names.index(self.get_item_name_at_slot(scroll_anchor_index)),
+        }
 
     def get_item_name_at_slot(self, idx: int | None = None) -> str:
         scroll_anchor_index = self.get_initial_and_next_scroll_anchors().next_windows
-        return self.get_item_row(
+        return self.get_element_and_wait(
+            "",
             self.item_cls,
             self.item_selector_prefix,
             scroll_anchor_index if idx is None else idx,
+            timeout=WAIT_FRONTEND // 2,
         ).name
 
     def scroll_and_wait_for_item_change(self, previous_name: str) -> str:
@@ -193,7 +199,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
         if index < len(loaded_items):
             return loaded_items[index]
 
-        windows = self.get_initial_window_layout()
+        windows = self.get_initial_window_layout()["windows"]
         if len(windows) == 1:
             raise IndexError(f"Index {index} is larger than number of elements")
 
@@ -213,50 +219,50 @@ class VirtualizedListPage[T: NamedElement](ListPage):
     def count_items(self) -> int:
         self.scroll_to_list_top()
         scroll_anchor_index = self.get_initial_and_next_scroll_anchors().next_windows
-        windows = self.get_initial_window_layout()
+
+        window_layout = self.get_initial_window_layout()
+        windows = window_layout["windows"]
 
         if len(windows) == 1:
             return windows[0]["end"] + 1
 
-        self.initial_window_offset = windows[1]["start"] - self.scroll_shift
-        previous_name = self.get_element_and_wait(
-            "",
-            self.item_cls,
-            self.item_selector_prefix,
-            scroll_anchor_index,
-        ).name
+        second_window_first_item_gui_idx = window_layout["second_window_first_item_gui_idx"]
         expected_first_item_next_window = self.get_item_name_at_slot(
-            scroll_anchor_index + (self.initial_window_offset - 12) + self.scroll_shift
+            second_window_first_item_gui_idx + self.scroll_shift
         )
 
+        previous_anchor_name = self.get_item_name_at_slot(scroll_anchor_index)
         additional_scrolls = 0
         partial_scroll = False
-
         while True:
-            print("Expected first: ", expected_first_item_next_window)
-            self.scroll_to_nth_type_selector(self.item_selector_prefix, scroll_anchor_index)
             try:
-                new_name = self.get_element_and_wait(
-                    previous_name,
-                    self.item_cls,
-                    self.item_selector_prefix,
-                    scroll_anchor_index,
-                ).name
+                new_anchor_name = self.scroll_and_wait_for_item_change(previous_anchor_name)
             except TimeoutException:
                 break
 
-            first_item_this_window = self.get_item_name_at_slot(
-                scroll_anchor_index + self.next_window_offset
-            )
-            print("Current first:", first_item_this_window)
+            if additional_scrolls == 0:
+                names = self.get_element_names()
+                first_item_this_window = names[0]
+
+                anchors_idx_diff = names.index(new_anchor_name) - names.index(previous_anchor_name)
+                self.look_back_idx = (
+                    second_window_first_item_gui_idx + self.scroll_shift - anchors_idx_diff
+                )
+            else:
+                first_item_this_window = self.get_item_name_at_slot(self.look_back_idx)
+
             if first_item_this_window != expected_first_item_next_window:
                 partial_scroll = True
                 break
 
-            expected_first_item_next_window = self.get_item_name_at_slot(
-                scroll_anchor_index + self.next_window_offset + self.scroll_shift
-            )
-            previous_name = new_name
+            if additional_scrolls == 0:
+                expected_first_item_next_window = names[0 + self.scroll_shift]
+            else:
+                expected_first_item_next_window = self.get_item_name_at_slot(
+                    self.look_back_idx + self.scroll_shift
+                )
+
+            previous_anchor_name = new_anchor_name
             additional_scrolls += 1
 
         elements_count = windows[1]["start"] + additional_scrolls * self.scroll_shift
