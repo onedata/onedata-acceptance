@@ -39,6 +39,21 @@ class VisibleElement(Protocol):
     def is_displayed(self) -> bool: ...
 
 
+def replace_ace_editor_data(
+    driver: WebDriver,
+    new_data: str,
+    css_selector: str = ".ace_editor",
+) -> None:
+    driver.execute_script(
+        """
+        var editor = ace.edit(document.querySelector(arguments[0]));
+        editor.setValue(arguments[1], -1);
+        """,
+        css_selector,
+        new_data,
+    )
+
+
 def is_element_visible_on_page(
     driver: WebDriver,
     web_elem_or_selector: WebElementOrSelector,

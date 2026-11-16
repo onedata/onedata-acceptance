@@ -345,8 +345,10 @@ def create_n_groups_using_rest(
     host: str = "onezone",
 ) -> None:
     zone_hostname = hosts[host]["hostname"]
-    for i in range(int(number)):
-        group_name = f"group{i:03d}"
+    number_of_groups = int(number)
+    index_width = len(str(number_of_groups))
+    for i in range(number_of_groups):
+        group_name = f"group{i:0{index_width}d}"
         group_id = _create_group(
             zone_hostname,
             users[user].username,

@@ -10,6 +10,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
+from tests.gui.utils.text import parse_elements_sequence
+from tests.gui.utils.web_elem_utils import replace_ace_editor_data
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -27,11 +29,17 @@ def assert_advertise_in_marketplace_toggle(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.configuration_page
+    toggle = page.advertise_toggle
+    toggle_classes = toggle.web_elem.get_attribute("class")
 
     if "not" in checked:
-        assert page.advertise_toggle.is_unchecked(), "Space is advertised in marketplace"
+        assert toggle.is_unchecked(), (
+            f'Space is advertised in marketplace; advertise toggle classes: "{toggle_classes}"'
+        )
     else:
-        assert page.advertise_toggle.is_checked(), "Space is not advertised in marketplace"
+        assert toggle.is_checked(), (
+            f'Space is not advertised in marketplace; advertise toggle classes: "{toggle_classes}"'
+        )
 
 
 @wt(
@@ -120,32 +128,55 @@ def set_description_of_a_space(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.configuration_page
     page.editor_description_mode.click()
-    page.description_text_area = description
+    replace_ace_editor_data(driver, description)
     if with_save:
         page.save_button.click()
         page.preview_description_mode.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_tags_in_space_configuration_tab(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    tag_type: str,
-    tags: list[str],
-    with_save: bool = True,
-) -> None:
+def open_space_tags_editor(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).data.configuration_page
-    page.space_tags_editor.click()
+    page.space_tags_editor.edit_button.click()
     page.space_tags_editor.add_tag.click()
-    getattr(Popups(driver).spaces_tags, tag_type).click()
 
-    for tag in tags:
-        Popups(driver).spaces_tags.search_bar = tag
-        Popups(driver).spaces_tags.tags_list[tag].click()
 
-    if with_save:
-        page.space_tags_editor.save_button.click()
+@repeat_failed(timeout=WAIT_FRONTEND)
+def save_space_tags_editor(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    page = OZLoggedIn(driver).data.configuration_page
+    page.space_tags_editor.save_button.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def exit_space_tags_editor_without_saving(selenium: SeleniumDrivers, browser_id: str) -> None:
+    driver = selenium[browser_id]
+    page = OZLoggedIn(driver).data.configuration_page
+    # click any visible element so the popup disappears
+    page.space_tags_editor.tags_label.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees tags "{expected_tags:ElementsSequence}" '
+        "in space configuration subpage",
+        extra_types={"ElementsSequence": parse_elements_sequence},
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_tags_in_space_configuration_tab(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    expected_tags: list[str],
+) -> None:
+    driver = selenium[browser_id]
+    tags_editor = OZLoggedIn(driver).data.configuration_page.space_tags_editor
+    actual_tags = [tag.name for tag in tags_editor.tags]
+
+    assert set(actual_tags) == set(expected_tags), (
+        f"Expected space tags {expected_tags}, but found {actual_tags}"
+    )
 
 
 @wt(parsers.parse('user of {browser_id} sees "{label_info}" header label in configuration space'))

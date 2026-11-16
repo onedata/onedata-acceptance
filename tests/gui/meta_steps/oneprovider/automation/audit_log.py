@@ -641,7 +641,7 @@ def check_visual_in_store_details_modal(
         if variable_type != "files":
             parsed_items = literal_eval(serialized_items)
         else:
-            parse_seq(serialized_items)
+            parsed_items = parse_seq(serialized_items)
 
         for elem in modal.store_content_list:
             if variable_type == "ranges":

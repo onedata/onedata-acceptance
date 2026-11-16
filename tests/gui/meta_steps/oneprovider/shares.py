@@ -69,11 +69,11 @@ from tests.gui.utils.common.xml_addons import (
     is_metadata_field_option_selectable_edm,
     is_name_in_initial_form_fields,
     register_namespace_by_metadata_type,
-    replace_xml_editor_data,
     resolve_xml_tag_for_et_search,
 )
 from tests.gui.utils.generic import transform
 from tests.gui.utils.text import ELEMENTS_SEQUENCE_PATTERN, parse_elements_sequence
+from tests.gui.utils.web_elem_utils import replace_ace_editor_data
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
@@ -601,7 +601,7 @@ def modify_xml_data_in_edm_form_in_shares_interface(
     assert elem is not None, f"Node with tag: {tag} was not found in XML data"
 
     elem.text = new_text
-    replace_xml_editor_data(
+    replace_ace_editor_data(
         driver,
         ET.tostring(root, encoding="utf-8", xml_declaration=True).decode("utf-8"),
     )

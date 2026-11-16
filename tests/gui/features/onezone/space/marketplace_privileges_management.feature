@@ -47,8 +47,8 @@ Feature: Basic management of space marketplace privileges for users in Onezone G
    And user of browser_user1 sees "example@gmail.com" in marketplace contact e-mail address text field
    And user of browser_user1 sees that "space1" space is advertised in the marketplace in space sidebar
    And user of browser_user1 clicks "View in Marketplace" link on space configuration page
-   Then user of browser_user1 sees advertised space on Space Marketplace subpage with following parameters:
-        space name: "space1"
+   Then user of browser_user1 sees "space1" space in Space Marketplace subpage with following details:
+        access state: membership granted
         organization name: "org_name1"
         creation time: current
         description: "some desc"

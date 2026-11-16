@@ -188,19 +188,25 @@ def get_page_for_list(
 ) -> ListPage:
     oz = OZLoggedIn(driver)
 
+    page: ListPage
+
     match list_element:
         case ListElement.SPACES | ListElement.SPACES_HEADERS:
-            return oz.data
+            page = oz.data
         case ListElement.GROUPS_HEADERS:
-            return oz.groups
+            page = oz.groups
         case ListElement.SHARES_SIDEBAR:
-            return oz.shares
+            page = oz.shares
         case ListElement.WORKFLOWS:
-            return oz.automation.workflows_page
+            page = oz.automation.workflows_page
         case ListElement.LAMBDAS:
-            return oz.automation.lambdas_page
+            page = oz.automation.lambdas_page
+        case ListElement.MARKETPLACE_SPACES:
+            page = oz.data.space_marketplace_page
         case _:
-            return getattr(oz, list_element.value)
+            page = getattr(oz, list_element.value)
+
+    return page
 
 
 @wt(
