@@ -17,7 +17,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.oneprovider.browser import Browser
-from tests.gui.utils.onezone.generic_page import (
+from tests.gui.utils.onezone.virtualized_list_page import (
     DEFAULT_SCROLLBAR_SELECTOR,
     ScrollAnchors,
     VirtualizedListPage,

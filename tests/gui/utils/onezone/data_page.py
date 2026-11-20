@@ -26,9 +26,9 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import PageObjectNotFoundError
-from tests.gui.utils.onezone.generic_page import (
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
+from tests.gui.utils.onezone.virtualized_list_page import (
     ScrollAnchors,
-    SidebarPanelPage,
     VirtualizedListPage,
 )
 from tests.utils.utils import element_has_class, repeat_failed

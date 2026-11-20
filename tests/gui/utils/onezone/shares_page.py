@@ -10,9 +10,9 @@ from collections.abc import Collection
 from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_FRONTEND, ScreenSize
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence
-from tests.gui.utils.onezone.generic_page import (
+from tests.gui.utils.onezone.generic_page import SidebarPanelPage
+from tests.gui.utils.onezone.virtualized_list_page import (
     ScrollAnchors,
-    SidebarPanelPage,
     VirtualizedListPage,
 )
 from tests.utils.utils import repeat_failed
