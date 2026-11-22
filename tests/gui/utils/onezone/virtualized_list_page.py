@@ -72,7 +72,6 @@ class VirtualizedListPage[T: NamedElement](ListPage):
     item_selector_prefix: str
     scroll_shift: int
     look_back_idx: int
-    next_window_offset: int
     window_layout_cache: ClassVar[dict[WindowLayoutCacheKey, WindowLayout]] = {}
 
     def scroll_to_top(
@@ -249,7 +248,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
         )
 
         expected_first_item_third_window = self.get_item_name_at_slot(
-                second_window.first_item_gui_idx + self.scroll_shift
+            second_window.first_item_gui_idx + self.scroll_shift
         )
         third_window: ThirdWindowResult = self._manage_third_window(
             previous_anchor_name=self.get_item_name_at_slot(),
@@ -265,13 +264,20 @@ class VirtualizedListPage[T: NamedElement](ListPage):
                 else 0
             )
             previous_name = third_window.anchor_name
+            if previous_name is None:
+                raise RuntimeError(
+                    "Previous name attribute for third window result should be given"
+                )
             for _ in range(additional_scrolls):
                 previous_name = self.scroll_and_wait_for_item_change(previous_name)
 
             window_start = second_window_start + (additional_scrolls + 1) * self.scroll_shift
 
         elif third_window.status is ThirdWindowStatus.UNEXPECTED_FIRST_ITEM:
-            items_count, _= self._calculate_item_count(second_window_start, 1, True, expected_first_item_third_window)
+            items_count, element_names = self._calculate_item_count(
+                second_window_start, 0, True, expected_first_item_third_window
+            )
+            window_start = items_count - len(element_names)
         else:
             window_start = second_window_start
 
@@ -342,7 +348,7 @@ class VirtualizedListPage[T: NamedElement](ListPage):
         completed_scrolls: int,
         partial_scroll: bool,
         expected_first_item: str,
-    ) -> int:
+    ) -> tuple[int, list[str]]:
         item_names = self.get_element_names()
         item_count = second_window_start + completed_scrolls * self.scroll_shift
 

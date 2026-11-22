@@ -97,7 +97,13 @@ def assert_n_items_in_items_list(
         # When uniqueness is not required, counting all headers is sufficient;
         # collecting their field values would be unnecessary.
         if (
-            items_type in [ListElement.SPACES_HEADERS, ListElement.SHARES]
+            items_type
+            in [
+                ListElement.SPACES_HEADERS,
+                ListElement.SHARES,
+                ListElement.GROUPS_HEADERS,
+                ListElement.GROUPS,
+            ]
             and number is not None
             and isinstance(page, VirtualizedListPage)
         ):

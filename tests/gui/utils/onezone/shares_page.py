@@ -18,8 +18,6 @@ from tests.gui.utils.onezone.virtualized_list_page import (
 from tests.utils.utils import repeat_failed
 
 SHARES_SIDEBAR_SELECTOR_PREFIX = ".sidebar-shares .one-list-item.data-row:nth-of-type"
-NEXT_SCROLL_SHIFT = 9
-CONST_SCROLL_IDX = 24
 SHARES_SCROLLBAR = ".perfect-scrollbar-element.ps--active-y:not(.col-sidebar)"
 
 
@@ -32,8 +30,7 @@ class SharesPage(SidebarPanelPage, VirtualizedListPage[SharesSidebarRecord]):
     panel_name = "shares"
     item_cls = SharesSidebarRecord
     item_selector_prefix = SHARES_SIDEBAR_SELECTOR_PREFIX
-    scroll_shift = NEXT_SCROLL_SHIFT
-    next_window_offset = -10
+    scroll_shift = 9
 
     shares_list = WebItemsSequence(".sidebar-shares .one-list-item", cls=SharesSidebarRecord)
 

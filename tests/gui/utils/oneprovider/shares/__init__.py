@@ -43,8 +43,6 @@ class SharesContentPage(Browser, VirtualizedListPage[SharesOptions]):
     item_selector_prefix = SHARES_SELECTOR_PREFIX
     item_cls = SharesOptions
     scroll_shift = 6
-    initial_window_offset = 6
-    next_window_offset = -6
 
     no_shares_msg = Label(".content-info-content-container")
     name = Label(".file-browser .fb-breadcrumbs-dir > .truncate")

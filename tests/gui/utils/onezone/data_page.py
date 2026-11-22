@@ -252,7 +252,6 @@ class DataPage(VirtualizedListPage[SpaceHeader], SidebarPanelPage):
     item_cls = SpaceHeader
     item_selector_prefix = SPACE_HEADER_SELECTOR_PREFIX
     scroll_shift = 9
-    next_window_offset = -10
 
     create_space_button = Button(".one-sidebar-toolbar-button .oneicon-add-filled")
 
