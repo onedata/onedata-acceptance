@@ -12,7 +12,7 @@ from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_FRONTEND, ScreenSize
+from tests.gui.constants import WAIT_FRONTEND, ScreenSize
 from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -323,4 +323,4 @@ class DataPage(VirtualizedListPage[SpaceHeader], SidebarPanelPage):
         self.scroll_to_top()
 
     def get_initial_and_next_scroll_anchors(self) -> ScrollAnchors:
-        return ScrollAnchors(20 if DEFAULT_SCREEN_SIZE == ScreenSize.MEDIUM else 24, 24)
+        return ScrollAnchors(24 if self._is_screen_size(ScreenSize.LARGE) else 20, 24)

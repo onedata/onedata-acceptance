@@ -59,10 +59,11 @@ class WindowLayout:
 @dataclass(frozen=True)
 class WindowLayoutCacheKey:
     page_type: type
-    screen_size: ScreenSize
+    screen_size: WindowSize
 
 
 DEFAULT_SCROLLBAR_SELECTOR = ".perfect-scrollbar-element.ps--active-y"
+WINDOW_SIZE_TOLERANCE = 10
 
 
 class VirtualizedListPage[T: NamedElement](ListPage):
@@ -127,13 +128,19 @@ class VirtualizedListPage[T: NamedElement](ListPage):
             ignored_exceptions=(StaleElementReferenceException,),
         ).until(get_changed_element)
 
-    def get_screen_size(self) -> ScreenSize:
+    def get_screen_size(self) -> WindowSize:
         size = self.driver.get_window_size()
-        return ScreenSize(
-            WindowSize(
-                width=size["width"],
-                height=size["height"],
-            )
+        return WindowSize(
+            width=size["width"],
+            height=size["height"],
+        )
+
+    def _is_screen_size(self, screen_size: ScreenSize) -> bool:
+        actual_size = self.get_screen_size()
+        expected_size = screen_size.value
+        return (
+            abs(actual_size.width - expected_size.width) <= WINDOW_SIZE_TOLERANCE
+            and abs(actual_size.height - expected_size.height) <= WINDOW_SIZE_TOLERANCE
         )
 
     def get_visible_items(self) -> list[T]:

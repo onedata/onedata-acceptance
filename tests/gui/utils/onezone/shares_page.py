@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections.abc import Collection
 
-from tests.gui.constants import DEFAULT_SCREEN_SIZE, WAIT_FRONTEND, ScreenSize
+from tests.gui.constants import WAIT_FRONTEND, ScreenSize
 from tests.gui.utils.core.base import NamedElement
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence
 from tests.gui.utils.onezone.generic_page import SidebarPanelPage
@@ -48,4 +48,4 @@ class SharesPage(SidebarPanelPage, VirtualizedListPage[SharesSidebarRecord]):
         return [share for share in self.shares_list if share.name != ""]
 
     def get_initial_and_next_scroll_anchors(self) -> ScrollAnchors:
-        return ScrollAnchors(20 if DEFAULT_SCREEN_SIZE == ScreenSize.MEDIUM else 24, 24)
+        return ScrollAnchors(20 if self._is_screen_size(ScreenSize.MEDIUM) else 24, 24)
