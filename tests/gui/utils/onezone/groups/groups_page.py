@@ -5,6 +5,9 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from collections.abc import Collection
+
+from tests.gui.constants import WAIT_FRONTEND
 from tests.gui.utils.core.base import NamedElement, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -20,9 +23,15 @@ from tests.gui.utils.onezone.generic_page import (
     get_visible_elements_list,
 )
 from tests.gui.utils.onezone.members_subpage import MembersPage
-from tests.utils.utils import element_has_class
+from tests.gui.utils.onezone.virtualized_list_page import (
+    ScrollAnchors,
+    VirtualizedListPage,
+)
+from tests.utils.utils import element_has_class, repeat_failed
 
 from .hierarchy_subpage import GroupHierarchyPage
+
+GROUP_HEADER_SELECTOR_PREFIX = ".one-sidebar-primary-item-list .one-list-item.data-row:nth-of-type"
 
 
 class Group(NamedElement):
@@ -59,8 +68,11 @@ class MenuItem(PageObject):
         self.click()
 
 
-class GroupsPage(SidebarPanelPage):
+class GroupsPage(SidebarPanelPage, VirtualizedListPage[GroupHeader]):
     panel_name = "groups"
+    item_selector_prefix = GROUP_HEADER_SELECTOR_PREFIX
+    item_cls = GroupHeader
+    scroll_shift = 9
 
     groups_list = WebItemsSequence(".sidebar-groups .one-list>.one-list-item.clickable", cls=Group)
     groups_headers_list = WebItemsSequence(
@@ -91,3 +103,19 @@ class GroupsPage(SidebarPanelPage):
             if element_has_class(group.web_elem, "active"):
                 return group.name
         return None
+
+    def get_visible_items(self) -> list[GroupHeader]:
+        return self.get_visible_groups_headers_list()
+
+    def get_all_rendered_items(self) -> Collection[GroupHeader]:
+        return self.groups_headers_list
+
+    def scroll_to_list_top(self) -> None:
+        self.scroll_to_top()
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_groups_headers_list(self) -> list[GroupHeader]:
+        return [group for group in self.groups_headers_list if group.name != ""]
+
+    def get_initial_and_next_scroll_anchors(self) -> ScrollAnchors:
+        return ScrollAnchors(24, 24)

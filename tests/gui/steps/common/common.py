@@ -50,13 +50,13 @@ from tests.gui.utils.onezone.discovery_page import DiscoveryPage
 from tests.gui.utils.onezone.generic_page import (
     ListPage,
     SidebarPanelPage,
-    VirtualizedListPage,
     get_visible_elements_list,
 )
 from tests.gui.utils.onezone.groups.groups_page import GroupsPage
 from tests.gui.utils.onezone.providers_page import ProvidersPage
 from tests.gui.utils.onezone.shares_page import SharesPage
 from tests.gui.utils.onezone.tokens_page import TokensPage
+from tests.gui.utils.onezone.virtualized_list_page import VirtualizedListPage
 from tests.gui.utils.web_elem_utils import get_visibility_condition, get_web_elem_or_locator
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -97,7 +97,13 @@ def assert_n_items_in_items_list(
         # When uniqueness is not required, counting all headers is sufficient;
         # collecting their field values would be unnecessary.
         if (
-            items_type in [ListElement.SPACES_HEADERS, ListElement.SHARES]
+            items_type
+            in [
+                ListElement.SPACES_HEADERS,
+                ListElement.SHARES,
+                ListElement.GROUPS_HEADERS,
+                ListElement.GROUPS,
+            ]
             and number is not None
             and isinstance(page, VirtualizedListPage)
         ):
