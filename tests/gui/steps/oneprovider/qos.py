@@ -154,7 +154,7 @@ def click_on_first_link_with_file_name_in_qos_audit_log(
     modal_qos = Modals(driver).details_modal.qos
     entries = modal_qos.audit_log_list.entries
     file_entries = [entry for entry in entries if entry.file.text == file_name]
-    file_entries[0].click()
+    file_entries[0].link.click()
 
 
 @wt(parsers.parse("user of {browser_id} sees that replicas number is equal {number} in QoS panel"))
