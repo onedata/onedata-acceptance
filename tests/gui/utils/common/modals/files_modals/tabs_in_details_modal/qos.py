@@ -62,7 +62,7 @@ class Entry(PageObject):
     time = WebElement(".timestamp-cell")
     file = WebElement(".cell-file")
     event = WebElement(".cell-content-message")
-    link = WebElement(".cell-file .navy")
+    link = WebElement(".cell-file .navigation-link")
 
 
 class AuditLogBrowser(PageObject):
