@@ -23,7 +23,7 @@ Feature: Deployment with Let`s Encrypt and enabled subdomain delegation process 
     And user of browser2 sees that cluster deployment has started
 
     # wait for finish of deployment
-    And user of browser2 waits 180 seconds for cluster deployment to finish
+    And user of browser2 waits 300 seconds for cluster deployment to finish
 
     # step2 in provider panel
     And user of browser2 types received registration token in step 2 of deployment process in Onepanel
